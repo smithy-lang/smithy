@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Smithy Guides" href="../../../guides/index.html" /><link rel="prev" title="Amazon Machine Learning Customizations" href="machinelearning-customizations.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Amazon S3 Customizations - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,9 +301,9 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="amazon-s3-customizations">
-<h1>Amazon S3 Customizations<a class="headerlink" href="#amazon-s3-customizations" title="Permalink to this headline">#</a></h1>
+<h1>Amazon S3 Customizations<a class="headerlink" href="#amazon-s3-customizations" title="Permalink to this heading">#</a></h1>
 <div class="section" id="s3-bucket-addressing">
-<h2>S3 Bucket Addressing<a class="headerlink" href="#s3-bucket-addressing" title="Permalink to this headline">#</a></h2>
+<h2>S3 Bucket Addressing<a class="headerlink" href="#s3-bucket-addressing" title="Permalink to this heading">#</a></h2>
 <p>Clients for Amazon S3 SHOULD expose multiple levels of configuration for bucket
 addressing: environment, file, client, and operation. Settings for bucket
 addressing should be resolved closest to the operation. Most bucket addressing
@@ -362,7 +362,7 @@ the <a class="reference internal" href="#s3-bucket-virtual-hosting"><span class=
 </table>
 </div>
 <div class="section" id="s3-bucket-virtual-hosting">
-<span id="id1"></span><h3>S3 Bucket Virtual Hosting<a class="headerlink" href="#s3-bucket-virtual-hosting" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3>S3 Bucket Virtual Hosting<a class="headerlink" href="#s3-bucket-virtual-hosting" title="Permalink to this heading">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html">virtual hosting</a> for
 addressing a bucket. Configurations MUST support the default of using virtual
 hosting, explicitly configuring virtual hosting, and explicitly configuring the
@@ -397,7 +397,7 @@ modeled HTTP bindings for the request.</p>
 </div>
 </div>
 <div class="section" id="s3-dual-stack-endpoints">
-<h3>S3 Dual-Stack Endpoints<a class="headerlink" href="#s3-dual-stack-endpoints" title="Permalink to this headline">#</a></h3>
+<h3>S3 Dual-Stack Endpoints<a class="headerlink" href="#s3-dual-stack-endpoints" title="Permalink to this heading">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html">dual-stack endpoints</a>
 for addressing a bucket. Configurations MUST default this setting to being
 disabled. When enabled, the string literal &quot;.dualstack&quot; is placed after S3's
@@ -427,7 +427,7 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 </div>
 </div>
 <div class="section" id="s3-transfer-acceleration-endpoints">
-<h3>S3 Transfer Acceleration Endpoints<a class="headerlink" href="#s3-transfer-acceleration-endpoints" title="Permalink to this headline">#</a></h3>
+<h3>S3 Transfer Acceleration Endpoints<a class="headerlink" href="#s3-transfer-acceleration-endpoints" title="Permalink to this heading">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use S3 <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html">transfer acceleration</a>
 for addressing a bucket. Configurations MUST default this setting to being
 disabled. When enabled, the string literal &quot;s3-accelerate&quot; MUST replace the
@@ -459,9 +459,9 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 </div>
 </div>
 <div class="section" id="s3-traits">
-<h2>S3 Traits<a class="headerlink" href="#s3-traits" title="Permalink to this headline">#</a></h2>
+<h2>S3 Traits<a class="headerlink" href="#s3-traits" title="Permalink to this heading">#</a></h2>
 <div class="section" id="aws-customizations-s3unwrappedxmloutput-trait">
-<h3><code class="docutils literal notranslate"><span class="pre">aws.customizations#s3UnwrappedXmlOutput</span></code> trait<a class="headerlink" href="#aws-customizations-s3unwrappedxmloutput-trait" title="Permalink to this headline">#</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">aws.customizations#s3UnwrappedXmlOutput</span></code> trait<a class="headerlink" href="#aws-customizations-s3unwrappedxmloutput-trait" title="Permalink to this heading">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates the response body from S3 is not wrapped in the <a class="reference internal" href="../aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml protocol</span></a> operation-level XML node.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
@@ -594,7 +594,9 @@ in order to properly handle the output for the <code class="docutils literal not
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>

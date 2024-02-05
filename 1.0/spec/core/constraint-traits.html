@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="4. Documentation traits" href="documentation-traits.html" /><link rel="prev" title="2. Prelude model" href="prelude-model.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>3. Constraint traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="constraint-traits">
-<span id="id1"></span><h1><span class="section-number">3. </span>Constraint traits<a class="headerlink" href="#constraint-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1><span class="section-number">3. </span>Constraint traits<a class="headerlink" href="#constraint-traits" title="Permalink to this heading">#</a></h1>
 <p>Constraint traits are used to constrain the values that can be provided
 for a shape.</p>
 <div class="section" id="enum-trait">
-<span id="smithy-api-enum-trait"></span><span id="id2"></span><h2><span class="section-number">3.1. </span><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait<a class="headerlink" href="#enum-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-enum-trait"></span><span id="id2"></span><h2><span class="section-number">3.1. </span><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait<a class="headerlink" href="#enum-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Constrains the acceptable values of a string to a fixed set.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
@@ -455,7 +455,7 @@ failures.</p>
 </div></div>
 </div>
 <div class="section" id="idref-trait">
-<span id="smithy-api-idref-trait"></span><span id="id3"></span><h2><span class="section-number">3.2. </span><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait<a class="headerlink" href="#idref-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-idref-trait"></span><span id="id3"></span><h2><span class="section-number">3.2. </span><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait<a class="headerlink" href="#idref-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><p>Indicates that a string value MUST contain a valid absolute
 <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>.</p>
@@ -614,7 +614,7 @@ syntactically correct absolute shape ID.</li>
 </ul>
 </div>
 <div class="section" id="length-trait">
-<span id="smithy-api-length-trait"></span><span id="id4"></span><h2><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">length</span></code> trait<a class="headerlink" href="#length-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-length-trait"></span><span id="id4"></span><h2><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">length</span></code> trait<a class="headerlink" href="#length-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Constrains a shape to minimum and maximum number of elements or size.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:is(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob))</span></code></p>
@@ -705,7 +705,7 @@ the corresponding shape:</p>
 </div></div>
 </div>
 <div class="section" id="pattern-trait">
-<span id="smithy-api-pattern-trait"></span><span id="id5"></span><h2><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait<a class="headerlink" href="#pattern-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-pattern-trait"></span><span id="id5"></span><h2><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait<a class="headerlink" href="#pattern-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Restricts string shape values to a specified regular expression.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(string,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
@@ -761,7 +761,7 @@ For example, the regular expression <code class="docutils literal notranslate"><
 </div></div>
 </div>
 <div class="section" id="private-trait">
-<span id="smithy-api-private-trait"></span><span id="id6"></span><h2><span class="section-number">3.5. </span><code class="docutils literal notranslate"><span class="pre">private</span></code> trait<a class="headerlink" href="#private-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-private-trait"></span><span id="id6"></span><h2><span class="section-number">3.5. </span><code class="docutils literal notranslate"><span class="pre">private</span></code> trait<a class="headerlink" href="#private-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Prevents models defined in a different namespace from referencing the
 targeted shape.</dd>
@@ -774,7 +774,7 @@ access from within the model itself and SHOULD NOT influence code-generation
 of the targeted shape.</p>
 </div>
 <div class="section" id="range-trait">
-<span id="smithy-api-range-trait"></span><span id="id7"></span><h2><span class="section-number">3.6. </span><code class="docutils literal notranslate"><span class="pre">range</span></code> trait<a class="headerlink" href="#range-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-range-trait"></span><span id="id7"></span><h2><span class="section-number">3.6. </span><code class="docutils literal notranslate"><span class="pre">range</span></code> trait<a class="headerlink" href="#range-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Restricts allowed values of byte, short, integer, long, float, double,
 bigDecimal, and bigInteger shapes within an acceptable lower and upper
@@ -838,7 +838,7 @@ of the targeted numeric shape to which it is applied.</p>
 </div></div>
 </div>
 <div class="section" id="required-trait">
-<span id="smithy-api-required-trait"></span><span id="id8"></span><h2><span class="section-number">3.7. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-required-trait"></span><span id="id8"></span><h2><span class="section-number">3.7. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Marks a structure member as required, meaning a value for the member MUST
 be present and not set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
@@ -885,7 +885,7 @@ in a response.</p>
 </div>
 </div>
 <div class="section" id="uniqueitems-trait">
-<span id="smithy-api-uniqueitems-trait"></span><span id="id9"></span><h2><span class="section-number">3.8. </span><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait<a class="headerlink" href="#uniqueitems-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-uniqueitems-trait"></span><span id="id9"></span><h2><span class="section-number">3.8. </span><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait<a class="headerlink" href="#uniqueitems-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the items in a <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a> MUST be unique
 based on <a class="reference internal" href="#value-equality"><span class="std std-ref">Value equality</span></a>.</dd>
@@ -905,7 +905,7 @@ based on <a class="reference internal" href="#value-equality"><span class="std s
 </pre></div>
 </div>
 <div class="section" id="value-equality">
-<span id="id10"></span><h3><span class="section-number">3.8.1. </span>Value equality<a class="headerlink" href="#value-equality" title="Permalink to this headline">#</a></h3>
+<span id="id10"></span><h3><span class="section-number">3.8.1. </span>Value equality<a class="headerlink" href="#value-equality" title="Permalink to this heading">#</a></h3>
 <p>Two values are considered equal if:</p>
 <ul class="simple">
 <li>They are the same type.</li>
@@ -933,7 +933,7 @@ to determine if two values are considered equal.</p>
 </div>
 </div>
 <div class="section" id="trait-precedence">
-<span id="precedence"></span><h2><span class="section-number">3.9. </span>Trait precedence<a class="headerlink" href="#trait-precedence" title="Permalink to this headline">#</a></h2>
+<span id="precedence"></span><h2><span class="section-number">3.9. </span>Trait precedence<a class="headerlink" href="#trait-precedence" title="Permalink to this heading">#</a></h2>
 <p>Some constraint traits can be applied to shapes as well as members.
 Constraint traits applied to members take precedence over constraint
 traits applied to the shape targeted by members.</p>
@@ -1072,7 +1072,9 @@ minimum will be <code class="docutils literal notranslate"><span class="pre">7</
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Server Generator for TypeScript error handling" href="error-handling.html" /><link rel="prev" title="Smithy Server Generator for TypeScript handlers" href="handlers.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Smithy Server Generator for TypeScript validation - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="smithy-server-generator-for-typescript-validation">
-<h1>Smithy Server Generator for TypeScript validation<a class="headerlink" href="#smithy-server-generator-for-typescript-validation" title="Permalink to this headline">#</a></h1>
+<h1>Smithy Server Generator for TypeScript validation<a class="headerlink" href="#smithy-server-generator-for-typescript-validation" title="Permalink to this heading">#</a></h1>
 <p>Smithy defines a set of <a class="reference internal" href="../spec/core/constraint-traits.html#constraint-traits"><span class="std std-ref">constraint traits</span></a> that can be used to restrict the set of allowed
 values for a shape. These traits do not change the type generated; the type will always correspond with the Smithy type.
 This allows Smithy models to evolve over time, so that model changes will not cause changes that break type checks.</p>
@@ -311,7 +311,7 @@ be too late in the process. At the point of validation, the server SDKs could on
 <a class="reference internal" href="error-handling.html#ts-ssdk-internal-failure-exception"><span class="std std-ref">InternalFailureException</span></a> to the user, and changes made by the operation
 implementation would neither be returned to the user nor rolled back.</p>
 <div class="section" id="default-validation">
-<h2>Default validation<a class="headerlink" href="#default-validation" title="Permalink to this headline">#</a></h2>
+<h2>Default validation<a class="headerlink" href="#default-validation" title="Permalink to this heading">#</a></h2>
 <p>The server SDK validates inputs by default if every operation in the service has the
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9">smithy.framework#ValidationException</a> error associated. This can be accomplished by associating the error directly
 with the <a class="reference internal" href="../spec/core/model.html#service"><span class="std std-ref">service</span></a>, as well. In this mode, the constraint traits built into Smithy are applied to each
@@ -325,7 +325,7 @@ constraints that are not supported directly by Smithy.</p>
 code unless default validation is disabled.</p>
 </div>
 <div class="section" id="custom-validation">
-<h2>Custom validation<a class="headerlink" href="#custom-validation" title="Permalink to this headline">#</a></h2>
+<h2>Custom validation<a class="headerlink" href="#custom-validation" title="Permalink to this heading">#</a></h2>
 <p>For advanced use-cases, developers can choose to customize the validation behavior of the server SDK. This requires
 setting <code class="docutils literal notranslate"><span class="pre">disableDefaultValidation</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> for the <code class="docutils literal notranslate"><span class="pre">typescript-ssdk-codegen</span></code> plugin:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -494,7 +494,9 @@ will render an <a class="reference internal" href="error-handling.html#ts-ssdk-i
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

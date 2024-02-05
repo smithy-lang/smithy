@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Evolving Models" href="evolving-models.html" /><link rel="prev" title="smithy-build" href="building-models/build-config.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Model linters - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,10 +301,10 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="model-linters">
-<h1>Model linters<a class="headerlink" href="#model-linters" title="Permalink to this headline">#</a></h1>
+<h1>Model linters<a class="headerlink" href="#model-linters" title="Permalink to this heading">#</a></h1>
 <p>This guide describes how to apply optional linters to a Smithy model.</p>
 <div class="section" id="linting-overview">
-<h2>Linting overview<a class="headerlink" href="#linting-overview" title="Permalink to this headline">#</a></h2>
+<h2>Linting overview<a class="headerlink" href="#linting-overview" title="Permalink to this heading">#</a></h2>
 <p>A <em>linter</em> is a special kind of <a class="reference internal" href="../spec/core/model-validation.html#validation"><span class="std std-ref">model validator</span></a>
 that is configurable. Linter implementations are found in code. The
 <a class="reference external" href="https://search.maven.org/artifact/software.amazon.smithy/smithy-linters">smithy-linters</a> package in Maven Central contains several linters that
@@ -313,8 +313,8 @@ can be used to apply additional validation to Smithy models.</p>
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.43.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.44.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.44.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -324,10 +324,10 @@ defined in the package and registered using <a class="reference external" href="
 use in Smithy models.</p>
 </div>
 <div class="section" id="linters-in-smithy-linters">
-<h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this headline">#</a></h2>
+<h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> package defines the following linters.</p>
 <div class="section" id="abbreviationname">
-<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not represent abbreviations
 with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
 &quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
@@ -372,7 +372,7 @@ letters. Defaults to an empty list.</td>
 </div>
 </div>
 <div class="section" id="camelcase">
-<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this headline">#</a></h3>
+<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
@@ -416,7 +416,7 @@ models.</dd>
 </div>
 </div>
 <div class="section" id="noninclusiveterms">
-<span id="id3"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this heading">#</a></h3>
 <p>Validates that all text content in a model (i.e. shape names, member names,
 documentation, trait values, etc.) does not contain words that perpetuate cultural
 biases. This validator has a built-in set of bias terms that are commonly found
@@ -484,7 +484,7 @@ This property is not required and defaults to false.</td>
 </div>
 </div>
 <div class="section" id="reservedwords">
-<span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
 <p>Reserved words are compared in a case-insensitive manner via substring match
@@ -557,7 +557,7 @@ evaluated instead of the shape name.</p>
 </pre></div>
 </div>
 <div class="section" id="wildcards-in-reservedwords">
-<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this headline">#</a></h4>
+<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this heading">#</a></h4>
 <p>The ReservedWords validator allows leading and trailing wildcard characters to
 be specified.</p>
 <ul>
@@ -689,7 +689,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </div>
 </div>
 <div class="section" id="standardoperationverb">
-<span id="id5"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this heading">#</a></h3>
 <p>Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
 that has better alternatives.</p>
@@ -761,7 +761,7 @@ be provided.</p>
 </div>
 </div>
 <div class="section" id="repeatedshapename">
-<span id="stutteredshapename"></span><span id="id6"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this headline">#</a></h3>
+<span id="stutteredshapename"></span><span id="id6"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this heading">#</a></h3>
 <p>Validates that <a class="reference internal" href="../spec/core/model.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/model.html#union"><span class="std std-ref">Union</span></a> member
 names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
@@ -796,7 +796,7 @@ is case-insensitively identical to the containing shape's name.</td>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
-<span id="id7"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">#</a></h3>
+<span id="id7"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this heading">#</a></h3>
 <p>Validates that every operation defines a dedicated input and output shape
 marked with the <a class="reference internal" href="../spec/core/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="../spec/core/type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
 <dl class="docutils">
@@ -817,7 +817,7 @@ operations together.</li>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
-<span id="id8"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this heading">#</a></h3>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/core/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
@@ -883,7 +883,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </div>
 </div>
 <div class="section" id="shouldhaveusedtimestamp">
-<span id="id9"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this heading">#</a></h3>
 <p>Looks for shapes that likely represent time, but that do not use a
 timestamp shape.</p>
 <p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
@@ -939,7 +939,7 @@ represent time.</td>
 </div>
 </div>
 <div class="section" id="writing-custom-validators">
-<h2>Writing custom validators<a class="headerlink" href="#writing-custom-validators" title="Permalink to this headline">#</a></h2>
+<h2>Writing custom validators<a class="headerlink" href="#writing-custom-validators" title="Permalink to this heading">#</a></h2>
 <p>Custom validators can be written in Java to apply more advanced model validation.
 Writing a custom validator involves writing an implementation of a
 Smithy validator in Java, creating a JAR, and making the JAR available on the
@@ -981,7 +981,7 @@ the custom validator is automatically applied to a model each time the
 model is loaded.</p>
 </div>
 <div class="section" id="writing-custom-linters">
-<h2>Writing custom Linters<a class="headerlink" href="#writing-custom-linters" title="Permalink to this headline">#</a></h2>
+<h2>Writing custom Linters<a class="headerlink" href="#writing-custom-linters" title="Permalink to this heading">#</a></h2>
 <p>Like custom validators, custom linters can be written in Java to apply more
 advanced model validation.</p>
 <p>Custom linters are implementations of the
@@ -1210,7 +1210,9 @@ using the following Smithy model:</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

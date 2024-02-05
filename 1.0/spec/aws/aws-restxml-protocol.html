@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS query protocol" href="aws-query-protocol.html" /><link rel="prev" title="AWS JSON 1.1 protocol" href="aws-json-1_1-protocol.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS restXml protocol - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,10 +301,10 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-restxml-protocol">
-<span id="id1"></span><h1>AWS restXml protocol<a class="headerlink" href="#aws-restxml-protocol" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>AWS restXml protocol<a class="headerlink" href="#aws-restxml-protocol" title="Permalink to this heading">#</a></h1>
 <p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
 <div class="section" id="aws-protocols-restxml-trait">
-<span id="aws-protocols-restxml-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait<a class="headerlink" href="#aws-protocols-restxml-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-restxml-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait<a class="headerlink" href="#aws-protocols-restxml-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds support for an HTTP-based protocol that sends XML requests and
 responses.</dd>
@@ -420,7 +420,7 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">#</a></h2>
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports the following traits
 that affect serialization:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -510,7 +510,7 @@ to services.</td>
 </div>
 </div>
 <div class="section" id="content-type">
-<h2>Content-Type<a class="headerlink" href="#content-type" title="Permalink to this headline">#</a></h2>
+<h2>Content-Type<a class="headerlink" href="#content-type" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol uses a default <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code>
 of <code class="docutils literal notranslate"><span class="pre">application/xml</span></code>.</p>
 <p>Input or output shapes that apply the <a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a> on one of
@@ -553,7 +553,7 @@ with the <code class="docutils literal notranslate"><span class="pre">httpPayloa
 </div>
 </div>
 <div class="section" id="xml-shape-serialization">
-<h2>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">#</a></h2>
+<h2>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this heading">#</a></h2>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -660,14 +660,14 @@ including examples and behaviors when using multiple XML traits.</p>
 </div>
 </div>
 <div class="section" id="http-binding-serialization">
-<h2>HTTP binding serialization<a class="headerlink" href="#http-binding-serialization" title="Permalink to this headline">#</a></h2>
+<h2>HTTP binding serialization<a class="headerlink" href="#http-binding-serialization" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports all of the HTTP binding traits
 defined in the <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP protocol bindings</span></a> specification. The
 serialization formats and behaviors described for each trait are supported as
 defined in the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
 </div>
 <div class="section" id="non-numeric-float-and-double-serialization">
-<h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this heading">#</a></h2>
 <p>Smithy floats and doubles are defined by IEEE-754, which includes special values
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol treats those special values as
@@ -698,7 +698,7 @@ strings with the following values:</p>
 </div>
 </div>
 <div class="section" id="error-response-serialization">
-<span id="restxml-errors"></span><h2>Error response serialization<a class="headerlink" href="#error-response-serialization" title="Permalink to this headline">#</a></h2>
+<span id="restxml-errors"></span><h2>Error response serialization<a class="headerlink" href="#error-response-serialization" title="Permalink to this heading">#</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped within an XML root
 node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> by default. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>,
 contains the serialized error structure members, unless bound to another
@@ -742,7 +742,7 @@ service perspective.</li>
 hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="protocol-compliance-tests">
-<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
+<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this heading">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/restXml">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/restXml</a></p>
 <p>These compliance tests define a model that is used to define test cases and
@@ -750,7 +750,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
 <div class="section" id="error-shape-renaming">
-<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this heading">#</a></h2>
 <p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
 the <a class="reference internal" href="../core/model.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
 not allowed to rename error shapes (shapes with <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
@@ -850,7 +850,9 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

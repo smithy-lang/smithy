@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Generating Code" href="generating-code.html" /><link rel="prev" title="Implementing the Generator" href="implementing-the-generator.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Making Codegen Pluggable - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -203,24 +203,24 @@
 <li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -337,11 +337,11 @@
         </div>
         <article role="main">
           <div class="section" id="making-codegen-pluggable">
-<h1>Making Codegen Pluggable<a class="headerlink" href="#making-codegen-pluggable" title="Permalink to this headline">#</a></h1>
+<h1>Making Codegen Pluggable<a class="headerlink" href="#making-codegen-pluggable" title="Permalink to this heading">#</a></h1>
 <p>This document describes various code generation and runtime concepts
 that can be used to make Smithy code generators open to extension.</p>
 <div class="section" id="why-make-codegen-extensible">
-<h2>Why make codegen extensible?<a class="headerlink" href="#why-make-codegen-extensible" title="Permalink to this headline">#</a></h2>
+<h2>Why make codegen extensible?<a class="headerlink" href="#why-make-codegen-extensible" title="Permalink to this heading">#</a></h2>
 <p>Smithy code generators need to be extensible so that optional features
 can be contributed to augment generated code. For example, Smithy code
 generators can generate generic clients that know how to send requests
@@ -352,13 +352,13 @@ codegen <em>integrations</em> that can augment generated code based on the
 presence of traits and configuration found in smithy-build.json files.</p>
 </div>
 <div class="section" id="integrations">
-<h2>Integrations<a class="headerlink" href="#integrations" title="Permalink to this headline">#</a></h2>
+<h2>Integrations<a class="headerlink" href="#integrations" title="Permalink to this heading">#</a></h2>
 <p><em>Integrations</em> are the primary abstraction used to customize Smithy code
 generators. Integrations are found on the classpath using
 Java Service Provider Interfaces (<a class="reference internal" href="../glossary.html#term-SPI"><span class="xref std std-term">SPI</span></a>) and are used to customize
 Smithy code generators.</p>
 <div class="section" id="what-can-integrations-customize">
-<h3>What can integrations customize?<a class="headerlink" href="#what-can-integrations-customize" title="Permalink to this headline">#</a></h3>
+<h3>What can integrations customize?<a class="headerlink" href="#what-can-integrations-customize" title="Permalink to this heading">#</a></h3>
 <p>Various aspects of a Smithy code generator can be customized. For example:</p>
 <ul class="simple">
 <li>Generate custom files like licenses, readmes, etc.</li>
@@ -384,7 +384,7 @@ shapes and traits in the model</li>
 </ul>
 </div>
 <div class="section" id="only-customize-through-opt-in">
-<h3>Only customize through opt-in<a class="headerlink" href="#only-customize-through-opt-in" title="Permalink to this headline">#</a></h3>
+<h3>Only customize through opt-in<a class="headerlink" href="#only-customize-through-opt-in" title="Permalink to this heading">#</a></h3>
 <p>Simply finding an integration on the classpath should not enable the
 integration. Integrations should only be enabled through opt-in signals.
 Traits found in the model and feature configuration in smithy-build.json
@@ -392,7 +392,7 @@ are used to enable customizations performed by integrations.</p>
 </div>
 </div>
 <div class="section" id="creating-a-smithyintegrations">
-<h2>Creating a <code class="docutils literal notranslate"><span class="pre">SmithyIntegrations</span></code><a class="headerlink" href="#creating-a-smithyintegrations" title="Permalink to this headline">#</a></h2>
+<h2>Creating a <code class="docutils literal notranslate"><span class="pre">SmithyIntegrations</span></code><a class="headerlink" href="#creating-a-smithyintegrations" title="Permalink to this heading">#</a></h2>
 <p>Smithy codegen provides a pre-built integration interface,
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java">SmithyIntegration</a>,
 that <em>should</em> be used by every Smithy code generator. Using this
@@ -452,14 +452,14 @@ implementation is expected to create a specific subtype of
 </pre></div>
 </div>
 <div class="section" id="identifying-integrations">
-<h3>Identifying integrations<a class="headerlink" href="#identifying-integrations" title="Permalink to this headline">#</a></h3>
+<h3>Identifying integrations<a class="headerlink" href="#identifying-integrations" title="Permalink to this heading">#</a></h3>
 <p>Integrations are identified using the <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#name()</span></code>
 method. This method will return the canonical class name of the
 integration by default, but it can be overridden to provide a different
 name. Note that naming conflicts between integrations are not allowed.</p>
 </div>
 <div class="section" id="how-integrations-are-ordered">
-<h3>How integrations are ordered<a class="headerlink" href="#how-integrations-are-ordered" title="Permalink to this headline">#</a></h3>
+<h3>How integrations are ordered<a class="headerlink" href="#how-integrations-are-ordered" title="Permalink to this heading">#</a></h3>
 <p>Integrations are ordered using a kind of priority ordered dependency
 graph. Integrations can specify that they should be applied before other
 integrations by name and/or after other integrations by name. The
@@ -492,7 +492,7 @@ the classpath and topologically ordering them.</p>
 </div>
 </div>
 <div class="section" id="preprocessing-models">
-<h3>Preprocessing models<a class="headerlink" href="#preprocessing-models" title="Permalink to this headline">#</a></h3>
+<h3>Preprocessing models<a class="headerlink" href="#preprocessing-models" title="Permalink to this heading">#</a></h3>
 <p>A common requirement of code generators is to preprocess the model. For
 example, a generator that doesn't support <a class="reference internal" href="../../spec/streaming.html#event-streams"><span class="std std-ref">event streams</span></a>
 might want to filter out event stream operations and emit warnings.
@@ -515,7 +515,7 @@ model.</p>
 </div>
 </div>
 <div class="section" id="changing-how-shapes-are-named-or-how-files-are-generated">
-<h3>Changing how shapes are named or how files are generated<a class="headerlink" href="#changing-how-shapes-are-named-or-how-files-are-generated" title="Permalink to this headline">#</a></h3>
+<h3>Changing how shapes are named or how files are generated<a class="headerlink" href="#changing-how-shapes-are-named-or-how-files-are-generated" title="Permalink to this heading">#</a></h3>
 <p>Another requirement when generating code might be to change the strategy
 used for naming shapes, the file location of shapes, or just adding
 metadata to each <a class="reference internal" href="../glossary.html#term-Symbol"><span class="xref std std-term">Symbol</span></a> created by a <a class="reference internal" href="../glossary.html#term-SymbolProvider"><span class="xref std std-term">SymbolProvider</span></a>. This can
@@ -532,7 +532,7 @@ be achieved by implementing <code class="docutils literal notranslate"><span cla
 </div>
 </div>
 <div class="section" id="intercepting-and-updating-sections-of-code">
-<span id="codegen-intercepting"></span><h3>Intercepting and updating sections of code<a class="headerlink" href="#intercepting-and-updating-sections-of-code" title="Permalink to this headline">#</a></h3>
+<span id="codegen-intercepting"></span><h3>Intercepting and updating sections of code<a class="headerlink" href="#intercepting-and-updating-sections-of-code" title="Permalink to this heading">#</a></h3>
 <p>Code generators can designate sections of code that can be modified
 by integrations. This feature allows integrations to do things like add
 text to every code file (for example a license header), apply
@@ -595,7 +595,7 @@ appends to the existing content in the section:</p>
 </div>
 </div>
 <div class="section" id="generating-other-custom-content">
-<h3>Generating other custom content<a class="headerlink" href="#generating-other-custom-content" title="Permalink to this headline">#</a></h3>
+<h3>Generating other custom content<a class="headerlink" href="#generating-other-custom-content" title="Permalink to this heading">#</a></h3>
 <p>Integrations might need to write additional files like a README, license
 files, or generate additional code. Integrations can override the
 <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#customize</span></code> method to perform anything they need to
@@ -619,7 +619,7 @@ model, settings object, symbol provider, <code class="docutils literal notransla
 </div>
 </div>
 <div class="section" id="registering-smithyintegrations">
-<h2>Registering <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s<a class="headerlink" href="#registering-smithyintegrations" title="Permalink to this headline">#</a></h2>
+<h2>Registering <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s<a class="headerlink" href="#registering-smithyintegrations" title="Permalink to this heading">#</a></h2>
 <p>Implementations of Integrations are registered with Java <a class="reference internal" href="../glossary.html#term-SPI"><span class="xref std std-term">SPI</span></a> by
 adding a specific <code class="docutils literal notranslate"><span class="pre">META-INF</span></code> file and found on the classpath. For example,
 if the integration class is defined as
@@ -634,7 +634,7 @@ integration needs to placed in a file named
 </div>
 </div>
 <div class="section" id="using-smithyintegrations-in-generators">
-<h2>Using <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s in generators<a class="headerlink" href="#using-smithyintegrations-in-generators" title="Permalink to this headline">#</a></h2>
+<h2>Using <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s in generators<a class="headerlink" href="#using-smithyintegrations-in-generators" title="Permalink to this heading">#</a></h2>
 <p><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles finding integrations on the
 classpath, topologically ordering them, and applying each integration method at
 the appropriate point of code generation.</p>
@@ -735,7 +735,9 @@ the appropriate point of code generation.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

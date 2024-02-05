@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Amazon Machine Learning Customizations" href="machinelearning-customizations.html" /><link rel="prev" title="Amazon API Gateway Customizations" href="apigateway-customizations.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Amazon Glacier Customizations - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,21 +301,21 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="amazon-glacier-customizations">
-<h1>Amazon Glacier Customizations<a class="headerlink" href="#amazon-glacier-customizations" title="Permalink to this headline">#</a></h1>
+<h1>Amazon Glacier Customizations<a class="headerlink" href="#amazon-glacier-customizations" title="Permalink to this heading">#</a></h1>
 <div class="section" id="x-amz-glacier-version-header">
-<h2><code class="docutils literal notranslate"><span class="pre">X-Amz-Glacier-Version</span></code> header<a class="headerlink" href="#x-amz-glacier-version-header" title="Permalink to this headline">#</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">X-Amz-Glacier-Version</span></code> header<a class="headerlink" href="#x-amz-glacier-version-header" title="Permalink to this heading">#</a></h2>
 <p>A client for Amazon Glacier MUST set the <code class="docutils literal notranslate"><span class="pre">X-Amz-Glacier-Version</span></code> header to
 the value of the service shape's <code class="docutils literal notranslate"><span class="pre">version</span></code> property for all requests.</p>
 </div>
 <div class="section" id="default-value-for-accountid">
-<h2>Default value for accountId<a class="headerlink" href="#default-value-for-accountid" title="Permalink to this headline">#</a></h2>
+<h2>Default value for accountId<a class="headerlink" href="#default-value-for-accountid" title="Permalink to this heading">#</a></h2>
 <p>Many operations in Amazon Glacier have an <code class="docutils literal notranslate"><span class="pre">accountId</span></code> member that is bound
 to the URI. Customers can specify the string &quot;-&quot; to indicate that the
 account making the request should be used. Since this is what customers
 usually want, clients SHOULD set this value by default.</p>
 </div>
 <div class="section" id="default-checksum-generation">
-<h2>Default checksum generation<a class="headerlink" href="#default-checksum-generation" title="Permalink to this headline">#</a></h2>
+<h2>Default checksum generation<a class="headerlink" href="#default-checksum-generation" title="Permalink to this heading">#</a></h2>
 <p>When uploading an archive as part of the <a class="reference external" href="https://docs.aws.amazon.com/amazonglacier/latest/dev/api-archive-post.html">UploadArchive</a> or <a class="reference external" href="https://docs.aws.amazon.com/amazonglacier/latest/dev/api-upload-part.html">UploadMultipartPart</a>
 operations, the <code class="docutils literal notranslate"><span class="pre">X-Amz-Content-Sha256</span></code> and <code class="docutils literal notranslate"><span class="pre">X-Amz-Sha256-Tree-Hash</span></code>
 headers MUST be set. Since the logic for computing these headers is static,
@@ -404,7 +404,9 @@ on how to calculate the values for these headers.</p>
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>

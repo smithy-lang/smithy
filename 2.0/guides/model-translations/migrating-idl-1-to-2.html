@@ -1,0 +1,899 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Generating CloudFormation Resource Schemas from Smithy" href="generating-cloudformation-resources.html" /><link rel="prev" title="Converting Smithy to OpenAPI" href="converting-to-openapi.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+        <title>Smithy IDL 1.0 to 2.0 Migration Guide - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Model Translations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/model-translations/migrating-idl-1-to-2.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="smithy-idl-1-0-to-2-0-migration-guide">
+<h1>Smithy IDL 1.0 to 2.0 Migration Guide<a class="headerlink" href="#smithy-idl-1-0-to-2-0-migration-guide" title="Permalink to this heading">#</a></h1>
+<p>This guide describes how to migrate your models from Smithy IDL version 1.0
+to version 2.0 without breaking your models or customers.</p>
+<div class="section" id="update-the-model-file-version">
+<h2>Update the model file version<a class="headerlink" href="#update-the-model-file-version" title="Permalink to this heading">#</a></h2>
+<p>For each model file you are upgrading, change the version from <code class="docutils literal notranslate"><span class="pre">1</span></code> or
+<code class="docutils literal notranslate"><span class="pre">1.0</span></code> to <code class="docutils literal notranslate"><span class="pre">2.0</span></code>. In the IDL this is controlled with the
+<a class="reference internal" href="../../spec/idl.html#smithy-version"><span class="std std-ref">version statement</span></a>, and in the AST it is controlled
+with the <code class="docutils literal notranslate"><span class="pre">smithy</span></code> <a class="reference internal" href="../../spec/json-ast.html#ast-top-level-properties"><span class="std std-ref">top level property</span></a>. For
+example, the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">string </span><span class="nc">Foo</span>
+</pre></div>
+</div>
+<p>Should be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">string </span><span class="nc">Foo</span>
+</pre></div>
+</div>
+<p>An IDL model file may not have a version control statement at the top. In this
+case, it uses version 1.0 by default. For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">string </span><span class="nc">Foo</span>
+</pre></div>
+</div>
+<p>Also needs to be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">string </span><span class="nc">Foo</span>
+</pre></div>
+</div>
+<p>Smithy's tooling is able to load both 1.0 model files and 2.0 model files into
+a single combined model. Therefore when migrating, it may be wise to migrate
+one file at a time.</p>
+</div>
+<div class="section" id="replace-the-box-trait">
+<h2>Replace the box trait<a class="headerlink" href="#replace-the-box-trait" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">box</span></code> trait is removed in 2.0. Any shape marked with the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait
+needs to be updated.</p>
+<div class="section" id="boxed-root-level-shapes">
+<h3>Boxed root-level shapes<a class="headerlink" href="#boxed-root-level-shapes" title="Permalink to this heading">#</a></h3>
+<p>For non-member, root level shapes, simply remove the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait. Root level
+shapes in Smithy 2.0 have no default values unless you explicitly assign them
+one.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@box</span><span class="w"> </span><span class="c">// &lt; remove this</span>
+<span class="kd">boolean </span><span class="nc">MyBoolean</span>
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">boolean </span><span class="nc">MyBoolean</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converting-primitive-root-level-shapes-from-1-0">
+<h3>Converting primitive root-level shapes from 1.0<a class="headerlink" href="#converting-primitive-root-level-shapes-from-1-0" title="Permalink to this heading">#</a></h3>
+<p>Some shapes in Smithy 1.0 had default zero values: boolean, byte, short,
+integer, long, float, and double. If you defined any of these shapes and did
+not mark them with the <code class="docutils literal notranslate"><span class="pre">&#64;box</span></code> trait, add the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait to them
+set to <code class="docutils literal notranslate"><span class="pre">false</span></code> for booleans and <code class="docutils literal notranslate"><span class="pre">0</span></code> for numbers. Any member that targets
+them also need to repeat this default value on the member.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">boolean </span><span class="nc">MyPrimitiveBoolean</span>
+
+<span class="kd">integer </span><span class="nc">MyPrimitiveInteger</span>
+
+<span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">myBoolean</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveBoolean</span><span class="p">,</span>
+<span class="w">    </span><span class="py">myInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveInteger</span>
+}
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@default</span>(<span class="kc">false</span>)
+<span class="kd">boolean </span><span class="nc">MyPrimitiveBoolean</span>
+
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">integer </span><span class="nc">MyPrimitiveInteger</span>
+
+<span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">myBoolean</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveBoolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="py">myInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="boxed-members">
+<h3>Boxed members<a class="headerlink" href="#boxed-members" title="Permalink to this heading">#</a></h3>
+<p>If a member is marked with the box trait, replace the trait with a
+<code class="docutils literal notranslate"><span class="pre">&#64;default(null)</span></code> trait to have the same effect of overriding the
+default value of the target shape.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@box</span><span class="w"> </span><span class="c">// change this to = null below</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">PrimitiveBoolean</span>
+}
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">PrimitiveBoolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span>
+}
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../../spec/aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p>
+</div>
+</div>
+</div>
+<div class="section" id="convert-set-shapes-to-list-shapes">
+<h2>Convert set shapes to list shapes<a class="headerlink" href="#convert-set-shapes-to-list-shapes" title="Permalink to this heading">#</a></h2>
+<p>The set shape was deprecated for IDL 2.0. Each set shape must be replaced by a
+list shape with the <a class="reference internal" href="../../spec/constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a>.</p>
+<p>For example, the following set:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">set </span><span class="nc">StringSet</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>Needs to be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@uniqueItems</span>
+<span class="kd">list </span><span class="nc">StringSet</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-the-default-trait-to-streaming-blobs">
+<h2>Add the default trait to streaming blobs<a class="headerlink" href="#add-the-default-trait-to-streaming-blobs" title="Permalink to this heading">#</a></h2>
+<p>Members that target a blob shape with the <a class="reference internal" href="../../spec/streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> have always
+had an implicit default empty value. In IDL 2.0, that will become explicit.
+Any such members that are not already marked with the <a class="reference internal" href="../../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>
+will now need to be marked with the <a class="reference internal" href="../../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.</p>
+<p>For example, the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">OptionalStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// This needs to be updated since it doesn&#39;t have the required or</span>
+<span class="w">    </span><span class="c">// default trait already.</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span>
+}
+
+<span class="kd">structure </span><span class="nc">RequiredStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// This doesn&#39;t need to be updated because it already has the required</span>
+<span class="w">    </span><span class="c">// trait.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span>
+}
+
+<span class="nt">@streaming</span>
+<span class="kd">blob </span><span class="nc">StreamingBlob</span>
+</pre></div>
+</div>
+<p>Needs to be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">OptionalStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+}
+
+<span class="kd">structure </span><span class="nc">RequiredStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span>
+}
+
+<span class="nt">@streaming</span>
+<span class="kd">blob </span><span class="nc">StreamingBlob</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-migration-steps">
+<h2>Optional migration steps<a class="headerlink" href="#optional-migration-steps" title="Permalink to this heading">#</a></h2>
+<p>The following steps are not required to update a model to be fully compatible
+with 2.0, but instead are refactoring steps that can be taken to simplify a
+your model.</p>
+<div class="section" id="move-operation-inputs-and-outputs-inline">
+<h3>Move operation inputs and outputs inline<a class="headerlink" href="#move-operation-inputs-and-outputs-inline" title="Permalink to this heading">#</a></h3>
+<p>The structures that define operation inputs and outputs very often use
+boilerplate names and for readability are usually placed close to their parent
+operation shapes to improve readability of the model. Smithy 2.0 introduced
+<a class="reference internal" href="../../spec/idl.html#idl-inline-input-output"><span class="std std-ref">inline input and output</span></a>, which allows you
+to define those shapes as part of the definition of the operation rather than
+separately. This improves readability and reduces the amount of boilerplate
+needed to model an operation. For example, the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">operation </span><span class="nc">PutUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutUserInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutUserOutput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PutUserInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">PutUserOutput</span><span class="w"> </span>{}
+</pre></div>
+</div>
+<p>can be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">operation </span><span class="nc">PutUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+}
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">the <a class="reference internal" href="../../spec/idl.html#idl-inline-input-output"><span class="std std-ref">inline input / output</span></a> section of the
+spec for more details.</p>
+</div>
+</div>
+<div class="section" id="abstract-shared-shape-configuration-with-mixins">
+<h3>Abstract shared shape configuration with mixins<a class="headerlink" href="#abstract-shared-shape-configuration-with-mixins" title="Permalink to this heading">#</a></h3>
+<p>Models often have several shapes that refer to the same sets of members, or
+which share a set of trait configurations. For example, resource instance
+operations all require that the resource's identifiers be present in input.
+With <a class="reference internal" href="../../spec/mixins.html#mixins"><span class="std std-ref">Mixins</span></a>, it is easy to simply share these member definitions without
+having to copy and paste them. The following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserOutput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetUserInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
+
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetUserOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>Can be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">UserIdentifiers</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserIdentifiers</span>]<span class="w"> </span>{}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserIdentifiers</span>]<span class="w"> </span>{
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
+</pre></div>
+</div>
+<p>Similarly, <a class="reference internal" href="../../spec/mixins.html#mixins"><span class="std std-ref">Mixins</span></a> can be useful if you have a shared set of traits
+that otherwise have to be copied and pasted.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">the <a class="reference internal" href="../../spec/mixins.html#mixins"><span class="std std-ref">mixins section</span></a> of the spec for more details on how they
+work.</p>
+</div>
+</div>
+<div class="section" id="use-the-target-elision-syntax-sugar-to-reduce-boilerplate">
+<h3>Use the target elision syntax sugar to reduce boilerplate<a class="headerlink" href="#use-the-target-elision-syntax-sugar-to-reduce-boilerplate" title="Permalink to this heading">#</a></h3>
+<p>Resource shapes contain a set of identifiers, but when writing structures that
+contain those identifiers you have to duplicate those definitions entirely. In
+IDL 2.0, you can use the target elision syntax with a structure bound to a
+resource. For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">resource </span><span class="nc">User</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
+
+<span class="c">// The `for` syntax here determines which resource should be checked.</span>
+<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">User</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// With this syntax, the target is automatically inferred from the</span>
+<span class="w">    </span><span class="c">// resource.</span>
+<span class="w">    </span><span class="nl">$id</span>
+
+<span class="w">    </span><span class="c">// Uncomment this to include an email member. Unlike with mixins, you</span>
+<span class="w">    </span><span class="c">// must opt in to the members that you want to include. This allows you</span>
+<span class="w">    </span><span class="c">// to have partial views of a resource, such as in a create operation</span>
+<span class="w">    </span><span class="c">// that does not bind all of the identifiers.</span>
+<span class="w">    </span><span class="c">// $email</span>
+
+<span class="w">    </span><span class="py">address</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>This syntax can also be used with mixins to more succinctly add additional
+traits to included members.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">UserIdentifiers</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserIdentifiers</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nl">$id</span>
+
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nl">$email</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-unsightly-commas">
+<h3>Remove unsightly commas<a class="headerlink" href="#remove-unsightly-commas" title="Permalink to this heading">#</a></h3>
+<p>Smithy IDL 2.0 removed the need to include commas when defining, lists, maps,
+and shape properties. For example, the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">NotFoundError</span><span class="p">,</span>
+<span class="w">        </span><span class="vc">AccessDeniedError</span><span class="p">,</span>
+<span class="w">    </span>]<span class="p">,</span>
+}
+</pre></div>
+</div>
+<p>can be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetUserOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">NotFoundError</span>
+<span class="w">        </span><span class="vc">AccessDeniedError</span>
+<span class="w">    </span>]
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="migrate-trait-based-string-enums-to-enum-shapes">
+<h3>Migrate trait-based string enums to enum shapes<a class="headerlink" href="#migrate-trait-based-string-enums-to-enum-shapes" title="Permalink to this heading">#</a></h3>
+<p>Smithy IDL 2.0 introduced two new shape types: <a class="reference internal" href="../../spec/simple-types.html#enum"><span class="std std-ref">enum</span></a> and <a class="reference internal" href="../../spec/simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>.
+While the latter is entirely new, the use case for the former was previously
+handled by applying the <a class="reference internal" href="../../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> to a string shape. A major advantage
+of using the enum shapes is that each enum value is now a <a class="reference internal" href="../../spec/model.html#member"><span class="std std-ref">Member shapes</span></a>. This
+means they can be individually targeted by traits, without having to have
+special handling inside of Smithy itself. Their definitions in the IDL are now
+also much more concise and readable. For example, the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@enum</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DIAMOND&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CLUB&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;club&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEART&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SPADE&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span>
+<span class="w">    </span>}
+])
+<span class="kd">string </span><span class="nc">Suit</span>
+</pre></div>
+</div>
+<p>can be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;club&quot;</span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="generating-cloudformation-resources.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Generating CloudFormation Resource Schemas from Smithy</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="converting-to-openapi.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Converting Smithy to OpenAPI</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Smithy IDL 1.0 to 2.0 Migration Guide</a><ul>
+<li><a class="reference internal" href="#update-the-model-file-version">Update the model file version</a></li>
+<li><a class="reference internal" href="#replace-the-box-trait">Replace the box trait</a><ul>
+<li><a class="reference internal" href="#boxed-root-level-shapes">Boxed root-level shapes</a></li>
+<li><a class="reference internal" href="#converting-primitive-root-level-shapes-from-1-0">Converting primitive root-level shapes from 1.0</a></li>
+<li><a class="reference internal" href="#boxed-members">Boxed members</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#convert-set-shapes-to-list-shapes">Convert set shapes to list shapes</a></li>
+<li><a class="reference internal" href="#add-the-default-trait-to-streaming-blobs">Add the default trait to streaming blobs</a></li>
+<li><a class="reference internal" href="#optional-migration-steps">Optional migration steps</a><ul>
+<li><a class="reference internal" href="#move-operation-inputs-and-outputs-inline">Move operation inputs and outputs inline</a></li>
+<li><a class="reference internal" href="#abstract-shared-shape-configuration-with-mixins">Abstract shared shape configuration with mixins</a></li>
+<li><a class="reference internal" href="#use-the-target-elision-syntax-sugar-to-reduce-boilerplate">Use the target elision syntax sugar to reduce boilerplate</a></li>
+<li><a class="reference internal" href="#remove-unsightly-commas">Remove unsightly commas</a></li>
+<li><a class="reference internal" href="#migrate-trait-based-string-enums-to-enum-shapes">Migrate trait-based string enums to enum shapes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

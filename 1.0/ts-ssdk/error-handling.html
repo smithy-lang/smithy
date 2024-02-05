@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Server Generator for TypeScript supported endpoints" href="supported-endpoints.html" /><link rel="prev" title="Smithy Server Generator for TypeScript validation" href="validation.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Smithy Server Generator for TypeScript error handling - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="smithy-server-generator-for-typescript-error-handling">
-<h1>Smithy Server Generator for TypeScript error handling<a class="headerlink" href="#smithy-server-generator-for-typescript-error-handling" title="Permalink to this headline">#</a></h1>
+<h1>Smithy Server Generator for TypeScript error handling<a class="headerlink" href="#smithy-server-generator-for-typescript-error-handling" title="Permalink to this heading">#</a></h1>
 <p>Errors are structures associated with services and operations in the Smithy model and are used to indicate that the
 server encountered a problem during request processing. Structures with the error trait are code generated as subclasses
 of <code class="docutils literal notranslate"><span class="pre">Error</span></code>.</p>
@@ -311,16 +311,16 @@ For instance, HTTP binding protocols set the status code of the response based o
 <p>If a non-code-generated Error, or a code-generated Error that is not associated with the operation or service in the
 model, is thrown from a handler, then a <em>synthetic</em> <code class="docutils literal notranslate"><span class="pre">InternalFailure</span></code> will be rendered as the result instead.</p>
 <div class="section" id="synthetic-errors">
-<h2>Synthetic errors<a class="headerlink" href="#synthetic-errors" title="Permalink to this headline">#</a></h2>
+<h2>Synthetic errors<a class="headerlink" href="#synthetic-errors" title="Permalink to this heading">#</a></h2>
 <p><em>Synthetic errors</em> are errors that are not included in the Smithy model, but can still be thrown by the server SDK. In
 general, these errors are not expected to have corresponding code generated types on the client side. These errors fall
 into two categories: framework-level errors that are unavoidable, and errors that are associated with the low-level
 transport protocol, such as HTTP.</p>
 <p>For backwards compatibility purposes, the names of synthetic errors generally end with <code class="docutils literal notranslate"><span class="pre">Exception</span></code>.</p>
 <div class="section" id="unavoidable-errors">
-<h3>Unavoidable errors<a class="headerlink" href="#unavoidable-errors" title="Permalink to this headline">#</a></h3>
+<h3>Unavoidable errors<a class="headerlink" href="#unavoidable-errors" title="Permalink to this heading">#</a></h3>
 <div class="section" id="internalfailureexception">
-<span id="ts-ssdk-internal-failure-exception"></span><h4>InternalFailureException<a class="headerlink" href="#internalfailureexception" title="Permalink to this headline">#</a></h4>
+<span id="ts-ssdk-internal-failure-exception"></span><h4>InternalFailureException<a class="headerlink" href="#internalfailureexception" title="Permalink to this heading">#</a></h4>
 <p>InternalFailureException is the catch-all exception for unexpected errors. It indicates either a bug in the framework or
 an exception being thrown from the handler that is not modeled. The server SDK will never include any details about
 internal failures, such as a meaningful exception message, to the caller, in order to prevent unintended information
@@ -329,14 +329,14 @@ disclosure.</p>
 built-in JavaScript error such as <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
 </div>
 <div class="section" id="serializationexception">
-<span id="ts-ssdk-serialization-exception"></span><h4>SerializationException<a class="headerlink" href="#serializationexception" title="Permalink to this headline">#</a></h4>
+<span id="ts-ssdk-serialization-exception"></span><h4>SerializationException<a class="headerlink" href="#serializationexception" title="Permalink to this heading">#</a></h4>
 <p>SerializationException is thrown by the server SDK when a request is unparseable, or if there is a type mismatch between
 a member in the serialized request and the member in the Smithy model. Since these failures occur during the
 deserialization process, server developers have no ability to customize these messages, and they will short-circuit
 request processing before validation occurs.</p>
 </div>
 <div class="section" id="unknownoperationexception">
-<span id="ts-ssdk-unknown-operation-exception"></span><h4>UnknownOperationException<a class="headerlink" href="#unknownoperationexception" title="Permalink to this headline">#</a></h4>
+<span id="ts-ssdk-unknown-operation-exception"></span><h4>UnknownOperationException<a class="headerlink" href="#unknownoperationexception" title="Permalink to this heading">#</a></h4>
 <p>UnknownOperationException is returned when the request cannot be matched to a handler known to the server SDK. This can
 happen either because the server SDK does not recognize the request protocol, which is common for internet-facing
 endpoints that receive robotic traffic, or if the request is in a known protocol but for an operation that is unknown to
@@ -344,14 +344,14 @@ the handler. The latter case can indicate a misconfiguration, such as an operati
 </div>
 </div>
 <div class="section" id="protocol-errors">
-<h3>Protocol errors<a class="headerlink" href="#protocol-errors" title="Permalink to this headline">#</a></h3>
+<h3>Protocol errors<a class="headerlink" href="#protocol-errors" title="Permalink to this heading">#</a></h3>
 <div class="section" id="unsupportedmediatypeexception">
-<h4>UnsupportedMediaTypeException<a class="headerlink" href="#unsupportedmediatypeexception" title="Permalink to this headline">#</a></h4>
+<h4>UnsupportedMediaTypeException<a class="headerlink" href="#unsupportedmediatypeexception" title="Permalink to this heading">#</a></h4>
 <p>UnsupportedMediaTypeException represents HTTP error 415, returned when a request has a <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> that is not
 accepted for the protocol or does not match the <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> trait in the model.</p>
 </div>
 <div class="section" id="notacceptableexception">
-<h4>NotAcceptableException<a class="headerlink" href="#notacceptableexception" title="Permalink to this headline">#</a></h4>
+<h4>NotAcceptableException<a class="headerlink" href="#notacceptableexception" title="Permalink to this heading">#</a></h4>
 <p>NotAcceptableException represents HTTP error 406, returned when a request's <code class="docutils literal notranslate"><span class="pre">Accept</span></code> header does not match the type used
 to serialize protocol responses, or when it does not match the response payload's <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> value.</p>
 </div>
@@ -450,7 +450,9 @@ to serialize protocol responses, or when it does not match the response payload'
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

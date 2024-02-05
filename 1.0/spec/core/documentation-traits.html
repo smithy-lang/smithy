@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="5. Type refinement traits" href="type-refinement-traits.html" /><link rel="prev" title="3. Constraint traits" href="constraint-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>4. Documentation traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="documentation-traits">
-<span id="id1"></span><h1><span class="section-number">4. </span>Documentation traits<a class="headerlink" href="#documentation-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1><span class="section-number">4. </span>Documentation traits<a class="headerlink" href="#documentation-traits" title="Permalink to this heading">#</a></h1>
 <p>Documentation traits are used to document and describe shapes in the model
 in a way that does not materially affect the semantics of the model.</p>
 <div class="section" id="deprecated-trait">
-<span id="smithy-api-deprecated-trait"></span><span id="id2"></span><h2><span class="section-number">4.1. </span><code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait<a class="headerlink" href="#deprecated-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-deprecated-trait"></span><span id="id2"></span><h2><span class="section-number">4.1. </span><code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait<a class="headerlink" href="#deprecated-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Marks a shape or member as deprecated.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
@@ -371,7 +371,7 @@ deprecated.</td>
 </div></div>
 </div>
 <div class="section" id="documentation-trait">
-<span id="smithy-api-documentation-trait"></span><span id="id3"></span><h2><span class="section-number">4.2. </span><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait<a class="headerlink" href="#documentation-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-documentation-trait"></span><span id="id3"></span><h2><span class="section-number">4.2. </span><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait<a class="headerlink" href="#documentation-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds documentation to a shape or member using the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
@@ -442,7 +442,7 @@ the shape targeted by the member, if present.</li>
 <code class="docutils literal notranslate"><span class="pre">Baz</span></code> resolves to &quot;Shape documentation&quot;, and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> is not documented.</p>
 </div>
 <div class="section" id="examples-trait">
-<span id="smithy-api-examples-trait"></span><span id="id4"></span><h2><span class="section-number">4.3. </span><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait<a class="headerlink" href="#examples-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-examples-trait"></span><span id="id4"></span><h2><span class="section-number">4.3. </span><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait<a class="headerlink" href="#examples-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Provides example inputs and outputs for operations.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
@@ -541,7 +541,7 @@ MUST NOT be defined for the same example.</p>
 </div>
 </div></div>
 <div class="section" id="errorexample-structure">
-<span id="examples-errorexample-structure"></span><h3><span class="section-number">4.3.1. </span><code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure<a class="headerlink" href="#errorexample-structure" title="Permalink to this headline">#</a></h3>
+<span id="examples-errorexample-structure"></span><h3><span class="section-number">4.3.1. </span><code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure<a class="headerlink" href="#errorexample-structure" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure defines an error example using the following
 members:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -576,7 +576,7 @@ value of the member.</td>
 </div>
 </div>
 <div class="section" id="externaldocumentation-trait">
-<span id="smithy-api-externaldocumentation-trait"></span><span id="id5"></span><h2><span class="section-number">4.4. </span><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait<a class="headerlink" href="#externaldocumentation-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-externaldocumentation-trait"></span><span id="id5"></span><h2><span class="section-number">4.4. </span><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait<a class="headerlink" href="#externaldocumentation-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Provides named links to external documentation for a shape.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
@@ -596,7 +596,7 @@ URL.</dd>
 </div></div>
 </div>
 <div class="section" id="internal-trait">
-<span id="smithy-api-internal-trait"></span><span id="id6"></span><h2><span class="section-number">4.5. </span><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait<a class="headerlink" href="#internal-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-internal-trait"></span><span id="id6"></span><h2><span class="section-number">4.5. </span><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait<a class="headerlink" href="#internal-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Shapes marked with the internal trait are meant only for internal use.
 Tooling can use the <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait to filter out shapes from models
@@ -620,7 +620,7 @@ filtered version of the model.</p>
 </div></div>
 </div>
 <div class="section" id="recommended-trait">
-<span id="smithy-api-recommended-trait"></span><span id="id7"></span><h2><span class="section-number">4.6. </span><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait<a class="headerlink" href="#recommended-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-recommended-trait"></span><span id="id7"></span><h2><span class="section-number">4.6. </span><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait<a class="headerlink" href="#recommended-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a structure member SHOULD be set. This trait is useful when
 the majority of use cases for a structure benefit from providing a value
@@ -664,7 +664,7 @@ or cannot be made required backward compatibly.</dd>
 </div>
 </div>
 <div class="section" id="sensitive-trait">
-<span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><span class="section-number">4.7. </span><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait<a class="headerlink" href="#sensitive-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><span class="section-number">4.7. </span><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait<a class="headerlink" href="#sensitive-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the data stored in the shape is sensitive and MUST be
 handled with care.</dd>
@@ -684,7 +684,7 @@ output. Application of this trait SHOULD NOT affect wire logging
 </div></div>
 </div>
 <div class="section" id="since-trait">
-<span id="smithy-api-since-trait"></span><span id="id9"></span><h2><span class="section-number">4.8. </span><code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-since-trait"></span><span id="id9"></span><h2><span class="section-number">4.8. </span><code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the version or date in which a shape or member was added to
 the model.</dd>
@@ -693,7 +693,7 @@ the model.</dd>
 </dl>
 </div>
 <div class="section" id="tags-trait">
-<span id="smithy-api-tags-trait"></span><span id="id10"></span><h2><span class="section-number">4.9. </span><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait<a class="headerlink" href="#tags-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-tags-trait"></span><span id="id10"></span><h2><span class="section-number">4.9. </span><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait<a class="headerlink" href="#tags-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Tags a shape with arbitrary tag names that can be used to filter and group
 shapes in the model.</dd>
@@ -711,7 +711,7 @@ tags trait are arbitrary and up to the model author.</p>
 </div></div>
 </div>
 <div class="section" id="title-trait">
-<span id="smithy-api-title-trait"></span><span id="id11"></span><h2><span class="section-number">4.10. </span><code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-title-trait"></span><span id="id11"></span><h2><span class="section-number">4.10. </span><code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines a proper name for a service or resource shape. This title can be
 used in automatically generated documentation and other contexts to
@@ -733,7 +733,7 @@ provide a user friendly name for services and resources.</dd>
 </div></div>
 </div>
 <div class="section" id="unstable-trait">
-<span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><span class="section-number">4.11. </span><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><span class="section-number">4.11. </span><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates a shape is unstable and MAY change in the future. This trait can
 be applied to trait shapes to indicate that a trait is unstable or
@@ -842,7 +842,9 @@ when code generated from unstable features are used.</dd>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

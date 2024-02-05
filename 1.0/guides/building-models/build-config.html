@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Model linters" href="../model-linters.html" /><link rel="prev" title="Smithy Gradle Plugin" href="gradle-plugin.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>smithy-build - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,12 +301,12 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="smithy-build">
-<h1>smithy-build<a class="headerlink" href="#smithy-build" title="Permalink to this headline">#</a></h1>
+<h1>smithy-build<a class="headerlink" href="#smithy-build" title="Permalink to this heading">#</a></h1>
 <p>Building a Smithy model requires constructing a configuration file,
 <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>. This file is used to describe how a model is created
 and what projections of the model to create.</p>
 <div class="section" id="using-smithy-build-json">
-<span id="smithy-build-json"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code><a class="headerlink" href="#using-smithy-build-json" title="Permalink to this headline">#</a></h2>
+<span id="smithy-build-json"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code><a class="headerlink" href="#using-smithy-build-json" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is used to describe how a model is created and
 what projections of the model to create.</p>
 <p>The configuration file accepts the following properties:</p>
@@ -409,7 +409,7 @@ a plugin can't be found on the classpath.</td>
 </div></div>
 </div>
 <div class="section" id="projections">
-<span id="id1"></span><h2>Projections<a class="headerlink" href="#projections" title="Permalink to this headline">#</a></h2>
+<span id="id1"></span><h2>Projections<a class="headerlink" href="#projections" title="Permalink to this heading">#</a></h2>
 <p>A projection of a model is a filtered and modified version of a Smithy model
 that is intended for specific audiences or customers. Projections are
 useful to companies that maintain internal and external versions of an API
@@ -465,7 +465,7 @@ emit a warning when a plugin cannot be resolved.</td>
 </table>
 </div>
 <div class="section" id="projection-artifacts">
-<span id="id2"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Permalink to this headline">#</a></h3>
+<span id="id2"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Permalink to this heading">#</a></h3>
 <p>smithy-build will write artifacts for each projection inside of
 <cite>outputDirectory</cite>.</p>
 <ul class="simple">
@@ -483,7 +483,7 @@ would become <code class="docutils literal notranslate"><span class="pre">${outp
 </div>
 </div>
 <div class="section" id="transforms">
-<span id="id3"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Permalink to this headline">#</a></h2>
+<span id="id3"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Permalink to this heading">#</a></h2>
 <p>Transforms are used to filter and modify the model for the projection.
 Transforms are applied to the model, in order.</p>
 <p>A transform accepts the following configuration:</p>
@@ -513,7 +513,7 @@ Transforms are applied to the model, in order.</p>
 </table>
 </div>
 <div class="section" id="apply">
-<span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Permalink to this headline">#</a></h3>
+<span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Permalink to this heading">#</a></h3>
 <p>Applies the transforms defined in the given projection names.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -569,7 +569,7 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 </div></div>
 </div>
 <div class="section" id="changestringenumstoenumshapes">
-<span id="id4"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this heading">#</a></h3>
 <p>Changes string shapes with enum traits into enum shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -621,7 +621,7 @@ applied.</p>
 </div>
 </div>
 <div class="section" id="changetypes">
-<span id="id5"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this heading">#</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -685,7 +685,7 @@ applied.</p>
 </div>
 </div>
 <div class="section" id="excludeshapesbytag">
-<span id="excludeshapesbytag-transform"></span><h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Permalink to this headline">#</a></h3>
+<span id="excludeshapesbytag-transform"></span><h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Permalink to this heading">#</a></h3>
 <p>Removes shapes if they are tagged with one or more of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code> via
 the <a class="reference internal" href="../../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -734,7 +734,7 @@ the <a class="reference internal" href="../../spec/core/documentation-traits.htm
 </div>
 </div>
 <div class="section" id="excludeshapesbytrait">
-<span id="excludeshapesbytrait-transform"></span><h3>excludeShapesByTrait<a class="headerlink" href="#excludeshapesbytrait" title="Permalink to this headline">#</a></h3>
+<span id="excludeshapesbytrait-transform"></span><h3>excludeShapesByTrait<a class="headerlink" href="#excludeshapesbytrait" title="Permalink to this heading">#</a></h3>
 <p>Removes shapes if they are marked with one or more specific traits.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -781,7 +781,7 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 </div></div>
 </div>
 <div class="section" id="includeshapesbytag">
-<span id="includeshapesbytag-transform"></span><h3>includeShapesByTag<a class="headerlink" href="#includeshapesbytag" title="Permalink to this headline">#</a></h3>
+<span id="includeshapesbytag-transform"></span><h3>includeShapesByTag<a class="headerlink" href="#includeshapesbytag" title="Permalink to this heading">#</a></h3>
 <p>Removes shapes that are not tagged with at least one of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 via the <a class="reference internal" href="../../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -830,7 +830,7 @@ via the <a class="reference internal" href="../../spec/core/documentation-traits
 </div>
 </div>
 <div class="section" id="includenamespaces">
-<span id="includenamespaces-transform"></span><h3>includeNamespaces<a class="headerlink" href="#includenamespaces" title="Permalink to this headline">#</a></h3>
+<span id="includenamespaces-transform"></span><h3>includeNamespaces<a class="headerlink" href="#includenamespaces" title="Permalink to this heading">#</a></h3>
 <p>Filters out shapes that are not part of one of the given <a class="reference internal" href="../../spec/core/idl.html#namespaces"><span class="std std-ref">namespaces</span></a>.
 Note that this does not filter out traits based on namespaces.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -879,7 +879,7 @@ Note that this does not filter out traits based on namespaces.</p>
 </div>
 </div>
 <div class="section" id="includeservices">
-<span id="includeservices-transform"></span><h3>includeServices<a class="headerlink" href="#includeservices" title="Permalink to this headline">#</a></h3>
+<span id="includeservices-transform"></span><h3>includeServices<a class="headerlink" href="#includeservices" title="Permalink to this heading">#</a></h3>
 <p>Filters out service shapes that are not included in the <code class="docutils literal notranslate"><span class="pre">services</span></code> list of
 shape IDs.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -925,7 +925,7 @@ a valid service shape ID.</td>
 </div></div>
 </div>
 <div class="section" id="excludetags">
-<span id="excludetags-transform"></span><h3>excludeTags<a class="headerlink" href="#excludetags" title="Permalink to this headline">#</a></h3>
+<span id="excludetags-transform"></span><h3>excludeTags<a class="headerlink" href="#excludetags" title="Permalink to this heading">#</a></h3>
 <p>Removes tags from shapes and trait definitions that match any of the
 provided <code class="docutils literal notranslate"><span class="pre">tags</span></code>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -970,7 +970,7 @@ provided <code class="docutils literal notranslate"><span class="pre">tags</span
 </div></div>
 </div>
 <div class="section" id="excludetraits">
-<span id="excludetraits-transform"></span><h3>excludeTraits<a class="headerlink" href="#excludetraits" title="Permalink to this headline">#</a></h3>
+<span id="excludetraits-transform"></span><h3>excludeTraits<a class="headerlink" href="#excludetraits" title="Permalink to this heading">#</a></h3>
 <p>Removes trait definitions from a model if the trait name is present in the
 provided list of <code class="docutils literal notranslate"><span class="pre">traits</span></code>. Any instance of a removed trait is also removed
 from shapes in the model.</p>
@@ -1044,7 +1044,7 @@ all traits in the &quot;example.foo&quot; namespace:</p>
 </div></div>
 </div>
 <div class="section" id="excludetraitsbytag">
-<span id="excludetraitsbytag-transform"></span><h3>excludeTraitsByTag<a class="headerlink" href="#excludetraitsbytag" title="Permalink to this headline">#</a></h3>
+<span id="excludetraitsbytag-transform"></span><h3>excludeTraitsByTag<a class="headerlink" href="#excludetraitsbytag" title="Permalink to this heading">#</a></h3>
 <p>Removes trait definitions from a model if the trait definition has any of
 the provided <a class="reference internal" href="../../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a removed trait is
 also removed from shapes in the model.</p>
@@ -1097,7 +1097,7 @@ orphaned shapes.</p>
 </div>
 </div>
 <div class="section" id="filtersuppressions">
-<span id="filtersuppressions-transform"></span><h3>filterSuppressions<a class="headerlink" href="#filtersuppressions" title="Permalink to this headline">#</a></h3>
+<span id="filtersuppressions-transform"></span><h3>filterSuppressions<a class="headerlink" href="#filtersuppressions" title="Permalink to this heading">#</a></h3>
 <p>Removes and modifies suppressions found in <a class="reference internal" href="../../spec/core/model-validation.html#suppression-definition"><span class="std std-ref">metadata</span></a>
 and the <a class="reference internal" href="../../spec/core/model-validation.html#suppress-trait"><span class="std std-ref">suppress trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1300,7 +1300,7 @@ suppressions:</p>
 </div></div>
 </div>
 <div class="section" id="includetags">
-<span id="includetags-transform"></span><h3>includeTags<a class="headerlink" href="#includetags" title="Permalink to this headline">#</a></h3>
+<span id="includetags-transform"></span><h3>includeTags<a class="headerlink" href="#includetags" title="Permalink to this heading">#</a></h3>
 <p>Removes tags from shapes and trait definitions that are not in the <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 list.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1345,7 +1345,7 @@ list.</p>
 </div></div>
 </div>
 <div class="section" id="includetraits">
-<span id="includetraits-transform"></span><h3>includeTraits<a class="headerlink" href="#includetraits" title="Permalink to this headline">#</a></h3>
+<span id="includetraits-transform"></span><h3>includeTraits<a class="headerlink" href="#includetraits" title="Permalink to this heading">#</a></h3>
 <p>Removes trait definitions from a model if the trait name is not present in the
 provided list of <code class="docutils literal notranslate"><span class="pre">traits</span></code>. Any instance of a removed trait is also removed
 from shapes in the model.</p>
@@ -1419,7 +1419,7 @@ all traits in the &quot;smithy.api&quot; namespace:</p>
 </div></div>
 </div>
 <div class="section" id="includetraitsbytag">
-<span id="includetraitsbytag-transform"></span><h3>includeTraitsByTag<a class="headerlink" href="#includetraitsbytag" title="Permalink to this headline">#</a></h3>
+<span id="includetraitsbytag-transform"></span><h3>includeTraitsByTag<a class="headerlink" href="#includetraitsbytag" title="Permalink to this heading">#</a></h3>
 <p>Removes trait definitions from a model if the trait definition does not
 contain one of the provided <a class="reference internal" href="../../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a
 removed trait definition is also removed from shapes in the model.</p>
@@ -1473,7 +1473,7 @@ in the filtered model.</td>
 </div>
 </div>
 <div class="section" id="excludemetadata">
-<span id="excludemetadata-transform"></span><h3>excludeMetadata<a class="headerlink" href="#excludemetadata" title="Permalink to this headline">#</a></h3>
+<span id="excludemetadata-transform"></span><h3>excludeMetadata<a class="headerlink" href="#excludemetadata" title="Permalink to this heading">#</a></h3>
 <p>Removes model <a class="reference internal" href="../../spec/core/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1518,7 +1518,7 @@ key is in the provided <code class="docutils literal notranslate"><span class="p
 </div></div>
 </div>
 <div class="section" id="includemetadata">
-<span id="includemetadata-transform"></span><h3>includeMetadata<a class="headerlink" href="#includemetadata" title="Permalink to this headline">#</a></h3>
+<span id="includemetadata-transform"></span><h3>includeMetadata<a class="headerlink" href="#includemetadata" title="Permalink to this heading">#</a></h3>
 <p>Removes model <a class="reference internal" href="../../spec/core/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is not in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1563,7 +1563,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div></div>
 </div>
 <div class="section" id="flattennamespaces">
-<span id="id6"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this headline">#</a></h3>
+<span id="id6"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1632,7 +1632,7 @@ long as they don't conflict with a shape within the
 </div></div>
 </div>
 <div class="section" id="removetraitdefinitions">
-<span id="removetraitdefinitions-transform"></span><h3>removeTraitDefinitions<a class="headerlink" href="#removetraitdefinitions" title="Permalink to this headline">#</a></h3>
+<span id="removetraitdefinitions-transform"></span><h3>removeTraitDefinitions<a class="headerlink" href="#removetraitdefinitions" title="Permalink to this heading">#</a></h3>
 <p>Removes trait definitions from the model, but leaves the instances of traits
 intact on any shapes.</p>
 <p>You can <em>export</em> trait definitions by applying specific tags to the trait
@@ -1685,7 +1685,7 @@ trait intact on shapes in the model:</p>
 </div></div>
 </div>
 <div class="section" id="removeunusedshapes">
-<span id="removeunusedshapes-transform"></span><h3>removeUnusedShapes<a class="headerlink" href="#removeunusedshapes" title="Permalink to this headline">#</a></h3>
+<span id="removeunusedshapes-transform"></span><h3>removeUnusedShapes<a class="headerlink" href="#removeunusedshapes" title="Permalink to this heading">#</a></h3>
 <p>Removes shapes from the model that are not connected to any service shape
 or to a shape definition.</p>
 <p>You can <em>export</em> shapes that are not connected to any service shape by
@@ -1740,7 +1740,7 @@ but keeps the shape if it has any of the provided tags:</p>
 </div></div>
 </div>
 <div class="section" id="renameshapes">
-<span id="renameshapes-transform"></span><h3>renameShapes<a class="headerlink" href="#renameshapes" title="Permalink to this headline">#</a></h3>
+<span id="renameshapes-transform"></span><h3>renameShapes<a class="headerlink" href="#renameshapes" title="Permalink to this heading">#</a></h3>
 <p>Renames shapes within the model, including updating any references to the
 shapes that are being renamed.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1792,7 +1792,7 @@ Any references to <code class="docutils literal notranslate"><span class="pre">n
 </div>
 </div>
 <div class="section" id="environment-variables">
-<span id="build-envars"></span><h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">#</a></h2>
+<span id="build-envars"></span><h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading">#</a></h2>
 <p>Strings in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> files can contain environment variable place
 holders that are expanded at load-time into the value of a Java system
 property or environment variable. The syntax of a placeholder is
@@ -1841,7 +1841,7 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id7"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
+<span id="id7"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -1859,18 +1859,18 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id8"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file.</p>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id9"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id10"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id10"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2003,7 +2003,9 @@ All model files referenced by the manifest are relative to <code class="docutils
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

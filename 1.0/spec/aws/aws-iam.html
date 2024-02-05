@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Amazon API Gateway traits" href="amazon-apigateway.html" /><link rel="prev" title="AWS Authentication Traits" href="aws-auth.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS IAM traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-iam-traits">
-<span id="id1"></span><h1>AWS IAM traits<a class="headerlink" href="#aws-iam-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>AWS IAM traits<a class="headerlink" href="#aws-iam-traits" title="Permalink to this heading">#</a></h1>
 <p>IAM Policy Traits are used to describe the permission structure of a service
 in relation to AWS IAM. Services integrated with AWS IAM define resource types,
 actions, and condition keys that IAM users can use to construct IAM policies.</p>
@@ -313,7 +313,7 @@ policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">Deriving Condition Keys</span></a>.</p>
 <div class="section" id="aws-iam-actionpermissiondescription-trait">
-<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>A brief description of what granting the user permission to invoke an
 operation would entail.</dd>
@@ -345,7 +345,7 @@ operation would entail.</dd>
 </div></div>
 </div>
 <div class="section" id="aws-iam-conditionkeys-trait">
-<span id="aws-iam-conditionkeys-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-conditionkeys-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Applies condition keys, by name, to a resource or operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
@@ -442,7 +442,7 @@ without being defined on the service.</p>
 </div>
 </div>
 <div class="section" id="aws-iam-defineconditionkeys-trait">
-<span id="aws-iam-defineconditionkeys-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-defineconditionkeys-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the set of condition keys that appear within a service in
 addition to inferred and global condition keys.</dd>
@@ -543,7 +543,7 @@ for more information.</td>
 defined on the service.</p>
 </div>
 <div class="section" id="condition-key-types">
-<span id="id5"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this heading">#</a></h3>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -571,7 +571,7 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 <td>A String type that conforms to the <code class="docutils literal notranslate"><span class="pre">datetime</span></code> profile of <a class="reference external" href="http://www.w3.org/TR/NOTE-datetime">ISO 8601</a>.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">IPAddress</span></code></td>
-<td>A String type that conforms to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc4632.html"><strong>RFC 4632</strong></a>.</td>
+<td>A String type that conforms to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc4632.html"><strong>RFC 4632</strong></a>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Numeric</span></code></td>
 <td>A general type for integers and floats.</td>
@@ -606,7 +606,7 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 </div>
 </div>
 <div class="section" id="aws-iam-disableconditionkeyinference-trait">
-<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Declares that the condition keys of a resource should not be inferred.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
@@ -677,7 +677,7 @@ condition key inference disabled.</p>
 </div></div>
 </div>
 <div class="section" id="aws-iam-requiredactions-trait">
-<span id="aws-iam-requiredactions-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-requiredactions-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Other actions that the invoker must be authorized to perform when
 executing the targeted operation.</dd>
@@ -757,7 +757,7 @@ operation for it to complete successfully.</p>
 </div></div>
 </div>
 <div class="section" id="aws-iam-supportedprincipaltypes-trait">
-<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id8"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id8"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
@@ -794,7 +794,7 @@ applied to the service.</li>
 </div></div>
 </div>
 <div class="section" id="aws-iam-iamresource-trait">
-<span id="aws-iam-iamresource-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-iamresource-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates properties of a Smithy resource in AWS IAM.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
@@ -841,7 +841,7 @@ deviates from the <a class="reference internal" href="../core/model.html#shape-i
 </div></div>
 </div>
 <div class="section" id="deriving-condition-keys">
-<span id="id10"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">#</a></h2>
+<span id="id10"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this heading">#</a></h2>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -1011,7 +1011,9 @@ trait.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

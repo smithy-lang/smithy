@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS restXml protocol" href="aws-restxml-protocol.html" /><link rel="prev" title="AWS JSON 1.0 protocol" href="aws-json-1_0-protocol.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS JSON 1.1 protocol - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,16 +301,16 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-json-1-1-protocol">
-<span id="aws-json-1-1"></span><h1>AWS JSON 1.1 protocol<a class="headerlink" href="#aws-json-1-1-protocol" title="Permalink to this headline">#</a></h1>
+<span id="aws-json-1-1"></span><h1>AWS JSON 1.1 protocol<a class="headerlink" href="#aws-json-1-1-protocol" title="Permalink to this heading">#</a></h1>
 <p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> protocol.</p>
 <div class="section" id="aws-protocols-awsjson1-1-trait">
-<span id="aws-protocols-awsjson1_1-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> trait<a class="headerlink" href="#aws-protocols-awsjson1-1-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-awsjson1_1-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> trait<a class="headerlink" href="#aws-protocols-awsjson1-1-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds support for an HTTP protocol that sends &quot;POST&quot; requests and
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.43.0/smithy-aws-protocol-tests/model/awsJson1_1">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.44.0/smithy-aws-protocol-tests/model/awsJson1_1">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> is a structure that supports the following
 members:</p>
@@ -421,7 +421,7 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">#</a></h2>
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol supports the following traits
 that affect serialization:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -458,7 +458,7 @@ to services.</td>
 </div>
 </div>
 <div class="section" id="protocol-behaviors">
-<h2>Protocol Behaviors<a class="headerlink" href="#protocol-behaviors" title="Permalink to this headline">#</a></h2>
+<h2>Protocol Behaviors<a class="headerlink" href="#protocol-behaviors" title="Permalink to this heading">#</a></h2>
 <p>Every request for the <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol MUST be sent to the
 root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>) using the HTTP &quot;POST&quot; method.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol does not support custom HTTP bindings.
@@ -502,7 +502,7 @@ service <code class="docutils literal notranslate"><span class="pre">ns.example#
 </div>
 </div>
 <div class="section" id="shape-serialization">
-<h2>Shape serialization<a class="headerlink" href="#shape-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Shape serialization<a class="headerlink" href="#shape-serialization" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol serializes all shapes into a JSON
 document body with no HTTP bindings supported. The following table shows how
 to convert each shape type:</p>
@@ -593,7 +593,7 @@ shape, but only a single member can be set to a non-null value.</td>
 </table>
 </div>
 <div class="section" id="empty-body-serialization">
-<h3>Empty body serialization<a class="headerlink" href="#empty-body-serialization" title="Permalink to this headline">#</a></h3>
+<h3>Empty body serialization<a class="headerlink" href="#empty-body-serialization" title="Permalink to this heading">#</a></h3>
 <p>When an operation has no modeled input or if no input parameters are provided,
 a client MUST send an empty JSON object (<code class="docutils literal notranslate"><span class="pre">{}</span></code>) as the request body. Server
 implementations MUST also accept empty request bodies.</p>
@@ -604,7 +604,7 @@ also accept an empty JSON object as the response body.</p>
 </div>
 </div>
 <div class="section" id="non-numeric-float-and-double-serialization">
-<h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this heading">#</a></h2>
 <p>Smithy floats and doubles are defined by IEEE-754, which includes special values
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol treats those special values as
@@ -635,7 +635,7 @@ strings with the following values:</p>
 </div>
 </div>
 <div class="section" id="operation-error-serialization">
-<h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this heading">#</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol are serialized identically to
 standard responses with one additional component to distinguish which error
 is contained. New server-side protocol implementations SHOULD use a body field
@@ -662,7 +662,7 @@ first <code class="docutils literal notranslate"><span class="pre">#</span></cod
 </ul>
 </div>
 <div class="section" id="differences-between-awsjson1-0-and-awsjson1-1">
-<h2>Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code><a class="headerlink" href="#differences-between-awsjson1-0-and-awsjson1-1" title="Permalink to this headline">#</a></h2>
+<h2>Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code><a class="headerlink" href="#differences-between-awsjson1-0-and-awsjson1-1" title="Permalink to this heading">#</a></h2>
 <p>There are two difference between <a class="reference internal" href="aws-json-1_0-protocol.html#aws-protocols-awsjson1-0-trait"><span class="std std-ref">awsJson1_0</span></a> and
 <a class="reference internal" href="#aws-protocols-awsjson1-1-trait"><span class="std std-ref">awsJson1_1</span></a>. First, the static value of the
 <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header is different. In <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> it MUST be
@@ -676,7 +676,7 @@ for both protocols. See <a class="reference internal" href="#operation-error-ser
 deserialize errors for <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code>.</p>
 </div>
 <div class="section" id="protocol-compliance-tests">
-<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
+<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this heading">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1</a></p>
 <p>These compliance tests define a model that is used to define test cases and
@@ -684,7 +684,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
 <div class="section" id="error-shape-renaming">
-<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this heading">#</a></h2>
 <p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
 the <a class="reference internal" href="../core/model.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
 not allowed to rename error shapes (shapes with <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
@@ -787,7 +787,9 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

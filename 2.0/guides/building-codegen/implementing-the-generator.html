@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Making Codegen Pluggable" href="making-codegen-pluggable.html" /><link rel="prev" title="Configuring the Generator" href="configuring-the-generator.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Implementing the Generator - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -203,24 +203,24 @@
 <li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -337,12 +337,12 @@
         </div>
         <article role="main">
           <div class="section" id="implementing-the-generator">
-<h1>Implementing the Generator<a class="headerlink" href="#implementing-the-generator" title="Permalink to this headline">#</a></h1>
+<h1>Implementing the Generator<a class="headerlink" href="#implementing-the-generator" title="Permalink to this heading">#</a></h1>
 <p>This document describes how to implement a code generator using the
 high-level <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">DirectedCodegen</a>
 interface.</p>
 <div class="section" id="directedcodegen">
-<span id="id1"></span><h2>DirectedCodegen<a class="headerlink" href="#directedcodegen" title="Permalink to this headline">#</a></h2>
+<span id="id1"></span><h2>DirectedCodegen<a class="headerlink" href="#directedcodegen" title="Permalink to this heading">#</a></h2>
 <p>Smithy code generators typically all follow the same patterns. In fact,
 the layout of existing code generators is so similar that a kind of
 &quot;golden-path&quot; codegen architecture was designed called
@@ -364,7 +364,7 @@ combinations that need to be code generated.</li>
 </ul>
 </div>
 <div class="section" id="implementing-directedcodegen">
-<h2>Implementing <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#implementing-directedcodegen" title="Permalink to this headline">#</a></h2>
+<h2>Implementing <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#implementing-directedcodegen" title="Permalink to this heading">#</a></h2>
 <p>The methods of <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> break down the process of building up
 and running a generator into specific methods.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">DirectedCodegen</span><span class="o">&lt;</span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
@@ -397,7 +397,7 @@ and running a generator into specific methods.</p>
 </div>
 <p>The <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">source code for DirectedCodegen</a> can be found on GitHub.</p>
 <div class="section" id="directedcodegen-prerequisites">
-<h3>DirectedCodegen prerequisites<a class="headerlink" href="#directedcodegen-prerequisites" title="Permalink to this headline">#</a></h3>
+<h3>DirectedCodegen prerequisites<a class="headerlink" href="#directedcodegen-prerequisites" title="Permalink to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> has a few prerequisites before it can be implemented.</p>
 <ul class="simple">
 <li>A <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> implementation used to map Smithy shapes to
@@ -422,7 +422,7 @@ extensible (type <code class="docutils literal notranslate"><span class="pre">I<
 </div>
 </div>
 <div class="section" id="running-directedcodegen-using-a-codegendirector">
-<span id="running-directedcodegen"></span><h2>Running <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> using a <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code><a class="headerlink" href="#running-directedcodegen-using-a-codegendirector" title="Permalink to this headline">#</a></h2>
+<span id="running-directedcodegen"></span><h2>Running <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> using a <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code><a class="headerlink" href="#running-directedcodegen-using-a-codegendirector" title="Permalink to this heading">#</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code> is used in concert with a <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code>
 implementation to build up the context needed to run the generator and
 call methods in the right order. <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code> is typically called
@@ -478,7 +478,7 @@ shapes that reference them)</li>
 </ol>
 </div>
 <div class="section" id="creating-a-settings-class">
-<h2>Creating a settings class<a class="headerlink" href="#creating-a-settings-class" title="Permalink to this headline">#</a></h2>
+<h2>Creating a settings class<a class="headerlink" href="#creating-a-settings-class" title="Permalink to this heading">#</a></h2>
 <p>A code generator uses a settings object to configure the generator in
 Smithy-Build and during directed code generation. At a minimum, this
 class should have a <code class="docutils literal notranslate"><span class="pre">ShapeId</span></code> for the service to generate.</p>
@@ -501,7 +501,7 @@ class should have a <code class="docutils literal notranslate"><span class="pre"
 </div>
 </div>
 <div class="section" id="creating-a-codegencontext-class">
-<h2>Creating a <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> class<a class="headerlink" href="#creating-a-codegencontext-class" title="Permalink to this headline">#</a></h2>
+<h2>Creating a <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> class<a class="headerlink" href="#creating-a-codegencontext-class" title="Permalink to this heading">#</a></h2>
 <p>This object provides access to codegen settings, abstractions for
 writing files, and abstractions for creating code writers. You should
 create a specific implementation of <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> for each
@@ -522,7 +522,7 @@ generator. This can be done using a Java record, POJO, builder, etc.</p>
 are available using the data available to <code class="docutils literal notranslate"><span class="pre">CreateContextDirective</span></code>.</p>
 </div>
 <div class="section" id="tips-for-using-directedcodegen">
-<h2>Tips for using <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#tips-for-using-directedcodegen" title="Permalink to this headline">#</a></h2>
+<h2>Tips for using <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#tips-for-using-directedcodegen" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li>Each directive object provided to the methods of a DirectedCodegen
 implementation provide all the context needed to perform that action.</li>
@@ -624,7 +624,9 @@ data you need.</li>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

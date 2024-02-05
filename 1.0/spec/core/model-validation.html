@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="16. Smithy IDL" href="idl.html" /><link rel="prev" title="14. Selectors" href="selectors.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>15. Model validation - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,12 +301,12 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="model-validation">
-<span id="validation"></span><h1><span class="section-number">15. </span>Model validation<a class="headerlink" href="#model-validation" title="Permalink to this headline">#</a></h1>
+<span id="validation"></span><h1><span class="section-number">15. </span>Model validation<a class="headerlink" href="#model-validation" title="Permalink to this heading">#</a></h1>
 <p>Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.</p>
 <div class="section" id="introduction">
-<h2><span class="section-number">15.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<h2><span class="section-number">15.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>APIs require a great deal of care and discipline to ensure that they provide
 a coherent interface to customers, particularly after an API is released and
 new features are added. This specification defines metadata that is used to
@@ -321,7 +321,7 @@ their enforcement. This validation standard allows the same level of
 conformity and rigor to be applied to Smithy models and API definitions.</p>
 </div>
 <div class="section" id="validators">
-<span id="validator-definition"></span><h2><span class="section-number">15.2. </span>Validators<a class="headerlink" href="#validators" title="Permalink to this headline">#</a></h2>
+<span id="validator-definition"></span><h2><span class="section-number">15.2. </span>Validators<a class="headerlink" href="#validators" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property contains an array of validator
 objects that are used to constrain a model. Each object in the
 <code class="docutils literal notranslate"><span class="pre">validators</span></code> array supports the following properties:</p>
@@ -421,7 +421,7 @@ configuration properties are provided.</td>
 </pre></div>
 </div>
 <div class="section" id="missing-validators">
-<span id="id1"></span><h3><span class="section-number">15.2.1. </span>Missing validators<a class="headerlink" href="#missing-validators" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3><span class="section-number">15.2.1. </span>Missing validators<a class="headerlink" href="#missing-validators" title="Permalink to this heading">#</a></h3>
 <p>The actual implementation of a validator is defined in code and is
 not defined in the Smithy model itself. If a Smithy implementation does not
 have an implementation for a specific validator by name, the Smithy
@@ -434,7 +434,7 @@ severity of WARNING.</p>
 </div>
 </div>
 <div class="section" id="severity">
-<span id="severity-definition"></span><h2><span class="section-number">15.3. </span>Severity<a class="headerlink" href="#severity" title="Permalink to this headline">#</a></h2>
+<span id="severity-definition"></span><h2><span class="section-number">15.3. </span>Severity<a class="headerlink" href="#severity" title="Permalink to this heading">#</a></h2>
 <p>When a model is in violation of a validator, a <em>validation event</em> is emitted.
 This validation event contains metadata about the violation, including the
 optional shape that was in violation, the validator ID, and the severity of
@@ -454,12 +454,12 @@ DANGER validation events indicate that a model is invalid.</dd>
 </dl>
 </div>
 <div class="section" id="suppressions">
-<span id="suppression-definition"></span><h2><span class="section-number">15.4. </span>Suppressions<a class="headerlink" href="#suppressions" title="Permalink to this headline">#</a></h2>
+<span id="suppression-definition"></span><h2><span class="section-number">15.4. </span>Suppressions<a class="headerlink" href="#suppressions" title="Permalink to this heading">#</a></h2>
 <p>Suppressions are used to suppress specific validation events.
 Suppressions are created using the <a class="reference internal" href="#suppress-trait"><span class="std std-ref">suppress trait</span></a> and
 <a class="reference internal" href="#suppressions-metadata"><span class="std std-ref">suppressions metadata</span></a>.</p>
 <div class="section" id="suppress-trait">
-<span id="id2"></span><h3><span class="section-number">15.4.1. </span><code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait<a class="headerlink" href="#suppress-trait" title="Permalink to this headline">#</a></h3>
+<span id="id2"></span><h3><span class="section-number">15.4.1. </span><code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait<a class="headerlink" href="#suppress-trait" title="Permalink to this heading">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>The suppress trait is used to suppress validation events(s) for a
 specific shape. Each value in the <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait is a
@@ -481,7 +481,7 @@ for the <code class="docutils literal notranslate"><span class="pre">smithy.exam
 </div></div>
 </div>
 <div class="section" id="suppression-metadata">
-<span id="suppressions-metadata"></span><h3><span class="section-number">15.4.2. </span>Suppression metadata<a class="headerlink" href="#suppression-metadata" title="Permalink to this headline">#</a></h3>
+<span id="suppressions-metadata"></span><h3><span class="section-number">15.4.2. </span>Suppression metadata<a class="headerlink" href="#suppression-metadata" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> metadata property contains an array of suppression objects
 that are used to suppress validation events for the entire model or for an
 entire namespace.</p>
@@ -547,12 +547,12 @@ ID of <code class="docutils literal notranslate"><span class="pre">OverlyBroadVa
 </div>
 </div>
 <div class="section" id="built-in-validators">
-<h2><span class="section-number">15.5. </span>Built-in validators<a class="headerlink" href="#built-in-validators" title="Permalink to this headline">#</a></h2>
+<h2><span class="section-number">15.5. </span>Built-in validators<a class="headerlink" href="#built-in-validators" title="Permalink to this heading">#</a></h2>
 <p>Smithy provides built-in validators that can be used in any model in
 the <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property. Implementations MAY support
 additional validators.</p>
 <div class="section" id="emiteachselector">
-<span id="id3"></span><h3><span class="section-number">15.5.1. </span>EmitEachSelector<a class="headerlink" href="#emiteachselector" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3><span class="section-number">15.5.1. </span>EmitEachSelector<a class="headerlink" href="#emiteachselector" title="Permalink to this heading">#</a></h3>
 <p>Emits a validation event for each shape that matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -671,7 +671,7 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 </pre></div>
 </div>
 <div class="section" id="binding-events-to-traits">
-<span id="emit-each-bind-to-trait"></span><h4><span class="section-number">15.5.1.1. </span>Binding events to traits<a class="headerlink" href="#binding-events-to-traits" title="Permalink to this headline">#</a></h4>
+<span id="emit-each-bind-to-trait"></span><h4><span class="section-number">15.5.1.1. </span>Binding events to traits<a class="headerlink" href="#binding-events-to-traits" title="Permalink to this heading">#</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">bindToTrait</span></code> property contains a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> that MUST
 reference a <a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait definition</span></a> shape. When set, this
 property causes the <code class="docutils literal notranslate"><span class="pre">EmitEachSelector</span></code> validator to only emit validation
@@ -707,7 +707,7 @@ the trait is applied to the matched shape.</p>
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
 </div>
 <div class="section" id="message-templates">
-<span id="emit-each-message-template"></span><h4><span class="section-number">15.5.1.2. </span>Message templates<a class="headerlink" href="#message-templates" title="Permalink to this headline">#</a></h4>
+<span id="emit-each-message-template"></span><h4><span class="section-number">15.5.1.2. </span>Message templates<a class="headerlink" href="#message-templates" title="Permalink to this heading">#</a></h4>
 <p>A <code class="docutils literal notranslate"><span class="pre">messageTemplate</span></code> is used to create more granular error messages. The
 template consists of literal spans and <a class="reference internal" href="selectors.html#grammar-token-selectors-SelectorContextValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector</span> <span class="pre">context</span> <span class="pre">value</span></code></a>
 templates (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id}</span></code>). A selector context value MAY be escaped
@@ -811,7 +811,7 @@ to make message templates more descriptive. Consider the following example:</p>
 </div>
 </div>
 <div class="section" id="variable-message-formatting">
-<h4><span class="section-number">15.5.1.3. </span>Variable message formatting<a class="headerlink" href="#variable-message-formatting" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">15.5.1.3. </span>Variable message formatting<a class="headerlink" href="#variable-message-formatting" title="Permalink to this heading">#</a></h4>
 <p>Different types of variables expand to different kinds of strings in message
 templates.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -890,7 +890,7 @@ to:</p>
 </div>
 </div>
 <div class="section" id="emitnoneselector">
-<span id="id9"></span><h3><span class="section-number">15.5.2. </span>EmitNoneSelector<a class="headerlink" href="#emitnoneselector" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3><span class="section-number">15.5.2. </span>EmitNoneSelector<a class="headerlink" href="#emitnoneselector" title="Permalink to this heading">#</a></h3>
 <p>Emits a validation event if no shape in the model matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -1041,7 +1041,9 @@ traits.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

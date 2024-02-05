@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS EC2 query protocol" href="aws-ec2-query-protocol.html" /><link rel="prev" title="AWS restXml protocol" href="aws-restxml-protocol.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS query protocol - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,10 +301,10 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-query-protocol">
-<span id="id1"></span><h1>AWS query protocol<a class="headerlink" href="#aws-query-protocol" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>AWS query protocol<a class="headerlink" href="#aws-query-protocol" title="Permalink to this heading">#</a></h1>
 <p>This document defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol.</p>
 <div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
 <p>The AWS Query protocol uses HTTP and serializes HTTP requests using query
 string parameters and responses using XML. Requests can be sent using GET
 requests and placing parameters in the query string; however, sending
@@ -339,7 +339,7 @@ responses, including event streams.</li>
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">#</a></h2>
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol supports the following traits
 that affect serialization:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -401,11 +401,11 @@ to services.</td>
 </div>
 </div>
 <div class="section" id="request-serialization">
-<h2>Request serialization<a class="headerlink" href="#request-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Request serialization<a class="headerlink" href="#request-serialization" title="Permalink to this heading">#</a></h2>
 <p>Requests SHALL be sent to the root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>). Requests SHALL use a POST
 request and a body that contains input parameters serialized with a
 Content-Type of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>. All keys and
-values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
+values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
 a Content-Length header; this protocol does not support chunked
 Transfer-Encoding.</p>
 <p>Requests MUST include the following key value pairs in the serialized body:</p>
@@ -438,7 +438,7 @@ concatenated with the following rules:</p>
 <li>&quot;.&quot; is used to separate member name segments within keys.</li>
 </ul>
 <div class="section" id="x-www-form-urlencoded-shape-serialization">
-<h3>x-www-form-urlencoded shape serialization<a class="headerlink" href="#x-www-form-urlencoded-shape-serialization" title="Permalink to this headline">#</a></h3>
+<h3>x-www-form-urlencoded shape serialization<a class="headerlink" href="#x-www-form-urlencoded-shape-serialization" title="Permalink to this heading">#</a></h3>
 <p>Simple shapes are serialized according to the following rules:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -553,7 +553,7 @@ single member can be set to a non-null value.</td>
 </div>
 </div>
 <div class="section" id="query-key-resolution">
-<span id="aws-protocols-awsqueryname-query-key-naming"></span><h3>Query key resolution<a class="headerlink" href="#query-key-resolution" title="Permalink to this headline">#</a></h3>
+<span id="aws-protocols-awsqueryname-query-key-naming"></span><h3>Query key resolution<a class="headerlink" href="#query-key-resolution" title="Permalink to this heading">#</a></h3>
 <p>The key component used to serialize a member in a request in <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> is
 resolved using the following process:</p>
 <ol class="arabic">
@@ -598,12 +598,12 @@ member, if present.</p>
 </ol>
 </div>
 <div class="section" id="example-requests">
-<h3>Example requests<a class="headerlink" href="#example-requests" title="Permalink to this headline">#</a></h3>
+<h3>Example requests<a class="headerlink" href="#example-requests" title="Permalink to this heading">#</a></h3>
 <p>The following list of examples are non-exhaustive. See the
 <a class="reference internal" href="#awsquery-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a> for a suite of compliance tests for the
 <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol. Newlines have been to examples only for readability.</p>
 <div class="section" id="structures-and-unions">
-<h4>Structures and unions<a class="headerlink" href="#structures-and-unions" title="Permalink to this headline">#</a></h4>
+<h4>Structures and unions<a class="headerlink" href="#structures-and-unions" title="Permalink to this heading">#</a></h4>
 <p>Each member value provided for the shape is serialized as a separate key
 with a &quot;.&quot; separator and the member name appended to the container's key.
 The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</p>
@@ -638,7 +638,7 @@ Action=QueryStructures
 </div>
 </div>
 <div class="section" id="collections">
-<h4>Collections<a class="headerlink" href="#collections" title="Permalink to this headline">#</a></h4>
+<h4>Collections<a class="headerlink" href="#collections" title="Permalink to this heading">#</a></h4>
 <p>Each value provided in the collection is serialized as a separate key with
 a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
 incrementing counter appended to the container's key.
@@ -704,7 +704,7 @@ Action=QueryLists
 </div>
 </div>
 <div class="section" id="maps">
-<h4>Maps<a class="headerlink" href="#maps" title="Permalink to this headline">#</a></h4>
+<h4>Maps<a class="headerlink" href="#maps" title="Permalink to this heading">#</a></h4>
 <p>Each key and value in each pair provided in the map is serialized as a
 separate key with a &quot;.&quot; separator, the string &quot;entry&quot;, a &quot;.&quot; separator,
 a &quot;1&quot; indexed incrementing counter, a &quot;.&quot; separator, and the string
@@ -777,7 +777,7 @@ Action=QueryMaps
 </div>
 </div>
 <div class="section" id="response-serialization">
-<h2>Response serialization<a class="headerlink" href="#response-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Response serialization<a class="headerlink" href="#response-serialization" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes XML responses within an XML root node with
 the name of the operation's output suffixed with &quot;Response&quot;. A nested element,
 with the name of the operation's output suffixed with &quot;Result&quot;, contains the
@@ -803,7 +803,7 @@ Content-Length:<span class="w"> </span>...
 </pre></div>
 </div>
 <div class="section" id="xml-shape-serialization">
-<h3>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">#</a></h3>
+<h3>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -911,7 +911,7 @@ including examples and behaviors when using multiple XML traits.</p>
 </div>
 </div>
 <div class="section" id="operation-error-serialization">
-<span id="awsquery-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">#</a></h2>
+<span id="awsquery-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this heading">#</a></h2>
 <p>Error response bodies in the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol are wrapped within an XML
 root node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>, contains
 the serialized error structure members. <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">The HTTP response code is a
@@ -949,7 +949,7 @@ the response.</li>
 hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="non-numeric-float-and-double-serialization">
-<span id="awsquery-non-numeric-float-serialization"></span><h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this headline">#</a></h2>
+<span id="awsquery-non-numeric-float-serialization"></span><h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this heading">#</a></h2>
 <p>Smithy floats and doubles are defined by IEEE-754, which includes special values
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol treats those special values as
@@ -979,7 +979,7 @@ strings with the following values:</p>
 </table>
 </div>
 <div class="section" id="error-http-response-status-code-resolution">
-<span id="awsquery-error-response-code"></span><h3>Error HTTP response status code resolution<a class="headerlink" href="#error-http-response-status-code-resolution" title="Permalink to this headline">#</a></h3>
+<span id="awsquery-error-response-code"></span><h3>Error HTTP response status code resolution<a class="headerlink" href="#error-http-response-status-code-resolution" title="Permalink to this heading">#</a></h3>
 <p>The status code of an error is <code class="docutils literal notranslate"><span class="pre">400</span></code>, <code class="docutils literal notranslate"><span class="pre">500</span></code>, or a custom status code
 defined by the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">aws.protocols#awsQueryError trait</span></a>. The status code
 is determined through the following process:</p>
@@ -991,7 +991,7 @@ applied to the error structure, if present.</li>
 </ol>
 </div>
 <div class="section" id="error-code-resolution">
-<span id="awsquery-error-code"></span><h3>Error &quot;Code&quot; resolution<a class="headerlink" href="#error-code-resolution" title="Permalink to this headline">#</a></h3>
+<span id="awsquery-error-code"></span><h3>Error &quot;Code&quot; resolution<a class="headerlink" href="#error-code-resolution" title="Permalink to this heading">#</a></h3>
 <p>The value of the &quot;Code&quot; element serialized in the error is resolved using the
 following process:</p>
 <ol class="arabic simple">
@@ -1002,7 +1002,7 @@ applied to the error structure, if present.</li>
 </div>
 </div>
 <div class="section" id="aws-protocols-awsquery-trait">
-<span id="aws-protocols-awsquery-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait<a class="headerlink" href="#aws-protocols-awsquery-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-awsquery-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait<a class="headerlink" href="#aws-protocols-awsquery-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds support for the awsQuery protocol to a service. The service MUST have
 an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>.</dd>
@@ -1010,7 +1010,7 @@ an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trai
 <p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.43.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.44.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -1044,7 +1044,7 @@ an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trai
 </div></div>
 </div>
 <div class="section" id="aws-protocols-awsqueryerror-trait">
-<span id="aws-protocols-awsqueryerror-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait<a class="headerlink" href="#aws-protocols-awsqueryerror-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-awsqueryerror-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait<a class="headerlink" href="#aws-protocols-awsqueryerror-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Provides a <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">custom &quot;Code&quot; value</span></a> for
 <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> errors and an <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">HTTP response code</span></a>.
@@ -1131,7 +1131,7 @@ no impact on other Smithy protocols.</p>
 </div></div>
 </div>
 <div class="section" id="aws-protocols-awsquerycompatible-trait">
-<span id="aws-protocols-awsquerycompatible-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait<a class="headerlink" href="#aws-protocols-awsquerycompatible-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-awsquerycompatible-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait<a class="headerlink" href="#aws-protocols-awsquerycompatible-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><p>When using the <a class="reference internal" href="#aws-protocols-awsquery-trait"><span class="std std-ref">awsQuery</span></a> protocol,
 custom <code class="docutils literal notranslate"><span class="pre">Code</span></code> and <code class="docutils literal notranslate"><span class="pre">HTTP</span> <span class="pre">response</span> <span class="pre">code</span></code> values can be defined for an error response via
@@ -1168,14 +1168,14 @@ and <code class="docutils literal notranslate"><span class="pre">Fault</span></c
 </div>
 </div>
 <div class="section" id="protocol-compliance-tests">
-<span id="awsquery-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
+<span id="awsquery-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this heading">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 </div>
 <div class="section" id="error-shape-renaming">
-<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this heading">#</a></h2>
 <p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
 the <a class="reference internal" href="../core/model.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
 not allowed to rename error shapes (shapes with <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
@@ -1294,7 +1294,9 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

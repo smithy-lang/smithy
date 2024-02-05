@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Generating CloudFormation Resource Schemas from Smithy" href="generating-cloudformation-resources.html" /><link rel="prev" title="Style Guide" href="style-guide.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Converting Smithy to OpenAPI - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="converting-smithy-to-openapi">
-<span id="smithy-to-openapi"></span><h1>Converting Smithy to OpenAPI<a class="headerlink" href="#converting-smithy-to-openapi" title="Permalink to this headline">#</a></h1>
+<span id="smithy-to-openapi"></span><h1>Converting Smithy to OpenAPI<a class="headerlink" href="#converting-smithy-to-openapi" title="Permalink to this heading">#</a></h1>
 <p>This guide describes how Smithy models can be converted to <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a>
 specifications.</p>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>OpenAPI is a standard for describing RESTful APIs. While Smithy has it's own
 interface definition language that's completely independent of OpenAPI,
 there are use cases for authoring API models in Smithy and converting
@@ -322,7 +322,7 @@ Smithy generators are not available.</p>
 </div>
 </div>
 <div class="section" id="differences-between-smithy-and-openapi">
-<h2>Differences between Smithy and OpenAPI<a class="headerlink" href="#differences-between-smithy-and-openapi" title="Permalink to this headline">#</a></h2>
+<h2>Differences between Smithy and OpenAPI<a class="headerlink" href="#differences-between-smithy-and-openapi" title="Permalink to this heading">#</a></h2>
 <p>Smithy and OpenAPI take very different approaches to modeling APIs. Smithy is
 <em>protocol agnostic</em>, which means it focuses on the interfaces and abstractions
 that are provided to end-users rather than how the data is sent over the wire.
@@ -335,7 +335,7 @@ of services it can describe, making it easier to adapt to existing web
 services, but at the same time making it easier to author APIs that provide
 a poor customer experience when using clients in strongly-typed languages.</p>
 <div class="section" id="unsupported-features">
-<h3>Unsupported features<a class="headerlink" href="#unsupported-features" title="Permalink to this headline">#</a></h3>
+<h3>Unsupported features<a class="headerlink" href="#unsupported-features" title="Permalink to this heading">#</a></h3>
 <p>Converting a Smithy model to OpenAPI is a lossy conversion. Various features
 in a Smithy model are not currently supported in the OpenAPI conversion.</p>
 <p><strong>Unsupported features</strong></p>
@@ -395,7 +395,7 @@ Smithy traits into OpenAPI as extensions requires the use of a custom
 </div>
 </div>
 <div class="section" id="converting-to-openapi-with-smithy-build">
-<h2>Converting to OpenAPI with smithy-build<a class="headerlink" href="#converting-to-openapi-with-smithy-build" title="Permalink to this headline">#</a></h2>
+<h2>Converting to OpenAPI with smithy-build<a class="headerlink" href="#converting-to-openapi-with-smithy-build" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">openapi</span></code> plugin contained in the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-openapi</span></code>
 package can be used with smithy-build and the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin">Smithy Gradle plugin</a> to build
 OpenAPI specifications from Smithy models.</p>
@@ -410,17 +410,17 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
 <span class="w">        </span><span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
 <span class="w">        </span><span class="c1">// additional dependency must added to use that protocol.</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// The dependency for restJson1 is required here too.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.44.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -446,13 +446,13 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.43.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.44.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
 </div>
 <div class="section" id="openapi-configuration-settings">
-<h2>OpenAPI configuration settings<a class="headerlink" href="#openapi-configuration-settings" title="Permalink to this headline">#</a></h2>
+<h2>OpenAPI configuration settings<a class="headerlink" href="#openapi-configuration-settings" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">openapi</span></code> plugin is highly configurable to support different OpenAPI
 tools and vendors.</p>
 <div class="admonition tip">
@@ -741,10 +741,10 @@ change.</p>
 <dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;</span></code>)</dt><dd><p>Adds or replaces the JSON value in the generated OpenAPI document at the
 given JSON pointer locations with a different JSON value. The value must
 be a map where each key is a valid JSON pointer string as defined in
-<span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in the map is the JSON value to add or replace
+<span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in the map is the JSON value to add or replace
 at the given target.</p>
 <p>Values are added using similar semantics of the &quot;add&quot; operation of
-JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
+JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
 properties to an undefined object will create nested objects in the
 result as needed.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -787,7 +787,7 @@ true, like the example below, is recommended.</p>
 </dl>
 </div>
 <div class="section" id="json-schema-configuration-settings">
-<h2>JSON schema configuration settings<a class="headerlink" href="#json-schema-configuration-settings" title="Permalink to this headline">#</a></h2>
+<h2>JSON schema configuration settings<a class="headerlink" href="#json-schema-configuration-settings" title="Permalink to this heading">#</a></h2>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-alphanumericonlyrefs">
 <dt>alphanumericOnlyRefs (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Creates JSON schema names that strip out non-alphanumeric characters.</p>
 <p>This is necessary for compatibility with some vendors like
@@ -970,7 +970,7 @@ look like this:</p>
 </dl>
 </div>
 <div class="section" id="security-schemes">
-<h2>Security schemes<a class="headerlink" href="#security-schemes" title="Permalink to this headline">#</a></h2>
+<h2>Security schemes<a class="headerlink" href="#security-schemes" title="Permalink to this heading">#</a></h2>
 <p>Smithy <a class="reference internal" href="../spec/core/auth-traits.html#authentication-traits"><span class="std std-ref">authentication traits</span></a> applied to a service,
 resource, or operation are converted to <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#securitySchemeObject">OpenAPI security schemes</a> that are
 defined and attached to the corresponding OpenAPI definitions.</p>
@@ -1041,7 +1041,7 @@ OpenAPI security schemes.</p>
 </div>
 </div>
 <div class="section" id="examples-trait-conversion">
-<h2><code class="docutils literal notranslate"><span class="pre">&#64;examples</span></code> trait conversion<a class="headerlink" href="#examples-trait-conversion" title="Permalink to this headline">#</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">&#64;examples</span></code> trait conversion<a class="headerlink" href="#examples-trait-conversion" title="Permalink to this heading">#</a></h2>
 <p>In Smithy, example values of input structure members and the corresponding
 output or error structure members for an operation are grouped together
 into one set of example values for an operation. Below is an example &quot;unit&quot; of <code class="docutils literal notranslate"><span class="pre">FooOperation</span></code>
@@ -1109,7 +1109,7 @@ The following is an example OpenAPI model for the above Smithy example value.</p
 </div>
 </div>
 <div class="section" id="amazon-api-gateway-extensions">
-<h2>Amazon API Gateway extensions<a class="headerlink" href="#amazon-api-gateway-extensions" title="Permalink to this headline">#</a></h2>
+<h2>Amazon API Gateway extensions<a class="headerlink" href="#amazon-api-gateway-extensions" title="Permalink to this heading">#</a></h2>
 <p>Smithy models can be converted to OpenAPI specifications that contain
 <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions.html">Amazon API Gateway extensions</a> for defining things like
 <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-integration-trait"><span class="std std-ref">integrations</span></a> . These
@@ -1119,14 +1119,14 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="amazon-api-gateway-configuration-settings">
-<h3>Amazon API Gateway configuration settings<a class="headerlink" href="#amazon-api-gateway-configuration-settings" title="Permalink to this headline">#</a></h3>
+<h3>Amazon API Gateway configuration settings<a class="headerlink" href="#amazon-api-gateway-configuration-settings" title="Permalink to this heading">#</a></h3>
 <dl class="docutils">
 <dt>apiGatewayType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Defines the type of API Gateway to define in the generated OpenAPI model.
 This setting influences which API Gateway specific plugins apply
@@ -1189,7 +1189,7 @@ headers will be omitted.</p>
 </dl>
 </div>
 <div class="section" id="binary-types">
-<h3>Binary types<a class="headerlink" href="#binary-types" title="Permalink to this headline">#</a></h3>
+<h3>Binary types<a class="headerlink" href="#binary-types" title="Permalink to this heading">#</a></h3>
 <p>The list of binary media types used by an API need to be specified for
 API Gateway in a top-level extension named <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-binary-media-types.html">x-amazon-apigateway-binary-media-types</a>.
 Smithy will automatically detect every media type used in a service by
@@ -1197,7 +1197,7 @@ collecting all of the <a class="reference internal" href="../spec/core/protocol-
 with <a class="reference internal" href="../spec/core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>.</p>
 </div>
 <div class="section" id="request-validators">
-<span id="apigateway-request-validators"></span><h3>Request validators<a class="headerlink" href="#request-validators" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-request-validators"></span><h3>Request validators<a class="headerlink" href="#request-validators" title="Permalink to this heading">#</a></h3>
 <p>Amazon API Gateway can perform request validation before forwarding a request
 to an integration. You can opt-in to this feature using the
 <code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait.</p>
@@ -1240,7 +1240,7 @@ declarations in a top-level <code class="docutils literal notranslate"><span cla
 OpenAPI extension.</p>
 </div>
 <div class="section" id="integrations">
-<span id="apigateway-integrations"></span><h3>Integrations<a class="headerlink" href="#integrations" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-integrations"></span><h3>Integrations<a class="headerlink" href="#integrations" title="Permalink to this heading">#</a></h3>
 <p>Smithy models can specify the backend integration configuration that
 Amazon API Gateway uses to for an operation.</p>
 <ul class="simple">
@@ -1257,7 +1257,7 @@ operation, then the operation uses a specific integration that overrides any
 integration inherited from a resource or service.</p>
 </div>
 <div class="section" id="cors-functionality">
-<h3>CORS functionality<a class="headerlink" href="#cors-functionality" title="Permalink to this headline">#</a></h3>
+<h3>CORS functionality<a class="headerlink" href="#cors-functionality" title="Permalink to this heading">#</a></h3>
 <p>When the <code class="docutils literal notranslate"><span class="pre">smithy.api#cors</span></code> trait is applied to a service and
 <code class="docutils literal notranslate"><span class="pre">apiGatewayType</span></code> is set to <code class="docutils literal notranslate"><span class="pre">REST</span></code>, then Smithy performs the following
 additions during the OpenAPI conversion:</p>
@@ -1270,7 +1270,7 @@ no gateway responses are defined in the OpenAPI model.</li>
 </ul>
 </div>
 <div class="section" id="authorizers">
-<span id="id1"></span><h3>Authorizers<a class="headerlink" href="#authorizers" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3>Authorizers<a class="headerlink" href="#authorizers" title="Permalink to this heading">#</a></h3>
 <p>The <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">x-amazon-apigateway-authorizer</a> security scheme extension is added
 using the <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> and
 <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-authorizer-trait"><span class="std std-ref">aws.apigateway#authorizer trait</span></a>.</p>
@@ -1451,7 +1451,7 @@ or operations using the <code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="section" id="aws-cloudformation-substitutions">
-<span id="openapi-cfn-substitutions"></span><h3>AWS CloudFormation substitutions<a class="headerlink" href="#aws-cloudformation-substitutions" title="Permalink to this headline">#</a></h3>
+<span id="openapi-cfn-substitutions"></span><h3>AWS CloudFormation substitutions<a class="headerlink" href="#aws-cloudformation-substitutions" title="Permalink to this heading">#</a></h3>
 <p>OpenAPI specifications used with Amazon API Gateway are commonly deployed
 through AWS CloudFormation. Values within an OpenAPI specification for things
 like the region a service is deployed and resources used within the service
@@ -1481,7 +1481,7 @@ configuration property to <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="section" id="amazon-cognito-user-pools">
-<h3>Amazon Cognito User Pools<a class="headerlink" href="#amazon-cognito-user-pools" title="Permalink to this headline">#</a></h3>
+<h3>Amazon Cognito User Pools<a class="headerlink" href="#amazon-cognito-user-pools" title="Permalink to this heading">#</a></h3>
 <p>Smithy adds Cognito User Pool based authentication to the OpenAPI model when
 the <a class="reference internal" href="../spec/aws/aws-auth.html#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> is added to a service shape.
 When this trait is present, Smithy will add a <code class="docutils literal notranslate"><span class="pre">securitySchemes</span></code> components
@@ -1507,7 +1507,7 @@ entry:</p>
 from the trait.</p>
 </div>
 <div class="section" id="amazon-api-gateway-api-key-usage-plans">
-<h3>Amazon API Gateway API key usage plans<a class="headerlink" href="#amazon-api-gateway-api-key-usage-plans" title="Permalink to this headline">#</a></h3>
+<h3>Amazon API Gateway API key usage plans<a class="headerlink" href="#amazon-api-gateway-api-key-usage-plans" title="Permalink to this heading">#</a></h3>
 <p>Smithy enables <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">API Gateway's API key usage plans</a> when a scheme based on the
 <a class="reference internal" href="../spec/core/auth-traits.html#httpapikeyauth-trait"><span class="std std-ref">httpApiKeyAuth trait</span></a> is set and configured as <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-authorizers-trait"><span class="std std-ref">an authorizer</span></a> with no <code class="docutils literal notranslate"><span class="pre">type</span></code> property set.</p>
 <p>The following Smithy model enables API Gateway's API key usage plans on the
@@ -1532,7 +1532,7 @@ from the trait.</p>
 </div>
 </div>
 <div class="section" id="other-traits-that-influence-api-gateway">
-<span id="other-traits"></span><h3>Other traits that influence API Gateway<a class="headerlink" href="#other-traits-that-influence-api-gateway" title="Permalink to this headline">#</a></h3>
+<span id="other-traits"></span><h3>Other traits that influence API Gateway<a class="headerlink" href="#other-traits-that-influence-api-gateway" title="Permalink to this heading">#</a></h3>
 <dl class="docutils">
 <dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code></dt><dd>Specifies the source of the caller identifier that will be used to
 throttle API methods that require a key. This trait is converted into
@@ -1548,7 +1548,7 @@ this service.</p>
 </div>
 </div>
 <div class="section" id="converting-to-openapi-with-code">
-<h2>Converting to OpenAPI with code<a class="headerlink" href="#converting-to-openapi-with-code" title="Permalink to this headline">#</a></h2>
+<h2>Converting to OpenAPI with code<a class="headerlink" href="#converting-to-openapi-with-code" title="Permalink to this heading">#</a></h2>
 <p>Developers that need more advanced control over the Smithy to OpenAPI
 conversion can use the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-openapi</span></code> Java library
 to perform the conversion.</p>
@@ -1558,7 +1558,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-code-build-gradle" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1688,7 +1688,9 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS CloudFormation traits" href="aws-cloudformation.html" /><link rel="prev" title="AWS IAM traits" href="aws-iam.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Amazon API Gateway traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="amazon-api-gateway-traits">
-<h1>Amazon API Gateway traits<a class="headerlink" href="#amazon-api-gateway-traits" title="Permalink to this headline">#</a></h1>
+<h1>Amazon API Gateway traits<a class="headerlink" href="#amazon-api-gateway-traits" title="Permalink to this heading">#</a></h1>
 <p>Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.</p>
 <div class="section" id="aws-apigateway-apikeysource-trait">
-<span id="aws-apigateway-apikeysource-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeysource-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-apikeysource-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeysource-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specifies the source of the caller identifier that will be used to
 throttle API methods that require a key.</dd>
@@ -376,7 +376,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-authorizers-trait">
-<span id="aws-apigateway-authorizers-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizers-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-authorizers-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizers-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">Lambda authorizers</a> to attach to the authentication schemes defined on
 this service.</dd>
@@ -523,7 +523,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-authorizer-trait">
-<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Applies a Lambda authorizer to a service, resource, or operation.
 Authorizers are resolved hierarchically: an operation inherits
@@ -542,7 +542,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-requestvalidator-trait">
-<span id="aws-apigateway-requestvalidator-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-requestvalidator-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Opts-in to Amazon API Gateway request validation for a service or
 operation.</dd>
@@ -618,7 +618,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-integration-trait">
-<span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that integrates with an actual
 backend.</dd>
@@ -810,7 +810,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-mockintegration-trait">
-<span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that returns a mock response.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
@@ -916,11 +916,11 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="shared-trait-data-types">
-<h2>Shared trait data types<a class="headerlink" href="#shared-trait-data-types" title="Permalink to this headline">#</a></h2>
+<h2>Shared trait data types<a class="headerlink" href="#shared-trait-data-types" title="Permalink to this heading">#</a></h2>
 <p>The following shapes are used throughout the Smithy API Gateway traits
 definitions.</p>
 <div class="section" id="contenthandling-string">
-<span id="apigateway-content-handling"></span><h3>ContentHandling string<a class="headerlink" href="#contenthandling-string" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-content-handling"></span><h3>ContentHandling string<a class="headerlink" href="#contenthandling-string" title="Permalink to this heading">#</a></h3>
 <p>Defines the payload conversion handling of a request or response.
 Valid values are:</p>
 <ul class="simple">
@@ -934,7 +934,7 @@ without modification.</li>
 </ul>
 </div>
 <div class="section" id="requestparameters-structure">
-<span id="apigateway-requestparameters"></span><h3>requestParameters structure<a class="headerlink" href="#requestparameters-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-requestparameters"></span><h3>requestParameters structure<a class="headerlink" href="#requestparameters-structure" title="Permalink to this heading">#</a></h3>
 <p>Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
 they are referenced.</p>
@@ -979,7 +979,7 @@ header (x-userid), and path parameters (op), respectively.</p>
 </div>
 </div>
 <div class="section" id="requesttemplates-structure">
-<span id="apigateway-requesttemplates"></span><h3>requestTemplates structure<a class="headerlink" href="#requesttemplates-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-requesttemplates"></span><h3>requestTemplates structure<a class="headerlink" href="#requesttemplates-structure" title="Permalink to this heading">#</a></h3>
 <p>Specifies mapping templates for a request payload of the specified media types.</p>
 <p><strong>Properties</strong></p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1015,7 +1015,7 @@ header (x-userid), and path parameters (op), respectively.</p>
 </div>
 </div>
 <div class="section" id="responses-structure">
-<span id="apigateway-responses"></span><h3>responses structure<a class="headerlink" href="#responses-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-responses"></span><h3>responses structure<a class="headerlink" href="#responses-structure" title="Permalink to this heading">#</a></h3>
 <p>Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.</p>
 <p><strong>Properties</strong></p>
@@ -1081,7 +1081,7 @@ property on the integration response's payload.</p>
 </div>
 </div>
 <div class="section" id="response-structure">
-<span id="apigateway-response-structure"></span><h3>response structure<a class="headerlink" href="#response-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-structure"></span><h3>response structure<a class="headerlink" href="#response-structure" title="Permalink to this heading">#</a></h3>
 <p>Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.</p>
 <p><strong>Properties</strong></p>
@@ -1141,7 +1141,7 @@ redirect URL from the integration response in the method's Location header.</p>
 </div>
 </div>
 <div class="section" id="response-templates-structure">
-<span id="apigateway-response-templates-structure"></span><h3>Response templates structure<a class="headerlink" href="#response-templates-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-templates-structure"></span><h3>Response templates structure<a class="headerlink" href="#response-templates-structure" title="Permalink to this heading">#</a></h3>
 <p>Specifies mapping templates for a response payload of the specified
 media types.</p>
 <p><strong>Properties</strong></p>
@@ -1182,7 +1182,7 @@ information about creating a mapping template, see
 </div>
 </div>
 <div class="section" id="response-parameters-structure">
-<span id="apigateway-response-parameters-structure"></span><h3>Response parameters structure<a class="headerlink" href="#response-parameters-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-parameters-structure"></span><h3>Response parameters structure<a class="headerlink" href="#response-parameters-structure" title="Permalink to this heading">#</a></h3>
 <p>Specifies mappings from integration method response parameters to method
 response parameters. Only the <code class="docutils literal notranslate"><span class="pre">header</span></code> and <code class="docutils literal notranslate"><span class="pre">body</span></code> types of the integration
 response parameters can be mapped to the <code class="docutils literal notranslate"><span class="pre">header</span></code> type of the method
@@ -1317,7 +1317,9 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

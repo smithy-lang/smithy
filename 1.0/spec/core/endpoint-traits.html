@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="14. Selectors" href="selectors.html" /><link rel="prev" title="12. XML binding traits" href="xml-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>13. Endpoint Traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="endpoint-traits">
-<span id="id1"></span><h1><span class="section-number">13. </span>Endpoint Traits<a class="headerlink" href="#endpoint-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1><span class="section-number">13. </span>Endpoint Traits<a class="headerlink" href="#endpoint-traits" title="Permalink to this heading">#</a></h1>
 <p>Smithy provides various endpoint binding traits that can be used to configure
 request endpoints.</p>
 <div class="section" id="endpoint-trait">
-<span id="smithy-api-endpoint-trait"></span><span id="id2"></span><h2><span class="section-number">13.1. </span><code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait<a class="headerlink" href="#endpoint-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-endpoint-trait"></span><span id="id2"></span><h2><span class="section-number">13.1. </span><code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait<a class="headerlink" href="#endpoint-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Configures a custom operation endpoint.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
@@ -329,7 +329,7 @@ request endpoints.</p>
 <tr class="row-even"><td>hostPrefix</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><p class="first"><strong>Required</strong> The <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property defines a template that expands
-to a valid <em>host</em> as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-3.2.2"><strong>RFC 3986#section-3.2.2</strong></a>.
+to a valid <em>host</em> as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3986.html#section-3.2.2"><strong>RFC 3986#section-3.2.2</strong></a>.
 <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> MAY contain <a class="reference internal" href="#endpoint-labels"><span class="std std-ref">label placeholders</span></a>
 that reference top-level input members of the operation marked with the
 <a class="reference internal" href="#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>. The <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> MUST NOT contain a scheme,
@@ -364,7 +364,7 @@ a domain that you do not control.</p>
 </pre></div>
 </div>
 <div class="section" id="labels">
-<span id="endpoint-labels"></span><h3><span class="section-number">13.1.1. </span>Labels<a class="headerlink" href="#labels" title="Permalink to this headline">#</a></h3>
+<span id="endpoint-labels"></span><h3><span class="section-number">13.1.1. </span>Labels<a class="headerlink" href="#labels" title="Permalink to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> patterns MAY contain label placeholders. <em class="dfn">Labels</em> consist
 of label name characters surrounded by open and closed braces (for example,
 &quot;{label_name}&quot; is a label and <code class="docutils literal notranslate"><span class="pre">label_name</span></code> is the label name). Every label
@@ -498,7 +498,7 @@ invalid because the <code class="docutils literal notranslate"><span class="pre"
 </div></div>
 </div>
 <div class="section" id="client-behavior">
-<span id="endpoint-clientbehavior"></span><h3><span class="section-number">13.1.2. </span>Client Behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">#</a></h3>
+<span id="endpoint-clientbehavior"></span><h3><span class="section-number">13.1.2. </span>Client Behavior<a class="headerlink" href="#client-behavior" title="Permalink to this heading">#</a></h3>
 <p>If an API operation is decorated with an endpoint trait, a client MUST expand
 the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> template and prepend the expanded value to the client's
 endpoint host prior to its use. Clients MUST fail when expanding a
@@ -581,7 +581,7 @@ header will contain the value <code class="docutils literal notranslate"><span c
 </div>
 </div>
 <div class="section" id="hostlabel-trait">
-<span id="smithy-api-hostlabel-trait"></span><span id="id3"></span><h2><span class="section-number">13.2. </span><code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait<a class="headerlink" href="#hostlabel-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-hostlabel-trait"></span><span id="id3"></span><h2><span class="section-number">13.2. </span><code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait<a class="headerlink" href="#hostlabel-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a top-level operation input structure member to a label in the
 hostPrefix of an endpoint trait.</dd>
@@ -736,7 +736,9 @@ to an operation marked with the <a class="reference internal" href="#endpoint-tr
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

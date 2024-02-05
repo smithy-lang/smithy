@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Using the Semantic Model" href="using-the-semantic-model.html" /><link rel="prev" title="Generating Code" href="generating-code.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Decoupling Codegen with Symbols - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -203,24 +203,24 @@
 <li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -337,7 +337,7 @@
         </div>
         <article role="main">
           <div class="section" id="decoupling-codegen-with-symbols">
-<h1>Decoupling Codegen with Symbols<a class="headerlink" href="#decoupling-codegen-with-symbols" title="Permalink to this headline">#</a></h1>
+<h1>Decoupling Codegen with Symbols<a class="headerlink" href="#decoupling-codegen-with-symbols" title="Permalink to this heading">#</a></h1>
 <p><a class="reference internal" href="../glossary.html#term-Symbols"><span class="xref std std-term">Symbols</span></a> are used in Smithy code generators to refer to qualified types
 in the target programming language. Symbols provide a layer of abstraction
 between the code being generated and the logic used to determine:</p>
@@ -348,7 +348,7 @@ between the code being generated and the logic used to determine:</p>
 <li>the imports needed to define and reference a type</li>
 </ul>
 <div class="section" id="quick-symbol-example">
-<h2>Quick Symbol example<a class="headerlink" href="#quick-symbol-example" title="Permalink to this headline">#</a></h2>
+<h2>Quick Symbol example<a class="headerlink" href="#quick-symbol-example" title="Permalink to this heading">#</a></h2>
 <p>The following example uses the built-in &quot;<code class="docutils literal notranslate"><span class="pre">T</span></code>&quot; formatter of
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>
 to write symbols to the generated code and automatically add imports to
@@ -382,7 +382,7 @@ the file:</p>
 </div>
 </div>
 <div class="section" id="benefits-of-symbols">
-<h2>Benefits of Symbols<a class="headerlink" href="#benefits-of-symbols" title="Permalink to this headline">#</a></h2>
+<h2>Benefits of Symbols<a class="headerlink" href="#benefits-of-symbols" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li>Refactoring. Symbols make it easy to refactor how shapes are generated
 and the file location of where shapes are generated.</li>
@@ -407,7 +407,7 @@ templates passed to CodeWriter more succinct.</li>
 </ul>
 </div>
 <div class="section" id="referencing-symbols-using-symbolreference">
-<h2>Referencing Symbols using SymbolReference<a class="headerlink" href="#referencing-symbols-using-symbolreference" title="Permalink to this headline">#</a></h2>
+<h2>Referencing Symbols using SymbolReference<a class="headerlink" href="#referencing-symbols-using-symbolreference" title="Permalink to this heading">#</a></h2>
 <p>A <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolReference.java">SymbolReference</a> is used to refer to another Symbol. For example, a
 SymbolReference is used when a Symbol uses generic type parameters. The
 following example is a Symbol created for a list of
@@ -430,7 +430,7 @@ following example is a Symbol created for a list of
 </pre></div>
 </div>
 <div class="section" id="aliasing-symbols">
-<h3>Aliasing Symbols<a class="headerlink" href="#aliasing-symbols" title="Permalink to this headline">#</a></h3>
+<h3>Aliasing Symbols<a class="headerlink" href="#aliasing-symbols" title="Permalink to this heading">#</a></h3>
 <p>An alias can be given to SymbolReference to deconflict the symbol with
 other symbols already in the target namespace. For example, let's say
 you need to reference a type that uses a fairly common name, so you
@@ -480,7 +480,7 @@ aliases.</p>
 </div>
 </div>
 <div class="section" id="symbol-dependencies">
-<h2>Symbol dependencies<a class="headerlink" href="#symbol-dependencies" title="Permalink to this headline">#</a></h2>
+<h2>Symbol dependencies<a class="headerlink" href="#symbol-dependencies" title="Permalink to this heading">#</a></h2>
 <p>Symbols can be used to automatically generate dependency closures and
 configuration files based on the symbols written to a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>.
 This allows generated code to depend on only the closure of dependencies
@@ -528,7 +528,7 @@ TypeScript type definitions, so two dependencies were added to the
 created <code class="docutils literal notranslate"><span class="pre">big</span></code> symbol: one that is a normal &quot;dependencies&quot; and one that
 is a &quot;<code class="docutils literal notranslate"><span class="pre">devDependencies</span></code>&quot;.</p>
 <div class="section" id="symboldependency-best-practices">
-<h3><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices<a class="headerlink" href="#symboldependency-best-practices" title="Permalink to this headline">#</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices<a class="headerlink" href="#symboldependency-best-practices" title="Permalink to this heading">#</a></h3>
 <p>Creating a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> in each place the dependency is needed
 spreads them out all over a project, making it difficult to change
 dependencies. Rather than create a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> each time they
@@ -582,7 +582,7 @@ dependencies that are needed by every client.</li>
 </div>
 </div>
 <div class="section" id="tracking-externally-controlled-dependencies">
-<h3>Tracking externally controlled dependencies<a class="headerlink" href="#tracking-externally-controlled-dependencies" title="Permalink to this headline">#</a></h3>
+<h3>Tracking externally controlled dependencies<a class="headerlink" href="#tracking-externally-controlled-dependencies" title="Permalink to this heading">#</a></h3>
 <p>A <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/DependencyTracker.java">DependencyTracker</a> can be used to track available dependencies using a
 JSON file that can be then used to provide version numbers to an enum. This
 can be useful if version numbers are maintained outside a code generator or
@@ -620,7 +620,7 @@ need to be translated from other formats or lock files. For example:</p>
 </div>
 </div>
 <div class="section" id="converting-shapes-to-symbols-with-symbolproviders">
-<h2>Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#converting-shapes-to-symbols-with-symbolproviders" title="Permalink to this headline">#</a></h2>
+<h2>Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#converting-shapes-to-symbols-with-symbolproviders" title="Permalink to this heading">#</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is used to convert Smithy shapes to Symbols. A
 <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is the brains of a Smithy code generator; it tells
 the code generator the types used to represent shapes in the model, the
@@ -709,7 +709,7 @@ language are accounted for during codegen.</p>
 </pre></div>
 </div>
 <div class="section" id="automatically-handling-reserved-words">
-<h3>Automatically handling reserved words<a class="headerlink" href="#automatically-handling-reserved-words" title="Permalink to this headline">#</a></h3>
+<h3>Automatically handling reserved words<a class="headerlink" href="#automatically-handling-reserved-words" title="Permalink to this heading">#</a></h3>
 <p>Smithy code generators are expected to generate valid code for the
 <a class="reference internal" href="../glossary.html#term-Target-environment"><span class="xref std std-term">target environment</span></a>. Service teams defining Smithy models should not
 need to know the intricacies of how Smithy models are converted to every
@@ -792,7 +792,7 @@ reserved words file case insensitively using
 </div>
 </div>
 <div class="section" id="composing-symbolproviders">
-<h3>Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#composing-symbolproviders" title="Permalink to this headline">#</a></h3>
+<h3>Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#composing-symbolproviders" title="Permalink to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> has a very simple interface, making it easy to
 compose functionality using decorators. Decorators can be used to do
 things like add caching or add more contextual data to Symbols.</p>
@@ -819,14 +819,14 @@ to every Symbol:</p>
 </div>
 </div>
 <div class="section" id="integrating-symbols-into-your-symbolwriter">
-<h2>Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code><a class="headerlink" href="#integrating-symbols-into-your-symbolwriter" title="Permalink to this headline">#</a></h2>
+<h2>Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code><a class="headerlink" href="#integrating-symbols-into-your-symbolwriter" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> provides some building blocks to help integrate Symbols
 into a particular programming language, but the actual gluing together
 of abstractions, generating import statements, generating dependencies,
 accounting for aliasing, etc. is an exercise left to each language
 implementation of Smithy.</p>
 <div class="section" id="create-an-importcontainer-for-your-language">
-<h3>Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language<a class="headerlink" href="#create-an-importcontainer-for-your-language" title="Permalink to this headline">#</a></h3>
+<h3>Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language<a class="headerlink" href="#create-an-importcontainer-for-your-language" title="Permalink to this heading">#</a></h3>
 <p>An <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ImportContainer.java">ImportContainer</a> is used to track the imports associated with a
 specific file being generated. Each time a <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> is written to a
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>, and each call to methods like <code class="docutils literal notranslate"><span class="pre">SymbolWriter#addImport</span></code>,
@@ -892,7 +892,7 @@ is added to a map of namespaces to a map of alias → target name.</p>
 write out imports before writing out the rest of the code.</p>
 </div>
 <div class="section" id="create-a-symbolwriter-subclass">
-<h3>Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass<a class="headerlink" href="#create-a-symbolwriter-subclass" title="Permalink to this headline">#</a></h3>
+<h3>Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass<a class="headerlink" href="#create-a-symbolwriter-subclass" title="Permalink to this heading">#</a></h3>
 <p>Each language should create a subclass of <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a> that
 automatically manages imports, symbols, and writes documentation
 strings.</p>
@@ -925,7 +925,7 @@ created.</p>
 </div>
 </div>
 <div class="section" id="use-writerdelegator-to-create-writers">
-<h3>Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers<a class="headerlink" href="#use-writerdelegator-to-create-writers" title="Permalink to this headline">#</a></h3>
+<h3>Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers<a class="headerlink" href="#use-writerdelegator-to-create-writers" title="Permalink to this heading">#</a></h3>
 <p>In order to track the dependencies used while generating code, and to
 add code interceptors to each created <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>, code generators
 should use a <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/WriterDelegator.java">WriterDelegator</a> to create <code class="docutils literal notranslate"><span class="pre">SymbolWriters</span></code>.</p>
@@ -974,9 +974,9 @@ manifests for the created code.</p>
 </div>
 </div>
 <div class="section" id="faq">
-<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">#</a></h2>
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading">#</a></h2>
 <div class="section" id="how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies">
-<h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Permalink to this headline">#</a></h3>
+<h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Permalink to this heading">#</a></h3>
 <p>Use typed property bags to store additional information. For example:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Symbol</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">)</span>
@@ -996,7 +996,7 @@ or <code class="docutils literal notranslate"><span class="pre">SymbolDependency
 </div>
 </div>
 <div class="section" id="does-symbolwriter-require-one-namespace-per-file">
-<h3>Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?<a class="headerlink" href="#does-symbolwriter-require-one-namespace-per-file" title="Permalink to this headline">#</a></h3>
+<h3>Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?<a class="headerlink" href="#does-symbolwriter-require-one-namespace-per-file" title="Permalink to this heading">#</a></h3>
 <p>No, but that's the easiest way to use <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>. Your language's
 subclass can be setup in a way that it uses multiple <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
 instances per/namespace in a single file. For example, an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
@@ -1113,7 +1113,9 @@ abstract exercise left up to the implementation.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

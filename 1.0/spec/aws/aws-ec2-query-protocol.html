@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS Service Customizations" href="customizations/index.html" /><link rel="prev" title="AWS query protocol" href="aws-query-protocol.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS EC2 query protocol - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,10 +301,10 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-ec2-query-protocol">
-<span id="id1"></span><h1>AWS EC2 query protocol<a class="headerlink" href="#aws-ec2-query-protocol" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>AWS EC2 query protocol<a class="headerlink" href="#aws-ec2-query-protocol" title="Permalink to this heading">#</a></h1>
 <p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2</span></code> protocol.</p>
 <div class="section" id="aws-protocols-ec2query-trait">
-<span id="aws-protocols-ec2query-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> trait<a class="headerlink" href="#aws-protocols-ec2query-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-ec2query-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> trait<a class="headerlink" href="#aws-protocols-ec2query-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds support for an HTTP protocol that sends requests in a
 <code class="docutils literal notranslate"><span class="pre">application/x-www-form-url-encoded</span></code> body and responses in XML
@@ -351,7 +351,7 @@ HTTP binding traits MUST be ignored if they are present.</li>
 </div></div>
 </div>
 <div class="section" id="aws-protocols-ec2queryname-trait">
-<span id="aws-protocols-ec2queryname-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait<a class="headerlink" href="#aws-protocols-ec2queryname-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-protocols-ec2queryname-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait<a class="headerlink" href="#aws-protocols-ec2queryname-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Allows a serialized query key to differ from a structure member name when
 used in the model.</dd>
@@ -404,7 +404,7 @@ protocol is:</p>
 </pre></div>
 </div>
 <div class="section" id="query-key-resolution">
-<span id="aws-protocols-ec2queryname-query-key-naming"></span><h3>Query key resolution<a class="headerlink" href="#query-key-resolution" title="Permalink to this headline">#</a></h3>
+<span id="aws-protocols-ec2queryname-query-key-naming"></span><h3>Query key resolution<a class="headerlink" href="#query-key-resolution" title="Permalink to this heading">#</a></h3>
 <p>The key component used to serialize a member in a request in <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> is
 resolved using the following process:</p>
 <ol class="arabic">
@@ -441,7 +441,7 @@ member with the first letter capitalized, if present.</p>
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">#</a></h2>
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> protocol supports the following traits
 that affect serialization:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -507,11 +507,11 @@ to services.</td>
 </div>
 </div>
 <div class="section" id="request-serialization">
-<h2>Request serialization<a class="headerlink" href="#request-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Request serialization<a class="headerlink" href="#request-serialization" title="Permalink to this heading">#</a></h2>
 <p>Requests SHALL be sent to the root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>). Requests SHALL use a POST
 request and a body that contains input parameters serialized with a
 Content-Type of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>. All keys and
-values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
+values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
 a Content-Length header; this protocol does not support chunked
 Transfer-Encoding.</p>
 <p>Requests MUST include the following key value pairs in the serialized body:</p>
@@ -544,7 +544,7 @@ concatenated with the following rules:</p>
 <li>&quot;.&quot; is used to separate member name segments within keys.</li>
 </ul>
 <div class="section" id="x-www-form-urlencoded-shape-serialization">
-<h3>x-www-form-urlencoded shape serialization<a class="headerlink" href="#x-www-form-urlencoded-shape-serialization" title="Permalink to this headline">#</a></h3>
+<h3>x-www-form-urlencoded shape serialization<a class="headerlink" href="#x-www-form-urlencoded-shape-serialization" title="Permalink to this heading">#</a></h3>
 <p>Simple shapes are serialized according to the following rules:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -649,14 +649,14 @@ single member can be set to a non-null value.</td>
 </div>
 </div>
 <div class="section" id="examples">
-<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h3>
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h3>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">These examples are non-exhaustive. See the <a class="reference internal" href="#ec2query-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a>
 for a suite of compliance tests for the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol.</p>
 </div>
 <div class="section" id="structures-and-unions">
-<h4>Structures and Unions<a class="headerlink" href="#structures-and-unions" title="Permalink to this headline">#</a></h4>
+<h4>Structures and Unions<a class="headerlink" href="#structures-and-unions" title="Permalink to this heading">#</a></h4>
 <p>Each member value provided for the shape is serialized as a separate key
 with a &quot;.&quot; separator and the member name appended to the container's key.
 See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
@@ -696,7 +696,7 @@ for how to serialize a property using a custom name. Members with null values ar
 </div>
 </div>
 <div class="section" id="collections">
-<h4>Collections<a class="headerlink" href="#collections" title="Permalink to this headline">#</a></h4>
+<h4>Collections<a class="headerlink" href="#collections" title="Permalink to this heading">#</a></h4>
 <p>Each value provided in the collection is serialized as a separate key with
 a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
 container's key.</p>
@@ -740,7 +740,7 @@ container's key.</p>
 </div>
 </div>
 <div class="section" id="response-serialization">
-<h2>Response serialization<a class="headerlink" href="#response-serialization" title="Permalink to this headline">#</a></h2>
+<h2>Response serialization<a class="headerlink" href="#response-serialization" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol serializes XML responses within an XML root node with
 the name of the operation's output suffixed with &quot;Response&quot;, which contains the
 contents of the successful response.</p>
@@ -753,7 +753,7 @@ following is a sample response to an operation named <code class="docutils liter
 </pre></div>
 </div>
 <div class="section" id="xml-shape-serialization">
-<h3>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">#</a></h3>
+<h3>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -861,7 +861,7 @@ including examples and behaviors when using multiple XML traits.</p>
 </div>
 </div>
 <div class="section" id="operation-error-serialization">
-<span id="ec2query-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">#</a></h2>
+<span id="ec2query-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this heading">#</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol are wrapped within an XML root
 node named <code class="docutils literal notranslate"><span class="pre">Response</span></code>. Inside this, there is an <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag containing
 the actual error, and a <code class="docutils literal notranslate"><span class="pre">RequestId</span></code> tag holding the request ID. Nested inside
@@ -892,7 +892,7 @@ serialized in the response.</p>
 hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="non-numeric-float-and-double-serialization">
-<span id="ec2query-non-numeric-float-serialization"></span><h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this headline">#</a></h2>
+<span id="ec2query-non-numeric-float-serialization"></span><h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this heading">#</a></h2>
 <p>Smithy floats and doubles are defined by IEEE-754, which includes special values
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol treats those special values as
@@ -923,7 +923,7 @@ strings with the following values:</p>
 </div>
 </div>
 <div class="section" id="protocol-compliance-tests">
-<span id="ec2query-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
+<span id="ec2query-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this heading">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query</a></p>
 <p>These compliance tests define a model that is used to define test cases and
@@ -931,7 +931,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add specifications, protocol examples, etc.</em></p>
 </div>
 <div class="section" id="error-shape-renaming">
-<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this heading">#</a></h2>
 <p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
 the <a class="reference internal" href="../core/model.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
 not allowed to rename error shapes (shapes with <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
@@ -1045,7 +1045,9 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

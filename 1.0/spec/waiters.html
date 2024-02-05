@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" /><link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Waiters - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="waiters">
-<span id="id1"></span><h1>Waiters<a class="headerlink" href="#waiters" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>Waiters<a class="headerlink" href="#waiters" title="Permalink to this heading">#</a></h1>
 <p>Waiters are a client-side abstraction used to poll a resource until a desired
 state is reached, or until it is determined that the resource will never
 enter into the desired state. This is a common task when working with
@@ -321,7 +321,7 @@ following client pseudocode:</p>
 </pre></div>
 </div>
 <div class="section" id="smithy-waiters-waitable-trait">
-<span id="smithy-waiters-waitable-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait<a class="headerlink" href="#smithy-waiters-waitable-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-waiters-waitable-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait<a class="headerlink" href="#smithy-waiters-waitable-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation has various named &quot;waiters&quot; that can be used
 to poll a resource until it enters a desired state.</dd>
@@ -380,7 +380,7 @@ delaying with exponential backoff until the total allowed time to wait
 is exceeded.</li>
 </ol>
 <div class="section" id="waiter-names">
-<span id="id3"></span><h3>Waiter names<a class="headerlink" href="#waiter-names" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3>Waiter names<a class="headerlink" href="#waiter-names" title="Permalink to this heading">#</a></h3>
 <p>Waiter names MUST be defined using UpperCamelCase and only contain
 alphanumeric characters. That is, waiters MUST adhere to the following
 ABNF:</p>
@@ -400,7 +400,7 @@ without needing to consider duplicate waiter names across operations.</p>
 </div>
 </div>
 <div class="section" id="waiter-workflow">
-<h2>Waiter workflow<a class="headerlink" href="#waiter-workflow" title="Permalink to this headline">#</a></h2>
+<h2>Waiter workflow<a class="headerlink" href="#waiter-workflow" title="Permalink to this heading">#</a></h2>
 <p>Implementations MUST require callers to provide the total amount of time
 they are willing to wait for a waiter to complete. Requiring the caller
 to set a deadline removes any surprises as to how long a waiter can
@@ -430,7 +430,7 @@ waiting.</li>
 described in <a class="reference internal" href="#waiter-retries"><span class="std std-ref">Waiter retries</span></a>, and continue to step 1.</li>
 </ol>
 <div class="section" id="waiter-retries">
-<span id="id4"></span><h3>Waiter retries<a class="headerlink" href="#waiter-retries" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3>Waiter retries<a class="headerlink" href="#waiter-retries" title="Permalink to this heading">#</a></h3>
 <p>Waiter implementations MUST delay for a period of time before attempting a
 retry. The amount of time a waiter delays between retries is computed using
 exponential backoff with jitter through the following algorithm:</p>
@@ -565,7 +565,7 @@ example table above.</p>
 </div>
 </div>
 <div class="section" id="why-exponential-backoff-with-jitter">
-<h3>Why exponential backoff with jitter?<a class="headerlink" href="#why-exponential-backoff-with-jitter" title="Permalink to this headline">#</a></h3>
+<h3>Why exponential backoff with jitter?<a class="headerlink" href="#why-exponential-backoff-with-jitter" title="Permalink to this heading">#</a></h3>
 <p><a class="reference external" href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/#Jitter">Exponential backoff with full jitter</a> is used as opposed to other retry
 strategies like linear backoff because it should work for most use cases,
 balancing the cost to the caller spent waiting on a resource to stabilize,
@@ -588,7 +588,7 @@ using linear backoff.</p>
 </div>
 </div>
 <div class="section" id="waiter-structure">
-<span id="id5"></span><h2>Waiter structure<a class="headerlink" href="#waiter-structure" title="Permalink to this headline">#</a></h2>
+<span id="id5"></span><h2>Waiter structure<a class="headerlink" href="#waiter-structure" title="Permalink to this heading">#</a></h2>
 <p>A <em>waiter</em> defines a set of acceptors that are used to check if a resource
 has entered into a desired state.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -645,7 +645,7 @@ categorized and grouped.</td>
 </div>
 </div>
 <div class="section" id="acceptor-structure">
-<span id="waiter-acceptor"></span><h2>Acceptor structure<a class="headerlink" href="#acceptor-structure" title="Permalink to this headline">#</a></h2>
+<span id="waiter-acceptor"></span><h2>Acceptor structure<a class="headerlink" href="#acceptor-structure" title="Permalink to this heading">#</a></h2>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -675,7 +675,7 @@ that matches the requirements needed for a state transition.</td>
 </div>
 </div>
 <div class="section" id="acceptorstate-enum">
-<span id="waiter-acceptor-state"></span><h2>AcceptorState enum<a class="headerlink" href="#acceptorstate-enum" title="Permalink to this headline">#</a></h2>
+<span id="waiter-acceptor-state"></span><h2>AcceptorState enum<a class="headerlink" href="#acceptorstate-enum" title="Permalink to this heading">#</a></h2>
 <p>Acceptors cause a waiter to transition into one of the following states:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -706,7 +706,7 @@ implicit if no accepter causes a state transition.</td>
 </div>
 </div>
 <div class="section" id="matcher-union">
-<span id="waiter-matcher"></span><h2>Matcher union<a class="headerlink" href="#matcher-union" title="Permalink to this headline">#</a></h2>
+<span id="waiter-matcher"></span><h2>Matcher union<a class="headerlink" href="#matcher-union" title="Permalink to this heading">#</a></h2>
 <p>A <em>matcher</em> defines how an acceptor determines if it matches the current
 state of a resource. A matcher is a union where exactly one of the following
 members MUST be set:</p>
@@ -764,7 +764,7 @@ errors that are not defined in the model.</p>
 </div>
 </div>
 <div class="section" id="pathmatcher-structure">
-<span id="waiter-pathmatcher"></span><h2>PathMatcher structure<a class="headerlink" href="#pathmatcher-structure" title="Permalink to this headline">#</a></h2>
+<span id="waiter-pathmatcher"></span><h2>PathMatcher structure<a class="headerlink" href="#pathmatcher-structure" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">output</span></code> and <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matchers test the result of a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
 expression against an expected value. These matchers are structures that
 support the following members:</p>
@@ -801,7 +801,7 @@ be a valid <a class="reference internal" href="#pathcomparator-enum"><span class
 </table>
 </div>
 <div class="section" id="jmespath-data-model">
-<h3>JMESPath data model<a class="headerlink" href="#jmespath-data-model" title="Permalink to this headline">#</a></h3>
+<h3>JMESPath data model<a class="headerlink" href="#jmespath-data-model" title="Permalink to this heading">#</a></h3>
 <p>The data model exposed to <a class="reference external" href="https://jmespath.org/">JMESPath</a> for input and output structures is
 converted from Smithy types to <a class="reference external" href="https://jmespath.org/specification.html#data-types">JMESPath types</a> using the following
 conversion table:</p>
@@ -906,7 +906,7 @@ only a single member is set to a non-null value.</td></tr>
 </table>
 </div>
 <div class="section" id="jmespath-static-analysis">
-<h3>JMESPath static analysis<a class="headerlink" href="#jmespath-static-analysis" title="Permalink to this headline">#</a></h3>
+<h3>JMESPath static analysis<a class="headerlink" href="#jmespath-static-analysis" title="Permalink to this heading">#</a></h3>
 <p>Smithy implementations that can statically analyze JMESPath expressions
 MAY emit a <a class="reference internal" href="core/model-validation.html#validation"><span class="std std-ref">validation event</span></a> with an event ID of
 <code class="docutils literal notranslate"><span class="pre">WaitableTraitJmespathProblem</span></code> and a <a class="reference internal" href="core/model-validation.html#severity-definition"><span class="std std-ref">severity of DANGER</span></a>
@@ -921,7 +921,7 @@ return type of a <a class="reference internal" href="#pathcomparator-enum"><span
 </div>
 </div>
 <div class="section" id="pathcomparator-enum">
-<span id="id12"></span><h2>PathComparator enum<a class="headerlink" href="#pathcomparator-enum" title="Permalink to this headline">#</a></h2>
+<span id="id12"></span><h2>PathComparator enum<a class="headerlink" href="#pathcomparator-enum" title="Permalink to this heading">#</a></h2>
 <p>Each <code class="docutils literal notranslate"><span class="pre">PathMatcher</span></code> structure contains a <code class="docutils literal notranslate"><span class="pre">comparator</span></code> that is used to
 check the result of a JMESPath expression against an expected value. A
 comparator can be set to any of the following values:</p>
@@ -967,7 +967,7 @@ any value in the array is a string that equals an expected string.</td>
 </div>
 </div>
 <div class="section" id="waiter-examples">
-<h2>Waiter examples<a class="headerlink" href="#waiter-examples" title="Permalink to this headline">#</a></h2>
+<h2>Waiter examples<a class="headerlink" href="#waiter-examples" title="Permalink to this heading">#</a></h2>
 <p>This section provides examples for various features of waiters.</p>
 <p>The following example defines a <code class="docutils literal notranslate"><span class="pre">ThingExists</span></code> waiter that waits until the
 <code class="docutils literal notranslate"><span class="pre">status</span></code> member in the output of the <code class="docutils literal notranslate"><span class="pre">GetThing</span></code> operation returns
@@ -1054,11 +1054,11 @@ provided groups on input matches the number of provided groups on output:</p>
 </div>
 </div>
 <div class="section" id="waiter-best-practices">
-<span id="id13"></span><h2>Waiter best-practices<a class="headerlink" href="#waiter-best-practices" title="Permalink to this headline">#</a></h2>
+<span id="id13"></span><h2>Waiter best-practices<a class="headerlink" href="#waiter-best-practices" title="Permalink to this heading">#</a></h2>
 <p>The following non-normative section outlines best practices for defining
 and implementing waiters.</p>
 <div class="section" id="keep-jmespath-expressions-simple">
-<h3>Keep JMESPath expressions simple<a class="headerlink" href="#keep-jmespath-expressions-simple" title="Permalink to this headline">#</a></h3>
+<h3>Keep JMESPath expressions simple<a class="headerlink" href="#keep-jmespath-expressions-simple" title="Permalink to this heading">#</a></h3>
 <p>Overly complex <a class="reference external" href="https://jmespath.org/">JMESPath</a> expressions can easily lead to bugs. While static
 analysis of JMESPath expressions can give some level of confidence in
 expressions, it does not guarantee that the logic encoded in the
@@ -1067,7 +1067,7 @@ a particular use-case, consider if the API itself is overly complex and
 needs to be simplified.</p>
 </div>
 <div class="section" id="name-waiters-after-the-resource-and-state">
-<h3>Name waiters after the resource and state<a class="headerlink" href="#name-waiters-after-the-resource-and-state" title="Permalink to this headline">#</a></h3>
+<h3>Name waiters after the resource and state<a class="headerlink" href="#name-waiters-after-the-resource-and-state" title="Permalink to this heading">#</a></h3>
 <p>Waiters SHOULD be named after the resource name and desired state, for example
 <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt;&lt;StateName&gt;</span></code>. &quot;StateName&quot; SHOULD match the expected state
 name of the resource where possible. For example, if a &quot;Snapshot&quot; resource
@@ -1099,7 +1099,7 @@ and <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt
 </div>
 </div>
 <div class="section" id="do-not-model-implicit-acceptors">
-<h3>Do not model implicit acceptors<a class="headerlink" href="#do-not-model-implicit-acceptors" title="Permalink to this headline">#</a></h3>
+<h3>Do not model implicit acceptors<a class="headerlink" href="#do-not-model-implicit-acceptors" title="Permalink to this heading">#</a></h3>
 <p>Implicit acceptors are unnecessary and can quickly become incomplete as new
 resource states and errors are added. Waiters have 2 implicit
 <a class="reference internal" href="#waiter-acceptor"><span class="std std-ref">acceptors</span></a>:</p>
@@ -1146,7 +1146,7 @@ specific errors. For example, the following matcher is unnecessary:</p>
 </div>
 </div>
 <div class="section" id="only-model-terminal-failure-states">
-<h3>Only model terminal failure states<a class="headerlink" href="#only-model-terminal-failure-states" title="Permalink to this headline">#</a></h3>
+<h3>Only model terminal failure states<a class="headerlink" href="#only-model-terminal-failure-states" title="Permalink to this heading">#</a></h3>
 <p>Waiters SHOULD only model terminal failure states. A <em>terminal failure state</em>
 is a resource state in which the resource cannot transition to the desired
 success state without a user taking some explicit action. Only modeling
@@ -1329,7 +1329,9 @@ the <code class="docutils literal notranslate"><span class="pre">StartResource</
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

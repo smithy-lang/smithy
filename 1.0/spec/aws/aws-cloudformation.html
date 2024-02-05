@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS restJson1 protocol" href="aws-restjson1-protocol.html" /><link rel="prev" title="Amazon API Gateway traits" href="amazon-apigateway.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS CloudFormation traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="aws-cloudformation-traits">
-<span id="id1"></span><h1>AWS CloudFormation traits<a class="headerlink" href="#aws-cloudformation-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>AWS CloudFormation traits<a class="headerlink" href="#aws-cloudformation-traits" title="Permalink to this heading">#</a></h1>
 <p>CloudFormation traits are used to describe Smithy resources and their
 components so they can be converted to <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a>.</p>
 <p id="aws-cloudformation-overview"><a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a> are the standard method of <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">modeling a
@@ -313,7 +313,7 @@ in the translation, and provides a more complete depiction of a resource in its
 schema. These schemas can be utilized by the <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/what-is-cloudformation-cli.html">CloudFormation Command Line
 Interface</a> to build, register, and deploy <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">resource providers</a>.</p>
 <div class="section" id="aws-cloudformation-cfnresource-trait">
-<span id="aws-cloudformation-cfnresource-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnresource-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfnresource-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnresource-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a Smithy resource is a CloudFormation resource.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
@@ -395,7 +395,7 @@ cannot be automatically converted to CloudFormation properties.</p>
 </div>
 </div></div>
 <div class="section" id="resource-properties">
-<span id="aws-cloudformation-property-deriviation"></span><h3>Resource properties<a class="headerlink" href="#resource-properties" title="Permalink to this headline">#</a></h3>
+<span id="aws-cloudformation-property-deriviation"></span><h3>Resource properties<a class="headerlink" href="#resource-properties" title="Permalink to this heading">#</a></h3>
 <p>Smithy will automatically derive <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">property</a> information for resources with
 the <code class="docutils literal notranslate"><span class="pre">&#64;aws.cloudformation#cfnResource</span></code> trait applied.</p>
 <p>A resource's properties include the <a class="reference internal" href="../core/model.html#resource-identifiers"><span class="std std-ref">resource's identifiers</span></a>
@@ -418,7 +418,7 @@ derived.</p>
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnexcludeproperty-trait">
-<span id="aws-cloudformation-cfnexcludeproperty-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnExcludeProperty</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnexcludeproperty-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfnexcludeproperty-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnExcludeProperty</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnexcludeproperty-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that structure member should not be included as a <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">property</a> in
 generated CloudFormation resource definitions.</dd>
@@ -473,7 +473,7 @@ a CloudFormation resource.</p>
 </div>
 </div>
 <div class="section" id="property-mutability">
-<span id="aws-cloudformation-mutability-derivation"></span><h2>Property mutability<a class="headerlink" href="#property-mutability" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-mutability-derivation"></span><h2>Property mutability<a class="headerlink" href="#property-mutability" title="Permalink to this heading">#</a></h2>
 <p>Any property derived for a resource will have its mutability automatically
 derived as well. CloudFormation resource properties can have the following
 mutability settings:</p>
@@ -626,7 +626,7 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnmutability-trait">
-<span id="aws-cloudformation-cfnmutability-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnmutability-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfnmutability-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnmutability-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates an explicit CloudFormation mutability of the structure member
 when part of a CloudFormation resource.</dd>
@@ -818,7 +818,7 @@ derivable <code class="docutils literal notranslate"><span class="pre">secret</s
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnname-trait">
-<span id="aws-cloudformation-cfnname-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnname-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfnname-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnname-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Allows a CloudFormation <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">resource property</a> name to differ from a
 structure member name used in the model.</dd>
@@ -847,7 +847,7 @@ structure member name used in the model.</dd>
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnadditionalidentifier-trait">
-<span id="aws-cloudformation-cfnadditionalidentifier-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnadditionalidentifier-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfnadditionalidentifier-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnadditionalidentifier-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the CloudFormation property generated from this member is an
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-cfnAdditionalIdentifiers">additional identifier</a> for the resource.</dd>
@@ -897,7 +897,7 @@ input to an operation bound to the <code class="docutils literal notranslate"><s
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfndefaultvalue-trait">
-<span id="aws-cloudformation-cfndefaultvalue-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnDefaultValue</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfndefaultvalue-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-cloudformation-cfndefaultvalue-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnDefaultValue</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfndefaultvalue-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the member annotated has a default value for the resource.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">resource</span> <span class="pre">&gt;</span> <span class="pre">operation</span> <span class="pre">-[output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
@@ -951,7 +951,7 @@ that the <code class="docutils literal notranslate"><span class="pre">fooAlias</
 </div>
 </div>
 <div class="section" id="example-model">
-<h2>Example model<a class="headerlink" href="#example-model" title="Permalink to this headline">#</a></h2>
+<h2>Example model<a class="headerlink" href="#example-model" title="Permalink to this heading">#</a></h2>
 <p>The above traits and behaviors culminate in the ability to generate
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a> from a Smithy model. The following example
 model utilizes all of these traits to express how a complex Smithy resource
@@ -1313,7 +1313,9 @@ can be annotated for CloudFormation resource generation.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

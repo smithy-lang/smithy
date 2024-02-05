@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS specifications" href="aws/index.html" /><link rel="prev" title="Waiters" href="waiters.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>MQTT Protocol Bindings - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="mqtt-protocol-bindings">
-<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Permalink to this headline">#</a></h1>
+<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Permalink to this heading">#</a></h1>
 <p>This document defines traits that bind Smithy operations, inputs, and
 outputs to the <a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html">MQTT</a>
 messaging transport protocol. In addition to traits, it defines the
@@ -313,7 +313,7 @@ Smithy models with MQTT metadata.</p>
 subject to change.</p>
 </div>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>Smithy is a protocol-agnostic model format that abstracts the transmission
 and serialization of operations, their inputs, and outputs. This abstraction
 allows MQTT services to be modeled in Smithy using MQTT protocol binding
@@ -323,7 +323,7 @@ The MQTT protocol binding traits defined in this document do not define the
 serialization format of complex payloads; the serialization format of complex
 payloads is protocol-specific.</p>
 <div class="section" id="mqtt-overview">
-<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Permalink to this headline">#</a></h3>
+<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Permalink to this heading">#</a></h3>
 <p>MQTT is a stateful protocol in which zero or more clients establish
 long-lived sessions with a server that acts as a message broker between
 them. Clients subscribe to topics and publish and receive messages. All
@@ -346,7 +346,7 @@ clients that connect to a service that utilizes MQTT protocol bindings.</p>
 </div>
 </div>
 <div class="section" id="mqtt-topic-templates">
-<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Permalink to this headline">#</a></h2>
+<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Permalink to this heading">#</a></h2>
 <p>An <em>MQTT topic template</em> declares an MQTT topic to be used for a given
 operation and to bind components of the topic to fields in the operations's
 input structure. The <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
@@ -405,7 +405,7 @@ in the topic template.</li>
 </ul>
 </div>
 <div class="section" id="smithy-mqtt-publish-trait">
-<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt; * &gt; member)
@@ -453,7 +453,7 @@ value for the &quot;{bar}&quot; label of the MQTT topic template. The &quot;mess
 &quot;anotherValue&quot; members come together to form a protocol-specific document
 that is sent in the payload of the message.</p>
 <div class="section" id="publish-validation">
-<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Permalink to this headline">#</a></h3>
+<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li>Publish operations MUST NOT have output with members.</li>
 <li>Publish operations MUST NOT utilize input event streams.</li>
@@ -464,7 +464,7 @@ the resolved MQTT topics of subscribe operations.</li>
 </div>
 </div>
 <div class="section" id="smithy-mqtt-subscribe-trait">
-<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds an operation to send one or more SUBSCRIBE control packets
 via the MQTT protocol.</dd>
@@ -528,7 +528,7 @@ topic using an <a class="reference internal" href="core/stream-traits.html#event
 </pre></div>
 </div>
 <div class="section" id="subscribe-validation">
-<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Permalink to this headline">#</a></h3>
+<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li>Subscribe operations MUST NOT define event streams with an
 <a class="reference internal" href="core/stream-traits.html#initial-response"><span class="std std-ref">initial-response</span></a>; only a single member can appear
@@ -545,7 +545,7 @@ custom headers to messages.</li>
 </div>
 </div>
 <div class="section" id="smithy-mqtt-topiclabel-trait">
-<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds a structure member to an <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">MQTT topic label</span></a>.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">member[trait|required]</span> <span class="pre">:test(&gt;</span> <span class="pre">:test(string,</span> <span class="pre">byte,</span> <span class="pre">short,</span> <span class="pre">integer,</span> <span class="pre">long,</span> <span class="pre">boolean,</span> <span class="pre">timestamp))</span></code></p>
@@ -562,7 +562,7 @@ case-sensitive member name that is marked with the <code class="docutils literal
 trait, marked with the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait, and targets a string, byte, short,
 integer, long, boolean, or timestamp shape.</p>
 <div class="section" id="label-serialization">
-<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Permalink to this headline">#</a></h3>
+<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Permalink to this heading">#</a></h3>
 <p>The value of the member is substituted into an MQTT topic template using the
 following serialization:</p>
 <ul class="simple">
@@ -571,12 +571,12 @@ following serialization:</p>
 the number.</li>
 <li>Boolean values are serialized as the strings <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
 <li>Timestamp values are serialized as <code class="docutils literal notranslate"><span class="pre">date-time</span></code> strings as specified
-in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>.</li>
+in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC 3339</strong></a>.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="topic-conflicts">
-<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Permalink to this headline">#</a></h2>
+<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Permalink to this heading">#</a></h2>
 <p>MQTT topics in Smithy are fully-typed; MQTT topics modeled in Smithy are
 associated with exactly one shape that defines the payload that can be
 published to a topic. Multiple operations and events in a model MAY resolve
@@ -643,7 +643,7 @@ same number of levels.</li>
 </div>
 </div>
 <div class="section" id="model-definition">
-<h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this headline">#</a></h2>
+<h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this heading">#</a></h2>
 <p>The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
@@ -771,7 +771,9 @@ MQTT protocol bindings.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Server Generator for TypeScript handlers" href="handlers.html" /><link rel="prev" title="Smithy Server Generator for TypeScript" href="index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Introduction to the Smithy Server Generator for TypeScript - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,7 +301,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="introduction-to-the-smithy-server-generator-for-typescript">
-<h1>Introduction to the Smithy Server Generator for TypeScript<a class="headerlink" href="#introduction-to-the-smithy-server-generator-for-typescript" title="Permalink to this headline">#</a></h1>
+<h1>Introduction to the Smithy Server Generator for TypeScript<a class="headerlink" href="#introduction-to-the-smithy-server-generator-for-typescript" title="Permalink to this heading">#</a></h1>
 <p>The Smithy Server Generator generates a lightweight server-side framework for request handling known as a server SDK,
 or SSDK. A server SDK enables server applications, also referred to as services, modeled in Smithy by performing the
 reverse of a client SDK: it deserializes the inputs and serializes the outputs of Smithy operations. Smithy services are
@@ -313,7 +313,7 @@ universally applicable to Smithy services, regardless of protocol. Server SDKs a
 targeted programming language using the same structure, with interfaces called handlers serving as the entrypoint at
 both the service and operation level.</p>
 <div class="section" id="data-flow">
-<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this headline">#</a></h2>
+<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this heading">#</a></h2>
 <p>Smithy services are generally request-reply services, the basic unit of work for which is one request, corresponding to
 an invocation of a modeled operation. An incoming request will first be serviced by an
 <a class="reference internal" href="supported-endpoints.html"><span class="doc">endpoint</span></a>, which is responsible for reading and writing bytes from the wire, and parsing and
@@ -430,7 +430,9 @@ without having to fight against a more heavyweight abstraction.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

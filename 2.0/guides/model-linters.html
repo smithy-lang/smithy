@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Model Validation Examples" href="model-validation-examples.html" /><link rel="prev" title="Generating a client" href="using-code-generation/generating-a-client.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>Model linters - Smithy 2.0</title>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+        <title>Linting Models - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -203,24 +203,24 @@
 <li class="toctree-l3"><a class="reference internal" href="smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Model linters</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="building-codegen/index.html">Creating a Smithy Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -336,11 +336,11 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="model-linters">
-<h1>Model linters<a class="headerlink" href="#model-linters" title="Permalink to this headline">#</a></h1>
+          <div class="section" id="linting-models">
+<h1>Linting Models<a class="headerlink" href="#linting-models" title="Permalink to this heading">#</a></h1>
 <p>This guide describes how to apply optional linters to a Smithy model.</p>
 <div class="section" id="linting-overview">
-<h2>Linting overview<a class="headerlink" href="#linting-overview" title="Permalink to this headline">#</a></h2>
+<h2>Linting overview<a class="headerlink" href="#linting-overview" title="Permalink to this heading">#</a></h2>
 <p>A <em>linter</em> is a special kind of <a class="reference internal" href="../spec/model-validation.html#validation"><span class="std std-ref">model validator</span></a>
 that is configurable. Linter implementations are found in code. The
 <a class="reference external" href="https://search.maven.org/artifact/software.amazon.smithy/smithy-linters">smithy-linters</a> package in Maven Central contains several linters that
@@ -348,8 +348,8 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.43.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.44.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.44.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -358,10 +358,10 @@ defined in the package and registered using <a class="reference external" href="
 use in Smithy models.</p>
 </div>
 <div class="section" id="linters-in-smithy-linters">
-<h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this headline">#</a></h2>
+<h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> package defines the following linters.</p>
 <div class="section" id="abbreviationname">
-<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not represent abbreviations
 with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
 &quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
@@ -406,7 +406,7 @@ letters. Defaults to an empty list.</td>
 </div>
 </div>
 <div class="section" id="camelcase">
-<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this headline">#</a></h3>
+<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
@@ -451,7 +451,7 @@ models.</dd>
 </div>
 </div>
 <div class="section" id="missingsensitivetrait">
-<span id="id3"></span><h3>MissingSensitiveTrait<a class="headerlink" href="#missingsensitivetrait" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3>MissingSensitiveTrait<a class="headerlink" href="#missingsensitivetrait" title="Permalink to this heading">#</a></h3>
 <p>This validator scans shape or member names and identifies ones that look like they could contain
 sensitive information but are not marked with the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait. This does not apply to
 shapes where the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait would be invalid. Users may also configure this validator
@@ -509,7 +509,7 @@ If set to true, <code class="docutils literal notranslate"><span class="pre">ter
 </div>
 </div>
 <div class="section" id="noninclusiveterms">
-<span id="id4"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this heading">#</a></h3>
 <p>Validates that all text content in a model (i.e. shape names, member names,
 documentation, trait values, etc.) does not contain words that perpetuate cultural
 biases. This validator has a built-in set of bias terms that are commonly found
@@ -577,7 +577,7 @@ This property is not required and defaults to false.</td>
 </div>
 </div>
 <div class="section" id="reservedwords">
-<span id="id5"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
 <dl class="docutils">
@@ -654,7 +654,7 @@ evaluated instead of the shape name.</p>
 </pre></div>
 </div>
 <div class="section" id="wildcards-in-reservedwords">
-<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this headline">#</a></h4>
+<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this heading">#</a></h4>
 <p>The ReservedWords validator allows leading and trailing wildcard characters to
 be specified.</p>
 <ul>
@@ -785,7 +785,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </ul>
 </div>
 <div class="section" id="words-boundary-matching">
-<span id="words-boundaries"></span><h4>Words boundary matching<a class="headerlink" href="#words-boundary-matching" title="Permalink to this headline">#</a></h4>
+<span id="words-boundaries"></span><h4>Words boundary matching<a class="headerlink" href="#words-boundary-matching" title="Permalink to this heading">#</a></h4>
 <p>Word boundaries can be used to find terms of interest. Word boundary search
 text consists of one or more alphanumeric words separated by a single
 space. When comparing against another string, the contents of the string
@@ -889,7 +889,7 @@ no spaces is considered a word in the search text (for example,
 </div>
 </div>
 <div class="section" id="standardoperationverb">
-<span id="id6"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">#</a></h3>
+<span id="id6"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this heading">#</a></h3>
 <p>Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
 that has better alternatives.</p>
@@ -961,7 +961,7 @@ be provided.</p>
 </div>
 </div>
 <div class="section" id="repeatedshapename">
-<span id="stutteredshapename"></span><span id="id7"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this headline">#</a></h3>
+<span id="stutteredshapename"></span><span id="id7"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this heading">#</a></h3>
 <p>Validates that <a class="reference internal" href="../spec/aggregate-types.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/aggregate-types.html#union"><span class="std std-ref">Union</span></a> member
 names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
@@ -996,7 +996,7 @@ is case-insensitively identical to the containing shape's name.</td>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
-<span id="id8"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this heading">#</a></h3>
 <p>Validates that every operation defines a dedicated input and output shape
 marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="../spec/type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
 <dl class="docutils">
@@ -1017,7 +1017,7 @@ operations together.</li>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
-<span id="id9"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this heading">#</a></h3>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
@@ -1085,7 +1085,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </div>
 </div>
 <div class="section" id="shouldhaveusedtimestamp">
-<span id="id10"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">#</a></h3>
+<span id="id10"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this heading">#</a></h3>
 <p>Looks for shapes that likely represent time, but that do not use a
 timestamp shape.</p>
 <p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
@@ -1140,7 +1140,7 @@ represent time.</td>
 </dl>
 </div>
 <div class="section" id="missingclientoptionaltrait">
-<span id="id11"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this headline">#</a></h3>
+<span id="id11"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this heading">#</a></h3>
 <p>Allows services to control backward compatibility guarantees for
 members marked as <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">&#64;required</span></a> and
 <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">&#64;default</span></a> by requiring the application of the
@@ -1221,7 +1221,7 @@ decides is not at risk of ever needing to become optional in the future:</p>
 </div>
 </div>
 <div class="section" id="writing-custom-validators">
-<h2>Writing custom validators<a class="headerlink" href="#writing-custom-validators" title="Permalink to this headline">#</a></h2>
+<h2>Writing custom validators<a class="headerlink" href="#writing-custom-validators" title="Permalink to this heading">#</a></h2>
 <p>Custom validators can be written in Java to apply more advanced model validation.
 Writing a custom validator involves writing an implementation of a
 Smithy validator in Java, creating a JAR, and making the JAR available on the
@@ -1263,7 +1263,7 @@ the custom validator is automatically applied to a model each time the
 model is loaded.</p>
 </div>
 <div class="section" id="writing-custom-linters">
-<h2>Writing custom Linters<a class="headerlink" href="#writing-custom-linters" title="Permalink to this headline">#</a></h2>
+<h2>Writing custom Linters<a class="headerlink" href="#writing-custom-linters" title="Permalink to this heading">#</a></h2>
 <p>Like custom validators, custom linters can be written in Java to apply more
 advanced model validation.</p>
 <p>Custom linters are implementations of the
@@ -1459,7 +1459,7 @@ using the following Smithy model:</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Model linters</a><ul>
+<li><a class="reference internal" href="#">Linting Models</a><ul>
 <li><a class="reference internal" href="#linting-overview">Linting overview</a></li>
 <li><a class="reference internal" href="#linters-in-smithy-linters">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a><ul>
 <li><a class="reference internal" href="#abbreviationname">AbbreviationName</a></li>
@@ -1495,7 +1495,9 @@ using the following Smithy model:</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

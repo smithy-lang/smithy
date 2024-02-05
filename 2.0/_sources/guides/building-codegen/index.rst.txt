@@ -1,6 +1,6 @@
---------------------------------
-Creating a Smithy Code Generator
---------------------------------
+-------------------------
+Creating a Code Generator
+-------------------------
 
 This guide describes how to structure a new Smithy code generator so that
 the generator can be used to build generic clients for any web service

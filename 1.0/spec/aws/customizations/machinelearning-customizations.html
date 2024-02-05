@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Amazon S3 Customizations" href="s3-customizations.html" /><link rel="prev" title="Amazon Glacier Customizations" href="glacier-customizations.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Amazon Machine Learning Customizations - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,9 +301,9 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="amazon-machine-learning-customizations">
-<h1>Amazon Machine Learning Customizations<a class="headerlink" href="#amazon-machine-learning-customizations" title="Permalink to this headline">#</a></h1>
+<h1>Amazon Machine Learning Customizations<a class="headerlink" href="#amazon-machine-learning-customizations" title="Permalink to this heading">#</a></h1>
 <div class="section" id="set-host-to-value-of-predictendpoint">
-<h2>Set host to value of <code class="docutils literal notranslate"><span class="pre">PredictEndpoint</span></code><a class="headerlink" href="#set-host-to-value-of-predictendpoint" title="Permalink to this headline">#</a></h2>
+<h2>Set host to value of <code class="docutils literal notranslate"><span class="pre">PredictEndpoint</span></code><a class="headerlink" href="#set-host-to-value-of-predictendpoint" title="Permalink to this heading">#</a></h2>
 <p>The <a class="reference external" href="https://docs.aws.amazon.com/machine-learning/latest/APIReference/API_Predict.html">Predict operation</a> makes use of an endpoint provided by other operations
 in the service. The operation expects that the request will be sent to the
 host specified in the <code class="docutils literal notranslate"><span class="pre">PredictEndpoint</span></code> parameter. An AWS client SHOULD
@@ -390,7 +390,9 @@ automatically set the host for the request to the host from the
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>

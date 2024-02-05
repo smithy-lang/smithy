@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="6. Protocol traits" href="protocol-traits.html" /><link rel="prev" title="4. Documentation traits" href="documentation-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>5. Type refinement traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="type-refinement-traits">
-<h1><span class="section-number">5. </span>Type refinement traits<a class="headerlink" href="#type-refinement-traits" title="Permalink to this headline">#</a></h1>
+<h1><span class="section-number">5. </span>Type refinement traits<a class="headerlink" href="#type-refinement-traits" title="Permalink to this heading">#</a></h1>
 <p>Type refinement traits are traits that significantly refine, or change,
 the type of a shape.</p>
 <div class="section" id="box-trait">
-<span id="smithy-api-box-trait"></span><span id="id1"></span><h2><span class="section-number">5.1. </span><code class="docutils literal notranslate"><span class="pre">box</span></code> trait<a class="headerlink" href="#box-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-box-trait"></span><span id="id1"></span><h2><span class="section-number">5.1. </span><code class="docutils literal notranslate"><span class="pre">box</span></code> trait<a class="headerlink" href="#box-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><p>Indicates that a shape is boxed. When a structure <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> is
 marked with this trait or the shape targeted by a structure member is marked
@@ -350,7 +350,7 @@ is wrapped in an <a class="reference external" href="https://doc.rust-lang.org/s
 used in all Smithy models, including boxed and unboxed shapes.</p>
 </div>
 <div class="section" id="error-trait">
-<span id="smithy-api-error-trait"></span><span id="id2"></span><h2><span class="section-number">5.2. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-error-trait"></span><span id="id2"></span><h2><span class="section-number">5.2. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a structure shape represents an error. All shapes
 referenced by the <a class="reference internal" href="model.html#operation"><span class="std std-ref">errors list of an operation</span></a>
@@ -405,7 +405,7 @@ in Java).</p>
 </div></div>
 </div>
 <div class="section" id="input-trait">
-<span id="smithy-api-input-trait"></span><span id="id3"></span><h2><span class="section-number">5.3. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-input-trait"></span><span id="id3"></span><h2><span class="section-number">5.3. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specializes a structure for use only as the input of a single operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
@@ -426,7 +426,7 @@ operation that targets it (if any). For example, the input shape of the
 ways that would otherwise require complex model transformations.</p>
 </div>
 <div class="section" id="output-trait">
-<span id="smithy-api-output-trait"></span><span id="id4"></span><h2><span class="section-number">5.4. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-output-trait"></span><span id="id4"></span><h2><span class="section-number">5.4. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specializes a structure for use only as the output of a single operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
@@ -446,7 +446,7 @@ operation that targets it (if any). For example, the output shape of the
 ways that would otherwise require complex model transformations.</p>
 </div>
 <div class="section" id="sparse-trait">
-<span id="smithy-api-sparse-trait"></span><span id="id5"></span><h2><span class="section-number">5.5. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-sparse-trait"></span><span id="id5"></span><h2><span class="section-number">5.5. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
 trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
@@ -594,7 +594,9 @@ trait has no effect on map keys; map keys are never allowed to be <code class="d
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

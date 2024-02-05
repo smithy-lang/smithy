@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Server Generator for TypeScript" href="../ts-ssdk/index.html" /><link rel="prev" title="Converting Smithy to OpenAPI" href="converting-to-openapi.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Generating CloudFormation Resource Schemas from Smithy - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,11 +301,11 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="generating-cloudformation-resource-schemas-from-smithy">
-<span id="smithy-to-cloudformation"></span><h1>Generating CloudFormation Resource Schemas from Smithy<a class="headerlink" href="#generating-cloudformation-resource-schemas-from-smithy" title="Permalink to this headline">#</a></h1>
+<span id="smithy-to-cloudformation"></span><h1>Generating CloudFormation Resource Schemas from Smithy<a class="headerlink" href="#generating-cloudformation-resource-schemas-from-smithy" title="Permalink to this heading">#</a></h1>
 <p>This guide describes how Smithy models can generate <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource
 Schemas</a>.</p>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>CloudFormation Resource Schemas are the standard method of <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">modeling a resource
 provider</a> for use within <a class="reference external" href="https://aws.amazon.com/cloudformation/">CloudFormation</a>. These schemas can then be used
 to <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-develop.html">develop the resource provider</a> for support in CloudFormation. Generating
@@ -322,7 +322,7 @@ register, and deploy resource providers.</p>
 <p><a class="reference internal" href="#generate-cloudformation-other-traits"><span class="std std-ref">Other traits may also influence CloudFormation Resource Schema
 generation.</span></a></p>
 <div class="section" id="differences-between-smithy-resources-and-cloudformation-resource-schemas">
-<h3>Differences between Smithy resources and CloudFormation Resource Schemas<a class="headerlink" href="#differences-between-smithy-resources-and-cloudformation-resource-schemas" title="Permalink to this headline">#</a></h3>
+<h3>Differences between Smithy resources and CloudFormation Resource Schemas<a class="headerlink" href="#differences-between-smithy-resources-and-cloudformation-resource-schemas" title="Permalink to this heading">#</a></h3>
 <p>Smithy and CloudFormation have different approaches to modeling resources. In
 Smithy, a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">resource</span></a> is an entity with an identity that has a
 set of operations. CloudFormation resources are defined as a collection of
@@ -331,7 +331,7 @@ properties are identifiers or have restrictions on their mutability.</p>
 </div>
 </div>
 <div class="section" id="generating-schemas-with-smithy-build">
-<h2>Generating Schemas with smithy-build<a class="headerlink" href="#generating-schemas-with-smithy-build" title="Permalink to this headline">#</a></h2>
+<h2>Generating Schemas with smithy-build<a class="headerlink" href="#generating-schemas-with-smithy-build" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> plugin contained in the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code>
 package can be used with smithy-build and the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin">Smithy Gradle plugin</a> to
 generate CloudFormation Resource Schemas from Smithy models.</p>
@@ -346,7 +346,7 @@ Resource Schemas from a Smithy model <a class="reference internal" href="buildin
 
 <span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -404,13 +404,13 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.43.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.44.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
 </div>
 <div class="section" id="cloudformation-configuration-settings">
-<h2>CloudFormation configuration settings<a class="headerlink" href="#cloudformation-configuration-settings" title="Permalink to this headline">#</a></h2>
+<h2>CloudFormation configuration settings<a class="headerlink" href="#cloudformation-configuration-settings" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> plugin provides configuration options to influence the
 Resource Schemas that it generates.</p>
 <div class="admonition tip">
@@ -520,10 +520,10 @@ values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &
 <dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;&gt;</span></code>)</dt><dd><p>Adds or replaces the JSON value in the generated Resource Schemas at the
 given JSON pointer locations with a different JSON value. The value must be
 a map where each key is a resource shape ID. The value is a map where each
-key is a valid JSON pointer string as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in
+key is a valid JSON pointer string as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in
 the nested map is the JSON value to add or replace at the given target.</p>
 <p>Values are added using similar semantics of the &quot;add&quot; operation of
-JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
+JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
 properties to an undefined object will create nested objects in the
 result as needed.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -667,7 +667,7 @@ is applied.</p>
 </dl>
 </div>
 <div class="section" id="json-schema-configuration-settings">
-<h2>JSON schema configuration settings<a class="headerlink" href="#json-schema-configuration-settings" title="Permalink to this headline">#</a></h2>
+<h2>JSON schema configuration settings<a class="headerlink" href="#json-schema-configuration-settings" title="Permalink to this heading">#</a></h2>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-defaulttimestampformat">
 <dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
 no explicit timestampFormat trait. The provided value is expected to be
@@ -728,7 +728,7 @@ appearing in the generated CloudFormation Resource Schemas.</p>
 </dl>
 </div>
 <div class="section" id="other-traits-that-influence-generation">
-<span id="generate-cloudformation-other-traits"></span><h2>Other traits that influence generation<a class="headerlink" href="#other-traits-that-influence-generation" title="Permalink to this headline">#</a></h2>
+<span id="generate-cloudformation-other-traits"></span><h2>Other traits that influence generation<a class="headerlink" href="#other-traits-that-influence-generation" title="Permalink to this heading">#</a></h2>
 <p>In addition to the <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-traits"><span class="std std-ref">AWS CloudFormation traits</span></a>,
 the following traits affect the generation of CloudFormation Resource Schemas.</p>
 <dl class="docutils">
@@ -747,7 +747,7 @@ the creation of a custom <code class="docutils literal notranslate"><span class=
 </div>
 </div>
 <div class="section" id="generating-schemas-with-code">
-<h2>Generating Schemas with code<a class="headerlink" href="#generating-schemas-with-code" title="Permalink to this headline">#</a></h2>
+<h2>Generating Schemas with code<a class="headerlink" href="#generating-schemas-with-code" title="Permalink to this heading">#</a></h2>
 <p>Developers that need more advanced control over the generation of
 CloudFormation resources from Smithy can use the
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code> Java library to perform
@@ -759,7 +759,7 @@ Gradle:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.43.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.44.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -785,7 +785,7 @@ Gradle:</p>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://smithy.io/javadoc/1.43.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://smithy.io/javadoc/1.44.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 
@@ -875,7 +875,9 @@ service providers. See the <a class="reference external" href="https://smithy.io
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

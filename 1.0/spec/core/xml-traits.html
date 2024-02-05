@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="13. Endpoint Traits" href="endpoint-traits.html" /><link rel="prev" title="11. HTTP binding traits" href="http-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>12. XML binding traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
@@ -301,18 +301,18 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
         </div>
         <article role="main">
           <div class="section" id="xml-binding-traits">
-<span id="id1"></span><h1><span class="section-number">12. </span>XML binding traits<a class="headerlink" href="#xml-binding-traits" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1><span class="section-number">12. </span>XML binding traits<a class="headerlink" href="#xml-binding-traits" title="Permalink to this heading">#</a></h1>
 <p>This document defines how to bind Smithy shapes to XML documents. Smithy
 defines several traits that are used to influence the serialization of
 shapes with XML based protocols.</p>
 <div class="section" id="serializing-xml-shapes">
-<span id="id2"></span><h2><span class="section-number">12.1. </span>Serializing XML shapes<a class="headerlink" href="#serializing-xml-shapes" title="Permalink to this headline">#</a></h2>
+<span id="id2"></span><h2><span class="section-number">12.1. </span>Serializing XML shapes<a class="headerlink" href="#serializing-xml-shapes" title="Permalink to this heading">#</a></h2>
 <p>This document provides recommendations on how Smithy structures and
 shapes within structures SHOULD be serialized with XML based protocols;
 however, protocols MAY choose to deviate from these recommendations
 if necessary.</p>
 <div class="section" id="structure-and-union-serialization">
-<span id="xml-structure-and-union-serialization"></span><h3><span class="section-number">12.1.1. </span>Structure and union serialization<a class="headerlink" href="#structure-and-union-serialization" title="Permalink to this headline">#</a></h3>
+<span id="xml-structure-and-union-serialization"></span><h3><span class="section-number">12.1.1. </span>Structure and union serialization<a class="headerlink" href="#structure-and-union-serialization" title="Permalink to this heading">#</a></h3>
 <p>All XML serialization starts with a structure or union. The shape name of a
 structure/union is used as the outermost XML element name. Members of a
 structure/union are serialized as nested XML elements where the name of the
@@ -330,17 +330,17 @@ element is the same as the name of the member.</p>
 </pre></div>
 </div>
 <div class="section" id="custom-xml-element-names">
-<h4><span class="section-number">12.1.1.1. </span>Custom XML element names<a class="headerlink" href="#custom-xml-element-names" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.1.1. </span>Custom XML element names<a class="headerlink" href="#custom-xml-element-names" title="Permalink to this heading">#</a></h4>
 <p>Structure/union member element names can be changed using the
 <a class="reference internal" href="#xmlname-trait"><span class="std std-ref">xmlName trait</span></a>.</p>
 </div>
 <div class="section" id="xml-attributes">
-<h4><span class="section-number">12.1.1.2. </span>XML attributes<a class="headerlink" href="#xml-attributes" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.1.2. </span>XML attributes<a class="headerlink" href="#xml-attributes" title="Permalink to this heading">#</a></h4>
 <p>The <a class="reference internal" href="#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a> is used to serialize a structure
 member as an XML attribute.</p>
 </div>
 <div class="section" id="xmlname-on-structures-and-unions">
-<h4><span class="section-number">12.1.1.3. </span><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> on structures and unions<a class="headerlink" href="#xmlname-on-structures-and-unions" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.1.3. </span><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> on structures and unions<a class="headerlink" href="#xmlname-on-structures-and-unions" title="Permalink to this heading">#</a></h4>
 <p>An <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait applied to a structure or union changes the element name
 of the serialized shape; however, it does not influence the serialization of
 members that target it. Given the following:</p>
@@ -397,7 +397,7 @@ members that target it. Given the following:</p>
 </div>
 </div>
 <div class="section" id="simple-type-serialization">
-<h3><span class="section-number">12.1.2. </span>Simple type serialization<a class="headerlink" href="#simple-type-serialization" title="Permalink to this headline">#</a></h3>
+<h3><span class="section-number">12.1.2. </span>Simple type serialization<a class="headerlink" href="#simple-type-serialization" title="Permalink to this heading">#</a></h3>
 <p>The following table defines how simple types are serialized in XML documents.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -487,11 +487,11 @@ notation if an exponent is needed.</td>
 </div>
 </div>
 <div class="section" id="list-and-set-serialization">
-<span id="xml-list-and-set-serialization"></span><h3><span class="section-number">12.1.3. </span>List and set serialization<a class="headerlink" href="#list-and-set-serialization" title="Permalink to this headline">#</a></h3>
+<span id="xml-list-and-set-serialization"></span><h3><span class="section-number">12.1.3. </span>List and set serialization<a class="headerlink" href="#list-and-set-serialization" title="Permalink to this heading">#</a></h3>
 <p>List and set shapes use the same serialization semantics. List and set shapes
 can be serialized as wrapped lists (the default behavior) or flattened lists.</p>
 <div class="section" id="wrapped-list-serialization">
-<h4><span class="section-number">12.1.3.1. </span>Wrapped list serialization<a class="headerlink" href="#wrapped-list-serialization" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.3.1. </span>Wrapped list serialization<a class="headerlink" href="#wrapped-list-serialization" title="Permalink to this heading">#</a></h4>
 <p>A wrapped list or set is serialized in an XML element where each value is
 serialized in a nested element named <code class="docutils literal notranslate"><span class="pre">member</span></code>. For example, given the
 following:</p>
@@ -564,7 +564,7 @@ change the nested element name. For example, given the following:</p>
 </div>
 </div>
 <div class="section" id="flattened-list-serialization">
-<h4><span class="section-number">12.1.3.2. </span>Flattened list serialization<a class="headerlink" href="#flattened-list-serialization" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.3.2. </span>Flattened list serialization<a class="headerlink" href="#flattened-list-serialization" title="Permalink to this heading">#</a></h4>
 <p>The <a class="reference internal" href="#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the values of list/set
 into a containing structure/union. The name of the elements repeated within
 the structure/union is based on the structure/union member name. For
@@ -629,11 +629,11 @@ following:</p>
 </div>
 </div>
 <div class="section" id="map-serialization">
-<span id="xml-map-serialization"></span><h3><span class="section-number">12.1.4. </span>Map serialization<a class="headerlink" href="#map-serialization" title="Permalink to this headline">#</a></h3>
+<span id="xml-map-serialization"></span><h3><span class="section-number">12.1.4. </span>Map serialization<a class="headerlink" href="#map-serialization" title="Permalink to this heading">#</a></h3>
 <p>Map shapes can be serialized as wrapped maps (the default behavior) or
 flattened maps.</p>
 <div class="section" id="wrapped-map-serialization">
-<h4><span class="section-number">12.1.4.1. </span>Wrapped map serialization<a class="headerlink" href="#wrapped-map-serialization" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.4.1. </span>Wrapped map serialization<a class="headerlink" href="#wrapped-map-serialization" title="Permalink to this heading">#</a></h4>
 <p>A wrapped map is serialized in an XML element where each value is
 serialized in a nested element named <code class="docutils literal notranslate"><span class="pre">entry</span></code> that contains a nested
 <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> element. For example, given the following:</p>
@@ -694,7 +694,7 @@ to change the nested element names.  For example, given the following:</p>
 </div>
 </div>
 <div class="section" id="flattened-map-serialization">
-<h4><span class="section-number">12.1.4.2. </span>Flattened map serialization<a class="headerlink" href="#flattened-map-serialization" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">12.1.4.2. </span>Flattened map serialization<a class="headerlink" href="#flattened-map-serialization" title="Permalink to this heading">#</a></h4>
 <p>The <a class="reference internal" href="#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to flatten the members of map
 into a containing structure/union. For example, given the following:</p>
 <div class="sphinx-tabs docutils container">
@@ -824,7 +824,7 @@ the following:</p>
 </div>
 </div>
 <div class="section" id="xmlattribute-trait">
-<span id="smithy-api-xmlattribute-trait"></span><span id="id3"></span><h2><span class="section-number">12.2. </span><code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait<a class="headerlink" href="#xmlattribute-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-xmlattribute-trait"></span><span id="id3"></span><h2><span class="section-number">12.2. </span><code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait<a class="headerlink" href="#xmlattribute-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Serializes an object property as an XML attribute rather than a nested
 XML element.</dd>
@@ -911,7 +911,7 @@ Given the following:</p>
 </div>
 </div>
 <div class="section" id="xmlflattened-trait">
-<span id="smithy-api-xmlflattened-trait"></span><span id="id4"></span><h2><span class="section-number">12.3. </span><code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait<a class="headerlink" href="#xmlflattened-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-xmlflattened-trait"></span><span id="id4"></span><h2><span class="section-number">12.3. </span><code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait<a class="headerlink" href="#xmlflattened-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Unwraps the values of a list or map into the containing structure.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:is(structure, union) &gt; :test(member &gt; :test(collection, map))
@@ -1047,7 +1047,7 @@ Given the following:</p>
 </div>
 </div>
 <div class="section" id="xmlname-trait">
-<span id="smithy-api-xmlname-trait"></span><span id="id5"></span><h2><span class="section-number">12.4. </span><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait<a class="headerlink" href="#xmlname-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-xmlname-trait"></span><span id="id5"></span><h2><span class="section-number">12.4. </span><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait<a class="headerlink" href="#xmlname-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Changes the serialized element or attribute name of a structure, union,
 or member.</dd>
@@ -1056,10 +1056,10 @@ or member.</dd>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-smithy-XmlName"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:XmlName</span></code></a> ABNF production:</p>
 <pre class="productionlist highlight">
-<strong id="grammar-token-smithy-XmlName"><span id="grammar-token-xmlname"></span>XmlName</strong> =
+<strong id="grammar-token-smithy-XmlName">XmlName</strong> =
     <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a>)
 
-<strong id="grammar-token-smithy-XmlIdentifier"><span id="grammar-token-xmlidentifier"></span>XmlIdentifier</strong> =
+<strong id="grammar-token-smithy-XmlIdentifier">XmlIdentifier</strong> =
     (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 </pre>
 </dd>
@@ -1120,7 +1120,7 @@ following</p>
 </div>
 </div>
 <div class="section" id="xmlnamespace-trait">
-<span id="smithy-api-xmlnamespace-trait"></span><span id="id6"></span><h2><span class="section-number">12.5. </span><code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait<a class="headerlink" href="#xmlnamespace-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-xmlnamespace-trait"></span><span id="id6"></span><h2><span class="section-number">12.5. </span><code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait<a class="headerlink" href="#xmlnamespace-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds an <a class="reference external" href="https://www.w3.org/TR/REC-xml-names/">XML namespace</a> to an XML element.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(service,</span> <span class="pre">member,</span> <span class="pre">simpleType,</span> <span class="pre">collection,</span> <span class="pre">map,</span> <span class="pre">structure,</span> <span class="pre">union)</span></code></p>
@@ -1318,7 +1318,9 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

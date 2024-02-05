@@ -62,7 +62,7 @@ Glossary
         A specific view of a Smithy model that has added, removed, or
         transformed model components.
 
-        .. seealso:: :doc:`building-models/build-config`
+        .. seealso:: :doc:`smithy-build-json`
 
     Reserved words
         Identifiers and words that cannot be used in a
@@ -104,7 +104,7 @@ Glossary
         :term:`Code generators <code generator>` are configured and executed
         by adding plugins to smithy-build.json files in various projections.
 
-        .. seealso:: :doc:`building-models/build-config`
+        .. seealso:: :doc:`smithy-build-json`
 
     Smithy model
         Smithy models define services, operations, resources, and shapes.

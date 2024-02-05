@@ -1,8 +1,8 @@
 .. _using-code-generation:
 
-=====================
-Using Code Generation
-=====================
+===============
+Code Generation
+===============
 
 One of Smithy's greatest strengths is code generation. Smithy models can be used to
 generate clients and servers in a variety of programming languages. The generated
