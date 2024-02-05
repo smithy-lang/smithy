@@ -23,7 +23,9 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.TraitService;
 import software.amazon.smithy.traitcodegen.generators.ShapeGenerator;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -80,7 +82,6 @@ final class TraitCodegen {
         LOGGER.info("Flushing writers");
         // Flush all writers
         if (!codegenContext.writerDelegator().getWriters().isEmpty()) {
-            LOGGER.warning("FOUND BASE DIR" + codegenContext.fileManifest().getBaseDir());
             codegenContext.writerDelegator().flushWriters();
         }
     }
@@ -107,9 +108,17 @@ final class TraitCodegen {
     }
 
     private static Set<Shape> getTraitClosure(Model model) {
-        // Get all trait shapes
+        // Get a map of existing providers, so we do not generate any trait definitions
+        // for traits pulled in from dependencies.
+        Set<ShapeId> existingProviders = new HashSet<>();
+        ServiceLoader.load(TraitService.class, TraitCodegen.class.getClassLoader())
+                .forEach(service -> existingProviders.add(service.getShapeId()));
+
+        // Get all trait shapes, but filter out prelude shapes
+        // and any trait shapes for which a provider is already defined
         Set<Shape> traitClosure = model.getShapesWithTrait(TraitDefinition.class).stream()
                 .filter(shape -> !Prelude.isPreludeShape(shape))
+                .filter(shape -> !existingProviders.contains(shape.getId()))
                 .collect(Collectors.toSet());
 
         // Find all shapes connected to trait shapes and therefore within generation closure.

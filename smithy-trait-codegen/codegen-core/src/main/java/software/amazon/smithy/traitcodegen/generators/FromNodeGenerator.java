@@ -200,7 +200,7 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             writer.write(BUILDER_INITIALIZER);
-            // If the shape has no members (i.e. is an annotation trait) then there will be no member setters and we
+            // If the shape has no members (i.e. is an annotation trait) then there will be no member setters, and we
             // need to terminate the line.
             writer.putContext("isEmpty", shape.members().isEmpty());
             writer.write("node.expectObjectNode()${?isEmpty};${/isEmpty}");
