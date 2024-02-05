@@ -324,3 +324,73 @@ apply DocumentTypeAsPayload @httpResponseTests([
         }
     }
 ])
+
+/// This example serializes documents as the value of maps.
+@idempotent
+@http(uri: "/DocumentTypeAsMapKey", method: "PUT")
+operation DocumentTypeAsMapKey {
+    input: DocumentTypeAsMapKeyInputOutput,
+    output: DocumentTypeAsMapKeyInputOutput,
+}
+
+structure DocumentTypeAsMapKeyInputOutput {
+    docValuedMap: DocumentValuedMap,
+}
+
+map DocumentValuedMap {
+    key: String,
+    value: Document,
+}
+
+apply DocumentTypeAsMapKey @httpRequestTests([
+    {
+        id: "DocumentTypeAsMapKeyInput",
+        documentation: "Serializes a map that uses documents as the value.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentTypeAsMapKey",
+        body: """
+            {
+                "docValuedMap": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
+])
+
+apply DocumentTypeAsMapKey @httpResponseTests([
+    {
+        id: "DocumentTypeAsMapKeyOutput",
+        documentation: "Deserializes a map that uses documents as the value.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "docValuedMap": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
+])
