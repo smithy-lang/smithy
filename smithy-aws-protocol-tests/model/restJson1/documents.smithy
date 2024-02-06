@@ -327,13 +327,13 @@ apply DocumentTypeAsPayload @httpResponseTests([
 
 /// This example serializes documents as the value of maps.
 @idempotent
-@http(uri: "/DocumentTypeAsMapKey", method: "PUT")
-operation DocumentTypeAsMapKey {
-    input: DocumentTypeAsMapKeyInputOutput,
-    output: DocumentTypeAsMapKeyInputOutput,
+@http(uri: "/DocumentTypeAsMapValue", method: "PUT")
+operation DocumentTypeAsMapValue {
+    input: DocumentTypeAsMapValueInputOutput,
+    output: DocumentTypeAsMapValueInputOutput,
 }
 
-structure DocumentTypeAsMapKeyInputOutput {
+structure DocumentTypeAsMapValueInputOutput {
     docValuedMap: DocumentValuedMap,
 }
 
@@ -342,13 +342,13 @@ map DocumentValuedMap {
     value: Document,
 }
 
-apply DocumentTypeAsMapKey @httpRequestTests([
+apply DocumentTypeAsMapValue @httpRequestTests([
     {
-        id: "DocumentTypeAsMapKeyInput",
+        id: "DocumentTypeAsMapValueInput",
         documentation: "Serializes a map that uses documents as the value.",
         protocol: restJson1,
         method: "PUT",
-        uri: "/DocumentTypeAsMapKey",
+        uri: "/DocumentTypeAsMapValue",
         body: """
             {
                 "docValuedMap": {
@@ -369,10 +369,10 @@ apply DocumentTypeAsMapKey @httpRequestTests([
     },
 ])
 
-apply DocumentTypeAsMapKey @httpResponseTests([
+apply DocumentTypeAsMapValue @httpResponseTests([
     {
-        id: "DocumentTypeAsMapKeyOutput",
-        documentation: "Deserializes a map that uses documents as the value.",
+        id: "DocumentTypeAsMapValueOutput",
+        documentation: "Serializes a map that uses documents as the value.",
         protocol: restJson1,
         code: 200,
         body: """
