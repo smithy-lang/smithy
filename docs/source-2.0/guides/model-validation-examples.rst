@@ -314,7 +314,7 @@ linters to have clear, actionable error messages.
 Require strings to have a ``@pattern`` constraint
 =================================================
 
-This example shows how to require all integers used in an operation input to
+This example shows how to require all strings used in an operation input to
 have a ``@pattern`` constraint trait.
 
 .. code-block:: smithy
