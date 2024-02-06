@@ -152,7 +152,7 @@ final class MigrateCommand implements Command {
                 .env(env)
                 .models(models)
                 .validationPrinter(env.stderr())
-                .severity(Severity.DANGER)
+                .defaultSeverity(Severity.DANGER)
                 .build();
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)

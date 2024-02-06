@@ -57,7 +57,7 @@ final class ModelBuilder {
     private List<String> models;
     private Command.Env env;
     private SmithyBuildConfig config;
-    private Severity severity;
+    private Severity defaultSeverity;
     private ValidatedResult<Model> validatedResult;
     private String titleLabel;
     private Style[] titleLabelStyles;
@@ -94,8 +94,8 @@ final class ModelBuilder {
         return this;
     }
 
-    public ModelBuilder severity(Severity severity) {
-        this.severity = severity;
+    public ModelBuilder defaultSeverity(Severity defaultSeverity) {
+        this.defaultSeverity = defaultSeverity;
         return this;
     }
 
@@ -123,7 +123,13 @@ final class ModelBuilder {
 
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
-        Severity minSeverity = resolveMinSeverity(standardOptions);
+
+        // Resolve validator options and severity.
+        ValidatorOptions validatorOptions = arguments.hasReceiver(ValidatorOptions.class)
+                ? arguments.getReceiver(ValidatorOptions.class)
+                : new ValidatorOptions();
+        resolveMinSeverity(standardOptions, validatorOptions);
+
         ClassLoader classLoader = env.classLoader();
         ColorFormatter colors = env.colors();
         CliPrinter stderr = env.stderr();
@@ -176,8 +182,8 @@ final class ModelBuilder {
 
         for (ValidationEvent event : sortedEvents) {
             // Only log events that are >= --severity. Note that setting --quiet inherently
-            // configures events to need to be >= DANGER.
-            if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
+            // configures events to need to be >= DANGER. Also filter using --show-validators and --hide-validators.
+            if (validatorOptions.isVisible(event)) {
                 validationPrinter.println(formatter.format(event));
             }
         }
@@ -274,14 +280,11 @@ final class ModelBuilder {
     }
 
     // Determine a default severity if one wasn't given, by inspecting if there is a --severity option.
-    private Severity resolveMinSeverity(StandardOptions standardOptions) {
-        if (severity != null) {
-            return severity;
-        } else if (arguments.hasReceiver(SeverityOption.class)) {
-            return arguments.getReceiver(SeverityOption.class).severity(standardOptions);
-        } else {
-            return Severity.WARNING;
+    private Severity resolveMinSeverity(StandardOptions standardOptions, ValidatorOptions validatorOption) {
+        if (defaultSeverity != null && validatorOption.severity() == null) {
+            validatorOption.severity(defaultSeverity);
         }
+        return validatorOption.detectAndGetSeverity(standardOptions);
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {

@@ -72,7 +72,7 @@ final class BuildCommand implements Command {
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new DiscoveryOptions());
-        arguments.addReceiver(new SeverityOption());
+        arguments.addReceiver(new ValidatorOptions());
         arguments.addReceiver(new BuildOptions());
         arguments.addReceiver(new Options());
 
