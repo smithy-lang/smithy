@@ -26,7 +26,7 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Generates the {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
+ * Generates the static {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
  */
 final class FromNodeGenerator implements Runnable {
     private static final String FROM_NODE_METHOD_TEMPLATE = "public static $T fromNode(Node node) {";

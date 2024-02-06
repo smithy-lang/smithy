@@ -16,8 +16,23 @@ import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public class CoreIntegration implements TraitCodegenIntegration {
+/**
+ * Core integration for Trait code generation.
+ *
+ * <p>This integration applies no built-in's, but decorates the Symbol provider to replace a
+ * shape symbol with a trait symbol definition if the trait has the
+ * {@link software.amazon.smithy.model.traits.TraitDefinition} trait applied.
+ * Trait symbols are named {@code <ShapeName>Trait} and always have a definition file.
+ * This integration runs after all other integrations have finished to ensure that
+ * any other type decorators and integrations have already been applied before creating any Trait
+ * definitions from the resulting type.
+ *
+ * <p>This integration also overrides the default {@code toMemberName} name implementation.
+ */
+@SmithyInternalApi
+public final class CoreIntegration implements TraitCodegenIntegration {
 
     @Override
     public String name() {

@@ -23,6 +23,9 @@ import software.amazon.smithy.utils.ListUtils;
 /**
  * Handles the conversion of String members and String types with the {@code IdRef} trait to
  * the {@link ShapeId} type.
+ *
+ * <p>This integration is run with a high priority to ensure down-stream integrations see a
+ * {@code ShapeId} type instead of a string.
  */
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     private static final String INTEGRATION_NAME = "id-ref-integration";

@@ -41,8 +41,8 @@ import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates methods to serialize a Java class to a smithy {@code Node}.
- * <p>
- * If the shape this generator is targeting is a trait then the serialization method is
+ *
+ * <p>If the shape this generator is targeting is a trait then the serialization method is
  * called {@code createNode()}, otherwise the method generated is called {@code toNode()}.
  * This is because Trait classes inherit from {@link software.amazon.smithy.model.traits.AbstractTrait}
  * which requires that they override {@code createNode()} for serialization.

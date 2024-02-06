@@ -31,9 +31,9 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Generates getter methods for each shape member.
- * <p>
- * Optional member getters will return the member type wrapped in an {@code Optional<T>}.
+ * Generates getter methods for each shape member or the value type held by the trait.
+ *
+ * <p>Optional member getters will return the member type wrapped in an {@code Optional<T>}.
  */
 final class GetterGenerator implements Runnable {
     private static final EnumSet<ShapeType> NO_OPTIONAL_WRAPPING_TYPES = EnumSet.of(ShapeType.MAP, ShapeType.LIST);

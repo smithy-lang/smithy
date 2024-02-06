@@ -29,8 +29,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Generates a static builder for a Java class.
- * <p>
- * In addition to the static builder class, this generator will create
+ *
+ * <p>In addition to the static builder class, this generator will create
  * {@code builder()} and {@code toBuilder()} methods for the target class.
  */
 final class BuilderGenerator implements Runnable {

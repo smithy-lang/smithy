@@ -26,6 +26,11 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 /**
  * Adds provider class to use as the {@link software.amazon.smithy.model.traits.TraitService} implementation for a
  * trait.
+ *
+ * <p>This provider class is only required for Trait classes, and is not needed in nested shapes. The {@code fromNode}
+ * method is used where possible to create the smithy node from the provided node. Provider methods MUST
+ * be added to the {@code META-INF/services/software.amazon.smithy.model.traits.TraitService} service provider file
+ * for the Trait class to be discovered during model assembly.
  */
 final class ProviderGenerator implements Runnable {
     private static final String PROVIDER_METHOD = "public Provider() {";

@@ -14,6 +14,16 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 /**
  * Settings for trait code generation. These can be set in the
  * {@code smithy-build.json} configuration for this plugin.
+ *
+ * <p>The following options are provided:
+ * <ul>
+ *     <li>"packageName" ({@code String}) - Sets the package namespace to use for generated Java classes.</li>
+ *     <li>"headerLines" ({@code List<String>}) - Defines the header comment to include in all output files. Use
+ *     this setting to add license and/or author information to all generated files. Each entry in the list
+ *     is generated as a new line in the generated comment.</li>
+ *     <li>"excludeTags" ({@code List<String>}) - List of Smithy tags to use for filtering out trait shapes
+ *     from the trait code generation process.</li>
+ * </ul>
  */
 @SmithyUnstableApi
 public final class TraitCodegenSettings {

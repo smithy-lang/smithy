@@ -10,6 +10,9 @@ import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds JavaDocs to static builder classes and is triggered by the {@link BuilderClassSection}.
+ */
 final class BuilderClassSectionDocsInterceptor implements CodeInterceptor.Prepender<BuilderClassSection,
         TraitCodegenWriter> {
     @Override

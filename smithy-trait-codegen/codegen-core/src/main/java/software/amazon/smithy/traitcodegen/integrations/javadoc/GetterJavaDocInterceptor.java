@@ -11,6 +11,10 @@ import software.amazon.smithy.traitcodegen.sections.JavaDocSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds Javadocs to the getter for a member if the corresponding member has a {@link DocumentationTrait}
+ * trait applied. The Javadoc contents will just be the contents of the {@code DocumentationTrait}.
+ */
 final class GetterJavaDocInterceptor implements CodeInterceptor.Prepender<GetterSection, TraitCodegenWriter> {
     @Override
     public void prepend(TraitCodegenWriter writer, GetterSection section) {

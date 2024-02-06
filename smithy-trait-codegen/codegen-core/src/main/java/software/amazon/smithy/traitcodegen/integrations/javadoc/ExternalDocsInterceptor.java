@@ -11,6 +11,10 @@ import software.amazon.smithy.traitcodegen.sections.JavaDocSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds the javadoc {@code @see} tag to the generated javadocs if the corresponding smithy shape
+ * has the {@link ExternalDocumentationTrait} trait applied.
+ */
 final class ExternalDocsInterceptor implements CodeInterceptor.Appender<JavaDocSection, TraitCodegenWriter> {
     @Override
     public void append(TraitCodegenWriter writer, JavaDocSection section) {

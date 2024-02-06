@@ -10,7 +10,7 @@ import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
- * Generates a Java class representation of a Smithy {@code DocumentShape} trait.
+ * Generates a Java class representation of a Smithy {@link software.amazon.smithy.model.shapes.DocumentShape} trait.
  */
 final class DocumentTraitGenerator extends TraitGenerator {
     @Override

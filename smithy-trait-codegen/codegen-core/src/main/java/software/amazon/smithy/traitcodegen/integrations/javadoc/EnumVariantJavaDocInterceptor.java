@@ -11,6 +11,9 @@ import software.amazon.smithy.traitcodegen.sections.JavaDocSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds a docstring to each java enum variant if the corresponding enum member has a doc comment.
+ */
 final class EnumVariantJavaDocInterceptor implements CodeInterceptor.Prepender<EnumVariantSection,
         TraitCodegenWriter> {
     @Override

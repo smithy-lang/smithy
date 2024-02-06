@@ -18,6 +18,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Consumer that generates a trait class definition from a {@link GenerateTraitDirective}.
+ *
+ * <p>This base class can be extended to generate a trait class by overriding
+ * the {@link #writeTraitBody(TraitCodegenWriter, GenerateTraitDirective)} method.
+ * This base class will automatically generate a provider method and add that provider to the
+ * {@code META-INF/services/software.amazon.smithy.model.traits.TraitService} service provider
+ * file so the generated trait implementation will be discoverable by a {@code ServiceLoader}.
  */
 abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
     private static final String CLASS_TEMPLATE = "public final class $1T extends $baseClass:T"
@@ -67,8 +73,8 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
 
     /**
      * Returns base class that the trait is a child of.
-     * <p>
-     * Defaults to {@link software.amazon.smithy.model.traits.AbstractTrait}.
+     *
+     * <p>Defaults to {@link software.amazon.smithy.model.traits.AbstractTrait}.
      * Override this method to have the trait inherit from another base class.
      */
     protected Symbol getBaseClass() {
@@ -77,8 +83,8 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
 
     /**
      * Whether the class implements {@code ToSmithyBuilder}.
-     * <p>
-     * Defaults to false. Override this method to return true indicate that a trait does
+     *
+     * <p>Defaults to false. Override this method to return true indicate that a trait does
      * implement ToSmithyBuilder.
      *
      * @return flag indicating if trait implements {@code ToSmithyBuilder}

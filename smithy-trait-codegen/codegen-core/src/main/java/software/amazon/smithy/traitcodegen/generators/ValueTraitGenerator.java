@@ -12,9 +12,11 @@ import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
- * Generates a Value trait.
- * <p>
- * A value trait is a trait that has only one property "value".
+ * Generates a "Value trait".
+ *
+ * <p>A "value trait" is a trait that has only one property "value" such as a string trait or
+ * a number trait. The value held by the trait is stored in a single property {@code value} and
+ * will have a {@code getValue()} getter to allow access to the held value.
  */
 final class ValueTraitGenerator extends TraitGenerator {
     @Override

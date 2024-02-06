@@ -7,13 +7,13 @@ package software.amazon.smithy.traitcodegen;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Provides various utility methods for trait code generation.
  */
-@SmithyUnstableApi
+@SmithyInternalApi
 public final class TraitCodegenUtils {
     public static final Symbol JAVA_STRING_SYMBOL = TraitCodegenUtils.fromClass(String.class);
 

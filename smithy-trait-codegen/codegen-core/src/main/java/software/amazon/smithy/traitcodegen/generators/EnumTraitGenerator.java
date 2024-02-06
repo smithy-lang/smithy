@@ -18,7 +18,11 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Generates a Java class representation of a Smithy {@code EnumShape} trait.
+ * Generates a Java class representation of a Smithy {@link EnumShape} trait.
+ *
+ * <p>Note: This generator only generates Java classes for string enums. For generating
+ * a trait class from an {@link software.amazon.smithy.model.shapes.IntEnumShape}, use
+ * the {@link IntEnumTraitGenerator} generator.
  */
 final class EnumTraitGenerator extends TraitGenerator {
     @Override

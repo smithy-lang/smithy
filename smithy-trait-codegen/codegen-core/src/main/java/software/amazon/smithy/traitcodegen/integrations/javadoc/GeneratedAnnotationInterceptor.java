@@ -10,6 +10,9 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.SmithyGenerated;
 
+/**
+ * Adds the {@link SmithyGenerated} annotation to all generated classes.
+ */
 final class GeneratedAnnotationInterceptor implements CodeInterceptor.Prepender<ClassSection,
         TraitCodegenWriter> {
     @Override

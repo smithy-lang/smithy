@@ -34,7 +34,12 @@ import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
-// TODO: add docs
+/**
+ * Base class used for the generation of traits and nested shapes from a {@link GenerateTraitDirective}.
+ *
+ * <p>This class will determine if a shape is a trait (i.e. has the {@link TraitDefinition} trait) or if the
+ * shape provided should be treated as a nested shape (i.e. defines a simple pojo).
+ */
 @SmithyInternalApi
 public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
     @Override

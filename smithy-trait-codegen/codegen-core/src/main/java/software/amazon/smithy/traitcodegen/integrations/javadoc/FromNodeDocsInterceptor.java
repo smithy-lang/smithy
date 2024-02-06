@@ -9,6 +9,9 @@ import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds a docstring for the {@code fromNode} method.
+ */
 final class FromNodeDocsInterceptor
         implements CodeInterceptor.Prepender<FromNodeSection, TraitCodegenWriter> {
     @Override

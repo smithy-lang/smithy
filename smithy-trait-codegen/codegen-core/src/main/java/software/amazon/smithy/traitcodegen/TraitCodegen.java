@@ -8,6 +8,7 @@ package software.amazon.smithy.traitcodegen;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -31,8 +32,23 @@ import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
+import software.amazon.smithy.utils.SmithyBuilder;
 
-
+/**
+ * Orchestration class for Trait code generation.
+ *
+ * <p>Trait codegen executes the following steps:
+ * <ul>
+ *     <li>Orchestrator creation - Plugin creates an instance of {@link TraitCodegen}.</li>
+ *     <li>Initialization - {@link #initialize()} is called to discover integration, filter out
+ *     any shapes with excluded tags, and set up the codegen context.</li>
+ *     <li>Execution - {@link #run()} is called to build a list of shapes to generate by pulling
+ *     all shapes with the {@link TraitDefinition} trait applied and walking the nested shapes inside
+ *     of those trait shapes. Then the {@link ShapeGenerator} is applied to each of the shapes to
+ *     generate. Finally, all of the writers created during the shapes generation process are flushed.</li>
+ * </ul>
+ *
+ */
 final class TraitCodegen {
     private static final Logger LOGGER = Logger.getLogger(TraitCodegen.class.getName());
 
@@ -47,9 +63,9 @@ final class TraitCodegen {
                          TraitCodegenSettings settings,
                          FileManifest fileManifest
     ) {
-        this.model = model;
-        this.settings = settings;
-        this.fileManifest = fileManifest;
+        this.model = Objects.requireNonNull(model);
+        this.settings = Objects.requireNonNull(settings);
+        this.fileManifest = Objects.requireNonNull(fileManifest);
     }
 
     public static TraitCodegen fromPluginContext(PluginContext context) {
@@ -72,6 +88,10 @@ final class TraitCodegen {
 
 
     public void run() {
+        // Check that all required fields have been correctly initialized.
+        SmithyBuilder.requiredState("integrations", integrations);
+        SmithyBuilder.requiredState("context",  codegenContext);
+
         // Find all trait definition shapes excluding traits in the prelude.
         LOGGER.info("Generating trait classes.");
         Set<Shape> traitClosure = getTraitClosure(model);

@@ -21,8 +21,8 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
  * Effectively sealed base class for generating a Java Enum class from a Smithy model.
- * <p>
- * The two public implementations provided by this base class are:
+ *
+ * <p>The two public implementations provided by this base class are:
  * <ul>
  *     <li>{@link StringEnumShapeGenerator} - Generates a java enum from a Smithy
  *     {@link software.amazon.smithy.model.shapes.EnumShape}.</li>

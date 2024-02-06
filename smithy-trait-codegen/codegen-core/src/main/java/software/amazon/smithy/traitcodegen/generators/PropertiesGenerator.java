@@ -31,6 +31,17 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
  * Generates properties for a Java class from Smithy shape members.
+ *
+ * <p>The generated properties hold the value types of member shapes or a value property representing
+ * the data the trait holds. In the following two cases the generated property has a static
+ * name:
+ * <ul>
+ *     <li>Value Shapes (numbers, enum, strings) - property {@code "value"} represents the single data type
+ *     held by the trait such as a {@code int} value.</li>
+ *     <li>List and Map shapes - property {@code "values"} represents the collection held by the trait such
+ *     as a list of strings.</li>
+ * </ul>
+ *
  */
 final class PropertiesGenerator implements Runnable {
     private final TraitCodegenWriter writer;

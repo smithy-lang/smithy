@@ -20,8 +20,8 @@ import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Generates a constructor that takes in a static builder class as input.
- * <p>
- * Static builders should be created using the {@link BuilderGenerator} generator.
+ *
+ * <p>Static builders should be created using the {@link BuilderGenerator} generator.
  */
 final class ConstructorWithBuilderGenerator implements Runnable {
     private static final String CONSTRUCTOR_TEMPLATE = "private $T(Builder builder) {";

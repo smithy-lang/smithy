@@ -10,6 +10,10 @@ import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 
+/**
+ * Adds the {@code @Deprecated} annotation to generated classes if the smithy shape the class corresponds to
+ * has the {@link DeprecatedTrait} trait applied.
+ */
 final class DeprecatedAnnotationClassInterceptor implements CodeInterceptor.Prepender<ClassSection,
         TraitCodegenWriter> {
     @Override
