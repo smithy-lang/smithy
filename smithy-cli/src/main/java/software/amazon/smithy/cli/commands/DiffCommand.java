@@ -65,7 +65,7 @@ final class DiffCommand implements Command {
     @Override
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
-        arguments.addReceiver(new SeverityOption());
+        arguments.addReceiver(new ValidatorOptions());
         arguments.addReceiver(new BuildOptions());
         arguments.addReceiver(new Options());
         arguments.getReceiver(BuildOptions.class).noPositionalArguments(true);
@@ -317,7 +317,7 @@ final class DiffCommand implements Command {
                     .validationPrinter(env.stderr())
                     // Only report issues that fail the build.
                     .validationMode(Validator.Mode.QUIET_CORE_ONLY)
-                    .severity(Severity.DANGER);
+                    .defaultSeverity(Severity.DANGER);
         }
 
         // Creating a new model is the same for each diff mode.
@@ -336,7 +336,7 @@ final class DiffCommand implements Command {
             builder
                     .titleLabel("DIFF", ColorTheme.DIFF_TITLE)
                     .validatedResult(new ValidatedResult<>(newModel, events))
-                    .severity(null) // reset so it takes on standard option settings.
+                    .defaultSeverity(null) // reset so it takes on standard option settings.
                     .build();
         }
 
