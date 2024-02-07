@@ -14,6 +14,7 @@ string stringTrait
 //  Number traits
 // ===============
 @trait
+@tags(["filterOut"])
 integer HttpCodeInteger
 
 @trait

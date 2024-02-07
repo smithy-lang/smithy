@@ -5,12 +5,18 @@
 
 package software.amazon.smithy.traitcodegen;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -18,7 +24,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
 
+
 public class TraitCodegenPluginTest {
+    private static final int EXPECTED_NUMBER_OF_FILES = 34;
 
     @Test
     public void generatesExpectedTraitFiles() {
@@ -41,5 +49,63 @@ public class TraitCodegenPluginTest {
         plugin.execute(context);
 
         assertFalse(manifest.getFiles().isEmpty());
+        assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
+        List<String> fileList = manifest.getFiles().stream().map(Path::toString).collect(Collectors.toList());
+        assertThat(fileList, hasItem("/META-INF/services/software.amazon.smithy.model.traits.TraitService"));
+    }
+
+    @Test
+    public void filtersTags() {
+        MockManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .settings(ObjectNode.builder()
+                        .withMember("package", "com.example.traits")
+                        .withMember("header", ArrayNode.fromStrings("Header line One"))
+                        .withMember("excludeTags", ArrayNode.fromStrings("filterOut"))
+                        .build()
+                )
+                .model(model)
+                .build();
+
+        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
+        plugin.execute(context);
+
+        assertFalse(manifest.getFiles().isEmpty());
+        assertEquals(EXPECTED_NUMBER_OF_FILES - 1, manifest.getFiles().size());
+    }
+
+    @Test
+    public void addsHeaderLines() {
+        MockManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .settings(ObjectNode.builder()
+                        .withMember("package", "com.example.traits")
+                        .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
+                        .build()
+                )
+                .model(model)
+                .build();
+
+        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
+        plugin.execute(context);
+
+        assertFalse(manifest.getFiles().isEmpty());
+        assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
+        Optional<String> fileStringOptional = manifest.getFileString("/com/example/traits/IdRefStructTrait.java");
+        assertTrue(fileStringOptional.isPresent());
+        assertThat(fileStringOptional.get(), startsWith("/**\n" +
+                " * Header line one\n" +
+                " * Header line two\n" +
+                " */"));
     }
 }

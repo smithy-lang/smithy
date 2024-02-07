@@ -15,14 +15,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.TransformContext;
-import software.amazon.smithy.build.transforms.ExcludeTraitsByTag;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -80,8 +77,7 @@ final class TraitCodegen {
         LOGGER.info("Initializing trait codegen plugin.");
         integrations = getIntegrations();
         SymbolProvider symbolProvider = createSymbolProvider();
-        Model codegenModel = removeTraitsWithTags(model, settings.excludeTags());
-        codegenContext = new TraitCodegenContext(codegenModel, settings, symbolProvider, fileManifest, integrations);
+        codegenContext = new TraitCodegenContext(model, settings, symbolProvider, fileManifest, integrations);
         registerInterceptors(codegenContext);
         LOGGER.info("Trait codegen plugin Initialized.");
     }
@@ -127,7 +123,7 @@ final class TraitCodegen {
         context.writerDelegator().setInterceptors(interceptors);
     }
 
-    private static Set<Shape> getTraitClosure(Model model) {
+    private Set<Shape> getTraitClosure(Model model) {
         // Get a map of existing providers, so we do not generate any trait definitions
         // for traits pulled in from dependencies.
         Set<ShapeId> existingProviders = new HashSet<>();
@@ -139,6 +135,7 @@ final class TraitCodegen {
         Set<Shape> traitClosure = model.getShapesWithTrait(TraitDefinition.class).stream()
                 .filter(shape -> !Prelude.isPreludeShape(shape))
                 .filter(shape -> !existingProviders.contains(shape.getId()))
+                .filter(shape -> !this.hasExcludeTag(shape))
                 .collect(Collectors.toSet());
 
         // Find all shapes connected to trait shapes and therefore within generation closure.
@@ -154,13 +151,7 @@ final class TraitCodegen {
         return traitClosure;
     }
 
-    private static Model removeTraitsWithTags(Model model, List<String> tags) {
-        if (tags.isEmpty()) {
-            return model;
-        }
-        return new ExcludeTraitsByTag().transform(TransformContext.builder()
-                .model(model)
-                .settings(Node.objectNode().withMember("tags", Node.fromStrings(tags)))
-                .build());
+    private boolean hasExcludeTag(Shape shape) {
+        return shape.getTags().stream().anyMatch(t -> settings.excludeTags().contains(t));
     }
 }

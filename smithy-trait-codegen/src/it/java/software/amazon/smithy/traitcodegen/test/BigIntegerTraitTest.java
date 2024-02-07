@@ -2,9 +2,7 @@ package software.amazon.smithy.traitcodegen.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.traits.HttpCodeBigDecimalTrait;
 import com.example.traits.HttpCodeBigIntegerTrait;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
