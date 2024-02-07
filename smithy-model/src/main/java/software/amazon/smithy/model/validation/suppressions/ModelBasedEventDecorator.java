@@ -151,6 +151,11 @@ public final class ModelBasedEventDecorator {
             List<Suppression> suppressions,
             List<SeverityOverride> severityOverrides
     ) {
+        // ERROR and SUPPRESSED events cannot be suppressed.
+        if (!event.getSeverity().canSuppress()) {
+            return event;
+        }
+
         // Use a suppress trait if present.
         if (event.getShapeId().isPresent()) {
             ShapeId target = event.getShapeId().get();
