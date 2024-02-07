@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +52,8 @@ public class TraitCodegenPluginTest {
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
         List<String> fileList = manifest.getFiles().stream().map(Path::toString).collect(Collectors.toList());
-        assertThat(fileList, hasItem("/META-INF/services/software.amazon.smithy.model.traits.TraitService"));
+        assertThat(fileList, hasItem(
+                Paths.get("/META-INF/services/software.amazon.smithy.model.traits.TraitService").toString()));
     }
 
     @Test
@@ -101,7 +103,8 @@ public class TraitCodegenPluginTest {
 
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
-        Optional<String> fileStringOptional = manifest.getFileString("/com/example/traits/IdRefStructTrait.java");
+        Optional<String> fileStringOptional = manifest.getFileString(
+                Paths.get("com/example/traits/IdRefStructTrait.java").toString());
         assertTrue(fileStringOptional.isPresent());
         assertThat(fileStringOptional.get(), startsWith("/**\n" +
                 " * Header line one\n" +
