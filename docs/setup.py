@@ -3,13 +3,13 @@
 from setuptools import setup, find_packages
 
 requires = [
-    "sphinx==4.2.0",
+    "sphinx>=5.0.0",
     "pygments==2.15.0",
     "sphinx_copybutton==0.5.0",
     # Used by new docs.
     "sphinx-inline-tabs==2022.1.2b11",
     # Used by old docs.
-    "sphinx-tabs==3.2.0"
+    "sphinx-tabs>=3.4.4"
 ]
 
 # Register the custom Smithy loader with Pygments.

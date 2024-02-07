@@ -40,7 +40,7 @@ jobs:
           echo $hash_url
           curl -fJLO $hash_url.sha256
       - name: Save artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: brew-artifacts
           path: '*.sha256'
@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Get artifacts
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: brew-artifacts
       - name: Checkout bottle repo

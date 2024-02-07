@@ -32,6 +32,7 @@ public final class IamActionValidator extends AbstractValidator {
         return events;
     }
 
+    @SuppressWarnings("deprecation")
     private List<ValidationEvent> validateDuplicateTraits(OperationShape operation, IamActionTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         if (operation.hasTrait(ActionNameTrait.ID) && trait.getName().isPresent()) {

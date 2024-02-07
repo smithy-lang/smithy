@@ -19,24 +19,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
-import software.amazon.smithy.model.validation.suppressions.SeverityOverride;
 import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
 import software.amazon.smithy.model.validation.validators.TargetValidator;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -68,24 +70,27 @@ final class ModelValidator implements Validator {
     }
 
     /** If these validators fail, then many others will too. Validate these first. */
-    private static final Set<Class<? extends Validator>> CORE_VALIDATORS = SetUtils.of(
-            TargetValidator.class,
-            ResourceCycleValidator.class
+    private static final Map<Class<?>, Validator> CORRECTNESS_VALIDATORS = MapUtils.of(
+            TargetValidator.class, new TargetValidator(),
+            ResourceCycleValidator.class, new ResourceCycleValidator()
     );
 
     private final ValidatorFactory validatorFactory;
-    private final List<ValidationEvent> events = new ArrayList<>();
-    private final List<Validator> validators = new ArrayList<>();
-    private final List<SeverityOverride> severityOverrides = new ArrayList<>();
+    private final List<ValidationEvent> events;
+    private final List<Validator> validators;
+    private final List<Validator> criticalValidators;
     private final ValidationEventDecorator validationEventDecorator;
     private final Consumer<ValidationEvent> eventListener;
+    private final boolean legacyValidationMode;
 
     ModelValidator(Builder builder) {
         this.validatorFactory = builder.validatorFactory;
         this.eventListener = builder.eventListener;
         this.validationEventDecorator = builder.validationEventDecorator;
-        this.events.addAll(builder.includeEvents);
-        this.validators.addAll(builder.validators);
+        this.events = builder.includeEvents.copy();
+        this.validators = builder.validators.copy();
+        this.criticalValidators = builder.criticalValidators.copy();
+        this.legacyValidationMode = builder.legacyValidationMode;
     }
 
     @Override
@@ -103,34 +108,43 @@ final class ModelValidator implements Validator {
 
     static final class Builder implements SmithyBuilder<ModelValidator> {
 
-        private final List<Validator> validators = new ArrayList<>();
-        private final List<ValidationEvent> includeEvents = new ArrayList<>();
+        private final BuilderRef<List<Validator>> validators = BuilderRef.forList();
+        private final BuilderRef<List<Validator>> criticalValidators = BuilderRef.forList();
+        private final BuilderRef<List<ValidationEvent>> includeEvents = BuilderRef.forList();
         private ValidatorFactory validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
         private Consumer<ValidationEvent> eventListener = event -> { };
         private ValidationEventDecorator validationEventDecorator;
+        private boolean legacyValidationMode = false;
 
         private Builder() {}
 
         /**
-         * Sets the custom {@link Validator}s to use when running the ModelValidator.
+         * Adds an array of {@link Validator}s to use when running the ModelValidator.
          *
-         * @param validators Validators to set.
-         * @return Returns the ModelValidator.
+         * @param validators Validators to add.
+         * @return Returns the builder.
          */
-        public Builder validators(Collection<? extends Validator> validators) {
-            this.validators.clear();
-            validators.forEach(this::addValidator);
+        public Builder addValidators(Collection<? extends Validator> validators) {
+            for (Validator validator : validators) {
+                addValidator(validator);
+            }
             return this;
         }
 
         /**
-         * Adds a custom {@link Validator}.
+         * Adds a {@link Validator}.
          *
          * @param validator Validator to add.
          * @return Returns the builder.
          */
         public Builder addValidator(Validator validator) {
-            validators.add(Objects.requireNonNull(validator));
+            if (!CORRECTNESS_VALIDATORS.containsKey(validator.getClass())) {
+                if (ValidationUtils.isCriticalValidator(validator.getClass())) {
+                    criticalValidators.get().add(validator);
+                } else {
+                    validators.get().add(validator);
+                }
+            }
             return this;
         }
 
@@ -165,21 +179,31 @@ final class ModelValidator implements Validator {
          * Includes a set of events that were already encountered in the result.
          *
          * <p>Suppressions and severity overrides will be applied to the given {@code events}. However, the validator
-         * assumes that the event has already been decroated and the event listener has already seen the event.
+         * assumes that the event has already been decorated and the event listener has already seen the event.
          *
          * @param events Events to include.
          * @return Returns the builder.
          */
         public Builder includeEvents(List<ValidationEvent> events) {
-            this.includeEvents.clear();
-            this.includeEvents.addAll(events);
+            this.includeEvents.get().addAll(events);
+            return this;
+        }
+
+        /**
+         * Enables legacy validation mode that does not fail if critical Validators emit an ERROR.
+         *
+         * @param legacyValidationMode Set to true to enable legacy validation mode.
+         * @return Returns the builder.
+         */
+        public Builder legacyValidationMode(boolean legacyValidationMode) {
+            this.legacyValidationMode = legacyValidationMode;
             return this;
         }
 
         @Override
         public ModelValidator build() {
-            validators.addAll(validatorFactory.loadBuiltinValidators());
-            validators.removeIf(v -> CORE_VALIDATORS.contains(v.getClass()));
+            // Adding built-in validators is deferred to allow for a custom factory to be set on the builder.
+            addValidators(validatorFactory.loadBuiltinValidators());
             return new ModelValidator(this);
         }
     }
@@ -187,22 +211,23 @@ final class ModelValidator implements Validator {
     private static final class LoadedModelValidator {
 
         private final Model model;
-        private final List<SeverityOverride> severityOverrides;
         private final List<Validator> validators;
+        private final List<Validator> criticalValidators;
         private final List<ValidationEvent> events = new ArrayList<>();
         private final ValidationEventDecorator validationEventDecorator;
         private final Consumer<ValidationEvent> eventListener;
+        private final boolean legacyValidationMode;
 
         private LoadedModelValidator(Model model, ModelValidator validator) {
             this.model = model;
             this.eventListener = validator.eventListener;
-            this.severityOverrides = new ArrayList<>(validator.severityOverrides);
             this.validators = new ArrayList<>(validator.validators);
+            this.criticalValidators = Collections.unmodifiableList(validator.criticalValidators);
+            this.legacyValidationMode = validator.legacyValidationMode;
 
             // Suppressing and elevating events is handled by composing a given decorator with a
             // ModelBasedEventDecorator.
             ModelBasedEventDecorator modelBasedEventDecorator = new ModelBasedEventDecorator();
-            modelBasedEventDecorator.severityOverrides(validator.severityOverrides);
             ValidatedResult<ValidationEventDecorator> result = modelBasedEventDecorator.createDecorator(model);
             this.validationEventDecorator = result.getResult()
                     .map(decorator -> ValidationEventDecorator.compose(
@@ -265,35 +290,42 @@ final class ModelValidator implements Validator {
         }
 
         private void pushEvent(ValidationEvent event) {
+            events.add(updateAndEmitEvent(event));
+        }
+
+        private ValidationEvent updateAndEmitEvent(ValidationEvent event) {
             if (validationEventDecorator.canDecorate(event)) {
                 event = validationEventDecorator.decorate(event);
             }
-            events.add(event);
             eventListener.accept(event);
+            return event;
         }
 
         private List<ValidationEvent> validate() {
-            // Perform critical validation before other more granular semantic validators.
-            pushEvents(new TargetValidator().validate(model));
-            pushEvents(new ResourceCycleValidator().validate(model));
-
-            // Fail early if errors were detected since further validation will just obscure the root cause.
+            // Perform critical correctness validation before other critical validators.
+            events.addAll(streamEvents(CORRECTNESS_VALIDATORS.values().stream()));
             if (LoaderUtils.containsErrorEvents(events)) {
                 return events;
             }
 
-            List<ValidationEvent> result = validators.parallelStream()
+            // Same thing, but for other critical validators.
+            events.addAll(streamEvents(criticalValidators.parallelStream()));
+
+            // Only fail early here if legacy validation mode is enabled.
+            if (!legacyValidationMode && LoaderUtils.containsErrorEvents(events)) {
+                return events;
+            }
+
+            events.addAll(streamEvents(validators.parallelStream()));
+            return events;
+        }
+
+        private List<ValidationEvent> streamEvents(Stream<Validator> validators) {
+            return validators
                     .flatMap(validator -> validator.validate(model).stream())
                     .filter(this::filterPrelude)
-                    .map(e -> validationEventDecorator.canDecorate(e) ? validationEventDecorator.decorate(e) : e)
-                    // Emit events as they occur during validation.
-                    .peek(eventListener)
+                    .map(this::updateAndEmitEvent)
                     .collect(Collectors.toList());
-
-            // Add in events encountered while building up validators and suppressions.
-            result.addAll(events);
-
-            return result;
         }
 
         private boolean filterPrelude(ValidationEvent event) {

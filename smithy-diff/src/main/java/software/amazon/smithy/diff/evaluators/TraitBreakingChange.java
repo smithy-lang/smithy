@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -214,15 +215,15 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
         }
 
         private String createBreakingMessage(TraitDefinition.ChangeType type, String path, Node left, Node right) {
-            String leftPretty = Node.prettyPrintJson(left.toNode());
-            String rightPretty = Node.prettyPrintJson(right.toNode());
+            String leftPretty = ValidationUtils.tickedPrettyPrintedNode(left);
+            String rightPretty = ValidationUtils.tickedPrettyPrintedNode(right);
 
             switch (type) {
                 case ADD:
                     if (!path.isEmpty()) {
                         return String.format("Added trait contents to `%s` at path `%s` with value %s",
                                              trait.getId(), path, rightPretty);
-                    } else if (rightPretty.equals("{}")) {
+                    } else if (Node.objectNode().equals(right)) {
                         return String.format("Added trait `%s`", trait.getId());
                     } else {
                         return String.format("Added trait `%s` with value %s", trait.getId(), rightPretty);
@@ -231,7 +232,7 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                     if (!path.isEmpty()) {
                         return String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
                                              trait.getId(), path, leftPretty);
-                    } else if (leftPretty.equals("{}")) {
+                    } else if (Node.objectNode().equals(left)) {
                         return String.format("Removed trait `%s`", trait.getId());
                     } else {
                         return String.format("Removed trait `%s`. Previous trait value: %s",

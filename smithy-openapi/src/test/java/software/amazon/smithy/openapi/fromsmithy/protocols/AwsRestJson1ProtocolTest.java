@@ -215,6 +215,7 @@ public class AwsRestJson1ProtocolTest {
 
     @ParameterizedTest
     @MethodSource("protocolHeaderCases")
+    @SuppressWarnings("unchecked")
     public void assertProtocolHeaders(
             String operationId,
             Set<String> expectedRequestHeaders,

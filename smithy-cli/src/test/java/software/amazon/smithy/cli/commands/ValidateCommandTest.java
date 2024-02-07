@@ -87,7 +87,7 @@ public class ValidateCommandTest {
         assertThat(result, containsString("EmitNotes"));
         assertThat(result, containsString("EmitWarnings"));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ValidateCommandTest {
         assertThat(result, containsString("─ EmitNotes"));
         assertThat(result, containsString("─ EmitWarnings"));
         assertThat(result, containsString("─ EmitDangers"));
-        assertThat(result, containsString("─ TraitTarget"));
+        assertThat(result, containsString("─ HttpLabelTrait"));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, containsString("EmitWarnings"));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, not(containsString("EmitWarnings")));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, not(containsString("EmitWarnings")));
         assertThat(result, not(containsString("EmitDangers")));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     private CliUtils.Result runValidationEventsTest(Severity severity) throws Exception {

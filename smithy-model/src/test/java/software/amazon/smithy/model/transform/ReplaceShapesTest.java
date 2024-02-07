@@ -27,6 +27,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -391,5 +392,26 @@ public class ReplaceShapesTest {
                           Matchers.not(Optional.empty()));
         // Ensure that the list shape has the new member.
         assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+    }
+
+    @Test
+    public void removingEnumMemberRemovesMemberFromUpdatedModel() {
+        EnumShape shapeA = EnumShape.builder()
+                .id("example#Foo")
+                .addMember("a", "A")
+                .addMember("b", "B")
+                .build();
+        EnumShape shapeB = shapeA.toBuilder().removeMember("b").build();
+
+        Model modelA = Model.builder().addShape(shapeA).build();
+
+        ReplaceShapes replaceShapes = new ReplaceShapes(Collections.singleton(shapeB));
+        Model modelB = replaceShapes.transform(ModelTransformer.create(), modelA);
+
+        assertEquals(modelB.expectShape(shapeB.getId()), shapeB);
+
+        // This previously would have failed because ReplaceShapes only removed members when they were removed from
+        // structures or unions. We now handle member removal generically instead.
+        assertThat(modelB.getShape(shapeA.getAllMembers().get("b").getId()), Matchers.equalTo(Optional.empty()));
     }
 }

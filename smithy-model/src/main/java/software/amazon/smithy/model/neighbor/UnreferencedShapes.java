@@ -27,7 +27,9 @@ import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Finds shapes that are not connected to a service shape, are not trait
- * definitions, and are not referenced by trait definitions.
+ * definitions, are not referenced by trait definitions, and are not
+ * referenced in trait values through
+ * {@link software.amazon.smithy.model.traits.IdRefTrait}.
  *
  * <p>Prelude shapes are never considered unreferenced.
  */
@@ -53,7 +55,9 @@ public final class UnreferencedShapes {
      * @return Returns the unreferenced shapes.
      */
     public Set<Shape> compute(Model model) {
-        Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProvider());
+        NeighborProvider baseProvider = NeighborProviderIndex.of(model).getProvider();
+        NeighborProvider providerWithIdRefRelationships = NeighborProvider.withIdRefRelationships(model, baseProvider);
+        Walker shapeWalker = new Walker(providerWithIdRefRelationships);
 
         // Find all shapes connected to any service shape.
         Set<Shape> connected = new HashSet<>();

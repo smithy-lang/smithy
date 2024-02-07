@@ -3,6 +3,7 @@ $version: "2.0"
 namespace aws.protocoltests.restxml.xmlns
 
 use aws.api#service
+use aws.auth#sigv4
 use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
@@ -15,8 +16,10 @@ use smithy.test#httpResponseTests
 ///
 /// See https://github.com/awslabs/smithy/issues/616
 @service(sdkId: "Rest Xml Protocol Namespace")
+@sigv4(name: "restxmlwithnamespace")
 @xmlNamespace(uri: "https://example.com")
 @restXml
+@title("Sample Rest Xml Protocol Service With Namespace")
 service RestXmlWithNamespace {
     version: "2019-12-16",
     operations: [SimpleScalarProperties]

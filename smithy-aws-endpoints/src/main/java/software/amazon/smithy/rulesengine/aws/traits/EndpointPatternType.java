@@ -16,7 +16,7 @@ public enum EndpointPatternType {
     SERVICE_DNSSUFFIX("service_dnsSuffix"),
 
     /** An endpoint with pattern `{service}.{region}.{dnsSuffix}`. */
-    SERVICE_REGION_DNSSUFFI("service_region_dnsSuffix");
+    SERVICE_REGION_DNSSUFFIX("service_region_dnsSuffix");
 
     private final String name;
 

@@ -168,6 +168,19 @@ public final class StringNode extends Node implements Comparable<StringNode> {
         }
     }
 
+    /**
+     * Gets the value of the string as a ShapeId if it is a valid Shape ID.
+     *
+     * @return Returns the optional Shape ID.
+     */
+    public Optional<ShapeId> asShapeId() {
+        try {
+            return Optional.of(ShapeId.from(getValue()));
+        } catch (ShapeIdSyntaxException e) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         return other instanceof StringNode && value.equals(((StringNode) other).getValue());

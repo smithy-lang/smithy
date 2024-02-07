@@ -131,7 +131,7 @@ public class TraitBreakingChangeTest {
                 assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/1` "
-                                   + "from \"b\" to \"B\""));
+                                   + "from `b` to `B`"));
             }
         );
     }
@@ -147,7 +147,7 @@ public class TraitBreakingChangeTest {
                     assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
                     assertThat(events.get(0).getMessage(),
                                equalTo("Removed trait contents from `smithy.example#exampleTrait` at path `/b`. "
-                                       + "Removed value: \"B\""));
+                                       + "Removed value: `B`"));
                 }
         );
     }
@@ -166,7 +166,7 @@ public class TraitBreakingChangeTest {
                 assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/b` "
-                                   + "from \"B\" to \"_B_\""));
+                                   + "from `B` to `_B_`"));
             }
         );
     }
@@ -184,7 +184,7 @@ public class TraitBreakingChangeTest {
                 assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Removed trait contents from `smithy.example#exampleTrait` at path "
-                                   + "`/foo/bar`. Removed value: \"hi\""));
+                                   + "`/foo/bar`. Removed value: `hi`"));
             }
         );
     }
@@ -202,7 +202,7 @@ public class TraitBreakingChangeTest {
                 assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path "
-                                   + "`/foo` from \"hi\" to \"bye\""));
+                                   + "`/foo` from `hi` to `bye`"));
             }
         );
     }

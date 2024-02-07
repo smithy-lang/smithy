@@ -1,5 +1,64 @@
 # Smithy Changelog
 
+## 1.44.0 (2024-01-25)
+
+### Features
+
+* Add AWS smoke test model package. ([#2113](https://github.com/smithy-lang/smithy/pull/2113))
+* Add more traits to protocol test services ([#2117](https://github.com/smithy-lang/smithy/pull/2117))
+* Enable custom inline suffixes in IDL serializer ([#2121](https://github.com/smithy-lang/smithy/pull/2121))
+* Keep trailing doc comment spaces in IDL serializer ([#2116](https://github.com/smithy-lang/smithy/pull/2116))
+* Expand protocol tests for default values. ([#2049](https://github.com/smithy-lang/smithy/pull/2049))
+* Add protocol tests for 0/false in query params. ([#2070](https://github.com/smithy-lang/smithy/pull/2070))
+* Change line break formatting in brackets. ([#2072](https://github.com/smithy-lang/smithy/pull/2072))
+* Add backticks to diff messages for trait changes. ([#2075](https://github.com/smithy-lang/smithy/pull/2075))
+* Support internal trait when building synthetic enum trait. ([#2106](https://github.com/smithy-lang/smithy/pull/2106))
+* Add "critical" validation phase to validation. ([#2098](https://github.com/smithy-lang/smithy/pull/2098))
+* Deprecated IAM Action traits that are now formally superseded by `@iamAction`. ([#2095](https://github.com/smithy-lang/smithy/pull/2095))
+* Added ability to override AWS endpoints partitions when needed. ([#2092](https://github.com/smithy-lang/smithy/pull/2092))
+
+### Bug Fixes
+
+* Fail when duplicate members are found in enum/intEnum shapes. ([#2112](https://github.com/smithy-lang/smithy/pull/2112))
+* Check references via idRef when looking for unreferenced shapes. ([#2105](https://github.com/smithy-lang/smithy/pull/2105))
+* Remove service renames after flattening namespaces. ([#2109](https://github.com/smithy-lang/smithy/pull/2109))
+* Fixed issue where endpoint modifier traits without a valid shape definition were being indexed. ([#2096](https://github.com/smithy-lang/smithy/pull/2096))
+
+### Documentation
+
+* Upgrade sphinx for docs. ([#2100](https://github.com/smithy-lang/smithy/pull/2100))
+* Updated several of the guide sections and tidied up the layout. ([#2097](https://github.com/smithy-lang/smithy/pull/2097))
+
+
+## 1.43.0 (2024-01-05)
+
+### Features
+
+* Updated `RemovedShape` diff event severity from `ERROR` to `WARNING` for scalar shapes. ([#2037](https://github.com/smithy-lang/smithy/pull/2037))
+* Made `parameterizedTestSource` public, allowing users to use a customized suite as a source for JUnit parameterized tests. ([#2087](https://github.com/smithy-lang/smithy/pull/2087))
+* Refactored `ReplaceShapes` transform to improve efficiency. ([#2082](https://github.com/smithy-lang/smithy/pull/2082))
+* Added validation for endpoint patterns used by `standardRegionalEndpoints` and `standardPartitionalEndpoints`. ([#2069](https://github.com/smithy-lang/smithy/pull/2069))
+* Added support for CLI dependency resolution via proxy. ([#2076](https://github.com/smithy-lang/smithy/pull/2076))
+* Improved efficiency of `ReplaceShapes` transform by only building container shapes once when multiple members are changed. ([#2081](https://github.com/smithy-lang/smithy/pull/2081))
+* Moved `allowOptionalNull` to `NodeValidationVisitor.Feature`. ([#2080](https://github.com/smithy-lang/smithy/pull/2080))
+* Added rules engine built-in for `AccountIdEndpointMode`. ([#2065](https://github.com/smithy-lang/smithy/pull/2065))
+* Added [JReleaser](https://jreleaser.org/) config. ([#2059](https://github.com/smithy-lang/smithy/pull/2059))
+* Added ability to find all operations for which a shape is used as an input, output, or error. ([#2064](https://github.com/smithy-lang/smithy/pull/2064))
+* Split InputOutput shapes into separate request and response shapes for `restXml` protocol tests. ([#2063](https://github.com/smithy-lang/smithy/pull/2063))
+
+### Bug Fixes
+
+* Fixed an issue where `@iamAction` wasn't reflected in CFN resource schema creation. ([#2091](https://github.com/smithy-lang/smithy/pull/2091)) 
+* Fixed tree node start and end locations. ([#2084](https://github.com/smithy-lang/smithy/pull/2084))
+* Fixed several minor build warnings. ([2089](https://github.com/smithy-lang/smithy/pull/2089))
+* Fixed protocol test service signing name for `awsJson1_1` protocol. ([#2089](https://github.com/smithy-lang/smithy/pull/2089))
+* Updated member removal for `ReplaceShapes` transform to ensure enum and intEnum members are correctly removed. ([#2082](https://github.com/smithy-lang/smithy/pull/2082))
+* Corrected erroneous outer tags in `restXml` protocol tests ([#2071](https://github.com/smithy-lang/smithy/pull/2071))
+
+### Documentation
+
+*  Added documentation for configuring CLI dependency resolution via proxy. ([#2083](https://github.com/smithy-lang/smithy/pull/2083))
+
 ## 1.42.0 (2023-12-07)
 
 ### Features

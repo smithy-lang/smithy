@@ -8,7 +8,7 @@ use aws.endpoints#standardRegionalEndpoints
     partitionSpecialCases: {
         "aws-us-gov": [
             {
-                endpoint: "myservice.{region}.{dnsSuffix}",
+                endpoint: "https://myservice.{region}.{dnsSuffix}",
                 fips: true
             }
         ]

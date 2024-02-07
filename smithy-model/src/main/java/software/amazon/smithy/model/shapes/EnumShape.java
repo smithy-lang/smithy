@@ -18,6 +18,7 @@ package software.amazon.smithy.model.shapes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
+import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -286,8 +288,16 @@ public final class EnumShape extends StringShape {
                 .orElseThrow(() -> new IllegalStateException("Enum definitions can only be made for string enums."));
         builder.value(traitValue);
         member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
-        member.getTrait(TagsTrait.class).ifPresent(tagsTrait -> builder.tags(tagsTrait.getValues()));
         member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
+
+        List<String> tags = member.getTrait(TagsTrait.class)
+                .map(StringListTrait::getValues)
+                .orElse(Collections.emptyList());
+
+        builder.tags(tags);
+        if (member.hasTrait(InternalTrait.class) && !tags.contains("internal")) {
+            builder.addTag("internal");
+        }
         return builder.build();
     }
 

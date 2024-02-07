@@ -1,12 +1,5 @@
 $version: "2.0"
 
-metadata suppressions = [
-    {
-        id: "ResourceOperationInputOutput",
-        namespace: "com.example"
-    }
-]
-
 namespace com.example
 
 resource Resource1 {

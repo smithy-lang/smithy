@@ -46,6 +46,27 @@ class EndpointModifierIndexTest {
             index.getEndpointModifierTraits(service4).get(RuleBasedEndpointsTrait.ID));
     }
 
+
+    @Test
+    public void indexSkipsLoadingTraitsWhenDefinitionIsMissing() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("endpointModifierIndex.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Remove trait shape definition from model to verify index can skip it
+        model = model.toBuilder().removeShape(StandardRegionalEndpointsTrait.ID).build();
+
+        EndpointModifierIndex index = new EndpointModifierIndex(model);
+
+        ShapeId service1 = getServiceShapeId(model, "ns.foo#Service1");
+        ShapeId service3 = getServiceShapeId(model, "ns.foo#Service3");
+
+        assertEquals(index.getEndpointModifierTraits(service1).size(), 0);
+        assertEquals(index.getEndpointModifierTraits(service3).size(), 1);
+    }
+
     private ShapeId getServiceShapeId(Model model, String service) {
         return model
             .expectShape(ShapeId.from(service), ServiceShape.class).toShapeId();

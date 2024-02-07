@@ -271,8 +271,7 @@ final class FormatVisitor {
                                         .close(Formatter.RBRACKET)
                                         .extractChildren(cursor, BracketFormatter.extractByType(TreeType.SHAPE_ID,
                                                                                                 this::visit))
-                                        .detectHardLines(cursor)
-                                        .forceLineBreaks(true) // always put each error on separate lines.
+                                        .forceLineBreaks() // always put each error on separate lines.
                                         .write());
             }
 
@@ -327,30 +326,46 @@ final class FormatVisitor {
                             }))
                             .detectHardLines(cursor)
                             .write();
-                } else {
-                    if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
-                        // Check the inner trait node for hard line breaks rather than the wrapper.
-                        TreeCursor traitNode = cursor
-                                .getFirstChild(TreeType.TRAIT_NODE)
-                                .getFirstChild(TreeType.NODE_VALUE)
-                                .getFirstChild(); // The actual node value.
-                        return new BracketFormatter()
-                                .open(Formatter.LPAREN)
-                                .close(Formatter.RPAREN)
-                                .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                    if (child.getTree().getType() == TreeType.TRAIT_NODE) {
-                                        // Split WS and NODE_VALUE so that they appear on different lines.
-                                        return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
-                                    } else {
-                                        return Stream.empty();
-                                    }
-                                }))
-                                .detectHardLines(traitNode)
-                                .write();
+                } else if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
+                    TreeCursor traitNode = cursor.getFirstChild(TreeType.TRAIT_NODE);
+                    // Check the inner trait node for hard line breaks rather than the wrapper.
+                    TreeCursor actualTraitNodeValue = traitNode
+                            .getFirstChild(TreeType.NODE_VALUE)
+                            .getFirstChild(); // The actual node value.
+
+                    BracketFormatter formatter = new BracketFormatter()
+                            .open(Formatter.LPAREN)
+                            .close(Formatter.RPAREN)
+                            .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                                if (child.getTree().getType() == TreeType.TRAIT_NODE) {
+                                    // Split WS and NODE_VALUE so that they appear on different lines.
+                                    return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
+                                } else {
+                                    return Stream.empty();
+                                }
+                            }));
+
+                    // TraitBody may have leading comments and TraitNode may have trailing comments
+                    // which both require line break
+                    TreeCursor bodyWs = cursor.getFirstChild(TreeType.WS);
+                    TreeCursor traitNodeWs = traitNode.getFirstChild(TreeType.WS);
+                    if ((bodyWs != null && !bodyWs.findChildrenByType(TreeType.COMMENT).isEmpty())
+                            || (traitNodeWs != null && !traitNodeWs.findChildrenByType(TreeType.COMMENT).isEmpty())) {
+                        // Need to line break if there's a leading comment in the trait body no matter what
+                        formatter.forceLineBreaks();
+                    } else if (actualTraitNodeValue.getTree().getType() == TreeType.NODE_ARRAY
+                            || actualTraitNodeValue.getTree().getType() == TreeType.NODE_OBJECT) {
+                        // Just inline arrays and objects in trait body
+                        formatter.forceInline();
                     } else {
-                        // If the trait node is empty, remove the empty parentheses.
-                        return Doc.text("");
+                        // Any other values can use normal detection
+                        formatter.detectHardLines(cursor);
                     }
+
+                    return formatter.write();
+                } else {
+                    // If the trait node is empty, remove the empty parentheses.
+                    return Doc.text("");
                 }
             }
 
@@ -400,11 +415,17 @@ final class FormatVisitor {
             }
 
             case NODE_OBJECT: {
-                return new BracketFormatter()
+                BracketFormatter formatter = new BracketFormatter()
                         .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP,
-                                                                                this::visit))
-                        .detectHardLines(cursor)
-                        .write();
+                                                                                this::visit));
+                if (cursor.getParent().getParent().getTree().getType() == TreeType.NODE_ARRAY)  {
+                    // Always break objects inside arrays if not empty
+                    formatter.forceLineBreaksIfNotEmpty();
+                } else {
+                    formatter.detectHardLines(cursor);
+                }
+                return formatter.write();
+
             }
 
             case NODE_OBJECT_KVP: {

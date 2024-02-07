@@ -65,6 +65,17 @@ public final class AwsBuiltIns {
                     .build();
 
     /**
+     * Built-in parameter representing the AccountId Endpoint Mode.
+     */
+    public static final Parameter ACCOUNT_ID_ENDPOINT_MODE =
+            Parameter.builder()
+                    .name("AccountIdEndpointMode")
+                    .type(ParameterType.STRING)
+                    .builtIn("AWS::Auth::AccountIdEndpointMode")
+                    .documentation("The AccountId Endpoint Mode.")
+                    .build();
+
+    /**
      * Built-in parameter representing the Credential Scope.
      */
     public static final Parameter CREDENTIAL_SCOPE =

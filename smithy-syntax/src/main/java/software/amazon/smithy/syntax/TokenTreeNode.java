@@ -109,22 +109,50 @@ class TokenTreeNode implements TokenTree {
 
     @Override
     public final int getStartLine() {
-        return getChildren().isEmpty() ? 0 : getChildren().get(0).getStartLine();
+        // Start line of 0 indicates an empty child, so ignore it.
+        for (TokenTree child : getChildren()) {
+            int startLine = child.getStartLine();
+            if (startLine > 0) {
+                return startLine;
+            }
+        }
+        return 0;
     }
 
     @Override
     public final int getStartColumn() {
-        return getChildren().isEmpty() ? 0 : getChildren().get(0).getStartColumn();
+        // Start column of 0 indicates an empty child, so ignore it.
+        for (TokenTree child : getChildren()) {
+            int startColumn = child.getStartColumn();
+            if (startColumn > 0) {
+                return startColumn;
+            }
+        }
+        return 0;
     }
 
     @Override
     public final int getEndLine() {
-        return children.isEmpty() ? getStartLine() : children.get(children.size() - 1).getEndLine();
+        // End line of 0 indicates an empty child, so ignore it.
+        for (int i = children.size() - 1; i >= 0; i--) {
+            int endLine = children.get(i).getEndLine();
+            if (endLine > 0) {
+                return endLine;
+            }
+        }
+        return 0;
     }
 
     @Override
     public final int getEndColumn() {
-        return children.isEmpty() ? getStartColumn() : children.get(children.size() - 1).getEndColumn();
+        // End column of 0 indicates an empty child, so ignore it.
+        for (int i = children.size() - 1; i >= 0; i--) {
+            int endColumn = children.get(i).getEndColumn();
+            if (endColumn > 0) {
+                return endColumn;
+            }
+        }
+        return 0;
     }
 
     @Override

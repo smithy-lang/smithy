@@ -10,6 +10,12 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
+/**
+ * Use the {@code @iamAction} trait's {@code name} property instead.
+ *
+ * @deprecated As of release 1.44.0, replaced by {@link IamActionTrait#resolveActionName}.
+ */
+@Deprecated
 public final class ActionNameTrait extends StringTrait {
 
     public static final ShapeId ID = ShapeId.from("aws.iam#actionName");

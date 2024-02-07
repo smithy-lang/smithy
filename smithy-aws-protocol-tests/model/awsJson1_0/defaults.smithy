@@ -37,7 +37,16 @@ apply OperationWithDefaults @httpRequestTests([
                     "defaultDouble": 1.0,
                     "defaultMap": {},
                     "defaultEnum": "FOO",
-                    "defaultIntEnum": 1
+                    "defaultIntEnum": 1,
+                    "emptyString": "",
+                    "falseBoolean": false,
+                    "emptyBlob": "",
+                    "zeroByte": 0,
+                    "zeroShort": 0,
+                    "zeroInteger": 0,
+                    "zeroLong": 0,
+                    "zeroFloat": 0.0,
+                    "zeroDouble": 0.0
                 }
             }"""
         params: {
@@ -91,6 +100,15 @@ apply OperationWithDefaults @httpRequestTests([
                 defaultMap: {name: "Jack"}
                 defaultEnum: "BAR"
                 defaultIntEnum: 2
+                emptyString: "foo"
+                falseBoolean: true
+                emptyBlob: "hi"
+                zeroByte: 1
+                zeroShort: 1
+                zeroInteger: 1
+                zeroLong: 1
+                zeroFloat: 1.0
+                zeroDouble: 1.0
             }
         }
         body: """
@@ -114,7 +132,16 @@ apply OperationWithDefaults @httpRequestTests([
                     "defaultDouble": 2.0,
                     "defaultMap": {"name": "Jack"},
                     "defaultEnum": "BAR",
-                    "defaultIntEnum": 2
+                    "defaultIntEnum": 2,
+                    "emptyString": "foo",
+                    "falseBoolean": true,
+                    "emptyBlob": "aGk=",
+                    "zeroByte": 1,
+                    "zeroShort": 1,
+                    "zeroInteger": 1,
+                    "zeroLong": 1,
+                    "zeroFloat": 1.0,
+                    "zeroDouble": 1.0
                 }
             }"""
     }
@@ -152,8 +179,56 @@ apply OperationWithDefaults @httpRequestTests([
                 defaultMap: {}
                 defaultEnum: "FOO"
                 defaultIntEnum: 1
+                emptyString: ""
+                falseBoolean: false
+                emptyBlob: ""
+                zeroByte: 0
+                zeroShort: 0
+                zeroInteger: 0
+                zeroLong: 0
+                zeroFloat: 0.0
+                zeroDouble: 0.0
             },
             topLevelDefault: "hi"
+            otherTopLevelDefault: 0
+        }
+    }
+    {
+        id: "AwsJson10ClientUsesExplicitlyProvidedValuesInTopLevel"
+        documentation: "Any time a value is provided for a member in the top level of input, it is used, regardless of if its the default."
+        appliesTo: "client"
+        tags: ["defaults"]
+        protocol: awsJson1_0
+        method: "POST"
+        bodyMediaType: "application/json"
+        uri: "/"
+        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        body: """
+            {
+                "topLevelDefault": "hi",
+                "otherTopLevelDefault": 0
+            }"""
+        params: {
+            topLevelDefault: "hi"
+            otherTopLevelDefault: 0
+        }
+    }
+    {
+        id: "AwsJson10ClientIgnoresNonTopLevelDefaultsOnMembersWithClientOptional"
+        documentation: "Typically, non top-level members would have defaults filled in, but if they have the clientOptional trait, the defaults should be ignored."
+        appliesTo: "client"
+        tags: ["defaults"]
+        protocol: awsJson1_0
+        method: "POST"
+        bodyMediaType: "application/json"
+        uri: "/"
+        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        body: """
+            {
+                "clientOptionalDefaults": {}
+            }"""
+        params: {
+            clientOptionalDefaults: {}
         }
     }
 ])
@@ -188,6 +263,15 @@ apply OperationWithDefaults @httpResponseTests([
             defaultMap: {}
             defaultEnum: "FOO"
             defaultIntEnum: 1
+            emptyString: ""
+            falseBoolean: false
+            emptyBlob: ""
+            zeroByte: 0
+            zeroShort: 0
+            zeroInteger: 0
+            zeroLong: 0
+            zeroFloat: 0.0
+            zeroDouble: 0.0
         }
     }
     {
@@ -219,7 +303,16 @@ apply OperationWithDefaults @httpResponseTests([
                 "defaultDouble": 2.0,
                 "defaultMap": {"name": "Jack"},
                 "defaultEnum": "BAR",
-                "defaultIntEnum": 2
+                "defaultIntEnum": 2,
+                "emptyString": "foo",
+                "falseBoolean": true,
+                "emptyBlob": "aGk=",
+                "zeroByte": 1,
+                "zeroShort": 1,
+                "zeroInteger": 1,
+                "zeroLong": 1,
+                "zeroFloat": 1.0,
+                "zeroDouble": 1.0
             }"""
         params: {
             defaultString: "bye"
@@ -241,6 +334,15 @@ apply OperationWithDefaults @httpResponseTests([
             defaultMap: {name: "Jack"}
             defaultEnum: "BAR"
             defaultIntEnum: 2
+            emptyString: "foo"
+            falseBoolean: true
+            emptyBlob: "hi"
+            zeroByte: 1
+            zeroShort: 1
+            zeroInteger: 1
+            zeroLong: 1
+            zeroFloat: 1.0
+            zeroDouble: 1.0
         }
     }
     {
@@ -271,7 +373,16 @@ apply OperationWithDefaults @httpResponseTests([
                 "defaultDouble": 1.0,
                 "defaultMap": {},
                 "defaultEnum": "FOO",
-                "defaultIntEnum": 1
+                "defaultIntEnum": 1,
+                "emptyString": "",
+                "falseBoolean": false,
+                "emptyBlob": "",
+                "zeroByte": 0,
+                "zeroShort": 0,
+                "zeroInteger": 0,
+                "zeroLong": 0,
+                "zeroFloat": 0.0,
+                "zeroDouble": 0.0
             }"""
         params: {}
     }
@@ -280,14 +391,20 @@ apply OperationWithDefaults @httpResponseTests([
 operation OperationWithDefaults {
     input := {
         defaults: Defaults
-
+        clientOptionalDefaults: ClientOptionalDefaults
         topLevelDefault: String = "hi" // Client should ignore default values in input shape
+        otherTopLevelDefault: Integer = 0
     }
 
     output := with [DefaultsMixin] {}
 }
 
 structure Defaults with [DefaultsMixin] {}
+
+structure ClientOptionalDefaults {
+    @clientOptional
+    member: Integer = 0
+}
 
 @mixin
 structure DefaultsMixin {
@@ -310,6 +427,15 @@ structure DefaultsMixin {
     defaultMap: TestStringMap = {}
     defaultEnum: TestEnum = "FOO"
     defaultIntEnum: TestIntEnum = 1
+    emptyString: String = ""
+    falseBoolean: Boolean = false
+    emptyBlob: Blob = ""
+    zeroByte: Byte = 0
+    zeroShort: Short = 0
+    zeroInteger: Integer = 0
+    zeroLong: Long = 0
+    zeroFloat: Float = 0.0
+    zeroDouble: Double = 0.0
 }
 
 list TestStringList {

@@ -499,4 +499,62 @@ public class EnumShapeTest {
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertFalse(EnumShape.canConvertToEnum(string, true));
     }
+
+    @Test
+    public void syntheticEnumSupportsDocumentation() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#DocumentedEnum")
+                .addMember("documented", "foo", builder -> {
+                    builder.addTrait(new DocumentationTrait("bar"));
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertEquals("bar", trait.getValues().get(0).getDocumentation().get());
+    }
+
+    @Test
+    public void syntheticEnumSupportsDeprecated() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#DeprecatedEnum")
+                .addMember("deprecated", "foo", builder -> {
+                    builder.addTrait(DeprecatedTrait.builder().build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertTrue(trait.getValues().get(0).isDeprecated());
+    }
+
+    @Test
+    public void syntheticEnumSupportsTags() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#TaggedEnum")
+                .addMember("tagged", "foo", builder -> {
+                    builder.addTrait(TagsTrait.builder().addValue("bar").build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertEquals(ListUtils.of("bar"), trait.getValues().get(0).getTags());
+    }
+
+    @Test
+    public void syntheticEnumSupportsInternal() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#InternalEnum")
+                .addMember("withoutTag", "foo", builder -> {
+                    builder.addTrait(new InternalTrait());
+                })
+                .addMember("withTag", "bar", builder -> {
+                    builder.addTrait(new InternalTrait());
+                    builder.addTrait(TagsTrait.builder().addValue("internal").build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        for (EnumDefinition definition : trait.getValues()) {
+            assertEquals(ListUtils.of("internal"), definition.getTags());
+        }
+    }
 }

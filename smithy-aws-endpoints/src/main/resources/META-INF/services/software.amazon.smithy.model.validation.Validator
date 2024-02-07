@@ -1,1 +1,2 @@
 software.amazon.smithy.rulesengine.aws.validators.RuleSetAwsBuiltInValidator
+software.amazon.smithy.rulesengine.aws.validators.AwsSpecialCaseEndpointValidator

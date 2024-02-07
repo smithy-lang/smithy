@@ -30,7 +30,7 @@ operation GetTime2 {
 
 @http(method: "X", uri: "/foo", code: 200)
 resource Sprocket2 {
-    identifiers: {username: String, id: String, otherId: String}
+    identifiers: { username: String, id: String, otherId: String }
 }
 
 @error("client")

@@ -32,6 +32,7 @@ final class BracketFormatter {
     private Doc close = Formatter.RBRACE;
     private Collection<Doc> children;
     private boolean forceLineBreaks;
+    private boolean forceInline = false;
 
     static Function<TreeCursor, Stream<Doc>> extractor(
             Function<TreeCursor, Doc> visitor,
@@ -91,8 +92,8 @@ final class BracketFormatter {
         return false;
     }
 
-    BracketFormatter forceLineBreaks(boolean forceLineBreaks) {
-        this.forceLineBreaks = forceLineBreaks;
+    BracketFormatter forceLineBreaks() {
+        forceLineBreaks = true;
         return this;
     }
 
@@ -103,15 +104,39 @@ final class BracketFormatter {
         return this;
     }
 
+    // Don't force line breaks and don't indent inside brackets
+    BracketFormatter forceInline() {
+        forceInline = true;
+        forceLineBreaks = false;
+        return this;
+    }
+
     Doc write() {
         SmithyBuilder.requiredState("open", open);
         SmithyBuilder.requiredState("close", close);
         SmithyBuilder.requiredState("children", children);
         if (forceLineBreaks) {
             return FormatVisitor.renderBlock(open, close, Doc.intersperse(Doc.line(), children));
-        } else {
-            return Doc.intersperse(Formatter.LINE_OR_COMMA, children).bracket(4, Doc.lineOrEmpty(), open, close);
         }
+
+        int indent = forceInline ? 0 : 4;
+        Doc lineBreakDoc = getBracketLineBreakDoc();
+        return Doc.intersperse(Formatter.LINE_OR_COMMA, children).bracket(indent, lineBreakDoc, open, close);
+    }
+
+    private Doc getBracketLineBreakDoc() {
+        Doc lineDoc;
+        if (!children.isEmpty() && open == Formatter.LBRACE) {
+            // Make flattened objects have space padding inside the braces
+            lineDoc = Doc.lineOrSpace();
+        } else if (children.size() > 1) {
+            // Multiple children may be separated on to different lines
+            lineDoc = Doc.lineOrEmpty();
+        } else {
+            // Only one child or less doesn't need line separation
+            lineDoc = Doc.empty();
+        }
+        return lineDoc;
     }
 
     private static final class Extractor implements Function<TreeCursor, Stream<Doc>> {

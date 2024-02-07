@@ -259,4 +259,22 @@ public class SmithyIdlModelSerializerTest {
         String serializedString = serialized.entrySet().iterator().next().getValue();
         Assertions.assertEquals(expectedOutput, serializedString);
     }
+
+    @Test
+    public void handlesCustomInlineSuffixes() {
+        URL resource = getClass().getResource("idl-serialization/custom-inline-io.smithy");
+        Model model = Model.assembler().addImport(resource).assemble().unwrap();
+
+        Assertions.assertTrue(model.getShape(ShapeId.from("com.example#InlineOperationRequest")).isPresent());
+        Assertions.assertTrue(model.getShape(ShapeId.from("com.example#InlineOperationResponse")).isPresent());
+
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
+                .inlineInputSuffix("Request")
+                .inlineOutputSuffix("Response")
+                .build()
+                .serialize(model);
+        String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
+
+        assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
+    }
 }

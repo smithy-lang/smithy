@@ -78,6 +78,16 @@ Description
 Type
     ``string``
 
+.. _rules-engine-aws-built-ins-account-id-endpoint-mode:
+
+``AWS::Auth::AccountIdEndpointMode`` built-in
+=============================================
+
+Description
+    The AccountId Endpoint Mode.
+Type
+    ``string``
+
 .. _rules-engine-aws-built-ins-credential-scope:
 
 ``AWS::Auth::CredentialScope`` built-in
