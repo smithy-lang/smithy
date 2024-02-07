@@ -33,6 +33,7 @@ include ":smithy-rules-engine"
 include ":smithy-smoke-test-traits"
 include ":smithy-syntax"
 include ":smithy-aws-endpoints"
+<<<<<<< HEAD
 include ":smithy-aws-smoke-test-model"
 include ":smithy-annotation-processor"
 include ":smithy-trait-codegen-core"
@@ -47,3 +48,6 @@ project(':smithy-trait-codegen-processor-processor').projectDir = new File(setti
         'smithy-trait-codegen/annotation-processor/processor')
 project(':smithy-trait-codegen-processor-annotation').projectDir = new File(settingsDir,
         'smithy-trait-codegen/annotation-processor/annotation')
+=======
+include ":smithy-trait-codegen"
+>>>>>>> 2f02e9d9 (Update to use integ tests instead of annotation processor for testing trait codegen)

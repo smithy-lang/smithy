@@ -1,0 +1,77 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+description = "Plugin for Generating Trait Code from Smithy Models"
+
+ext {
+    displayName = "Smithy :: Trait Code Generation"
+    moduleName = "software.amazon.smithy.traitcodegen"
+}
+
+dependencies {
+    implementation project(":smithy-codegen-core")
+}
+
+// Set up Integration testing source sets
+sourceSets {
+    // Used to generate traits that will be tested in integ tests
+    create("util") {
+        java {
+            compileClasspath += main.output + main.runtimeClasspath
+            runtimeClasspath += main.output + main.runtimeClasspath
+        }
+    }
+    create("it") {
+        compileClasspath += sourceSets.main.output + configurations["testRuntimeClasspath"] + configurations["testCompileClasspath"]
+        runtimeClasspath += output + compileClasspath + sourceSets.test.runtimeClasspath
+
+        // Pull in the generated trait files
+        java {
+            srcDir("$buildDir/integ/com/example/traits")
+        }
+        // Add generated service provider file to resources
+        resources {
+            srcDirs += "$buildDir/generated-resources"
+        }
+    }
+}
+
+// Execute building of trait classes using an executable class
+// These traits will then be passed in to the integration test (it)
+// source set
+tasks.register("generateTraits", JavaExec) {
+    classpath = sourceSets.util.runtimeClasspath + sourceSets.util.output
+    mainClass = "software.amazon.smithy.traitcodegen.utils.PluginExecutor"
+}
+// Copy generated META-INF files to a new generated-resources directory to
+// make it easy to include as resource srcDir
+def generatedMetaInf = new File("$buildDir/integ/META-INF")
+def destResourceDir = new File("$buildDir/generated-resources", "META-INF")
+tasks.register("copyGeneratedSrcs", Copy) {
+    from generatedMetaInf
+    into destResourceDir
+    dependsOn("generateTraits")
+}
+
+
+// Add the integ test task
+tasks.register("integ", Test) {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.it.output.classesDirs
+    classpath = sourceSets.it.runtimeClasspath + sourceSets.util.runtimeClasspath
+}
+
+// Do not run checkstyle on generated trait classes
+tasks["checkstyleIt"].enabled = false
+
+// Force correct ordering so generated sources are available
+tasks["compileItJava"].dependsOn("generateTraits")
+tasks["compileItJava"].dependsOn("copyGeneratedSrcs")
+tasks["processItResources"].dependsOn("copyGeneratedSrcs")
+tasks["integ"].mustRunAfter("generateTraits")
+tasks["integ"].mustRunAfter("copyGeneratedSrcs")
+
+// Always run integ tests after base tests
+tasks["test"].finalizedBy("integ")
