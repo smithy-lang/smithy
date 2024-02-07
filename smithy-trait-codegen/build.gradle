@@ -16,20 +16,13 @@ dependencies {
 
 // Set up Integration testing source sets
 sourceSets {
-    // Used to generate traits that will be tested in integ tests
-    create("util") {
-        java {
-            compileClasspath += main.output + main.runtimeClasspath
-            runtimeClasspath += main.output + main.runtimeClasspath
-        }
-    }
     create("it") {
         compileClasspath += sourceSets.main.output + configurations["testRuntimeClasspath"] + configurations["testCompileClasspath"]
-        runtimeClasspath += output + compileClasspath + sourceSets.test.runtimeClasspath
+        runtimeClasspath += output + compileClasspath + sourceSets.test.runtimeClasspath + sourceSets.test.output
 
         // Pull in the generated trait files
         java {
-            srcDir("$buildDir/integ/com/example/traits")
+            srcDir("$buildDir/integ/")
         }
         // Add generated service provider file to resources
         resources {
@@ -42,9 +35,10 @@ sourceSets {
 // These traits will then be passed in to the integration test (it)
 // source set
 tasks.register("generateTraits", JavaExec) {
-    classpath = sourceSets.util.runtimeClasspath + sourceSets.util.output
-    mainClass = "software.amazon.smithy.traitcodegen.utils.PluginExecutor"
+    classpath = sourceSets.test.runtimeClasspath + sourceSets.test.output
+    mainClass = "software.amazon.smithy.traitcodegen.PluginExecutor"
 }
+
 // Copy generated META-INF files to a new generated-resources directory to
 // make it easy to include as resource srcDir
 def generatedMetaInf = new File("$buildDir/integ/META-INF")
@@ -60,7 +54,7 @@ tasks.register("copyGeneratedSrcs", Copy) {
 tasks.register("integ", Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.it.output.classesDirs
-    classpath = sourceSets.it.runtimeClasspath + sourceSets.util.runtimeClasspath
+    classpath = sourceSets.it.runtimeClasspath
 }
 
 // Do not run checkstyle on generated trait classes

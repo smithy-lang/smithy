@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.utils;
+package software.amazon.smithy.traitcodegen;
 
 
 import java.nio.file.Paths;
@@ -12,7 +12,6 @@ import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.traitcodegen.TraitCodegenPlugin;
 
 /**
  * Simple wrapper class used to execute the Trait codegen plugin for integration tests.
