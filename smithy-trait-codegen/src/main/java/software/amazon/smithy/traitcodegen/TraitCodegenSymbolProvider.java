@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -35,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.utils.CaseUtils;
 
 final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> implements SymbolProvider {
     private static final String NODE_FROM = "Node.from($L)";
@@ -210,6 +212,20 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol toSymbol(Shape shape) {
         return shape.accept(this);
+    }
+
+    @Override
+    public String toMemberName(MemberShape member) {
+        Shape containerShape = model.expectShape(member.getContainer());
+        // If the container is a Map list then we assign a simple "values" holder for the collection
+        if (containerShape.isMapShape() || containerShape.isListShape()) {
+            return "values";
+        // Enum shapes should have upper snake case members
+        } else if (containerShape.isEnumShape() || containerShape.isIntEnumShape()) {
+            return CaseUtils.toSnakeCase(member.getMemberName()).toUpperCase(Locale.ROOT);
+        }
+
+        return member.getMemberName();
     }
 
     private static Symbol simpleShapeSymbolFrom(Class<?> clazz) {

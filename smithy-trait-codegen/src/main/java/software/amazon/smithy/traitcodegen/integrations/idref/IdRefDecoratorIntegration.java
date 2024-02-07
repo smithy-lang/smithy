@@ -48,7 +48,18 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     @Override
     public SymbolProvider decorateSymbolProvider(Model model, TraitCodegenSettings settings,
                                                  SymbolProvider symbolProvider) {
-        return shape -> provideSymbol(shape, symbolProvider, model);
+        return new SymbolProvider() {
+            @Override
+            public Symbol toSymbol(Shape shape) {
+                return provideSymbol(shape, symbolProvider, model);
+            }
+
+            // Necessary to ensure initial toMemberName is not squashed by decorating
+            @Override
+            public String toMemberName(MemberShape shape) {
+                return symbolProvider.toMemberName(shape);
+            }
+        };
     }
 
     private Symbol provideSymbol(Shape shape, SymbolProvider symbolProvider, Model model) {

@@ -28,8 +28,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * This integration runs after all other integrations have finished to ensure that
  * any other type decorators and integrations have already been applied before creating any Trait
  * definitions from the resulting type.
- *
- * <p>This integration also overrides the default {@code toMemberName} name implementation.
  */
 @SmithyInternalApi
 public final class CoreIntegration implements TraitCodegenIntegration {
@@ -60,9 +58,10 @@ public final class CoreIntegration implements TraitCodegenIntegration {
                 return symbolProvider.toSymbol(shape);
             }
 
+            // Necessary to ensure initial toMemberName is not squashed by decorating
             @Override
             public String toMemberName(MemberShape shape) {
-                return toMemberNameOrValues(shape, model, symbolProvider);
+                return symbolProvider.toMemberName(shape);
             }
         };
     }
@@ -81,14 +80,5 @@ public final class CoreIntegration implements TraitCodegenIntegration {
                 .definitionFile(packagePath + "/" + TraitCodegenUtils.getDefaultTraitName(shape) + ".java")
                 .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
                 .build();
-    }
-
-    private static String toMemberNameOrValues(MemberShape member, Model model, SymbolProvider symbolProvider) {
-        Shape containerShape = model.expectShape(member.getContainer());
-        if (containerShape.isMapShape() || containerShape.isListShape()) {
-            return "values";
-        } else {
-            return symbolProvider.toMemberName(member);
-        }
     }
 }
