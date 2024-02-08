@@ -61,10 +61,31 @@ final class ModelBuilder {
     private ValidatedResult<Model> validatedResult;
     private String titleLabel;
     private Style[] titleLabelStyles;
+    private ValidationEventFormatOptions.Format validationOutputFormat;
+    private boolean disableOutputFormatFraming = false;
     private boolean disableConfigModels;
 
     public ModelBuilder arguments(Arguments arguments) {
         this.arguments = arguments;
+
+        // Determine how to format the output, whether it's text (the default) or CSV.
+        // Only some commands (like validate) actually let you customize the output format, so assume a default.
+        if (validationOutputFormat == null) {
+            validationOutputFormat(arguments.hasReceiver(ValidationEventFormatOptions.class)
+                    ? arguments.getReceiver(ValidationEventFormatOptions.class).format()
+                    : ValidationEventFormatOptions.Format.TEXT);
+        }
+
+        return this;
+    }
+
+    public ModelBuilder disableOutputFormatFraming(boolean disableOutputFormatFraming) {
+        this.disableOutputFormatFraming = disableOutputFormatFraming;
+        return this;
+    }
+
+    public ModelBuilder validationOutputFormat(ValidationEventFormatOptions.Format validationOutputFormat) {
+        this.validationOutputFormat = validationOutputFormat;
         return this;
     }
 
@@ -180,12 +201,20 @@ final class ModelBuilder {
                 .titleLabel(titleLabel, titleLabelStyles)
                 .build();
 
+        if (!disableOutputFormatFraming) {
+            validationOutputFormat.beginPrinting(validationPrinter);
+        }
+
         for (ValidationEvent event : sortedEvents) {
             // Only log events that are >= --severity. Note that setting --quiet inherently
             // configures events to need to be >= DANGER. Also filter using --show-validators and --hide-validators.
             if (validatorOptions.isVisible(event)) {
-                validationPrinter.println(formatter.format(event));
+                validationOutputFormat.print(validationPrinter, formatter, event);
             }
+        }
+
+        if (!disableOutputFormatFraming) {
+            validationOutputFormat.endPrinting(validationPrinter);
         }
 
         env.flush();

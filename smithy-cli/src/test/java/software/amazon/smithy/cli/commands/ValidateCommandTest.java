@@ -18,7 +18,6 @@ package software.amazon.smithy.cli.commands;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URISyntaxException;
@@ -215,5 +214,41 @@ public class ValidateCommandTest {
         assertThat(result.stdout(), containsString("EmitWarnings"));
         assertThat(result.stdout(), not(containsString("EmitDangers")));
         assertThat(result.stdout(), containsString("HttpLabelTrait"));
+    }
+
+    @Test
+    public void canOutputCsv() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "csv",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), containsString("suppressionReason"));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), containsString("EmitDangers"));
+        assertThat(result.stdout(), containsString("HttpLabelTrait"));
+        assertThat(result.stdout(), not(containsString("FAILURE"))); // stderr
+    }
+
+    @Test
+    public void canOutputText() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "text",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), not(containsString("suppressionReason")));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), containsString("EmitDangers"));
+        assertThat(result.stdout(), containsString("HttpLabelTrait"));
+        assertThat(result.stdout(), not(containsString("FAILURE"))); // stderr
+    }
+
+    @Test
+    public void outputFormatMustBeValid() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "HELLO");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Unexpected --format: `HELLO`"));
     }
 }

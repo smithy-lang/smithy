@@ -72,6 +72,24 @@ public class DiffCommandTest {
     }
 
     @Test
+    public void canWriteCsvOutput() {
+        IntegUtils.withTempDir("diff", dir -> {
+            Path a = dir.resolve("a.smithy");
+            writeFile(a, "$version: \"2.0\"\nnamespace example\nstring A\n");
+
+            Path b = dir.resolve("b.smithy");
+            writeFile(b, "$version: \"2.0\"\nnamespace example\n@aaaaaa\nstring A\n");
+
+            RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--old", a.toString(),
+                                                                "--new", b.toString(),
+                                                                "--format", "csv"));
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
+            assertThat(result.getOutput(), containsString("severity,id,"));
+            assertThat(result.getOutput(), containsString("ERROR"));
+        });
+    }
+
+    @Test
     public void showsLabelForDiffEvents() {
         IntegUtils.withTempDir("diff", dir -> {
             Path a = dir.resolve("a.smithy");
