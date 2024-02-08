@@ -90,7 +90,6 @@ public class ValidationEventDecoratorTest {
     static class TestValidationEventDecorator implements ValidationEventDecorator {
         @Override
         public boolean canDecorate(ValidationEvent ev) {
-            System.out.println(ev);
             return ev.containsId(SHAPE_EVENT_ID);
         }
 
