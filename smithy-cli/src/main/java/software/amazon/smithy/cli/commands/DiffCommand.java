@@ -67,6 +67,7 @@ final class DiffCommand implements Command {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new ValidatorOptions());
         arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new ValidationEventFormatOptions());
         arguments.addReceiver(new Options());
         arguments.getReceiver(BuildOptions.class).noPositionalArguments(true);
 
@@ -314,7 +315,7 @@ final class DiffCommand implements Command {
                     .config(config)
                     .arguments(arguments)
                     .env(env)
-                    .validationPrinter(env.stderr())
+                    .validationPrinter(env.stdout())
                     // Only report issues that fail the build.
                     .validationMode(Validator.Mode.QUIET_CORE_ONLY)
                     .defaultSeverity(Severity.DANGER);
@@ -326,6 +327,7 @@ final class DiffCommand implements Command {
                     .models(models)
                     .titleLabel("NEW", ColorTheme.DIFF_EVENT_TITLE)
                     .config(config)
+                    .disableOutputFormatFraming(true) // don't repeat things like CSV headers.
                     .build();
         }
 
@@ -337,6 +339,7 @@ final class DiffCommand implements Command {
                     .titleLabel("DIFF", ColorTheme.DIFF_TITLE)
                     .validatedResult(new ValidatedResult<>(newModel, events))
                     .defaultSeverity(null) // reset so it takes on standard option settings.
+                    .disableOutputFormatFraming(true) // don't repeat things like CSV headers.
                     .build();
         }
 

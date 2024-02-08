@@ -48,6 +48,7 @@ final class ValidateCommand implements Command {
         arguments.addReceiver(new DiscoveryOptions());
         arguments.addReceiver(new ValidatorOptions());
         arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new ValidationEventFormatOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(
             this,
