@@ -232,6 +232,10 @@ apply AllQueryStringTypes @httpRequestTests([
         params: {
             queryInteger: 0
             queryBoolean: false
+            queryParamsMapOfStringList: {
+                queryInteger: ["0"]
+                queryBoolean: ["false"]
+            }
         }
     }
 ])

@@ -324,3 +324,73 @@ apply DocumentTypeAsPayload @httpResponseTests([
         }
     }
 ])
+
+/// This example serializes documents as the value of maps.
+@idempotent
+@http(uri: "/DocumentTypeAsMapValue", method: "PUT")
+operation DocumentTypeAsMapValue {
+    input: DocumentTypeAsMapValueInputOutput,
+    output: DocumentTypeAsMapValueInputOutput,
+}
+
+structure DocumentTypeAsMapValueInputOutput {
+    docValuedMap: DocumentValuedMap,
+}
+
+map DocumentValuedMap {
+    key: String,
+    value: Document,
+}
+
+apply DocumentTypeAsMapValue @httpRequestTests([
+    {
+        id: "DocumentTypeAsMapValueInput",
+        documentation: "Serializes a map that uses documents as the value.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentTypeAsMapValue",
+        body: """
+            {
+                "docValuedMap": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
+])
+
+apply DocumentTypeAsMapValue @httpResponseTests([
+    {
+        id: "DocumentTypeAsMapValueOutput",
+        documentation: "Serializes a map that uses documents as the value.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "docValuedMap": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
+])

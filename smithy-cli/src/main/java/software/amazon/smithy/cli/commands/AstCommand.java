@@ -86,7 +86,7 @@ final class AstCommand implements Command {
                 .models(arguments.getPositional())
                 .validationPrinter(env.stderr())
                 .validationMode(Validator.Mode.QUIET)
-                .severity(Severity.DANGER)
+                .defaultSeverity(Severity.DANGER)
                 .build();
 
         ModelSerializer serializer = ModelSerializer.builder().build();

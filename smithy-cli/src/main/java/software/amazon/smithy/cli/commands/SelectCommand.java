@@ -232,7 +232,7 @@ final class SelectCommand implements Command {
                 .models(arguments.getPositional())
                 .validationPrinter(env.stderr())
                 .validationMode(Validator.Mode.QUIET_CORE_ONLY)
-                .severity(Severity.DANGER)
+                .defaultSeverity(Severity.DANGER)
                 .build();
 
         Options options = arguments.getReceiver(Options.class);
