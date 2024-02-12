@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URISyntaxException;
@@ -228,6 +229,9 @@ public class ValidateCommandTest {
         assertThat(result.stdout(), containsString("EmitDangers"));
         assertThat(result.stdout(), containsString("HttpLabelTrait"));
         assertThat(result.stdout(), not(containsString("FAILURE"))); // stderr
+
+        String[] lines = result.stdout().split("(\\r\\n|\\r|\\n)");
+        assertThat(lines[0], containsString("severity,id,shape,file,line,column,message,hint,suppressionReason"));
     }
 
     @Test

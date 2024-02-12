@@ -33,7 +33,7 @@ public class DiffCommandTest {
 
         String[] lines = result.stdout().split("(\\r\\n|\\r|\\n)");
         assertThat(lines.length, is(2));
-        assertThat(lines[0], containsString("severity,id,shape,file,message,hint,suppressionReason"));
+        assertThat(lines[0], containsString("severity,id,shape,file,line,column,message,hint,suppressionReason"));
         assertThat(lines[1], containsString("\"ERROR\",\"ChangedShapeType\",\"smithy.example#Hello\""));
     }
 }
