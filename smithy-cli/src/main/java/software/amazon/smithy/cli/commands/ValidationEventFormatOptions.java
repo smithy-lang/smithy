@@ -29,7 +29,7 @@ final class ValidationEventFormatOptions implements ArgumentReceiver {
         CSV {
             @Override
             void beginPrinting(CliPrinter printer) {
-                printer.println("severity,id,shape,file,message,hint,suppressionReason");
+                printer.println("severity,id,shape,file,line,column,message,hint,suppressionReason");
             }
 
             @Override
