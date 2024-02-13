@@ -124,6 +124,16 @@ structure structureTrait {
     @documentation("More documentation")
     fieldC: NestedA
 
+    // Nice test trait structure that includes a preformatted text that should not be messed with.
+    /// For example:
+    /// <pre>
+    /// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    /// </pre>
+    ///
+    /// <ul>
+    ///     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>
+    ///     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>
+    /// </ul>
     fieldD: ListD
 
     fieldE: MyMap

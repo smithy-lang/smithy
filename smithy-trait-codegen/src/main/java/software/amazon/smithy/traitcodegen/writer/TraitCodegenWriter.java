@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.writer;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.codegen.core.SymbolWriter;
@@ -20,7 +23,7 @@ import software.amazon.smithy.utils.StringUtils;
 /**
  * Writes Java code for trait definitions.
  *
- * <p>This writter supports two custom formatters, a Java type formatter '$T' and
+ * <p>This writer supports two custom formatters, a Java type formatter '$T' and
  * a Base type formatter '$B'.
  * <ul>
  *     <li>{@link JavaTypeFormatter}|{@code 'T'}: This formatter handles the formatting of
@@ -35,8 +38,9 @@ import software.amazon.smithy.utils.StringUtils;
  * </ul>
  */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
+    private static final Logger LOGGER = Logger.getLogger(TraitCodegenWriter.class.getName());
     private static final int MAX_LINE_LENGTH = 120;
-
+    private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
     private final String packageName;
     private final String fileName;
     private final TraitCodegenSettings settings;
@@ -75,6 +79,31 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
     public void openDocstring() {
         pushState().writeWithNoFormatting("/**");
+    }
+
+    public void writeDocStringContents(String contents) {
+        // Split out any HTML-tag wrapped sections as we do not want to wrap
+        // any customer documentation with tags
+        Matcher matcher = PATTERN.matcher(contents);
+        int lastMatchPos = 0;
+        while (matcher.find()) {
+            // write all contents up to the match.
+            writeInlineWithNoFormatting(" * ");
+            writeWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos, matcher.start())
+                            .replace("\n", "\n * "), MAX_LINE_LENGTH - 8,
+                    getNewline() + " * ", false));
+            // write match contents
+            writeInlineWithNoFormatting(" * ");
+            writeWithNoFormatting(contents.substring(matcher.start(), matcher.end())
+                    .replace("\n", "\n * "));
+            lastMatchPos = matcher.end();
+        }
+        // Write out all remaining contents
+        writeInlineWithNoFormatting(" * ");
+        writeWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos).replace("\n", "\n * "),
+                MAX_LINE_LENGTH - 8,
+                getNewline() + " * ",
+                false));
     }
 
     public void writeDocStringContents(String contents, Object... args) {
