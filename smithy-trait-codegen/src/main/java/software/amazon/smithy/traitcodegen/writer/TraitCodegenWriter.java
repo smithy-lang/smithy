@@ -74,17 +74,17 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
     public void openDocstring() {
-        pushState().write("/**");
+        pushState().writeWithNoFormatting("/**");
     }
 
     public void writeDocStringContents(String contents, Object... args) {
-        writeInline(" * ");
+        writeInlineWithNoFormatting(" * ");
         write(StringUtils.wrap(contents.replace("\n", "\n * "), MAX_LINE_LENGTH - 8,
                 getNewline() + " * ", false), args);
     }
 
     public void closeDocstring() {
-        write(" */").popState();
+        writeWithNoFormatting(" */").popState();
     }
 
     @Override
@@ -114,11 +114,11 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
     public void newLine() {
-        writeInline(getNewline());
+        writeInlineWithNoFormatting(getNewline());
     }
 
     public void override() {
-        write("@Override");
+        writeWithNoFormatting("@Override");
     }
 
     /**

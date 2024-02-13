@@ -96,7 +96,7 @@ final class PropertiesGenerator implements Runnable {
         @Override
         public Void intEnumShape(IntEnumShape shape) {
             writer.addImport(Integer.class);
-            writer.write("private final Integer value;");
+            writer.writeWithNoFormatting("private final Integer value;");
             for (Map.Entry<String, MemberShape> memberEntry : shape.getAllMembers().entrySet()) {
                 writer.pushState(new EnumVariantSection(memberEntry.getValue()));
                 writer.write("public static final Integer $L = $L;", memberEntry.getKey(),

@@ -42,8 +42,8 @@ final class IntEnumTraitGenerator extends TraitGenerator {
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {
         writer.addImport(FromSourceLocation.class);
         writer.openBlock("public $T(Integer value, FromSourceLocation sourceLocation) {", "}", symbol, () -> {
-            writer.write("super(ID, sourceLocation);");
-            writer.write("this.value = value;");
+            writer.writeWithNoFormatting("super(ID, sourceLocation);");
+            writer.writeWithNoFormatting("this.value = value;");
         });
         writer.newLine();
     }
@@ -51,8 +51,8 @@ final class IntEnumTraitGenerator extends TraitGenerator {
     private void writeConstructor(TraitCodegenWriter writer, Symbol symbol) {
         writer.addImport(SourceLocation.class);
         writer.openBlock("public $T(Integer value) {", "}", symbol, () -> {
-            writer.write("super(ID, SourceLocation.NONE);");
-            writer.write("this.value = value;");
+            writer.writeWithNoFormatting("super(ID, SourceLocation.NONE);");
+            writer.writeWithNoFormatting("this.value = value;");
         });
         writer.newLine();
     }

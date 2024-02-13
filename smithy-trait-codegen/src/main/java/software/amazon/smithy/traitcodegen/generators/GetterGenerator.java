@@ -132,7 +132,7 @@ final class GetterGenerator implements Runnable {
             writer.addImport(Integer.class);
             writer.pushState(new GetterSection(shape));
             writer.openBlock("public Integer getValue() {", "}",
-                    () -> writer.write("return value;"));
+                    () -> writer.writeWithNoFormatting("return value;"));
             writer.popState();
             writer.newLine();
             return null;

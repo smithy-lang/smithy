@@ -39,21 +39,21 @@ final class EnumTraitGenerator extends TraitGenerator {
         for (String memberKey : shape.getEnumValues().keySet()) {
             writer.openBlock("public boolean is$L() {", "}", getMethodName(memberKey),
                             () -> writer.write("return $L.equals(getValue());", memberKey))
-                    .writeInline("\n");
+                    .writeInlineWithNoFormatting("\n");
         }
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {
         writer.addImport(FromSourceLocation.class);
         writer.openBlock("public $T(String name, FromSourceLocation sourceLocation) {", "}", symbol,
-                () -> writer.write("super(ID, name, sourceLocation);"));
+                () -> writer.writeWithNoFormatting("super(ID, name, sourceLocation);"));
         writer.newLine();
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol symbol) {
         writer.addImport(SourceLocation.class);
         writer.openBlock("public $T(String name) {", "}", symbol,
-                () -> writer.write("super(ID, name, SourceLocation.NONE);"));
+                () -> writer.writeWithNoFormatting("super(ID, name, SourceLocation.NONE);"));
         writer.newLine();
     }
 

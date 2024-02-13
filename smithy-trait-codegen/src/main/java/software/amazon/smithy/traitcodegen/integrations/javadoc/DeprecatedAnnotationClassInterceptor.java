@@ -18,7 +18,7 @@ final class DeprecatedAnnotationClassInterceptor implements CodeInterceptor.Prep
         TraitCodegenWriter> {
     @Override
     public void prepend(TraitCodegenWriter writer, ClassSection section) {
-        writer.write("@Deprecated");
+        writer.writeWithNoFormatting("@Deprecated");
     }
 
     @Override

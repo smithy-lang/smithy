@@ -75,7 +75,7 @@ final class BuilderGenerator implements Runnable {
         writer.openBlock(builderClassTemplate, "}", symbol, () -> {
             baseShape.accept(new BuilderPropertyGenerator());
             writer.newLine();
-            writer.write("private Builder() {}").newLine();
+            writer.writeWithNoFormatting("private Builder() {}").newLine();
             baseShape.accept(new BuilderSetterGenerator());
             writer.newLine();
             writer.override();
@@ -91,13 +91,13 @@ final class BuilderGenerator implements Runnable {
         writer.addImports(SmithyBuilder.class, ToSmithyBuilder.class);
         writer.override();
         writer.openBlock("public SmithyBuilder<$T> toBuilder() {", "}", symbol, () -> {
-            writer.writeInline("return builder()");
+            writer.writeInlineWithNoFormatting("return builder()");
             writer.indent();
             if (baseShape.hasTrait(TraitDefinition.class)) {
-                writer.writeInline(".sourceLocation(getSourceLocation())");
+                writer.writeInlineWithNoFormatting(".sourceLocation(getSourceLocation())");
             }
             if (baseShape.members().isEmpty()) {
-                writer.writeInline(";");
+                writer.writeInlineWithNoFormatting(";");
             }
             writer.newLine();
             // Set all builder properties for any members in the shape
@@ -106,9 +106,9 @@ final class BuilderGenerator implements Runnable {
                 MemberShape member = memberIterator.next();
                 writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
                 if (memberIterator.hasNext()) {
-                    writer.writeInline("\n");
+                    writer.writeWithNoFormatting("\n");
                 } else {
-                    writer.writeInline(";\n");
+                    writer.writeWithNoFormatting(";\n");
                 }
             }
             writer.dedent();
@@ -210,7 +210,7 @@ final class BuilderGenerator implements Runnable {
             writer.openBlock(ACCESSOR_TEMPLATE, "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("this.$1L = $1L;", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.writeWithNoFormatting(RETURN_THIS);
                     });
             writer.newLine();
             return null;
@@ -222,7 +222,7 @@ final class BuilderGenerator implements Runnable {
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().addAll($1L);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.writeWithNoFormatting(RETURN_THIS);
                     });
             writer.newLine();
 
@@ -230,7 +230,7 @@ final class BuilderGenerator implements Runnable {
             writer.openBlock("public Builder clear$L() {", "}",
                     StringUtils.capitalize(memberName), () -> {
                         writer.write("$L.get().clear();", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.writeWithNoFormatting(RETURN_THIS);
                     });
             writer.newLine();
 

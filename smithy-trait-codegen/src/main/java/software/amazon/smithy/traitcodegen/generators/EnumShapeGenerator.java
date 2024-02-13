@@ -91,7 +91,7 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     private void writeValueGetter(TraitCodegenWriter writer) {
         writer.openBlock("public $T getValue() {", "}", getValueType(),
-                () -> writer.write("return value;"));
+                () -> writer.writeWithNoFormatting("return value;"));
     }
 
     private void writeConstructor(Symbol enumSymbol, TraitCodegenWriter writer) {

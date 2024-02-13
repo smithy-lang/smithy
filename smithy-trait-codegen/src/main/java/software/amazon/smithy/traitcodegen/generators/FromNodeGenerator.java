@@ -155,21 +155,21 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             Symbol memberSymbol = symbolProvider.toSymbol(shape.getMember());
-            writer.write(BUILDER_INITIALIZER);
-            writer.write("node.expectArrayNode()");
+            writer.writeWithNoFormatting(BUILDER_INITIALIZER);
+            writer.writeWithNoFormatting("node.expectArrayNode()");
             writer.indent();
-            writer.write(".getElements().stream()");
+            writer.writeWithNoFormatting(".getElements().stream()");
             writer.write(".map(n -> " + memberSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER) + ")", "n");
-            writer.write(".forEach(builder::addValuesItem);");
+            writer.writeWithNoFormatting(".forEach(builder::addValuesItem);");
             writer.dedent();
-            writer.write(BUILD_AND_RETURN);
+            writer.writeWithNoFormatting(BUILD_AND_RETURN);
 
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.write(BUILDER_INITIALIZER);
+            writer.writeWithNoFormatting(BUILDER_INITIALIZER);
             Symbol keySymbol = symbolProvider.toSymbol(shape.getKey());
             Symbol valueSymbol = symbolProvider.toSymbol(shape.getValue());
             writer.openBlock("node.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
@@ -178,7 +178,7 @@ final class FromNodeGenerator implements Runnable {
                                     + valueSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, String.class)
                                     + ");",
                             "k", "v"));
-            writer.write(BUILD_AND_RETURN);
+            writer.writeWithNoFormatting(BUILD_AND_RETURN);
             return null;
         }
 
@@ -210,9 +210,9 @@ final class FromNodeGenerator implements Runnable {
                 MemberShape member = memberIterator.next();
                 member.accept(new MemberGenerator(member, writer, model, symbolProvider));
                 if (memberIterator.hasNext()) {
-                    writer.writeInline("\n");
+                    writer.writeInlineWithNoFormatting("\n");
                 } else {
-                    writer.writeInline(";\n");
+                    writer.writeWithNoFormatting(";\n");
                 }
             }
             writer.dedent();

@@ -48,7 +48,7 @@ final class ConstructorWithBuilderGenerator implements Runnable {
             // If the shape is a trait include the source location. Nested shapes don't have a separate
             // source location.
             if (shape.hasTrait(TraitDefinition.class)) {
-                writer.write("super(ID, builder.getSourceLocation());");
+                writer.writeWithNoFormatting("super(ID, builder.getSourceLocation());");
             }
             shape.accept(new InitializerVisitor());
         });
@@ -101,7 +101,7 @@ final class ConstructorWithBuilderGenerator implements Runnable {
         }
 
         private void writeValuesInitializer() {
-            writer.write("this.values = builder.values.copy();");
+            writer.writeWithNoFormatting("this.values = builder.values.copy();");
         }
     }
 }

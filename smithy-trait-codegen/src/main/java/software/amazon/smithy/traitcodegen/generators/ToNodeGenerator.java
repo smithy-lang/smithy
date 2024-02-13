@@ -98,7 +98,7 @@ final class ToNodeGenerator implements Runnable {
                     .indent()
                     .write(".map(s -> " + symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, String.class) + ")",
                             "s")
-                    .write(".collect(ArrayNode.collect(getSourceLocation()));")
+                    .writeWithNoFormatting(".collect(ArrayNode.collect(getSourceLocation()));")
                     .dedent();
             return null;
         }
@@ -141,7 +141,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write("throw new UnsupportedOperationException(\"NodeCache is always set\");");
+            writer.writeWithNoFormatting("throw new UnsupportedOperationException(\"NodeCache is always set\");");
             return null;
         }
 
@@ -170,20 +170,20 @@ final class ToNodeGenerator implements Runnable {
             if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getKey()))
                     && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getValue()))
             ) {
-                writer.write("return ObjectNode.fromStringMap(values).toBuilder()")
-                        .write(".sourceLocation(getSourceLocation()).build();");
+                writer.writeWithNoFormatting("return ObjectNode.fromStringMap(values).toBuilder()")
+                        .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
                 return null;
             }
             Pair<String, String> mappers = getKeyValueMappers(shape);
             writer.addImports(AbstractMap.class, Map.class);
-            writer.write("return values.entrySet().stream()")
+            writer.writeWithNoFormatting("return values.entrySet().stream()")
                     .indent()
-                    .write(".map(entry -> new AbstractMap.SimpleImmutableEntry<>(")
+                    .writeWithNoFormatting(".map(entry -> new AbstractMap.SimpleImmutableEntry<>(")
                     .indent()
                     .write(mappers.getLeft() + ", " + mappers.getRight() + "))", "entry.getKey()", "entry.getValue()")
                     .dedent()
-                    .write(".collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))")
-                    .write(".toBuilder().sourceLocation(getSourceLocation()).build();")
+                    .writeWithNoFormatting(".collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))")
+                    .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
                     .dedent();
             return null;
         }
@@ -191,14 +191,14 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void stringShape(StringShape shape) {
             writer.addImport(StringNode.class);
-            writer.write("return new StringNode(value.toString(), getSourceLocation());");
+            writer.writeWithNoFormatting("return new StringNode(value.toString(), getSourceLocation());");
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
             writer.addImport(Node.class);
-            writer.write("return Node.objectNodeBuilder()").indent();
+            writer.writeWithNoFormatting("return Node.objectNodeBuilder()").indent();
             if (shape.hasTrait(TraitDefinition.class)) {
                 // If the shape is a trait we need to add the source location of trait to the
                 // generated node.
@@ -208,14 +208,14 @@ final class ToNodeGenerator implements Runnable {
                 member.accept(new MemberMapperVisitor(symbolProvider.toMemberName(member),
                         symbolProvider, member.isRequired()));
             }
-            writer.write(".build();");
+            writer.writeWithNoFormatting(".build();");
             writer.dedent();
             return null;
         }
 
         private void generateNumberTraitCreator() {
             writer.addImport(NumberNode.class);
-            writer.write("return new NumberNode(value, getSourceLocation());");
+            writer.writeWithNoFormatting("return new NumberNode(value, getSourceLocation());");
         }
     }
 

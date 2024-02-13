@@ -49,12 +49,12 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
         writer.openBlock("public boolean equals(Object other) {", "}", () -> {
             writer.disableNewlines();
             writer.openBlock("if (other == this) {\n", "}",
-                    () -> writer.write("return true;").newLine());
+                    () -> writer.writeWithNoFormatting("return true;").newLine());
             writer.openBlock(" else if (!(other instanceof $T)) {\n", "}", symbol,
-                    () -> writer.write("return false;").newLine());
+                    () -> writer.writeWithNoFormatting("return false;").newLine());
             writer.openBlock(" else {\n", "}", () -> {
                 writer.write("$1T b = ($1T) other;", symbol).newLine();
-                writer.write("return toNode().equals(b.toNode());\n");
+                writer.writeWithNoFormatting("return toNode().equals(b.toNode());\n");
             }).newLine();
             writer.enableNewlines();
         });
@@ -64,6 +64,6 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
     private void writeHashCode(TraitCodegenWriter writer) {
         writer.override();
         writer.openBlock("public int hashCode() {", "}",
-                () -> writer.write("return toNode().hashCode();"));
+                () -> writer.writeWithNoFormatting("return toNode().hashCode();"));
     }
 }

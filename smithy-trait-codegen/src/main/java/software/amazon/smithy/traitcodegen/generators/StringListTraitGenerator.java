@@ -64,7 +64,7 @@ final class StringListTraitGenerator extends TraitGenerator {
 
     private void writeBuilderGetter(TraitCodegenWriter writer) {
         writer.openBlock("public static Builder builder() {", "}",
-                () -> writer.write("return new Builder();"));
+                () -> writer.writeWithNoFormatting("return new Builder();"));
         writer.newLine();
     }
 
@@ -73,7 +73,7 @@ final class StringListTraitGenerator extends TraitGenerator {
         writer.addImport(StringListTrait.class);
         writer.openBlock("public static final class Builder extends StringListTrait.Builder<$T, Builder> {", "}",
                 symbol, () -> {
-                    writer.write("private Builder() {}");
+                    writer.writeWithNoFormatting("private Builder() {}");
                     writer.newLine();
                     writer.override();
                     writer.openBlock("public $T build() {", "}", symbol,
