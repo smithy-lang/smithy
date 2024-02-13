@@ -235,19 +235,18 @@ final class BuilderGenerator implements Runnable {
             writer.newLine();
 
             // Set one
-            writer.openBlock("public Builder add$LItem($T $LItem) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()), memberName,
+            writer.openBlock("public Builder add$L($T value) {", "}",
+                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
                     () -> {
-                        writer.write("$1L.get().add($1LItem);", memberName);
+                        writer.write("$L.get().add(value);", memberName);
                         writer.write(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
 
             // Remove one
-            writer.openBlock("public Builder remove$LItem($T $LItem) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()), memberName,
+            writer.openBlock("public Builder remove$L($T value) {", "}",
+                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
                     () -> {
-                        writer.write("$1L.get().remove($1LItem);", memberName);
+                        writer.write("$L.get().remove(value);", memberName);
                         writer.write(RETURN_THIS);
                     });
             return null;

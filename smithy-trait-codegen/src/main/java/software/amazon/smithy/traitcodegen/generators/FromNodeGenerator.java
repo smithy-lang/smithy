@@ -160,7 +160,7 @@ final class FromNodeGenerator implements Runnable {
             writer.indent();
             writer.writeWithNoFormatting(".getElements().stream()");
             writer.write(".map(n -> " + memberSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER) + ")", "n");
-            writer.writeWithNoFormatting(".forEach(builder::addValuesItem);");
+            writer.writeWithNoFormatting(".forEach(builder::addValues);");
             writer.dedent();
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
 
