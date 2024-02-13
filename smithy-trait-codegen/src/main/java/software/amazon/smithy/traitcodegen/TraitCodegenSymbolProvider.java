@@ -94,7 +94,6 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol intEnumShape(IntEnumShape shape) {
         return Symbol.builder()
                 .name(TraitCodegenUtils.getDefaultName(shape))
-                .putProperty(SymbolProperties.ENUM_VALUE_TYPE, TraitCodegenUtils.fromClass(int.class))
                 .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().intValue()")
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.intValue()))")
                 .namespace(packageName, ".")
@@ -173,7 +172,6 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol enumShape(EnumShape shape) {
         return Symbol.builder()
                 .name(TraitCodegenUtils.getDefaultName(shape))
-                .putProperty(SymbolProperties.ENUM_VALUE_TYPE, TraitCodegenUtils.fromClass(String.class))
                 .putProperty(SymbolProperties.TO_NODE_MAPPER, "Node.from($L.getValue())")
                 .putProperty(SymbolProperties.FROM_NODE_MAPPER,
                         TraitCodegenUtils.getDefaultName(shape) + ".fromNode($L)")

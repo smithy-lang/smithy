@@ -21,9 +21,6 @@ public final class SymbolProperties {
 
     public static final String FROM_NODE_MAPPER = "from-node-mapper";
 
-    // Type of the value of each enum variant
-    public static final String ENUM_VALUE_TYPE = "enum-value-type";
-
     // Provides an initializer for the builder ref
     public static final String BUILDER_REF_INITIALIZER = "builder-ref-initializer";
 
