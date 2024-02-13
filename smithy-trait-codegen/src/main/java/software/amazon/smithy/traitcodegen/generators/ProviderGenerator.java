@@ -18,6 +18,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.traitcodegen.Mapper;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -63,9 +64,10 @@ final class ProviderGenerator implements Runnable {
                 writer.addImports(Trait.class, ShapeId.class, Node.class);
                 writer.override();
                 writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}",
-                        () -> writer.write("return new $T("
-                                + symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER)
-                                + ", value.getSourceLocation());", traitSymbol, "value"));
+                        () -> writer.write("return new $T($C, value.getSourceLocation());",
+                                traitSymbol,
+                                symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
+                                                Mapper.class).with("value")));
             });
             return null;
         }

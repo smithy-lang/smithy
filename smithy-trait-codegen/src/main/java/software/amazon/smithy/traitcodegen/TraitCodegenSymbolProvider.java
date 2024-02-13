@@ -36,11 +36,10 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CaseUtils;
 
 final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> implements SymbolProvider {
-    private static final String NODE_FROM = "Node.from($L)";
-    private static final String TO_NODE = "$L.toNode()";
     private static final String LIST_INITIALIZER = "forList()";
     private static final String MAP_INITIALIZER = "forOrderedMap()";
 
@@ -69,7 +68,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol byteShape(ByteShape shape) {
         return TraitCodegenUtils.fromClass(Byte.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().byteValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().byteValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.byteValue()))")
                 .build();
     }
@@ -77,7 +77,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol shortShape(ShortShape shape) {
         return simpleShapeSymbolFrom(Short.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().shortValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().shortValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.shortValue()))")
                 .build();
     }
@@ -85,7 +86,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol integerShape(IntegerShape shape) {
         return simpleShapeSymbolFrom(Integer.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().intValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().intValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.intValue()))")
                 .build();
     }
@@ -94,7 +96,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol intEnumShape(IntEnumShape shape) {
         return Symbol.builder()
                 .name(TraitCodegenUtils.getDefaultName(shape))
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().intValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().intValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.intValue()))")
                 .namespace(packageName, ".")
                 .declarationFile(packagePath + "/" + TraitCodegenUtils.getDefaultName(shape) + ".java")
@@ -104,7 +107,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol longShape(LongShape shape) {
         return simpleShapeSymbolFrom(Long.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().longValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().longValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.longValue()))")
                 .build();
     }
@@ -112,7 +116,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol floatShape(FloatShape shape) {
         return simpleShapeSymbolFrom(Float.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().floatValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().floatValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.floatValue()))")
                 .build();
     }
@@ -120,7 +125,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol doubleShape(DoubleShape shape) {
         return simpleShapeSymbolFrom(Double.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().getValue().doubleValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().getValue().doubleValue()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "NumberMember($1S, n -> builder.$1L(n.doubleValue()))")
                 .build();
     }
@@ -129,7 +135,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol bigIntegerShape(BigIntegerShape shape) {
         return simpleShapeSymbolFrom(BigInteger.class).toBuilder()
                 .putProperty(SymbolProperties.FROM_NODE_MAPPER,
-                        "$L.expectNumberNode().asBigDecimal().get().toBigInteger()")
+                        (Mapper) (w, s) -> w.write(
+                                "$L.expectNumberNode().asBigDecimal().get().toBigInteger()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "Member($1S, n -> "
                         + "n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$1L)")
                 .build();
@@ -138,7 +145,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol bigDecimalShape(BigDecimalShape shape) {
         return simpleShapeSymbolFrom(BigDecimal.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().asBigDecimal().get()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectNumberNode().asBigDecimal().get()", s))
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "Member($1S, n -> "
                         + "n.expectNumberNode().asBigDecimal().get(), builder::$1L)")
                 .build();
@@ -164,7 +172,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol stringShape(StringShape shape) {
         return simpleShapeSymbolFrom(String.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectStringNode().getValue()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("$L.expectStringNode().getValue()", s))
                 .build();
     }
 
@@ -172,9 +181,9 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol enumShape(EnumShape shape) {
         return Symbol.builder()
                 .name(TraitCodegenUtils.getDefaultName(shape))
-                .putProperty(SymbolProperties.TO_NODE_MAPPER, "Node.from($L.getValue())")
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
-                        TraitCodegenUtils.getDefaultName(shape) + ".fromNode($L)")
+                .putProperty(SymbolProperties.TO_NODE_MAPPER,
+                        (Mapper) (w, s) -> w.write("Node.from($L.getValue())", s).addImport(Node.class))
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER, (Mapper) (w, s) -> fromNode(w, s, shape))
                 .namespace(packageName, ".")
                 .declarationFile(packagePath + "/" + TraitCodegenUtils.getDefaultName(shape) + ".java")
                 .build();
@@ -185,9 +194,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
         Symbol.Builder builder = Symbol.builder()
                 .name(TraitCodegenUtils.getDefaultName(shape))
                 .namespace(packageName, ".")
-                .putProperty(SymbolProperties.TO_NODE_MAPPER, TO_NODE)
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
-                        TraitCodegenUtils.getDefaultName(shape) + ".fromNode($L)")
+                .putProperty(SymbolProperties.TO_NODE_MAPPER, (Mapper) (w, s) -> w.write("$L.toNode()", s))
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER, (Mapper) (w, s) -> fromNode(w, s, shape))
                 .declarationFile(packagePath + "/" + TraitCodegenUtils.getDefaultName(shape) + ".java");
         return builder.build();
     }
@@ -228,8 +236,16 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
 
     private static Symbol simpleShapeSymbolFrom(Class<?> clazz) {
         return TraitCodegenUtils.fromClass(clazz).toBuilder()
-                .putProperty(SymbolProperties.TO_NODE_MAPPER, NODE_FROM)
-                .putProperty(SymbolProperties.NODE_MAPPING_IMPORTS, TraitCodegenUtils.fromClass(Node.class))
+                .putProperty(SymbolProperties.TO_NODE_MAPPER, (Mapper) TraitCodegenSymbolProvider::nodeFrom)
                 .build();
+    }
+
+    private static void nodeFrom(TraitCodegenWriter writer, String var) {
+        writer.addImport(Node.class);
+        writer.write("Node.from($L)", var);
+    }
+
+    private static void fromNode(TraitCodegenWriter writer, String var, Shape shape) {
+        writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), var);
     }
 }

@@ -19,6 +19,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.traitcodegen.Mapper;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
@@ -89,27 +90,26 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeInline(getMemberPrefix() + "ArrayMember($S, n -> "
-                    + symbolProvider.toSymbol(shape.getMember()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
-                    String.class)
-                    + ", builder::$L)", symbolProvider.toMemberName(member), "n", symbolProvider.toMemberName(member));
+            writer.writeInline(getMemberPrefix() + "ArrayMember($1S, n -> $2C, builder::$1L)",
+                    symbolProvider.toMemberName(member),
+                    symbolProvider.toSymbol(shape.getMember()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
+                    Mapper.class).with("n"));
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            String keyMapper =
-                    symbolProvider.toSymbol(shape.getKey()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
-                            String.class);
-            String valueMapper =
-                    symbolProvider.toSymbol(shape.getValue()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
-                            String.class);
+            Mapper keyMapper = symbolProvider.toSymbol(shape.getKey())
+                    .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class);
+            Mapper valueMapper = symbolProvider.toSymbol(shape.getValue())
+                    .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class);
             writer.disableNewlines();
             writer.openBlock(getMemberPrefix()
                             + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
                     symbolProvider.toMemberName(member),
-                    () -> writer.write("builder.put$L(" + keyMapper + ", " + valueMapper + ");\n",
-                            StringUtils.capitalize(symbolProvider.toMemberName(member)), "k", "v"));
+                    () -> writer.write("builder.put$L($C, $C);\n",
+                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                            keyMapper.with("k"), valueMapper.with("v")));
             writer.enableNewlines();
             return null;
         }
@@ -132,9 +132,10 @@ final class FromNodeGenerator implements Runnable {
         }
 
         private void generateGenericMember(Shape shape) {
-            writer.writeInline(getMemberPrefix() + "Member($S, n -> "
-                    + symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER, String.class)
-                    + ", builder::$L)", symbolProvider.toMemberName(member), "n", symbolProvider.toMemberName(member));
+            writer.writeInline(getMemberPrefix() + "Member($1S, n -> $2C, builder::$1L)",
+                    symbolProvider.toMemberName(member),
+                    symbolProvider.toSymbol(shape)
+                            .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("n"));
         }
 
         private String getMemberPrefix() {
@@ -159,7 +160,8 @@ final class FromNodeGenerator implements Runnable {
             writer.writeWithNoFormatting("node.expectArrayNode()");
             writer.indent();
             writer.writeWithNoFormatting(".getElements().stream()");
-            writer.write(".map(n -> " + memberSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER) + ")", "n");
+            writer.write(".map(n -> $C)",
+                    memberSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("n"));
             writer.writeWithNoFormatting(".forEach(builder::addValues);");
             writer.dedent();
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
@@ -173,11 +175,9 @@ final class FromNodeGenerator implements Runnable {
             Symbol keySymbol = symbolProvider.toSymbol(shape.getKey());
             Symbol valueSymbol = symbolProvider.toSymbol(shape.getValue());
             writer.openBlock("node.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
-                    () -> writer.write("builder.putValues("
-                                    + keySymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, String.class) + ", "
-                                    + valueSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, String.class)
-                                    + ");",
-                            "k", "v"));
+                    () -> writer.write("builder.putValues($C, $C);",
+                            keySymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("k"),
+                            valueSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("v")));
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
             return null;
         }
