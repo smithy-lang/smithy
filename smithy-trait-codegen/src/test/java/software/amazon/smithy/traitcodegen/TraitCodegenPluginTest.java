@@ -6,7 +6,9 @@
 package software.amazon.smithy.traitcodegen;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -110,5 +112,49 @@ public class TraitCodegenPluginTest {
                 " * Header line one\n" +
                 " * Header line two\n" +
                 " */"));
+    }
+
+    @Test
+    public void doesNotFormatContentInsideHtmlTags() {
+        MockManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .settings(ObjectNode.builder()
+                        .withMember("package", "com.example.traits")
+                        .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
+                        .build()
+                )
+                .model(model)
+                .build();
+
+        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
+        plugin.execute(context);
+
+        assertFalse(manifest.getFiles().isEmpty());
+        assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
+        Optional<String> fileStringOptional = manifest.getFileString(
+                Paths.get("com/example/traits/StructureTraitTrait.java").toString());
+        assertTrue(fileStringOptional.isPresent());
+        String expected = "    /**\n"
+                          + "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n"
+                          + "     * wrapped.\n"
+                          + "     * For example:\n"
+                          + "     * <pre>\n"
+                          + "     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                          + "     * </pre>\n"
+                          + "     * \n"
+                          + "     * <ul>\n"
+                          + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
+                          + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
+                          + "     * </ul>\n"
+                          + "     */\n"
+                          + "    public List<String> getFieldD() {\n"
+                          + "        return fieldD;\n"
+                          + "    }\n";
+        assertTrue(fileStringOptional.get().contains(expected));
     }
 }

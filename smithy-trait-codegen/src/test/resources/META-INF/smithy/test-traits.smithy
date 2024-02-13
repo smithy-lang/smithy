@@ -124,7 +124,7 @@ structure structureTrait {
     @documentation("More documentation")
     fieldC: NestedA
 
-    // Nice test trait structure that includes a preformatted text that should not be messed with.
+    /// Documentation includes preformatted text that should not be messed with. This sentence should still be partially wrapped.
     /// For example:
     /// <pre>
     /// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

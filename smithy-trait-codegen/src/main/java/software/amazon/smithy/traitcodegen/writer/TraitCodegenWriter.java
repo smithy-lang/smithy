@@ -8,7 +8,6 @@ package software.amazon.smithy.traitcodegen.writer;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -32,13 +31,12 @@ import software.amazon.smithy.utils.StringUtils;
  *
  *     <li>{@link BaseTypeFormatter}|{@code 'B'}: This formatter allows you to use the base type
  *     for a trait. For example a String Trait may have a base type of {@code ShapeId}. To write
- *     this base type simply use the {@code $B} formatter and provide the trait symbol. Note that
+ *     this base type, use the {@code $B} formatter and provide the trait symbol. Note that
  *     if no base type is found (i.e. type is not a trait) then this formatter behaves exactly the
  *     same as the {@link JavaTypeFormatter}.
  * </ul>
  */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
-    private static final Logger LOGGER = Logger.getLogger(TraitCodegenWriter.class.getName());
     private static final int MAX_LINE_LENGTH = 120;
     private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
     private final String packageName;
@@ -86,20 +84,17 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         // any customer documentation with tags
         Matcher matcher = PATTERN.matcher(contents);
         int lastMatchPos = 0;
+        writeInlineWithNoFormatting(" * ");
         while (matcher.find()) {
             // write all contents up to the match.
-            writeInlineWithNoFormatting(" * ");
-            writeWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos, matcher.start())
+            writeInlineWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos, matcher.start())
                             .replace("\n", "\n * "), MAX_LINE_LENGTH - 8,
                     getNewline() + " * ", false));
             // write match contents
-            writeInlineWithNoFormatting(" * ");
-            writeWithNoFormatting(contents.substring(matcher.start(), matcher.end())
-                    .replace("\n", "\n * "));
+            writeInlineWithNoFormatting(contents.substring(matcher.start(), matcher.end()).replace("\n", "\n * "));
             lastMatchPos = matcher.end();
         }
         // Write out all remaining contents
-        writeInlineWithNoFormatting(" * ");
         writeWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos).replace("\n", "\n * "),
                 MAX_LINE_LENGTH - 8,
                 getNewline() + " * ",
