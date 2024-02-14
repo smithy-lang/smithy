@@ -326,8 +326,8 @@ if (useJreleaser) {
                         active = "ALWAYS"
                         url = "https://aws.oss.sonatype.org/service/local"
                         snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
-                        closeRepository = false
-                        releaseRepository = false
+                        closeRepository = true
+                        releaseRepository = true
                         stagingRepository(stagingDirectory.get().toString())
                     }
                 }
