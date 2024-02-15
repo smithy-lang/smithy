@@ -155,8 +155,7 @@ Build Dependencies
 ^^^^^^^^^^^^^^^^^^
 
 The ``smithy-base`` plugin adds a ``smithyBuild`` `Configuration`_ that can be used to specify
-dependencies that will only be used for calling ``smithy build`` but will not be treated as
-runtime dependencies for any output JARs or publications. These are similar to `compileOnly`
+dependencies used when calling ``smithy build``. These dependencies will not be included in any output JARs or publications. They are akin to `compileOnly`
 dependencies for Java projects. Smithy build plugins and projected dependencies should be
 included in the `smithyBuild` configuration. For example:
 
