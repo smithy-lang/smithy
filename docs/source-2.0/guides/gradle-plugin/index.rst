@@ -508,7 +508,7 @@ prevents packages with projected models from appearing as dependencies of the
 projected version of the model.
 
 The following example gradle build script will run a "projection"
-build that uses the "external" projection.
+build using the "external" projection.
 
 .. tab:: Kotlin
 
