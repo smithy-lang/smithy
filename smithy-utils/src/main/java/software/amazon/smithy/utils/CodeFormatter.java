@@ -635,7 +635,7 @@ final class CodeFormatter {
             // Parse the formatter and apply it.
             int line = parser.line();
             int column = parser.column();
-            char identifier = parser.expect(CodeWriterFormatterContainer.VALID_FORMATTER_CHARS);
+            char identifier = parser.expect(AbstractCodeWriter.VALID_FORMATTER_CHARS);
 
             // The error message needs to be created here and given to the operation in way that it can
             // throw with an appropriate message.
