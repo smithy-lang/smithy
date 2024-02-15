@@ -1,5 +1,25 @@
 # Smithy Changelog
 
+## 1.45.0 (2024-02-14)
+
+### Features
+
+* Added new option to CLI to configure the format (`text` or `csv`) of validation output. ([#2133](https://github.com/smithy-lang/smithy/pull/2133))
+* Added options to CLI to hide or show validation events for specified validators. ([#2127](https://github.com/smithy-lang/smithy/pull/2127))
+* Added protocol tests for verifying serialization/deserialization behavior for maps with document values. ([#2125](https://github.com/smithy-lang/smithy/pull/2125))
+* Changed `UnreferencedShape` to be an opt-in linter instead of on-by-default to reduce friction when defining common shapes that are not connected to a service shape. Added a validator that allows you to configure what shape to check connectedness (defaults to service shape). ([#2119](https://github.com/smithy-lang/smithy/pull/2119))
+
+### Bug Fixes
+
+* Fixed headers when printing validation event output in csv format. ([#2136](https://github.com/smithy-lang/smithy/pull/2136))
+* Fixed `RestJsonZeroAndFalseQueryValues` protocol test to correctly include a params value for servers. ([#2132](https://github.com/smithy-lang/smithy/pull/2132))
+* Fixed regression in model validation that incorrectly allowed suppression of ERROR events. ([#2130](https://github.com/smithy-lang/smithy/pull/2130))
+
+### Documentation
+
+* Fixed typo in @pattern validation example. ([#2126](https://github.com/smithy-lang/smithy/pull/2126))
+
+
 ## 1.44.0 (2024-01-25)
 
 ### Features
