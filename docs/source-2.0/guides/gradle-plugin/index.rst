@@ -149,7 +149,7 @@ such as shared models or :ref:`smithy build plugins <plugins>`:
     Build dependencies that are not required by output models.
 
 Runtime dependencies can be added directly to the ``runtimeClasspath`` configuration
-or to a configuration that extends ``runtimeClasspath`` such as the ``implementation``
+or to a configuration that extends ``runtimeClasspath``, such as the ``implementation``
 configuration added by the ``java-library`` plugin.
 
 Build Dependencies
