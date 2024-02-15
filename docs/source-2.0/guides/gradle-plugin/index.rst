@@ -419,7 +419,7 @@ The ``smithyBuild`` task that builds smithy models operates in two different mod
 1. If no ``projection`` is specified for the ``SmithyExtension``, then the task
    runs a "source" build using the "source" projection.
 2. If a ``projection`` is specified for the ``SmithyExtension``, then the task
-   runs in a "projection" mode.
+   runs in "projection" mode.
 
 .. _building-source-model:
 
