@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Gradle Plugin" href="gradle-plugin.html" /><link rel="prev" title="Installation" href="smithy-cli/cli_installation.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Gradle Plugins" href="gradle-plugin/index.html" /><link rel="prev" title="Installation" href="smithy-cli/cli_installation.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>smithy-build.json - Smithy 2.0</title>
@@ -204,7 +204,7 @@
 </ul>
 </li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">smithy-build.json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gradle-plugin/index.html">Smithy Gradle Plugins</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/generating-a-client.html">Generating a client</a></li>
@@ -347,7 +347,7 @@ and what projections of the model to create.</p>
 what projections of the model to create.</p>
 <p>The configuration file accepts the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -423,7 +423,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.44.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -512,7 +512,7 @@ and the Smithy CLI will automatically resolve these dependencies using the
 <a class="reference external" href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Apache Maven</a> dependency resolver.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">maven</span></code> property accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -554,7 +554,7 @@ all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
 <div class="table-wrapper colwidths-given docutils container" id="id15">
-<table border="1" class="colwidths-given docutils align-default" id="id15">
+<table border="1" class="docutils align-default" id="id15">
 <caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id15" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col width="20%" />
@@ -611,7 +611,7 @@ has a critical vulnerability).</td>
 <p>The <code class="docutils literal notranslate"><span class="pre">repositories</span></code> property accepts a list of structures that each accept
 the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -671,7 +671,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.44.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -737,7 +737,7 @@ property. Projection names MUST match the following pattern:</p>
 </div>
 <p>A projection accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -805,7 +805,7 @@ and <code class="docutils literal notranslate"><span class="pre">${files...}</sp
 Transforms are applied to the model, in order.</p>
 <p>A transform accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -833,7 +833,7 @@ Transforms are applied to the model, in order.</p>
 <span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Permalink to this heading">#</a></h3>
 <p>Applies the transforms defined in the given projection names.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -887,7 +887,7 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span id="id7"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this heading">#</a></h3>
 <p>Changes string shapes with enum traits into enum shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -945,7 +945,7 @@ transform.</p>
 <span id="id8"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this heading">#</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1009,7 +1009,7 @@ transform.</p>
 <span id="excludeshapesbyselector-transform"></span><h3>excludeShapesBySelector<a class="headerlink" href="#excludeshapesbyselector" title="Permalink to this heading">#</a></h3>
 <p>Removes all shapes matching the given <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1057,7 +1057,7 @@ transform.</p>
 <p>Removes shapes if they are tagged with one or more of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code> via
 the <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1103,7 +1103,7 @@ the <a class="reference internal" href="../spec/documentation-traits.html#tags-t
 <span id="excludeshapesbytrait-transform"></span><h3>excludeShapesByTrait<a class="headerlink" href="#excludeshapesbytrait" title="Permalink to this heading">#</a></h3>
 <p>Removes shapes if they are marked with one or more specific traits.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1148,7 +1148,7 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 <span id="includeshapesbyselector-transform"></span><h3>includeShapesBySelector<a class="headerlink" href="#includeshapesbyselector" title="Permalink to this heading">#</a></h3>
 <p>Includes only the shapes matching the given <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1196,7 +1196,7 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 <p>Removes shapes that are not tagged with at least one of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 via the <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1243,7 +1243,7 @@ via the <a class="reference internal" href="../spec/documentation-traits.html#ta
 <p>Filters out shapes that are not part of one of the given <a class="reference internal" href="../spec/idl.html#namespaces"><span class="std std-ref">namespaces</span></a>.
 Note that this does not filter out traits based on namespaces.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1290,7 +1290,7 @@ Note that this does not filter out traits based on namespaces.</p>
 <p>Filters out service shapes that are not included in the <code class="docutils literal notranslate"><span class="pre">services</span></code> list of
 shape IDs.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1334,7 +1334,7 @@ a valid service shape ID.</td>
 <p>Removes tags from shapes and trait definitions that match any of the
 provided <code class="docutils literal notranslate"><span class="pre">tags</span></code>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1381,7 +1381,7 @@ from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1451,7 +1451,7 @@ also removed from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1498,7 +1498,7 @@ orphaned shapes.</p>
 <p>Removes and modifies suppressions found in <a class="reference internal" href="../spec/model-validation.html#suppression-definition"><span class="std std-ref">metadata</span></a>
 and the <a class="reference internal" href="../spec/model-validation.html#suppress-trait"><span class="std std-ref">suppress trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1689,7 +1689,7 @@ suppressions:</p>
 <p>Removes tags from shapes and trait definitions that are not in the <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1736,7 +1736,7 @@ from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1806,7 +1806,7 @@ removed trait definition is also removed from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1854,7 +1854,7 @@ in the filtered model.</td>
 <p>Removes model <a class="reference internal" href="../spec/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1897,7 +1897,7 @@ key is in the provided <code class="docutils literal notranslate"><span class="p
 <p>Removes model <a class="reference internal" href="../spec/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is not in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1940,7 +1940,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -2009,7 +2009,7 @@ intact on any shapes.</p>
 <p>You can <em>export</em> trait definitions by applying specific tags to the trait
 definition and adding the list of export tags in the <code class="docutils literal notranslate"><span class="pre">exportTagged</span></code> argument.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -2061,7 +2061,7 @@ or to a shape definition.</p>
 applying specific tags to the shape and adding the list of export tags in
 the <code class="docutils literal notranslate"><span class="pre">exportTagged</span></code> argument.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -2111,7 +2111,7 @@ but keeps the shape if it has any of the provided tags:</p>
 <p>Renames shapes within the model, including updating any references to the
 shapes that are being renamed.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -2207,7 +2207,7 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 <p>In addition to environment variables of the process, smithy-build.json
 files have access to the following environment variables:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -2302,7 +2302,7 @@ process.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin supports the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -2342,7 +2342,7 @@ the standard input of the process. By default, the prelude is omitted.</td>
 </div>
 <p>Smithy will make the following environment variables available to the program:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -2418,12 +2418,12 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="gradle-plugin.html">
+          <a class="next-page" href="gradle-plugin/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Smithy Gradle Plugin</div>
+                <div class="title">Smithy Gradle Plugins</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -204,7 +204,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
@@ -398,7 +398,7 @@ input parameters.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures
 that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -669,7 +669,7 @@ of output or error parameters.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>
 structures that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -886,7 +886,7 @@ request processing.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is a list of
 <code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -949,7 +949,7 @@ in length. One test permutation is generated for each index the
 parameter lists. For example, parameters with 5 values for each key
 will generate 5 tests in total.</p>
 <p>Parameter values are substituted using the conventions described by
-the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.44.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.45.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
 parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
 formatters.</p>
 <div class="last admonition note">
@@ -968,7 +968,7 @@ interpreted as substitution expressions by the code generator.</p>
 <div class="section" id="httpmalformedrequestdefinition">
 <span id="httpmalformedrequestdefinition-struct"></span><h3>HttpMalformedRequestDefinition<a class="headerlink" href="#httpmalformedrequestdefinition" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1034,7 +1034,7 @@ base64 encoding the data (for example, use &quot;Zm9vCg==&quot; and not &quot;fo
 <div class="section" id="httpmalformedresponsedefinition">
 <span id="httpmalformedresponsedefinition-struct"></span><h3>HttpMalformedResponseDefinition<a class="headerlink" href="#httpmalformedresponsedefinition" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1071,7 +1071,7 @@ value differs from the serialized response value.</p>
 <div class="section" id="httpmalformedresponsebodydefinition">
 <span id="httpmalformedresponsebodydefinition-struct"></span><h4>HttpMalformedResponseBodyDefinition<a class="headerlink" href="#httpmalformedresponsebodydefinition" title="Permalink to this heading">#</a></h4>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1103,7 +1103,7 @@ base64 encoded.</td>
 <p>A union describing the assertion to run against the response body. As it is a
 union, exactly one member must be set.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />

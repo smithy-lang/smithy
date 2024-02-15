@@ -204,7 +204,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
@@ -360,7 +360,7 @@ conditions.</p>
 </dl>
 <p>The content of the <code class="docutils literal notranslate"><span class="pre">endpointRuleSet</span></code> document has the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -412,7 +412,7 @@ on the scenario.</p>
 <span id="rules-engine-endpoint-rule-set-parameter"></span><h3>Parameter object<a class="headerlink" href="#parameter-object" title="Permalink to this heading">#</a></h3>
 <p>A parameter object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -498,7 +498,7 @@ handling of <code class="docutils literal notranslate"><span class="pre">require
 <span id="rules-engine-endpoint-rule-set-parameter-deprecated"></span><h3>Deprecated object<a class="headerlink" href="#deprecated-object" title="Permalink to this heading">#</a></h3>
 <p>A deprecated object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -542,7 +542,7 @@ provide recourse options to a user.</td>
 <span id="rules-engine-endpoint-rule-set-endpoint-rule"></span><h3>Endpoint rule object<a class="headerlink" href="#endpoint-rule-object" title="Permalink to this heading">#</a></h3>
 <p>An endpoint rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -605,7 +605,7 @@ and uses a parameter value in a url template:</p>
 <span id="rules-engine-endpoint-rule-set-endpoint"></span><h3>Endpoint object<a class="headerlink" href="#endpoint-object" title="Permalink to this heading">#</a></h3>
 <p>An endpoint object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -679,7 +679,7 @@ MUST return an error.</li>
 <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration objects. No validators are provided by default.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.44.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.45.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 </div>
@@ -687,7 +687,7 @@ MUST return an error.</li>
 <span id="rules-engine-endpoint-rule-set-error-rule"></span><h3>Error rule object<a class="headerlink" href="#error-rule-object" title="Permalink to this heading">#</a></h3>
 <p>An error rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -761,7 +761,7 @@ other rules have failed to match.</p>
 <span id="rules-engine-endpoint-rule-set-tree-rule"></span><h3>Tree rule object<a class="headerlink" href="#tree-rule-object" title="Permalink to this heading">#</a></h3>
 <p>A tree rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="30%" />
@@ -860,7 +860,7 @@ of a tree, endpoint, and error rule.</p>
 <span id="rules-engine-endpoint-rule-set-condition"></span><h3>Condition object<a class="headerlink" href="#condition-object" title="Permalink to this heading">#</a></h3>
 <p>A condition is specified using an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="50%" />
@@ -961,7 +961,7 @@ endpoint object.</p>
 <span id="rules-engine-endpoint-rule-set-function"></span><h3>Function object<a class="headerlink" href="#function-object" title="Permalink to this heading">#</a></h3>
 <p>A function is specified using an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="50%" />
@@ -996,7 +996,7 @@ the set is extensible.</p>
 <span id="rules-engine-endpoint-rule-set-reference"></span><h3>Reference object<a class="headerlink" href="#reference-object" title="Permalink to this heading">#</a></h3>
 <p>A reference is an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="50%" />

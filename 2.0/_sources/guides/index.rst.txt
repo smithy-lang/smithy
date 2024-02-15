@@ -7,7 +7,7 @@ Guides
 
     smithy-cli/index
     smithy-build-json
-    gradle-plugin
+    gradle-plugin/index
     using-code-generation/index
     model-linters
     model-validation-examples

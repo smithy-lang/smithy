@@ -204,7 +204,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gradle-plugin/index.html">Smithy Gradle Plugins</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/generating-a-client.html">Generating a client</a></li>
@@ -348,8 +348,8 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.44.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.44.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.45.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -359,9 +359,71 @@ use in Smithy models.</p>
 </div>
 <div class="section" id="linters-in-smithy-linters">
 <h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> package defines the following linters.</p>
+<p>For Java developers using Smithy's reference implementation, the following
+linters (except for UnreferencedShape) are defined in the  <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-linters</span></code>
+Maven package.</p>
+<div class="section" id="unreferencedshape">
+<span id="id1"></span><h3>UnreferencedShape<a class="headerlink" href="#unreferencedshape" title="Permalink to this heading">#</a></h3>
+<p>Emits when a shape is not connected to the rest of the model. If no
+configuration is provided, the linter will check if a shape is connected to
+the closure of any service shape. A selector can be provided to define a
+custom set of &quot;root&quot; shapes to customize how the linter determines if a shape
+is unreferenced. Shapes that are connected through the <a class="reference internal" href="../spec/constraint-traits.html#idref-trait"><span class="std std-ref">idRef trait</span></a>
+are considered connected.</p>
+<dl class="docutils">
+<dt>Rationale</dt><dd>Just like unused variables in code, removing unused shapes from a model
+makes the model easier to maintain.</dd>
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">NOTE</span></code></dd>
+<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>rootShapeSelector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a> that specifies the root shape(s)
+from which to detect if other shapes are connected. Defaults
+to &quot;service&quot;, meaning any shape connected to any service shape
+in the model is considered referenced.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="c">// Find shapes that aren&#39;t connected to service shapes or shapes</span>
+<span class="w">        </span><span class="c">// marked with the trait, smithy.example#myCustomTrait.</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UnreferencedShape&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">rootShapeSelector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(service, [trait|smithy.example#myCustomTrait])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For backward compatibility reasons, the <code class="docutils literal notranslate"><span class="pre">UnreferencedShape</span></code> validator is available
+in <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-model</span></code> Maven package and does not require
+additional dependencies.</p>
+</div>
+</div>
 <div class="section" id="abbreviationname">
-<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this heading">#</a></h3>
+<span id="id2"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not represent abbreviations
 with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
 &quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
@@ -373,7 +435,7 @@ to represent camelCase words using snake_case; utilizing strict camel
 casing makes it easier to split words apart.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -406,7 +468,7 @@ letters. Defaults to an empty list.</td>
 </div>
 </div>
 <div class="section" id="camelcase">
-<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this heading">#</a></h3>
+<span id="id3"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
@@ -418,7 +480,7 @@ model and can lead to consistent naming in code generated from Smithy
 models.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -451,7 +513,7 @@ models.</dd>
 </div>
 </div>
 <div class="section" id="missingsensitivetrait">
-<span id="id3"></span><h3>MissingSensitiveTrait<a class="headerlink" href="#missingsensitivetrait" title="Permalink to this heading">#</a></h3>
+<span id="id4"></span><h3>MissingSensitiveTrait<a class="headerlink" href="#missingsensitivetrait" title="Permalink to this heading">#</a></h3>
 <p>This validator scans shape or member names and identifies ones that look like they could contain
 sensitive information but are not marked with the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait. This does not apply to
 shapes where the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait would be invalid. Users may also configure this validator
@@ -464,7 +526,7 @@ of it. Mistakenly not marking sensitive data accordingly carries a large risk, a
 helpful to have an automated validator to catch instances of this rather than rely on best efforts.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -509,7 +571,7 @@ If set to true, <code class="docutils literal notranslate"><span class="pre">ter
 </div>
 </div>
 <div class="section" id="noninclusiveterms">
-<span id="id4"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this heading">#</a></h3>
+<span id="id5"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this heading">#</a></h3>
 <p>Validates that all text content in a model (i.e. shape names, member names,
 documentation, trait values, etc.) does not contain words that perpetuate cultural
 biases. This validator has a built-in set of bias terms that are commonly found
@@ -530,7 +592,7 @@ allowList and denyList much more clearly indicate that something is
 allowed or denied.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -577,7 +639,7 @@ This property is not required and defaults to false.</td>
 </div>
 </div>
 <div class="section" id="reservedwords">
-<span id="id5"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this heading">#</a></h3>
+<span id="id6"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this heading">#</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
 <dl class="docutils">
@@ -590,7 +652,7 @@ code-names, from appearing in public artifacts.</dd>
 <dt>Configuration</dt><dd><p>A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
 value is a list of objects with the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -662,7 +724,7 @@ be specified.</p>
 names match when case-insensitively <strong>containing</strong> the word. The following
 table shows matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename*</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -693,7 +755,7 @@ table shows matches for a reserved word of <code class="docutils literal notrans
 case-insensitively <strong>ending with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -724,7 +786,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 case-insensitively <strong>starting with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename*</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -755,7 +817,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 case-insensitively <strong>the same as</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -795,7 +857,7 @@ case-insensitively compared against the words in the search text for a match.</p
 or the type of character between two characters changes. The following table
 demonstrates how comparison text is parsed into words.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />
@@ -833,7 +895,7 @@ boundary searches also match if the search terms concatenated together with
 no spaces is considered a word in the search text (for example,
 <code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code> will match the word <code class="docutils literal notranslate"><span class="pre">secretid</span></code>).</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -889,7 +951,7 @@ no spaces is considered a word in the search text (for example,
 </div>
 </div>
 <div class="section" id="standardoperationverb">
-<span id="id6"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this heading">#</a></h3>
+<span id="id7"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this heading">#</a></h3>
 <p>Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
 that has better alternatives.</p>
@@ -903,7 +965,7 @@ in order for this validator to properly function.</p>
 API to more easily understand the semantics of an operation.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -961,7 +1023,7 @@ be provided.</p>
 </div>
 </div>
 <div class="section" id="repeatedshapename">
-<span id="stutteredshapename"></span><span id="id7"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this heading">#</a></h3>
+<span id="stutteredshapename"></span><span id="id8"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this heading">#</a></h3>
 <p>Validates that <a class="reference internal" href="../spec/aggregate-types.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/aggregate-types.html#union"><span class="std std-ref">Union</span></a> member
 names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
@@ -971,7 +1033,7 @@ names do not case-insensitively repeat their container shape names.</p>
 redundant.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -996,7 +1058,7 @@ is case-insensitively identical to the containing shape's name.</td>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
-<span id="id8"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this heading">#</a></h3>
+<span id="id9"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this heading">#</a></h3>
 <p>Validates that every operation defines a dedicated input and output shape
 marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="../spec/type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
 <dl class="docutils">
@@ -1017,7 +1079,7 @@ operations together.</li>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
-<span id="id9"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this heading">#</a></h3>
+<span id="id10"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this heading">#</a></h3>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
@@ -1026,7 +1088,7 @@ data helps to maintain a predictable SLA and helps to prevent operational
 issues in the future.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1085,7 +1147,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </div>
 </div>
 <div class="section" id="shouldhaveusedtimestamp">
-<span id="id10"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this heading">#</a></h3>
+<span id="id11"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this heading">#</a></h3>
 <p>Looks for shapes that likely represent time, but that do not use a
 timestamp shape.</p>
 <p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
@@ -1115,7 +1177,7 @@ contain the same two words, &quot;foo&quot; and &quot;bar&quot;.</p>
 that make them easier to work with in client tooling.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1140,7 +1202,7 @@ represent time.</td>
 </dl>
 </div>
 <div class="section" id="missingclientoptionaltrait">
-<span id="id11"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this heading">#</a></h3>
+<span id="id12"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this heading">#</a></h3>
 <p>Allows services to control backward compatibility guarantees for
 members marked as <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">&#64;required</span></a> and
 <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">&#64;default</span></a> by requiring the application of the
@@ -1159,7 +1221,7 @@ default value. The risk associated with such members may be unacceptable
 for some services.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1462,6 +1524,7 @@ using the following Smithy model:</p>
 <li><a class="reference internal" href="#">Linting Models</a><ul>
 <li><a class="reference internal" href="#linting-overview">Linting overview</a></li>
 <li><a class="reference internal" href="#linters-in-smithy-linters">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a><ul>
+<li><a class="reference internal" href="#unreferencedshape">UnreferencedShape</a></li>
 <li><a class="reference internal" href="#abbreviationname">AbbreviationName</a></li>
 <li><a class="reference internal" href="#camelcase">CamelCase</a></li>
 <li><a class="reference internal" href="#missingsensitivetrait">MissingSensitiveTrait</a></li>

@@ -204,7 +204,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
@@ -361,7 +361,7 @@ response payloads for operations with a 204/205 status, etc.</p>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">http</span></code> trait is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -481,7 +481,7 @@ characters declared in the pattern, with the exception of trailing slashes
 which are always optional.</p>
 <p>Given an endpoint of <code class="docutils literal notranslate"><span class="pre">https://yourhost</span></code> and a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/path</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -540,7 +540,7 @@ and &quot;/{foo}bar&quot; is invalid).</li>
 (&quot;/&quot;).</p>
 <p>Given a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label}</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -590,7 +590,7 @@ not immediately adjacent and do not have identical label names. Given a
 pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label1}/{label2}</span></code> and an endpoint of
 <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -638,7 +638,7 @@ The query string portion of a pattern MUST NOT contain labels.</p>
 <p>Literals can be in the form of required keys without values. Given a pattern
 of <code class="docutils literal notranslate"><span class="pre">/path?requiredKey</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -683,7 +683,7 @@ string parameter.</td>
 Given a pattern of <code class="docutils literal notranslate"><span class="pre">/path?requiredKey=requiredValue</span></code> and an endpoint of
 <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -732,7 +732,7 @@ in any path pattern, and if present, it MUST be the last label in the pattern.
 Greedy labels MUST be bound to a string shape.</p>
 <p>Given a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label+}</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -772,7 +772,7 @@ can be modeled with a pattern of <code class="docutils literal notranslate"><spa
 labels match greedily: they will match the longest possible string. Given a
 pattern of <code class="docutils literal notranslate"><span class="pre">/prefix/{label+}/suffix</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">https://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="10%" />
@@ -959,7 +959,7 @@ in any other context and is simply ignored.</p>
 <p>Various HTTP headers are highly discouraged for the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> and
 <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> traits.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -1522,7 +1522,7 @@ and is simply ignored.</p>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
