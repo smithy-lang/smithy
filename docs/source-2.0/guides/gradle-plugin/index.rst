@@ -5,10 +5,8 @@ Smithy Gradle Plugins
 =====================
 
 The `Smithy Gradle plugins`_ integrate Smithy with the `Gradle`_ build system. These plugin can
-build artifacts from Smithy models, generate JARs that contain Smithy models
-found in Java projects, and generate JARs that contain filtered :ref:`projections <projections>`
-of Smithy models.
-
+build artifacts from Smithy models, and generate JARs for Smithy models and model
+:ref:`projections <projections>`.
 
 Plugins
 =======
@@ -64,8 +62,9 @@ The following example configures a project to use the ``smithy-base`` Gradle plu
 
 .. note::
 
-    The ``smithy-jar`` plugin requires that a JVM plugin that creates a JAR task,
-    such as the `Java Plugin`_ or `Kotlin JVM plugin`_, is applied first.
+    The ``smithy-jar`` plugin requires that a `jar` task be registered
+    before it is applied. The `Java Plugin`_ and `Kotlin JVM plugin`_
+    are commonly used plugins that both register a `jar` task.
 
 Complete Examples
 =================
