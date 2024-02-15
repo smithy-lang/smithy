@@ -333,7 +333,7 @@ your project as follows:
 Set Smithy Tags to add to a JAR
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the smithy-jar plugin is applied to a project it can add a number of Smithy
+When the smithy-jar plugin is applied to a project, it can add a number of Smithy
 tags to the MANIFEST of a generated JAR. These tags can be used by downstream
 consumers to filter which models to include in projections. Tags can be configured
 for the plugin as follows:
