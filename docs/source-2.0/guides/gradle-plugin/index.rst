@@ -306,7 +306,7 @@ Set ``smithy-build`` configs to use
 
 By default, the plugin will look for a file called ``smithy-build.json``
 at the project's root and will use that as the :ref:`smithy-build config <smithy-build>`
-for your project. If no smithy-build.json file is found then an empty build config
+for your project. If no smithy-build.json file is found, then an empty build config
 is used to build the project.
 
 Alternatively, you can explicitly configure one or more smithy-build configs to use for
