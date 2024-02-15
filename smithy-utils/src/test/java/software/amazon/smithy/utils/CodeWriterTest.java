@@ -23,8 +23,10 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -983,6 +985,26 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void flattensStatesOfOtherWhenCopying() {
+        CodeWriter a = new CodeWriter();
+        a.pushState();
+        a.putFormatter('A', (value, indent) -> value.toString().toUpperCase(Locale.ENGLISH));
+        a.putContext("a", 1);
+        a.putContext("b", "B");
+        a.pushState();
+        a.putContext("b", 2); // override "b"
+        a.putFormatter('B', (value, indent) -> value.toString().toLowerCase(Locale.ENGLISH));
+
+        CodeWriter b = new CodeWriter();
+        b.putContext("c", 3);
+        b.copySettingsFrom(a);
+        b.writeInline("${1A} ${2B} ${a:L} ${b:L} ${c:L}", "Hello", "Goodbye");
+
+        assertThat(b.toString(), equalTo("HELLO goodbye 1 2 3\n"));
+        assertThat(a.toString(), equalTo("\n"));
+    }
+
+    @Test
     public void canPassRunnableToFormatters() {
         CodeWriter writer = new CodeWriter();
         writer.write("Hi, $C.", (Runnable) () -> writer.writeInline("TheName"));
@@ -1451,6 +1473,34 @@ public class CodeWriterTest {
         assertThat(writer.toString(), equalTo("foo: ok actually\n"));
     }
 
+    @Test
+    public void canAccessStateClassesOfInheritedStates() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.putContext("a", "A");
+        writer.pushState();
+        writer.pushState(new CustomSection());
+        writer.putContext("b", "B");
+        writer.pushState();
+        writer.write("${a:L}, ${b:L}, ${hello:L}${partial:C|}");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("A, B, Hello, 0T, 1T, 2T\n"));
+    }
+
+    @Test
+    public void canRemoveContextFromTheCurrentState() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.putContext("a", "A");
+        writer.pushState();
+        writer.putContext("b", "B");
+        writer.removeContext("a");
+
+        writer.write("${a:L}, ${b:L}");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo(", B\n"));
+    }
+
     private static final class MySection implements CodeSection {
         public String getFoo() {
             return "foo";
@@ -1494,6 +1544,27 @@ public class CodeWriterTest {
         @Override
         protected boolean isStackTraceRelevant(StackTraceElement e) {
             return false;
+        }
+    }
+
+    public static final class CustomSection implements CodeSection {
+        public String hello() {
+            return "Hello";
+        }
+
+        public List<String> values() {
+            return ListUtils.of("a", "b", "c");
+        }
+
+        public String test() {
+            return "T";
+        }
+
+        public Consumer<AbstractCodeWriter<?>> partial() {
+            // This partial ensures that nested contexts can reach up to parent contexts and sections to get values.
+            return writer -> {
+                writer.write("${#values}, ${key:L}${test:L}${/values}");
+            };
         }
     }
 }

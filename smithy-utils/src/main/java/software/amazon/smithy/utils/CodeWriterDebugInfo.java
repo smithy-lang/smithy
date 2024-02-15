@@ -42,7 +42,7 @@ public final class CodeWriterDebugInfo {
     /**
      * Get the CodeWriter state path from which the debug information was collected.
      *
-     * @return Returns the path as returned by {@link CodeWriter#getStateDebugPath()};
+     * @return Returns the path as returned by {@link AbstractCodeWriter#getDebugInfo()};
      */
     public String getStateDebugPath() {
         return getMetadata("path");
