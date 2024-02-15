@@ -133,7 +133,7 @@ Models found in these directories are combined into a flattened directory
 structure and used to validate and build the Smithy model. A Smithy manifest
 file is automatically created for the detected models, and it, along with the
 model files, are placed in the ``META-INF/smithy/`` resource of the created
-JAR. Any project that then depends on this created JAR will be able to find
+JAR. Any project that depends on this created JAR will be able to find
 and use the Smithy models contained in the JAR when using *model discovery*.
 
 Dependencies
