@@ -467,7 +467,7 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
 
 .. tab:: Groovy
 
-        .. code-block:: Groovy
+        .. code-block:: groovy
             :caption: build.gradle
 
             plugins {
@@ -719,7 +719,7 @@ the gradle build script:
 
 .. tab:: Groovy
 
-        .. code-block:: Groovy
+        .. code-block:: groovy
             :caption: build.gradle
 
             dependencies {
@@ -727,7 +727,7 @@ the gradle build script:
 
                 // This dependency is required in order to apply the "openapi"
                 // plugin in smithy-build.json
-                smithyBuild("software.amazon.smithy:smithy-openapi:__smithy_version__")
+                smithyBuild 'software.amazon.smithy:smithy-openapi:__smithy_version__'
             }
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
