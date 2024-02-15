@@ -274,8 +274,7 @@ in the ``smithy-build.json`` config for your Smithy project. For example:
         "outputDirectory": "build/output"
     }
 
-The output directory can also be configured for the plugin using the ``smithy``
-extension:
+The second method is to configure the plugin using the ``smithy`` extension:
 
 .. tab:: Kotlin
 
