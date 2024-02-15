@@ -505,20 +505,38 @@ generate artifacts, and runs validation.
 
 
     To build a Smithy model using the :ref:`Smithy Gradle Plugin <smithy-gradle-plugin>`,
-    first, create a ``build.gradle.kts`` file in the ``smithy-quickstart`` directory:
+    first, create a gradle build script file in the ``smithy-quickstart`` directory:
 
-    .. code-block:: kotlin
-        :caption: build.gradle.kts
+    .. tab:: Kotlin
 
-        plugins {
-            `java-library`
-            id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
-        }
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
 
-        repositories {
-            mavenLocal()
-            mavenCentral()
-        }
+            plugins {
+                `java-library`
+                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java-library'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
 
     Next, run ``gradle build``. That's it! We just created a simple, read-only, ``Weather`` service.
 
