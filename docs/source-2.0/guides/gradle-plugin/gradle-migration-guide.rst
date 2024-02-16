@@ -114,7 +114,7 @@ for these build-only dependencies.
         +   smithyBuild 'com.foo.baz:foo-internal-model:1.0.0'
         }
 
-Chang ``projection`` property name
+Change ``projection`` property name
 ===================================
 
 The property ``projection`` has also been updated to ``sourceProjection``.
@@ -122,24 +122,24 @@ The property ``projection`` has also been updated to ``sourceProjection``.
 .. tab:: Kotlin
 
         .. code-block:: diff
-                :caption: build.gradle.kts
+            :caption: build.gradle.kts
 
-                -configure<software.amazon.smithy.gradle.SmithyExtension> {
-                +smithy {
-                -    projection = "foo"
-                +    sourceProjection.set("foo")
-                }
+            -configure<software.amazon.smithy.gradle.SmithyExtension> {
+            +smithy {
+            -    projection = "foo"
+            +    sourceProjection.set("foo")
+            }
 
 .. tab:: Groovy
 
         .. code-block:: diff
-                :caption: build.gradle
+            :caption: build.gradle
 
-                -configure<software.amazon.smithy.gradle.SmithyExtension> {
-                +smithy {
-                -    projection = "foo"
-                +    sourceProjection = "foo"
-                }
+            -configure<software.amazon.smithy.gradle.SmithyExtension> {
+            +smithy {
+            -    projection = "foo"
+            +    sourceProjection = "foo"
+            }
 
 Change ``smithyBuildJar`` task name
 ===================================
@@ -153,34 +153,34 @@ configure the ``smithyBuild`` task instead. Tasks that depended on
 .. tab:: Kotlin
 
         .. code-block:: diff
-                :caption: build.gradle.kts
+            :caption: build.gradle.kts
 
-                tasks {
-                -   smithyBuildJar {
-	            +   smithyBuild {
-                        smithyBuildConfigs = files("smithy-build.json", other)
-                    }
-                    // ..
+            tasks {
+            -   smithyBuildJar {
+            +   smithyBuild {
+                    smithyBuildConfigs.set(files("smithy-build.json", other))
                 }
+                // ..
+            }
 
-                -tasks["smithyBuildJar"].dependsOn("otherTask")
-                +tasks["jar"].dependsOn("otherTask")
+            -tasks["smithyBuildJar"].dependsOn("otherTask")
+            +tasks["jar"].dependsOn("otherTask")
 
 .. tab:: Groovy
 
         .. code-block:: diff
-                :caption: build.gradle
+            :caption: build.gradle
 
-                tasks {
-                -   smithyBuildJar {
-	            +   smithyBuild {
-                        smithyBuildConfigs = files("smithy-build.json", other)
-                    }
-                    // ..
+            tasks {
+            -   smithyBuildJar {
+            +   smithyBuild {
+                    smithyBuildConfigs = files("smithy-build.json", other)
                 }
+                // ..
+            }
 
-                -tasks["smithyBuildJar"].dependsOn("otherTask")
-                +tasks["jar"].dependsOn("otherTask")
+            -tasks["smithyBuildJar"].dependsOn("otherTask")
+            +tasks["jar"].dependsOn("otherTask")
 
 .. _Smithy Gradle plugins: https://github.com/awslabs/smithy-gradle-plugin/
 .. _Configuration: https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.Configuration.html
