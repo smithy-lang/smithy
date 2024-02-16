@@ -237,22 +237,16 @@ final class IdlStringLexer {
     /**
      * Computes the number of leading whitespace characters in a string.
      *
-     * <p>This method returns -1 if the string is empty or if the string
-     * contains only whitespace. When determining the whitespace of the
-     * last line, the length of the line is returned if the entire
-     * line consists of only spaces. This ensures that the whitespace
-     * of the last line can be used to influence the indentation of the
-     * content as a whole (a significant trailing line policy).
+     * <p>This method returns -1 if the string contains only whitespace. When determining the whitespace of the
+     * last line, the length of the line is returned if the entire line consists of only spaces. This ensures that
+     * the whitespace of the last line can be used to influence the indentation of the content as a whole
+     * (a significant trailing line policy).
      *
      * @param line Line to search for whitespace.
      * @param isLastLine Whether or not this is the last line.
      * @return Returns the last whitespace index starting at 0 or -1.
      */
     private static int computeLeadingWhitespace(CharSequence line, boolean isLastLine) {
-        if (line.length() == 0) {
-            return -1;
-        }
-
         for (int offset = 0; offset < line.length(); offset++) {
             if (line.charAt(offset) != ' ') {
                 return offset;

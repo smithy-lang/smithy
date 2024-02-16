@@ -9,7 +9,7 @@ metadata validators = [
         configuration: {
             selector: """
                 operation -[input]-> structure > member
-                :test(member > string:not([trait|enum]))
+                    :test(member > string:not([trait|enum]))
                 :test(member > string:not([trait|length]))
                 :test(member > string:not([trait|aws.api#arnReference]))
                 :test(member > string:not([trait|aws.api#providesPassRole]))

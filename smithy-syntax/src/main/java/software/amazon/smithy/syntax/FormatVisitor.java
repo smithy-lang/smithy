@@ -17,14 +17,13 @@ package software.amazon.smithy.syntax;
 
 import com.opencastsoftware.prettier4j.Doc;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.StringUtils;
 
 final class FormatVisitor {
 
@@ -447,11 +446,49 @@ final class FormatVisitor {
             case TEXT_BLOCK: {
                 // Dispersing the lines of the text block preserves any indentation applied from formatting parent
                 // nodes.
-                List<Doc> lines = Arrays.stream(tree.concatTokens().split(System.lineSeparator()))
-                        .map(String::trim)
-                        .map(Doc::text)
-                        .collect(Collectors.toList());
-                return Doc.intersperse(Doc.line(), lines);
+
+                // We need to rebuild the text block to remove any incidental leading whitespace. The easiest way to
+                // do that is to use the already parsed and resolved value from the lexer.
+                String stringValue = cursor.getTree()
+                        .tokens()
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
+                        .getStringContents();
+
+                // If the last character is a newline, then the closing triple quote must be on the next line.
+                boolean endQuoteOnNextLine = stringValue.endsWith("\n") || stringValue.endsWith("\r");
+
+                List<Doc> resultLines = new ArrayList<>();
+                resultLines.add(Doc.text("\"\"\""));
+
+                String[] inputLines = stringValue.split("\\r?\\n", -1);
+                for (int i = 0; i < inputLines.length; i++) {
+                    boolean lastLine = i == inputLines.length - 1;
+
+                    // If this is the last line and the ending quote is on the next line, then skip the extra line.
+                    if (endQuoteOnNextLine && lastLine) {
+                        break;
+                    }
+
+                    String lineValue = inputLines[i];
+
+                    // Trim trailing whitespace.
+                    // TODO: This may need to be configurable.
+                    lineValue = StringUtils.stripEnd(lineValue, null);
+
+                    // Add the closing quote to this line if it needs to be on the last line.
+                    if (lastLine) {
+                        lineValue += "\"\"\"";
+                    }
+
+                    resultLines.add(Doc.text(lineValue));
+                }
+
+                if (endQuoteOnNextLine) {
+                    resultLines.add(Doc.text("\"\"\""));
+                }
+
+                return Doc.intersperse(Doc.line(), resultLines);
             }
 
             case TOKEN:
