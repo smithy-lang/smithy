@@ -8,6 +8,12 @@ The `Smithy Gradle plugins`_ integrate Smithy with the `Gradle`_ build system. T
 build artifacts from Smithy models, and generate JARs for Smithy models and model
 :ref:`projections <projections>`.
 
+.. toctree::
+    :maxdepth: 1
+    :caption: Migrate to version 0.8.0+
+
+    gradle-migration-guide
+
 Plugins
 =======
 
@@ -151,6 +157,8 @@ Runtime dependencies can be added directly to the ``runtimeClasspath`` configura
 or to a configuration that extends ``runtimeClasspath``, such as the ``implementation``
 configuration added by the ``java-library`` plugin.
 
+.. _dependencies:
+
 Build Dependencies
 ^^^^^^^^^^^^^^^^^^
 
@@ -255,8 +263,6 @@ This extension supports the following properties:
     * - outputDirectory
       - ``Directory``
       - Defines where Smithy build artifacts are written.
-
-.. _dependencies:
 
 
 Customize output directory
@@ -381,6 +387,8 @@ process if necessary. To run Smithy CLI commands in a process set the
         smithy {
             fork = true
         }
+
+.. _disable-smithy-formatter:
 
 Disable Smithy Formatter
 ^^^^^^^^^^^^^^^^^^^^^^^^
