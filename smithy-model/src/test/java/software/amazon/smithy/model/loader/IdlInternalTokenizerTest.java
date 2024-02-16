@@ -21,9 +21,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
+import java.util.stream.Stream;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class IdlInternalTokenizerTest {
 
@@ -180,5 +184,82 @@ public class IdlInternalTokenizerTest {
 
         assertThat(lines, equalTo("Hi\nThere\n123\n456"));
         MatcherAssert.assertThat(tokenizer.removePendingDocCommentLines(), nullValue());
+    }
+
+    public static Stream<Arguments> textBlockTests() {
+        return Stream.of(
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "    Hello\n"
+                        + "        - Indented\"\"\"\n",
+                        "Hello\n    - Indented"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "    Hello\n"
+                        + "        - Indented\n"
+                        + "    \"\"\"\n",
+                        "Hello\n    - Indented\n"
+                ),
+                Arguments.of(
+                    "\"\"\"\n"
+                    + "    Hello\n"
+                    + "        - Indented\n"
+                    + "\"\"\"\n",
+                    "    Hello\n        - Indented\n"
+                ),
+                Arguments.of(
+                    "\"\"\"\n"
+                    + "    Hello\"\"\"\n",
+                    "Hello"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "    Hello\n"
+                        + "\n"
+                        + "        - Indented\n"
+                        + "\"\"\"\n",
+                        "    Hello\n\n        - Indented\n"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "                        \n" // only WS doesn't influence line length calculations.
+                        + "          Hello\n"
+                        + "                        \n" // only WS doesn't influence line length calculations.
+                        + "          \"\"\"",
+                        "\nHello\n\n"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "\n" // empty lines are incidental whitespace.
+                        + "          Hello\n"
+                        + "                        \n" // only WS doesn't influence line length calculations.
+                        + "          \"\"\"",
+                        "\nHello\n\n"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "\n" // empty lines are incidental whitespace.
+                        + "Hello\n"
+                        + "\n"
+                        + "\n"
+                        + "\"\"\"",
+                        "\nHello\n\n\n"
+                ),
+                Arguments.of(
+                        "\"\"\"\n"
+                        + "\"\"\"",
+                        ""
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("textBlockTests")
+    public void parsesTextBlocks(String model, String stringValue) {
+        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", model);
+        tokenizer.expect(IdlToken.TEXT_BLOCK);
+
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(stringValue));
     }
 }
