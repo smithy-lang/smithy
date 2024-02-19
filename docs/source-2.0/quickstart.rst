@@ -93,10 +93,31 @@ weather service.
 4. This service closure contains the following operations:
    ``ListCities``, ``GetCity``, ``GetForecast``, ``GetCurrentTime``.
 
-``Weather`` is a :ref:`service` shape that is defined inside of a
-:ref:`namespace <namespaces>`.
+First, create a directory called `smithy-quickstart` with a `model` directory
+and a weather model file such that your `smithy-quickstart` directory has the
+following file structure:
+
+.. code-block:: text
+
+    smithy-quickstart/
+    └── model/
+        └── weather.smithy
+
+.. tip::
+
+    Run the following command to create the quickstart directory
+
+    .. code-block:: text
+
+        mkdir -p smithy-quickstart/model \
+        && touch smithy-quickstart/model/weather.smithy \
+        && cd smithy-quickstart
+
+Next, we will start to model a ``Weather`` service in the `weather.smithy` file.
+``Weather`` is a :ref:`service` shape that is defined inside of a :ref:`namespace <namespaces>`.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     $version: "2"
     namespace example.weather
@@ -129,6 +150,7 @@ A resource is contained within a service or another resource. Resources have
 identifiers, operations, and any number of child resources.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     $version: "2"
     namespace example.weather
@@ -163,6 +185,7 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
 ``Forecast`` to the ``resources`` property of the ``City``.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     resource City {
         identifiers: { cityId: CityId }
@@ -189,6 +212,7 @@ members of resource operations map to resource properties or identifiers to
 perform updates on or examine the state of a resource.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     resource City {
         identifiers: { cityId: CityId }
@@ -244,6 +268,7 @@ your API.
 Let's define the operation used to "read" a ``City``.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     @readonly
     operation GetCity {
@@ -291,6 +316,7 @@ Let's define the operation used to "read" a ``City``.
 And define the operation used to "read" a ``Forecast``.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     @readonly
     operation GetForecast {
@@ -332,6 +358,7 @@ bind the identifier of a ``City`` to its input structure; we are listing
 cities, so there's no way we could provide a ``City`` identifier.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     /// Provides weather forecasts.
     @paginated(inputToken: "nextToken", outputToken: "nextToken",
@@ -413,6 +440,7 @@ service.
 
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     /// Provides weather forecasts.
     @paginated(inputToken: "nextToken", outputToken: "nextToken",
@@ -442,50 +470,79 @@ service.
 Building the Model
 ==================
 
-Now that you have a model, you'll want to build it and generate things from it.
-Building the model creates projections of the model, applies plugins to
-generate artifacts, runs validation, and creates a JAR that contains the
-filtered projection. The `Smithy Gradle Plugin`_ is the best way to get started
-building a Smithy model. First, create a ``smithy-build.json`` file:
+Now that you have a model, you'll want to build it and generate additional
+artifacts from it. Building the model creates projections of the model, applies plugins to
+generate artifacts, and runs validation.
 
-.. code-block:: json
+.. tab:: Smithy CLI
 
-    {
-        "version": "1.0"
-    }
+    .. admonition:: Install required tools
+        :class: tip
 
-Then create a new ``build.gradle.kts`` file:
+        Before you proceed, make sure you have the :ref:`Smithy CLI installed <cli_installation>`.
 
-.. code-block:: kotlin
+    To build a Smithy model using the :ref:`the Smithy CLI <smithy-cli>`,
+    create a :ref:`smithy-build.json <smithy-build-json>` file in the ``smithy-quickstart`` directory:
 
-    plugins {
-        id("software.amazon.smithy").version("0.6.0")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+        {
+            // Version of the smithy-build.json file specification
+            "version": "1.0",
+            // Location to search for Smithy model source files
+            "sources": ["model"]
+        }
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-    }
+    Next, run ``smithy build``. That's it! We just created a simple, read-only, ``Weather`` service.
 
-    configure<software.amazon.smithy.gradle.SmithyExtension> {
-        // Uncomment this to use a custom projection when building the JAR.
-        // projection = "foo"
-    }
+.. tab:: Gradle
 
-    // Uncomment to disable creating a JAR.
-    //tasks["jar"].enabled = false
+    .. admonition:: Install required tools
+        :class: tip
 
-Finally, copy the weather model to ``model/weather.smithy`` and
-then run ``gradle build`` (make sure you have `gradle installed`_).
+        Before you proceed, make sure you have `gradle installed`_.
+
+
+    To build a Smithy model using the :ref:`Smithy Gradle Plugin <smithy-gradle-plugin>`,
+    first, create a gradle build script file in the ``smithy-quickstart`` directory:
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                `java-library`
+                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java-library'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+
+    Next, run ``gradle build``. That's it! We just created a simple, read-only, ``Weather`` service.
+
 
 Next steps
 ==========
-
-That's it! We just created a simple, read-only, ``Weather`` service.
 
 1. Try adding a "create" lifecycle operation to ``City``.
 2. Try adding a "delete" lifecycle operation to ``City``.
@@ -511,49 +568,46 @@ There's plenty more to explore in Smithy.
 Complete example
 ================
 
-If you followed all the steps in this guide, you should have three files, laid
-out like so::
 
-    .
-    ├── build.gradle.kts
-    ├── model
-    │   └── weather.smithy
-    └── smithy-build.json
 
-The ``smithy-build.json`` should have the following contents:
+.. note::
 
-.. code-block:: json
+    You can clone a working version of this quickstart example using the
+    :ref:`Smithy CLI <smithy-cli>` ``init`` command.
 
-    {
-        "version": "1.0"
-    }
+    .. tab:: Quickstart with Smithy CLI
 
-The ``build.gradle.kts`` should have the following contents:
+        .. code-block::
 
-.. code-block:: kotlin
+            smithy init -o <output_directory>
 
-    plugins {
-        id("software.amazon.smithy").version("0.6.0")
-    }
+    .. tab:: Quickstart with Gradle
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+        .. code-block::
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-    }
+            smithy init -t quickstart-gradle -o <output_directory>
 
-    configure<software.amazon.smithy.gradle.SmithyExtension> {
-        // Uncomment this to use a custom projection when building the JAR.
-        // projection = "foo"
-    }
+If you followed all the steps in this guide, your working directory should be laid out like so:
 
-    // Uncomment to disable creating a JAR.
-    //tasks["jar"].enabled = false
+.. tab:: Smithy CLI
 
-Finally, the complete ``weather.smithy`` model should look like:
+    .. code-block:: text
+
+        .
+        ├── smithy-build.json
+        └── model
+            └── weather.smithy
+
+.. tab:: Gradle
+
+    .. code-block:: text
+
+        .
+        ├── build.gradle.kts
+        └── model
+            └── weather.smithy
+
+The complete ``weather.smithy`` model should look like:
 
 .. code-block:: smithy
 
