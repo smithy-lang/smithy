@@ -537,8 +537,18 @@ generate artifacts, and runs validation.
                 mavenCentral()
             }
 
+    Next, create a :ref:`smithy-build.json <smithy-build-json>` file in the
+    ``smithy-quickstart`` directory:
 
-    Next, run ``gradle build``. That's it! We just created a simple, read-only, ``Weather`` service.
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            // Version of the smithy-build.json file specification
+            "version": "1.0"
+        }
+
+    Finally, run ``gradle build``. That's it! We just created a simple, read-only, ``Weather`` service.
 
 
 Next steps
@@ -604,6 +614,7 @@ If you followed all the steps in this guide, your working directory should be la
 
         .
         ├── build.gradle.kts
+        ├── smithy-build.json
         └── model
             └── weather.smithy
 
