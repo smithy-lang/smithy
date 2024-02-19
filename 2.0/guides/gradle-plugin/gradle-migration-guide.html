@@ -2,10 +2,10 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Generating a client" href="generating-a-client.html" /><link rel="prev" title="Code Generation" href="index.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Code Generation" href="../using-code-generation/index.html" /><link rel="prev" title="Smithy Gradle Plugins" href="index.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
-        <title>Updating the Smithy Model - Smithy 2.0</title>
+        <title>Migrating to Gradle plugin version 0.10.0+ - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -204,13 +204,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Smithy Gradle Plugins</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Code Generation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Updating the Smithy Model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generating-a-client.html">Generating a client</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
@@ -317,7 +317,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/using-code-generation/update-model.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/gradle-plugin/gradle-migration-guide.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -339,124 +339,196 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="updating-the-smithy-model">
-<span id="update-model"></span><h1>Updating the Smithy Model<a class="headerlink" href="#updating-the-smithy-model" title="Permalink to this heading">#</a></h1>
-<p>The weather service model is currently a high-level description of the Weather API,
-and doesn't contain any low-level details about how the data is sent over the wire.
-However, in order to communicate with the Weather API, a client needs to know some
-of these details. For example, how should a client serialize requests? Is the server
-using HTTP or something else?</p>
-<p>Smithy makes it simple to add this information to a model via <a class="reference internal" href="../../spec/model.html#traits"><span class="std std-ref">Traits</span></a>. Let's
-update the weather service model with the details needed for generating a client.</p>
-<div class="section" id="specifying-a-protocol">
-<h2>Specifying a protocol<a class="headerlink" href="#specifying-a-protocol" title="Permalink to this heading">#</a></h2>
-<p>In Smithy, <cite>protocols</cite> define how a client and server communicate, and are modeled by
-<a class="reference internal" href="../../spec/protocol-traits.html"><span class="doc">protocol traits</span></a>. A service's supported protocols can be
-defined by applying protocol traits to the service shape. To generate code, at least
-one protocol trait is required, and the code generator has to know how to generate code
-for that protocol.</p>
-<p>In this example, the weather service will use the
-<a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-restjson1-protocol"><span class="std std-ref">AWS restJson1 protocol</span></a>, which is a RESTful protocol
-that sends JSON in structured payloads over HTTP.</p>
-<p>The protocol trait, <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-protocols-restjson1-trait"><span class="std std-ref">&#64;aws.protocols#restJson1</span></a>,
-is provided by the <cite>smithy-aws-traits</cite> package, so first add a dependency to
-<code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
-<span class="p">}</span>
-</pre></div>
+          <div class="section" id="migrating-to-gradle-plugin-version-0-10-0">
+<span id="gradle-migration-guide"></span><h1>Migrating to Gradle plugin version 0.10.0+<a class="headerlink" href="#migrating-to-gradle-plugin-version-0-10-0" title="Permalink to this heading">#</a></h1>
+<p>This guide describes how to migrate your Gradle build files
+to use the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle plugins</a> v0.10.0+ without breaking
+your existing Gradle projects.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Versions 0.10.0+ of the Smithy Gradle plugins will automatically apply
+the Smithy formatter to your Smithy source files. This can result in a
+large number of formatting changes the first time you apply these plugins
+to your project. For instructions on how to disable automatic formatting
+see <a class="reference internal" href="index.html#disable-smithy-formatter"><span class="std std-ref">Disabling the Smithy formatter</span></a>.</p>
 </div>
-<p>Now, import the <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-protocols-restjson1-trait"><span class="std std-ref">&#64;aws.protocols#restJson1</span></a> trait
-and apply it to the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-<span class="kd">namespace </span><span class="nc">example.weather</span>
-
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
-
-<span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(
-<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>
-)
-<span class="nt">@restJson1</span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+<div class="section" id="update-plugin-artifact">
+<h2>Update plugin artifact<a class="headerlink" href="#update-plugin-artifact" title="Permalink to this heading">#</a></h2>
+<p>The Smithy Gradle plugin has been broken up into separate capability
+(<code class="docutils literal notranslate"><span class="pre">smithy-jar</span></code>) and convention (<code class="docutils literal notranslate"><span class="pre">smithy-base</span></code>) plugins. The
+<code class="docutils literal notranslate"><span class="pre">smithy-jar</span></code> plugin operates similarly to the previous <code class="docutils literal notranslate"><span class="pre">smithy</span></code> plugin,
+but no longer applies the <code class="docutils literal notranslate"><span class="pre">java</span></code> plugin automatically. To migrate to the
+new plugin, change the artifact id in the <code class="docutils literal notranslate"><span class="pre">plugins</span></code> block and apply the
+<code class="docutils literal notranslate"><span class="pre">java</span></code> (or <code class="docutils literal notranslate"><span class="pre">java-library</span></code>) plugin if it is not already applied to
+your project.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
+<span class="gd">-     id(&quot;software.amazon.smithy&quot;).version(&quot;0.7.0&quot;)</span>
+<span class="gi">+     `java`</span>
+<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;0.10.0&quot;)</span>
 }
 </pre></div>
 </div>
 </div>
-<div class="section" id="adding-http-bindings">
-<h2>Adding HTTP bindings<a class="headerlink" href="#adding-http-bindings" title="Permalink to this heading">#</a></h2>
-<p>In Smithy, HTTP can be configured by applying <a class="reference internal" href="../../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>
-to operation shapes. HTTP protocols can use these traits to generate code that formats
-HTTP messages properly.</p>
-<p>First, configure the HTTP method, request URI, and the status code of a successful
-response with the <a class="reference internal" href="../../spec/http-bindings.html#http-trait"><span class="std std-ref">&#64;http trait</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities/{cityId}&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
-}
-
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
-<span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities&quot;</span>)
-<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
-}
-
-<span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/currentTime&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
-}
-
-<span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/forecast/{cityId}&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
+<span class="gd">-      id &#39;software.amazon.smithy&#39; version &#39;0.7.0&#39;</span>
+<span class="gi">+      id &#39;java&#39;</span>
+<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;0.10.0&#39;</span>
 }
 </pre></div>
 </div>
-<p>The URI patterns for the <code class="docutils literal notranslate"><span class="pre">GetCity</span></code> and <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code> operations each use an HTTP label to
-bind the <code class="docutils literal notranslate"><span class="pre">cityId</span></code> member of the operation input structure to the request URI. Let's specify
-the members that should be bound to the URIs using the <a class="reference internal" href="../../spec/http-bindings.html#httplabel-trait"><span class="std std-ref">&#64;httpLabel trait</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpLabel</span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
-}
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="remove-buildscript-dependencies">
+<h2>Remove Buildscript Dependencies<a class="headerlink" href="#remove-buildscript-dependencies" title="Permalink to this heading">#</a></h2>
+<p>Pre-0.10.0 versions of the Smithy Gradle plugins use the buildscript block
+for build-only dependencies such as Smithy build plugins. The 0.10.0+
+Gradle plugins create a new Gradle <a class="reference external" href="https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.Configuration.html">Configuration</a> <code class="docutils literal notranslate"><span class="pre">smithyBuild</span></code>
+for these build-only dependencies.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-buildscript {</span>
+<span class="gd">-       repositories {</span>
+<span class="gd">-           mavenLocal()</span>
+<span class="gd">-           mavenCentral()</span>
+<span class="gd">-       }</span>
+<span class="gd">-</span>
+<span class="gd">-       dependencies {</span>
+<span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
+<span class="gd">-           // only ran on buildscript classpath for projections</span>
+<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;)</span>
+<span class="gd">-           // Take a dependency on the internal model package. This</span>
+<span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
+<span class="gd">-           // that is does not appear in the generated JAR.</span>
+<span class="gd">-           classpath(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
+<span class="gd">-       }</span>
+<span class="gd">-}</span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpLabel</span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
+dependencies {
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.45.0&quot;)
+
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;)
+<span class="gi">+   smithyBuild(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
 }
 </pre></div>
 </div>
-<p>For the <code class="docutils literal notranslate"><span class="pre">ListCities</span></code> operation, include the <code class="docutils literal notranslate"><span class="pre">nextToken</span></code> and <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> input members
-in the request URI as query parameters using the <a class="reference internal" href="../../spec/http-bindings.html#httpquery-trait"><span class="std std-ref">&#64;httpQuery trait</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;nextToken&quot;</span>)
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;pageSize&quot;</span>)
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-buildscript {</span>
+<span class="gd">-       repositories {</span>
+<span class="gd">-           mavenLocal()</span>
+<span class="gd">-           mavenCentral()</span>
+<span class="gd">-       }</span>
+<span class="gd">-</span>
+<span class="gd">-       dependencies {</span>
+<span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
+<span class="gd">-           // only ran on buildscript classpath for projections</span>
+<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;</span>
+<span class="gd">-           // Take a dependency on the internal model package. This</span>
+<span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
+<span class="gd">-           // that is does not appear in the generated JAR.</span>
+<span class="gd">-           classpath &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
+<span class="gd">-       }</span>
+<span class="gd">-}</span>
+
+dependencies {
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.45.0&#39;
+
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;
+<span class="gi">+   smithyBuild &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
 }
 </pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="change-projection-property-name">
+<h2>Change <code class="docutils literal notranslate"><span class="pre">projection</span></code> property name<a class="headerlink" href="#change-projection-property-name" title="Permalink to this heading">#</a></h2>
+<p>The property <code class="docutils literal notranslate"><span class="pre">projection</span></code> has also been updated to <code class="docutils literal notranslate"><span class="pre">sourceProjection</span></code>.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-configure&lt;software.amazon.smithy.gradle.SmithyExtension&gt; {</span>
+<span class="gi">+smithy {</span>
+<span class="gd">-    projection = &quot;foo&quot;</span>
+<span class="gi">+    sourceProjection.set(&quot;foo&quot;)</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-configure&lt;software.amazon.smithy.gradle.SmithyExtension&gt; {</span>
+<span class="gi">+smithy {</span>
+<span class="gd">-    projection = &quot;foo&quot;</span>
+<span class="gi">+    sourceProjection = &quot;foo&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="change-smithybuildjar-task-name">
+<h2>Change <code class="docutils literal notranslate"><span class="pre">smithyBuildJar</span></code> task name<a class="headerlink" href="#change-smithybuildjar-task-name" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithyBuildJar</span></code> task has been removed. Instead, the plugin now
+executes separate <code class="docutils literal notranslate"><span class="pre">smithyBuild</span></code> and <code class="docutils literal notranslate"><span class="pre">smithyJarStaging</span></code> tasks. If
+your project previously configured the <code class="docutils literal notranslate"><span class="pre">smithyBuildJar</span></code>,
+configure the <code class="docutils literal notranslate"><span class="pre">smithyBuild</span></code> task instead. Tasks that depended on
+<code class="docutils literal notranslate"><span class="pre">smithyBuildJar</span></code> should now depend on the <code class="docutils literal notranslate"><span class="pre">jar</span></code> task.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>tasks {
+<span class="gd">-   smithyBuildJar {</span>
+<span class="gi">+   smithyBuild {</span>
+<span class="w"> </span>       smithyBuildConfigs.set(files(&quot;smithy-build.json&quot;, other))
+<span class="w"> </span>   }
+<span class="w"> </span>   // ..
+}
+
+<span class="gd">-tasks[&quot;smithyBuildJar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+<span class="gi">+tasks[&quot;jar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>tasks {
+<span class="gd">-   smithyBuildJar {</span>
+<span class="gi">+   smithyBuild {</span>
+<span class="w"> </span>       smithyBuildConfigs = files(&quot;smithy-build.json&quot;, other)
+<span class="w"> </span>   }
+<span class="w"> </span>   // ..
+}
+
+<span class="gd">-tasks[&quot;smithyBuildJar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+<span class="gi">+tasks[&quot;jar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -466,12 +538,12 @@ in the request URI as query parameters using the <a class="reference internal" h
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="generating-a-client.html">
+          <a class="next-page" href="../using-code-generation/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Generating a client</div>
+                <div class="title">Code Generation</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -482,7 +554,7 @@ in the request URI as query parameters using the <a class="reference internal" h
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Code Generation</div>
+                <div class="title">Smithy Gradle Plugins</div>
                 
               </div>
             </a>
@@ -523,9 +595,11 @@ in the request URI as query parameters using the <a class="reference internal" h
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Updating the Smithy Model</a><ul>
-<li><a class="reference internal" href="#specifying-a-protocol">Specifying a protocol</a></li>
-<li><a class="reference internal" href="#adding-http-bindings">Adding HTTP bindings</a></li>
+<li><a class="reference internal" href="#">Migrating to Gradle plugin version 0.10.0+</a><ul>
+<li><a class="reference internal" href="#update-plugin-artifact">Update plugin artifact</a></li>
+<li><a class="reference internal" href="#remove-buildscript-dependencies">Remove Buildscript Dependencies</a></li>
+<li><a class="reference internal" href="#change-projection-property-name">Change <code class="docutils literal notranslate"><span class="pre">projection</span></code> property name</a></li>
+<li><a class="reference internal" href="#change-smithybuildjar-task-name">Change <code class="docutils literal notranslate"><span class="pre">smithyBuildJar</span></code> task name</a></li>
 </ul>
 </li>
 </ul>
