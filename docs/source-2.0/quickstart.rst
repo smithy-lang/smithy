@@ -479,7 +479,7 @@ generate artifacts, and runs validation.
     .. admonition:: Install required tools
         :class: tip
 
-        Before you proceed, make sure you have the :ref:`smithy-cli installed <cli_installation>`.
+        Before you proceed, make sure you have the :ref:`Smithy CLI installed <cli_installation>`.
 
     To build a Smithy model using the :ref:`the Smithy CLI <smithy-cli>`,
     create a :ref:`smithy-build.json <smithy-build-json>` file in the ``smithy-quickstart`` directory:
