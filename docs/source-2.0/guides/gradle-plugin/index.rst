@@ -92,8 +92,340 @@ You can list all examples available in the `Smithy Gradle plugins`_ repository w
 
     smithy init --list --url https://github.com/smithy-lang/smithy-gradle-plugin
 
+.. _building-smithy-models:
+
+Building Smithy models
+======================
+
+The ``smithyBuild`` task that builds smithy models operates in two different modes:
+
+1. If no ``projection`` is specified for the ``SmithyExtension``, then the task
+   runs a "source" build using the "source" projection.
+2. If a ``projection`` is specified for the ``SmithyExtension``, then the task
+   runs in "projection" mode.
+
+.. _building-source-model:
+
+Building a source model
+-----------------------
+
+A "source" build is run when no ``sourceProjection`` is configured in
+``SmithyExtension``. To prevent accidentally relying on Smithy models
+that are only available as build dependencies, Smithy models are discovered
+using only the :ref:`model sources <model-sources>` and ``runtimeClasspath``.
+
+The following example ``build.gradle.kts`` will build a Smithy model using a
+"source" build:
+
+.. tab:: Kotlin
+
+    .. code-block:: kotlin
+        :caption: build.gradle.kts
+
+        plugins {
+            `java-library`
+            id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+        }
+
+        // The SmithyExtension is used to customize the build. This example
+        // doesn't set any values and can be completely omitted.
+        smithy {}
+
+        repositories {
+            mavenLocal()
+            mavenCentral()
+        }
+
+        dependencies {
+            implementation("software.amazon.smithy:smithy-model:__smithy_version__")
+
+            // These are just examples of dependencies. This model has a dependency on
+            // a "common" model package and uses the external AWS traits.
+            implementation("com.foo.baz:foo-model-internal-common:1.0.0")
+            implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+        }
+
+.. tab:: Groovy
+
+    .. code-block:: groovy
+        :caption: build.gradle
+
+        plugins {
+            id 'java-library'
+            'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+        }
+
+        // The SmithyExtension is used to customize the build. This example
+        // doesn't set any values and can be completely omitted.
+        smithy {}
+
+        repositories {
+            mavenLocal()
+            mavenCentral()
+        }
+
+        dependencies {
+            implementation 'software.amazon.smithy:smithy-model:__smithy_version__'
+
+            // These are just examples of dependencies. This model has a dependency on
+            // a "common" model package and uses the external AWS traits.
+            implementation 'com.foo.baz:foo-model-internal-common:1.0.0'
+            implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+        }
+
+.. _generating-projection:
+
+Generating a projection
+-----------------------
+
+A "projection" build is run when a :ref:`projection <projections>` is
+specified in the ``SmithyExtension``. You might create a projection of
+a model if you need to maintain an internal version of a model that contains
+more information and features than an external version of a model published to
+your customers.
+
+Any projected models should be added to the ``smithyBuild`` configuration. This
+prevents packages with projected models from appearing as dependencies of the
+projected version of the model.
+
+The following example gradle build script will run a "projection"
+build using the "external" projection.
+
+.. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                `java-library`
+                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+            dependencies {
+                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+
+                // Take a dependency on the internal model package. This
+                // dependency *must* be a smithyBuild dependency to ensure
+                // that is does not appear in the generated JAR.
+                smithyBuild("com.foo.baz:foo-internal-model:1.0.0")
+            }
+
+            smithy {
+                // Use the "external" projection. This projection must be found in the
+                // smithy-build.json file. This also ensures that models found in the
+                // foo-internal-package that weren't filtered out are copied into the
+                // projection created by this package.
+                sourceProjection.set("external")
+                projectionSourceTags.addAll("com.foo.baz:foo-internal-model")
+            }
+
+.. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java-library'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+            dependencies {
+                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+
+                // Take a dependency on the internal model package. This
+                // dependency *must* be a smithyBuild dependency to ensure
+                // that is does not appear in the generated JAR.
+                smithyBuild 'com.foo.baz:foo-internal-model:1.0.0'
+            }
+
+            smithy {
+                // Use the "external" projection. This projection must be found in the
+                // smithy-build.json file. This also ensures that models found in the
+                // foo-internal-package that weren't filtered out are copied into the
+                // projection created by this package.
+                sourceProjection = "external"
+                projectionSourceTags += ["com.foo.baz:foo-internal-model"]
+            }
+
+Because the ``sourceProjection`` of the ``SmithyExtension`` was set to ``external``, a
+``smithy-build.json`` file **must** be found that defines the ``external``
+projection. For example:
+
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "external": {
+                "transforms": [
+                    {
+                        "name": "excludeShapesByTag",
+                        "args": {
+                            "tags": ["internal"]
+                        }
+                    },
+                    {
+                        "name": "excludeShapesByTrait",
+                        "args": {
+                            "traits": ["internal"]
+                        }
+                    },
+                    {
+                        "name": "excludeMetadata",
+                        "args": {
+                            "keys": ["suppressions", "validators"]
+                        }
+                    },
+                    {
+                        "name": "removeUnusedShapes"
+                    }
+                ]
+            }
+        }
+    }
+
+.. _projection-tags:
+
+Projection tags
+^^^^^^^^^^^^^^^
+
+Projections can *project* and filter shapes from dependencies into the output model.
+"Projecting" a dependency into your output JAR will include that model in the output
+sources of your project. Downstream consumers of your JAR will then no longer need to
+include the "projected" dependency as a dependency of their project to resolve the
+"projected" shapes. You need to specify which dependencies are being projected into
+your JAR by setting the ``projectionSourceTags`` property.
+
+.. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            smithy {
+                sourceProjection.set("external")
+                projectionSourceTags.addAll("Foo", "com.baz:bar")
+            }
+
+.. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            smithy {
+                projection = "external"
+                projectionSourceTags += setOf("Foo", "com.baz:bar")
+            }
+
+
+Tags are used to logically group packages to make it easier to build
+projections. The ``tags`` property is used to add ``Smithy-Tags`` attribute
+to the JAR MANIFEST.
+
+.. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            smithy {
+                tags.addAll("X", "foobaz-model")
+            }
+
+.. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            smithy {
+                tags += ["X", "foobaz-model"]
+            }
+
+
+For example, if your service is made up of 10 packages, you can add the
+"foobaz-model" Smithy tag to each package so that the only value that needs
+to be provided for ``tags`` to correctly project your model is "foobaz-model".
+
+When building a model package, the Smithy Gradle plugin will automatically add
+the group name of the package being built, the group name + ":" + name of the package,
+and group name + ":" + name + ":" version. This allows models to always
+be queried by group and artifact names in addition to custom tags.
+
+.. _artifacts-from-smithy-models:
+
+Building artifacts from Smithy models
+-------------------------------------
+
+If a :ref:`smithy-build.json <smithy-build>` file is found at the root of the project,
+then it will be used to generate :ref:`artifacts <projection-artifacts>` from the Smithy
+model. Smithy uses :ref:`build plugins <plugins>` to generate projection artifacts. To
+use a smithy build plugin with Gradle, first add it as a ``smithyBuild`` dependency in
+the Gradle build script. The plugin will then be discoverable and can be configured
+in the ``smithy-build.json`` file.
+
+For example, to generate a Typescript client from a Smithy model, add the
+``smithy-typescript-codegen`` package as a ``smithyBuild`` dependency:
+
+.. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                // ...
+
+                // This dependency is required in order to apply the "typescript-client-codegen"
+                // plugin in smithy-build.json
+                smithyBuild("software.amazon.smithy.typescript:smithy-typescript-codegen:0.19.0")
+            }
+
+.. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                // ...
+
+                // This dependency is required in order to apply the "typescript-client-codegen"
+                // plugin in smithy-build.json
+                smithyBuild 'software.amazon.smithy.typescript:smithy-typescript-codegen:0.19.0'
+            }
+
+The plugin can then be configured in the ``smithy-build.json`` to generate a typescript client
+from a Smithy model:
+
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "typescript-client-codegen": {
+                "package": "@smithy/typescript-client-codegen-example",
+                "packageVersion": "0.0.1",
+                "packageJson": {
+                    "license": "MIT"
+                }
+            }
+        }
+    }
+
+.. _gradle-plugin-configuration:
+
 Configuration
 =============
+
+.. _model-sources:
 
 Smithy model sources
 --------------------
@@ -415,326 +747,6 @@ the formatter by setting the format setting on the plugin extension to false:
         smithy {
             format = false
         }
-
-.. _building-smithy-models:
-
-Building Smithy models
-======================
-
-The ``smithyBuild`` task that builds smithy models operates in two different modes:
-
-1. If no ``projection`` is specified for the ``SmithyExtension``, then the task
-   runs a "source" build using the "source" projection.
-2. If a ``projection`` is specified for the ``SmithyExtension``, then the task
-   runs in "projection" mode.
-
-.. _building-source-model:
-
-Building a source model
------------------------
-
-A "source" build is run when no ``projection`` is configured in
-``SmithyExtension``. Because no projection was specified, **smithy-build** is
-executed using the ``compileClasspath`` plus the ``buildscript`` classpath. To
-prevent accidentally relying on Smithy models that are only available to
-build scripts, Smithy models are discovered using only the
-``compileClasspath`` and ``runtimeClasspath``.
-
-The following example ``build.gradle.kts`` will build a Smithy model using a
-"source" build:
-
-.. tab:: Kotlin
-
-        .. code-block:: kotlin
-            :caption: build.gradle.kts
-
-            plugins {
-                `java-library`
-                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
-            }
-
-            // The SmithyExtension is used to customize the build. This example
-            // doesn't set any values and can be completely omitted.
-            smithy {}
-
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
-
-            dependencies {
-                implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-
-                // These are just examples of dependencies. This model has a dependency on
-                // a "common" model package and uses the external AWS traits.
-                implementation("com.foo.baz:foo-model-internal-common:1.0.0")
-                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
-            }
-
-.. tab:: Groovy
-
-        .. code-block:: groovy
-            :caption: build.gradle
-
-            plugins {
-                id 'java-library'
-                'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
-            }
-
-            // The SmithyExtension is used to customize the build. This example
-            // doesn't set any values and can be completely omitted.
-            smithy {}
-
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
-
-            dependencies {
-                implementation 'software.amazon.smithy:smithy-model:__smithy_version__'
-
-                // These are just examples of dependencies. This model has a dependency on
-                // a "common" model package and uses the external AWS traits.
-                implementation 'com.foo.baz:foo-model-internal-common:1.0.0'
-                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
-            }
-
-.. _generating-projection:
-
-Generating a projection
------------------------
-
-A "projection" build is run when a :ref:`projection <projections>` is
-specified in the ``SmithyExtension``. You might create a projection of
-a model if you need to maintain an internal version of a model that contains
-more information and features than an external version of a model published to
-your customers.
-
-Any projected models should be added to the ``smithyBuild`` configuration. This
-prevents packages with projected models from appearing as dependencies of the
-projected version of the model.
-
-The following example gradle build script will run a "projection"
-build using the "external" projection.
-
-.. tab:: Kotlin
-
-        .. code-block:: kotlin
-            :caption: build.gradle.kts
-
-            plugins {
-                `java-library`
-                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
-            }
-
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
-
-            dependencies {
-                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
-
-                // Take a dependency on the internal model package. This
-                // dependency *must* be a smithyBuild dependency to ensure
-                // that is does not appear in the generated JAR.
-                smithyBuild("com.foo.baz:foo-internal-model:1.0.0")
-            }
-
-            smithy {
-                // Use the "external" projection. This projection must be found in the
-                // smithy-build.json file. This also ensures that models found in the
-                // foo-internal-package that weren't filtered out are copied into the
-                // projection created by this package.
-                sourceProjection.set("external")
-                projectionSourceTags.addAll("com.foo.baz:foo-internal-model")
-            }
-
-.. tab:: Groovy
-
-        .. code-block:: groovy
-            :caption: build.gradle
-
-            plugins {
-                id 'java-library'
-                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
-            }
-
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
-
-            dependencies {
-                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
-
-                // Take a dependency on the internal model package. This
-                // dependency *must* be a smithyBuild dependency to ensure
-                // that is does not appear in the generated JAR.
-                smithyBuild 'com.foo.baz:foo-internal-model:1.0.0'
-            }
-
-            smithy {
-                // Use the "external" projection. This projection must be found in the
-                // smithy-build.json file. This also ensures that models found in the
-                // foo-internal-package that weren't filtered out are copied into the
-                // projection created by this package.
-                sourceProjection = "external"
-                projectionSourceTags += ["com.foo.baz:foo-internal-model"]
-            }
-
-Because the ``sourceProjection`` of the ``SmithyExtension`` was set to ``external``, a
-``smithy-build.json`` file **must** be found that defines the ``external``
-projection. For example:
-
-.. code-block:: json
-    :caption: smithy-build.json
-
-    {
-        "version": "1.0",
-        "projections": {
-            "external": {
-                "transforms": [
-                    {
-                        "name": "excludeShapesByTag",
-                        "args": {
-                            "tags": ["internal"]
-                        }
-                    },
-                    {
-                        "name": "excludeShapesByTrait",
-                        "args": {
-                            "traits": ["internal"]
-                        }
-                    },
-                    {
-                        "name": "excludeMetadata",
-                        "args": {
-                            "keys": ["suppressions", "validators"]
-                        }
-                    },
-                    {
-                        "name": "removeUnusedShapes"
-                    }
-                ]
-            }
-        }
-    }
-
-
-.. _projection-tags:
-
-Projection tags
----------------
-
-Projections are meant to *project* and filter other models into another
-model. You need to specify which dependencies are being projected into your
-JAR by setting the ``projectionSourceTags`` property.
-
-.. tab:: Kotlin
-
-        .. code-block:: kotlin
-            :caption: build.gradle.kts
-
-            smithy {
-                sourceProjection.set("external")
-                projectionSourceTags.addAll("Foo", "com.baz:bar")
-            }
-
-.. tab:: Groovy
-
-        .. code-block:: groovy
-            :caption: build.gradle
-
-            smithy {
-                projection = "external"
-                projectionSourceTags += setOf("Foo", "com.baz:bar")
-            }
-
-
-Tags are used to logically group packages to make it easier to build
-projections. The ``tags`` property is used to add ``Smithy-Tags`` to a JAR.
-
-.. tab:: Kotlin
-
-        .. code-block:: kotlin
-            :caption: build.gradle.kts
-
-            smithy {
-                tags.addAll("X", "foobaz-model")
-            }
-
-.. tab:: Groovy
-
-        .. code-block:: groovy
-            :caption: build.gradle
-
-            smithy {
-                tags += ["X", "foobaz-model"]
-            }
-
-
-For example, if your service is made up of 10 packages, you can add the
-"foobaz-model" Smithy tag to each package so that the only value that needs
-to be provided for ``tags`` to correctly project your model is "foobaz-model".
-
-When building a model package, this plugin will automatically add the group
-name of the package being built, the group name + ":" + name of the package,
-and group name + ":" + name + ":" version. This allows models to always
-be queried by group and artifact names in addition to custom tags.
-
-
-.. _artifacts-from-smithy-models:
-
-Building artifacts from Smithy models
--------------------------------------
-
-If a ``smithy-build.json`` file is found at the root of the project, then it
-will be used to generate :ref:`artifacts <projection-artifacts>` from the Smithy model.
-
-The following example generates an OpenAPI model from a Smithy model:
-
-.. code-block:: json
-    :caption: smithy-build.json
-
-    {
-        "version": "1.0",
-        "plugins": {
-            "openapi": {
-                "service": "foo.baz#MyService"
-            }
-        }
-    }
-
-
-The above Smithy plugin also requires a ``smithyBuild`` dependency in
-the gradle build script:
-
-.. tab:: Kotlin
-
-        .. code-block:: kotlin
-            :caption: build.gradle.kts
-
-            dependencies {
-                // ...
-
-                // This dependency is required in order to apply the "openapi"
-                // plugin in smithy-build.json
-                smithyBuild("software.amazon.smithy:smithy-openapi:__smithy_version__")
-            }
-
-.. tab:: Groovy
-
-        .. code-block:: groovy
-            :caption: build.gradle
-
-            dependencies {
-                // ...
-
-                // This dependency is required in order to apply the "openapi"
-                // plugin in smithy-build.json
-                smithyBuild 'software.amazon.smithy:smithy-openapi:__smithy_version__'
-            }
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
 .. _Smithy Gradle plugins: https://github.com/awslabs/smithy-gradle-plugin/
