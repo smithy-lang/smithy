@@ -12,3 +12,7 @@ release = u'2.0'
 version = release
 
 html_theme_options['source_directory'] = "docs/source-2.0"
+html_theme_options['announcement'] = '''<strong> We want your feedback on Smithy.</strong>
+Please consider taking our brief <a href="https://amazonmr.au1.qualtrics.com/jfe/form/SV_9Rfqo2wizSpnZPM">survey</a>
+ to share your feedback.
+'''
