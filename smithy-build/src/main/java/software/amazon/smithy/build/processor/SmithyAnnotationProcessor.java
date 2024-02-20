@@ -64,7 +64,6 @@ import software.amazon.smithy.utils.IoUtils;
  * {@code
  *  @Target(ElementType.PACKAGE)
  *  public @interface MyPlugin {
- *     String packageName();
  *     String[] listOfTags();
  *  }
  * }
@@ -74,15 +73,14 @@ import software.amazon.smithy.utils.IoUtils;
  * added to the {@code package-info.java} as follows:
  * <pre>
  * {@code
- * @MyPlugin(
- *      packageName = "myPackage.namespace",
- *      listOfTags = {"a", "b", "c"}
- * )
+ * @MyPlugin(listOfTags = {"a", "b", "c"})
  * package com.example.traitcodegen;
  *
  * import com.example.annotations.MyPlugin;
  * }
  * </pre>
+ * The base processor class will discover the namespace of the package the annotation
+ * is applied to and pass that as a parameter to the {@link #createPluginNode} method.
  *
  * @param <A> Annotation to execute the processor for. This annotation should
  *            target the {@code PACKAGE} {@link java.lang.annotation.ElementType} and
