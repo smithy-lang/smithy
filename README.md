@@ -49,7 +49,7 @@ The [Smithy CLI] is the easiest way to get started with building Smithy models. 
 
 ```json
 {
-    "version": "1.0"
+    "version": "1.0",
     "sources": ["model"]
 }
 ```
