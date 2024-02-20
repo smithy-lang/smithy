@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.processor;
+package software.amazon.smithy.build.processor;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -21,6 +21,7 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
@@ -108,7 +109,8 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
         } else if (elements.size() == 1) {
             messager.printMessage(Diagnostic.Kind.NOTE,
                     "Executing processor: " + this.getClass().getSimpleName() + "...");
-            SmithyBuildConfig config = createBuildConfig(getAnnotation(elements));
+            String packageName = getPackageName(elements.iterator().next());
+            SmithyBuildConfig config = createBuildConfig(getAnnotation(elements), packageName);
             executeSmithyBuild(config).allArtifacts()
                     .filter(path -> path.toString().contains(getPluginName()) && path.toString().contains("source"))
                     .forEach(this::writeArtifact);
@@ -142,11 +144,11 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
      * @param annotation instance of generator annotation to use to create the build config.
      * @return ObjectNode to use as plugin configuration node.
      */
-    protected abstract ObjectNode createPluginNode(A annotation);
+    protected abstract ObjectNode createPluginNode(A annotation, String packageName);
 
-    private SmithyBuildConfig createBuildConfig(A annotation) {
+    private SmithyBuildConfig createBuildConfig(A annotation, String packageName) {
         Map<String, ObjectNode> pluginMap = new HashMap<>();
-        pluginMap.put(getPluginName(), createPluginNode(annotation));
+        pluginMap.put(getPluginName(), createPluginNode(annotation, packageName));
         return SmithyBuildConfig.builder().version("1.0").plugins(pluginMap).build();
     }
 
@@ -215,5 +217,15 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
     // This is necessary to convert windows paths to a valid URI
     private String convertOutputPath(String outputPath) {
         return outputPath.replace(FileSystems.getDefault().getSeparator(), "/");
+    }
+
+    private String getPackageName(Element element) {
+        if (element instanceof PackageElement) {
+            PackageElement packageElement = (PackageElement) element;
+            return packageElement.getQualifiedName().toString();
+        } else {
+            throw new IllegalStateException("Expected Annotation to be applied to package element "
+                    + "but found : " + element);
+        }
     }
 }

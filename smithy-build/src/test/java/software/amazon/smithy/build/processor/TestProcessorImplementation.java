@@ -1,4 +1,4 @@
-package software.amazon.smithy.processor;
+package software.amazon.smithy.build.processor;
 
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -20,9 +20,9 @@ public class TestProcessorImplementation extends SmithyAnnotationProcessor<TestP
     }
 
     @Override
-    protected ObjectNode createPluginNode(TestProcessorAnnotation annotation) {
+    protected ObjectNode createPluginNode(TestProcessorAnnotation annotation, String packageName) {
         return Node.objectNodeBuilder()
-                .withMember("namespace", annotation.namespace())
+                .withMember("packageName", packageName)
                 .build();
     }
 }

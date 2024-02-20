@@ -1,4 +1,4 @@
-package software.amazon.smithy.processor;
+package software.amazon.smithy.build.processor;
 
 import java.nio.file.Paths;
 import software.amazon.smithy.build.FileManifest;
@@ -20,16 +20,16 @@ public class TestBuildPlugin implements SmithyBuildPlugin {
         Settings settings = Settings.from(context.getSettings());
         FileManifest fileManifest = context.getFileManifest();
 
-        String pathifiedNamespace = settings.namespace.replace(".", "/");
+        String pathifiedNamespace = settings.packageName.replace(".", "/");
 
         // Write an empty java class
         fileManifest.writeFile(pathifiedNamespace + "/Empty.java",
-                getEmptyClass(settings.namespace));
+                getEmptyClass(settings.packageName));
 
         // Write a META-INF metadata file
         fileManifest.writeFile(
                 Paths.get(META_INF_LOCATION + "com.example.spi.impl.Example").normalize(),
-                settings.namespace + "." + "Empty"
+                settings.packageName + "." + "Empty"
         );
 
         // Write a non-java file we expect to be ignored
@@ -52,14 +52,14 @@ public class TestBuildPlugin implements SmithyBuildPlugin {
 
 
     private static final class Settings {
-        private final String namespace;
+        private final String packageName;
 
-        private Settings(String namespace) {
-            this.namespace = namespace;
+        private Settings(String packageName) {
+            this.packageName = packageName;
         }
 
         static Settings from(ObjectNode node) {
-            return new Settings(node.expectStringMember("namespace").getValue());
+            return new Settings(node.expectStringMember("packageName").getValue());
         }
     }
 }
