@@ -1,0 +1,86 @@
+name: make-docs
+on:
+  release:
+    types: [released]
+  workflow_dispatch: # on button click
+    inputs:
+      javadocs:
+        type: boolean
+        description: 'Build JavaDocs?'
+        required: true
+      release:
+        type: boolean
+        description: 'Release the docs?'
+        required: true
+
+env:
+  ARTIFACTS_DIR: /tmp/artifacts
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo 
+      uses: actions/checkout@v4
+    - name: Setup
+      run: |
+        mkdir -p $ARTIFACTS_DIR
+
+    - name: Build JavaDocs
+      # run if 'javadocs' is not set to false 
+      if: ${{ !contains(inputs.javadocs, 'false') }}
+      run: |
+        VERSION=$(cat VERSION)
+        mkdir -p $ARTIFACTS_DIR/javadoc
+        ./gradlew javadoc
+        cp -R build/docs/javadoc/latest $ARTIFACTS_DIR/javadoc/$VERSION
+        mkdir $ARTIFACTS_DIR/javadoc/latest
+        cat << EOF > $ARTIFACTS_DIR/javadoc/latest/index.html
+        <!DOCTYPE html>
+        <meta charset="utf-8">
+        <title>Redirecting to latest javadocs</title>
+        <meta http-equiv="refresh" content="0; URL=../${VERSION}/">
+        EOF
+
+    - name: Build Smithy docs
+      run: |
+        cd docs
+        pip3 install -r requirements.txt
+        make clean
+        make html
+        cp -R build/html/* $ARTIFACTS_DIR
+        rm $ARTIFACTS_DIR/.buildinfo || true
+        rm $ARTIFACTS_DIR/objects.inv || true
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: smithy-docs
+        path: ${{ env.ARTIFACTS_DIR }}
+        retention-days: 7
+  
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    # run if 'release' is not set to false 
+    if: ${{ !contains(inputs.release, 'false') }}
+    needs: build-docs
+    steps:
+    - name: Checkout GitHub pages branch
+      uses: actions/checkout@v4
+      with:
+        ref: 'gh-pages'
+    - name: Download artifacts
+      id: download
+      uses: actions/download-artifact@v4
+      with:
+        name: smithy-docs
+        path: /tmp/smithy-docs
+    - name: Copy artifacts
+      run: |
+        cp -R /tmp/smithy-docs/* .
+        git config --global user.name "smithy-automation"
+        git config --global user.email "github-smithy-automation@amazon.com"
+        git add -A
+        git commit -m "Update documentation"
+        git push
