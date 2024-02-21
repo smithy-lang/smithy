@@ -1,6 +1,2 @@
-software.amazon.smithy.mqtt.traits.validators.MqttPublishInputValidator
-software.amazon.smithy.mqtt.traits.validators.MqttSubscribeInputValidator
-software.amazon.smithy.mqtt.traits.validators.MqttSubscribeOutputValidator
 software.amazon.smithy.mqtt.traits.validators.MqttTopicConflictValidator
 software.amazon.smithy.mqtt.traits.validators.MqttTopicLabelValidator
-software.amazon.smithy.mqtt.traits.validators.MqttUnsupportedErrorsValidator

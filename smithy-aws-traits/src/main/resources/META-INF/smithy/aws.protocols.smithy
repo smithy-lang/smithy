@@ -49,7 +49,6 @@ structure HttpConfiguration {
 /// protocol does not use HTTP binding traits.
 @deprecated
 @protocolDefinition(
-    noInlineDocumentSupport: true
     traits: [
         timestampFormat
         cors
@@ -63,6 +62,12 @@ structure HttpConfiguration {
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
+@constrainShapes(
+    UnsupportedProtocolDocument: {
+        selector: "member :test(> document)"
+        message: "Document types are not supported with awsQuery"
+    }
+)
 structure awsQuery {}
 
 /// Provides the value in the 'Code' distinguishing field and HTTP response
@@ -90,7 +95,6 @@ structure awsQueryCompatible {}
 /// This protocol does not use HTTP binding traits.
 @deprecated
 @protocolDefinition(
-    noInlineDocumentSupport: true
     traits: [
         timestampFormat
         cors
@@ -104,6 +108,12 @@ structure awsQueryCompatible {}
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
+@constrainShapes(
+    UnsupportedProtocolDocument: {
+        selector: "member :test(> document)"
+        message: "Document types are not supported with ec2Query"
+    }
+)
 structure ec2Query {}
 
 /// Indicates the serialized name of a structure member when that structure is
@@ -158,7 +168,6 @@ structure restJson1 with [HttpConfiguration] {}
 /// A RESTful protocol that sends XML in structured payloads.
 @deprecated
 @protocolDefinition(
-    noInlineDocumentSupport: true
     traits: [
         timestampFormat
         cors
@@ -179,6 +188,12 @@ structure restJson1 with [HttpConfiguration] {}
         xmlName
         xmlNamespace
     ]
+)
+@constrainShapes(
+    UnsupportedProtocolDocument: {
+        selector: "member :test(> document)"
+        message: "Document types are not supported with restXml"
+    }
 )
 @trait(selector: "service")
 structure restXml with [HttpConfiguration] {

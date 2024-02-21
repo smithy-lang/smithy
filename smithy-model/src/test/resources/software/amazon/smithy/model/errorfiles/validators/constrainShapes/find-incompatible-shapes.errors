@@ -1,0 +1,2 @@
+[ERROR] com.amazonaws.simple#GetFooInput$document: Found an incompatible shape when validating the constraints of the `com.amazonaws.simple#myProtocol` trait attached to `com.amazonaws.simple#MyService`: Document types are not supported | com.amazonaws.simple.myProtocol.NoDocuments
+[ERROR] com.amazonaws.simple#GetFooOutput: Found an incompatible shape when validating the constraints of the `com.amazonaws.simple#myProtocol` trait attached to `com.amazonaws.simple#MyService`: Event streams are not supported | com.amazonaws.simple.myProtocol.NoEventStreams

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -63,6 +64,19 @@ public interface Selector {
         } catch (SelectorSyntaxException e) {
             throw new SourceException(e.getMessage(), node, e);
         }
+    }
+
+    /**
+     * Selects matching shapes from a model using a specific set of starting shapes.
+     *
+     * <p>This method makes chaining the results of one selector into another easier.
+     *
+     * @param model Model to query.
+     * @param startingShapes Shapes to push through the selector.
+     * @return Returns the matching shapes.
+     */
+    default Set<Shape> select(Model model, Collection<? extends Shape> startingShapes) {
+        throw new UnsupportedOperationException("Selecting using starting shapes is not supported by this Selector");
     }
 
     /**
