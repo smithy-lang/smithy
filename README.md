@@ -1,6 +1,12 @@
 # <img alt="Smithy" src="docs/_static/favicon.png" width="28"> Smithy
 [![Build Status](https://github.com/smithy-lang/smithy/workflows/ci/badge.svg)](https://github.com/smithy-lang/smithy/actions/workflows/ci.yml)
 
+<strong> We want your feedback on Smithy.</strong>
+Please consider taking our brief <a href="https://amazonmr.au1.qualtrics.com/jfe/form/SV_9Rfqo2wizSpnZPM">survey</a>
+to share your feedback.
+
+---
+
 Smithy defines and generates clients, services, and documentation for
 any protocol.
 
