@@ -1,0 +1,7 @@
+[ERROR] com.amazonaws.simple#invalid1: `constrainShapes` key is not a valid event ID: `.` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid2: `constrainShapes` key is not a valid event ID: `foo.` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid3: `constrainShapes` key is not a valid event ID: `_` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid4: `constrainShapes` key is not a valid event ID: `1` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid5: `constrainShapes` key is not a valid event ID: `a.1` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid6: `constrainShapes` key is not a valid event ID: `.a` | ConstrainShapes
+[ERROR] com.amazonaws.simple#invalid7: `constrainShapes` key is not a valid event ID: `!.a` | ConstrainShapes

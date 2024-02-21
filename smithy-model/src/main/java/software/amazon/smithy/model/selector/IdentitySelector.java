@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -31,6 +33,16 @@ final class IdentitySelector implements Selector {
     @Override
     public Set<Shape> select(Model model) {
         return model.toSet();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<Shape> select(Model model, Collection<? extends Shape> startingShapes) {
+        if (startingShapes instanceof Set) {
+            return (Set<Shape>) startingShapes;
+        } else {
+            return new HashSet<>(startingShapes);
+        }
     }
 
     @Override

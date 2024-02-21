@@ -1,1 +1,1 @@
-[ERROR] smithy.example#Foo: Trait `smithy.mqtt#subscribe` cannot be applied to `smithy.example#Foo`. This trait may only be applied to shapes that match the following selector: operation:test(-[output]-> structure > member > union[trait|streaming]) | TraitTarget
+[ERROR] smithy.example#Foo: Trait `smithy.mqtt#subscribe` cannot be applied to `smithy.example#Foo`. This trait may only be applied to shapes that match the following selector: operation :test(-[output]->) | TraitTarget

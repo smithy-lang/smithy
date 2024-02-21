@@ -106,7 +106,7 @@ structure TraitDiffRule {
     change: TraitChangeType
 
     /// Defines the severity of the change. Defaults to ERROR if not defined.
-    severity: TraitChangeSeverity = "ERROR"
+    severity: Severity = "ERROR"
 
     /// Provides a reason why the change is potentially backward incompatible.
     message: String
@@ -131,7 +131,7 @@ enum TraitChangeType {
 }
 
 @private
-enum TraitChangeSeverity {
+enum Severity {
     /// A minor infraction occurred.
     NOTE
 
@@ -218,6 +218,7 @@ structure protocolDefinition {
     traits: TraitShapeIdList
 
     /// Set to true if inline documents are not supported by this protocol.
+    @deprecated(message: "Use the `@constrainShapes` trait instead")
     noInlineDocumentSupport: Boolean
 }
 
@@ -302,6 +303,51 @@ structure httpApiKeyAuth {
     /// Defines the security scheme to use in the ``Authorization`` header.
     /// This can only be set if the "in" property is set to ``header``.
     scheme: NonEmptyString
+}
+
+/// A meta-trait used to limit the kinds of shapes that can be contained in the closure of a shape when a trait is
+/// applied to it.
+///
+/// `constrainShapes` is a map of validation event IDs to constraints to apply to a closure of shapes.
+/// Selectors are used to identify shapes that are incompatible with the constrained trait.
+///
+/// The following example defines a protocol that does not support document types. Each matching member found in the
+/// closure of an attached shape emits a validation event:
+///
+/// ```
+/// @trait(selector: "service")
+/// @protocolDefinition
+/// @constrainShapes(
+///     "myCustomProtocol.NoDocuments": {
+///         selector: "member :test(> document)"
+///         message: "This protocol does not support document types"
+///     }
+/// )
+/// structure myCustomProtocol {}
+/// ```
+@trait(selector: "[trait|trait]")
+map constrainShapes {
+    /// The validation event ID to emit when the constraint finds an incompatible shape.
+    @length(min: 1)
+    key: String
+
+    /// The constraint to apply.
+    value: ConstrainShapeDefinition
+}
+
+@internal
+structure ConstrainShapeDefinition {
+    /// A Smithy selector that receives every shape in the closure of a shape, including the shape itself. Any shape
+    /// yielded by the selector is considered incompatible with the trait.
+    @required
+    selector: String
+
+    /// A message to use when a matching shape is found.
+    @required
+    message: String
+
+    /// The severity to use when a matching shape is found.
+    severity: Severity = "ERROR"
 }
 
 /// Provides a structure member with a default value. When added to root

@@ -1,2 +1,1 @@
-[ERROR] smithy.example#InvalidExample: This service uses the `aws.protocols#awsQuery` protocol which does not support inline document types, but the following document types were found in the closure of the service: [smithy.example#InlineDocument | NoInlineDocumentSupport
-[SUPPRESSED] smithy.example#InvalidExample: This shape applies a trait that is deprecated: aws.protocols#awsQuery | DeprecatedTrait
+[ERROR] smithy.example#Operation1Input$foo: Found an incompatible shape when validating the constraints of the `aws.protocols#awsQuery` trait attached to `smithy.example#InvalidExample`: Document types are not supported with awsQuery | UnsupportedProtocolDocument

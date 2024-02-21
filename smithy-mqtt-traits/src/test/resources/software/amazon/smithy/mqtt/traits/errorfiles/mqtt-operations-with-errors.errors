@@ -1,2 +1,2 @@
-[DANGER] smithy.example#Baz: Operations marked with the `smithy.mqtt#publish` trait do not support errors. | MqttUnsupportedErrors
-[DANGER] smithy.example#Foo: Operations marked with the `smithy.mqtt#subscribe` trait do not support errors. | MqttUnsupportedErrors
+[DANGER] smithy.example#Foo: Found an incompatible shape when validating the constraints of the `smithy.mqtt#subscribe` trait attached to `smithy.example#Foo`: Operations marked with the `smithy.mqtt#subscribe` trait do not support errors | MqttUnsupportedErrors
+[DANGER] smithy.example#Baz: Found an incompatible shape when validating the constraints of the `smithy.mqtt#publish` trait attached to `smithy.example#Baz`: Operations marked with the `smithy.mqtt#publish` trait do not support errors | MqttUnsupportedErrors

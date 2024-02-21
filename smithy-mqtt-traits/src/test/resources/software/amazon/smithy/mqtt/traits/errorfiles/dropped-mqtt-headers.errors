@@ -1,2 +1,2 @@
-[DANGER] smithy.example#Foo: This member is used as part of an MQTT event stream event, and MQTT event streams do not support the eventHeader trait. | MqttSubscribeOutput
-[DANGER] smithy.example#Foo: This member is used as part of an MQTT event stream event, and MQTT event streams do not support the eventHeader trait. | MqttSubscribeOutput
+[DANGER] smithy.example#Event$foo: Found an incompatible shape when validating the constraints of the `smithy.mqtt#subscribe` trait attached to `smithy.example#Foo`: The `@eventHeader` trait is not supported with subscribe operations. | MqttSubscribeOutput.EventHeaderNotSupported
+[DANGER] smithy.example#Event$bar: Found an incompatible shape when validating the constraints of the `smithy.mqtt#subscribe` trait attached to `smithy.example#Foo`: The `@eventHeader` trait is not supported with subscribe operations. | MqttSubscribeOutput.EventHeaderNotSupported
