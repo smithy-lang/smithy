@@ -47,7 +47,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                               String namespace,
                               TraitCodegenSettings settings
     ) {
-        super(new TraitCodegenImportContainer(namespace));
+        super(new TraitCodegenImportContainer(namespace, fileName));
         this.namespace = namespace;
         this.fileName = fileName;
         this.settings = settings;
