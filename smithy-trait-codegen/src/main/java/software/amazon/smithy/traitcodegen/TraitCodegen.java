@@ -20,6 +20,7 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -48,11 +49,13 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 final class TraitCodegen {
     private static final Logger LOGGER = Logger.getLogger(TraitCodegen.class.getName());
+    // Get all trait definitions within a namespace
+    private static final String SELECTOR_TEMPLATE = "[trait|trait][id|namespace ^= '%s']";
 
     private final Model model;
     private final TraitCodegenSettings settings;
     private final FileManifest fileManifest;
-
+    private final Selector traitSelector;
     private List<TraitCodegenIntegration> integrations;
     private TraitCodegenContext codegenContext;
 
@@ -63,6 +66,7 @@ final class TraitCodegen {
         this.model = Objects.requireNonNull(model);
         this.settings = Objects.requireNonNull(settings);
         this.fileManifest = Objects.requireNonNull(fileManifest);
+        this.traitSelector = Selector.parse(String.format(SELECTOR_TEMPLATE, settings.smithyNamespace()));
     }
 
     public static TraitCodegen fromPluginContext(PluginContext context) {
@@ -130,22 +134,40 @@ final class TraitCodegen {
         ServiceLoader.load(TraitService.class, TraitCodegen.class.getClassLoader())
                 .forEach(service -> existingProviders.add(service.getShapeId()));
 
-        // Get all trait shapes, but filter out prelude shapes
-        // and any trait shapes for which a provider is already defined
-        Set<Shape> traitClosure = model.getShapesWithTrait(TraitDefinition.class).stream()
-                .filter(shape -> !Prelude.isPreludeShape(shape))
+        // Get all trait shapes within the specified namespace, but filter out
+        // any trait shapes for which a provider is already defined or which have
+        // excluded tags
+        Set<Shape> traitClosure = traitSelector.select(model).stream()
                 .filter(shape -> !existingProviders.contains(shape.getId()))
                 .filter(shape -> !this.hasExcludeTag(shape))
                 .collect(Collectors.toSet());
 
+        if (traitClosure.isEmpty()) {
+            LOGGER.warning("Could not find any trait definitions to generate.");
+            return traitClosure;
+        }
+
         // Find all shapes connected to trait shapes and therefore within generation closure.
+        // These shapes must all be within the same namespace. Note: we do not need to add members
+        // to the closure
         Set<Shape> nested = new HashSet<>();
         Walker walker = new Walker(model);
         for (Shape traitShape : traitClosure) {
             nested.addAll(walker.walkShapes(traitShape).stream()
+                    .filter(shape -> !shape.isMemberShape())
                     .filter(shape -> !Prelude.isPreludeShape(shape))
                     .collect(Collectors.toSet()));
         }
+
+        // If any nested shapes are not in the specified namespace, throw an error.
+        Set<Shape> invalidNested = nested.stream()
+                .filter(shape -> !shape.getId().getNamespace().startsWith(settings.smithyNamespace()))
+                .collect(Collectors.toSet());
+        if (!invalidNested.isEmpty()) {
+            throw new RuntimeException("Shapes: " + invalidNested + " are within the trait closure but are not within"
+                    + "the specified namespace `" + settings.smithyNamespace() + "`.");
+        }
+
         traitClosure.addAll(nested);
 
         return traitClosure;

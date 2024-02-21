@@ -6,9 +6,7 @@
 package software.amazon.smithy.traitcodegen;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,7 +27,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 
 
 public class TraitCodegenPluginTest {
-    private static final int EXPECTED_NUMBER_OF_FILES = 34;
+    private static final int EXPECTED_NUMBER_OF_FILES = 36;
 
     @Test
     public void generatesExpectedTraitFiles() {
@@ -42,6 +40,7 @@ public class TraitCodegenPluginTest {
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
                         .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line One"))
                         .build()
                 )
@@ -56,6 +55,10 @@ public class TraitCodegenPluginTest {
         List<String> fileList = manifest.getFiles().stream().map(Path::toString).collect(Collectors.toList());
         assertThat(fileList, hasItem(
                 Paths.get("/META-INF/services/software.amazon.smithy.model.traits.TraitService").toString()));
+        assertThat(fileList, hasItem(
+                Paths.get("/com/example/traits/nested/NestedNamespaceTraitTrait.java").toString()));
+        assertThat(fileList, hasItem(
+                Paths.get("/com/example/traits/nested/NestedNamespaceStruct.java").toString()));
     }
 
     @Test
@@ -69,6 +72,7 @@ public class TraitCodegenPluginTest {
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
                         .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line One"))
                         .withMember("excludeTags", ArrayNode.fromStrings("filterOut"))
                         .build()
@@ -94,6 +98,7 @@ public class TraitCodegenPluginTest {
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
                         .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
                         .build()
                 )
@@ -125,6 +130,7 @@ public class TraitCodegenPluginTest {
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
                         .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
                         .build()
                 )

@@ -81,9 +81,9 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.writeInline(getMemberPrefix()
-                            + symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.MEMBER_MAPPER),
-                    symbolProvider.toMemberName(member)
+            writer.writeInline(getMemberPrefix() + "$C",
+                    symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.MEMBER_MAPPER, Mapper.class)
+                            .with(symbolProvider.toMemberName(member))
             );
             return null;
         }

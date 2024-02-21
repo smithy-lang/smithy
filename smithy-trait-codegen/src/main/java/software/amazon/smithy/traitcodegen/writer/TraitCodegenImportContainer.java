@@ -18,10 +18,19 @@ import software.amazon.smithy.codegen.core.Symbol;
 final class TraitCodegenImportContainer implements ImportContainer {
     private static final String JAVA_NAMESPACE_PREFIX = "java.lang";
     private final Set<Symbol> imports = new HashSet<>();
+    private final String namespace;
+
+    TraitCodegenImportContainer(String namespace) {
+        this.namespace = namespace;
+    }
 
     @Override
     public void importSymbol(Symbol symbol, String alias) {
-        if (!symbol.getNamespace().startsWith(JAVA_NAMESPACE_PREFIX)) {
+        // Do not import the symbol if it is in the base java namespace
+        // or if it is in the same namespace as the file
+        if (!symbol.getNamespace().startsWith(JAVA_NAMESPACE_PREFIX)
+                && !symbol.getNamespace().equals(namespace)
+        ) {
             imports.add(symbol);
         }
     }

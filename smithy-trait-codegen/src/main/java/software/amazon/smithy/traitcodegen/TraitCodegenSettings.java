@@ -28,6 +28,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class TraitCodegenSettings {
     private final String packageName;
+    private final String smithyNamespace;
     private final List<String> headerLines;
     private final List<String> excludeTags;
 
@@ -36,13 +37,19 @@ public final class TraitCodegenSettings {
      * {@code smithy-build.json} configuration for this plugin.
      *
      * @param packageName java package name to use for generated code. For example {@code com.example.traits}.
+     * @param smithyNamespace smithy namespace to search for traits in // TODO: Improve comment
      * @param headerLines lines of text to included as a header in all generated code files. This might be a
      *                    license header or copyright header that should be included in all generated files.
      * @param excludeTags smithy tags to exclude from trait code generation. Traits with these tags will be
      *                    ignored when generating java classes.
      */
-    TraitCodegenSettings(String packageName, List<String> headerLines, List<String> excludeTags) {
+    TraitCodegenSettings(String packageName,
+                         String smithyNamespace,
+                         List<String> headerLines,
+                         List<String> excludeTags
+    ) {
         this.packageName = Objects.requireNonNull(packageName);
+        this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
         this.headerLines = Objects.requireNonNull(headerLines);
         this.excludeTags = Objects.requireNonNull(excludeTags);
     }
@@ -56,6 +63,7 @@ public final class TraitCodegenSettings {
     public static TraitCodegenSettings fromNode(ObjectNode node) {
         return new TraitCodegenSettings(
                 node.expectStringMember("package").getValue(),
+                node.expectStringMember("namespace").getValue(),
                 node.expectArrayMember("header")
                         .getElementsAs(el -> el.expectStringNode().getValue()),
                 node.getArrayMember("excludeTags")
@@ -66,6 +74,10 @@ public final class TraitCodegenSettings {
 
     public String packageName() {
         return packageName;
+    }
+
+    public String smithyNamespace() {
+        return smithyNamespace;
     }
 
     public List<String> headerLines() {

@@ -64,4 +64,22 @@ public final class TraitCodegenUtils {
         return JAVA_STRING_SYMBOL.getName().equals(baseSymbol.getName())
                 && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
     }
+
+    /**
+     * Maps a smithy namespace to a java package namespace.
+     *
+     * @param rootSmithyNamespace base smithy namespace in use for trait codegen trait discovery
+     * @param shapeNamespace namespace of shape to map into package namespace.
+     * @param packageNamespace Java package namespace for trait codegen.
+     */
+    public static String mapNamespace(String rootSmithyNamespace,
+                                      String shapeNamespace,
+                                      String packageNamespace
+    ) {
+        if (!shapeNamespace.startsWith(rootSmithyNamespace)) {
+            throw new IllegalArgumentException("Cannot relativize non-nested namespaces "
+                    + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + ".");
+        }
+        return shapeNamespace.replace(rootSmithyNamespace, packageNamespace);
+    }
 }

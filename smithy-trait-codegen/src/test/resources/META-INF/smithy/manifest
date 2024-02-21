@@ -1,1 +1,4 @@
 test-traits.smithy
+ignored.smithy
+nested-namespace.smithy
+

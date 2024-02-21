@@ -31,6 +31,7 @@ public final class PluginExecutor {
                 .fileManifest(FileManifest.create(Paths.get("build/integ")))
                 .settings(ObjectNode.builder()
                         .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line One"))
                         .build()
                 )

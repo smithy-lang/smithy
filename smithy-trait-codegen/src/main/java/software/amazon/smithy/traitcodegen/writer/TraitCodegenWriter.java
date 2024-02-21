@@ -39,13 +39,16 @@ import software.amazon.smithy.utils.StringUtils;
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
     private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
-    private final String packageName;
+    private final String namespace;
     private final String fileName;
     private final TraitCodegenSettings settings;
 
-    public TraitCodegenWriter(String fileName, String packageName, TraitCodegenSettings settings) {
-        super(new TraitCodegenImportContainer());
-        this.packageName = packageName;
+    public TraitCodegenWriter(String fileName,
+                              String namespace,
+                              TraitCodegenSettings settings
+    ) {
+        super(new TraitCodegenImportContainer(namespace));
+        this.namespace = namespace;
         this.fileName = fileName;
         this.settings = settings;
 
@@ -53,16 +56,9 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         putFormatter('B', new BaseTypeFormatter());
     }
 
-    private static boolean fileMatchesSymbol(String file, Symbol symbol) {
-        String fullClassName = StringUtils.strip(file, ".java").replace("/", ".");
-        return fullClassName.equals(symbol.getNamespace() + "." + symbol.getName());
-    }
 
     public void addImport(Symbol symbol) {
-        // Do not add import if the symbol is the same class as this file
-        if (!fileMatchesSymbol(fileName, symbol)) {
-            addImport(symbol, symbol.getName());
-        }
+        addImport(symbol, symbol.getName());
     }
 
     public void addImport(Class<?> clazz) {
@@ -125,7 +121,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
     public String getPackageHeader() {
-        return String.format("package %s;%n", packageName);
+        return String.format("package %s;%n", namespace);
     }
 
     public String getHeader() {
