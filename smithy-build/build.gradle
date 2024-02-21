@@ -24,4 +24,7 @@ ext {
 dependencies {
     api project(":smithy-utils")
     api project(":smithy-model")
+
+    // Allows testing of annotation processor
+    testImplementation "com.google.testing.compile:compile-testing:0.21.0"
 }
