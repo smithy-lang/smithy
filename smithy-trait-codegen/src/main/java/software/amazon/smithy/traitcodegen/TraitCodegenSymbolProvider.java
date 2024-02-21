@@ -187,7 +187,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     public Symbol enumShape(EnumShape shape) {
         return getJavaClassSymbolBuilder(shape)
                 .putProperty(SymbolProperties.TO_NODE_MAPPER,
-                        (Mapper) (w, s) -> w.write("Node.from($L.getValue())", s).addImport(Node.class))
+                        (Mapper) (w, s) -> w.write("$T.from($L.getValue())", Node.class, s))
                 .putProperty(SymbolProperties.FROM_NODE_MAPPER, (Mapper) (w, s) -> fromNode(w, s, shape))
                 .build();
     }
@@ -240,8 +240,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     }
 
     private static void nodeFrom(TraitCodegenWriter writer, String var) {
-        writer.addImport(Node.class);
-        writer.write("Node.from($L)", var);
+        writer.write("$T.from($L)", Node.class, var);
     }
 
     private static void fromNode(TraitCodegenWriter writer, String var, Shape shape) {

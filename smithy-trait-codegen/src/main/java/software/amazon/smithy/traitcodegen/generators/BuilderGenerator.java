@@ -25,7 +25,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
-import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Generates a static builder for a Java class.
@@ -37,7 +36,7 @@ final class BuilderGenerator implements Runnable {
     private static final String VALUES = "values";
     private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2B $1L) {";
     private static final String RETURN_THIS = "return this;";
-    private static final String BUILDER_REF_TEMPLATE = "private final BuilderRef<$B> $L = BuilderRef.$L;";
+    private static final String BUILDER_REF_TEMPLATE = "private final $1T<$2B> $3L = $1T.$4L;";
     private static final String BUILDER_METHOD_TEMPLATE = "public static Builder builder() {";
 
     private final TraitCodegenWriter writer;
@@ -64,33 +63,31 @@ final class BuilderGenerator implements Runnable {
 
     private void writeBuilderClass() {
         writer.pushState(new BuilderClassSection(symbol));
-        String builderClassTemplate = "public static final class Builder ";
+        writer.writeInline("public static final class Builder ");
         if (baseShape.hasTrait(TraitDefinition.class)) {
-            writer.addImport(AbstractTraitBuilder.class);
-            builderClassTemplate += "extends AbstractTraitBuilder<$T, Builder> {";
+            writer.write("extends $T<$T, Builder> {", AbstractTraitBuilder.class, symbol);
         } else {
-            writer.addImport(SmithyBuilder.class);
-            builderClassTemplate += "implements SmithyBuilder<$T> {";
+            writer.write("implements $T<$T> {", SmithyBuilder.class, symbol);
         }
-        writer.openBlock(builderClassTemplate, "}", symbol, () -> {
-            baseShape.accept(new BuilderPropertyGenerator());
-            writer.newLine();
-            writer.writeWithNoFormatting("private Builder() {}").newLine();
-            baseShape.accept(new BuilderSetterGenerator());
-            writer.newLine();
-            writer.override();
-            writer.openBlock("public $T build() {", "}", symbol,
-                    () -> writer.write("return new $T(this);", symbol));
-        });
+        writer.indent();
+        baseShape.accept(new BuilderPropertyGenerator());
+        writer.newLine();
+        writer.writeWithNoFormatting("private Builder() {}").newLine();
+        baseShape.accept(new BuilderSetterGenerator());
+        writer.newLine();
+        writer.override();
+        writer.openBlock("public $T build() {", "}", symbol,
+                () -> writer.write("return new $T(this);", symbol));
+        writer.dedent().write("}");
         writer.popState();
         writer.newLine();
     }
 
     private void writeToBuilderMethod() {
         writer.pushState(new ToBuilderSection(symbol));
-        writer.addImports(SmithyBuilder.class, ToSmithyBuilder.class);
         writer.override();
-        writer.openBlock("public SmithyBuilder<$T> toBuilder() {", "}", symbol, () -> {
+        writer.openBlock("public $T<$T> toBuilder() {", "}",
+                SmithyBuilder.class, symbol, () -> {
             writer.writeInlineWithNoFormatting("return builder()");
             writer.indent();
             if (baseShape.hasTrait(TraitDefinition.class)) {
@@ -151,8 +148,7 @@ final class BuilderGenerator implements Runnable {
             Optional<String> builderRefOptional =
                     symbolProvider.toSymbol(shape).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER, String.class);
             if (builderRefOptional.isPresent()) {
-                writer.addImport(BuilderRef.class);
-                writer.write(BUILDER_REF_TEMPLATE, symbolProvider.toSymbol(shape),
+                writer.write(BUILDER_REF_TEMPLATE, BuilderRef.class, symbolProvider.toSymbol(shape),
                         symbolProvider.toMemberName(shape),
                         builderRefOptional.orElseThrow(RuntimeException::new));
             } else {
@@ -163,8 +159,7 @@ final class BuilderGenerator implements Runnable {
 
         private void writeValuesProperty(Shape shape) {
             Symbol collectionSymbol = symbolProvider.toSymbol(shape);
-            writer.addImport(BuilderRef.class);
-            writer.write(BUILDER_REF_TEMPLATE, collectionSymbol, VALUES,
+            writer.write(BUILDER_REF_TEMPLATE, BuilderRef.class, collectionSymbol, VALUES,
                     collectionSymbol.expectProperty(SymbolProperties.BUILDER_REF_INITIALIZER));
         }
     }

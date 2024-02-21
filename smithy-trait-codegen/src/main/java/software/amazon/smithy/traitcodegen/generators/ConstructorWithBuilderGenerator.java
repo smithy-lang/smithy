@@ -81,9 +81,8 @@ final class ConstructorWithBuilderGenerator implements Runnable {
         public Void structureShape(StructureShape shape) {
             for (MemberShape member : shape.members()) {
                 if (member.isRequired()) {
-                    writer.addImport(SmithyBuilder.class);
-                    writer.write("this.$1L = SmithyBuilder.requiredState($1S, $2L);",
-                            symbolProvider.toMemberName(member), getBuilderValue(member));
+                    writer.write("this.$1L = $2T.requiredState($1S, $3L);",
+                            symbolProvider.toMemberName(member), SmithyBuilder.class, getBuilderValue(member));
                 } else {
                     writer.write("this.$L = $L;", symbolProvider.toMemberName(member), getBuilderValue(member));
                 }

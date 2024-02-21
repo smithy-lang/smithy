@@ -13,7 +13,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -26,8 +25,8 @@ import software.amazon.smithy.utils.StringUtils;
  */
 final class EnumTraitGenerator extends TraitGenerator {
     @Override
-    protected Symbol getBaseClass() {
-        return TraitCodegenUtils.fromClass(StringTrait.class);
+    protected Class<?> getBaseClass() {
+        return StringTrait.class;
     }
 
     @Override
@@ -44,16 +43,15 @@ final class EnumTraitGenerator extends TraitGenerator {
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {
-        writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $T(String name, FromSourceLocation sourceLocation) {", "}", symbol,
+        writer.openBlock("public $T(String name, $T sourceLocation) {", "}",
+                symbol, FromSourceLocation.class,
                 () -> writer.writeWithNoFormatting("super(ID, name, sourceLocation);"));
         writer.newLine();
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol symbol) {
-        writer.addImport(SourceLocation.class);
         writer.openBlock("public $T(String name) {", "}", symbol,
-                () -> writer.writeWithNoFormatting("super(ID, name, SourceLocation.NONE);"));
+                () -> writer.write("super(ID, name, $T.NONE);", SourceLocation.class));
         writer.newLine();
     }
 

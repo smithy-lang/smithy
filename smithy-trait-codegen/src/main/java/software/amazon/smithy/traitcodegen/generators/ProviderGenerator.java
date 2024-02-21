@@ -16,11 +16,11 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.traitcodegen.Mapper;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 
@@ -56,14 +56,15 @@ final class ProviderGenerator implements Runnable {
     private final class ProviderMethodVisitor extends ShapeVisitor.Default<Void> {
         @Override
         public Void getDefault(Shape shape) {
-            writer.openBlock("public static final class Provider extends AbstractTrait.Provider {", "}", () -> {
+            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
+                    AbstractTrait.class, () -> {
                 // Basic constructor
                 generateProviderConstructor();
 
                 // Provider method
-                writer.addImports(Trait.class, ShapeId.class, Node.class);
                 writer.override();
-                writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}",
+                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
+                        Trait.class, ShapeId.class, Node.class,
                         () -> writer.write("return new $T($C, value.getSourceLocation());",
                                 traitSymbol,
                                 symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
@@ -74,13 +75,13 @@ final class ProviderGenerator implements Runnable {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.openBlock("public static final class Provider extends AbstractTrait.Provider {", "}", () -> {
+            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
+                    AbstractTrait.class, () -> {
                 generateProviderConstructor();
                 writer.newLine();
-
-                writer.addImports(Trait.class, ShapeId.class, Node.class);
                 writer.override();
-                writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}",
+                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
+                        Trait.class, ShapeId.class, Node.class,
                         () -> writer.write("return new $T(value);", traitSymbol));
             });
             return null;
@@ -101,8 +102,7 @@ final class ProviderGenerator implements Runnable {
         @Override
         public Void enumShape(EnumShape shape) {
             writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                    TraitCodegenUtils.fromClass(StringTrait.class),
-                    traitSymbol, () -> writer.openBlock(PROVIDER_METHOD, "}",
+                    StringTrait.class, traitSymbol, () -> writer.openBlock(PROVIDER_METHOD, "}",
                             () -> writer.write("super(ID, $T::new);", traitSymbol)));
             return null;
         }
@@ -114,12 +114,12 @@ final class ProviderGenerator implements Runnable {
         }
 
         private void generateAbstractTraitProvider() {
-            writer.addImports(Trait.class, Node.class);
-            writer.openBlock("public static final class Provider extends AbstractTrait.Provider {", "}", () -> {
+            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
+                    AbstractTrait.class, () -> {
                 generateProviderConstructor();
-
                 writer.override();
-                writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}", () -> {
+                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
+                        Trait.class, ShapeId.class, Node.class, () -> {
                     writer.write("$1T result = $1T.fromNode(value);", traitSymbol);
                     writer.writeWithNoFormatting("result.setNodeCache(value);");
                     writer.writeWithNoFormatting("return result;");

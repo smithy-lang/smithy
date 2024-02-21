@@ -57,18 +57,8 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
 
-    public void addImport(Symbol symbol) {
+    private void addImport(Symbol symbol) {
         addImport(symbol, symbol.getName());
-    }
-
-    public void addImport(Class<?> clazz) {
-        addImport(TraitCodegenUtils.fromClass(clazz));
-    }
-
-    public void addImports(Class<?>... clazzes) {
-        for (Class<?> clazz : clazzes) {
-            addImport(TraitCodegenUtils.fromClass(clazz));
-        }
     }
 
     public void openDocstring() {
@@ -147,11 +137,16 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final class JavaTypeFormatter implements BiFunction<Object, String, String> {
         @Override
         public String apply(Object type, String indent) {
-            if (!(type instanceof Symbol)) {
+            Symbol typeSymbol;
+            if (type instanceof Symbol) {
+                typeSymbol = (Symbol) type;
+            } else if (type instanceof Class<?>) {
+                typeSymbol = TraitCodegenUtils.fromClass((Class<?>) type);
+            } else {
                 throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol but found: `"
                         + type + "`.");
             }
-            Symbol typeSymbol = (Symbol) type;
+
             addImport(typeSymbol);
             if (typeSymbol.getReferences().isEmpty()) {
                 return typeSymbol.getName();

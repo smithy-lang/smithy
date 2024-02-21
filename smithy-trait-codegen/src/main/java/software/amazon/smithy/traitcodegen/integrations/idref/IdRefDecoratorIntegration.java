@@ -93,12 +93,10 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     }
 
     private static void toNodeMapper(TraitCodegenWriter writer, String var) {
-        writer.addImport(Node.class);
-        writer.write("Node.from($L.toString())", var);
+        writer.write("$T.from($L.toString())", Node.class, var);
     }
 
     private static void fromNodeMapper(TraitCodegenWriter writer, String var) {
-        writer.addImport(ShapeId.class);
-        writer.write("ShapeId.fromNode($L)", var);
+        writer.write("$T.fromNode($L)", ShapeId.class, var);
     }
 }

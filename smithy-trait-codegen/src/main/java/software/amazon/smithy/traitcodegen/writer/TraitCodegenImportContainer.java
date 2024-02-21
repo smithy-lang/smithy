@@ -8,7 +8,6 @@ package software.amazon.smithy.traitcodegen.writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ final class TraitCodegenImportContainer implements ImportContainer {
     TraitCodegenImportContainer(String namespace, String fileName) {
         this.namespace = namespace;
         this.className = extractClassName(fileName);
-        System.out.println("CLASS NAME: " + className);
     }
 
     @Override
@@ -62,7 +60,8 @@ final class TraitCodegenImportContainer implements ImportContainer {
         return builder.toString();
     }
 
-    private String extractClassName(String filename) {
+
+    private static String extractClassName(String filename) {
         return StringUtils.strip(filename, ".java").substring(filename.lastIndexOf("/") + 1);
     }
 }

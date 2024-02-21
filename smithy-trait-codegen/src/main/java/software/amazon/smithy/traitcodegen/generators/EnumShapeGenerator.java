@@ -14,7 +14,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -65,7 +64,7 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     abstract String getVariantTemplate();
 
-    abstract Symbol getValueType();
+    abstract Class<?> getValueType();
 
     abstract Object getEnumValue(MemberShape member);
 
@@ -110,8 +109,8 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        Symbol getValueType() {
-            return TraitCodegenUtils.fromClass(String.class);
+        Class<?> getValueType() {
+            return String.class;
         }
 
         @Override
@@ -130,8 +129,8 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        Symbol getValueType() {
-            return TraitCodegenUtils.fromClass(int.class);
+        Class<?> getValueType() {
+            return int.class;
         }
 
         @Override

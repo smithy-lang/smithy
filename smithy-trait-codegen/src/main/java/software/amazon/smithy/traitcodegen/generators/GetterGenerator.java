@@ -129,10 +129,9 @@ final class GetterGenerator implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.addImport(Integer.class);
             writer.pushState(new GetterSection(shape));
-            writer.openBlock("public Integer getValue() {", "}",
-                    () -> writer.writeWithNoFormatting("return value;"));
+            writer.openBlock("public $T getValue() {", "}",
+                    Integer.class, () -> writer.writeWithNoFormatting("return value;"));
             writer.popState();
             writer.newLine();
             return null;
@@ -164,11 +163,12 @@ final class GetterGenerator implements Runnable {
         }
 
         private void generateOptionalGetter(MemberShape member) {
-            writer.addImport(Optional.class);
             writer.pushState(new GetterSection(member));
-            writer.openBlock("public Optional<$T> get$L() {", "}",
-                    symbolProvider.toSymbol(member), StringUtils.capitalize(symbolProvider.toMemberName(member)),
-                    () -> writer.write("return Optional.ofNullable($L);", symbolProvider.toMemberName(member)));
+            writer.openBlock("public $T<$T> get$L() {", "}",
+                    Optional.class, symbolProvider.toSymbol(member),
+                    StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                    () -> writer.write("return $T.ofNullable($L);",
+                            Optional.class, symbolProvider.toMemberName(member)));
             writer.popState();
             writer.newLine();
         }

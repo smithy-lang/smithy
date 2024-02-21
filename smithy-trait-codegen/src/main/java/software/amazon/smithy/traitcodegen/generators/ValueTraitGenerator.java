@@ -29,9 +29,8 @@ final class ValueTraitGenerator extends TraitGenerator {
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol) {
-        writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $1T($1B value, FromSourceLocation sourceLocation) {", "}",
-                traitSymbol, () -> {
+        writer.openBlock("public $1T($1B value, $2T sourceLocation) {", "}",
+                traitSymbol, FromSourceLocation.class, () -> {
                     writer.writeWithNoFormatting("super(ID, sourceLocation);");
                     writer.writeWithNoFormatting("this.value = value;");
                 });
@@ -39,9 +38,8 @@ final class ValueTraitGenerator extends TraitGenerator {
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol) {
-        writer.addImport(SourceLocation.class);
         writer.openBlock("public $1T($1B value) {", "}", traitSymbol, () -> {
-            writer.writeWithNoFormatting("super(ID, SourceLocation.NONE);");
+            writer.write("super(ID, $T.NONE);", SourceLocation.class);
             writer.writeWithNoFormatting("this.value = value;");
         });
         writer.newLine();

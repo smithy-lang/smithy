@@ -95,11 +95,10 @@ final class PropertiesGenerator implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.addImport(Integer.class);
-            writer.writeWithNoFormatting("private final Integer value;");
+            writer.write("private final $T value;", Integer.class);
             for (Map.Entry<String, MemberShape> memberEntry : shape.getAllMembers().entrySet()) {
                 writer.pushState(new EnumVariantSection(memberEntry.getValue()));
-                writer.write("public static final Integer $L = $L;", memberEntry.getKey(),
+                writer.write("public static final $T $L = $L;", Integer.class, memberEntry.getKey(),
                         memberEntry.getValue().expectTrait(EnumValueTrait.class).expectIntValue());
                 writer.popState();
             }
@@ -159,7 +158,7 @@ final class PropertiesGenerator implements Runnable {
         public Void enumShape(EnumShape shape) {
             for (Map.Entry<String, MemberShape> memberEntry : shape.getAllMembers().entrySet()) {
                 writer.pushState(new EnumVariantSection(memberEntry.getValue()));
-                writer.write("public static final String $L = $S;", memberEntry.getKey(),
+                writer.write("public static final $T $L = $S;", String.class, memberEntry.getKey(),
                         memberEntry.getValue().expectTrait(EnumValueTrait.class).expectStringValue());
                 writer.popState();
             }

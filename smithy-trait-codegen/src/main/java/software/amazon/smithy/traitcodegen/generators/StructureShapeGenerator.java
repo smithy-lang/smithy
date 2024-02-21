@@ -11,20 +11,18 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Generates a Java class from a Smithy {@code StructureShape}.
  */
 final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> {
-    private static final String BASE_CLASS_TEMPLATE_STRING = "public final class $1T implements ToNode, "
-            + "ToSmithyBuilder<$1T> {";
-
     @Override
     public void accept(GenerateTraitDirective directive) {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
-            writer.addImport(ToNode.class);
             writer.pushState(new ClassSection(directive.shape()))
-                    .openBlock(BASE_CLASS_TEMPLATE_STRING, "}", directive.symbol(), () -> {
+                    .openBlock("public final class $1T implements $2T, $3T<$1T> {", "}",
+                            directive.symbol(), ToNode.class, ToSmithyBuilder.class, () -> {
                         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
                         new ConstructorWithBuilderGenerator(writer, directive.symbol(), directive.shape(),
                                 directive.symbolProvider()).run();

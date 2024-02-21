@@ -11,7 +11,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -26,10 +25,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * file so the generated trait implementation will be discoverable by a {@code ServiceLoader}.
  */
 abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
-    private static final String CLASS_TEMPLATE = "public final class $1T extends $baseClass:T"
-            + "${?implementsToBuilder} implements ToSmithyBuilder<$1T>${/implementsToBuilder} {";
     private static final String PROVIDER_FILE = "META-INF/services/software.amazon.smithy.model.traits.TraitService";
-    private static final String TRAIT_ID_TEMPLATE = "public static final ShapeId ID = ShapeId.from($S);";
 
     /**
      * Write provider method to Java SPI to service file for {@link software.amazon.smithy.model.traits.TraitService}.
@@ -47,15 +43,15 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
             // Add class definition context
             writer.putContext("baseClass", getBaseClass());
-            if (implementsToSmithyBuilder()) {
-                writer.addImport(ToSmithyBuilder.class);
-                writer.putContext("implementsToBuilder", true);
-            }
-            writer.addImport(ShapeId.class);
+            writer.putContext("implementsToBuilder", implementsToSmithyBuilder());
+
             writer.pushState(new ClassSection(directive.shape()));
-            writer.openBlock(CLASS_TEMPLATE, "}", directive.symbol(), () -> {
+            writer.openBlock("public final class $2T extends $baseClass:T"
+                            + "${?implementsToBuilder} implements $1T<$2T>${/implementsToBuilder} {", "}",
+                    ToSmithyBuilder.class, directive.symbol(), () -> {
                 // All traits include a static ID property
-                writer.write(TRAIT_ID_TEMPLATE, directive.shape().getId());
+                writer.write("public static final $1T ID = $1T.from($2S);",
+                        ShapeId.class, directive.shape().getId());
                 writer.newLine();
                 writeTraitBody(writer, directive);
                 // Include the provider class
@@ -77,8 +73,8 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
      * <p>Defaults to {@link software.amazon.smithy.model.traits.AbstractTrait}.
      * Override this method to have the trait inherit from another base class.
      */
-    protected Symbol getBaseClass() {
-        return TraitCodegenUtils.fromClass(AbstractTrait.class);
+    protected Class<?> getBaseClass() {
+        return AbstractTrait.class;
     }
 
     /**

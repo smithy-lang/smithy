@@ -30,8 +30,6 @@ import software.amazon.smithy.utils.StringUtils;
  * Generates the static {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
  */
 final class FromNodeGenerator implements Runnable {
-    private static final String FROM_NODE_METHOD_TEMPLATE = "public static $T fromNode(Node node) {";
-
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
     private final Shape shape;
@@ -50,8 +48,8 @@ final class FromNodeGenerator implements Runnable {
     @Override
     public void run() {
         writer.pushState(new FromNodeSection(symbol));
-        writer.addImport(Node.class);
-        writer.openBlock(FROM_NODE_METHOD_TEMPLATE, "}", symbol, () -> shape.accept(new FromNodeBodyGenerator()));
+        writer.openBlock("public static $T fromNode($T node) {", "}",
+                symbol, Node.class, () -> shape.accept(new FromNodeBodyGenerator()));
         writer.popState();
         writer.newLine();
     }

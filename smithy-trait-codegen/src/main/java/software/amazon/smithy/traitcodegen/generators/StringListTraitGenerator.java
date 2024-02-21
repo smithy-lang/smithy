@@ -10,12 +10,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Generates traits for the special case where the list's member is represented by a
@@ -27,15 +24,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 final class StringListTraitGenerator extends TraitGenerator {
     @Override
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writer.addImport(StringListTrait.class);
-        writer.openBlock("public static final class Provider extends StringListTrait.Provider<$T> {", "}",
-                directive.symbol(), () -> writer.openBlock("public Provider() {", "}",
+        writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
+                StringListTrait.class, directive.symbol(),
+                () -> writer.openBlock("public Provider() {", "}",
                         () -> writer.write("super(ID, $T::new);", directive.symbol())));
     }
 
     @Override
-    protected Symbol getBaseClass() {
-        return TraitCodegenUtils.fromClass(StringListTrait.class);
+    protected Class<?> getBaseClass() {
+        return StringListTrait.class;
     }
 
     @Override
@@ -54,7 +51,6 @@ final class StringListTraitGenerator extends TraitGenerator {
 
     private void writeToBuilderMethod(TraitCodegenWriter writer, Symbol symbol) {
         writer.pushState(new ToBuilderSection(symbol));
-        writer.addImports(SmithyBuilder.class, ToSmithyBuilder.class);
         writer.override();
         writer.openBlock("public Builder toBuilder() {", "}",
                 () -> writer.write("return builder().sourceLocation(getSourceLocation()).values(getValues());"));
@@ -70,9 +66,8 @@ final class StringListTraitGenerator extends TraitGenerator {
 
     private void writeBuilderClass(TraitCodegenWriter writer, Symbol symbol) {
         writer.pushState(new BuilderClassSection(symbol));
-        writer.addImport(StringListTrait.class);
-        writer.openBlock("public static final class Builder extends StringListTrait.Builder<$T, Builder> {", "}",
-                symbol, () -> {
+        writer.openBlock("public static final class Builder extends $T.Builder<$T, Builder> {", "}",
+                StringListTrait.class, symbol, () -> {
                     writer.writeWithNoFormatting("private Builder() {}");
                     writer.newLine();
                     writer.override();
@@ -85,16 +80,14 @@ final class StringListTraitGenerator extends TraitGenerator {
 
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol) {
-        writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $1T($1B values, FromSourceLocation sourceLocation) {", "}",
-                traitSymbol, () -> writer.write("super(ID, values, sourceLocation);"));
+        writer.openBlock("public $1T($1B values, $2T sourceLocation) {", "}",
+                traitSymbol, FromSourceLocation.class, () -> writer.write("super(ID, values, sourceLocation);"));
         writer.newLine();
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol) {
-        writer.addImport(SourceLocation.class);
         writer.openBlock("public $1T($1B values) {", "}", traitSymbol,
-                () -> writer.write("super(ID, values, SourceLocation.NONE);"));
+                () -> writer.write("super(ID, values, $T.NONE);", SourceLocation.class));
         writer.newLine();
     }
 }

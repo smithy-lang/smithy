@@ -86,7 +86,6 @@ final class TraitCodegen {
         LOGGER.info("Trait codegen plugin Initialized.");
     }
 
-
     public void run() {
         // Check that all required fields have been correctly initialized.
         SmithyBuilder.requiredState("integrations", integrations);
@@ -167,7 +166,6 @@ final class TraitCodegen {
             throw new RuntimeException("Shapes: " + invalidNested + " are within the trait closure but are not within"
                     + "the specified namespace `" + settings.smithyNamespace() + "`.");
         }
-
         traitClosure.addAll(nested);
 
         return traitClosure;

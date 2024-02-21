@@ -6,6 +6,7 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -21,7 +22,7 @@ final class DocumentTraitGenerator extends TraitGenerator {
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol symbol) {
-        writer.openBlock("public $T(Node value) {", "}", symbol,
-                () -> writer.write("super(ID, value);"));
+        writer.openBlock("public $T($T value) {", "}",
+                symbol, Node.class, () -> writer.writeWithNoFormatting("super(ID, value);"));
     }
 }

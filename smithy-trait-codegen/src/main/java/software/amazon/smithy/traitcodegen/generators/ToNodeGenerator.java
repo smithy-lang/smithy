@@ -49,8 +49,8 @@ import software.amazon.smithy.utils.StringUtils;
  * which requires that they override {@code createNode()} for serialization.
  */
 final class ToNodeGenerator implements Runnable {
-    private static final String CREATE_NODE_METHOD = "protected Node createNode() {";
-    private static final String TO_NODE_METHOD = "public Node toNode() {";
+    private static final String CREATE_NODE_METHOD = "protected $T createNode() {";
+    private static final String TO_NODE_METHOD = "public $T toNode() {";
 
     private final TraitCodegenWriter writer;
     private final Shape shape;
@@ -66,10 +66,9 @@ final class ToNodeGenerator implements Runnable {
 
     @Override
     public void run() {
-        writer.addImport(Node.class);
         writer.override();
         writer.openBlock(shape.hasTrait(TraitDefinition.class) ? CREATE_NODE_METHOD : TO_NODE_METHOD, "}",
-                () -> shape.accept(new CreateNodeBodyGenerator()));
+                Node.class, () -> shape.accept(new CreateNodeBodyGenerator()));
         writer.newLine();
     }
 
@@ -91,12 +90,11 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             Symbol symbol = symbolProvider.toSymbol(shape.getMember());
-            writer.addImport(ArrayNode.class);
             writer.write("return values.stream()")
                     .indent()
                     .write(".map(s -> $C)",
                             symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s"))
-                    .writeWithNoFormatting(".collect(ArrayNode.collect(getSourceLocation()));")
+                    .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
                     .dedent();
             return null;
         }
@@ -163,26 +161,25 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.addImport(ObjectNode.class);
             // If it is a Map<string,string> use a simpler syntax
             if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getKey()))
                     && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getValue()))
             ) {
-                writer.writeWithNoFormatting("return ObjectNode.fromStringMap(values).toBuilder()")
+                writer.write("return $T.fromStringMap(values).toBuilder()", ObjectNode.class)
                         .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
                 return null;
             }
             Pair<Mapper, Mapper> mappers = getKeyValueMappers(shape);
-            writer.addImports(AbstractMap.class, Map.class);
             writer.writeWithNoFormatting("return values.entrySet().stream()")
                     .indent()
-                    .writeWithNoFormatting(".map(entry -> new AbstractMap.SimpleImmutableEntry<>(")
+                    .write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
                     .indent()
                     .write("$C, $C))",
                             mappers.getLeft().with("entry.getKey()"),
                             mappers.getRight().with("entry.getValue()"))
                     .dedent()
-                    .writeWithNoFormatting(".collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))")
+                    .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
+                            ObjectNode.class, Map.class)
                     .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
                     .dedent();
             return null;
@@ -190,15 +187,13 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.addImport(StringNode.class);
-            writer.writeWithNoFormatting("return new StringNode(value.toString(), getSourceLocation());");
+            writer.write("return new $T(value.toString(), getSourceLocation());", StringNode.class);
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.addImport(Node.class);
-            writer.writeWithNoFormatting("return Node.objectNodeBuilder()").indent();
+            writer.write("return $T.objectNodeBuilder()", Node.class).indent();
             if (shape.hasTrait(TraitDefinition.class)) {
                 // If the shape is a trait we need to add the source location of trait to the
                 // generated node.
@@ -214,8 +209,7 @@ final class ToNodeGenerator implements Runnable {
         }
 
         private void generateNumberTraitCreator() {
-            writer.addImport(NumberNode.class);
-            writer.writeWithNoFormatting("return new NumberNode(value, getSourceLocation());");
+            writer.write("return new $T(value, getSourceLocation());", NumberNode.class);
         }
     }
 
@@ -256,11 +250,11 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.addImport(ArrayNode.class);
             Symbol listTargetSymbol = symbolProvider.toSymbol(shape.getMember());
-            writer.write(".withMember($S, get$L().stream().map(s -> $C).collect(ArrayNode.collect()))",
+            writer.write(".withMember($S, get$L().stream().map(s -> $C).collect($T.collect()))",
                     memberName, StringUtils.capitalize(memberName),
-                    listTargetSymbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s")
+                    listTargetSymbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s"),
+                    ArrayNode.class
             );
             return null;
         }
@@ -268,17 +262,17 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void mapShape(MapShape shape) {
             Pair<Mapper, Mapper> mappers = getKeyValueMappers(shape);
-            writer.addImports(AbstractMap.class, Map.class, ObjectNode.class);
             writer.openBlock(".withMember($S, get$L().entrySet().stream()", ")",
                     memberName,
                     StringUtils.capitalize(memberName),
-                    () -> writer.write(".map(entry -> new AbstractMap.SimpleImmutableEntry<>(")
+                    () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
                             .indent()
                             .write("$C, $C))",
                                     mappers.getLeft().with("entry.getKey()"),
                                     mappers.getRight().with("entry.getValue()"))
                             .dedent()
-                            .write(".collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))"));
+                            .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
+                                    ObjectNode.class, Map.class));
             return null;
         }
     }

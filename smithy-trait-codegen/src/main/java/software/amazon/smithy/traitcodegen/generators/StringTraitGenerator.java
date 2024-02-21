@@ -10,7 +10,6 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -29,28 +28,27 @@ final class StringTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writer.addImport(StringTrait.class);
-        writer.openBlock("public static final class Provider extends StringTrait.Provider<$T> {", "}",
-                directive.symbol(), () -> writer.openBlock("public Provider() {", "}",
+        writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
+                StringTrait.class, directive.symbol(),
+                () -> writer.openBlock("public Provider() {", "}",
                         () -> writer.write("super(ID, $T::new);", directive.symbol())));
     }
 
     @Override
-    protected Symbol getBaseClass() {
-        return TraitCodegenUtils.fromClass(StringTrait.class);
+    protected Class<?> getBaseClass() {
+        return StringTrait.class;
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {
-        writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $T(String name, FromSourceLocation sourceLocation) {", "}", symbol,
+        writer.openBlock("public $T($T name, $T sourceLocation) {", "}",
+                symbol, String.class, FromSourceLocation.class,
                 () -> writer.writeWithNoFormatting("super(ID, name, sourceLocation);"));
         writer.newLine();
     }
 
     private void writeConstructor(TraitCodegenWriter writer, Symbol symbol) {
-        writer.addImport(SourceLocation.class);
         writer.openBlock("public $T(String name) {", "}", symbol,
-                () -> writer.writeWithNoFormatting("super(ID, name, SourceLocation.NONE);"));
+                () -> writer.write("super(ID, name, $T.NONE);", SourceLocation.class));
         writer.newLine();
     }
 }

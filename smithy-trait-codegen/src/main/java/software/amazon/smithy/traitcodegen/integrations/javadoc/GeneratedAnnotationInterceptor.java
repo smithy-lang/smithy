@@ -17,8 +17,7 @@ final class GeneratedAnnotationInterceptor implements CodeInterceptor.Prepender<
         TraitCodegenWriter> {
     @Override
     public void prepend(TraitCodegenWriter writer, ClassSection section) {
-        writer.addImport(SmithyGenerated.class);
-        writer.writeWithNoFormatting("@SmithyGenerated");
+        writer.write("@$T", SmithyGenerated.class);
     }
 
     @Override
