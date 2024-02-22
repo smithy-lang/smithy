@@ -65,7 +65,8 @@ public class IdentitySelectorTest {
         Model model = Model.builder().addShapes(shape1, shape2).build();
 
         Set<Shape> given = Collections.singleton(shape1);
+        Selector.StartingContext env = new Selector.StartingContext(given);
 
-        assertThat(s.select(model, given), equalTo(given));
+        assertThat(s.select(model, env), equalTo(given));
     }
 }

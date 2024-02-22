@@ -38,6 +38,40 @@ public interface Selector {
     Selector IDENTITY = new IdentitySelector();
 
     /**
+     * Starting environment context object used when evaluating a selector.
+     */
+    final class StartingContext {
+
+        public static final StartingContext DEFAULT = new StartingContext();
+
+        // If necessary, it's possible that we could also support predefined selector variables too.
+        private final Collection<? extends Shape> startingShapes;
+
+        /**
+         * Create a StartingContext that sends all shapes in a Model through the Selector.
+         */
+        public StartingContext() {
+            this(null);
+        }
+
+        /**
+         * @param startingShapes A specific set of shapes to send through the Selector rather than all Model shapes.
+         */
+        public StartingContext(Collection<? extends Shape> startingShapes) {
+            this.startingShapes = startingShapes;
+        }
+
+        /**
+         * Get the potentially null set of starting shapes to provide to the selector.
+         *
+         * @return Returns the custom set starting shapes to provide to the selector.
+         */
+        public Collection<? extends Shape> getStartingShapes() {
+            return startingShapes;
+        }
+    }
+
+    /**
      * Parses a selector expression.
      *
      * @param expression Expression to parse.
@@ -67,26 +101,28 @@ public interface Selector {
     }
 
     /**
-     * Selects matching shapes from a model using a specific set of starting shapes.
-     *
-     * <p>This method makes chaining the results of one selector into another easier.
-     *
-     * @param model Model to query.
-     * @param startingShapes Shapes to push through the selector.
-     * @return Returns the matching shapes.
-     */
-    default Set<Shape> select(Model model, Collection<? extends Shape> startingShapes) {
-        throw new UnsupportedOperationException("Selecting using starting shapes is not supported by this Selector");
-    }
-
-    /**
      * Matches a selector to a model.
      *
      * @param model Model used to resolve shapes with.
      * @return Returns the matching shapes.
      */
     default Set<Shape> select(Model model) {
+        // Methods for providing a starting environment were introduced after initially releasing the Selector
+        // interface. Typically, you'd call select(model, Env.DEFAULT) here, but to maintain backward compatibility,
+        // this calls shapes(model). Implementations of this interface should override both this method and
+        // select(Model, Env);
         return shapes(model).collect(Collectors.toSet());
+    }
+
+    /**
+     * Matches a selector to a model.
+     *
+     * @param model   Model used to resolve shapes with.
+     * @param context Selector starting environment context.
+     * @return Returns the matching shapes.
+     */
+    default Set<Shape> select(Model model, StartingContext context) {
+        return shapes(model, context).collect(Collectors.toSet());
     }
 
     /**
@@ -97,7 +133,23 @@ public interface Selector {
      * @param shapeMatchConsumer Receives each matched shape and the vars available when the shape was matched.
      */
     default void consumeMatches(Model model, Consumer<ShapeMatch> shapeMatchConsumer) {
+        // Methods for providing a starting environment were introduced after initially releasing the Selector
+        // interface. Typically, you'd call matches(Model, Env, Consumer) here, but to maintain backward compatibility,
+        // this calls matches(model). Implementations of this interface should override both this method and
+        // consumeMatches(Model, Env, Consumer);
         matches(model).forEach(shapeMatchConsumer);
+    }
+
+    /**
+     * Matches a selector to a set of shapes and receives each matched shape
+     * with the variables that were set when the shape was matched.
+     *
+     * @param model   Model to select shapes from.
+     * @param context Selector starting environment context.
+     * @param shapeMatchConsumer Receives each matched shape and the vars available when the shape was matched.
+     */
+    default void consumeMatches(Model model, StartingContext context, Consumer<ShapeMatch> shapeMatchConsumer) {
+        matches(model, context).forEach(shapeMatchConsumer);
     }
 
     /**
@@ -106,7 +158,20 @@ public interface Selector {
      * @param model Model to match the selector against.
      * @return Returns a stream of matching shapes.
      */
-    Stream<Shape> shapes(Model model);
+    default Stream<Shape> shapes(Model model) {
+        return shapes(model, StartingContext.DEFAULT);
+    }
+
+    /**
+     * Returns a stream of shapes in a model that match the selector.
+     *
+     * @param model   Model to match the selector against.
+     * @param context Selector starting environment context.
+     * @return Returns a stream of matching shapes.
+     */
+    default Stream<Shape> shapes(Model model, StartingContext context) {
+        return matches(model, context).map(ShapeMatch::getShape);
+    }
 
     /**
      * Returns a stream of {@link ShapeMatch} objects for each match found in
@@ -115,7 +180,22 @@ public interface Selector {
      * @param model Model to match the selector against.
      * @return Returns a stream of {@code ShapeMatch} objects.
      */
-    Stream<ShapeMatch> matches(Model model);
+    default Stream<ShapeMatch> matches(Model model) {
+        return matches(model, StartingContext.DEFAULT);
+    }
+
+    /**
+     * Returns a stream of {@link ShapeMatch} objects for each match found in
+     * a model.
+     *
+     * @param model           Model to match the selector against.
+     * @param startingContext Selector starting environment context.
+     * @return Returns a stream of {@code ShapeMatch} objects.
+     */
+    default Stream<ShapeMatch> matches(Model model, StartingContext startingContext) {
+        // Needed for backward compatibility with potentially already existing Selectors.
+        throw new UnsupportedOperationException("matches(model, context) is not implemented");
+    }
 
     /**
      * Represents a selector match found in the model.

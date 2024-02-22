@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitValidatorsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -56,24 +57,33 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             Shape appliedShape,
             List<ValidationEvent> events
     ) {
-        Set<Shape> startingShape = Collections.singleton(appliedShape);
+        Selector.StartingContext startingEnv = new Selector.StartingContext(Collections.singleton(appliedShape));
         TraitValidatorsTrait trait = traitWithValidators.expectTrait(TraitValidatorsTrait.class);
+
         for (Map.Entry<String, TraitValidatorsTrait.Validator> entry : trait.getValidators().entrySet()) {
             String id = entry.getKey();
             TraitValidatorsTrait.Validator definition = entry.getValue();
-            for (Shape shape : definition.getSelector().select(model, startingShape)) {
-                String message = String.format(
-                        "Found an incompatible shape when validating the constraints of the `%s` trait "
-                        + "attached to `%s`: %s",
-                        traitWithValidators.getId(), appliedShape.getId(), definition.getMessage());
-                events.add(ValidationEvent.builder()
-                                   .id(id)
-                                   .sourceLocation(shape)
-                                   .shapeId(shape)
-                                   .message(message)
-                                   .severity(definition.getSeverity())
-                                   .build());
+            for (Shape shape : definition.getSelector().select(model, startingEnv)) {
+                String suffix = definition.getMessage().orElse(null);
+                events.add(createEvent(traitWithValidators, appliedShape, id, shape,
+                                       definition.getSeverity(), suffix));
             }
         }
+    }
+
+    private ValidationEvent createEvent(
+            Shape traitWithValidators,
+            Shape appliedShape,
+            String eventId,
+            Shape shape,
+            Severity severity,
+            String suffix
+    ) {
+        String suffixMessage = suffix == null ? "" : ": " + suffix;
+        String message = String.format(
+                "Found an incompatible shape when validating the constraints of the `%s` trait "
+                + "attached to `%s`%s",
+                traitWithValidators.getId(), appliedShape.getId(), suffixMessage);
+        return ValidationEvent.builder().id(eventId).shape(shape).message(message).severity(severity).build();
     }
 }

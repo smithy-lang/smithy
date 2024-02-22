@@ -7,8 +7,10 @@ package software.amazon.smithy.model.traits;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -77,7 +79,7 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
         public static Validator fromNode(Node node) {
             ObjectNode obj = node.expectObjectNode();
             Selector selector = Selector.fromNode(obj.expectStringMember("selector"));
-            String message = obj.expectStringMember("message").getValue();
+            String message = obj.getStringMember("message").map(StringNode::getValue).orElse(null);
             Severity severity = obj.getStringMember("severity").map(Severity::fromNode).orElse(Severity.ERROR);
             return new Validator(selector, message, severity);
         }
@@ -86,7 +88,9 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
         public Node toNode() {
             ObjectNode.Builder builder = ObjectNode.builder();
             builder.withMember("selector", selector.toString());
-            builder.withMember("message", message);
+            if (message != null) {
+                builder.withMember("message", message);
+            }
             if (severity != Severity.ERROR) {
                 builder.withMember("severity", severity.toString());
             }
@@ -97,17 +101,12 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
             return selector;
         }
 
-        public String getMessage() {
-            return message;
+        public Optional<String> getMessage() {
+            return Optional.ofNullable(message);
         }
 
         public Severity getSeverity() {
             return severity;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(selector, message, severity);
         }
 
         @Override
@@ -118,8 +117,15 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Validator that = (Validator) o;
-            return selector.equals(that.selector) && message.equals(that.message) && severity == that.severity;
+            Validator validator = (Validator) o;
+            return selector.equals(validator.selector)
+                   && Objects.equals(message, validator.message)
+                   && severity == validator.severity;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(selector, message, severity);
         }
     }
 

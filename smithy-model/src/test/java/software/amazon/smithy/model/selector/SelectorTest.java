@@ -100,7 +100,7 @@ public class SelectorTest {
     }
 
     @Test
-    public void defaultSelectorInterfaceSelectCollectsStreamToSet() {
+    public void worksWithPreviousAssumptionsOfInterface() {
         Selector test = new Selector() {
             @Override
             public Stream<Shape> shapes(Model model) {
@@ -114,6 +114,9 @@ public class SelectorTest {
         };
 
         assertThat(test.select(modelJson), equalTo(modelJson.toSet()));
+
+        // This shouldn't fail with UnsupportedOperationException.
+        test.consumeMatches(modelJson, m -> {});
     }
 
     @Test
