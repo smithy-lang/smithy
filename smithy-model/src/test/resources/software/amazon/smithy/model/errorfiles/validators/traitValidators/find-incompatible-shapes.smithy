@@ -4,13 +4,13 @@ namespace com.amazonaws.simple
 
 @trait
 @protocolDefinition
-@constrainShapes(
+@traitValidators(
     "com.amazonaws.simple.myProtocol.NoDocuments": {
-        selector: "member :test(> document)"
+        selector: "~> member :test(> document)"
         message: "Document types are not supported"
     }
     "com.amazonaws.simple.myProtocol.NoEventStreams": {
-        selector: "operation -[input, output]-> :test(> member > union [trait|streaming]))"
+        selector: "~> operation -[input, output]-> :test(> member > union [trait|streaming]))"
         message: "Event streams are not supported"
     }
 )

@@ -75,4 +75,4 @@ software.amazon.smithy.model.traits.XmlAttributeTrait$Provider
 software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
 software.amazon.smithy.model.traits.XmlNamespaceTrait$Provider
 software.amazon.smithy.model.traits.XmlNameTrait$Provider
-software.amazon.smithy.model.traits.ConstrainShapesTrait$Provider
+software.amazon.smithy.model.traits.TraitValidatorsTrait$Provider

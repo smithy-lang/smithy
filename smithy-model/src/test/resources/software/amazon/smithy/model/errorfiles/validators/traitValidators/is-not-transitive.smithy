@@ -4,9 +4,9 @@ $version: "2.0"
 namespace com.amazonaws.simple
 
 @trait
-@constrainShapes(
+@traitValidators(
     "NoSensitiveStrings": {
-        selector: "member :test(> [trait|sensitive])"
+        selector: "~> member :test(> [trait|sensitive])"
         message: "Sensitive strings are not allowed here"
     }
 )

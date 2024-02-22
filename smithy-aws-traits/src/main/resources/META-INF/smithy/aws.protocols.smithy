@@ -62,9 +62,9 @@ structure HttpConfiguration {
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
-@constrainShapes(
+@traitValidators(
     UnsupportedProtocolDocument: {
-        selector: "member :test(> document)"
+        selector: "~> member :test(> document)"
         message: "Document types are not supported with awsQuery"
     }
 )
@@ -108,9 +108,9 @@ structure awsQueryCompatible {}
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
-@constrainShapes(
+@traitValidators(
     UnsupportedProtocolDocument: {
-        selector: "member :test(> document)"
+        selector: "~> member :test(> document)"
         message: "Document types are not supported with ec2Query"
     }
 )
@@ -189,9 +189,9 @@ structure restJson1 with [HttpConfiguration] {}
         xmlNamespace
     ]
 )
-@constrainShapes(
+@traitValidators(
     UnsupportedProtocolDocument: {
-        selector: "member :test(> document)"
+        selector: "~> member :test(> document)"
         message: "Document types are not supported with restXml"
     }
 )
