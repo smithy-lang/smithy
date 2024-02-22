@@ -14,19 +14,19 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 
-public class ConstrainShapesTraitTest {
+public class TraitValidatorsTest {
     @Test
     public void convertsToNode() {
         SourceLocation s = new SourceLocation("foo.xml");
-        ConstrainShapesTrait trait1 = ConstrainShapesTrait.builder()
+        TraitValidatorsTrait trait1 = TraitValidatorsTrait.builder()
                 .sourceLocation(s)
-                .putDefinition("hi", new ConstrainShapesTrait.Definition(Selector.parse("*"), "Error!"))
-                .putDefinition("hi", new ConstrainShapesTrait.Definition(Selector.parse("string"),
-                                                                         "Warning!",
-                                                                         Severity.WARNING))
+                .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("*"), "Error!"))
+                .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("string"),
+                                                                        "Warning!",
+                                                                        Severity.WARNING))
                 .build();
 
-        ConstrainShapesTrait.Provider p = new ConstrainShapesTrait.Provider();
+        TraitValidatorsTrait.Provider p = new TraitValidatorsTrait.Provider();
 
         assertThat(p.createTrait(ShapeId.from("com.foo#Example"), trait1.toNode()), equalTo(trait1));
     }
@@ -34,11 +34,11 @@ public class ConstrainShapesTraitTest {
     @Test
     public void convertsToBuilder() {
         SourceLocation s = new SourceLocation("foo.xml");
-        ConstrainShapesTrait trait1 = ConstrainShapesTrait.builder()
+        TraitValidatorsTrait trait1 = TraitValidatorsTrait.builder()
                 .sourceLocation(s)
-                .putDefinition("hi", new ConstrainShapesTrait.Definition(Selector.parse("*"),
-                                                                         "Error!",
-                                                                         Severity.DANGER))
+                .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("*"),
+                                                                        "Error!",
+                                                                        Severity.DANGER))
                 .build();
 
         assertThat(trait1.toBuilder().build(), equalTo(trait1));

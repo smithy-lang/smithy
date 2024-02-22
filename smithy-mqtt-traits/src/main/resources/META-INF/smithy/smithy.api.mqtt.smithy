@@ -11,7 +11,7 @@ structure mqttJson {}
     conflicts: ["smithy.mqtt#subscribe"],
     breakingChanges: [{change: "any"}]
 )
-@constrainShapes(
+@traitValidators(
     "MqttPublishInput.NoEventStreams": {
         selector: "-[input]-> structure > member :test(> union [trait|streaming])"
         message: "The input of `smithy.mqtt#publish` operations cannot contain event streams"
@@ -31,7 +31,7 @@ string publish
     conflicts: ["smithy.mqtt#publish"]
     breakingChanges: [{change: "any"}]
 )
-@constrainShapes(
+@traitValidators(
     "MqttSubscribeInput.MissingTopicLabel": {
         selector: "-[input]-> structure > member :not([trait|smithy.mqtt#topicLabel])"
         message: """

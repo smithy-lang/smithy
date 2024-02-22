@@ -3,30 +3,30 @@ $version: "2.0"
 namespace com.amazonaws.simple
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Valid
     "foo.bar": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
     // Valid
     "foo_bar": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
     // Valid
     "_foo_bar": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
     // Valid
     "Foo.bar": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
     // Valid
     "Foo": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
@@ -34,70 +34,70 @@ structure allValid {}
 
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     ".": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid1 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     "foo.": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid2 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     "_": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid3 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     "1": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid4 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     "a.1": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid5 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     ".a": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )
 structure invalid6 {}
 
 @trait
-@constrainShapes(
+@traitValidators(
     // Invalid
     "!.a": {
-        selector: "string"
+        selector: "~> string"
         message: "This one is invalid"
     }
 )

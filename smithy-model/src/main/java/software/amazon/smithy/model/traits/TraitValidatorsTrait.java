@@ -17,17 +17,17 @@ import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Implementation of smithy.api#constrainShapes.
+ * Implementation of smithy.api#traitValidators.
  */
-public final class ConstrainShapesTrait extends AbstractTrait implements ToSmithyBuilder<ConstrainShapesTrait> {
+public final class TraitValidatorsTrait extends AbstractTrait implements ToSmithyBuilder<TraitValidatorsTrait> {
 
-    public static final ShapeId ID = ShapeId.from("smithy.api#constrainShapes");
+    public static final ShapeId ID = ShapeId.from("smithy.api#traitValidators");
 
-    private final Map<String, Definition> definitions;
+    private final Map<String, Validator> validators;
 
-    private ConstrainShapesTrait(Builder builder) {
+    private TraitValidatorsTrait(Builder builder) {
         super(ID, builder.sourceLocation);
-        this.definitions = builder.definitions.copy();
+        this.validators = builder.validators.copy();
     }
 
     public static Builder builder() {
@@ -38,48 +38,48 @@ public final class ConstrainShapesTrait extends AbstractTrait implements ToSmith
     protected Node createNode() {
         ObjectNode.Builder builder = ObjectNode.builder();
         builder.sourceLocation(getSourceLocation());
-        definitions.forEach((k, v) -> builder.withMember(k, v.toNode()));
+        validators.forEach((k, v) -> builder.withMember(k, v.toNode()));
         return builder.build();
     }
 
     @Override
     public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        definitions.forEach(builder::putDefinition);
+        validators.forEach(builder::putValidator);
         return builder;
     }
 
     /**
-     * Get a map of ID suffixes to constraint definitions.
+     * Get a map of ID suffixes to validators.
      *
      * @return Returns an unmodifiable map.
      */
-    public Map<String, Definition> getDefinitions() {
-        return definitions;
+    public Map<String, Validator> getValidators() {
+        return validators;
     }
 
-    public static final class Definition implements ToNode {
+    public static final class Validator implements ToNode {
 
         private final Selector selector;
         private final String message;
         private final Severity severity;
 
-        public Definition(Selector selector, String message) {
+        public Validator(Selector selector, String message) {
             this(selector, message, Severity.ERROR);
         }
 
-        public Definition(Selector selector, String message, Severity severity) {
+        public Validator(Selector selector, String message, Severity severity) {
             this.selector = selector;
             this.message = message;
             this.severity = severity;
         }
 
-        public static Definition fromNode(Node node) {
+        public static Validator fromNode(Node node) {
             ObjectNode obj = node.expectObjectNode();
             Selector selector = Selector.fromNode(obj.expectStringMember("selector"));
             String message = obj.expectStringMember("message").getValue();
             Severity severity = obj.getStringMember("severity").map(Severity::fromNode).orElse(Severity.ERROR);
-            return new Definition(selector, message, severity);
+            return new Validator(selector, message, severity);
         }
 
         @Override
@@ -118,29 +118,29 @@ public final class ConstrainShapesTrait extends AbstractTrait implements ToSmith
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Definition that = (Definition) o;
+            Validator that = (Validator) o;
             return selector.equals(that.selector) && message.equals(that.message) && severity == that.severity;
         }
     }
 
-    public static final class Builder extends AbstractTraitBuilder<ConstrainShapesTrait, Builder> {
+    public static final class Builder extends AbstractTraitBuilder<TraitValidatorsTrait, Builder> {
 
-        private final BuilderRef<Map<String, Definition>> definitions = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, Validator>> validators = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
         @Override
-        public ConstrainShapesTrait build() {
-            return new ConstrainShapesTrait(this);
+        public TraitValidatorsTrait build() {
+            return new TraitValidatorsTrait(this);
         }
 
-        public Builder putDefinition(String idSuffix, Definition definition) {
-            definitions.get().put(idSuffix, definition);
+        public Builder putValidator(String idSuffix, Validator validator) {
+            validators.get().put(idSuffix, validator);
             return this;
         }
 
-        public Builder removeDefinition(String idSuffix) {
-            definitions.get().remove(idSuffix);
+        public Builder removeValidator(String idSuffix) {
+            validators.get().remove(idSuffix);
             return this;
         }
     }
@@ -152,14 +152,14 @@ public final class ConstrainShapesTrait extends AbstractTrait implements ToSmith
         }
 
         @Override
-        public ConstrainShapesTrait createTrait(ShapeId target, Node value) {
+        public TraitValidatorsTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode().getMembers().forEach((k, v) -> {
                 String key = k.expectStringNode().getValue();
                 ObjectNode valueNode = v.expectObjectNode();
-                builder.putDefinition(key, Definition.fromNode(valueNode));
+                builder.putValidator(key, Validator.fromNode(valueNode));
             });
-            ConstrainShapesTrait result = builder.build();
+            TraitValidatorsTrait result = builder.build();
             result.setNodeCache(value);
             return result;
         }

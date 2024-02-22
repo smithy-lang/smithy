@@ -1,0 +1,7 @@
+[ERROR] com.amazonaws.simple#invalid1: `smithy.api#traitValidators` key is not a valid event ID: `.` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid2: `smithy.api#traitValidators` key is not a valid event ID: `foo.` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid3: `smithy.api#traitValidators` key is not a valid event ID: `_` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid4: `smithy.api#traitValidators` key is not a valid event ID: `1` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid5: `smithy.api#traitValidators` key is not a valid event ID: `a.1` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid6: `smithy.api#traitValidators` key is not a valid event ID: `.a` | TraitValidators
+[ERROR] com.amazonaws.simple#invalid7: `smithy.api#traitValidators` key is not a valid event ID: `!.a` | TraitValidators

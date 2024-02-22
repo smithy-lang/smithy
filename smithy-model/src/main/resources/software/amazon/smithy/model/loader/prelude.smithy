@@ -305,40 +305,39 @@ structure httpApiKeyAuth {
     scheme: NonEmptyString
 }
 
-/// A meta-trait used to limit the kinds of shapes that can be contained in the closure of a shape when a trait is
-/// applied to it.
+/// A meta-trait used to apply validation to a specific shape in the model that a trait is applied to.
 ///
-/// `constrainShapes` is a map of validation event IDs to constraints to apply to a closure of shapes.
-/// Selectors are used to identify shapes that are incompatible with the constrained trait.
+/// `traitValidators` is a map of validation event IDs to validators to apply to a shape.
+/// Selectors are used to identify shapes that are incompatible with a constrained trait.
 ///
 /// The following example defines a protocol that does not support document types. Each matching member found in the
 /// closure of an attached shape emits a validation event:
 ///
 /// ```
 /// @trait(selector: "service")
-/// @protocolDefinition
-/// @constrainShapes(
+/// @traitValidators(
 ///     "myCustomProtocol.NoDocuments": {
 ///         selector: "member :test(> document)"
 ///         message: "This protocol does not support document types"
 ///     }
 /// )
+/// @protocolDefinition
 /// structure myCustomProtocol {}
 /// ```
 @trait(selector: "[trait|trait]")
-map constrainShapes {
+map traitValidators {
     /// The validation event ID to emit when the constraint finds an incompatible shape.
     @length(min: 1)
     key: String
 
-    /// The constraint to apply.
-    value: ConstrainShapeDefinition
+    /// The validator to apply.
+    value: TraitValidator
 }
 
 @internal
-structure ConstrainShapeDefinition {
-    /// A Smithy selector that receives every shape in the closure of a shape, including the shape itself. Any shape
-    /// yielded by the selector is considered incompatible with the trait.
+structure TraitValidator {
+    /// A Smithy selector that receives only the shape to which the `traitValidators` trait is applied.
+    /// Any shape yielded by the selector is considered incompatible with the trait.
     @required
     selector: String
 
