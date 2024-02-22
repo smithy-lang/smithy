@@ -2,4 +2,5 @@ test-traits.smithy
 ignored.smithy
 nested-namespace.smithy
 name-conflicts.smithy
+non-java-names.smithy
 

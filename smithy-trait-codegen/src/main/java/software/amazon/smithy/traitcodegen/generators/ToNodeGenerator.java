@@ -200,7 +200,8 @@ final class ToNodeGenerator implements Runnable {
                 writer.writeInline(".sourceLocation(getSourceLocation())");
             }
             for (MemberShape member : shape.members()) {
-                member.accept(new MemberMapperVisitor(symbolProvider.toMemberName(member),
+                member.accept(new MemberMapperVisitor(member.getMemberName(),
+                        symbolProvider.toMemberName(member),
                         symbolProvider, member.isRequired()));
             }
             writer.writeWithNoFormatting(".build();");
@@ -216,14 +217,17 @@ final class ToNodeGenerator implements Runnable {
     // Writes the per-member mapping from a member to an object node member node.
     private final class MemberMapperVisitor extends ShapeVisitor.Default<Void> {
         private final String memberName;
+        private final String formattedMemberName;
         private final SymbolProvider symbolProvider;
         private final boolean required;
 
         private MemberMapperVisitor(String memberName,
+                                    String formattedMemberName,
                                     SymbolProvider symbolProvider,
                                     boolean required
         ) {
             this.memberName = memberName;
+            this.formattedMemberName = formattedMemberName;
             this.symbolProvider = symbolProvider;
             this.required = required;
         }
@@ -234,10 +238,10 @@ final class ToNodeGenerator implements Runnable {
             if (required) {
                 writer.write(".withMember($S, $C)",
                         memberName,
-                        symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with(memberName));
+                        symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with(formattedMemberName));
             } else {
                 writer.write(".withOptionalMember($S, get$L().map(m -> $C))",
-                        memberName, StringUtils.capitalize(memberName),
+                        memberName, StringUtils.capitalize(formattedMemberName),
                         symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("m"));
             }
             return null;
@@ -252,7 +256,7 @@ final class ToNodeGenerator implements Runnable {
         public Void listShape(ListShape shape) {
             Symbol listTargetSymbol = symbolProvider.toSymbol(shape.getMember());
             writer.write(".withMember($S, get$L().stream().map(s -> $C).collect($T.collect()))",
-                    memberName, StringUtils.capitalize(memberName),
+                    memberName, StringUtils.capitalize(formattedMemberName),
                     listTargetSymbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s"),
                     ArrayNode.class
             );
@@ -263,8 +267,7 @@ final class ToNodeGenerator implements Runnable {
         public Void mapShape(MapShape shape) {
             Pair<Mapper, Mapper> mappers = getKeyValueMappers(shape);
             writer.openBlock(".withMember($S, get$L().entrySet().stream()", ")",
-                    memberName,
-                    StringUtils.capitalize(memberName),
+                    memberName, StringUtils.capitalize(formattedMemberName),
                     () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
                             .indent()
                             .write("$C, $C))",
