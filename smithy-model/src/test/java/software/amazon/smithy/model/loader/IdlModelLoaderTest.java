@@ -491,4 +491,11 @@ public class IdlModelLoaderTest {
         assertThat(e.getMessage(),
                    startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
     }
+
+    @Test
+    public void handlesMultipleMemberInheritance() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
+                .assemble();
+    }
 }

@@ -48,11 +48,11 @@ final class NamedMemberUtils {
                 String name = member.getMemberName();
                 if (members.get().containsKey(name)) {
                     MemberShape localMember = members.get().get(name);
-                    // Rebuild the member with the proper inherited mixin if needed.
+                    // Rebuild the member with the proper inherited mixins if needed.
                     // This catches errant cases where a member is added to a structure/union
                     // but omits the mixin members of parent shapes. Arguably, that's way too
                     // nuanced and error-prone to _not_ try to smooth over.
-                    if (localMember.getMixins().isEmpty() || !mixins.containsKey(member.getId())) {
+                    if (localMember.getMixins().isEmpty() || !localMember.getMixins().contains(member.getId())) {
                         localMember = localMember.toBuilder().clearMixins().addMixin(member).build();
                     }
                     computedMembers.put(name, localMember);

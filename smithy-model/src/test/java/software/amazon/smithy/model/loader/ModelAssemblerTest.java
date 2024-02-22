@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,6 +79,8 @@ import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
+import software.amazon.smithy.model.traits.PatternTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
@@ -1367,5 +1371,24 @@ public class ModelAssemblerTest {
                 .addUnparsedModel("member-apply-2.smithy", modelWithApply)
                 .assemble()
                 .unwrap();
+    }
+
+    @Test
+    public void handlesMultipleInheritanceForMixinMembers() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/multiple-inheritance-with-introduction.smithy"))
+                .assemble()
+                .unwrap();
+
+        MemberShape shape = model.expectShape(ShapeId.from("com.example#FinalStructure$member"), MemberShape.class);
+
+        assertThat(shape.getMixins(), contains(
+                ShapeId.from("com.example#MixinA$member"),
+                ShapeId.from("com.example#MixinB$member")
+        ));
+        assertThat(shape.getAllTraits().keySet(),
+                containsInAnyOrder(PatternTrait.ID, RequiredTrait.ID, InternalTrait.ID));
+        String actualPattern = shape.expectTrait(PatternTrait.class).getValue();
+        assertThat(actualPattern, equalTo("baz"));
     }
 }
