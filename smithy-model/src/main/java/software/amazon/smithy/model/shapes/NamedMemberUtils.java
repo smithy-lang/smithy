@@ -53,7 +53,7 @@ final class NamedMemberUtils {
                     // but omits the mixin members of parent shapes. Arguably, that's way too
                     // nuanced and error-prone to _not_ try to smooth over.
                     if (localMember.getMixins().isEmpty() || !localMember.getMixins().contains(member.getId())) {
-                        localMember = localMember.toBuilder().clearMixins().addMixin(member).build();
+                        localMember = rebuildMemberMixins(localMember, mixins.values());
                     }
                     computedMembers.put(name, localMember);
                 } else {
@@ -85,6 +85,14 @@ final class NamedMemberUtils {
             }
         }
         return Collections.unmodifiableMap(computedMembers);
+    }
+
+    private static MemberShape rebuildMemberMixins(MemberShape member, Collection<Shape> mixins) {
+        MemberShape.Builder builder = member.toBuilder().clearMixins();
+        for (Shape mixin : mixins) {
+            mixin.getMember(member.getMemberName()).ifPresent(builder::addMixin);
+        }
+        return builder.build();
     }
 
     static Set<MemberShape> flattenMixins(
