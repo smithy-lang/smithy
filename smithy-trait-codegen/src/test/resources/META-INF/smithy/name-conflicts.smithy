@@ -7,19 +7,23 @@ namespace test.smithy.traitcodegen.conflicts
 @trait
 structure hasMembersWithConflictingNames {
     toSmithyBuilder: toSmithyBuilder
-    abstractTrait: AbstractTrait
+    builder: Builder
+    static: static
 }
 
-//
-//// Conflicts with static builder
-//@private
-//structure Builder {}
-//
+/// Conflicts with static `builder` name that is a reserved word
+@private
+structure Builder {}
+
+/// Conflicts with java `static` keyword
+@private
+structure static {}
 
 /// Conflicts with ToSmithyBuilder interface
 @private
 structure toSmithyBuilder {}
 
 /// Conflicts with AbstractTrait base class
-@private
-structure AbstractTrait {}
+@trait
+structure Abstract {}
+
