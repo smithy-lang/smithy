@@ -310,4 +310,30 @@ public class StructureShapeTest {
 
         assertThat(concrete.getMemberNames(), contains("a", "b", "c", "d"));
     }
+
+    @Test
+    public void fixesMissingMemberMixins() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#Mixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("a", string.getId())
+                .build();
+        StructureShape mixin2 = StructureShape.builder()
+                .id("smithy.example#Mixin2")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("a", string.getId())
+                .build();
+        StructureShape concrete = StructureShape.builder()
+                .id("smithy.example#Concrete")
+                .addMember("a", string.getId())
+                .addMixin(mixin1)
+                .addMixin(mixin2)
+                .build();
+
+        assertThat(concrete.getMember("a").get().getMixins(), contains(
+                ShapeId.from("smithy.example#Mixin1$a"),
+                ShapeId.from("smithy.example#Mixin2$a")
+        ));
+    }
 }
