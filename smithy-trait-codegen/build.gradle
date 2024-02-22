@@ -69,3 +69,6 @@ tasks["integ"].mustRunAfter("copyGeneratedSrcs")
 
 // Always run integ tests after base tests
 tasks["test"].finalizedBy("integ")
+
+// dont run spotbugs on integ tests
+tasks["spotbugsIt"].enabled(false)

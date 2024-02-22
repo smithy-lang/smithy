@@ -5,8 +5,12 @@
 
 package software.amazon.smithy.traitcodegen.writer;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +21,6 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.StringUtils;
-
 
 /**
  * Writes Java code for trait definitions.
@@ -42,6 +45,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final String namespace;
     private final String fileName;
     private final TraitCodegenSettings settings;
+    private final Map<String, Set<Symbol>> symbolNames = new HashMap<>();
 
     public TraitCodegenWriter(String fileName,
                               String namespace,
@@ -99,15 +103,47 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
         // Do not add code headers to META-INF files
-        if (!fileName.startsWith("META-INF")) {
-            builder.append(getHeader()).append(getNewline());
-            builder.append(getPackageHeader()).append(getNewline());
-            builder.append(getImportContainer().toString()).append(getNewline());
+        if (fileName.startsWith("META-INF")) {
+            return super.toString();
         }
-        builder.append(super.toString());
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(getHeader()).append(getNewline());
+        builder.append(getPackageHeader()).append(getNewline());
+        builder.append(getImportContainer().toString()).append(getNewline());
+
+        // Handle duplicates that may need to use full name
+        Map<String, Object> nameContext = resolveNameContext();
+        putContext(nameContext);
+        builder.append(format(super.toString()));
+
         return builder.toString();
+    }
+
+    private Map<String, Object> resolveNameContext() {
+        Map<String, Object> contextMap = new HashMap<>();
+        for (Map.Entry<String, Set<Symbol>> entry : symbolNames.entrySet()) {
+            Set<Symbol> duplicates = entry.getValue();
+            // If the duplicates list has more than one entry
+            // then duplicates are present, and we need to de-dupe
+            if (duplicates.size() > 1) {
+                duplicates.forEach(dupe -> {
+                    // If we are in the namespace of a Symbol, use its
+                    // short name, otherwise use the full name
+                    if (dupe.getNamespace().equals(namespace)) {
+                        contextMap.put(dupe.getFullName(), dupe.getName());
+                    } else {
+                        contextMap.put(dupe.getFullName(), dupe.getFullName());
+                    }
+                });
+            } else {
+                Symbol symbol = duplicates.iterator().next();
+                contextMap.put(symbol.getFullName(), symbol.getName());
+            }
+        }
+
+        return contextMap;
     }
 
     public String getPackageHeader() {
@@ -143,28 +179,40 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             } else if (type instanceof Class<?>) {
                 typeSymbol = TraitCodegenUtils.fromClass((Class<?>) type);
             } else {
-                throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol but found: `"
-                        + type + "`.");
+                throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol or Class "
+                        + "but found: `" + type + "`.");
             }
 
-            addImport(typeSymbol);
             if (typeSymbol.getReferences().isEmpty()) {
-                return typeSymbol.getName();
+                return getPlaceholder(typeSymbol);
             }
+
+            // Add type references as type references (ex. `List<InnerType>`)
             StringBuilder builder = new StringBuilder();
-            builder.append(typeSymbol.getName());
+            builder.append(getPlaceholder(typeSymbol));
             builder.append("<");
             Iterator<SymbolReference> iterator = typeSymbol.getReferences().iterator();
             while (iterator.hasNext()) {
-                Symbol refSymbol = iterator.next().getSymbol();
-                addImport(refSymbol);
-                builder.append(refSymbol.getName());
+                String placeholder = getPlaceholder(iterator.next().getSymbol());
+                builder.append(placeholder);
                 if (iterator.hasNext()) {
                     builder.append(",");
                 }
             }
             builder.append(">");
             return builder.toString();
+        }
+
+        private String getPlaceholder(Symbol symbol) {
+            // Add symbol to import container
+            addImport(symbol);
+
+            // Add symbol to symbol map, so we can handle potential type name conflicts
+            Set<Symbol> nameSet = symbolNames.computeIfAbsent(symbol.getName(), n -> new HashSet<>());
+            nameSet.add(symbol);
+
+            // Return a placeholder value that will be filled when toString is called
+            return format("$${$L:L}", symbol.getFullName());
         }
     }
 
