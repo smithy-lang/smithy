@@ -233,6 +233,26 @@ sourceSets {
     }
 }
 
+task integ(type: Test) {
+    useJUnitPlatform()
+    systemProperty "SMITHY_BINARY", "${smithyBinary}"
+    testClassesDirs = sourceSets["it"].output.classesDirs
+    classpath = sourceSets["it"].runtimeClasspath
+
+    // Configuration parameters to execute top-level classes in parallel but methods in same thread
+    systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "same_thread"
+    systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
+
+    testLogging {
+        events = ["passed", "skipped", "failed"]
+        exceptionFormat = "full"
+    }
+}
+
+// Runtime images need to be created before integration tests can run.
+tasks["integ"].dependsOn("runtime")
+
 // ------ Setup Jreleaser -------
 tasks.assembleDist.doFirst {
     // This is a workaround for a weird behavior.
