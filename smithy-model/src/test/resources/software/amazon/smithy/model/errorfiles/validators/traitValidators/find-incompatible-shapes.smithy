@@ -13,6 +13,9 @@ namespace com.amazonaws.simple
         selector: "~> operation -[input, output]-> :test(> member > union [trait|streaming]))"
         message: "Event streams are not supported"
     }
+    "com.amazonaws.simple.myProtocol.NoErrors": {
+        selector: "-[operation]-> :not(-[error]->)"
+    }
 )
 structure myProtocol {}
 

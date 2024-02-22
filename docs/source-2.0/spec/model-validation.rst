@@ -861,8 +861,8 @@ Validator definition
             -[input]-> structure > member [id|member='foo']
     * - message
       - ``string``
-      - **Required**. The validation message to include in each emitted
-        validation event.
+      - Additional context to include in the message of each emitted validation
+        event.
     * - severity
       - ``string``
       - The :ref:`severity <severity-definition>` to use when an

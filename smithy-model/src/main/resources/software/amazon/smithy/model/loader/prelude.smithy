@@ -342,7 +342,6 @@ structure TraitValidator {
     selector: String
 
     /// A message to use when a matching shape is found.
-    @required
     message: String
 
     /// The severity to use when a matching shape is found.

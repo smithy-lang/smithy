@@ -63,11 +63,13 @@ final class WrappedSelector implements Selector {
 
     @Override
     public Set<Shape> select(Model model) {
-        return select(model, delegate.getStartingShapes(model));
+        return select(model, StartingContext.DEFAULT);
     }
 
     @Override
-    public Set<Shape> select(Model model, Collection<? extends Shape> startingShapes) {
+    public Set<Shape> select(Model model, StartingContext startingContext) {
+        Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
+
         if (isParallel(startingShapes)) {
             return shapes(model).collect(Collectors.toSet());
         } else {
@@ -81,27 +83,35 @@ final class WrappedSelector implements Selector {
         }
     }
 
+    private Collection<? extends Shape> getStartingShapes(Model model, StartingContext startingContext) {
+        Collection<? extends Shape> startingShapes = startingContext.getStartingShapes();
+        return startingShapes == null ? delegate.getStartingShapes(model) : startingShapes;
+    }
+
     private boolean isParallel(Collection<? extends Shape> startingShapes) {
         return startingShapes.size() >= PARALLEL_THRESHOLD;
     }
 
     @Override
     public void consumeMatches(Model model, Consumer<ShapeMatch> shapeMatchConsumer) {
+        consumeMatches(model, StartingContext.DEFAULT, shapeMatchConsumer);
+    }
+
+    @Override
+    public void consumeMatches(Model model, StartingContext context, Consumer<ShapeMatch> shapeMatchConsumer) {
         // This is more optimized than using matches() and collecting to a Set
         // because it avoids creating streams and buffering the result of
         // pushing each shape into internal selectors.
-        pushShapes(model, delegate.getStartingShapes(model), (ctx, s) -> {
+        Collection<? extends Shape> startingShapes = getStartingShapes(model, context);
+        pushShapes(model, startingShapes, (ctx, s) -> {
             shapeMatchConsumer.accept(new ShapeMatch(s, ctx.getVars()));
             return InternalSelector.Response.CONTINUE;
         });
     }
 
     @Override
-    public Stream<Shape> shapes(Model model) {
-        return shapes(model, delegate.getStartingShapes(model));
-    }
-
-    private Stream<Shape> shapes(Model model, Collection<? extends Shape> startingShapes) {
+    public Stream<Shape> shapes(Model model, StartingContext startingContext) {
+        Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
         NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShapes(startingShapes).flatMap(shape -> {
@@ -111,10 +121,11 @@ final class WrappedSelector implements Selector {
     }
 
     @Override
-    public Stream<ShapeMatch> matches(Model model) {
+    public Stream<ShapeMatch> matches(Model model, StartingContext startingContext) {
+        Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
         NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> computedRoots = computeRoots(model);
-        return streamStartingShapes(delegate.getStartingShapes(model)).flatMap(shape -> {
+        return streamStartingShapes(startingShapes).flatMap(shape -> {
             List<ShapeMatch> result = new ArrayList<>();
             delegate.push(new Context(model, index, computedRoots), shape, (ctx, s) -> {
                 result.add(new ShapeMatch(s, ctx.getVars()));
