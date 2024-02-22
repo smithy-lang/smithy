@@ -6,11 +6,14 @@
 package software.amazon.smithy.traitcodegen;
 
 import java.net.URL;
+import java.util.List;
 import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.CaseUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -29,6 +32,7 @@ public final class TraitCodegenUtils {
     public static final ReservedWords MEMBER_ESCAPER = new ReservedWordsBuilder()
             .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + MEMBER_ESCAPE_SUFFIX)
             .build();
+    private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 
     private TraitCodegenUtils() {}
 
@@ -52,11 +56,23 @@ public final class TraitCodegenUtils {
      * @return Default name.
      */
     public static String getDefaultName(Shape shape) {
-        String unescaped = StringUtils.capitalize(shape.getId().getName());
+        String baseName = shape.getId().getName();
+
+        // If the name contains any problematic delimiters, use PascalCase converter,
+        // otherwise, just capitalize first letter to avoid messing with user-defined
+        // capitalization.
+        String unescaped;
+        if (DELIMITERS.stream().anyMatch(baseName::contains)) {
+            unescaped = CaseUtils.toPascalCase(shape.getId().getName());
+        } else {
+            unescaped = StringUtils.capitalize(baseName);
+        }
+
         // No need to escape trait names (they already have 'Trait' appended)
         if (shape.hasTrait(TraitDefinition.class)) {
             return unescaped;
         }
+
         return SHAPE_ESCAPER.escape(unescaped);
     }
 

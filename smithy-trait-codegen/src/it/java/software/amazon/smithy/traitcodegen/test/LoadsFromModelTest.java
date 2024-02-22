@@ -35,6 +35,7 @@ import com.example.traits.StringTraitTrait;
 import com.example.traits.StructureListTraitTrait;
 import com.example.traits.StructureSetTraitTrait;
 import com.example.traits.StructureTraitTrait;
+import com.example.traits.names.SnakeCaseStructureTrait;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -138,7 +139,9 @@ public class LoadsFromModelTest {
                                 "getFieldD", ListUtils.of("a", "b", "c"),
                                 "getFieldE", MapUtils.of("a", "one", "b", "two"),
                                 "getFieldF", Optional.of(new BigDecimal("100.01")),
-                                "getFieldG", Optional.of(new BigInteger("100"))))
+                                "getFieldG", Optional.of(new BigInteger("100")))),
+                Arguments.of("snake-case-struct.smithy", SnakeCaseStructureTrait.class,
+                        MapUtils.of("getSnakeCaseMember", Optional.of("stuff")))
         );
     }
 

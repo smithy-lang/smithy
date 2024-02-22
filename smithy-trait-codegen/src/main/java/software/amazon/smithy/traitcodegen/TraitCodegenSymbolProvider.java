@@ -38,10 +38,13 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CaseUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> implements SymbolProvider {
     private static final String LIST_INITIALIZER = "forList()";
     private static final String MAP_INITIALIZER = "forOrderedMap()";
+    private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
+
     private final String packageNamespace;
     private final String smithyNamespace;
     private final Model model;
@@ -226,11 +229,15 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
             return "values";
         // Enum shapes should have upper snake case members
         } else if (containerShape.isEnumShape() || containerShape.isIntEnumShape()) {
-            return TraitCodegenUtils.MEMBER_ESCAPER.escape(
-                    CaseUtils.toSnakeCase(member.getMemberName()).toUpperCase(Locale.ROOT));
+            return CaseUtils.toSnakeCase(TraitCodegenUtils.MEMBER_ESCAPER.escape(member.getMemberName()))
+                    .toUpperCase(Locale.ROOT);
         }
 
-        return TraitCodegenUtils.MEMBER_ESCAPER.escape(member.getMemberName());
+        if (DELIMITERS.stream().anyMatch(member.getMemberName()::contains)) {
+            return TraitCodegenUtils.MEMBER_ESCAPER.escape(CaseUtils.toCamelCase(member.getMemberName()));
+        } else {
+            return TraitCodegenUtils.MEMBER_ESCAPER.escape(member.getMemberName());
+        }
     }
 
     private static Symbol simpleShapeSymbolFrom(Class<?> clazz) {

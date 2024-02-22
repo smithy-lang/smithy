@@ -28,6 +28,7 @@ import com.example.traits.StringTraitTrait;
 import com.example.traits.StructureListTraitTrait;
 import com.example.traits.StructureSetTraitTrait;
 import com.example.traits.StructureTraitTrait;
+import com.example.traits.names.SnakeCaseStructureTrait;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,6 +36,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -100,7 +102,10 @@ public class CreatesTraitTest {
                         .fieldD(ListUtils.of("a", "b", "c"))
                         .fieldE(MapUtils.of("a", "one", "b", "two"))
                         .build().toNode()
-                ));
+                ),
+                Arguments.of(SnakeCaseStructureTrait.ID, ObjectNode.builder()
+                        .withMember("snake_case_member", "stuff").build())
+        );
     }
 
     @ParameterizedTest
