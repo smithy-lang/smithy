@@ -99,22 +99,25 @@ final class ApplyMixin implements ShapeModifier {
                     }
                 }
             }
-            if (introducedMember == null && memberBuilders.containsKey(member.getMemberName())) {
-                MemberShape.Builder original = memberBuilders.get(member.getMemberName());
-                introducedMember = original.addMixin(member).build();
-                if (!introducedMember.getTarget().equals(member.getTarget())) {
-                    mixinMemberConflict(original, member);
+
+            if (introducedMember == null) {
+                if (memberBuilders.containsKey(member.getMemberName())) {
+                    MemberShape.Builder original = memberBuilders.get(member.getMemberName());
+                    introducedMember = original.addMixin(member).build();
+                    if (!introducedMember.getTarget().equals(member.getTarget())) {
+                        mixinMemberConflict(original, member);
+                    }
+                } else if (!introducedTraits.isEmpty()) {
+                    // Build local member copies before adding mixins if traits
+                    // were introduced to inherited mixin members.
+                    introducedMember = MemberShape.builder()
+                            .id(targetId)
+                            .target(member.getTarget())
+                            .source(member.getSourceLocation())
+                            .addTraits(introducedTraits.values())
+                            .addMixin(member)
+                            .build();
                 }
-            } else if (!introducedTraits.isEmpty()) {
-                // Build local member copies before adding mixins if traits
-                // were introduced to inherited mixin members.
-                introducedMember = MemberShape.builder()
-                        .id(targetId)
-                        .target(member.getTarget())
-                        .source(member.getSourceLocation())
-                        .addTraits(introducedTraits.values())
-                        .addMixin(member)
-                        .build();
             }
 
             if (introducedMember != null) {
