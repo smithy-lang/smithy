@@ -51,7 +51,7 @@ The following example configures a project to use the ``smithy-base`` Gradle plu
         :caption: build.gradle.kts
 
         plugins {
-            id("software.amazon.smithy.gradle.smithy-base").version("0.10.0")
+            id("software.amazon.smithy.gradle.smithy-base").version("__smithy_gradle_version__")
         }
 
 .. tab:: Groovy
@@ -60,7 +60,7 @@ The following example configures a project to use the ``smithy-base`` Gradle plu
         :caption: build.gradle
 
         plugins {
-            id 'software.amazon.smithy.gradle.smithy-base' version '0.10.0'
+            id 'software.amazon.smithy.gradle.smithy-base' version '__smithy_gradle_version__'
         }
 
 
@@ -124,7 +124,7 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
 
         plugins {
             `java-library`
-            id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+            id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
         }
 
         // The SmithyExtension is used to customize the build. This example
@@ -152,7 +152,7 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
 
         plugins {
             id 'java-library'
-            'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+            'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
         }
 
         // The SmithyExtension is used to customize the build. This example
@@ -198,7 +198,7 @@ build using the "external" projection.
 
             plugins {
                 `java-library`
-                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+                id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
             }
 
             repositories {
@@ -231,7 +231,7 @@ build using the "external" projection.
 
             plugins {
                 id 'java-library'
-                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
             }
 
             repositories {
