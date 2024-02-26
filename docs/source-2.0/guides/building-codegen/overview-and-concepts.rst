@@ -25,8 +25,9 @@ Interfaces (SPI).
 Consider the following smithy-build.json file:
 
 .. code-block:: json
+    :caption: smithy-build.json
 
-   {
+    {
        "version": "1.0",
        "plugins": {
            "foo-client-codegen": {
@@ -36,7 +37,7 @@ Consider the following smithy-build.json file:
                "edition": "2022"
            }
        }
-   }
+    }
 
 This file tells Smithy-Build to generate a hypothetical Foo language
 client using the ``foo-client-codegen`` plugin found on the classpath.
@@ -149,8 +150,9 @@ implementation. For example, here's how service code generation could be
 configured for a Java code generator:
 
 .. code-block:: json
+    :caption: smithy-build.json
 
-   {
+    {
        "version": "1.0",
        "projections": {
            "source": {
@@ -164,7 +166,7 @@ configured for a Java code generator:
                }
            }
        }
-   }
+    }
 
 
 Client generation

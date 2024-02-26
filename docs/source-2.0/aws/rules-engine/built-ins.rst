@@ -13,17 +13,32 @@ to a Smithy project:
 
 .. tab:: Gradle
 
-    .. code-block:: kotlin
+    .. tab:: Kotlin
 
-        dependencies {
-            ...
-            implementation("software.amazon.smithy:smithy-aws-endpoints:__smithy_version__")
-            ...
-        }
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
 
-.. tab:: smithy-build.json
+            dependencies {
+                ...
+                implementation("software.amazon.smithy:smithy-aws-endpoints:__smithy_version__")
+                ...
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                ...
+                implementation 'software.amazon.smithy:smithy-aws-endpoints:__smithy_version__'
+                ...
+            }
+
+.. tab:: Smithy CLI
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "maven": {
