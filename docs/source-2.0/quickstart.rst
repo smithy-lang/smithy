@@ -512,7 +512,7 @@ generate artifacts, and runs validation.
 
             plugins {
                 `java-library`
-                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+                id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
             }
 
             repositories {
@@ -527,7 +527,7 @@ generate artifacts, and runs validation.
 
             plugins {
                 id 'java-library'
-                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
             }
 
             repositories {

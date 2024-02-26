@@ -91,7 +91,7 @@ generate CloudFormation Resource Schemas from Smithy models.
 
             plugins {
                 java
-                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+                id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
             }
 
             dependencies {
@@ -108,7 +108,7 @@ generate CloudFormation Resource Schemas from Smithy models.
 
             plugins {
                 id 'java'
-                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
             }
 
             dependencies {
