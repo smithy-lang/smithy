@@ -6,7 +6,7 @@ Model validation
 
 Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
-own standards and best practices.
+own standards, best practices, and constraints.
 
 
 ------------
@@ -742,3 +742,128 @@ traits.
             selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])"
         }
     }]
+
+
+.. smithy-trait:: smithy.api#traitValidators
+.. _traitValidators-trait:
+
+-------------------------
+``traitValidators`` trait
+-------------------------
+
+It's sometimes necessary to constrain the set of shapes that can be
+referenced when certain traits are applied to a shape. For example, some
+protocols don't support event streams or document types. When that kind of
+protocol trait is applied to a service and the service references such a
+shape, a validation event should be emitted automatically. This can be
+achieved without writing code by applying a ``traitValidators`` trait to a
+trait definition.
+
+Summary
+    A meta-trait used to limit the kinds of shapes that can be referenced by a
+    shape when a trait is applied to the shape.
+Trait selector
+    ``[trait|trait]``
+Value type
+    Map of event ID strings to
+    :ref:`validator definition <traitValidators-validator>` objects.
+
+.. rubric:: Example
+
+The following example defines a protocol that does not support document types.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    @trait(selector: "service")
+    @traitValidators(
+        "myCustomProtocol.NoDocuments": {
+           selector: "~> member :test(> document)"
+           message: "myCustomProtocol does not support document types."
+        }
+    )
+    @protocolDefinition
+    structure myCustomProtocol {}
+
+If the trait is applied to the following service:
+
+.. code-block:: smithy
+
+    @myCustomProtocol
+    service MyService {
+        operations: [GetFoo]
+    }
+
+    operation GetFoo {
+        input := {
+            document: Document
+        }
+    }
+
+It will emit the following event:
+
+.. code-block::
+
+    ──  ERROR  ──────────────────────────────────────── myCustomProtocol.NoDocuments
+    Shape: smithy.example#GetFooInput$document
+    File:  example.smithy:22:9
+
+    21|     input := {
+    22|         document: Document
+      |         ^
+
+    Found an incompatible shape when validating the constraints of the
+    smithy.example#myCustomProtocol trait attached to smithy.example#MyService:
+    myCustomProtocol does not support document types.
+
+
+Map key event ID
+================
+
+The key of the map is the event ID to use with each emitted validation event.
+The event MUST adhere to the :token:`smithy:Namespace` syntax.
+
+
+.. _traitValidators-validator:
+
+Validator definition
+====================
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 20 60
+
+    * - Property
+      - Type
+      - Description
+    * - selector
+      - ``string``
+      - **Required**. A Smithy :ref:`selector <selectors>` that receives only
+        the applied shape. Any shape yielded by the selector is considered
+        incompatible with the trait and causes a validation event.
+
+        For example, the following selector would emit an event for any
+        member in the closure of the applied shape that targets a boolean
+        shape:
+
+        .. code-block::
+
+            ~> member :test(> boolean)
+
+        The following selector would emit an event only if the trait is bound
+        to an operation that defines an input shape with a member named "foo":
+
+        .. code-block::
+
+            -[input]-> structure > member [id|member='foo']
+    * - message
+      - ``string``
+      - Additional context to include in the message of each emitted validation
+        event.
+    * - severity
+      - ``string``
+      - The :ref:`severity <severity-definition>` to use when an
+        incompatible shape is found. Defaults to ``ERROR`` if not set.

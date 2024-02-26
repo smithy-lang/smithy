@@ -350,7 +350,7 @@ Please consider taking our brief <a href="https://amazonmr.au1.qualtrics.com/jfe
 <span id="validation"></span><h1><span class="section-number">17. </span>Model validation<a class="headerlink" href="#model-validation" title="Permalink to this heading">#</a></h1>
 <p>Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
-own standards and best practices.</p>
+own standards, best practices, and constraints.</p>
 <div class="section" id="introduction">
 <h2><span class="section-number">17.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>APIs require a great deal of care and discipline to ensure that they provide
@@ -1103,6 +1103,120 @@ traits.</p>
 </div>
 </div>
 </div>
+<div class="section" id="traitvalidators-trait">
+<span id="smithy-api-traitvalidators-trait"></span><span id="id10"></span><h2><span class="section-number">17.7. </span><code class="docutils literal notranslate"><span class="pre">traitValidators</span></code> trait<a class="headerlink" href="#traitvalidators-trait" title="Permalink to this heading">#</a></h2>
+<p>It's sometimes necessary to constrain the set of shapes that can be
+referenced when certain traits are applied to a shape. For example, some
+protocols don't support event streams or document types. When that kind of
+protocol trait is applied to a service and the service references such a
+shape, a validation event should be emitted automatically. This can be
+achieved without writing code by applying a <code class="docutils literal notranslate"><span class="pre">traitValidators</span></code> trait to a
+trait definition.</p>
+<dl class="docutils">
+<dt>Summary</dt><dd>A meta-trait used to limit the kinds of shapes that can be referenced by a
+shape when a trait is applied to the shape.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">[trait|trait]</span></code></dd>
+<dt>Value type</dt><dd>Map of event ID strings to
+<a class="reference internal" href="#traitvalidators-validator"><span class="std std-ref">validator definition</span></a> objects.</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>The following example defines a protocol that does not support document types.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@traitValidators</span>(
+<span class="w">    </span><span class="s2">&quot;myCustomProtocol.NoDocuments&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">       </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;~&gt; member :test(&gt; document)&quot;</span>
+<span class="w">       </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myCustomProtocol does not support document types.&quot;</span>
+<span class="w">    </span>}
+)
+<span class="nt">@protocolDefinition</span>
+<span class="kd">structure </span><span class="nc">myCustomProtocol</span><span class="w"> </span>{}
+</pre></div>
+</div>
+<p>If the trait is applied to the following service:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@myCustomProtocol</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoo</span>]
+}
+
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">document</span><span class="p">:</span><span class="w"> </span><span class="vc">Document</span>
+<span class="w">    </span>}
+}
+</pre></div>
+</div>
+<p>It will emit the following event:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>──  ERROR  ──────────────────────────────────────── myCustomProtocol.NoDocuments
+Shape: smithy.example#GetFooInput$document
+File:  example.smithy:22:9
+
+21|     input := {
+22|         document: Document
+  |         ^
+
+Found an incompatible shape when validating the constraints of the
+smithy.example#myCustomProtocol trait attached to smithy.example#MyService:
+myCustomProtocol does not support document types.
+</pre></div>
+</div>
+<div class="section" id="map-key-event-id">
+<h3><span class="section-number">17.7.1. </span>Map key event ID<a class="headerlink" href="#map-key-event-id" title="Permalink to this heading">#</a></h3>
+<p>The key of the map is the event ID to use with each emitted validation event.
+The event MUST adhere to the <a class="reference internal" href="model.html#grammar-token-smithy-Namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Namespace</span></code></a> syntax.</p>
+</div>
+<div class="section" id="traitvalidators-validator">
+<span id="id11"></span><h3><span class="section-number">17.7.2. </span>Validator definition<a class="headerlink" href="#traitvalidators-validator" title="Permalink to this heading">#</a></h3>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first"><strong>Required</strong>. A Smithy <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that receives only
+the applied shape. Any shape yielded by the selector is considered
+incompatible with the trait and causes a validation event.</p>
+<p>For example, the following selector would emit an event for any
+member in the closure of the applied shape that targets a boolean
+shape:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">~&gt;</span> <span class="n">member</span> <span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="o">&gt;</span> <span class="n">boolean</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following selector would emit an event only if the trait is bound
+to an operation that defines an input shape with a member named &quot;foo&quot;:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="p">[</span><span class="nb">input</span><span class="p">]</span><span class="o">-&gt;</span> <span class="n">structure</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="p">[</span><span class="nb">id</span><span class="o">|</span><span class="n">member</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>message</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Additional context to include in the message of each emitted validation
+event.</td>
+</tr>
+<tr class="row-even"><td>severity</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The <a class="reference internal" href="#severity-definition"><span class="std std-ref">severity</span></a> to use when an
+incompatible shape is found. Defaults to <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> if not set.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 
         </article>
@@ -1189,6 +1303,11 @@ traits.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#emitnoneselector">17.6.2. EmitNoneSelector</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#traitvalidators-trait">17.7. <code class="docutils literal notranslate"><span class="pre">traitValidators</span></code> trait</a><ul>
+<li><a class="reference internal" href="#map-key-event-id">17.7.1. Map key event ID</a></li>
+<li><a class="reference internal" href="#traitvalidators-validator">17.7.2. Validator definition</a></li>
 </ul>
 </li>
 </ul>

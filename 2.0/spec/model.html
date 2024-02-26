@@ -1665,7 +1665,7 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="vc">TraitChangeType</span>
 
 <span class="w">    </span><span class="c">/// Defines the severity of the change. Defaults to ERROR if not defined.</span>
-<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="vc">TraitChangeSeverity</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span>
+<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="vc">Severity</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span>
 
 <span class="w">    </span><span class="c">/// Provides a reason why the change is potentially backward incompatible.</span>
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1690,7 +1690,7 @@ namespace using a relative shape ID.</p>
 }
 
 <span class="nt">@private</span>
-<span class="kd">enum </span><span class="nc">TraitChangeSeverity</span><span class="w"> </span>{
+<span class="kd">enum </span><span class="nc">Severity</span><span class="w"> </span>{
 <span class="w">    </span><span class="c">/// A minor infraction occurred.</span>
 <span class="w">    </span><span class="vc">NOTE</span>
 
@@ -1777,6 +1777,7 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">traits</span><span class="p">:</span><span class="w"> </span><span class="vc">TraitShapeIdList</span>
 
 <span class="w">    </span><span class="c">/// Set to true if inline documents are not supported by this protocol.</span>
+<span class="w">    </span><span class="nt">@deprecated</span>(<span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Use the `@constrainShapes` trait instead&quot;</span>)
 <span class="w">    </span><span class="py">noInlineDocumentSupport</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span>
 }
 
@@ -1861,6 +1862,49 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="c">/// Defines the security scheme to use in the ``Authorization`` header.</span>
 <span class="w">    </span><span class="c">/// This can only be set if the &quot;in&quot; property is set to ``header``.</span>
 <span class="w">    </span><span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
+}
+
+<span class="c">/// A meta-trait used to apply validation to a specific shape in the model that a trait is applied to.</span>
+<span class="c">///</span>
+<span class="c">/// `traitValidators` is a map of validation event IDs to validators to apply to a shape.</span>
+<span class="c">/// Selectors are used to identify shapes that are incompatible with a constrained trait.</span>
+<span class="c">///</span>
+<span class="c">/// The following example defines a protocol that does not support document types. Each matching member found in the</span>
+<span class="c">/// closure of an attached shape emits a validation event:</span>
+<span class="c">///</span>
+<span class="c">/// ```</span>
+<span class="c">/// @trait(selector: &quot;service&quot;)</span>
+<span class="c">/// @traitValidators(</span>
+<span class="c">///     &quot;myCustomProtocol.NoDocuments&quot;: {</span>
+<span class="c">///         selector: &quot;member :test(&gt; document)&quot;</span>
+<span class="c">///         message: &quot;This protocol does not support document types&quot;</span>
+<span class="c">///     }</span>
+<span class="c">/// )</span>
+<span class="c">/// @protocolDefinition</span>
+<span class="c">/// structure myCustomProtocol {}</span>
+<span class="c">/// ```</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|trait]&quot;</span>)
+<span class="kd">map </span><span class="nc">traitValidators</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The validation event ID to emit when the constraint finds an incompatible shape.</span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// The validator to apply.</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">TraitValidator</span>
+}
+
+<span class="nt">@internal</span>
+<span class="kd">structure </span><span class="nc">TraitValidator</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// A Smithy selector that receives only the shape to which the `traitValidators` trait is applied.</span>
+<span class="w">    </span><span class="c">/// Any shape yielded by the selector is considered incompatible with the trait.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// A message to use when a matching shape is found.</span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// The severity to use when a matching shape is found.</span>
+<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="vc">Severity</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span>
 }
 
 <span class="c">/// Provides a structure member with a default value. When added to root</span>

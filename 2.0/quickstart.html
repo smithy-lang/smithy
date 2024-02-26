@@ -456,12 +456,12 @@ weather service.</p>
 <li>This service provides weather information for cities.</li>
 <li>This service consists of <code class="docutils literal notranslate"><span class="pre">City</span></code> resources and <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resources.</li>
 <li>The <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service has many <code class="docutils literal notranslate"><span class="pre">City</span></code> resources, and a <code class="docutils literal notranslate"><span class="pre">City</span></code>
-resource contains a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> singleton resource.</li>
-<li>This service closure contains the following operations:
+resource contains a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource.</li>
+<li>This service and its resources contain the following operations:
 <code class="docutils literal notranslate"><span class="pre">ListCities</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCity</span></code>, <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCurrentTime</span></code>.</li>
 </ol>
 <p>First, create a directory called <cite>smithy-quickstart</cite> with a <cite>model</cite> directory
-and a weather model file such that your <cite>smithy-quickstart</cite> directory has the
+and a <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model file such that your <cite>smithy-quickstart</cite> directory has the
 following file structure:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>smithy-quickstart/
 └── model/
@@ -470,14 +470,14 @@ following file structure:</p>
 </div>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p>Run the following command to create the quickstart directory</p>
+<p>Run the following command to create the quickstart directory and weather model file</p>
 <div class="last highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p smithy-quickstart/model \
 &amp;&amp; touch smithy-quickstart/model/weather.smithy \
 &amp;&amp; cd smithy-quickstart
 </pre></div>
 </div>
 </div>
-<p>Next, we will start to model a <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service in the <cite>weather.smithy</cite> file.
+<p>Next, we will start to model a <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service in the <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> file.
 <code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a <a class="reference internal" href="spec/idl.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
@@ -519,7 +519,9 @@ identifiers, operations, and any number of child resources.</p>
 <span class="c">/// Provides weather forecasts.</span>
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">City</span>
+<span class="w">    </span>]
 }
 
 <span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
@@ -544,14 +546,16 @@ as the <code class="docutils literal notranslate"><span class="pre">identifiers<
 the resource so that input members of the operation are used to provide the
 identity of the resource.</p>
 <p>Each <code class="docutils literal notranslate"><span class="pre">City</span></code> has a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>. This can be defined by adding the
-<code class="docutils literal notranslate"><span class="pre">Forecast</span></code> to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of the <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of the <code class="docutils literal notranslate"><span class="pre">City</span></code> resource.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span>
 <span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">Forecast</span>
+<span class="w">    </span>]
 }
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
@@ -578,8 +582,19 @@ perform updates on or examine the state of a resource.</p>
 <span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span>
 <span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">Forecast</span>
+<span class="w">    </span>]
 }
+
+<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
+
 
 <span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
 <span class="w">    </span><span class="nl">$coordinates</span>
@@ -629,37 +644,29 @@ your API.</p>
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
-}
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
+<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">        </span><span class="c">// has to be marked as required.</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$cityId</span>
+<span class="w">    </span>}
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nl">$cityId</span>
-}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
+<span class="w">        </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">        </span><span class="c">// will always provide a value for the member.</span>
+<span class="w">        </span><span class="c">// &quot;notProperty&quot; indicates that top-level input member &quot;name&quot;</span>
+<span class="w">        </span><span class="c">// is not bound to any resource property.</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nt">@notProperty</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
-<span class="w">    </span><span class="c">// will always provide a value for the member.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@notProperty</span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$coordinates</span>
+<span class="w">    </span>}
 
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nl">$coordinates</span>
-}
-
-<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
-
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">NoSuchResource</span>
+<span class="w">    </span>]
 }
 
 <span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
@@ -677,21 +684,16 @@ your API.</p>
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
-}
+<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
+<span class="w">    </span><span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$cityId</span>
+<span class="w">    </span>}
 
-<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
-<span class="c">// a Forecast doesn&#39;t have its own.</span>
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
-}
-
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">        </span><span class="nl">$chanceOfRain</span>
+<span class="w">    </span>}
 }
 </pre></div>
 </div>
@@ -718,11 +720,12 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">City</span>
+<span class="w">    </span>]
 }
 
 <span class="c">// The paginated trait indicates that the operation may</span>
@@ -731,22 +734,17 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 <span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
-}
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">    </span>}
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
-}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">    </span>}
 }
 
 <span class="c">// CitySummaries is a list of CitySummary structures.</span>
@@ -755,7 +753,11 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])
+<span class="nt">@references</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>
+<span class="w">    </span>}
+])
 <span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
@@ -796,27 +798,23 @@ service.</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">City</span>
+<span class="w">    </span>]
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">GetCurrentTime</span>
+<span class="w">    </span>]
 }
 
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
-}
-
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}
-
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+<span class="w">    </span>}
 }
 </pre></div>
 </div>
@@ -968,31 +966,38 @@ show how to use tools like the Smithy CLI or
 </div>
 </div>
 <p>The complete <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model should look like:</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">weather.smithy</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
 <span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(
-<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>
-)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">City</span>
+<span class="w">    </span>]
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">GetCurrentTime</span>
+<span class="w">    </span>]
 }
 
 <span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span>
 <span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">Forecast</span>
+<span class="w">    </span>]
 }
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="p">,</span>
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
 }
 
 <span class="c">// &quot;pattern&quot; is a trait.</span>
@@ -1001,28 +1006,29 @@ show how to use tools like the Smithy CLI or
 
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
-}
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
+<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">        </span><span class="c">// has to be marked as required.</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$cityId</span>
+<span class="w">    </span>}
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
-}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
+<span class="w">        </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">        </span><span class="c">// will always provide a value for the member.</span>
+<span class="w">        </span><span class="c">// &quot;notProperty&quot; indicates that top-level input member &quot;name&quot;</span>
+<span class="w">        </span><span class="c">// is not bound to any resource property.</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nt">@notProperty</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
-<span class="w">    </span><span class="c">// will always provide a value for the member.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$coordinates</span>
+<span class="w">    </span>}
 
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">NoSuchResource</span>
+<span class="w">    </span>]
 }
 
 <span class="c">// This structure is nested within GetCityOutput.</span>
@@ -1047,22 +1053,17 @@ show how to use tools like the Smithy CLI or
 <span class="nt">@readonly</span>
 <span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
 <span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
-}
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">    </span>}
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
-}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">    </span>}
 }
 
 <span class="c">// CitySummaries is a list of CitySummary structures.</span>
@@ -1071,7 +1072,11 @@ show how to use tools like the Smithy CLI or
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])
+<span class="nt">@references</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>
+<span class="w">    </span>}
+])
 <span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
@@ -1082,38 +1087,27 @@ show how to use tools like the Smithy CLI or
 
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
-}
-
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}
-
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+<span class="w">    </span>}
 }
 
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
-}
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
+<span class="w">        </span><span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="nl">$cityId</span>
+<span class="w">    </span>}
 
-<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
-<span class="c">// a Forecast doesn&#39;t have its own.</span>
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
-}
-
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">        </span><span class="nl">$chanceOfRain</span>
+<span class="w">    </span>}
 }
 </pre></div>
+</div>
 </div>
 </div>
 </div>

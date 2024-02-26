@@ -379,24 +379,84 @@ properties are identifiers or have restrictions on their mutability.</p>
 <div class="section" id="generating-schemas-with-smithy-build">
 <h2>Generating Schemas with smithy-build<a class="headerlink" href="#generating-schemas-with-smithy-build" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> plugin contained in the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code>
-package can be used with smithy-build and the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin">Smithy Gradle plugin</a> to
+package can be used with either the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin">Smithy Gradle plugin</a> or <a class="reference internal" href="../smithy-cli/index.html#smithy-cli"><span class="std std-ref">Smithy CLI</span></a> to
 generate CloudFormation Resource Schemas from Smithy models.</p>
-<p>The following example shows how to configure Gradle to generate CloudFormation
-Resource Schemas from a Smithy model <a class="reference internal" href="../gradle-plugin/index.html#artifacts-from-smithy-models"><span class="std std-ref">using a buildscript dependency</span></a>:</p>
-<div class="literal-block-wrapper docutils container" id="cfn-smithy-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">#</a></div>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">java</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot;</span><span class="p">)</span>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Smithy CLI</label><div class="tab-content docutils container">
+<p>The following example shows how to generate CloudFormation
+Resource Schemas from a Smithy model using the Smithy CLI:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="c1">// Required for @service trait</span>
+<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">A dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot; is
+required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
+to the correct Java library implementation.</p>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Gradle</label><div class="tab-content docutils container">
+<p>The following example shows how to configure Gradle to generate CloudFormation
+Resource Schemas from a Smithy model <a class="reference internal" href="../gradle-plugin/index.html#artifacts-from-smithy-models"><span class="std std-ref">using a build-only dependency</span></a>:</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">java</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.10.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// Required for @service trait</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;0.10.0&#39;</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&#39;</span>
+<span class="w">    </span><span class="c1">// Required for @service trait</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">A build-only dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot; is
+required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
+to the correct Java library implementation.</p>
 </div>
 <p>The Smithy Gradle plugin relies on a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file found at the
 root of a project to define the actual process of generating the CloudFormation
@@ -404,8 +464,8 @@ Resource Schemas. The following example defines a <code class="docutils literal 
 that generates a CloudFormation Resource Schemas for the specified resource
 shapes bound to the <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code> service using the <code class="docutils literal notranslate"><span class="pre">Smithy</span></code>
 organization.</p>
-<div class="literal-block-wrapper docutils container" id="cfn-smithy-build-json">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#cfn-smithy-build-json" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -418,11 +478,13 @@ organization.</p>
 </pre></div>
 </div>
 </div>
+</div>
+</div>
 <p>AWS Service teams SHOULD NOT set the <code class="docutils literal notranslate"><span class="pre">organizationName</span></code> property, and instead
 use the <a class="reference internal" href="../../aws/aws-core.html#service-cloudformation-name"><span class="std std-ref">cloudFormationName property of the aws.api#service trait</span></a>. The following configuration and model would
 generate one Resource Schema with the <code class="docutils literal notranslate"><span class="pre">typeName</span></code> of <code class="docutils literal notranslate"><span class="pre">AWS:Queues:Queue</span></code>.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -434,8 +496,8 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -449,12 +511,6 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 }
 </pre></div>
 </div>
-</div>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot; is
-required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
-to the correct Java library implementation.</p>
 </div>
 </div>
 <div class="section" id="cloudformation-configuration-settings">
@@ -470,6 +526,8 @@ Resource Schemas that it generates.</p>
 <dl class="docutils" id="generate-cloudformation-setting-service">
 <dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../../spec/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id9" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -481,12 +539,15 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-organizationname">
 <dt>organizationName (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">Organization</span></code> component of the resource's <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName">type name</a>. Defaults to
 &quot;AWS&quot; if the <a class="reference internal" href="../../aws/aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> is present, otherwise is
 <strong>required</strong>.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id10" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -497,6 +558,7 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
+</div>
 </div>
 </dd>
 </dl>
@@ -505,6 +567,8 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 This value defaults to the <a class="reference internal" href="../../aws/aws-core.html#service-cloudformation-name"><span class="std std-ref">cloudFormationName property of the
 aws.api#service trait</span></a> if present, or the
 shape name of the specified service shape otherwise.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id11" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -517,6 +581,7 @@ shape name of the specified service shape otherwise.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-externaldocs">
@@ -525,6 +590,8 @@ specified priority ordered list of names in an <a class="reference internal" hre
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Documentation Url&quot;, &quot;DocumentationUrl&quot;, &quot;API Reference&quot;, &quot;User
 Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide&quot;.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -540,6 +607,7 @@ Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-sourcedocs">
@@ -547,6 +615,8 @@ Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide
 priority ordered list of names in an <a class="reference internal" href="../../spec/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a>.
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &quot;Source Code&quot;.</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -562,6 +632,7 @@ values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-jsonadd">
@@ -574,6 +645,8 @@ the nested map is the JSON value to add or replace at the given target.</p>
 JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
 properties to an undefined object will create nested objects in the
 result as needed.</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -594,6 +667,7 @@ result as needed.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-disablehandlerpermissiongeneration">
@@ -604,6 +678,8 @@ listed in the <a class="reference internal" href="../../aws/aws-iam.html#aws-iam
 trait</span></a> on the operation. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers">the handlers
 section</a> in the CloudFormation Resource Schemas documentation for more
 information.</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id15" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -615,6 +691,7 @@ information.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
+</div>
 </div>
 <p>CloudFormation Resource Schema handlers determine what provisioning actions
 can be performed for the resource. The handlers utilized by CloudFormation
@@ -663,6 +740,8 @@ Schemas. By default, deprecated members are automatically added to the
 <code class="docutils literal notranslate"><span class="pre">deprecatedProperties</span></code> schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-deprecatedproperties">the deprecatedProperties
 section</a> in the CloudFormation Resource Schemas documentation for more
 information.</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id16" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -675,6 +754,7 @@ information.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-disablerequiredpropertygeneration">
@@ -682,6 +762,8 @@ information.</p>
 default, required members are automatically added to the <code class="docutils literal notranslate"><span class="pre">required</span></code>
 schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required">the required property section</a> in the CloudFormation
 Resource Schemas documentation for more information.</p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id17" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -694,6 +776,7 @@ Resource Schemas documentation for more information.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-disablecapitalizedproperties">
@@ -701,6 +784,8 @@ Resource Schemas documentation for more information.</p>
 Resource Schemas. By default, property names of resource schemas are
 capitalized if no <a class="reference internal" href="../../aws/aws-cloudformation.html#aws-cloudformation-cfnname-trait"><span class="std std-ref">cfnName</span></a> trait
 is applied.</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id18" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -713,6 +798,7 @@ is applied.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 </div>
@@ -723,6 +809,8 @@ is applied.</p>
 no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id19" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -735,11 +823,14 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-schemadocumentextensions">
 <dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to all of the generated
 CloudFormation Resource Schemas. Any existing value is overwritten.</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id20" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -757,11 +848,14 @@ CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-disablefeatures">
 <dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and CloudFormation schema property names from
 appearing in the generated CloudFormation Resource Schemas.</p>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id21" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -774,14 +868,15 @@ appearing in the generated CloudFormation Resource Schemas.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-useintegertype">
 <dt>useIntegerType (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to use the <code class="docutils literal notranslate"><span class="pre">integer</span></code> type when converting <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>,
 <code class="docutils literal notranslate"><span class="pre">integer</span></code>, and <code class="docutils literal notranslate"><span class="pre">long</span></code> shapes.</p>
 <p>By default, these shape types are converted with a type of <code class="docutils literal notranslate"><span class="pre">number</span></code>.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id22" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -826,14 +921,26 @@ the generation.</p>
 <p>First, you'll need to get a copy of the library. The following example shows
 how to install <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code> through
 Gradle:</p>
-<div class="literal-block-wrapper docutils container" id="cfn-code-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">#</a></div>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">}</span>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id23" title="Permalink to this code">#</a></div>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id24" title="Permalink to this code">#</a></div>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.45.0&#39;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <p>Next, you need to create and configure a <code class="docutils literal notranslate"><span class="pre">CloudFormationConverter</span></code>:</p>

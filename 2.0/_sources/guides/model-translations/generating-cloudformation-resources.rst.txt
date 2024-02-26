@@ -44,48 +44,105 @@ Generating Schemas with smithy-build
 ------------------------------------
 
 The ``cloudformation`` plugin contained in the ``software.amazon.smithy:smithy-aws-cloudformation``
-package can be used with smithy-build and the `Smithy Gradle plugin`_ to
+package can be used with either the `Smithy Gradle plugin`_ or :ref:`Smithy CLI <smithy-cli>` to
 generate CloudFormation Resource Schemas from Smithy models.
 
-The following example shows how to configure Gradle to generate CloudFormation
-Resource Schemas from a Smithy model :ref:`using a buildscript dependency
-<artifacts-from-smithy-models>`:
+.. tab:: Smithy CLI
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
-    :name: cfn-smithy-build-gradle
+    The following example shows how to generate CloudFormation
+    Resource Schemas from a Smithy model using the Smithy CLI:
 
-    plugins {
-        java
-        id("software.amazon.smithy").version("0.6.0")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
 
-    buildscript {
-        dependencies {
-            classpath("software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__")
-        }
-    }
-
-The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
-root of a project to define the actual process of generating the CloudFormation
-Resource Schemas. The following example defines a ``smithy-build.json`` file
-that generates a CloudFormation Resource Schemas for the specified resource
-shapes bound to the ``smithy.example#Queues`` service using the ``Smithy``
-organization.
-
-.. code-block:: json
-    :caption: smithy-build.json
-    :name: cfn-smithy-build-json
-
-    {
-        "version": "1.0",
-        "plugins": {
-            "cloudformation": {
-                "service": "smithy.example#Queues",
-                "organizationName": "Smithy"
+        {
+            "version": "1.0",
+            "maven": {
+                "dependencies": [
+                  "software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__",
+                  // Required for @service trait
+                  "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+                ]
+            },
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy"
+                }
             }
         }
-    }
+
+    .. important::
+
+        A dependency on "software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__" is
+        required in order for smithy-build to map the "cloudformation" plugin name
+        to the correct Java library implementation.
+
+.. tab:: Gradle
+
+    The following example shows how to configure Gradle to generate CloudFormation
+    Resource Schemas from a Smithy model :ref:`using a build-only dependency
+    <artifacts-from-smithy-models>`:
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                java
+                id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+            }
+
+            dependencies {
+                smithyBuild("software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__")
+                // Required for @service trait
+                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+            }
+
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+            }
+
+            dependencies {
+                smithyBuild 'software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__'
+                // Required for @service trait
+                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+            }
+
+
+    .. important::
+
+        A build-only dependency on "software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__" is
+        required in order for smithy-build to map the "cloudformation" plugin name
+        to the correct Java library implementation.
+
+    The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
+    root of a project to define the actual process of generating the CloudFormation
+    Resource Schemas. The following example defines a ``smithy-build.json`` file
+    that generates a CloudFormation Resource Schemas for the specified resource
+    shapes bound to the ``smithy.example#Queues`` service using the ``Smithy``
+    organization.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy"
+                }
+            }
+        }
 
 AWS Service teams SHOULD NOT set the ``organizationName`` property, and instead
 use the :ref:`cloudFormationName property of the aws.api#service trait
@@ -119,12 +176,6 @@ generate one Resource Schema with the ``typeName`` of ``AWS:Queues:Queue``.
         resources: [Queue]
     }
 
-.. important::
-
-    A buildscript dependency on "software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__" is
-    required in order for smithy-build to map the "cloudformation" plugin name
-    to the correct Java library implementation.
-
 
 -------------------------------------
 CloudFormation configuration settings
@@ -147,6 +198,7 @@ service (``string``)
     For example, ``smithy.example#Queues``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -166,6 +218,7 @@ organizationName (``string``)
     **required**.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -186,6 +239,7 @@ serviceName (``string``)
     shape name of the specified service shape otherwise.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -208,6 +262,7 @@ externalDocs (``[string]``)
     Guide", "Developer Guide", "Reference", and "Guide".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -234,6 +289,7 @@ sourceDocs (``[string]``)
     values: "Source Url", "SourceUrl", "Source", and "Source Code".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -266,6 +322,7 @@ jsonAdd (``Map<String, Map<String, Node>>``)
     result as needed.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -298,6 +355,7 @@ disableHandlerPermissionGeneration (``boolean``)
     information.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -363,6 +421,7 @@ disableDeprecatedPropertyGeneration (``boolean``)
     information.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -384,6 +443,7 @@ disableRequiredPropertyGeneration (``boolean``)
     Resource Schemas documentation for more information.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -405,6 +465,7 @@ disableCapitalizedProperties (``boolean``)
     is applied.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -430,6 +491,7 @@ defaultTimestampFormat (``string``)
     "epoch-seconds", or "http-date".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -449,6 +511,7 @@ schemaDocumentExtensions (``Map<String, any>``)
     CloudFormation Resource Schemas. Any existing value is overwritten.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -473,6 +536,7 @@ disableFeatures (``[string]``)
     appearing in the generated CloudFormation Resource Schemas.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -546,15 +610,24 @@ First, you'll need to get a copy of the library. The following example shows
 how to install ``software.amazon.smithy:smithy-aws-cloudformation`` through
 Gradle:
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
-    :name: cfn-code-build-gradle
+.. tab:: Kotlin
 
-    buildscript {
+    .. code-block:: kotlin
+        :caption: build.gradle.kts
+
         dependencies {
-            classpath("software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__")
+            implementation("software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__")
         }
-    }
+
+.. tab:: Groovy
+
+    .. code-block:: groovy
+        :caption: build.gradle
+
+        dependencies {
+            implementation 'software.amazon.smithy:smithy-aws-cloudformation:__smithy_version__'
+        }
+
 
 Next, you need to create and configure a ``CloudFormationConverter``:
 
