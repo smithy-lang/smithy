@@ -106,59 +106,121 @@ The ``openapi`` plugin contained in the ``software.amazon.smithy:smithy-openapi`
 package can be used with smithy-build and the `Smithy Gradle plugin`_ to build
 OpenAPI specifications from Smithy models.
 
-The following example shows how to configure Gradle to build an OpenAPI
-specification from a Smithy model using a buildscript dependency:
+.. tab:: Smithy CLI
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
-    :name: openapi-smithy-build-gradle
+    .. admonition:: Install required tools
+        :class: tip
 
-    plugins {
-        java
-        id("software.amazon.smithy").version("0.6.0")
-    }
+        Before you proceed, make sure you have the :ref:`Smithy CLI installed <cli_installation>`.
 
-    buildscript {
-        dependencies {
-            classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
-            // The openapi plugin configured in the smithy-build.json example below
-            // uses the restJson1 protocol defined in the aws-traits package. This
-            // additional dependency must added to use that protocol.
-            classpath("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
-        }
-    }
+    The following example shows how to use the Smithy CLI to build an OpenAPI
+    specification from a Smithy model.
 
-    dependencies {
-        // The dependency for restJson1 is required here too.
-        implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
 
-The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
-root of a project to define the actual process of building the OpenAPI
-specification. The following example defines a ``smithy-build.json`` file
-that builds an OpenAPI specification from a service for the
-``example.weather#Weather`` service using the ``aws.protocols#restJson1`` protocol:
-
-.. code-block:: json
-    :caption: smithy-build.json
-    :name: open-api-smithy-build-json
-
-    {
-        "version": "1.0",
-        "plugins": {
+        {
+          "version": "1.0",
+          "sources": ["models"],
+          "maven": {
+            "dependencies": [
+              "software.amazon.smithy:smithy-openapi:__smithy_version__",
+              // Required for restJson1 trait.
+              "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+            ]
+          },
+          "plugins": {
             "openapi": {
-                "service": "example.weather#Weather",
-                "protocol": "aws.protocols#restJson1"
+              "service": "smithy.example#Weather",
+              "protocol": "aws.protocols#restJson1",
+              "version": "3.1.0"
             }
+          }
         }
-    }
 
-.. important::
+    To build the Smithy model and generate the OpenAPI artifact, run ``smithy build``.
 
-    A buildscript dependency on "software.amazon.smithy:smithy-openapi:__smithy_version__" is
-    required in order for smithy-build to map the "openapi" plugin name to the
-    correct Java library implementation.
+    .. tip::
 
+        You can clone a working version of this example using the
+        :ref:`Smithy CLI <smithy-cli>` ``init`` command.
+
+        .. code-block::
+
+            smithy init -t smithy-to-openapi -o <output_directory>
+
+.. tab:: Gradle
+
+    .. admonition:: Install required tools
+        :class: tip
+
+        Before you proceed, make sure you have `gradle installed`_.
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                java
+                // Use the `smithy-jar` plugin if you also want to package
+                // smithy models into the JAR created by the `java` plugin.
+                id("software.amazon.smithy-base").version("0.10.0")
+            }
+
+            dependencies {
+                smithyBuild("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+
+                // Required for restJson1 trait.
+                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java'
+                // Use the `smithy-jar` plugin if you also want to package
+                // smithy models into the JAR created by the `java` plugin.
+                id 'software.amazon.smithy-base' version '0.10.0'
+            }
+
+            dependencies {
+                smithyBuild 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+
+                // Required for restJson1 trait.
+                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+            }
+
+    .. important::
+
+        A build-only dependency on "software.amazon.smithy:smithy-openapi:__smithy_version__" is
+        required in order for smithy-build to map the "openapi" plugin name to the
+        correct Java library implementation.
+
+    The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
+    root of a project to define the actual process of building the OpenAPI
+    specification. The following example defines a ``smithy-build.json`` file
+    that builds an OpenAPI specification from a service for the
+    ``example.weather#Weather`` service using the ``aws.protocols#restJson1`` protocol:
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+          "version": "1.0",
+          "plugins": {
+            "openapi": {
+              "service": "smithy.example#Weather",
+              "protocol": "aws.protocols#restJson1",
+              "version": "3.1.0"
+            }
+          }
+        }
+
+    To build the Smithy model and generate the OpenAPI artifact, run ``gradle build``.
 
 ------------------------------
 OpenAPI configuration settings
@@ -578,6 +640,7 @@ disableIntegerFormat (``boolean``)
     or ``int64`` for Integer or Long shapes respectively.
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "Foo": {
@@ -812,6 +875,7 @@ supportNonNumericFloats (``boolean``)
     look like this:
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "floatMember": {
@@ -822,6 +886,7 @@ supportNonNumericFloats (``boolean``)
     With this enabled, references to floats/doubles will look like this:
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "floatMember": {
@@ -863,6 +928,7 @@ disableDefaultValues (``boolean``)
     With this disabled, default values will not appear in the output:
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "Foo": {
@@ -891,6 +957,7 @@ disableDefaultValues (``boolean``)
     pointers wrapped in an ``allOf``:
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "Foo": {
@@ -948,6 +1015,7 @@ disableIntEnums (``boolean``)
     will not be set:
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "Foo": {
@@ -964,6 +1032,7 @@ disableIntEnums (``boolean``)
     property set and the schema will use a ``$ref``.
 
     .. code-block:: json
+        :caption: Weather.openapi.json
 
         {
             "Foo": {
@@ -1009,6 +1078,7 @@ Smithy provides built-in support for the following authentication traits:
 For example, given the following Smithy model:
 
 .. code-block:: smithy
+    :caption: main.smithy
 
     $version: "2"
     namespace smithy.example
@@ -1028,6 +1098,7 @@ For example, given the following Smithy model:
 Smithy will generate the following OpenAPI model:
 
 .. code-block:: json
+    :caption: Foo.openapi.json
 
     {
         "openapi": "3.0.2",
@@ -1143,26 +1214,65 @@ OpenAPI conversion traits
 The ``software.amazon.smithy:smithy-openapi-traits`` package defines traits used to augment the conversion
 of a Smithy model into an OpenAPI specification.
 
-The following example shows how to add it to your Gradle build alongside the ``smithy-openapi`` plugin:
+.. tab:: Smithy CLI
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
+    .. code-block:: json
+        :caption: smithy-build.json
 
-    plugins {
-        java
-        id("software.amazon.smithy").version("0.6.0")
-    }
-
-    buildscript {
-        dependencies {
-            classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
-            classpath("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+        {
+          "version": "1.0",
+          "sources": ["models"],
+          "maven": {
+            "dependencies": [
+              "software.amazon.smithy:smithy-openapi:__smithy_version__",
+              "software.amazon.smithy:smithy-openapi-traits:__smithy_version__",
+              // Required for restJson1 trait.
+              "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+            ]
+          },
+          "...": "..."
         }
-    }
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
-    }
+.. tab:: Gradle
+
+    The following example shows how to add the package to your Gradle build alongside the
+    ``smithy-openapi`` plugin:
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                java
+                id("software.amazon.smithy.gradle.smithy-base").version("0.10.0")
+            }
+
+            dependencies {
+                smithyBuild("software.amazon.smithy:smithy-openapi:__smithy_version__")
+
+                implementation("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+                // Required for restJson1 trait.
+                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java'
+                id 'software.amazon.smithy.gradle.smithy-base' version '0.10.0'
+            }
+
+            dependencies {
+                smithyBuild 'software.amazon.smithy:smithy-openapi:__smithy_version__'
+
+                implementation 'software.amazon.smithy:smithy-openapi-traits:__smithy_version__'
+                // Required for restJson1 trait.
+                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+            }
 
 Refer to `Converting to OpenAPI with smithy-build`_ for more detailed information about using the plugin and Gradle.
 
@@ -1299,15 +1409,42 @@ Smithy models can be converted to OpenAPI specifications that contain
 API Gateway extensions are automatically picked up by Smithy by adding a
 dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
-    :name: apigateway-build-gradle
+.. tab:: Smithy CLI
 
-    buildscript {
-        dependencies {
-            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:__smithy_version__")
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+          "version": "1.0",
+          "sources": ["models"],
+          "maven": {
+            "dependencies": [
+              "...",
+              "software.amazon.smithy:smithy-aws-apigateway-openapi:__smithy_version__"
+            ]
+          },
+          "...": "..."
         }
-    }
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                smithyBuild("software.amazon.smithy:smithy-aws-apigateway-openapi:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                smithyBuild 'software.amazon.smithy:smithy-aws-apigateway-openapi:__smithy_version__'
+            }
 
 
 Amazon API Gateway configuration settings
@@ -1837,15 +1974,23 @@ to perform the conversion.
 First, you'll need to get a copy of the library. The following example
 shows how to install ``software.amazon.smithy:smithy-openapi`` through Gradle:
 
-.. code-block:: kotlin
-    :caption: build.gradle.kts
-    :name: openapi-code-build-gradle
+.. tab:: Kotlin
 
-    buildscript {
+    .. code-block:: kotlin
+        :caption: build.gradle.kts
+
         dependencies {
-            classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
+            implementation("software.amazon.smithy:smithy-openapi:__smithy_version__")
         }
-    }
+
+.. tab:: Groovy
+
+    .. code-block:: groovy
+        :caption: build.gradle
+
+        dependencies {
+            implementation 'software.amazon.smithy:smithy-openapi:__smithy_version__'
+        }
 
 Next, you need to create and configure an ``OpenApiConverter``:
 
@@ -1892,3 +2037,4 @@ The conversion process is highly extensible through
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
+.. _gradle installed: https://gradle.org/install/
