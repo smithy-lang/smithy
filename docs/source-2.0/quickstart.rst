@@ -297,6 +297,8 @@ Let's define the operation used to "read" a ``City``.
         output := for City {
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
             @required
             @notProperty
             name: String
@@ -646,6 +648,7 @@ The complete ``weather.smithy`` model should look like:
 
     resource Forecast {
         identifiers: { cityId: CityId }
+        properties: { chanceOfRain: Float }
         read: GetForecast
     }
 
@@ -665,6 +668,8 @@ The complete ``weather.smithy`` model should look like:
         output := for City {
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
             @required
             @notProperty
             name: String
