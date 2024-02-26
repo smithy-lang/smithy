@@ -621,6 +621,7 @@ If you followed all the steps in this guide, your working directory should be la
 The complete ``weather.smithy`` model should look like:
 
 .. code-block:: smithy
+    :caption: weather.smithy
 
     $version: "2"
     namespace example.weather
