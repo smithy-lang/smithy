@@ -89,12 +89,12 @@ weather service.
 1. This service provides weather information for cities.
 2. This service consists of ``City`` resources and ``Forecast`` resources.
 3. The ``Weather`` service has many ``City`` resources, and a ``City``
-   resource contains a single ``Forecast`` singleton resource.
-4. This service closure contains the following operations:
+   resource contains a single ``Forecast`` resource.
+4. This service and its resources contain the following operations:
    ``ListCities``, ``GetCity``, ``GetForecast``, ``GetCurrentTime``.
 
 First, create a directory called `smithy-quickstart` with a `model` directory
-and a weather model file such that your `smithy-quickstart` directory has the
+and a ``weather.smithy`` model file such that your `smithy-quickstart` directory has the
 following file structure:
 
 .. code-block:: text
@@ -105,7 +105,7 @@ following file structure:
 
 .. tip::
 
-    Run the following command to create the quickstart directory
+    Run the following command to create the quickstart directory and weather model file
 
     .. code-block:: text
 
@@ -113,7 +113,7 @@ following file structure:
         && touch smithy-quickstart/model/weather.smithy \
         && cd smithy-quickstart
 
-Next, we will start to model a ``Weather`` service in the `weather.smithy` file.
+Next, we will start to model a ``Weather`` service in the ``weather.smithy`` file.
 ``Weather`` is a :ref:`service` shape that is defined inside of a :ref:`namespace <namespaces>`.
 
 .. code-block:: smithy
@@ -158,7 +158,9 @@ identifiers, operations, and any number of child resources.
     /// Provides weather forecasts.
     service Weather {
         version: "2006-03-01"
-        resources: [City]
+        resources: [
+            City
+        ]
     }
 
     resource City {
@@ -182,7 +184,7 @@ the resource so that input members of the operation are used to provide the
 identity of the resource.
 
 Each ``City`` has a single ``Forecast``. This can be defined by adding the
-``Forecast`` to the ``resources`` property of the ``City``.
+``Forecast`` resource to the ``resources`` property of the ``City`` resource.
 
 .. code-block:: smithy
     :caption: model/weather.smithy
@@ -191,7 +193,9 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
         identifiers: { cityId: CityId }
         read: GetCity
         list: ListCities
-        resources: [Forecast]
+        resources: [
+            Forecast
+        ]
     }
 
     resource Forecast {
@@ -219,8 +223,19 @@ perform updates on or examine the state of a resource.
         properties: { coordinates: CityCoordinates }
         read: GetCity
         list: ListCities
-        resources: [Forecast]
+        resources: [
+            Forecast
+        ]
     }
+
+    structure CityCoordinates {
+        @required
+        latitude: Float
+
+        @required
+        longitude: Float
+    }
+
 
     structure GetCityOutput for City {
         $coordinates
@@ -272,37 +287,29 @@ Let's define the operation used to "read" a ``City``.
 
     @readonly
     operation GetCity {
-        input: GetCityInput
-        output: GetCityOutput
-        errors: [NoSuchResource]
-    }
+        input := for City {
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            $cityId
+        }
 
-    @input
-    structure GetCityInput for City {
-        // "cityId" provides the identifier for the resource and
-        // has to be marked as required.
-        @required
-        $cityId
-    }
+        output := for City {
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
+            @required
+            @notProperty
+            name: String
 
-    @output
-    structure GetCityOutput {
-        // "required" is used on output to indicate if the service
-        // will always provide a value for the member.
-        @required
-        @notProperty
-        name: String
+            @required
+            $coordinates
+        }
 
-        @required
-        $coordinates
-    }
-
-    structure CityCoordinates {
-        @required
-        latitude: Float
-
-        @required
-        longitude: Float
+        errors: [
+            NoSuchResource
+        ]
     }
 
     // "error" is a trait that is used to specialize
@@ -320,21 +327,16 @@ And define the operation used to "read" a ``Forecast``.
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput
-        output: GetForecastOutput
-    }
+        // "cityId" provides the only identifier for the resource since
+        // a Forecast doesn't have its own.
+        input := for Forecast {
+            @required
+            $cityId
+        }
 
-    // "cityId" provides the only identifier for the resource since
-    // a Forecast doesn't have its own.
-    @input
-    structure GetForecastInput {
-        @required
-        cityId: CityId
-    }
-
-    @output
-    structure GetForecastOutput {
-        chanceOfRain: Float
+        output := for Forecast {
+            $chanceOfRain
+        }
     }
 
 .. admonition:: Review
@@ -361,11 +363,12 @@ cities, so there's no way we could provide a ``City`` identifier.
     :caption: model/weather.smithy
 
     /// Provides weather forecasts.
-    @paginated(inputToken: "nextToken", outputToken: "nextToken",
-               pageSize: "pageSize")
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
+        resources: [
+            City
+        ]
     }
 
     // The paginated trait indicates that the operation may
@@ -374,22 +377,17 @@ cities, so there's no way we could provide a ``City`` identifier.
     @paginated(items: "items")
     @readonly
     operation ListCities {
-        input: ListCitiesInput
-        output: ListCitiesOutput
-    }
+        input := {
+            nextToken: String
+            pageSize: Integer
+        }
 
-    @input
-    structure ListCitiesInput {
-        nextToken: String
-        pageSize: Integer
-    }
+        output := {
+            nextToken: String
 
-    @output
-    structure ListCitiesOutput {
-        nextToken: String
-
-        @required
-        items: CitySummaries
+            @required
+            items: CitySummaries
+        }
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -398,7 +396,11 @@ cities, so there's no way we could provide a ``City`` identifier.
     }
 
     // CitySummary contains a reference to a City.
-    @references([{resource: City}])
+    @references([
+        {
+            resource: City
+        }
+    ])
     structure CitySummary {
         @required
         cityId: CityId
@@ -443,27 +445,23 @@ service.
     :caption: model/weather.smithy
 
     /// Provides weather forecasts.
-    @paginated(inputToken: "nextToken", outputToken: "nextToken",
-               pageSize: "pageSize")
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
-        operations: [GetCurrentTime]
+        resources: [
+            City
+        ]
+        operations: [
+            GetCurrentTime
+        ]
     }
 
     @readonly
     operation GetCurrentTime {
-        input: GetCurrentTimeInput
-        output: GetCurrentTimeOutput
-    }
-
-    @input
-    structure GetCurrentTimeInput {}
-
-    @output
-    structure GetCurrentTimeOutput {
-        @required
-        time: Timestamp
+        output := {
+            @required
+            time: Timestamp
+        }
     }
 
 
@@ -624,30 +622,35 @@ The complete ``weather.smithy`` model should look like:
     :caption: weather.smithy
 
     $version: "2"
+
     namespace example.weather
 
     /// Provides weather forecasts.
-    @paginated(
-        inputToken: "nextToken"
-        outputToken: "nextToken"
-        pageSize: "pageSize"
-    )
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
-        operations: [GetCurrentTime]
+        resources: [
+            City
+        ]
+        operations: [
+            GetCurrentTime
+        ]
     }
 
     resource City {
         identifiers: { cityId: CityId }
+        properties: { coordinates: CityCoordinates }
         read: GetCity
         list: ListCities
-        resources: [Forecast]
+        resources: [
+            Forecast
+        ]
     }
 
     resource Forecast {
         identifiers: { cityId: CityId }
-        read: GetForecast,
+        properties: { chanceOfRain: Float }
+        read: GetForecast
     }
 
     // "pattern" is a trait.
@@ -656,28 +659,29 @@ The complete ``weather.smithy`` model should look like:
 
     @readonly
     operation GetCity {
-        input: GetCityInput
-        output: GetCityOutput
-        errors: [NoSuchResource]
-    }
+        input := for City {
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            $cityId
+        }
 
-    @input
-    structure GetCityInput {
-        // "cityId" provides the identifier for the resource and
-        // has to be marked as required.
-        @required
-        cityId: CityId
-    }
+        output := for City {
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
+            @required
+            @notProperty
+            name: String
 
-    @output
-    structure GetCityOutput {
-        // "required" is used on output to indicate if the service
-        // will always provide a value for the member.
-        @required
-        name: String
+            @required
+            $coordinates
+        }
 
-        @required
-        coordinates: CityCoordinates
+        errors: [
+            NoSuchResource
+        ]
     }
 
     // This structure is nested within GetCityOutput.
@@ -702,22 +706,17 @@ The complete ``weather.smithy`` model should look like:
     @readonly
     @paginated(items: "items")
     operation ListCities {
-        input: ListCitiesInput
-        output: ListCitiesOutput
-    }
+        input := {
+            nextToken: String
+            pageSize: Integer
+        }
 
-    @input
-    structure ListCitiesInput {
-        nextToken: String
-        pageSize: Integer
-    }
+        output := {
+            nextToken: String
 
-    @output
-    structure ListCitiesOutput {
-        nextToken: String
-
-        @required
-        items: CitySummaries
+            @required
+            items: CitySummaries
+        }
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -726,7 +725,11 @@ The complete ``weather.smithy`` model should look like:
     }
 
     // CitySummary contains a reference to a City.
-    @references([{resource: City}])
+    @references([
+        {
+            resource: City
+        }
+    ])
     structure CitySummary {
         @required
         cityId: CityId
@@ -737,36 +740,24 @@ The complete ``weather.smithy`` model should look like:
 
     @readonly
     operation GetCurrentTime {
-        input: GetCurrentTimeInput
-        output: GetCurrentTimeOutput
-    }
-
-    @input
-    structure GetCurrentTimeInput {}
-
-    @output
-    structure GetCurrentTimeOutput {
-        @required
-        time: Timestamp
+        output := {
+            @required
+            time: Timestamp
+        }
     }
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput
-        output: GetForecastOutput
-    }
+        input := for Forecast {
+            // "cityId" provides the only identifier for the resource since
+            // a Forecast doesn't have its own.
+            @required
+            $cityId
+        }
 
-    // "cityId" provides the only identifier for the resource since
-    // a Forecast doesn't have its own.
-    @input
-    structure GetForecastInput {
-        @required
-        cityId: CityId
-    }
-
-    @output
-    structure GetForecastOutput {
-        chanceOfRain: Float
+        output := for Forecast {
+            $chanceOfRain
+        }
     }
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
