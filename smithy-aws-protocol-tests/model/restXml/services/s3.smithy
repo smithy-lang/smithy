@@ -43,7 +43,8 @@ service AmazonS3 {
     operations: [
         ListObjectsV2,
         GetBucketLocation,
-        DeleteObjectTagging
+        DeleteObjectTagging,
+        GetObject
     ],
 }
 
@@ -343,6 +344,74 @@ operation DeleteObjectTagging {
     output: DeleteObjectTaggingOutput
 }
 
+@httpRequestTests([
+    {
+        id: "S3PreservesLeadingDotSegmentInUriLabel",
+        documentation: """
+            S3 clients should not remove dot segments from request paths.
+        """,
+        protocol: restXml,
+        method: "GET",
+        uri: "/../key.txt",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "tagging"
+        ],
+        params: {
+            Bucket: "mybucket",
+            Key: "../key.txt"
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                },
+                s3: {
+                    addressing_style: "virtual",
+                },
+            },
+        },
+    },
+    {
+        id: "S3PreservesEmbeddedDotSegmentInUriLabel",
+        documentation: """
+            S3 clients should not remove dot segments from request paths.
+        """,
+        protocol: restXml,
+        method: "GET",
+        uri: "foo/../key.txt",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "tagging"
+        ],
+        params: {
+            Bucket: "mybucket",
+            Key: "foo/../key.txt"
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                },
+                s3: {
+                    addressing_style: "virtual",
+                },
+            },
+        },
+    }
+])
+@http(uri: "/{Bucket}/{Key+}",method: "GET")
+operation GetObject {
+    input: GetObjectRequest,
+    output: GetObjectOutput,
+}
+
 
 @httpResponseTests([{
         id: "GetBucketLocationUnwrappedOutput",
@@ -440,6 +509,20 @@ structure ListObjectsV2Output {
 
     StartAfter: StartAfter,
 }
+
+@input
+structure GetObjectRequest {
+    @httpLabel
+    @required
+    Bucket: BucketName,
+
+    @httpLabel
+    @required
+    Key: ObjectKey,
+}
+
+@output
+structure GetObjectOutput {}
 
 @input
 structure DeleteObjectTaggingRequest {
