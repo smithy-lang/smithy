@@ -20,7 +20,6 @@ import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
-import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -84,7 +83,9 @@ final class BuilderGenerator implements Runnable {
     }
 
     private void writeToBuilderMethod() {
-        writer.pushState(new ToBuilderSection(symbol));
+        writer.openDocstring();
+        writer.writeDocStringContents("Creates a builder used to build a {@link $T}.", symbol);
+        writer.closeDocstring();
         writer.override();
         writer.openBlock("public $T<$T> toBuilder() {", "}",
                 SmithyBuilder.class, symbol, () -> {
@@ -110,7 +111,6 @@ final class BuilderGenerator implements Runnable {
             }
             writer.dedent();
         });
-        writer.popState();
         writer.newLine();
     }
 

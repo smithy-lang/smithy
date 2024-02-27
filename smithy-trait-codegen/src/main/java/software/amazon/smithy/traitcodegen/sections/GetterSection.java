@@ -18,6 +18,9 @@ public final class GetterSection implements CodeSection {
         this.shape = shape;
     }
 
+    /**
+     * {@link Shape} that this getter returns a Java object for.
+     */
     public Shape shape() {
         return shape;
     }

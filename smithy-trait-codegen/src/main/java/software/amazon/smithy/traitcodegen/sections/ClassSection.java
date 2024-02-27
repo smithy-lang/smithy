@@ -18,6 +18,9 @@ public final class ClassSection implements CodeSection {
         this.shape = shape;
     }
 
+    /**
+     * {@link Shape} that this Java class represents.
+     */
     public Shape shape() {
         return shape;
     }

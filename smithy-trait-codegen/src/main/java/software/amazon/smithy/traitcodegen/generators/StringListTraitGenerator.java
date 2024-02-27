@@ -11,7 +11,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
-import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -50,11 +49,12 @@ final class StringListTraitGenerator extends TraitGenerator {
     }
 
     private void writeToBuilderMethod(TraitCodegenWriter writer, Symbol symbol) {
-        writer.pushState(new ToBuilderSection(symbol));
+        writer.openDocstring();
+        writer.writeDocStringContents("Creates a builder used to build a {@link $T}.", symbol);
+        writer.closeDocstring();
         writer.override();
         writer.openBlock("public Builder toBuilder() {", "}",
                 () -> writer.write("return builder().sourceLocation(getSourceLocation()).values(getValues());"));
-        writer.popState();
         writer.newLine();
     }
 

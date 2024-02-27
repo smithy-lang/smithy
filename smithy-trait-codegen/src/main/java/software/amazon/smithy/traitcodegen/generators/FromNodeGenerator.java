@@ -22,7 +22,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.Mapper;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
-import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -58,10 +57,8 @@ final class FromNodeGenerator implements Runnable {
         writer.closeDocstring();
 
         // Write actual method
-        writer.pushState(new FromNodeSection(symbol));
         writer.openBlock("public static $T fromNode($T node) {", "}",
                 symbol, Node.class, () -> shape.accept(new FromNodeBodyGenerator()));
-        writer.popState();
         writer.newLine();
     }
 

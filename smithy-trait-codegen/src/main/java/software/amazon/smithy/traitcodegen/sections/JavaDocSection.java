@@ -18,6 +18,9 @@ public final class JavaDocSection implements CodeSection {
         this.shape = shape;
     }
 
+    /**
+     * {@link Shape} that the class the Javadoc is added to represents.
+     */
     public Shape shape() {
         return shape;
     }

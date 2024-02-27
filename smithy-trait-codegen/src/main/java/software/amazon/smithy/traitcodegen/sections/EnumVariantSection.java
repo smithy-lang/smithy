@@ -18,6 +18,9 @@ public final class EnumVariantSection implements CodeSection {
         this.memberShape = memberShape;
     }
 
+    /**
+     * {@link MemberShape} that this enum variant represents.
+     */
     public MemberShape memberShape() {
         return memberShape;
     }

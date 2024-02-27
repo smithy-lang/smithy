@@ -9,7 +9,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.utils.CodeSection;
 
 /**
- * Contains the nested builder class for a trait.
+ * Contains the static builder class for a shape.
  */
 public final class BuilderClassSection implements CodeSection {
     private final Symbol symbol;
@@ -18,6 +18,9 @@ public final class BuilderClassSection implements CodeSection {
         this.symbol = symbol;
     }
 
+    /**
+     * {@link Symbol} representing the enclosing class for this builder.
+     */
     public Symbol symbol() {
         return symbol;
     }

@@ -36,7 +36,6 @@ public final class JavaDocIntegration implements TraitCodegenIntegration  {
                 new DeprecatedNoteInterceptor(),
                 new ClassJavaDocInterceptor(),
                 new ExternalDocsInterceptor(),
-                new BuilderMethodDocsInterceptor(),
                 new BuilderClassSectionDocsInterceptor(),
                 new GetterJavaDocInterceptor(),
                 new EnumVariantJavaDocInterceptor()
