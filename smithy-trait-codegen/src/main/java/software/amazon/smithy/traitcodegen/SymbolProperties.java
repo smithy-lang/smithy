@@ -9,15 +9,11 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public final class SymbolProperties {
-    // Provides the correct method to map value from a member to a builder value
-    // This should be a string template accepting the member name as the only argument
-    public static final String MEMBER_MAPPER = "member-mapper";
-
-    public static final String FROM_NODE_MAPPER = "from-node-mapper";
-
     // Provides an initializer for the builder ref
     public static final String BUILDER_REF_INITIALIZER = "builder-ref-initializer";
 
+    // The "base" symbol for a trait. This is the symbol that the shape would resolve
+    // to if it were not marked with `@trait`.
     public static final String BASE_SYMBOL = "base-symbol";
 
     private SymbolProperties() {

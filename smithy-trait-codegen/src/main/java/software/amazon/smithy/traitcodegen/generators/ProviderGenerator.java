@@ -6,7 +6,7 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.EnumShape;
@@ -19,8 +19,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.traitcodegen.Mapper;
-import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 
@@ -38,14 +36,14 @@ final class ProviderGenerator implements Runnable {
 
     private final TraitCodegenWriter writer;
     private final Symbol traitSymbol;
+    private final Model model;
     private final Shape shape;
-    private final SymbolProvider symbolProvider;
 
-    ProviderGenerator(TraitCodegenWriter writer, Shape shape, Symbol traitSymbol, SymbolProvider symbolProvider) {
+    ProviderGenerator(TraitCodegenWriter writer, Shape shape, Symbol traitSymbol, Model model) {
         this.writer = writer;
         this.traitSymbol = traitSymbol;
+        this.model = model;
         this.shape = shape;
-        this.symbolProvider = symbolProvider;
     }
 
     @Override
@@ -67,8 +65,8 @@ final class ProviderGenerator implements Runnable {
                         Trait.class, ShapeId.class, Node.class,
                         () -> writer.write("return new $T($C, value.getSourceLocation());",
                                 traitSymbol,
-                                symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
-                                                Mapper.class).with("value")));
+                                (Runnable) () -> shape.accept(
+                                        new FromNodeMapperVisitor(writer, model, "value"))));
             });
             return null;
         }

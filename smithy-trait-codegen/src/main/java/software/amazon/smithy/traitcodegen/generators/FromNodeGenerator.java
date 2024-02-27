@@ -10,17 +10,24 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.traitcodegen.Mapper;
-import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -36,7 +43,7 @@ final class FromNodeGenerator implements Runnable {
     private final Model model;
 
     FromNodeGenerator(TraitCodegenWriter writer, Symbol symbol, Shape shape, SymbolProvider symbolProvider,
-                             Model model) {
+                      Model model) {
         this.writer = writer;
         this.symbol = symbol;
         this.shape = shape;
@@ -62,93 +69,6 @@ final class FromNodeGenerator implements Runnable {
         writer.newLine();
     }
 
-    /**
-     * Generates the mapping from a node member to a builder field.
-     */
-    private static final class MemberGenerator extends ShapeVisitor.Default<Void> {
-        private final MemberShape member;
-        private final TraitCodegenWriter writer;
-        private final Model model;
-        private final SymbolProvider symbolProvider;
-
-        private MemberGenerator(MemberShape member, TraitCodegenWriter writer, Model model,
-                                SymbolProvider symbolProvider) {
-            this.member = member;
-            this.writer = writer;
-            this.model = model;
-            this.symbolProvider = symbolProvider;
-        }
-
-
-        @Override
-        public Void memberShape(MemberShape shape) {
-            return model.expectShape(shape.getTarget()).accept(this);
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            writer.writeInline(getMemberPrefix() + "$C",
-                    symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.MEMBER_MAPPER, Mapper.class)
-                            .with(symbolProvider.toMemberName(member))
-            );
-            return null;
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            writer.writeInline(getMemberPrefix() + "ArrayMember($1S, n -> $3C, builder::$2L)",
-                    member.getMemberName(), symbolProvider.toMemberName(member),
-                    symbolProvider.toSymbol(shape.getMember()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
-                    Mapper.class).with("n"));
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            Mapper keyMapper = symbolProvider.toSymbol(shape.getKey())
-                    .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class);
-            Mapper valueMapper = symbolProvider.toSymbol(shape.getValue())
-                    .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class);
-            writer.disableNewlines();
-            writer.openBlock(getMemberPrefix()
-                            + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
-                    member.getMemberName(),
-                    () -> writer.write("builder.put$L($C, $C);\n",
-                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
-                            keyMapper.with("k"), valueMapper.with("v")));
-            writer.enableNewlines();
-            return null;
-        }
-
-        @Override
-        public Void stringShape(StringShape shape) {
-            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
-                writer.writeInline(getMemberPrefix() + "StringMember($S, builder::$L)",
-                        member.getMemberName(), symbolProvider.toMemberName(member));
-            } else {
-                generateGenericMember(shape);
-            }
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            generateGenericMember(shape);
-            return null;
-        }
-
-        private void generateGenericMember(Shape shape) {
-            writer.writeInline(getMemberPrefix() + "Member($1S, n -> $3C, builder::$2L)",
-                    member.getMemberName(), symbolProvider.toMemberName(member),
-                    symbolProvider.toSymbol(shape)
-                            .expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("n"));
-        }
-
-        private String getMemberPrefix() {
-            return member.isRequired() ? ".expect" : ".get";
-        }
-    }
-
     private final class FromNodeBodyGenerator extends ShapeVisitor.Default<Void> {
         private static final String BUILDER_INITIALIZER = "Builder builder = builder();";
         private static final String BUILD_AND_RETURN = "return builder.build();";
@@ -161,13 +81,12 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            Symbol memberSymbol = symbolProvider.toSymbol(shape.getMember());
             writer.writeWithNoFormatting(BUILDER_INITIALIZER);
             writer.writeWithNoFormatting("node.expectArrayNode()");
             writer.indent();
             writer.writeWithNoFormatting(".getElements().stream()");
             writer.write(".map(n -> $C)",
-                    memberSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("n"));
+                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
             writer.writeWithNoFormatting(".forEach(builder::addValues);");
             writer.dedent();
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
@@ -178,12 +97,11 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void mapShape(MapShape shape) {
             writer.writeWithNoFormatting(BUILDER_INITIALIZER);
-            Symbol keySymbol = symbolProvider.toSymbol(shape.getKey());
-            Symbol valueSymbol = symbolProvider.toSymbol(shape.getValue());
             writer.openBlock("node.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
                     () -> writer.write("builder.putValues($C, $C);",
-                            keySymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("k"),
-                            valueSymbol.expectProperty(SymbolProperties.FROM_NODE_MAPPER, Mapper.class).with("v")));
+                            (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
+                            (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
+            );
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
             return null;
         }
@@ -214,7 +132,7 @@ final class FromNodeGenerator implements Runnable {
             Iterator<MemberShape> memberIterator = shape.members().iterator();
             while (memberIterator.hasNext()) {
                 MemberShape member = memberIterator.next();
-                member.accept(new MemberGenerator(member, writer, model, symbolProvider));
+                member.accept(new MemberGenerator(member));
                 if (memberIterator.hasNext()) {
                     writer.writeInlineWithNoFormatting("\n");
                 } else {
@@ -224,6 +142,147 @@ final class FromNodeGenerator implements Runnable {
             writer.dedent();
             writer.write(BUILD_AND_RETURN);
 
+            return null;
+        }
+    }
+
+    /**
+     * Generates the mapping from a node member to a builder field.
+     */
+    private final class MemberGenerator extends ShapeVisitor.Default<Void> {
+        private final String memberName;
+        private final String fieldName;
+        private final String memberPrefix;
+
+        private MemberGenerator(MemberShape member) {
+            this.fieldName = member.getMemberName();
+            this.memberName = symbolProvider.toMemberName(member);
+            this.memberPrefix = member.isRequired() ? ".expect" : ".get";
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            return model.expectShape(shape.getTarget()).accept(this);
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            throw new UnsupportedOperationException("Shape not supported " + shape);
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            writer.write(memberPrefix + "BooleanMember($S, builder::$L)", fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
+                    fieldName, memberName,
+                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
+            return null;
+        }
+
+        @Override
+        public Void byteShape(ByteShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.byteValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.shortValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void integerShape(IntegerShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void longShape(LongShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.longValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.doubleValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void bigIntegerShape(BigIntegerShape shape) {
+            writer.write(memberPrefix
+                            + "Member($S, n -> n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$L)",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void bigDecimalShape(BigDecimalShape shape) {
+            writer.write(memberPrefix
+                            + "Member($S, n -> n.expectNumberNode().asBigDecimal().get(), builder::$L)",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            writer.disableNewlines();
+            writer.openBlock(memberPrefix
+                            + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
+                    fieldName,
+                    () -> writer.write("builder.put$L($C, $C);\n",
+                            StringUtils.capitalize(memberName),
+                            (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
+                            (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
+            );
+            writer.enableNewlines();
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
+                    fieldName, memberName);
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
+                writer.writeInline(memberPrefix + "StringMember($S, builder::$L)", fieldName, memberName);
+            } else {
+                writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                        fieldName, memberName,
+                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
+                );
+            }
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                    fieldName, memberName,
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
+            );
             return null;
         }
     }

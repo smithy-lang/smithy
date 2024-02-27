@@ -63,7 +63,7 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
     }
 
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        new ProviderGenerator(writer, directive.shape(), directive.symbol(), directive.symbolProvider()).run();
+        new ProviderGenerator(writer, directive.shape(), directive.symbol(), directive.model()).run();
     }
 
     /**

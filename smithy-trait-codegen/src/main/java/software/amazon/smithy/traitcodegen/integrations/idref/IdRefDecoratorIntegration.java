@@ -9,18 +9,14 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.IdRefTrait;
-import software.amazon.smithy.traitcodegen.Mapper;
-import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
-import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -32,9 +28,7 @@ import software.amazon.smithy.utils.ListUtils;
  */
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     private static final String INTEGRATION_NAME = "id-ref-integration";
-    private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class).toBuilder()
-            .putProperty(SymbolProperties.FROM_NODE_MAPPER, (Mapper) IdRefDecoratorIntegration::fromNodeMapper)
-            .build();
+    private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class);
 
     @Override
     public String name() {
@@ -89,13 +83,5 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
                     .build();
         }
         return symbolProvider.toSymbol(shape);
-    }
-
-    private static void toNodeMapper(TraitCodegenWriter writer, String var) {
-        writer.write("$T.from($L.toString())", Node.class, var);
-    }
-
-    private static void fromNodeMapper(TraitCodegenWriter writer, String var) {
-        writer.write("$T.fromNode($L)", ShapeId.class, var);
     }
 }

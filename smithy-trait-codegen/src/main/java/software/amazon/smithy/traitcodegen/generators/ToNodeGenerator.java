@@ -268,6 +268,9 @@ final class ToNodeGenerator implements Runnable {
         }
     }
 
+    /**
+     * Determines how to map a shape to a node.
+     */
     private final class ToNodeMapperVisitor extends ShapeVisitor.Default<Void> {
         private final String varName;
 
