@@ -192,9 +192,16 @@ final class ToNodeGenerator implements Runnable {
                 // generated node.
                 writer.writeInline(".sourceLocation(getSourceLocation())");
             }
-            for (MemberShape member : shape.members()) {
-                member.accept(new MemberMapperVisitor(member.getMemberName(),
-                        symbolProvider.toMemberName(member), member.isRequired()));
+            for (MemberShape mem : shape.members()) {
+                if (mem.isRequired()) {
+                    writer.write(".withMember($S, $C)",
+                            mem.getMemberName(),
+                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
+                } else {
+                    writer.write(".withOptionalMember($S, get$L().map(m -> $C))",
+                            mem.getMemberName(), StringUtils.capitalize(symbolProvider.toMemberName(mem)),
+                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m")));
+                }
             }
             writer.writeWithNoFormatting(".build();");
             writer.dedent();
@@ -203,68 +210,6 @@ final class ToNodeGenerator implements Runnable {
 
         private void generateNumberTraitCreator() {
             writer.write("return new $T(value, getSourceLocation());", NumberNode.class);
-        }
-    }
-
-    // Writes the per-member mapping from a member to an object node member node.
-    private final class MemberMapperVisitor extends ShapeVisitor.Default<Void> {
-        private final String memberName;
-        private final String formattedMemberName;
-        private final boolean required;
-
-        private MemberMapperVisitor(String memberName,
-                                    String formattedMemberName,
-                                    boolean required
-        ) {
-            this.memberName = memberName;
-            this.formattedMemberName = formattedMemberName;
-            this.required = required;
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            if (required) {
-                writer.write(".withMember($S, $C)",
-                        memberName,
-                        (Runnable) () -> shape.accept(new ToNodeMapperVisitor(formattedMemberName)));
-            } else {
-                writer.write(".withOptionalMember($S, get$L().map(m -> $C))",
-                        memberName, StringUtils.capitalize(formattedMemberName),
-                        (Runnable) () -> shape.accept(new ToNodeMapperVisitor("m")));
-            }
-            return null;
-        }
-
-        @Override
-        public Void memberShape(MemberShape shape) {
-            return model.expectShape(shape.getTarget()).accept(this);
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            writer.write(".withMember($S, get$L().stream().map(s -> $C).collect($T.collect()))",
-                    memberName, StringUtils.capitalize(formattedMemberName),
-                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
-                    ArrayNode.class
-            );
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            writer.openBlock(".withMember($S, get$L().entrySet().stream()", ")",
-                    memberName, StringUtils.capitalize(formattedMemberName),
-                    () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
-                            .indent()
-                            .write("$C, $C))",
-                                    (Runnable) () -> shape.getKey().accept(
-                                            new ToNodeMapperVisitor("entry.getKey()")),
-                                    (Runnable) () -> shape.getValue().accept(
-                                            new ToNodeMapperVisitor("entry.getValue()")))
-                            .dedent()
-                            .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
-                                    ObjectNode.class, Map.class));
-            return null;
         }
     }
 
@@ -306,6 +251,33 @@ final class ToNodeGenerator implements Runnable {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$T.from($L)", Node.class, varName);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            writer.write("$L.stream().map(s -> $C).collect($T.collect())",
+                    varName,
+                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
+                    ArrayNode.class
+            );
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            writer.openBlock("$L.entrySet().stream()", "",
+                    varName,
+                    () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
+                            .indent()
+                            .write("$C, $C))",
+                                    (Runnable) () -> shape.getKey().accept(
+                                            new ToNodeMapperVisitor("entry.getKey()")),
+                                    (Runnable) () -> shape.getValue().accept(
+                                            new ToNodeMapperVisitor("entry.getValue()")))
+                            .dedent()
+                            .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
+                                    ObjectNode.class, Map.class));
             return null;
         }
 

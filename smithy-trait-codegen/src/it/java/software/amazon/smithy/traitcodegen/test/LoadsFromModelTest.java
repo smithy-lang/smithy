@@ -92,8 +92,8 @@ public class LoadsFromModelTest {
                         MapUtils.of("getFieldA", Optional.of(TARGET_ONE))),
                 Arguments.of("id-ref.smithy", IdRefStructWithNestedIdsTrait.class,
                         MapUtils.of("getIdRefHolder", NestedIdRefHolder.builder().id(TARGET_ONE).build(),
-                                "getIdList", ListUtils.of(TARGET_ONE, TARGET_TWO),
-                                "getIdMap", MapUtils.of("a", TARGET_ONE, "b", TARGET_TWO))),
+                                "getIdList", Optional.of(ListUtils.of(TARGET_ONE, TARGET_TWO)),
+                                "getIdMap", Optional.of(MapUtils.of("a", TARGET_ONE, "b", TARGET_TWO)))),
                 Arguments.of("integer-trait.smithy", HttpCodeIntegerTrait.class,
                         MapUtils.of("getValue", 1)),
                 Arguments.of("long-trait.smithy", HttpCodeLongTrait.class,
@@ -136,8 +136,8 @@ public class LoadsFromModelTest {
                                         .fieldQ(true)
                                         .fieldZ(NestedB.A)
                                         .build()),
-                                "getFieldD", ListUtils.of("a", "b", "c"),
-                                "getFieldE", MapUtils.of("a", "one", "b", "two"),
+                                "getFieldD", Optional.of(ListUtils.of("a", "b", "c")),
+                                "getFieldE", Optional.of(MapUtils.of("a", "one", "b", "two")),
                                 "getFieldF", Optional.of(new BigDecimal("100.01")),
                                 "getFieldG", Optional.of(new BigInteger("100")))),
                 Arguments.of("snake-case-struct.smithy", SnakeCaseStructureTrait.class,

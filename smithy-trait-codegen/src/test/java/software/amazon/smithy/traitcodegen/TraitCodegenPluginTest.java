@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
@@ -158,8 +159,8 @@ public class TraitCodegenPluginTest {
                           + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
                           + "     * </ul>\n"
                           + "     */\n"
-                          + "    public List<String> getFieldD() {\n"
-                          + "        return fieldD;\n"
+                          + "    public Optional<List<String>> getFieldD() {\n"
+                          + "        return Optional.ofNullable(fieldD);\n"
                           + "    }\n";
         assertTrue(fileStringOptional.get().contains(expected));
     }

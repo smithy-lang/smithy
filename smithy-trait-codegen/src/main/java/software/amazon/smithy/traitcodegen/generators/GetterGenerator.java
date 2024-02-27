@@ -5,7 +5,6 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
-import java.util.EnumSet;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -21,7 +20,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -36,7 +34,6 @@ import software.amazon.smithy.utils.StringUtils;
  * <p>Optional member getters will return the member type wrapped in an {@code Optional<T>}.
  */
 final class GetterGenerator implements Runnable {
-    private static final EnumSet<ShapeType> NO_OPTIONAL_WRAPPING_TYPES = EnumSet.of(ShapeType.MAP, ShapeType.LIST);
     private final TraitCodegenWriter writer;
     private final SymbolProvider symbolProvider;
     private final Shape shape;
@@ -142,8 +139,7 @@ final class GetterGenerator implements Runnable {
             for (MemberShape member : shape.members()) {
                 // If the member is required or the type does not require an optional wrapper (such as a list or map)
                 // then do not wrap return in an Optional
-                if (member.isRequired()
-                        || NO_OPTIONAL_WRAPPING_TYPES.contains(model.expectShape(member.getTarget()).getType())) {
+                if (member.isRequired()) {
                     generateNonOptionalGetter(member);
                 } else {
                     generateOptionalGetter(member);
