@@ -80,7 +80,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
 
     @Override
     public Symbol intEnumShape(IntEnumShape shape) {
-        return getJavaClassSymbolBuilder(shape).build();
+        return getJavaClassSymbol(shape);
     }
 
     @Override
@@ -132,12 +132,12 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
 
     @Override
     public Symbol enumShape(EnumShape shape) {
-        return getJavaClassSymbolBuilder(shape).build();
+        return getJavaClassSymbol(shape);
     }
 
     @Override
     public Symbol structureShape(StructureShape shape) {
-        return getJavaClassSymbolBuilder(shape).build();
+        return getJavaClassSymbol(shape);
     }
 
     @Override
@@ -179,12 +179,13 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
         }
     }
 
-    private Symbol.Builder getJavaClassSymbolBuilder(Shape shape) {
+    private Symbol getJavaClassSymbol(Shape shape) {
         String name = TraitCodegenUtils.getDefaultName(shape);
         String namespace = TraitCodegenUtils.mapNamespace(smithyNamespace,
                 shape.getId().getNamespace(), packageNamespace);
         return Symbol.builder().name(name)
                 .namespace(namespace, ".")
-                .declarationFile("./" + namespace.replace(".", "/") + "/"  + name + ".java");
+                .declarationFile("./" + namespace.replace(".", "/") + "/"  + name + ".java")
+                .build();
     }
 }
