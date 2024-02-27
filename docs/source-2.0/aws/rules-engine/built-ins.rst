@@ -11,6 +11,19 @@ dependency is required to access these functions:
 The following example adds ``smithy-aws-endpoints`` as a Gradle dependency
 to a Smithy project:
 
+.. tab:: Smithy CLI
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "maven": {
+                "dependencies": [
+                    "software.amazon.smithy:smithy-aws-endpoints:__smithy_version__"
+                ]
+            }
+        }
+
 .. tab:: Gradle
 
     .. tab:: Kotlin
@@ -34,20 +47,6 @@ to a Smithy project:
                 implementation 'software.amazon.smithy:smithy-aws-endpoints:__smithy_version__'
                 ...
             }
-
-.. tab:: Smithy CLI
-
-    .. code-block:: json
-        :caption: smithy-build.json
-
-        {
-            "maven": {
-                "dependencies": [
-                    "software.amazon.smithy:smithy-aws-endpoints:__smithy_version__"
-                ]
-            }
-        }
-
 
 .. _rules-engine-aws-built-ins-region:
 
