@@ -7,7 +7,6 @@ package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.AbstractMap;
 import java.util.Map;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -20,6 +19,7 @@ import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -27,17 +27,18 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.traitcodegen.Mapper;
-import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -72,14 +73,6 @@ final class ToNodeGenerator implements Runnable {
         writer.newLine();
     }
 
-    private Pair<Mapper, Mapper> getKeyValueMappers(MapShape shape) {
-        Mapper keyMapper = symbolProvider.toSymbol(shape.getKey())
-                .expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class);
-        Mapper valueMapper = symbolProvider.toSymbol(shape.getValue())
-                .expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class);
-        return Pair.of(keyMapper, valueMapper);
-    }
-
     private final class CreateNodeBodyGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
@@ -89,11 +82,10 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape.getMember());
             writer.write("return values.stream()")
                     .indent()
                     .write(".map(s -> $C)",
-                            symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s"))
+                            (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")))
                     .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
                     .dedent();
             return null;
@@ -169,14 +161,15 @@ final class ToNodeGenerator implements Runnable {
                         .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
                 return null;
             }
-            Pair<Mapper, Mapper> mappers = getKeyValueMappers(shape);
             writer.writeWithNoFormatting("return values.entrySet().stream()")
                     .indent()
                     .write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
                     .indent()
                     .write("$C, $C))",
-                            mappers.getLeft().with("entry.getKey()"),
-                            mappers.getRight().with("entry.getValue()"))
+                            (Runnable) () -> shape.getKey().accept(
+                                    new ToNodeMapperVisitor("entry.getKey()")),
+                            (Runnable) () -> shape.getValue().accept(
+                                    new ToNodeMapperVisitor("entry.getValue()")))
                     .dedent()
                     .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
                             ObjectNode.class, Map.class)
@@ -201,8 +194,7 @@ final class ToNodeGenerator implements Runnable {
             }
             for (MemberShape member : shape.members()) {
                 member.accept(new MemberMapperVisitor(member.getMemberName(),
-                        symbolProvider.toMemberName(member),
-                        symbolProvider, member.isRequired()));
+                        symbolProvider.toMemberName(member), member.isRequired()));
             }
             writer.writeWithNoFormatting(".build();");
             writer.dedent();
@@ -218,31 +210,27 @@ final class ToNodeGenerator implements Runnable {
     private final class MemberMapperVisitor extends ShapeVisitor.Default<Void> {
         private final String memberName;
         private final String formattedMemberName;
-        private final SymbolProvider symbolProvider;
         private final boolean required;
 
         private MemberMapperVisitor(String memberName,
                                     String formattedMemberName,
-                                    SymbolProvider symbolProvider,
                                     boolean required
         ) {
             this.memberName = memberName;
             this.formattedMemberName = formattedMemberName;
-            this.symbolProvider = symbolProvider;
             this.required = required;
         }
 
         @Override
         protected Void getDefault(Shape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape);
             if (required) {
                 writer.write(".withMember($S, $C)",
                         memberName,
-                        symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with(formattedMemberName));
+                        (Runnable) () -> shape.accept(new ToNodeMapperVisitor(formattedMemberName)));
             } else {
                 writer.write(".withOptionalMember($S, get$L().map(m -> $C))",
                         memberName, StringUtils.capitalize(formattedMemberName),
-                        symbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("m"));
+                        (Runnable) () -> shape.accept(new ToNodeMapperVisitor("m")));
             }
             return null;
         }
@@ -254,10 +242,9 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            Symbol listTargetSymbol = symbolProvider.toSymbol(shape.getMember());
             writer.write(".withMember($S, get$L().stream().map(s -> $C).collect($T.collect()))",
                     memberName, StringUtils.capitalize(formattedMemberName),
-                    listTargetSymbol.expectProperty(SymbolProperties.TO_NODE_MAPPER, Mapper.class).with("s"),
+                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
                     ArrayNode.class
             );
             return null;
@@ -265,18 +252,90 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void mapShape(MapShape shape) {
-            Pair<Mapper, Mapper> mappers = getKeyValueMappers(shape);
             writer.openBlock(".withMember($S, get$L().entrySet().stream()", ")",
                     memberName, StringUtils.capitalize(formattedMemberName),
                     () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
                             .indent()
                             .write("$C, $C))",
-                                    mappers.getLeft().with("entry.getKey()"),
-                                    mappers.getRight().with("entry.getValue()"))
+                                    (Runnable) () -> shape.getKey().accept(
+                                            new ToNodeMapperVisitor("entry.getKey()")),
+                                    (Runnable) () -> shape.getValue().accept(
+                                            new ToNodeMapperVisitor("entry.getValue()")))
                             .dedent()
                             .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
                                     ObjectNode.class, Map.class));
             return null;
+        }
+    }
+
+    private final class ToNodeMapperVisitor extends ShapeVisitor.Default<Void> {
+        private final String varName;
+
+        ToNodeMapperVisitor(String varName) {
+            this.varName = varName;
+        }
+
+        @Override
+        public Void operationShape(OperationShape shape) {
+            throw new UnsupportedOperationException("Cannot serialize trait member for operation shape. " + shape);
+        }
+
+        @Override
+        public Void resourceShape(ResourceShape shape) {
+            throw new UnsupportedOperationException("Cannot serialize trait member for operation shape. " + shape);
+        }
+
+        @Override
+        public Void serviceShape(ServiceShape shape) {
+            throw new UnsupportedOperationException("Cannot serialize trait member for operation shape. " + shape);
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            if (shape.hasTrait(IdRefTrait.class)) {
+                idRefMapper();
+            } else {
+                getDefault(shape);
+            }
+            return null;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("$T.from($L)", Node.class, varName);
+            return null;
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            if (shape.hasTrait(IdRefTrait.class)) {
+                idRefMapper();
+            } else {
+                model.expectShape(shape.getTarget()).accept(this);
+            }
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            writer.write("$L.toNode()", varName);
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            writer.write("$T.from($L.getValue())", Node.class, varName);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            writer.write("$L.toNode()", varName);
+            return null;
+        }
+
+        private void idRefMapper() {
+            writer.write("$T.from($L.toString())", Node.class, varName);
         }
     }
 }

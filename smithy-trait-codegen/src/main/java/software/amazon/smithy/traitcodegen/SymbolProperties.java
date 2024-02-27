@@ -13,12 +13,6 @@ public final class SymbolProperties {
     // This should be a string template accepting the member name as the only argument
     public static final String MEMBER_MAPPER = "member-mapper";
 
-    // Provides the lambda method call to map the shape to a node
-    public static final String TO_NODE_MAPPER = "to-node-mapper";
-
-    // Other symbols to import when using the node mapper for a symbol
-    public static final String NODE_MAPPING_IMPORTS = "node-mapper-imports";
-
     public static final String FROM_NODE_MAPPER = "from-node-mapper";
 
     // Provides an initializer for the builder ref

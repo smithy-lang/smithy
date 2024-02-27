@@ -33,7 +33,6 @@ import software.amazon.smithy.utils.ListUtils;
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     private static final String INTEGRATION_NAME = "id-ref-integration";
     private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class).toBuilder()
-            .putProperty(SymbolProperties.TO_NODE_MAPPER, (Mapper) IdRefDecoratorIntegration::toNodeMapper)
             .putProperty(SymbolProperties.FROM_NODE_MAPPER, (Mapper) IdRefDecoratorIntegration::fromNodeMapper)
             .build();
 
