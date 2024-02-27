@@ -27,20 +27,52 @@ In this example, the weather service will use the
 that sends JSON in structured payloads over HTTP.
 
 The protocol trait, :ref:`@aws.protocols#restJson1 <aws.protocols#restJson1-trait>`,
-is provided by the `smithy-aws-traits` package, so first add a dependency to
-``build.gradle.kts``:
+is provided by the `smithy-aws-traits` package, so first add a dependency to your Smithy
+project:
 
-.. code-block:: kotlin
+.. tab:: Smithy CLI
 
-    dependencies {
-        ...
-        implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "...": "..."
+            "maven": {
+                "dependencies": [
+                    "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+                ]
+            },
+            "...": "..."
+        }
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                ...
+                implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+         .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                ...
+                implementation 'software.amazon.smithy:smithy-aws-traits:__smithy_version__'
+            }
+
 
 Now, import the :ref:`@aws.protocols#restJson1 <aws.protocols#restJson1-trait>` trait
 and apply it to the ``Weather`` service shape:
 
 .. code-block:: smithy
+    :caption: weather.smithy
 
     $version: "2"
     namespace example.weather
@@ -53,6 +85,7 @@ and apply it to the ``Weather`` service shape:
         outputToken: "nextToken"
         pageSize: "pageSize"
     )
+
     @restJson1
     service Weather {
         version: "2006-03-01"
