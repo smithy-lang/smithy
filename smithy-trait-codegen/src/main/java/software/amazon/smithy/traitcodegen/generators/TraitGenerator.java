@@ -41,11 +41,10 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
     @Override
     public void accept(GenerateTraitDirective directive) {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
+            writer.pushState(new ClassSection(directive.shape()));
             // Add class definition context
             writer.putContext("baseClass", getBaseClass());
             writer.putContext("implementsToBuilder", implementsToSmithyBuilder());
-
-            writer.pushState(new ClassSection(directive.shape()));
             writer.openBlock("public final class $2T extends $baseClass:T"
                             + "${?implementsToBuilder} implements $1T<$2T>${/implementsToBuilder} {", "}",
                     ToSmithyBuilder.class, directive.symbol(), () -> {
