@@ -88,8 +88,8 @@ final class TraitCodegen {
 
     public void run() {
         // Check that all required fields have been correctly initialized.
-        SmithyBuilder.requiredState("integrations", integrations);
-        SmithyBuilder.requiredState("context",  codegenContext);
+        Objects.requireNonNull(integrations, "`integrations` not initialized.");
+        Objects.requireNonNull(codegenContext, "`codegenContext` not initialized.");
 
         // Find all trait definition shapes excluding traits in the prelude.
         LOGGER.info("Generating trait classes.");
