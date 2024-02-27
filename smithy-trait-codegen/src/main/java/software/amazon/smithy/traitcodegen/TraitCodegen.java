@@ -30,7 +30,6 @@ import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
-import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Orchestration class for Trait code generation.

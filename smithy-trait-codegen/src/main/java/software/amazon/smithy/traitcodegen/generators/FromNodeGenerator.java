@@ -47,6 +47,17 @@ final class FromNodeGenerator implements Runnable {
 
     @Override
     public void run() {
+        // Add docstring for method
+        writer.openDocstring();
+        writer.writeDocStringContents("Creates a {@link $T} from a {@link Node}.", symbol);
+        writer.writeDocStringContents("");
+        writer.writeDocStringContents("@param node Node to create the $T from.", symbol);
+        writer.writeDocStringContents("@return Returns the created $T.", symbol);
+        writer.writeDocStringContents("@throws software.amazon.smithy.model.node.ExpectationNotMetException "
+                + "if the given Node is invalid.");
+        writer.closeDocstring();
+
+        // Write actual method
         writer.pushState(new FromNodeSection(symbol));
         writer.openBlock("public static $T fromNode($T node) {", "}",
                 symbol, Node.class, () -> shape.accept(new FromNodeBodyGenerator()));

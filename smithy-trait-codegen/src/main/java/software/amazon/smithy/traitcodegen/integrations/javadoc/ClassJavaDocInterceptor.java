@@ -10,9 +10,10 @@ import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.JavaDocSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.SmithyGenerated;
 
 /**
- * Adds basic JavaDocs for generated java classes..
+ * Adds basic JavaDocs for generated java classes.
  */
 final class ClassJavaDocInterceptor implements CodeInterceptor.Prepender<ClassSection, TraitCodegenWriter> {
     @Override
@@ -22,6 +23,9 @@ final class ClassJavaDocInterceptor implements CodeInterceptor.Prepender<ClassSe
         writer.writeDocStringContents(section.shape().expectTrait(DocumentationTrait.class).getValue());
         writer.popState();
         writer.closeDocstring();
+        // Adds smithy generated annotation to indicate class was generated
+        // by a code generator
+        writer.write("@$T", SmithyGenerated.class);
     }
 
     @Override

@@ -32,12 +32,10 @@ public final class JavaDocIntegration implements TraitCodegenIntegration  {
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
             TraitCodegenContext codegenContext) {
         return ListUtils.of(
-                new GeneratedAnnotationInterceptor(),
                 new DeprecatedAnnotationClassInterceptor(),
                 new DeprecatedNoteInterceptor(),
                 new ClassJavaDocInterceptor(),
                 new ExternalDocsInterceptor(),
-                new FromNodeDocsInterceptor(),
                 new BuilderMethodDocsInterceptor(),
                 new BuilderClassSectionDocsInterceptor(),
                 new GetterJavaDocInterceptor(),
