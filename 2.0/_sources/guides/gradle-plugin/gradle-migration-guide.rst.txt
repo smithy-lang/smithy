@@ -34,7 +34,7 @@ your project.
         plugins {
         -     id("software.amazon.smithy").version("0.7.0")
         +     `java`
-        +     id("software.amazon.smithy.gradle.smithy-jar").version("0.10.0")
+        +     id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
         }
 
 .. tab:: Groovy
@@ -45,7 +45,7 @@ your project.
         plugins {
         -      id 'software.amazon.smithy' version '0.7.0'
         +      id 'java'
-        +      id 'software.amazon.smithy.gradle.smithy-jar' version '0.10.0'
+        +      id 'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
         }
 
 Remove Buildscript Dependencies

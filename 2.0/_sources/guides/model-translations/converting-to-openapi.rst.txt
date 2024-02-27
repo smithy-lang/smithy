@@ -165,7 +165,7 @@ OpenAPI specifications from Smithy models.
                 java
                 // Use the `smithy-jar` plugin if you also want to package
                 // smithy models into the JAR created by the `java` plugin.
-                id("software.amazon.smithy-base").version("0.10.0")
+                id("software.amazon.smithy-base").version("__smithy_gradle_version__")
             }
 
             dependencies {
@@ -184,7 +184,7 @@ OpenAPI specifications from Smithy models.
                 id 'java'
                 // Use the `smithy-jar` plugin if you also want to package
                 // smithy models into the JAR created by the `java` plugin.
-                id 'software.amazon.smithy-base' version '0.10.0'
+                id 'software.amazon.smithy-base' version '__smithy_gradle_version__'
             }
 
             dependencies {
@@ -1245,7 +1245,7 @@ of a Smithy model into an OpenAPI specification.
 
             plugins {
                 java
-                id("software.amazon.smithy.gradle.smithy-base").version("0.10.0")
+                id("software.amazon.smithy.gradle.smithy-base").version("__smithy_gradle_version__")
             }
 
             dependencies {
@@ -1263,7 +1263,7 @@ of a Smithy model into an OpenAPI specification.
 
             plugins {
                 id 'java'
-                id 'software.amazon.smithy.gradle.smithy-base' version '0.10.0'
+                id 'software.amazon.smithy.gradle.smithy-base' version '__smithy_gradle_version__'
             }
 
             dependencies {

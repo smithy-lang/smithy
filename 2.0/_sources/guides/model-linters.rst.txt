@@ -14,15 +14,45 @@ that is configurable. Linter implementations are found in code. The
 `smithy-linters`_ package in Maven Central contains several linters that
 can be used to apply additional validation to Smithy models.
 
-The following example adds ``smithy-linters`` as a Gradle dependency
-to a ``build.gradle.kts`` file:
+The following example adds ``smithy-linters`` as a dependency to a Smithy project:
 
-.. code-block:: kotlin
+.. tab:: Smithy CLI
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-        implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "...": "...",
+            "maven": {
+                "dependencies": [
+                    "software.amazon.smithy:smithy-linters:__smithy_version__"
+                ]
+            },
+            "...": "..."
+        }
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                ...
+                implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                ...
+                implementation 'software.amazon.smithy:smithy-linters:__smithy_version__'
+            }
+
 
 After the dependency is added and available on the Java classpath, validators
 defined in the package and registered using `Java SPI`_ are available for

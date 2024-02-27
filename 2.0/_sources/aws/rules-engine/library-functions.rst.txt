@@ -9,22 +9,13 @@ make it possible to integrate AWS concepts like `Amazon Resource Names (ARNs)`_
 and `Partitions`_. An additional dependency is required to access these
 functions:
 
-The following example adds ``smithy-aws-endpoints`` as a Gradle dependency
+The following example adds ``smithy-aws-endpoints`` as a dependency
 to a Smithy project:
 
-.. tab:: Gradle
-
-    .. code-block:: kotlin
-
-        dependencies {
-            ...
-            implementation("software.amazon.smithy:smithy-aws-endpoints:__smithy_version__")
-            ...
-        }
-
-.. tab:: smithy-build.json
+.. tab:: Smithy CLI
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "maven": {
@@ -33,6 +24,30 @@ to a Smithy project:
                 ]
             }
         }
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                ...
+                implementation("software.amazon.smithy:smithy-aws-endpoints:__smithy_version__")
+                ...
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                ...
+                implementation 'software.amazon.smithy:smithy-aws-endpoints:__smithy_version__'
+                ...
+            }
 
 .. _rules-engine-aws-library-awsPartition:
 
