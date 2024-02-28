@@ -73,7 +73,6 @@ final class BuilderGenerator implements Runnable {
         writer.newLine();
         writer.writeWithNoFormatting("private Builder() {}").newLine();
         baseShape.accept(new BuilderSetterGenerator());
-        writer.newLine();
         writer.override();
         writer.openBlock("public $T build() {", "}", symbol,
                 () -> writer.write("return new $T(this);", symbol));
@@ -104,9 +103,9 @@ final class BuilderGenerator implements Runnable {
                 MemberShape member = memberIterator.next();
                 writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
                 if (memberIterator.hasNext()) {
-                    writer.writeWithNoFormatting("\n");
+                    writer.writeInlineWithNoFormatting("\n");
                 } else {
-                    writer.writeWithNoFormatting(";\n");
+                    writer.writeInlineWithNoFormatting(";\n");
                 }
             }
             writer.dedent();
@@ -186,7 +185,6 @@ final class BuilderGenerator implements Runnable {
         public Void structureShape(StructureShape shape) {
             shape.members().forEach(
                     memberShape -> memberShape.accept(new SetterVisitor(symbolProvider.toMemberName(memberShape))));
-            writer.newLine();
             return null;
         }
     }
@@ -204,8 +202,7 @@ final class BuilderGenerator implements Runnable {
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("this.$1L = $1L;", memberName);
                         writer.writeWithNoFormatting(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
             return null;
         }
 
@@ -216,16 +213,14 @@ final class BuilderGenerator implements Runnable {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().addAll($1L);", memberName);
                         writer.writeWithNoFormatting(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
 
             // Clear all
             writer.openBlock("public Builder clear$L() {", "}",
                     StringUtils.capitalize(memberName), () -> {
                         writer.write("$L.get().clear();", memberName);
                         writer.writeWithNoFormatting(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
 
             // Set one
             writer.openBlock("public Builder add$L($T value) {", "}",
@@ -241,7 +236,7 @@ final class BuilderGenerator implements Runnable {
                     () -> {
                         writer.write("$L.get().remove(value);", memberName);
                         writer.write(RETURN_THIS);
-                    });
+                    }).newLine();
             return null;
         }
 
@@ -260,8 +255,7 @@ final class BuilderGenerator implements Runnable {
             writer.openBlock("public Builder clear$L() {", "}", StringUtils.capitalize(memberName), () -> {
                 writer.write("this.$L.get().clear();", memberName);
                 writer.write(RETURN_THIS);
-            });
-            writer.newLine();
+            }).newLine();
 
             // Set one
             MemberShape keyShape = shape.getKey();
@@ -271,16 +265,14 @@ final class BuilderGenerator implements Runnable {
                     symbolProvider.toSymbol(valueShape), () -> {
                         writer.write("this.$L.get().put(key, value);", memberName);
                         writer.write(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
 
             // Remove one
             writer.openBlock("public Builder remove$L($T $L) {", "}",
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape), memberName, () -> {
                         writer.write("this.$1L.get().remove($1L);", memberName);
                         writer.write(RETURN_THIS);
-                    });
-            writer.newLine();
+                    }).newLine();
             return null;
         }
 
