@@ -3,4 +3,8 @@ ignored.smithy
 nested-namespace.smithy
 name-conflicts.smithy
 non-java-names.smithy
+mixins.smithy
+idref.smithy
+deprecated.smithy
+string-enum-compatibility.smithy
 

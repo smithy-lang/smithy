@@ -25,9 +25,12 @@ import com.example.traits.StringSetTrait;
 import com.example.traits.StringStringMapTrait;
 import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
+import com.example.traits.StructWithMixinTrait;
 import com.example.traits.StructureListTrait;
+import com.example.traits.StructureListWithMixinMemberTrait;
 import com.example.traits.StructureSetTrait;
 import com.example.traits.StructureTrait;
+import com.example.traits.SuitTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -104,7 +107,12 @@ public class CreatesTraitTest {
                         .build().toNode()
                 ),
                 Arguments.of(SnakeCaseStructureTrait.ID, ObjectNode.builder()
-                        .withMember("snake_case_member", "stuff").build())
+                        .withMember("snake_case_member", "stuff").build()),
+                Arguments.of(StructureListWithMixinMemberTrait.ID,
+                        ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
+                Arguments.of(StructWithMixinTrait.ID, StructWithMixinTrait.builder()
+                        .d("d").build().toNode()),
+                Arguments.of(SuitTrait.ID, Node.from("CLUBS"))
         );
     }
 
