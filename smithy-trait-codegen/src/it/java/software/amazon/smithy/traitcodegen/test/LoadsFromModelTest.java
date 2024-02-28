@@ -35,6 +35,7 @@ import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
 import com.example.traits.StructWithMixinTrait;
 import com.example.traits.StructWithNestedDocumentTrait;
+import com.example.traits.StructWithNestedTimestampTrait;
 import com.example.traits.StructureListTrait;
 import com.example.traits.StructureListWithMixinMemberTrait;
 import com.example.traits.StructureSetTrait;
@@ -44,6 +45,7 @@ import com.example.traits.names.SnakeCaseStructureTrait;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -160,7 +162,9 @@ public class LoadsFromModelTest {
                         MapUtils.of("isClub", true, "getValue", "club")),
                 Arguments.of("nested-document-trait.smithy", StructWithNestedDocumentTrait.class,
                         MapUtils.of("getDoc", Optional.of(ObjectNode.builder().withMember("foo", "bar")
-                                .withMember("fizz", "buzz").build())))
+                                .withMember("fizz", "buzz").build()))),
+                Arguments.of("nested-timestamp.smithy", StructWithNestedTimestampTrait.class,
+                        MapUtils.of("getTime", Optional.of(Instant.parse("1985-04-12T23:20:50.52Z"))))
         );
     }
 

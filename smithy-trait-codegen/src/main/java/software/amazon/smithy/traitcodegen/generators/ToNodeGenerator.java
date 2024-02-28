@@ -249,7 +249,7 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void stringShape(StringShape shape) {
             if (shape.hasTrait(IdRefTrait.class)) {
-                idRefMapper();
+                toStringMapper();
             } else {
                 fromNodeMapper();
             }
@@ -316,7 +316,7 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void memberShape(MemberShape shape) {
             if (shape.hasTrait(IdRefTrait.class)) {
-                idRefMapper();
+                toStringMapper();
             } else {
                 model.expectShape(shape.getTarget()).accept(this);
             }
@@ -382,16 +382,18 @@ final class ToNodeGenerator implements Runnable {
             throw new UnsupportedOperationException("Union shapes are not supported at this time.");
         }
 
+        // TODO: handle timestampFormat
         @Override
         public Void timestampShape(TimestampShape shape) {
-            throw new UnsupportedOperationException("Timestamp shapes not supported at this time.");
+            toStringMapper();
+            return null;
         }
 
         private void fromNodeMapper() {
             writer.write("$T.from($L)", Node.class, varName);
         }
 
-        private void idRefMapper() {
+        private void toStringMapper() {
             writer.write("$T.from($L.toString())", Node.class, varName);
         }
     }

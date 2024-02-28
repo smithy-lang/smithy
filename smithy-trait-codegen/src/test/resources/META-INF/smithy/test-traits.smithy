@@ -213,3 +213,15 @@ structure structWithNestedDocument {
 
 @private
 document nestedDoc
+
+// ==================
+//  Timestamp traits
+// ==================
+
+@trait
+structure structWithNestedTimestamp {
+    time: nestedTimestamp
+}
+
+@private
+timestamp nestedTimestamp

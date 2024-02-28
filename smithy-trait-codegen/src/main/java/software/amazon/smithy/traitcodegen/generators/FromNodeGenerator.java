@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.time.Instant;
 import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -283,13 +284,18 @@ final class FromNodeGenerator implements Runnable {
             return null;
         }
 
+
+        // TODO: Handle timestampFormat trait
         @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Shape not supported " + shape);
+        public Void timestampShape(TimestampShape shape) {
+            writer.writeInline(memberPrefix + "Member($1S, n -> $3T.parse(n.expectStringNode().getValue()), "
+                    + "builder::$2L)",
+                    fieldName, memberName, Instant.class);
+            return null;
         }
 
         @Override
-        public Void timestampShape(TimestampShape shape) {
+        public Void unionShape(UnionShape shape) {
             throw new UnsupportedOperationException("Shape not supported " + shape);
         }
 

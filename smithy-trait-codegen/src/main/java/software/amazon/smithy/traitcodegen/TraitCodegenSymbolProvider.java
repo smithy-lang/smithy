@@ -8,6 +8,7 @@ package software.amazon.smithy.traitcodegen;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -154,7 +155,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol timestampShape(TimestampShape shape) {
-        throw new UnsupportedOperationException("Union shapes are not supported at this time.");
+        return TraitCodegenUtils.fromClass(Instant.class);
     }
 
     @Override
