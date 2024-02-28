@@ -80,6 +80,7 @@ final class TraitCodegen {
     public void initialize() {
         LOGGER.info("Initializing trait codegen plugin.");
         integrations = getIntegrations();
+        model = applyBaseTransforms(model);
         SymbolProvider symbolProvider = createSymbolProvider();
         codegenContext = new TraitCodegenContext(model, settings, symbolProvider, fileManifest, integrations);
         registerInterceptors(codegenContext);
@@ -87,8 +88,9 @@ final class TraitCodegen {
     }
 
     public void run() {
-        validateState();
-        applyTransforms();
+        // Check that all required fields have been correctly initialized.
+        Objects.requireNonNull(integrations, "`integrations` not initialized.");
+        Objects.requireNonNull(codegenContext, "`codegenContext` not initialized.");
 
         // Find all trait definition shapes excluding traits in the prelude.
         LOGGER.info("Generating trait classes.");
@@ -105,19 +107,19 @@ final class TraitCodegen {
     }
 
     /**
-     * Check that all required fields have been correctly initialized.
-     */
-    private void validateState() {
-        Objects.requireNonNull(integrations, "`integrations` not initialized.");
-        Objects.requireNonNull(codegenContext, "`codegenContext` not initialized.");
-    }
-
-    /**
      * Applies standard transforms to the model.
+     * <dl>
+     *     <dt>changeStringEnumsToEnumShapes</dt>
+     *     <dd>Changes string enums to enum shapes for compatibility</dd>
+     *     <dt>flattenAndRemoveMixins</dt>
+     *     <dd>Ensures mixins are flattened into any generated traits or nested structures</dd>
+     * </dl>
      */
-    private void applyTransforms() {
+    private static Model applyBaseTransforms(Model model) {
         ModelTransformer transformer = ModelTransformer.create();
         model = transformer.changeStringEnumsToEnumShapes(model);
+        model = transformer.flattenAndRemoveMixins(model);
+        return model;
     }
 
     private List<TraitCodegenIntegration> getIntegrations() {
