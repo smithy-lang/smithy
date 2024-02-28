@@ -10,7 +10,10 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
@@ -24,6 +27,8 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -51,12 +56,7 @@ final class GetterGenerator implements Runnable {
         shape.accept(new GetterVisitor());
     }
 
-    public final class GetterVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        protected Void getDefault(Shape shape) {
-            // Do not generate a getter by default
-            return null;
-        }
+    public final class GetterVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
         @Override
         public Void shortShape(ShortShape shape) {
@@ -83,6 +83,13 @@ final class GetterGenerator implements Runnable {
         }
 
         @Override
+        public Void documentShape(DocumentShape shape) {
+            // Documents do not generate any getters. You must
+            // use the .toNode method to get the value of a document trait.
+            return null;
+        }
+
+        @Override
         public Void doubleShape(DoubleShape shape) {
             generateValueGetter(shape);
             return null;
@@ -98,6 +105,18 @@ final class GetterGenerator implements Runnable {
         public Void bigDecimalShape(BigDecimalShape shape) {
             generateValueGetter(shape);
             return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            generateValueGetter(shape);
+            return null;
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
+                    + "Consider using an Annotation (empty structure) trait instead");
         }
 
         @Override
@@ -147,6 +166,21 @@ final class GetterGenerator implements Runnable {
                 writer.newLine();
             }
             return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Union Shapes are not supported at this time.");
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            throw new UnsupportedOperationException("Timestamp Shapes are not supported at this time.");
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            throw new IllegalArgumentException("Cannot generate a getter for Member shape: " + shape);
         }
 
         private void generateNonOptionalGetter(MemberShape member) {

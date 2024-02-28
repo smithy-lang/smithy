@@ -8,6 +8,7 @@ package software.amazon.smithy.traitcodegen.generators;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
@@ -19,14 +20,13 @@ import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ResourceShape;
-import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
@@ -51,17 +51,11 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
         }
     }
 
-    private static final class TraitShapeGenerator extends ShapeVisitor.Default<Void> {
+    private static final class TraitShapeGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
         private final GenerateTraitDirective directive;
 
         private TraitShapeGenerator(GenerateTraitDirective directive) {
             this.directive = directive;
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            throw new UnsupportedOperationException("Trait code generation does not support shapes of type: "
-                    + shape.getType());
         }
 
         @Override
@@ -173,6 +167,32 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
             new CollectionTraitGenerator().accept(directive);
             return null;
         }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Trait code generation does not support union traits"
+                    + " at this time. Failed to generate Trait class for: " + shape);
+        }
+
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            throw new UnsupportedOperationException("Trait code generation does not support timestamp traits"
+                    + " at this time. Failed to generate Trait class for: " + shape);
+        }
+
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            throw new UnsupportedOperationException("Trait code generation does not support blob traits"
+                    + " at this time. Failed to generate Trait class for: " + shape);
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            throw new IllegalArgumentException("Member shapes cannot be generated as traits. Attempted to generate "
+                    + " trait definition for :" + shape);
+        }
     }
 
     private static final class NestedShapeGenerator extends ShapeVisitor.Default<Void> {
@@ -184,34 +204,19 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         protected Void getDefault(Shape shape) {
-            // Most nested shapes are simply ignored as they do not generate new class files.
-            // For example, an Integer does not generate a new class.
+            // Most nested shapes do not generate new classes.
             return null;
-        }
-
-        @Override
-        public Void operationShape(OperationShape shape) {
-            throw new UnsupportedOperationException("Cannot generate nested type for operation shapes");
-        }
-
-        @Override
-        public Void resourceShape(ResourceShape shape) {
-            throw new UnsupportedOperationException("Cannot generate nested type for resource shapes");
-        }
-
-        @Override
-        public Void serviceShape(ServiceShape shape) {
-            throw new UnsupportedOperationException("Cannot generate nested type for service shapes");
-        }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Cannot generate nested type for Union shapes");
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
             new StructureShapeGenerator().accept(directive);
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            new EnumShapeGenerator.StringEnumShapeGenerator().accept(directive);
             return null;
         }
 
@@ -222,10 +227,15 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        public Void enumShape(EnumShape shape) {
-            new EnumShapeGenerator.StringEnumShapeGenerator().accept(directive);
-            return null;
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Generation of nested types for Union shapes "
+                    + " is not supported at this time.");
         }
 
+        @Override
+        public Void memberShape(MemberShape shape) {
+            throw new IllegalArgumentException("NestedShapeGenerator should not visit member shapes. "
+             + " Attempted to visit " + shape);
+        }
     }
 }

@@ -13,8 +13,10 @@ import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
@@ -29,6 +31,8 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -83,13 +87,7 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             writer.writeWithNoFormatting(BUILDER_INITIALIZER);
-            writer.writeWithNoFormatting("node.expectArrayNode()");
-            writer.indent();
-            writer.writeWithNoFormatting(".getElements().stream()");
-            writer.write(".map(n -> $C)",
-                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
-            writer.writeWithNoFormatting(".forEach(builder::addValues);");
-            writer.dedent();
+            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
 
             return null;
@@ -98,11 +96,7 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void mapShape(MapShape shape) {
             writer.writeWithNoFormatting(BUILDER_INITIALIZER);
-            writer.openBlock("node.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
-                    () -> writer.write("builder.putValues($C, $C);",
-                            (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
-                            (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
-            );
+            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
             writer.writeWithNoFormatting(BUILD_AND_RETURN);
             return null;
         }
@@ -150,7 +144,7 @@ final class FromNodeGenerator implements Runnable {
     /**
      * Generates the mapping from a node member to a builder field.
      */
-    private final class MemberGenerator extends ShapeVisitor.Default<Void> {
+    private final class MemberGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
         private final String memberName;
         private final String fieldName;
         private final String memberPrefix;
@@ -164,11 +158,6 @@ final class FromNodeGenerator implements Runnable {
         @Override
         public Void memberShape(MemberShape shape) {
             return model.expectShape(shape.getTarget()).accept(this);
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            throw new UnsupportedOperationException("Shape not supported " + shape);
         }
 
         @Override
@@ -218,6 +207,12 @@ final class FromNodeGenerator implements Runnable {
             writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
                     fieldName, memberName);
             return null;
+        }
+
+        // TODO: Implement???
+        @Override
+        public Void documentShape(DocumentShape shape) {
+            throw new UnsupportedOperationException("Shape not supported " + shape);
         }
 
         @Override
@@ -285,6 +280,21 @@ final class FromNodeGenerator implements Runnable {
                     (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
             );
             return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Shape not supported " + shape);
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            throw new UnsupportedOperationException("Shape not supported " + shape);
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            throw new UnsupportedOperationException("Shape not supported " + shape);
         }
     }
 }

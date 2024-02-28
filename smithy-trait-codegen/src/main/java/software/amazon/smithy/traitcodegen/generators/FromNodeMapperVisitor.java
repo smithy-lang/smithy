@@ -8,21 +8,26 @@ package software.amazon.smithy.traitcodegen.generators;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
+import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -30,7 +35,7 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 /**
  * Determines how to map a node to a shape.
  */
-final class FromNodeMapperVisitor extends ShapeVisitor.Default<Void> {
+final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     private final TraitCodegenWriter writer;
     private final Model model;
@@ -43,13 +48,32 @@ final class FromNodeMapperVisitor extends ShapeVisitor.Default<Void> {
     }
 
     @Override
-    protected Void getDefault(Shape shape) {
-        throw new UnsupportedOperationException("Shape not supported " + shape);
+    public Void booleanShape(BooleanShape shape) {
+        writer.write("BooleanMember($1S, builder::$1L)", varName);
+        return null;
     }
 
     @Override
-    public Void booleanShape(BooleanShape shape) {
-        writer.write("BooleanMember($1S, builder::$1L)", varName);
+    public Void listShape(ListShape shape) {
+        writer.write("$L.expectArrayNode()", varName);
+        writer.indent();
+        writer.writeWithNoFormatting(".getElements().stream()");
+        writer.write(".map(n -> $C)",
+                (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n"))
+        );
+        writer.writeWithNoFormatting(".forEach(builder::addValues);");
+        writer.dedent();
+        return null;
+    }
+
+    @Override
+    public Void mapShape(MapShape shape) {
+        writer.openBlock("$L.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
+                varName,
+                () -> writer.write("builder.putValues($C, $C);",
+                        (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
+                        (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
+        );
         return null;
     }
 
@@ -80,6 +104,11 @@ final class FromNodeMapperVisitor extends ShapeVisitor.Default<Void> {
     @Override
     public Void floatShape(FloatShape shape) {
         writer.write("$L.expectNumberNode().getValue().floatValue()", varName);
+        return null;
+    }
+
+    @Override
+    public Void documentShape(DocumentShape shape) {
         return null;
     }
 
@@ -115,6 +144,21 @@ final class FromNodeMapperVisitor extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), varName);
         return null;
+    }
+
+    @Override
+    public Void unionShape(UnionShape shape) {
+        throw new UnsupportedOperationException("Union shapes not supported at this time.");
+    }
+
+    @Override
+    public Void timestampShape(TimestampShape shape) {
+        throw new UnsupportedOperationException("Timestamp shapes not supported at this time.");
+    }
+
+    @Override
+    public Void blobShape(BlobShape shape) {
+        throw new UnsupportedOperationException("Blob shapes not supported at this time.");
     }
 
     @Override

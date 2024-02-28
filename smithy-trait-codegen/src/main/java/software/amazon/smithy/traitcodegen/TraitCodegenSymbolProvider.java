@@ -35,10 +35,12 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
 
-final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> implements SymbolProvider {
+final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Symbol> implements SymbolProvider {
     private static final String LIST_INITIALIZER = "forList()";
     private static final String MAP_INITIALIZER = "forOrderedMap()";
     private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
@@ -151,8 +153,13 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     }
 
     @Override
-    protected Symbol getDefault(Shape shape) {
-        return null;
+    public Symbol timestampShape(TimestampShape shape) {
+        throw new UnsupportedOperationException("Union shapes are not supported at this time.");
+    }
+
+    @Override
+    public Symbol unionShape(UnionShape shape) {
+        throw new UnsupportedOperationException("Union shapes are not supported at this time.");
     }
 
     @Override

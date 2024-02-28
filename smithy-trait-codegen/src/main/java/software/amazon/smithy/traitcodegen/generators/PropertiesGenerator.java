@@ -9,6 +9,8 @@ import java.util.Map;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -25,6 +27,8 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -60,13 +64,13 @@ final class PropertiesGenerator implements Runnable {
         writer.newLine();
     }
 
-    private final class PropertyGenerator extends ShapeVisitor.Default<Void> {
+    private final class PropertyGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
         private static final String PROPERTY_TEMPLATE = "private final $T $L;";
 
         @Override
-        protected Void getDefault(Shape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
+        public Void booleanShape(BooleanShape shape) {
+            throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
+                    + "Consider using an Annotation (empty structure) trait instead");
         }
 
         @Override
@@ -171,6 +175,30 @@ final class PropertiesGenerator implements Runnable {
                 writer.write(PROPERTY_TEMPLATE, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member));
             }
             return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Property generator does not support shape "
+                    + shape + " of type " + shape.getType());
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            throw new UnsupportedOperationException("Property generator does not support shape "
+                    + shape + " of type " + shape.getType());
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            throw new UnsupportedOperationException("Property generator does not support shape "
+                    + shape + " of type " + shape.getType());
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
+                    + "to visit " + shape);
         }
 
         private void createValueProperty(Shape shape) {
