@@ -219,9 +219,28 @@ document nestedDoc
 // ==================
 
 @trait
-structure structWithNestedTimestamp {
-    time: nestedTimestamp
+structure structWithNestedTimestamps {
+    @required
+    baseTime: basicTimestamp
+    @required
+    dateTime: dateTimeTimestamp
+    @required
+    httpDate: httpDateTimestamp
+    @required
+    epochSeconds: epochSecondsTimestamp
 }
 
 @private
-timestamp nestedTimestamp
+timestamp basicTimestamp
+
+@private
+@timestampFormat("date-time")
+timestamp dateTimeTimestamp
+
+@private
+@timestampFormat("http-date")
+timestamp httpDateTimestamp
+
+@private
+@timestampFormat("epoch-seconds")
+timestamp epochSecondsTimestamp

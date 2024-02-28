@@ -35,7 +35,7 @@ import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
 import com.example.traits.StructWithMixinTrait;
 import com.example.traits.StructWithNestedDocumentTrait;
-import com.example.traits.StructWithNestedTimestampTrait;
+import com.example.traits.StructWithNestedTimestampsTrait;
 import com.example.traits.StructureListTrait;
 import com.example.traits.StructureListWithMixinMemberTrait;
 import com.example.traits.StructureSetTrait;
@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -163,8 +164,11 @@ public class LoadsFromModelTest {
                 Arguments.of("nested-document-trait.smithy", StructWithNestedDocumentTrait.class,
                         MapUtils.of("getDoc", Optional.of(ObjectNode.builder().withMember("foo", "bar")
                                 .withMember("fizz", "buzz").build()))),
-                Arguments.of("nested-timestamp.smithy", StructWithNestedTimestampTrait.class,
-                        MapUtils.of("getTime", Optional.of(Instant.parse("1985-04-12T23:20:50.52Z"))))
+                Arguments.of("nested-timestamps.smithy", StructWithNestedTimestampsTrait.class,
+                        MapUtils.of("getBaseTime", Instant.parse("1985-04-12T23:20:50.52Z"),
+                                    "getDateTime", Instant.parse("1985-04-12T23:20:50.52Z"),
+                                "getHttpDate", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")),
+                                "getEpochSeconds", Instant.ofEpochSecond((long) 1515531081.123)))
         );
     }
 

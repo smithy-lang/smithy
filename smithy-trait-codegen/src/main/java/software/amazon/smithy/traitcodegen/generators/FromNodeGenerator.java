@@ -6,6 +6,7 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -34,6 +35,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -284,14 +286,38 @@ final class FromNodeGenerator implements Runnable {
             return null;
         }
 
-
-        // TODO: Handle timestampFormat trait
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, n -> $3T.parse(n.expectStringNode().getValue()), "
-                    + "builder::$2L)",
-                    fieldName, memberName, Instant.class);
+            if (shape.hasTrait(TimestampFormatTrait.class)) {
+                switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.writeInline(memberPrefix
+                                        + "Member($1S, n -> $3T.ofEpochSecond("
+                                        + "n.expectNumberNode().getValue().longValue()), "
+                                        + "builder::$2L)",
+                                fieldName, memberName, Instant.class);
+                        break;
+                    case HTTP_DATE:
+                        writer.writeInline(memberPrefix + "Member($1S, n -> $3T"
+                                        + ".from($4T.RFC_1123_DATE_TIME"
+                                        + ".parse(n.expectStringNode().getValue())), "
+                                        + "builder::$2L)",
+                                fieldName, memberName, Instant.class, DateTimeFormatter.class);
+                        break;
+                    default:
+                        defaultTimestampMapper();
+                        break;
+                }
+            } else {
+                defaultTimestampMapper();
+            }
             return null;
+        }
+
+        private void defaultTimestampMapper() {
+            writer.writeInline(memberPrefix + "Member($1S, n -> $3T.parse(n.expectStringNode().getValue()), "
+                            + "builder::$2L)",
+                    fieldName, memberName, Instant.class);
         }
 
         @Override

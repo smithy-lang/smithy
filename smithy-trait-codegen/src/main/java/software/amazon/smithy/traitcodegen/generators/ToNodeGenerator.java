@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -37,6 +38,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -382,10 +384,24 @@ final class ToNodeGenerator implements Runnable {
             throw new UnsupportedOperationException("Union shapes are not supported at this time.");
         }
 
-        // TODO: handle timestampFormat
         @Override
         public Void timestampShape(TimestampShape shape) {
-            toStringMapper();
+            if (shape.hasTrait(TimestampFormatTrait.class)) {
+                switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$T.from($L.getEpochSecond())", Node.class, varName);
+                        break;
+                    case HTTP_DATE:
+                        writer.write("$T.from($T.RFC_1123_DATE_TIME.format($L))",
+                                Node.class, DateTimeFormatter.class, varName);
+                        break;
+                    default:
+                        toStringMapper();
+                        break;
+                }
+            } else {
+                toStringMapper();
+            }
             return null;
         }
 
