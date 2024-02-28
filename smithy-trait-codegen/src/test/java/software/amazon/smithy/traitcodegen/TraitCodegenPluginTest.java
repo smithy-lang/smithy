@@ -56,7 +56,7 @@ public class TraitCodegenPluginTest {
         assertThat(fileList, hasItem(
                 Paths.get("/META-INF/services/software.amazon.smithy.model.traits.TraitService").toString()));
         assertThat(fileList, hasItem(
-                Paths.get("/com/example/traits/nested/NestedNamespaceTraitTrait.java").toString()));
+                Paths.get("/com/example/traits/nested/NestedNamespaceTrait.java").toString()));
         assertThat(fileList, hasItem(
                 Paths.get("/com/example/traits/nested/NestedNamespaceStruct.java").toString()));
     }
@@ -143,7 +143,7 @@ public class TraitCodegenPluginTest {
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
         Optional<String> fileStringOptional = manifest.getFileString(
-                Paths.get("com/example/traits/StructureTraitTrait.java").toString());
+                Paths.get("com/example/traits/StructureTrait.java").toString());
         assertTrue(fileStringOptional.isPresent());
         String expected = "    /**\n"
                           + "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n"

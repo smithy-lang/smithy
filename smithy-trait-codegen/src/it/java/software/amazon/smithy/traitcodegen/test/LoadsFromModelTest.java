@@ -3,7 +3,7 @@ package software.amazon.smithy.traitcodegen.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-import com.example.traits.BasicAnnotationTraitTrait;
+import com.example.traits.BasicAnnotationTrait;
 import com.example.traits.HttpCodeBigDecimalTrait;
 import com.example.traits.HttpCodeBigIntegerTrait;
 import com.example.traits.HttpCodeByteTrait;
@@ -23,18 +23,18 @@ import com.example.traits.MapValue;
 import com.example.traits.NestedA;
 import com.example.traits.NestedB;
 import com.example.traits.NestedIdRefHolder;
-import com.example.traits.NumberListTraitTrait;
-import com.example.traits.NumberSetTraitTrait;
+import com.example.traits.NumberListTrait;
+import com.example.traits.NumberSetTrait;
 import com.example.traits.ResponseTypeIntTrait;
 import com.example.traits.ResponseTypeTrait;
-import com.example.traits.StringListTraitTrait;
-import com.example.traits.StringSetTraitTrait;
+import com.example.traits.StringListTrait;
+import com.example.traits.StringSetTrait;
 import com.example.traits.StringStringMapTrait;
 import com.example.traits.StringToStructMapTrait;
-import com.example.traits.StringTraitTrait;
-import com.example.traits.StructureListTraitTrait;
-import com.example.traits.StructureSetTraitTrait;
-import com.example.traits.StructureTraitTrait;
+import com.example.traits.StringTrait;
+import com.example.traits.StructureListTrait;
+import com.example.traits.StructureSetTrait;
+import com.example.traits.StructureTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -63,7 +63,7 @@ public class LoadsFromModelTest {
 
     static Stream<Arguments> loadsModelTests() {
         return Stream.of(
-                Arguments.of("annotation-trait.smithy", BasicAnnotationTraitTrait.class,
+                Arguments.of("annotation-trait.smithy", BasicAnnotationTrait.class,
                         Collections.emptyMap()),
                 Arguments.of("big-decimal-trait.smithy", HttpCodeBigDecimalTrait.class,
                         MapUtils.of("getValue", new BigDecimal("100.01"))),
@@ -98,25 +98,25 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValue", 1)),
                 Arguments.of("long-trait.smithy", HttpCodeLongTrait.class,
                         MapUtils.of("getValue", 1L)),
-                Arguments.of("number-list-trait.smithy", NumberListTraitTrait.class,
+                Arguments.of("number-list-trait.smithy", NumberListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(1, 2, 3, 4, 5))),
-                Arguments.of("number-set-trait.smithy", NumberSetTraitTrait.class,
+                Arguments.of("number-set-trait.smithy", NumberSetTrait.class,
                         MapUtils.of("getValues", SetUtils.of(1, 2, 3, 4))),
                 Arguments.of("short-trait.smithy", HttpCodeShortTrait.class,
                         MapUtils.of("getValue", (short) 1)),
                 Arguments.of("int-enum-trait.smithy", ResponseTypeIntTrait.class,
                         MapUtils.of("getValue", 1, "isYes", true)),
-                Arguments.of("string-list-trait.smithy", StringListTraitTrait.class,
+                Arguments.of("string-list-trait.smithy", StringListTrait.class,
                         MapUtils.of("getValues", ListUtils.of("a", "b", "c", "d"))),
-                Arguments.of("string-set-trait.smithy", StringSetTraitTrait.class,
+                Arguments.of("string-set-trait.smithy", StringSetTrait.class,
                         MapUtils.of("getValues", SetUtils.of("a", "b", "c", "d"))),
-                Arguments.of("structure-list-trait.smithy", StructureListTraitTrait.class,
+                Arguments.of("structure-list-trait.smithy", StructureListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(
                                         ListMember.builder().a("first").b(1).c("other").build(),
                                         ListMember.builder().a("second").b(2).c("more").build()))),
-                Arguments.of("string-trait.smithy", StringTraitTrait.class,
+                Arguments.of("string-trait.smithy", StringTrait.class,
                         MapUtils.of("getValue","Testing String Trait")),
-                Arguments.of("structure-set-trait.smithy", StructureSetTraitTrait.class,
+                Arguments.of("structure-set-trait.smithy", StructureSetTrait.class,
                         MapUtils.of("getValues", ListUtils.of(
                                 ListMember.builder().a("first").b(1).c("other").build(),
                                 ListMember.builder().a("second").b(2).c("more").build()))),
@@ -127,7 +127,7 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValues", MapUtils.of(
                                 "one", MapValue.builder().a("foo").b(2).build(),
                                 "two", MapValue.builder().a("bar").b(4).build()))),
-                Arguments.of("struct-trait.smithy", StructureTraitTrait.class,
+                Arguments.of("struct-trait.smithy", StructureTrait.class,
                         MapUtils.of(
                                 "getFieldA", "first",
                                 "getFieldB", Optional.of(false),

@@ -68,22 +68,17 @@ public final class TraitCodegenUtils {
             unescaped = StringUtils.capitalize(baseName);
         }
 
-        // No need to escape trait names (they already have 'Trait' appended)
+        // No need to escape trait name (they already have 'Trait' appended)
         if (shape.hasTrait(TraitDefinition.class)) {
-            return unescaped;
+            // If the trait class name doesn't already end with `Trait`,
+            // use that. Otherwise, append the `Trait` suffix.
+            if (unescaped.endsWith("Trait")) {
+                return unescaped;
+            }
+            return unescaped + "Trait";
         }
 
         return SHAPE_ESCAPER.escape(unescaped);
-    }
-
-    /**
-     * Gets the default name of a Shape that defines a trait.
-     *
-     * @param shape Shape to get name for.
-     * @return Default name.
-     */
-    public static String getDefaultTraitName(Shape shape) {
-        return getDefaultName(shape) + "Trait";
     }
 
     /**

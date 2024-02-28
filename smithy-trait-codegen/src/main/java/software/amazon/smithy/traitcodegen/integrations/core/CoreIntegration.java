@@ -69,7 +69,7 @@ public final class CoreIntegration implements TraitCodegenIntegration {
     private Symbol getTraitSymbol(TraitCodegenSettings settings, Shape shape, Symbol baseSymbol) {
         String relativeNamespace = TraitCodegenUtils.mapNamespace(settings.smithyNamespace(),
                 shape.getId().getNamespace(), settings.packageName());
-        String name = TraitCodegenUtils.getDefaultTraitName(shape);
+        String name = TraitCodegenUtils.getDefaultName(shape);
 
         // Maintain all existing properties, but change the namespace and name of the shape
         // and add the base symbol as a property. The references need to be set to empty list

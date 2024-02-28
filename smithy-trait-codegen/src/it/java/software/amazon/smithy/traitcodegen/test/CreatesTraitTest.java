@@ -2,7 +2,7 @@ package software.amazon.smithy.traitcodegen.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.traits.BasicAnnotationTraitTrait;
+import com.example.traits.BasicAnnotationTrait;
 import com.example.traits.HttpCodeBigDecimalTrait;
 import com.example.traits.HttpCodeBigIntegerTrait;
 import com.example.traits.HttpCodeByteTrait;
@@ -16,18 +16,18 @@ import com.example.traits.ListMember;
 import com.example.traits.MapValue;
 import com.example.traits.NestedA;
 import com.example.traits.NestedB;
-import com.example.traits.NumberListTraitTrait;
-import com.example.traits.NumberSetTraitTrait;
+import com.example.traits.NumberListTrait;
+import com.example.traits.NumberSetTrait;
 import com.example.traits.ResponseTypeIntTrait;
 import com.example.traits.ResponseTypeTrait;
-import com.example.traits.StringListTraitTrait;
-import com.example.traits.StringSetTraitTrait;
+import com.example.traits.StringListTrait;
+import com.example.traits.StringSetTrait;
 import com.example.traits.StringStringMapTrait;
 import com.example.traits.StringToStructMapTrait;
-import com.example.traits.StringTraitTrait;
-import com.example.traits.StructureListTraitTrait;
-import com.example.traits.StructureSetTraitTrait;
-import com.example.traits.StructureTraitTrait;
+import com.example.traits.StringTrait;
+import com.example.traits.StructureListTrait;
+import com.example.traits.StructureSetTrait;
+import com.example.traits.StructureTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +49,7 @@ public class CreatesTraitTest {
 
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
-                Arguments.of(BasicAnnotationTraitTrait.ID, Node.objectNode()),
+                Arguments.of(BasicAnnotationTrait.ID, Node.objectNode()),
                 Arguments.of(HttpCodeBigDecimalTrait.ID, Node.from(1)),
                 Arguments.of(HttpCodeBigIntegerTrait.ID, Node.from(1)),
                 Arguments.of(HttpCodeByteTrait.ID, Node.from(1)),
@@ -64,15 +64,15 @@ public class CreatesTraitTest {
                 Arguments.of(HttpCodeIntegerTrait.ID, Node.from(1)),
                 Arguments.of(ResponseTypeIntTrait.ID, Node.from(2)),
                 Arguments.of(HttpCodeLongTrait.ID, Node.from(1L)),
-                Arguments.of(NumberListTraitTrait.ID, ArrayNode.fromNodes(
+                Arguments.of(NumberListTrait.ID, ArrayNode.fromNodes(
                         Node.from(1), Node.from(2), Node.from(3))
                 ),
-                Arguments.of(NumberSetTraitTrait.ID, ArrayNode.fromNodes(
+                Arguments.of(NumberSetTrait.ID, ArrayNode.fromNodes(
                         Node.from(1), Node.from(2), Node.from(3))
                 ),
                 Arguments.of(HttpCodeShortTrait.ID, Node.from(1)),
-                Arguments.of(StringListTraitTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
-                Arguments.of(StringSetTraitTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
+                Arguments.of(StringListTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
+                Arguments.of(StringSetTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
                 Arguments.of(StringStringMapTrait.ID, StringStringMapTrait.builder()
                         .putValues("a", "first").putValues("b", "other").build().toNode()
                 ),
@@ -81,16 +81,16 @@ public class CreatesTraitTest {
                         .putValues("two", MapValue.builder().a("bar").b(4).build())
                         .build().toNode()
                 ),
-                Arguments.of(StringTraitTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
-                Arguments.of(StructureListTraitTrait.ID, ArrayNode.fromNodes(
+                Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
+                Arguments.of(StructureListTrait.ID, ArrayNode.fromNodes(
                         ListMember.builder().a("first").b(1).c("other").build().toNode(),
                         ListMember.builder().a("second").b(2).c("more").build().toNode()
                 )),
-                Arguments.of(StructureSetTraitTrait.ID, ArrayNode.fromNodes(
+                Arguments.of(StructureSetTrait.ID, ArrayNode.fromNodes(
                         ListMember.builder().a("first").b(1).c("other").build().toNode(),
                         ListMember.builder().a("second").b(2).c("more").build().toNode()
                 )),
-                Arguments.of(StructureTraitTrait.ID, StructureTraitTrait.builder()
+                Arguments.of(StructureTrait.ID, StructureTrait.builder()
                         .fieldA("a")
                         .fieldB(true)
                         .fieldC(NestedA.builder()
