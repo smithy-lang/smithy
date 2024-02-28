@@ -114,8 +114,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         builder.append(getImportContainer().toString()).append(getNewline());
 
         // Handle duplicates that may need to use full name
-        Map<String, Object> nameContext = resolveNameContext();
-        putContext(nameContext);
+        putContext(resolveNameContext());
         builder.append(format(super.toString()));
 
         return builder.toString();

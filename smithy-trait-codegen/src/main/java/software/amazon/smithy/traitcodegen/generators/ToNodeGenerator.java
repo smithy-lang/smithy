@@ -163,7 +163,7 @@ final class ToNodeGenerator implements Runnable {
             }
             writer.writeWithNoFormatting("return values.entrySet().stream()")
                     .indent()
-                    .write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
+                    .write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
                     .indent()
                     .write("$C, $C))",
                             (Runnable) () -> shape.getKey().accept(
@@ -171,8 +171,8 @@ final class ToNodeGenerator implements Runnable {
                             (Runnable) () -> shape.getValue().accept(
                                     new ToNodeMapperVisitor("entry.getValue()")))
                     .dedent()
-                    .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
-                            ObjectNode.class, Map.class)
+                    .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
+                            ObjectNode.class, Map.Entry.class)
                     .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
                     .dedent();
             return null;
@@ -268,7 +268,7 @@ final class ToNodeGenerator implements Runnable {
         public Void mapShape(MapShape shape) {
             writer.openBlock("$L.entrySet().stream()", "",
                     varName,
-                    () -> writer.write(".map(entry -> new $T.SimpleImmutableEntry<>(", AbstractMap.class)
+                    () -> writer.write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
                             .indent()
                             .write("$C, $C))",
                                     (Runnable) () -> shape.getKey().accept(
@@ -276,8 +276,8 @@ final class ToNodeGenerator implements Runnable {
                                     (Runnable) () -> shape.getValue().accept(
                                             new ToNodeMapperVisitor("entry.getValue()")))
                             .dedent()
-                            .write(".collect($1T.collect($2T.Entry::getKey, $2T.Entry::getValue))",
-                                    ObjectNode.class, Map.class));
+                            .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
+                                    ObjectNode.class, Map.Entry.class));
             return null;
         }
 
