@@ -274,7 +274,7 @@ final class InitCommand implements Command {
         exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), stagingPath);
         // add any additional files that should be included
         for (String includedFile : includedFiles) {
-            exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), stagingPath);
+            exec(ListUtils.of("git", "sparse-checkout", "add", includedFile), stagingPath);
         }
         exec(ListUtils.of("git", "checkout"), stagingPath);
 
