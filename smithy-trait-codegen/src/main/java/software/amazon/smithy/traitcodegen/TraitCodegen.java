@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.traitcodegen.generators.ShapeGenerator;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -51,7 +52,7 @@ final class TraitCodegen {
     // Get all trait definitions within a namespace
     private static final String SELECTOR_TEMPLATE = "[trait|trait][id|namespace ^= '%s']";
 
-    private final Model model;
+    private Model model;
     private final TraitCodegenSettings settings;
     private final FileManifest fileManifest;
     private final Selector traitSelector;
@@ -86,13 +87,12 @@ final class TraitCodegen {
     }
 
     public void run() {
-        // Check that all required fields have been correctly initialized.
-        Objects.requireNonNull(integrations, "`integrations` not initialized.");
-        Objects.requireNonNull(codegenContext, "`codegenContext` not initialized.");
+        validateState();
+        applyTransforms();
 
         // Find all trait definition shapes excluding traits in the prelude.
         LOGGER.info("Generating trait classes.");
-        Set<Shape> traitClosure = getTraitClosure(model);
+        Set<Shape> traitClosure = getTraitClosure(codegenContext.model());
         for (Shape trait : traitClosure) {
             new ShapeGenerator().accept(new GenerateTraitDirective(codegenContext, trait));
         }
@@ -102,6 +102,22 @@ final class TraitCodegen {
         if (!codegenContext.writerDelegator().getWriters().isEmpty()) {
             codegenContext.writerDelegator().flushWriters();
         }
+    }
+
+    /**
+     * Check that all required fields have been correctly initialized.
+     */
+    private void validateState() {
+        Objects.requireNonNull(integrations, "`integrations` not initialized.");
+        Objects.requireNonNull(codegenContext, "`codegenContext` not initialized.");
+    }
+
+    /**
+     * Applies standard transforms to the model.
+     */
+    private void applyTransforms() {
+        ModelTransformer transformer = ModelTransformer.create();
+        model = transformer.changeStringEnumsToEnumShapes(model);
     }
 
     private List<TraitCodegenIntegration> getIntegrations() {
