@@ -205,3 +205,11 @@ intEnum ResponseTypeInt {
 // ===============
 @trait
 document JsonMetadata
+
+@trait
+structure structWithNestedDocument {
+    doc: nestedDoc
+}
+
+@private
+document nestedDoc

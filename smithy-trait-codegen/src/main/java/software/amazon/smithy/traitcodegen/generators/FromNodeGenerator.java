@@ -209,10 +209,11 @@ final class FromNodeGenerator implements Runnable {
             return null;
         }
 
-        // TODO: Implement???
         @Override
         public Void documentShape(DocumentShape shape) {
-            throw new UnsupportedOperationException("Shape not supported " + shape);
+            writer.write(memberPrefix + "Member($1S, $3T::expectObjectNode, builder::$2L)",
+                    fieldName, memberName, Node.class);
+            return null;
         }
 
         @Override

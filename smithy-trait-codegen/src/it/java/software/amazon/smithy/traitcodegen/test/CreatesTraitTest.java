@@ -26,6 +26,7 @@ import com.example.traits.StringStringMapTrait;
 import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
 import com.example.traits.StructWithMixinTrait;
+import com.example.traits.StructWithNestedDocumentTrait;
 import com.example.traits.StructureListTrait;
 import com.example.traits.StructureListWithMixinMemberTrait;
 import com.example.traits.StructureSetTrait;
@@ -112,7 +113,10 @@ public class CreatesTraitTest {
                         ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
                 Arguments.of(StructWithMixinTrait.ID, StructWithMixinTrait.builder()
                         .d("d").build().toNode()),
-                Arguments.of(SuitTrait.ID, Node.from("CLUBS"))
+                Arguments.of(SuitTrait.ID, Node.from("CLUBS")),
+                Arguments.of(StructWithNestedDocumentTrait.ID,
+                        ObjectNode.objectNodeBuilder().withMember("doc", ObjectNode.builder()
+                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build())
         );
     }
 

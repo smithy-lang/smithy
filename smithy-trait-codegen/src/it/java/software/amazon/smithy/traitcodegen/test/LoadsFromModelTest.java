@@ -34,6 +34,7 @@ import com.example.traits.StringStringMapTrait;
 import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
 import com.example.traits.StructWithMixinTrait;
+import com.example.traits.StructWithNestedDocumentTrait;
 import com.example.traits.StructureListTrait;
 import com.example.traits.StructureListWithMixinMemberTrait;
 import com.example.traits.StructureSetTrait;
@@ -53,6 +54,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
@@ -155,7 +157,10 @@ public class LoadsFromModelTest {
                 Arguments.of("struct-with-mixin-trait.smithy", StructWithMixinTrait.class,
                         MapUtils.of("getD", "mixed-in")),
                 Arguments.of("legacy-enum-trait.smithy", SuitTrait.class,
-                        MapUtils.of("isClub", true, "getValue", "club"))
+                        MapUtils.of("isClub", true, "getValue", "club")),
+                Arguments.of("nested-document-trait.smithy", StructWithNestedDocumentTrait.class,
+                        MapUtils.of("getDoc", Optional.of(ObjectNode.builder().withMember("foo", "bar")
+                                .withMember("fizz", "buzz").build())))
         );
     }
 
