@@ -199,4 +199,30 @@ public interface ShapeVisitor<R> {
             return getDefault(shape);
         }
     }
+
+    /**
+     * Creates {@link ShapeVisitor} that only requires implementation of
+     * all data shape branches, but does not support service shapes.
+     *
+     * @param <R> Return type.
+     */
+    abstract class DataShapeVisitor<R> implements ShapeVisitor<R> {
+        @Override
+        public R operationShape(OperationShape shape) {
+            throw new IllegalArgumentException("DataShapeVisitor cannot be use to visit "
+                    + "Operation Shapes. Attempted to visit: " + shape);
+        }
+
+        @Override
+        public R resourceShape(ResourceShape shape) {
+            throw new IllegalArgumentException("DataShapeVisitor cannot be use to visit "
+                    + "Resource Shapes. Attempted to visit: " + shape);
+        }
+
+        @Override
+        public R serviceShape(ServiceShape shape) {
+            throw new IllegalArgumentException("DataShapeVisitor cannot be use to visit "
+                + "Service Shapes. Attempted to visit: " + shape);
+        }
+    }
 }
