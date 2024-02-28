@@ -16,14 +16,17 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * {@code smithy-build.json} configuration for this plugin.
  *
  * <p>The following options are provided:
- * <ul>
- *     <li>"packageName" ({@code String}) - Sets the package namespace to use for generated Java classes.</li>
- *     <li>"headerLines" ({@code List<String>}) - Defines the header comment to include in all output files. Use
+ * <dl>
+ *     <dt>"packageName" ({@code String})</dt>
+ *     <dd>Sets the package namespace to use for generated Java classes.</dd>
+ *     <dt>"headerLines" ({@code List<String>}) </dt>
+ *     <dd>Defines the header comment to include in all output files. Use
  *     this setting to add license and/or author information to all generated files. Each entry in the list
- *     is generated as a new line in the generated comment.</li>
- *     <li>"excludeTags" ({@code List<String>}) - List of Smithy tags to use for filtering out trait shapes
- *     from the trait code generation process.</li>
- * </ul>
+ *     is generated as a new line in the generated comment.</dd>
+ *     <dt>"excludeTags" ({@code List<String>})</dt>
+ *     <dd>List of Smithy tags to use for filtering out trait shapes
+ *     from the trait code generation process.</dd>
+ * </dl>
  */
 @SmithyUnstableApi
 public final class TraitCodegenSettings {
@@ -72,18 +75,38 @@ public final class TraitCodegenSettings {
         );
     }
 
+    /**
+     * Java package name to generate traits into.
+     *
+     * @return package name
+     */
     public String packageName() {
         return packageName;
     }
 
+    /**
+     * Smithy namespace to search for traits.
+     *
+     * @return namespace
+     */
     public String smithyNamespace() {
         return smithyNamespace;
     }
 
+    /**
+     * List of lines added to the top of every generated file as a header.
+     *
+     * @return header lines as a list
+     */
     public List<String> headerLines() {
         return headerLines;
     }
 
+    /**
+     * List of tags to exclude from shape code generation.
+     *
+     * @return tag list
+     */
     public List<String> excludeTags() {
         return excludeTags;
     }

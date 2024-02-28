@@ -9,6 +9,7 @@ import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -59,8 +60,8 @@ final class FromNodeGenerator implements Runnable {
         writer.writeDocStringContents("");
         writer.writeDocStringContents("@param node Node to create the $T from.", symbol);
         writer.writeDocStringContents("@return Returns the created $T.", symbol);
-        writer.writeDocStringContents("@throws software.amazon.smithy.model.node.ExpectationNotMetException "
-                + "if the given Node is invalid.");
+        writer.writeDocStringContents("@throws $T if the given Node is invalid.",
+                ExpectationNotMetException.class);
         writer.closeDocstring();
 
         // Write actual method

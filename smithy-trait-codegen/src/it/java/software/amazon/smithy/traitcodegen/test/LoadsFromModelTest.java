@@ -81,7 +81,7 @@ public class LoadsFromModelTest {
                 Arguments.of("enum-trait.smithy", ResponseTypeTrait.class,
                         MapUtils.of("getValue", "yes", "isYes", true)),
                 Arguments.of("float-trait.smithy", HttpCodeFloatTrait.class,
-                        MapUtils.of("getValue", (float) 1.1)),
+                        MapUtils.of("getValue", 1.1F)),
                 Arguments.of("id-ref.smithy", IdRefStringTrait.class,
                         MapUtils.of("getValue", TARGET_ONE)),
                 Arguments.of("id-ref.smithy", IdRefListTrait.class,
@@ -167,7 +167,7 @@ public class LoadsFromModelTest {
             if (value instanceof Float) {
                 assertEquals((Float) expected, (Float) value, 0.0001,
                         "Value of accessor `" + accessor + "` invalid for " + trait);
-            } if (value instanceof Iterable) {
+            } else if (value instanceof Iterable) {
                 assertIterableEquals((Iterable<?>) expected, (Iterable<?>) value);
             } else {
                 assertEquals(expected, value, "Value of accessor `" + accessor

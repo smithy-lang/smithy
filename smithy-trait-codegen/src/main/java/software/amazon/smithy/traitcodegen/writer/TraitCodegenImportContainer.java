@@ -42,10 +42,14 @@ final class TraitCodegenImportContainer implements ImportContainer {
         return builder.toString();
     }
 
+    /**
+     * Sort imports then filter out any instances of duplicates. Then filter out and instances of base java classes
+     * that do not need to be imported. Finally, filter out cases where the symbol has the same namespace as the file.
+     *
+     * @return sorted list of imports
+     */
     private Set<String> getSortedAndFilteredImports() {
-        // Sort imports then filter out any instances of duplicates. Then
-        // filter out or instances of base java classes that do not need to be imported.
-        // Finally, filter out cases where the symbol has the same namespace as the file.
+        //
         return imports.values().stream()
                 .filter(s -> s.size() == 1)
                 .map(s -> s.iterator().next())

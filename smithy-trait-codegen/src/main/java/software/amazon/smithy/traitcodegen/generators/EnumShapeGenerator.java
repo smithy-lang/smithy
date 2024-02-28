@@ -22,13 +22,12 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * Effectively sealed base class for generating a Java Enum class from a Smithy model.
  *
  * <p>The two public implementations provided by this base class are:
- * <ul>
- *     <li>{@link StringEnumShapeGenerator} - Generates a java enum from a Smithy
- *     {@link software.amazon.smithy.model.shapes.EnumShape}.</li>
- *     <li>{@link IntEnumShapeGenerator} - Generates a java enum from a Smithy
- *     {@link software.amazon.smithy.model.shapes.IntEnumShape}.</li>
- * </ul>
- *
+ * <dl>
+ *     <dt>{@link StringEnumShapeGenerator}</dt>
+ *     <dd>Generates a java enum from a Smithy {@link software.amazon.smithy.model.shapes.EnumShape}.</dd>
+ *     <dt>{@link IntEnumShapeGenerator}</dt>
+ *     <dd>Generates a java enum from a Smithy {@link software.amazon.smithy.model.shapes.IntEnumShape}.</dd>
+ * </dl>
  */
 abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
     private static final String VALUE_FIELD_TEMPLATE = "private final $T value;";

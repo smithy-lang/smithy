@@ -164,7 +164,6 @@ final class BuilderGenerator implements Runnable {
         }
     }
 
-
     private final class BuilderSetterGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
@@ -191,7 +190,6 @@ final class BuilderGenerator implements Runnable {
             return null;
         }
     }
-
 
     private final class SetterVisitor extends ShapeVisitor.Default<Void> {
         private final String memberName;

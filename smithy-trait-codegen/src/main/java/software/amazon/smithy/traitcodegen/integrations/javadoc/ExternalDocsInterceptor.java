@@ -16,6 +16,7 @@ import software.amazon.smithy.utils.CodeInterceptor;
  * has the {@link ExternalDocumentationTrait} trait applied.
  */
 final class ExternalDocsInterceptor implements CodeInterceptor.Appender<JavaDocSection, TraitCodegenWriter> {
+
     @Override
     public void append(TraitCodegenWriter writer, JavaDocSection section) {
         ExternalDocumentationTrait trait = section.shape().expectTrait(ExternalDocumentationTrait.class);
