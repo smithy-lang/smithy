@@ -16,11 +16,10 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class TraitCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER = Logger.getLogger(TraitCodegenPlugin.class.getName());
-    private static final String NAME = "trait-codegen";
 
     @Override
     public String getName() {
-        return NAME;
+        return "trait-codegen";
     }
 
     @Override

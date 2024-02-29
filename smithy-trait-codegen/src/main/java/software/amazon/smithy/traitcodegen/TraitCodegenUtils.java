@@ -22,14 +22,12 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyInternalApi
 public final class TraitCodegenUtils {
     public static final Symbol JAVA_STRING_SYMBOL = TraitCodegenUtils.fromClass(String.class);
-    private static final URL RESERVED_WORDS_FILE = TraitCodegenUtils.class.getResource("reserved-words.txt");
-    private static final String SHAPE_ESCAPE_SUFFIX = "Shape";
-    private static final String MEMBER_ESCAPE_SUFFIX = "Member";
+    public static final URL RESERVED_WORDS_FILE = TraitCodegenUtils.class.getResource("reserved-words.txt");
     public static final ReservedWords SHAPE_ESCAPER = new ReservedWordsBuilder()
-            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + SHAPE_ESCAPE_SUFFIX)
+            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Shape")
             .build();
     public static final ReservedWords MEMBER_ESCAPER = new ReservedWordsBuilder()
-            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + MEMBER_ESCAPE_SUFFIX)
+            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Member")
             .build();
     private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 

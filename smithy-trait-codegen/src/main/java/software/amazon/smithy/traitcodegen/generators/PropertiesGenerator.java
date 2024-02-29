@@ -62,7 +62,6 @@ final class PropertiesGenerator implements Runnable {
     }
 
     private final class PropertyGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
-        private static final String PROPERTY_TEMPLATE = "private final $T $L;";
 
         @Override
         public Void booleanShape(BooleanShape shape) {
@@ -157,7 +156,9 @@ final class PropertiesGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             for (MemberShape member : shape.members()) {
-                writer.write(PROPERTY_TEMPLATE, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member));
+                writer.write("private final $T $L;",
+                        symbolProvider.toSymbol(member),
+                        symbolProvider.toMemberName(member));
             }
             return null;
         }

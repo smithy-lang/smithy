@@ -55,8 +55,6 @@ import software.amazon.smithy.utils.StringUtils;
  * which requires that they override {@code createNode()} for serialization.
  */
 final class ToNodeGenerator implements Runnable {
-    private static final String CREATE_NODE_METHOD = "protected $T createNode() {";
-    private static final String TO_NODE_METHOD = "public $T toNode() {";
 
     private final TraitCodegenWriter writer;
     private final Shape shape;
@@ -73,8 +71,8 @@ final class ToNodeGenerator implements Runnable {
     @Override
     public void run() {
         writer.override();
-        writer.openBlock(shape.hasTrait(TraitDefinition.class) ? CREATE_NODE_METHOD : TO_NODE_METHOD, "}",
-                Node.class, () -> shape.accept(new CreateNodeBodyGenerator()));
+        writer.openBlock(shape.hasTrait(TraitDefinition.class) ? "protected $T createNode() {" : "public $T toNode() {",
+                "}", Node.class, () -> shape.accept(new CreateNodeBodyGenerator()));
         writer.newLine();
     }
 

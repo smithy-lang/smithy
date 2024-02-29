@@ -32,11 +32,6 @@ import software.amazon.smithy.utils.StringUtils;
  * {@code builder()} and {@code toBuilder()} methods for the target class.
  */
 final class BuilderGenerator implements Runnable {
-    private static final String VALUES = "values";
-    private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2B $1L) {";
-    private static final String RETURN_THIS = "return this;";
-    private static final String BUILDER_REF_TEMPLATE = "private final $1T<$2B> $3L = $1T.$4L;";
-    private static final String BUILDER_METHOD_TEMPLATE = "public static Builder builder() {";
 
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
@@ -114,8 +109,8 @@ final class BuilderGenerator implements Runnable {
     }
 
     private void writeBuilderMethod() {
-        writer.openBlock(BUILDER_METHOD_TEMPLATE, "}", () -> writer.write("return new Builder();"));
-        writer.newLine();
+        writer.openBlock("public static Builder builder() {", "}",
+                () -> writer.write("return new Builder();")).newLine();
     }
 
     private final class BuilderPropertyGenerator extends ShapeVisitor.Default<Void> {
@@ -147,7 +142,8 @@ final class BuilderGenerator implements Runnable {
             Optional<String> builderRefOptional =
                     symbolProvider.toSymbol(shape).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER, String.class);
             if (builderRefOptional.isPresent()) {
-                writer.write(BUILDER_REF_TEMPLATE, BuilderRef.class, symbolProvider.toSymbol(shape),
+                writer.write("private final $1T<$2B> $3L = $1T.$4L;", BuilderRef.class,
+                        symbolProvider.toSymbol(shape),
                         symbolProvider.toMemberName(shape),
                         builderRefOptional.orElseThrow(RuntimeException::new));
             } else {
@@ -158,7 +154,8 @@ final class BuilderGenerator implements Runnable {
 
         private void writeValuesProperty(Shape shape) {
             Symbol collectionSymbol = symbolProvider.toSymbol(shape);
-            writer.write(BUILDER_REF_TEMPLATE, BuilderRef.class, collectionSymbol, VALUES,
+            writer.write("private final $1T<$2B> $3L = $1T.$4L;", BuilderRef.class,
+                    collectionSymbol, "values",
                     collectionSymbol.expectProperty(SymbolProperties.BUILDER_REF_INITIALIZER));
         }
     }
@@ -171,13 +168,13 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            shape.accept(new SetterVisitor(VALUES));
+            shape.accept(new SetterVisitor("values"));
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            shape.accept(new SetterVisitor(VALUES));
+            shape.accept(new SetterVisitor("values"));
             return null;
         }
 
@@ -198,28 +195,28 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.openBlock(ACCESSOR_TEMPLATE, "}",
+            writer.openBlock("public Builder $1L($2B $1L) {", "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("this.$1L = $1L;", memberName);
-                        writer.writeWithNoFormatting(RETURN_THIS);
+                        writer.writeWithNoFormatting("return this;");
                     }).newLine();
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.openBlock(ACCESSOR_TEMPLATE, "}",
+            writer.openBlock("public Builder $1L($2B $1L) {", "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().addAll($1L);", memberName);
-                        writer.writeWithNoFormatting(RETURN_THIS);
+                        writer.writeWithNoFormatting("return this;");
                     }).newLine();
 
             // Clear all
             writer.openBlock("public Builder clear$L() {", "}",
                     StringUtils.capitalize(memberName), () -> {
                         writer.write("$L.get().clear();", memberName);
-                        writer.writeWithNoFormatting(RETURN_THIS);
+                        writer.writeWithNoFormatting("return this;");
                     }).newLine();
 
             // Set one
@@ -227,7 +224,7 @@ final class BuilderGenerator implements Runnable {
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
                     () -> {
                         writer.write("$L.get().add(value);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.write("return this;");
                     }).newLine();
 
             // Remove one
@@ -235,7 +232,7 @@ final class BuilderGenerator implements Runnable {
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
                     () -> {
                         writer.write("$L.get().remove(value);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.write("return this;");
                     }).newLine();
             return null;
         }
@@ -243,18 +240,18 @@ final class BuilderGenerator implements Runnable {
         @Override
         public Void mapShape(MapShape shape) {
             // Set all
-            writer.openBlock(ACCESSOR_TEMPLATE, "}",
+            writer.openBlock("public Builder $1L($2B $1L) {", "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().putAll($1L);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.write("return this;");
                     });
             writer.newLine();
 
             // Clear all
             writer.openBlock("public Builder clear$L() {", "}", StringUtils.capitalize(memberName), () -> {
                 writer.write("this.$L.get().clear();", memberName);
-                writer.write(RETURN_THIS);
+                writer.write("return this;");
             }).newLine();
 
             // Set one
@@ -264,14 +261,14 @@ final class BuilderGenerator implements Runnable {
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape),
                     symbolProvider.toSymbol(valueShape), () -> {
                         writer.write("this.$L.get().put(key, value);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.write("return this;");
                     }).newLine();
 
             // Remove one
             writer.openBlock("public Builder remove$L($T $L) {", "}",
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape), memberName, () -> {
                         writer.write("this.$1L.get().remove($1L);", memberName);
-                        writer.write(RETURN_THIS);
+                        writer.write("return this;");
                     }).newLine();
             return null;
         }

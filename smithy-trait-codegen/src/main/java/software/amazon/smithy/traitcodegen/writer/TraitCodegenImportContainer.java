@@ -18,7 +18,6 @@ import software.amazon.smithy.codegen.core.Symbol;
  * Import container for Java imports.
  */
 final class TraitCodegenImportContainer implements ImportContainer {
-    private static final String JAVA_NAMESPACE_PREFIX = "java.lang";
     private final Map<String, Set<Symbol>> imports = new HashMap<>();
     private final String namespace;
 
@@ -49,11 +48,10 @@ final class TraitCodegenImportContainer implements ImportContainer {
      * @return sorted list of imports
      */
     private Set<String> getSortedAndFilteredImports() {
-        //
         return imports.values().stream()
                 .filter(s -> s.size() == 1)
                 .map(s -> s.iterator().next())
-                .filter(s -> !s.getNamespace().startsWith(JAVA_NAMESPACE_PREFIX))
+                .filter(s -> !s.getNamespace().startsWith("java.lang"))
                 .filter(s -> !s.getNamespace().equals(namespace))
                 .map(Symbol::getFullName)
                 .collect(Collectors.toCollection(TreeSet::new));

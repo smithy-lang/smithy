@@ -32,7 +32,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * </dl>
  */
 abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
-    private static final String VALUE_FIELD_TEMPLATE = "private final $T value;";
 
     // Private constructor to make abstract class effectively sealed.
     private EnumShapeGenerator() {}
@@ -108,7 +107,7 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
     }
 
     private void writeValueField(TraitCodegenWriter writer) {
-        writer.write(VALUE_FIELD_TEMPLATE, getValueType());
+        writer.write("private final $T value;", getValueType());
     }
 
     private void writeValueGetter(TraitCodegenWriter writer) {

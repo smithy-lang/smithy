@@ -41,8 +41,6 @@ import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Symbol> implements SymbolProvider {
-    private static final String LIST_INITIALIZER = "forList()";
-    private static final String MAP_INITIALIZER = "forOrderedMap()";
     private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 
     private final String packageNamespace;
@@ -114,7 +112,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
     public Symbol listShape(ListShape shape) {
         Symbol.Builder builder = TraitCodegenUtils.fromClass(List.class).toBuilder()
                 .addReference(toSymbol(shape.getMember()))
-                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, LIST_INITIALIZER);
+                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forList()");
         return builder.build();
     }
 
@@ -123,7 +121,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
         return TraitCodegenUtils.fromClass(Map.class).toBuilder()
                 .addReference(shape.getKey().accept(this))
                 .addReference(shape.getValue().accept(this))
-                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, MAP_INITIALIZER)
+                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedMap()")
                 .build();
     }
 

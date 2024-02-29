@@ -24,8 +24,6 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * <p>Static builders should be created using the {@link BuilderGenerator} generator.
  */
 final class ConstructorWithBuilderGenerator implements Runnable {
-    private static final String CONSTRUCTOR_TEMPLATE = "private $T(Builder builder) {";
-
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
     private final Shape shape;
@@ -44,7 +42,7 @@ final class ConstructorWithBuilderGenerator implements Runnable {
 
     @Override
     public void run() {
-        writer.openBlock(CONSTRUCTOR_TEMPLATE, "}", symbol, () -> {
+        writer.openBlock("private $T(Builder builder) {", "}", symbol, () -> {
             // If the shape is a trait include the source location. Nested shapes don't have a separate
             // source location.
             if (shape.hasTrait(TraitDefinition.class)) {

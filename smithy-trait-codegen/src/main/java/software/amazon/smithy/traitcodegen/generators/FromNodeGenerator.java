@@ -76,8 +76,6 @@ final class FromNodeGenerator implements Runnable {
     }
 
     private final class FromNodeBodyGenerator extends ShapeVisitor.Default<Void> {
-        private static final String BUILDER_INITIALIZER = "Builder builder = builder();";
-        private static final String BUILD_AND_RETURN = "return builder.build();";
 
         @Override
         protected Void getDefault(Shape shape) {
@@ -87,18 +85,18 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeWithNoFormatting(BUILDER_INITIALIZER);
+            writer.writeWithNoFormatting("Builder builder = builder();");
             shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-            writer.writeWithNoFormatting(BUILD_AND_RETURN);
+            writer.writeWithNoFormatting("return builder.build();");
 
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.writeWithNoFormatting(BUILDER_INITIALIZER);
+            writer.writeWithNoFormatting("Builder builder = builder();");
             shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-            writer.writeWithNoFormatting(BUILD_AND_RETURN);
+            writer.writeWithNoFormatting("return builder.build();");
             return null;
         }
 
@@ -119,7 +117,7 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.write(BUILDER_INITIALIZER);
+            writer.write("Builder builder = builder();");
             // If the shape has no members (i.e. is an annotation trait) then there will be no member setters, and we
             // need to terminate the line.
             writer.putContext("isEmpty", shape.members().isEmpty());
@@ -136,7 +134,7 @@ final class FromNodeGenerator implements Runnable {
                 }
             }
             writer.dedent();
-            writer.write(BUILD_AND_RETURN);
+            writer.write("return builder.build();");
 
             return null;
         }

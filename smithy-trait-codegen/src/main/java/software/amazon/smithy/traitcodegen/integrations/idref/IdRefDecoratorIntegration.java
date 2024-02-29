@@ -27,12 +27,11 @@ import software.amazon.smithy.utils.ListUtils;
  * {@code ShapeId} type instead of a string.
  */
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
-    private static final String INTEGRATION_NAME = "id-ref-integration";
     private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class);
 
     @Override
     public String name() {
-        return INTEGRATION_NAME;
+        return "id-ref-integration";
     }
 
     @Override

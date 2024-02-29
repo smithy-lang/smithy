@@ -32,7 +32,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * for the Trait class to be discovered during model assembly.
  */
 final class ProviderGenerator implements Runnable {
-    private static final String PROVIDER_METHOD = "public Provider() {";
 
     private final TraitCodegenWriter writer;
     private final Symbol traitSymbol;
@@ -100,7 +99,7 @@ final class ProviderGenerator implements Runnable {
         @Override
         public Void enumShape(EnumShape shape) {
             writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                    StringTrait.class, traitSymbol, () -> writer.openBlock(PROVIDER_METHOD, "}",
+                    StringTrait.class, traitSymbol, () -> writer.openBlock("public Provider() {", "}",
                             () -> writer.write("super(ID, $T::new);", traitSymbol)));
             return null;
         }
@@ -126,7 +125,7 @@ final class ProviderGenerator implements Runnable {
         }
 
         private void generateProviderConstructor() {
-            writer.openBlock(PROVIDER_METHOD, "}", () -> writer.write("super(ID);")).newLine();
+            writer.openBlock("public Provider() {", "}", () -> writer.write("super(ID);")).newLine();
         }
     }
 }

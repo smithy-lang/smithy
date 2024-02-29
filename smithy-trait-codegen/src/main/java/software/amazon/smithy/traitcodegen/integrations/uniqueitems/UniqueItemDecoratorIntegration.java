@@ -26,12 +26,10 @@ import software.amazon.smithy.utils.ListUtils;
  * a {@link Set} rather than a list.
  */
 public class UniqueItemDecoratorIntegration implements TraitCodegenIntegration {
-    private static final String SET_INITIALIZER = "forOrderedSet()";
-    private static final String INTEGRATION_NAME = "unique-items-integration";
 
     @Override
     public String name() {
-        return INTEGRATION_NAME;
+        return "unique-items-integration";
     }
 
     @Override
@@ -67,7 +65,7 @@ public class UniqueItemDecoratorIntegration implements TraitCodegenIntegration {
             return TraitCodegenUtils.fromClass(Set.class).toBuilder()
                     .addReference(symbolProvider.toSymbol(shape.asListShape()
                             .orElseThrow(RuntimeException::new).getMember()))
-                    .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, SET_INITIALIZER)
+                    .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedSet()")
                     .build();
         } else if (shape.isMemberShape()) {
             Shape target = model.expectShape(shape.asMemberShape().orElseThrow(RuntimeException::new).getTarget());
