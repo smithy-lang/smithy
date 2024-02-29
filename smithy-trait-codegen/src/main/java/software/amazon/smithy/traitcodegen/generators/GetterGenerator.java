@@ -108,8 +108,7 @@ final class GetterGenerator implements Runnable {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            generateValueGetter(shape);
-            return null;
+            throw new UnsupportedOperationException("Blob Shapes are not supported at this time.");
         }
 
         @Override

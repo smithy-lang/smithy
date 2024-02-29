@@ -288,8 +288,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            fromNodeMapper();
-            return null;
+            throw new UnsupportedOperationException("Blob Shapes are not supported at this time.");
         }
 
         @Override

@@ -7,7 +7,6 @@ package software.amazon.smithy.traitcodegen;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +57,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol blobShape(BlobShape shape) {
-        return TraitCodegenUtils.fromClass(ByteBuffer.class);
+        throw new UnsupportedOperationException("Blob shapes are not supported at this time.");
     }
 
     @Override

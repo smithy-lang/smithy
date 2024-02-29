@@ -98,15 +98,13 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     abstract Object getEnumValue(MemberShape member);
 
-    abstract String getUnknownVariant();
-
     private void writeVariants(Shape enumShape, SymbolProvider provider, TraitCodegenWriter writer) {
         for (MemberShape member : enumShape.members()) {
             writer.pushState(new EnumVariantSection(member));
             writer.write(getVariantTemplate() + ",", provider.toMemberName(member), getEnumValue(member));
             writer.popState();
         }
-        writer.write("UNKNOWN($L);", getUnknownVariant());
+        writer.write("UNKNOWN(null);");
     }
 
     private void writeValueField(TraitCodegenWriter writer) {
@@ -169,11 +167,6 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         Object getEnumValue(MemberShape member) {
             return member.expectTrait(EnumValueTrait.class).expectStringValue();
         }
-
-        @Override
-        String getUnknownVariant() {
-            return "\"unknown\"";
-        }
     }
 
     /**
@@ -193,11 +186,6 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         @Override
         Object getEnumValue(MemberShape member) {
             return member.expectTrait(EnumValueTrait.class).expectIntValue();
-        }
-
-        @Override
-        String getUnknownVariant() {
-            return "-99999";
         }
     }
 }
