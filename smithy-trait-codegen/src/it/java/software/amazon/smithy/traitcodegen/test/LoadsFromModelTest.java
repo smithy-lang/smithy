@@ -3,49 +3,50 @@ package software.amazon.smithy.traitcodegen.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-import com.example.traits.BaseTimestampTrait;
-import com.example.traits.BasicAnnotationTrait;
-import com.example.traits.DateTimeTimestampTrait;
-import com.example.traits.EpochSecondsTimestampTrait;
-import com.example.traits.HttpCodeBigDecimalTrait;
-import com.example.traits.HttpCodeBigIntegerTrait;
-import com.example.traits.HttpCodeByteTrait;
-import com.example.traits.HttpCodeDoubleTrait;
-import com.example.traits.HttpCodeFloatTrait;
-import com.example.traits.HttpCodeIntegerTrait;
-import com.example.traits.HttpCodeLongTrait;
-import com.example.traits.HttpCodeShortTrait;
-import com.example.traits.HttpDateTimestampTrait;
-import com.example.traits.IdRefListTrait;
-import com.example.traits.IdRefMapTrait;
-import com.example.traits.IdRefStringTrait;
-import com.example.traits.IdRefStructTrait;
-import com.example.traits.IdRefStructWithNestedIdsTrait;
-import com.example.traits.JsonMetadataTrait;
-import com.example.traits.ListMember;
-import com.example.traits.ListMemberWithMixin;
-import com.example.traits.MapValue;
-import com.example.traits.NestedA;
-import com.example.traits.NestedB;
-import com.example.traits.NestedIdRefHolder;
-import com.example.traits.NumberListTrait;
-import com.example.traits.NumberSetTrait;
-import com.example.traits.ResponseTypeIntTrait;
-import com.example.traits.ResponseTypeTrait;
-import com.example.traits.StringListTrait;
-import com.example.traits.StringSetTrait;
-import com.example.traits.StringStringMapTrait;
-import com.example.traits.StringToStructMapTrait;
+
 import com.example.traits.StringTrait;
-import com.example.traits.StructWithMixinTrait;
-import com.example.traits.StructWithNestedDocumentTrait;
-import com.example.traits.StructWithNestedTimestampsTrait;
-import com.example.traits.StructureListTrait;
-import com.example.traits.StructureListWithMixinMemberTrait;
-import com.example.traits.StructureSetTrait;
-import com.example.traits.StructureTrait;
-import com.example.traits.SuitTrait;
+import com.example.traits.documents.DocumentTrait;
+import com.example.traits.documents.StructWithNestedDocumentTrait;
+import com.example.traits.enums.IntEnumTrait;
+import com.example.traits.enums.StringEnumTrait;
+import com.example.traits.enums.SuitTrait;
+import com.example.traits.idref.IdRefListTrait;
+import com.example.traits.idref.IdRefMapTrait;
+import com.example.traits.idref.IdRefStringTrait;
+import com.example.traits.idref.IdRefStructTrait;
+import com.example.traits.idref.IdRefStructWithNestedIdsTrait;
+import com.example.traits.idref.NestedIdRefHolder;
+import com.example.traits.lists.ListMember;
+import com.example.traits.lists.NumberListTrait;
+import com.example.traits.lists.StructureListTrait;
+import com.example.traits.maps.MapValue;
+import com.example.traits.maps.StringStringMapTrait;
+import com.example.traits.maps.StringToStructMapTrait;
+import com.example.traits.mixins.ListMemberWithMixin;
+import com.example.traits.mixins.StructWithMixinTrait;
+import com.example.traits.mixins.StructureListWithMixinMemberTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
+import com.example.traits.numbers.BigDecimalTrait;
+import com.example.traits.numbers.BigIntegerTrait;
+import com.example.traits.numbers.ByteTrait;
+import com.example.traits.numbers.DoubleTrait;
+import com.example.traits.numbers.FloatTrait;
+import com.example.traits.numbers.IntegerTrait;
+import com.example.traits.numbers.LongTrait;
+import com.example.traits.numbers.ShortTrait;
+import com.example.traits.structures.BasicAnnotationTrait;
+import com.example.traits.structures.NestedA;
+import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructureTrait;
+import com.example.traits.timestamps.DateTimeTimestampTrait;
+import com.example.traits.timestamps.EpochSecondsTimestampTrait;
+import com.example.traits.timestamps.HttpDateTimestampTrait;
+import com.example.traits.timestamps.StructWithNestedTimestampsTrait;
+import com.example.traits.timestamps.TimestampTrait;
+import com.example.traits.uniqueitems.NumberSetTrait;
+import com.example.traits.uniqueitems.SetMember;
+import com.example.traits.uniqueitems.StringSetTrait;
+import com.example.traits.uniqueitems.StructureSetTrait;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -63,6 +64,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -73,74 +75,87 @@ public class LoadsFromModelTest {
     private static final ShapeId TARGET_ONE = ShapeId.from("test.smithy.traitcodegen#IdRefTarget1");
     private static final ShapeId TARGET_TWO = ShapeId.from("test.smithy.traitcodegen#IdRefTarget2");
 
-
     static Stream<Arguments> loadsModelTests() {
         return Stream.of(
-                Arguments.of("annotation-trait.smithy", BasicAnnotationTrait.class,
-                        Collections.emptyMap()),
-                Arguments.of("big-decimal-trait.smithy", HttpCodeBigDecimalTrait.class,
-                        MapUtils.of("getValue", new BigDecimal("100.01"))),
-                Arguments.of("big-integer-trait.smithy", HttpCodeBigIntegerTrait.class,
-                        MapUtils.of("getValue", new BigInteger("100"))),
-                Arguments.of("byte-trait.smithy", HttpCodeByteTrait.class,
-                        MapUtils.of("getValue", (byte) 1)),
-                Arguments.of("document-trait.smithy", JsonMetadataTrait.class,
+                // Document types
+                Arguments.of("documents/document-trait.smithy", DocumentTrait.class,
                         MapUtils.of("toNode", Node.objectNodeBuilder()
                                 .withMember("metadata", "woo")
                                 .withMember("more", "yay")
                                 .build())),
-                Arguments.of("double-trait.smithy", HttpCodeDoubleTrait.class,
-                        MapUtils.of("getValue", 1.1)),
-                Arguments.of("enum-trait.smithy", ResponseTypeTrait.class,
-                        MapUtils.of("getValue", "yes", "getEnumValue", ResponseTypeTrait.ResponseType.YES)),
-                Arguments.of("float-trait.smithy", HttpCodeFloatTrait.class,
-                        MapUtils.of("getValue", 1.1F)),
-                Arguments.of("id-ref.smithy", IdRefStringTrait.class,
+                Arguments.of("documents/struct-with-nested-document.smithy", StructWithNestedDocumentTrait.class,
+                        MapUtils.of("getDoc", Optional.of(ObjectNode.builder().withMember("foo", "bar")
+                                .withMember("fizz", "buzz").build()))),
+                // Enums
+                Arguments.of("enums/enum-trait.smithy", StringEnumTrait.class,
+                        MapUtils.of("getValue", "yes", "getEnumValue", StringEnumTrait.StringEnum.YES)),
+                Arguments.of("enums/int-enum-trait.smithy", IntEnumTrait.class,
+                        MapUtils.of("getValue", 1, "getEnumValue", IntEnumTrait.IntEnum.YES)),
+                Arguments.of("enums/string-enum-compatibility.smithy", SuitTrait.class,
+                        MapUtils.of("getEnumValue", SuitTrait.Suit.CLUB, "getValue", "club")),
+                // Id Refs
+                Arguments.of("idref/idref-string.smithy", IdRefStringTrait.class,
                         MapUtils.of("getValue", TARGET_ONE)),
-                Arguments.of("id-ref.smithy", IdRefListTrait.class,
+                Arguments.of("idref/idref-list.smithy", IdRefListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(TARGET_ONE, TARGET_TWO))),
-                Arguments.of("id-ref.smithy", IdRefMapTrait.class,
+                Arguments.of("idref/idref-map.smithy", IdRefMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of("a", TARGET_ONE, "b", TARGET_TWO))),
-                Arguments.of("id-ref.smithy", IdRefStructTrait.class,
+                Arguments.of("idref/idref-struct.smithy", IdRefStructTrait.class,
                         MapUtils.of("getFieldA", Optional.of(TARGET_ONE))),
-                Arguments.of("id-ref.smithy", IdRefStructWithNestedIdsTrait.class,
+                Arguments.of("idref/idref-struct-with-nested-refs.smithy", IdRefStructWithNestedIdsTrait.class,
                         MapUtils.of("getIdRefHolder", NestedIdRefHolder.builder().id(TARGET_ONE).build(),
                                 "getIdList", Optional.of(ListUtils.of(TARGET_ONE, TARGET_TWO)),
                                 "getIdMap", Optional.of(MapUtils.of("a", TARGET_ONE, "b", TARGET_TWO)))),
-                Arguments.of("integer-trait.smithy", HttpCodeIntegerTrait.class,
-                        MapUtils.of("getValue", 1)),
-                Arguments.of("long-trait.smithy", HttpCodeLongTrait.class,
-                        MapUtils.of("getValue", 1L)),
-                Arguments.of("number-list-trait.smithy", NumberListTrait.class,
+                // Lists
+                Arguments.of("lists/number-list-trait.smithy", NumberListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(1, 2, 3, 4, 5))),
-                Arguments.of("number-set-trait.smithy", NumberSetTrait.class,
-                        MapUtils.of("getValues", SetUtils.of(1, 2, 3, 4))),
-                Arguments.of("short-trait.smithy", HttpCodeShortTrait.class,
-                        MapUtils.of("getValue", (short) 1)),
-                Arguments.of("int-enum-trait.smithy", ResponseTypeIntTrait.class,
-                        MapUtils.of("getValue", 1, "getEnumValue", ResponseTypeIntTrait.ResponseTypeInt.YES)),
-                Arguments.of("string-list-trait.smithy", StringListTrait.class,
+                Arguments.of("lists/string-list-trait.smithy", StringListTrait.class,
                         MapUtils.of("getValues", ListUtils.of("a", "b", "c", "d"))),
-                Arguments.of("string-set-trait.smithy", StringSetTrait.class,
-                        MapUtils.of("getValues", SetUtils.of("a", "b", "c", "d"))),
-                Arguments.of("structure-list-trait.smithy", StructureListTrait.class,
-                        MapUtils.of("getValues", ListUtils.of(
-                                        ListMember.builder().a("first").b(1).c("other").build(),
-                                        ListMember.builder().a("second").b(2).c("more").build()))),
-                Arguments.of("string-trait.smithy", StringTrait.class,
-                        MapUtils.of("getValue","Testing String Trait")),
-                Arguments.of("structure-set-trait.smithy", StructureSetTrait.class,
+                Arguments.of("lists/struct-list-trait.smithy", StructureListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(
                                 ListMember.builder().a("first").b(1).c("other").build(),
                                 ListMember.builder().a("second").b(2).c("more").build()))),
-                Arguments.of("string-string-map-trait.smithy", StringStringMapTrait.class,
+                // Maps
+                Arguments.of("maps/string-string-map-trait.smithy", StringStringMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of("a", "stuff",
-                                        "b", "other", "c", "more!"))),
-                Arguments.of("string-struct-map-trait.smithy", StringToStructMapTrait.class,
+                                "b", "other", "c", "more!"))),
+                Arguments.of("maps/string-to-struct-map-trait.smithy", StringToStructMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of(
                                 "one", MapValue.builder().a("foo").b(2).build(),
                                 "two", MapValue.builder().a("bar").b(4).build()))),
-                Arguments.of("struct-trait.smithy", StructureTrait.class,
+                // Mixins
+                Arguments.of("mixins/struct-with-mixin-member.smithy", StructureListWithMixinMemberTrait.class,
+                        MapUtils.of("getValues", ListUtils.of(
+                                ListMemberWithMixin.builder().a("first").b(1).c("other")
+                                        .d("mixed-in").build(),
+                                ListMemberWithMixin.builder().a("second").b(2).c("more")
+                                        .d("mixins are cool").build()))),
+                Arguments.of("mixins/struct-with-only-mixin-member.smithy", StructWithMixinTrait.class,
+                        MapUtils.of("getD", "mixed-in")),
+                // Naming conflicts
+                Arguments.of("names/snake-case-struct.smithy", SnakeCaseStructureTrait.class,
+                        MapUtils.of("getSnakeCaseMember", Optional.of("stuff"))),
+                // Numbers
+                Arguments.of("numbers/big-decimal-trait.smithy", BigDecimalTrait.class,
+                        MapUtils.of("getValue", new BigDecimal("100.01"))),
+                Arguments.of("numbers/big-integer-trait.smithy", BigIntegerTrait.class,
+                        MapUtils.of("getValue", new BigInteger("100"))),
+                Arguments.of("numbers/byte-trait.smithy", ByteTrait.class,
+                        MapUtils.of("getValue", (byte) 1)),
+                Arguments.of("numbers/double-trait.smithy", DoubleTrait.class,
+                        MapUtils.of("getValue", 100.01)),
+                Arguments.of("numbers/float-trait.smithy", FloatTrait.class,
+                        MapUtils.of("getValue", 1.1F)),
+                Arguments.of("numbers/integer-trait.smithy", IntegerTrait.class,
+                        MapUtils.of("getValue", 1)),
+                Arguments.of("numbers/long-trait.smithy", LongTrait.class,
+                        MapUtils.of("getValue", 1L)),
+                Arguments.of("numbers/short-trait.smithy", ShortTrait.class,
+                        MapUtils.of("getValue", (short) 1)),
+                // Structures
+                Arguments.of("structures/annotation-trait.smithy", BasicAnnotationTrait.class,
+                        Collections.emptyMap()),
+                Arguments.of("structures/struct-trait.smithy", StructureTrait.class,
                         MapUtils.of(
                                 "getFieldA", "first",
                                 "getFieldB", Optional.of(false),
@@ -153,35 +168,33 @@ public class LoadsFromModelTest {
                                 "getFieldE", Optional.of(MapUtils.of("a", "one", "b", "two")),
                                 "getFieldF", Optional.of(new BigDecimal("100.01")),
                                 "getFieldG", Optional.of(new BigInteger("100")))),
-                Arguments.of("snake-case-struct.smithy", SnakeCaseStructureTrait.class,
-                        MapUtils.of("getSnakeCaseMember", Optional.of("stuff"))),
-                Arguments.of("struct-list-with-mixin-trait.smithy", StructureListWithMixinMemberTrait.class,
-                        MapUtils.of("getValues", ListUtils.of(
-                                        ListMemberWithMixin.builder().a("first").b(1).c("other")
-                                                .d("mixed-in").build(),
-                                        ListMemberWithMixin.builder().a("second").b(2).c("more")
-                                                .d("mixins are cool").build()))),
-                Arguments.of("struct-with-mixin-trait.smithy", StructWithMixinTrait.class,
-                        MapUtils.of("getD", "mixed-in")),
-                Arguments.of("legacy-enum-trait.smithy", SuitTrait.class,
-                        MapUtils.of("getEnumValue", SuitTrait.Suit.CLUB, "getValue", "club")),
-                Arguments.of("nested-document-trait.smithy", StructWithNestedDocumentTrait.class,
-                        MapUtils.of("getDoc", Optional.of(ObjectNode.builder().withMember("foo", "bar")
-                                .withMember("fizz", "buzz").build()))),
-                Arguments.of("nested-timestamps.smithy", StructWithNestedTimestampsTrait.class,
+                // Timestamps
+                Arguments.of("timestamps/struct-with-nested-timestamps.smithy", StructWithNestedTimestampsTrait.class,
                         MapUtils.of("getBaseTime", Instant.parse("1985-04-12T23:20:50.52Z"),
-                                    "getDateTime", Instant.parse("1985-04-12T23:20:50.52Z"),
+                                "getDateTime", Instant.parse("1985-04-12T23:20:50.52Z"),
                                 "getHttpDate", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")),
                                 "getEpochSeconds", Instant.ofEpochSecond((long) 1515531081.123))),
-                Arguments.of("base-timestamp-trait.smithy", BaseTimestampTrait.class,
+                Arguments.of("timestamps/timestamp-trait.smithy", TimestampTrait.class,
                         MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
-                Arguments.of("date-time-timestamp-trait.smithy", DateTimeTimestampTrait.class,
+                Arguments.of("timestamps/date-time-format-timestamp-trait.smithy", DateTimeTimestampTrait.class,
                         MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
-                Arguments.of("http-date-trait.smithy", HttpDateTimestampTrait.class,
+                Arguments.of("timestamps/http-date-format-timestamp-trait.smithy", HttpDateTimestampTrait.class,
                         MapUtils.of("getValue", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME
-                                        .parse("Tue, 29 Apr 2014 18:30:38 GMT")))),
-                Arguments.of("epoch-seconds-timestamp-trait.smithy", EpochSecondsTimestampTrait.class,
-                        MapUtils.of("getValue", Instant.ofEpochSecond((long) 1515531081.123)))
+                                .parse("Tue, 29 Apr 2014 18:30:38 GMT")))),
+                Arguments.of("timestamps/epoch-seconds-format-timestamp-trait.smithy", EpochSecondsTimestampTrait.class,
+                        MapUtils.of("getValue", Instant.ofEpochSecond((long) 1515531081.123))),
+                // Uniques items (sets)
+                Arguments.of("uniqueitems/number-set-trait.smithy", NumberSetTrait.class,
+                        MapUtils.of("getValues", SetUtils.of(1, 2, 3, 4))),
+                Arguments.of("uniqueitems/string-set-trait.smithy", StringSetTrait.class,
+                        MapUtils.of("getValues", SetUtils.of("a", "b", "c", "d"))),
+                Arguments.of("uniqueitems/struct-set-trait.smithy", StructureSetTrait.class,
+                        MapUtils.of("getValues", ListUtils.of(
+                                SetMember.builder().a("first").b(1).c("other").build(),
+                                SetMember.builder().a("second").b(2).c("more").build()))),
+                // Strings
+                Arguments.of("string-trait.smithy", StringTrait.class,
+                        MapUtils.of("getValue","Testing String Trait"))
         );
     }
 

@@ -1,9 +1,9 @@
 $version: "2.0"
 
-namespace test.smithy.traitcodegen
+namespace test.smithy.traitcodegen.enums
 
-@ResponseType("bad")
+@StringEnum("bad")
 string notAValidVariant
 
-@ResponseType("YES")
+@StringEnum("YES")
 string incorrectValueCasing

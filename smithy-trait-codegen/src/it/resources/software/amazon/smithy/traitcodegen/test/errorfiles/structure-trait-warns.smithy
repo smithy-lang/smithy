@@ -1,6 +1,6 @@
 $version: "2.0"
 
-namespace test.smithy.traitcodegen
+namespace test.smithy.traitcodegen.structures
 
 
 @structureTrait(

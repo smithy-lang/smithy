@@ -27,7 +27,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 
 
 public class TraitCodegenPluginTest {
-    private static final int EXPECTED_NUMBER_OF_FILES = 54;
+    private static final int EXPECTED_NUMBER_OF_FILES = 55;
 
     @Test
     public void generatesExpectedTraitFiles() {
@@ -111,7 +111,7 @@ public class TraitCodegenPluginTest {
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
         Optional<String> fileStringOptional = manifest.getFileString(
-                Paths.get("com/example/traits/IdRefStructTrait.java").toString());
+                Paths.get("com/example/traits/idref/IdRefStructTrait.java").toString());
         assertTrue(fileStringOptional.isPresent());
         assertThat(fileStringOptional.get(), startsWith("/**\n" +
                 " * Header line one\n" +
@@ -143,7 +143,7 @@ public class TraitCodegenPluginTest {
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
         Optional<String> fileStringOptional = manifest.getFileString(
-                Paths.get("com/example/traits/StructureTrait.java").toString());
+                Paths.get("com/example/traits/structures/StructureTrait.java").toString());
         assertTrue(fileStringOptional.isPresent());
         String expected = "    /**\n"
                           + "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n"

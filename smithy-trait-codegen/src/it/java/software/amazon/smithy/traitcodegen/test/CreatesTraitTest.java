@@ -2,41 +2,50 @@ package software.amazon.smithy.traitcodegen.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.traits.BaseTimestampTrait;
-import com.example.traits.BasicAnnotationTrait;
-import com.example.traits.DateTimeTimestampTrait;
-import com.example.traits.EpochSecondsTimestampTrait;
-import com.example.traits.HttpCodeBigDecimalTrait;
-import com.example.traits.HttpCodeBigIntegerTrait;
-import com.example.traits.HttpCodeByteTrait;
-import com.example.traits.HttpCodeDoubleTrait;
-import com.example.traits.HttpCodeFloatTrait;
-import com.example.traits.HttpCodeIntegerTrait;
-import com.example.traits.HttpCodeLongTrait;
-import com.example.traits.HttpCodeShortTrait;
-import com.example.traits.HttpDateTimestampTrait;
-import com.example.traits.JsonMetadataTrait;
-import com.example.traits.ListMember;
-import com.example.traits.MapValue;
-import com.example.traits.NestedA;
-import com.example.traits.NestedB;
-import com.example.traits.NumberListTrait;
-import com.example.traits.NumberSetTrait;
-import com.example.traits.ResponseTypeIntTrait;
-import com.example.traits.ResponseTypeTrait;
-import com.example.traits.StringListTrait;
-import com.example.traits.StringSetTrait;
-import com.example.traits.StringStringMapTrait;
-import com.example.traits.StringToStructMapTrait;
 import com.example.traits.StringTrait;
-import com.example.traits.StructWithMixinTrait;
-import com.example.traits.StructWithNestedDocumentTrait;
-import com.example.traits.StructureListTrait;
-import com.example.traits.StructureListWithMixinMemberTrait;
-import com.example.traits.StructureSetTrait;
-import com.example.traits.StructureTrait;
-import com.example.traits.SuitTrait;
+import com.example.traits.documents.DocumentTrait;
+import com.example.traits.documents.StructWithNestedDocumentTrait;
+import com.example.traits.enums.IntEnumTrait;
+import com.example.traits.enums.StringEnumTrait;
+import com.example.traits.enums.SuitTrait;
+import com.example.traits.idref.IdRefListTrait;
+import com.example.traits.idref.IdRefMapTrait;
+import com.example.traits.idref.IdRefStringTrait;
+import com.example.traits.idref.IdRefStructTrait;
+import com.example.traits.idref.IdRefStructWithNestedIdsTrait;
+import com.example.traits.idref.NestedIdRefHolder;
+import com.example.traits.lists.ListMember;
+import com.example.traits.lists.NumberListTrait;
+import com.example.traits.lists.StringListTrait;
+import com.example.traits.lists.StructureListTrait;
+import com.example.traits.maps.MapValue;
+import com.example.traits.maps.StringStringMapTrait;
+import com.example.traits.maps.StringToStructMapTrait;
+import com.example.traits.mixins.StructWithMixinTrait;
+import com.example.traits.mixins.StructureListWithMixinMemberTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
+import com.example.traits.numbers.BigDecimalTrait;
+import com.example.traits.numbers.BigIntegerTrait;
+import com.example.traits.numbers.ByteTrait;
+import com.example.traits.numbers.DoubleTrait;
+import com.example.traits.numbers.FloatTrait;
+import com.example.traits.numbers.IntegerTrait;
+import com.example.traits.numbers.LongTrait;
+import com.example.traits.numbers.ShortTrait;
+import com.example.traits.structures.BasicAnnotationTrait;
+import com.example.traits.structures.NestedA;
+import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructureTrait;
+import com.example.traits.timestamps.DateTimeTimestampTrait;
+import com.example.traits.timestamps.EpochSecondsTimestampTrait;
+import com.example.traits.timestamps.HttpDateTimestampTrait;
+import com.example.traits.timestamps.TimestampTrait;
+import com.example.traits.uniqueitems.NumberSetTrait;
+import com.example.traits.uniqueitems.SetMember;
+import com.example.traits.uniqueitems.StringSetTrait;
+import com.example.traits.uniqueitems.StructureSetTrait;
+import com.sun.org.apache.xpath.internal.Arg;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -57,30 +66,29 @@ public class CreatesTraitTest {
 
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
-                Arguments.of(BasicAnnotationTrait.ID, Node.objectNode()),
-                Arguments.of(HttpCodeBigDecimalTrait.ID, Node.from(1)),
-                Arguments.of(HttpCodeBigIntegerTrait.ID, Node.from(1)),
-                Arguments.of(HttpCodeByteTrait.ID, Node.from(1)),
-                Arguments.of(JsonMetadataTrait.ID, Node.objectNodeBuilder()
+                // Document traits
+                Arguments.of(DocumentTrait.ID, Node.objectNodeBuilder()
                         .withMember("metadata", "woo")
                         .withMember("more", "yay")
                         .build()
                 ),
-                Arguments.of(HttpCodeDoubleTrait.ID, Node.from(1.2)),
-                Arguments.of(ResponseTypeTrait.ID, Node.from("no")),
-                Arguments.of(HttpCodeFloatTrait.ID, Node.from(1.2)),
-                Arguments.of(HttpCodeIntegerTrait.ID, Node.from(1)),
-                Arguments.of(ResponseTypeIntTrait.ID, Node.from(2)),
-                Arguments.of(HttpCodeLongTrait.ID, Node.from(1L)),
+                Arguments.of(StructWithNestedDocumentTrait.ID,
+                        ObjectNode.objectNodeBuilder().withMember("doc", ObjectNode.builder()
+                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build()),
+                // Enums
+                Arguments.of(StringEnumTrait.ID, Node.from("no")),
+                Arguments.of(IntEnumTrait.ID, Node.from(2)),
+                Arguments.of(SuitTrait.ID, Node.from("clubs")),
+                // Lists
                 Arguments.of(NumberListTrait.ID, ArrayNode.fromNodes(
                         Node.from(1), Node.from(2), Node.from(3))
                 ),
-                Arguments.of(NumberSetTrait.ID, ArrayNode.fromNodes(
-                        Node.from(1), Node.from(2), Node.from(3))
-                ),
-                Arguments.of(HttpCodeShortTrait.ID, Node.from(1)),
                 Arguments.of(StringListTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
-                Arguments.of(StringSetTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
+                Arguments.of(StructureListTrait.ID, ArrayNode.fromNodes(
+                        ListMember.builder().a("first").b(1).c("other").build().toNode(),
+                        ListMember.builder().a("second").b(2).c("more").build().toNode()
+                )),
+                // Maps
                 Arguments.of(StringStringMapTrait.ID, StringStringMapTrait.builder()
                         .putValues("a", "first").putValues("b", "other").build().toNode()
                 ),
@@ -89,15 +97,25 @@ public class CreatesTraitTest {
                         .putValues("two", MapValue.builder().a("bar").b(4).build())
                         .build().toNode()
                 ),
-                Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
-                Arguments.of(StructureListTrait.ID, ArrayNode.fromNodes(
-                        ListMember.builder().a("first").b(1).c("other").build().toNode(),
-                        ListMember.builder().a("second").b(2).c("more").build().toNode()
-                )),
-                Arguments.of(StructureSetTrait.ID, ArrayNode.fromNodes(
-                        ListMember.builder().a("first").b(1).c("other").build().toNode(),
-                        ListMember.builder().a("second").b(2).c("more").build().toNode()
-                )),
+                // Mixins
+                Arguments.of(StructureListWithMixinMemberTrait.ID,
+                        ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
+                Arguments.of(StructWithMixinTrait.ID, StructWithMixinTrait.builder()
+                        .d("d").build().toNode()),
+                // Naming Conflicts
+                Arguments.of(SnakeCaseStructureTrait.ID, ObjectNode.builder()
+                        .withMember("snake_case_member", "stuff").build()),
+                // Numbers
+                Arguments.of(BigDecimalTrait.ID, Node.from(1)),
+                Arguments.of(BigIntegerTrait.ID, Node.from(1)),
+                Arguments.of(ByteTrait.ID, Node.from(1)),
+                Arguments.of(DoubleTrait.ID, Node.from(1.2)),
+                Arguments.of(FloatTrait.ID, Node.from(1.2)),
+                Arguments.of(IntegerTrait.ID, Node.from(1)),
+                Arguments.of(LongTrait.ID, Node.from(1L)),
+                Arguments.of(ShortTrait.ID, Node.from(1)),
+                // Structures
+                Arguments.of(BasicAnnotationTrait.ID, Node.objectNode()),
                 Arguments.of(StructureTrait.ID, StructureTrait.builder()
                         .fieldA("a")
                         .fieldB(true)
@@ -111,20 +129,22 @@ public class CreatesTraitTest {
                         .fieldE(MapUtils.of("a", "one", "b", "two"))
                         .build().toNode()
                 ),
-                Arguments.of(SnakeCaseStructureTrait.ID, ObjectNode.builder()
-                        .withMember("snake_case_member", "stuff").build()),
-                Arguments.of(StructureListWithMixinMemberTrait.ID,
-                        ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
-                Arguments.of(StructWithMixinTrait.ID, StructWithMixinTrait.builder()
-                        .d("d").build().toNode()),
-                Arguments.of(SuitTrait.ID, Node.from("CLUBS")),
-                Arguments.of(StructWithNestedDocumentTrait.ID,
-                        ObjectNode.objectNodeBuilder().withMember("doc", ObjectNode.builder()
-                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build()),
-                Arguments.of(BaseTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
+                // Timestamps
+                Arguments.of(TimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(DateTimeTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(HttpDateTimestampTrait.ID, Node.from("Tue, 29 Apr 2014 18:30:38 GMT")),
-                Arguments.of(EpochSecondsTimestampTrait.ID, Node.from(1515531081.123))
+                Arguments.of(EpochSecondsTimestampTrait.ID, Node.from(1515531081.123)),
+                // Unique Items (sets)
+                Arguments.of(NumberSetTrait.ID, ArrayNode.fromNodes(
+                        Node.from(1), Node.from(2), Node.from(3))
+                ),
+                Arguments.of(StringSetTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
+                Arguments.of(StructureSetTrait.ID, ArrayNode.fromNodes(
+                        SetMember.builder().a("first").b(1).c("other").build().toNode(),
+                        SetMember.builder().a("second").b(2).c("more").build().toNode()
+                )),
+                // Strings
+                Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils."))
         );
     }
 
