@@ -5,7 +5,6 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
-import java.util.Map;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -29,8 +28,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.EnumValueTrait;
-import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -100,13 +97,6 @@ final class PropertiesGenerator implements Runnable {
         @Override
         public Void intEnumShape(IntEnumShape shape) {
             writer.write("private final $T value;", Integer.class);
-            for (Map.Entry<String, MemberShape> memberEntry : shape.getAllMembers().entrySet()) {
-                writer.pushState(new EnumVariantSection(memberEntry.getValue()));
-                writer.write("public static final $T $L = $L;", Integer.class, memberEntry.getKey(),
-                        memberEntry.getValue().expectTrait(EnumValueTrait.class).expectIntValue());
-                writer.popState();
-            }
-
             return null;
         }
 
@@ -160,12 +150,7 @@ final class PropertiesGenerator implements Runnable {
 
         @Override
         public Void enumShape(EnumShape shape) {
-            for (Map.Entry<String, MemberShape> memberEntry : shape.getAllMembers().entrySet()) {
-                writer.pushState(new EnumVariantSection(memberEntry.getValue()));
-                writer.write("public static final $T $L = $S;", String.class, memberEntry.getKey(),
-                        memberEntry.getValue().expectTrait(EnumValueTrait.class).expectStringValue());
-                writer.popState();
-            }
+            // Enum shapes have no properties
             return null;
         }
 

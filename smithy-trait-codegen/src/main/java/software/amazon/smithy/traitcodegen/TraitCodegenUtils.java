@@ -11,7 +11,6 @@ import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -68,17 +67,26 @@ public final class TraitCodegenUtils {
             unescaped = StringUtils.capitalize(baseName);
         }
 
-        // No need to escape trait name (they already have 'Trait' appended)
-        if (shape.hasTrait(TraitDefinition.class)) {
-            // If the trait class name doesn't already end with `Trait`,
-            // use that. Otherwise, append the `Trait` suffix.
-            if (unescaped.endsWith("Trait")) {
-                return unescaped;
-            }
-            return unescaped + "Trait";
+        return SHAPE_ESCAPER.escape(unescaped);
+    }
+
+    /**
+     * Gets the default class name to use for a given Smithy {@link Shape} that
+     * defines a trait.
+     *
+     * @param shape Shape to get name for.
+     * @return Default name.
+     */
+    public static String getDefaultTraitName(Shape shape) {
+        String name = getDefaultName(shape);
+
+        // If the trait class name doesn't already end with `Trait`,
+        // use that. Otherwise, append the `Trait` suffix.
+        if (name.endsWith("Trait")) {
+            return name;
         }
 
-        return SHAPE_ESCAPER.escape(unescaped);
+        return name + "Trait";
     }
 
     /**

@@ -166,6 +166,8 @@ structure NestedA {
     fieldQ: Boolean
 
     fieldZ: NestedB
+
+    fieldAA: NestedC
 }
 
 @private
@@ -174,6 +176,14 @@ enum NestedB {
     A
     /// A B!
     B
+}
+
+@private
+intEnum NestedC {
+    /// An A!
+    A = 1
+    /// A B!
+    B = 2
 }
 
 // ===============

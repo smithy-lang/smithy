@@ -104,7 +104,7 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.write("return $T.valueOf(node.expectNumberNode().getValue().intValue());", symbol);
+            writer.write("return $T.from(node.expectNumberNode().getValue().intValue());", symbol);
             return null;
         }
 
@@ -257,8 +257,8 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
-                    fieldName, memberName);
+            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L($T.from(n.intValue())))",
+                    fieldName, memberName, symbolProvider.toSymbol(shape));
             return null;
         }
 

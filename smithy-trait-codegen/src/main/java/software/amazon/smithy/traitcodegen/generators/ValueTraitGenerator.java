@@ -25,7 +25,7 @@ final class ValueTraitGenerator extends TraitGenerator {
         writeConstructor(writer, directive.symbol());
         writeConstructorWithSourceLocation(writer, directive.symbol());
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
-        new GetterGenerator(writer, directive.symbolProvider(), directive.shape(), directive.model()).run();
+        new GetterGenerator(writer, directive.symbolProvider(), directive.shape()).run();
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol) {

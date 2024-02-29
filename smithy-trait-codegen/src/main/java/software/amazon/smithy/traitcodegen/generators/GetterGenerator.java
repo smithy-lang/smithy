@@ -6,8 +6,8 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Optional;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -15,6 +15,7 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -42,13 +43,11 @@ final class GetterGenerator implements Runnable {
     private final TraitCodegenWriter writer;
     private final SymbolProvider symbolProvider;
     private final Shape shape;
-    private final Model model;
 
-    GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Shape shape, Model model) {
+    GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Shape shape) {
         this.writer = writer;
         this.symbolProvider = symbolProvider;
         this.shape = shape;
-        this.model = model;
     }
 
     @Override
@@ -144,11 +143,29 @@ final class GetterGenerator implements Runnable {
         }
 
         @Override
+        public Void enumShape(EnumShape shape) {
+            Symbol shapeSymbol = symbolProvider.toSymbol(shape);
+            generateEnumValueGetterDocstring(shapeSymbol);
+            writer.openBlock("public $B getEnumValue() {", "}",
+                    shapeSymbol,
+                    () -> writer.write("return $B.from(getValue());", shapeSymbol));
+            writer.newLine();
+            return null;
+        }
+
+        @Override
         public Void intEnumShape(IntEnumShape shape) {
             writer.pushState(new GetterSection(shape));
             writer.openBlock("public $T getValue() {", "}",
-                    Integer.class, () -> writer.writeWithNoFormatting("return value;"));
+                    Integer.class, () -> writer.write("return value;"));
             writer.popState();
+            writer.newLine();
+
+            Symbol shapeSymbol = symbolProvider.toSymbol(shape);
+            generateEnumValueGetterDocstring(shapeSymbol);
+            writer.openBlock("public $B getEnumValue() {", "}",
+                    shapeSymbol,
+                    () -> writer.write("return $B.from(value);", shapeSymbol));
             writer.newLine();
             return null;
         }
@@ -182,6 +199,14 @@ final class GetterGenerator implements Runnable {
         @Override
         public Void memberShape(MemberShape shape) {
             throw new IllegalArgumentException("Cannot generate a getter for Member shape: " + shape);
+        }
+
+        private void generateEnumValueGetterDocstring(Symbol symbol) {
+            writer.openDocstring();
+            writer.writeDocStringContents("Gets the {@code $1T} value as a {@code $1B} enum.", symbol);
+            writer.writeDocStringContents("");
+            writer.writeDocStringContents("@return Returns the {@code $B} enum.", symbol);
+            writer.closeDocstring();
         }
 
         private void generateNonOptionalGetter(MemberShape member) {

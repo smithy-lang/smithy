@@ -5,11 +5,13 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
-import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
@@ -41,10 +43,33 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
                 writer -> writeEnum(directive.shape(), directive.symbolProvider(), writer, directive.model()));
     }
 
-    protected void writeEnum(Shape enumShape, SymbolProvider provider, TraitCodegenWriter writer, Model model) {
+    public void writeEnum(Shape enumShape,
+                          SymbolProvider provider,
+                          TraitCodegenWriter writer,
+                          Model model) {
+        writeEnum(enumShape, provider, writer, model, true);
+    }
+
+    /**
+     * Writes an Enum class from an enum shape.
+     *
+     * @param enumShape enum shape to generate enum class for.
+     * @param provider symbol provider.
+     * @param writer writer to write generated code to.
+     * @param model smithy model used for code generation.
+     * @param isStandaloneClass flag indicating if enum is a standalone class (i.e. defined in its own class file).
+     */
+    public void writeEnum(Shape enumShape,
+                          SymbolProvider provider,
+                          TraitCodegenWriter writer,
+                          Model model,
+                          boolean isStandaloneClass
+    ) {
         Symbol enumSymbol = provider.toSymbol(enumShape);
         writer.pushState(new ClassSection(enumShape))
-                .openBlock("public enum $L {", "}", enumSymbol.getName(), () -> {
+                .putContext("standalone", isStandaloneClass)
+                .openBlock("public enum $B ${?standalone}implements $T ${/standalone}{", "}",
+                        enumSymbol, ToNode.class, () -> {
                     writeVariants(enumShape, provider, writer);
                     writer.newLine();
 
@@ -56,7 +81,13 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
                     writeValueGetter(writer);
                     writer.newLine();
 
-                    new FromNodeGenerator(writer, enumSymbol, enumShape, provider, model).run();
+                    writeFromMethod(enumSymbol, writer);
+
+                    // Only generate From and To Node when we are in a standalone class.
+                    if (isStandaloneClass) {
+                        writeToNode(writer);
+                        new FromNodeGenerator(writer, enumSymbol, enumShape, provider, model).run();
+                    }
                 })
                 .popState();
     }
@@ -67,20 +98,15 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     abstract Object getEnumValue(MemberShape member);
 
+    abstract String getUnknownVariant();
+
     private void writeVariants(Shape enumShape, SymbolProvider provider, TraitCodegenWriter writer) {
-        Iterator<MemberShape> memberIterator = enumShape.members().iterator();
-        String template = getVariantTemplate();
-        while (memberIterator.hasNext()) {
-            MemberShape member = memberIterator.next();
-            String name = provider.toMemberName(member);
+        for (MemberShape member : enumShape.members()) {
             writer.pushState(new EnumVariantSection(member));
-            if (memberIterator.hasNext()) {
-                writer.write(template + ",", name, getEnumValue(member));
-            } else {
-                writer.write(template + ";", name, getEnumValue(member));
-            }
+            writer.write(getVariantTemplate() + ",", provider.toMemberName(member), getEnumValue(member));
             writer.popState();
         }
+        writer.write("UNKNOWN($L);", getUnknownVariant());
     }
 
     private void writeValueField(TraitCodegenWriter writer) {
@@ -92,9 +118,36 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
                 () -> writer.writeWithNoFormatting("return value;"));
     }
 
+    private void writeToNode(TraitCodegenWriter writer) {
+        writer.override();
+        writer.openBlock("public $T toNode() {", "}", Node.class,
+                () -> writer.write("return $T.from(value);", Node.class));
+        writer.newLine();
+    }
+
     private void writeConstructor(Symbol enumSymbol, TraitCodegenWriter writer) {
-        writer.openBlock("$T($T value) {", "}",
+        writer.openBlock("$B($T value) {", "}",
                 enumSymbol, getValueType(), () -> writer.write("this.value = value;"));
+        writer.newLine();
+    }
+
+    private void writeFromMethod(Symbol enumSymbol, TraitCodegenWriter writer) {
+        writer.openDocstring();
+        writer.writeDocStringContents("Create a {@code $B} from a value in a model.", enumSymbol);
+        writer.writeDocStringContents("");
+        writer.writeDocStringContents("<p> Any unknown value is returned as {@code UNKNOWN}.");
+        writer.writeDocStringContents("");
+        writer.writeDocStringContents("@param value Value to create enum from.");
+        writer.writeDocStringContents("@return Returns the {@link $B} enum value.", enumSymbol);
+        writer.closeDocstring();
+        writer.openBlock("public static $B from($T value) {", "}",
+                enumSymbol, getValueType(), () -> {
+                    writer.openBlock("for ($B val: values()) {", "}",
+                            enumSymbol,
+                            () -> writer.openBlock("if ($T.equals(val.getValue(), value)) {", "}",
+                                    Objects.class, () -> writer.writeWithNoFormatting("return val;")));
+                    writer.writeWithNoFormatting("return UNKNOWN;");
+                });
         writer.newLine();
     }
 
@@ -116,6 +169,11 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         Object getEnumValue(MemberShape member) {
             return member.expectTrait(EnumValueTrait.class).expectStringValue();
         }
+
+        @Override
+        String getUnknownVariant() {
+            return "\"unknown\"";
+        }
     }
 
     /**
@@ -129,12 +187,17 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         Class<?> getValueType() {
-            return int.class;
+            return Integer.class;
         }
 
         @Override
         Object getEnumValue(MemberShape member) {
             return member.expectTrait(EnumValueTrait.class).expectIntValue();
+        }
+
+        @Override
+        String getUnknownVariant() {
+            return "-99999";
         }
     }
 }
