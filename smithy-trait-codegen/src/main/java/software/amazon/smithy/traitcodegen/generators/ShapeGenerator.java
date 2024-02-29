@@ -169,18 +169,16 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
+        public Void timestampShape(TimestampShape shape) {
+            new ValueTraitGenerator().accept(directive);
+            return null;
+        }
+
+        @Override
         public Void unionShape(UnionShape shape) {
             throw new UnsupportedOperationException("Trait code generation does not support union traits"
                     + " at this time. Failed to generate Trait class for: " + shape);
         }
-
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            throw new UnsupportedOperationException("Trait code generation does not support timestamp traits"
-                    + " at this time. Failed to generate Trait class for: " + shape);
-        }
-
 
         @Override
         public Void blobShape(BlobShape shape) {

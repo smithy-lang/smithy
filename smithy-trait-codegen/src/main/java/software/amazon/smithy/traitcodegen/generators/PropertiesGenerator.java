@@ -178,13 +178,13 @@ final class PropertiesGenerator implements Runnable {
         }
 
         @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
+        public Void timestampShape(TimestampShape shape) {
+            createValueProperty(shape);
+            return null;
         }
 
         @Override
-        public Void timestampShape(TimestampShape shape) {
+        public Void unionShape(UnionShape shape) {
             throw new UnsupportedOperationException("Property generator does not support shape "
                     + shape + " of type " + shape.getType());
         }

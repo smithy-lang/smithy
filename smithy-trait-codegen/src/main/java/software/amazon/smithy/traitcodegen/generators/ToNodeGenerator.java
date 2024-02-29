@@ -5,6 +5,8 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -184,7 +186,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("return new $T(value.toString(), getSourceLocation());", StringNode.class);
+            toStringCreator();
             return null;
         }
 
@@ -219,13 +221,39 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Union shapes not supported at this time.");
+        public Void timestampShape(TimestampShape shape) {
+            if (shape.hasTrait(TimestampFormatTrait.class)) {
+                switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("return new $T(value.getEpochSecond(), getSourceLocation());",
+                                NumberNode.class);
+                        break;
+                    case HTTP_DATE:
+                        writer.write("return new $T($T.RFC_1123_DATE_TIME.format(",
+                                StringNode.class, DateTimeFormatter.class);
+                        writer.indent();
+                        writer.write("$T.ofInstant(value, $T.UTC)), getSourceLocation());",
+                                ZonedDateTime.class, ZoneOffset.class);
+                        writer.dedent();
+                        break;
+                    default:
+                        toStringCreator();
+                        break;
+                }
+            } else {
+                toStringCreator();
+            }
+
+            return null;
+        }
+
+        private void toStringCreator() {
+            writer.write("return new $T(value.toString(), getSourceLocation());", StringNode.class);
         }
 
         @Override
-        public Void timestampShape(TimestampShape shape) {
-            throw new UnsupportedOperationException("Timestamp shapes not supported at this time.");
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Union shapes not supported at this time.");
         }
 
         @Override

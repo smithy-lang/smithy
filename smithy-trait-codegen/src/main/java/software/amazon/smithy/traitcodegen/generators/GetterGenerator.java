@@ -169,13 +169,14 @@ final class GetterGenerator implements Runnable {
         }
 
         @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Union Shapes are not supported at this time.");
+        public Void timestampShape(TimestampShape shape) {
+            generateValueGetter(shape);
+            return null;
         }
 
         @Override
-        public Void timestampShape(TimestampShape shape) {
-            throw new UnsupportedOperationException("Timestamp Shapes are not supported at this time.");
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Union Shapes are not supported at this time.");
         }
 
         @Override

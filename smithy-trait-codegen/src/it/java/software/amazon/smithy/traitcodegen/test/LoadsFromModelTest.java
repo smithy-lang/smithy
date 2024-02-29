@@ -3,7 +3,10 @@ package software.amazon.smithy.traitcodegen.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
+import com.example.traits.BaseTimestampTrait;
 import com.example.traits.BasicAnnotationTrait;
+import com.example.traits.DateTimeTimestampTrait;
+import com.example.traits.EpochSecondsTimestampTrait;
 import com.example.traits.HttpCodeBigDecimalTrait;
 import com.example.traits.HttpCodeBigIntegerTrait;
 import com.example.traits.HttpCodeByteTrait;
@@ -12,6 +15,7 @@ import com.example.traits.HttpCodeFloatTrait;
 import com.example.traits.HttpCodeIntegerTrait;
 import com.example.traits.HttpCodeLongTrait;
 import com.example.traits.HttpCodeShortTrait;
+import com.example.traits.HttpDateTimestampTrait;
 import com.example.traits.IdRefListTrait;
 import com.example.traits.IdRefMapTrait;
 import com.example.traits.IdRefStringTrait;
@@ -168,7 +172,16 @@ public class LoadsFromModelTest {
                         MapUtils.of("getBaseTime", Instant.parse("1985-04-12T23:20:50.52Z"),
                                     "getDateTime", Instant.parse("1985-04-12T23:20:50.52Z"),
                                 "getHttpDate", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")),
-                                "getEpochSeconds", Instant.ofEpochSecond((long) 1515531081.123)))
+                                "getEpochSeconds", Instant.ofEpochSecond((long) 1515531081.123))),
+                Arguments.of("base-timestamp-trait.smithy", BaseTimestampTrait.class,
+                        MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
+                Arguments.of("date-time-timestamp-trait.smithy", DateTimeTimestampTrait.class,
+                        MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
+                Arguments.of("http-date-trait.smithy", HttpDateTimestampTrait.class,
+                        MapUtils.of("getValue", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME
+                                        .parse("Tue, 29 Apr 2014 18:30:38 GMT")))),
+                Arguments.of("epoch-seconds-timestamp-trait.smithy", EpochSecondsTimestampTrait.class,
+                        MapUtils.of("getValue", Instant.ofEpochSecond((long) 1515531081.123)))
         );
     }
 

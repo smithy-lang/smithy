@@ -5,6 +5,8 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -29,6 +31,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -147,13 +150,35 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     }
 
     @Override
-    public Void unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Union shapes not supported at this time.");
+    public Void timestampShape(TimestampShape shape) {
+        if (shape.hasTrait(TimestampFormatTrait.class)) {
+            switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                case EPOCH_SECONDS:
+                    writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
+                            varName, Instant.class);
+                    break;
+                case HTTP_DATE:
+                    writer.writeInline("$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
+                            varName, Instant.class, DateTimeFormatter.class);
+                    break;
+                default:
+                    defaultTimestampMapper();
+                    break;
+            }
+        } else {
+            defaultTimestampMapper();
+        }
+        return null;
+    }
+
+    private void defaultTimestampMapper() {
+        writer.writeInline("$2T.parse($1L.expectStringNode().getValue())",
+                varName, Instant.class);
     }
 
     @Override
-    public Void timestampShape(TimestampShape shape) {
-        throw new UnsupportedOperationException("Timestamp shapes not supported at this time.");
+    public Void unionShape(UnionShape shape) {
+        throw new UnsupportedOperationException("Union shapes not supported at this time.");
     }
 
     @Override

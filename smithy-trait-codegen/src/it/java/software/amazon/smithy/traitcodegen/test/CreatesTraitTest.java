@@ -2,7 +2,10 @@ package software.amazon.smithy.traitcodegen.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.traits.BaseTimestampTrait;
 import com.example.traits.BasicAnnotationTrait;
+import com.example.traits.DateTimeTimestampTrait;
+import com.example.traits.EpochSecondsTimestampTrait;
 import com.example.traits.HttpCodeBigDecimalTrait;
 import com.example.traits.HttpCodeBigIntegerTrait;
 import com.example.traits.HttpCodeByteTrait;
@@ -11,6 +14,7 @@ import com.example.traits.HttpCodeFloatTrait;
 import com.example.traits.HttpCodeIntegerTrait;
 import com.example.traits.HttpCodeLongTrait;
 import com.example.traits.HttpCodeShortTrait;
+import com.example.traits.HttpDateTimestampTrait;
 import com.example.traits.JsonMetadataTrait;
 import com.example.traits.ListMember;
 import com.example.traits.MapValue;
@@ -116,7 +120,11 @@ public class CreatesTraitTest {
                 Arguments.of(SuitTrait.ID, Node.from("CLUBS")),
                 Arguments.of(StructWithNestedDocumentTrait.ID,
                         ObjectNode.objectNodeBuilder().withMember("doc", ObjectNode.builder()
-                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build())
+                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build()),
+                Arguments.of(BaseTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
+                Arguments.of(DateTimeTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
+                Arguments.of(HttpDateTimestampTrait.ID, Node.from("Tue, 29 Apr 2014 18:30:38 GMT")),
+                Arguments.of(EpochSecondsTimestampTrait.ID, Node.from(1515531081.123))
         );
     }
 
