@@ -56,24 +56,29 @@ final class TraitCodegen {
     private final TraitCodegenSettings settings;
     private final FileManifest fileManifest;
     private final Selector traitSelector;
+    private final PluginContext pluginContext;
+
     private List<TraitCodegenIntegration> integrations;
     private TraitCodegenContext codegenContext;
 
     private TraitCodegen(Model model,
                          TraitCodegenSettings settings,
-                         FileManifest fileManifest
+                         FileManifest fileManifest,
+                         PluginContext pluginContext
     ) {
         this.model = Objects.requireNonNull(model);
         this.settings = Objects.requireNonNull(settings);
         this.fileManifest = Objects.requireNonNull(fileManifest);
         this.traitSelector = Selector.parse(String.format(SELECTOR_TEMPLATE, settings.smithyNamespace()));
+        this.pluginContext = pluginContext;
     }
 
     public static TraitCodegen fromPluginContext(PluginContext context) {
         return new TraitCodegen(
                 context.getModel(),
                 TraitCodegenSettings.fromNode(context.getSettings()),
-                context.getFileManifest()
+                context.getFileManifest(),
+                context
         );
     }
 
@@ -145,7 +150,7 @@ final class TraitCodegen {
 
     private Set<Shape> getTraitClosure(Model model) {
         // Get a map of existing providers, so we do not generate any trait definitions
-        // for traits pulled in from dependencies.
+        // for traits we have already manually defined a provider for.
         Set<ShapeId> existingProviders = new HashSet<>();
         ServiceLoader.load(TraitService.class, TraitCodegen.class.getClassLoader())
                 .forEach(service -> existingProviders.add(service.getShapeId()));
@@ -154,6 +159,7 @@ final class TraitCodegen {
         // any trait shapes for which a provider is already defined or which have
         // excluded tags
         Set<Shape> traitClosure = traitSelector.select(model).stream()
+                .filter(pluginContext::isSourceShape)
                 .filter(shape -> !existingProviders.contains(shape.getId()))
                 .filter(shape -> !this.hasExcludeTag(shape))
                 .collect(Collectors.toSet());
