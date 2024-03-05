@@ -152,7 +152,7 @@ public class TraitCodegenPluginTest {
                           + "     * <pre>\n"
                           + "     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
                           + "     * </pre>\n"
-                          + "     * \n"
+                          + "     *\n"
                           + "     * <ul>\n"
                           + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
                           + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"

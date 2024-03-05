@@ -56,6 +56,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         this.fileName = fileName;
         this.settings = settings;
 
+        // Ensure extraneous white space is trimmed
+        trimBlankLines();
+        trimTrailingSpaces();
+
         putFormatter('T', new JavaTypeFormatter());
         putFormatter('B', new BaseTypeFormatter());
     }
@@ -195,7 +199,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                 String placeholder = getPlaceholder(iterator.next().getSymbol());
                 builder.append(placeholder);
                 if (iterator.hasNext()) {
-                    builder.append(",");
+                    builder.append(", ");
                 }
             }
             builder.append(">");

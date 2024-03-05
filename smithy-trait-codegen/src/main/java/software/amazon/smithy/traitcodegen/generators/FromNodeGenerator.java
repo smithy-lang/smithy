@@ -161,7 +161,7 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write(memberPrefix + "BooleanMember($S, builder::$L)", fieldName, memberName);
+            writer.writeInline(memberPrefix + "BooleanMember($S, builder::$L)", fieldName, memberName);
             return null;
         }
 
@@ -175,56 +175,56 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.byteValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.byteValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.shortValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.shortValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.longValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.longValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write(memberPrefix + "Member($1S, $3T::expectObjectNode, builder::$2L)",
+            writer.writeInline(memberPrefix + "Member($1S, $3T::expectObjectNode, builder::$2L)",
                     fieldName, memberName, Node.class);
             return null;
         }
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L(n.doubleValue()))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.doubleValue()))",
                     fieldName, memberName);
             return null;
         }
 
         @Override
         public Void bigIntegerShape(BigIntegerShape shape) {
-            writer.write(memberPrefix
+            writer.writeInline(memberPrefix
                             + "Member($S, n -> n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$L)",
                     fieldName, memberName);
             return null;
@@ -232,7 +232,7 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write(memberPrefix
+            writer.writeInline(memberPrefix
                             + "Member($S, n -> n.expectNumberNode().asBigDecimal().get(), builder::$L)",
                     fieldName, memberName);
             return null;
@@ -255,7 +255,7 @@ final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.write(memberPrefix + "NumberMember($S, n -> builder.$L($T.from(n.intValue())))",
+            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L($T.from(n.intValue())))",
                     fieldName, memberName, symbolProvider.toSymbol(shape));
             return null;
         }
