@@ -13,10 +13,12 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Contextual information that is made available during most parts of trait code generation.
  */
+@SmithyUnstableApi
 public final class TraitCodegenContext implements CodegenContext<TraitCodegenSettings, TraitCodegenWriter,
         TraitCodegenIntegration> {
     private final Model model;

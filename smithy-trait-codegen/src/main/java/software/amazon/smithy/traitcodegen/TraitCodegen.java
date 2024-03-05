@@ -70,6 +70,10 @@ final class TraitCodegen {
         this.settings = Objects.requireNonNull(settings);
         this.fileManifest = Objects.requireNonNull(fileManifest);
         this.traitSelector = Selector.parse(String.format(SELECTOR_TEMPLATE, settings.smithyNamespace()));
+        // Only allow this plugin to be run on the source projection.
+        if (!pluginContext.getProjectionName().equals("source")) {
+            throw new IllegalArgumentException("Trait code generation can ONLY be run on the `source` projection.");
+        }
         this.pluginContext = pluginContext;
     }
 

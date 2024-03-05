@@ -8,9 +8,7 @@ package software.amazon.smithy.traitcodegen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -55,10 +53,10 @@ public final class TraitCodegenSettings {
                          List<String> excludeTags
     ) {
         this.packageName = Objects.requireNonNull(packageName);
-        this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
-        if (smithyNamespace.startsWith(SMITHY_MODEL_NAMESPACE)) {
-            throw new IllegalArgumentException("The `software.amazon.smithy.model` namespace is reserved.");
+        if (packageName.startsWith(SMITHY_MODEL_NAMESPACE)) {
+            throw new IllegalArgumentException("The `software.amazon.smithy.model` package namespace is reserved.");
         }
+        this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
         this.headerLines = Objects.requireNonNull(headerLines);
         this.excludeTags = Objects.requireNonNull(excludeTags);
     }
