@@ -165,7 +165,9 @@ public class LoadsFromModelTest {
                                         .fieldZ(NestedB.A)
                                         .build()),
                                 "getFieldD", Optional.of(ListUtils.of("a", "b", "c")),
+                                "getFieldDOrEmpty", ListUtils.of("a", "b", "c"),
                                 "getFieldE", Optional.of(MapUtils.of("a", "one", "b", "two")),
+                                "getFieldEOrEmpty", MapUtils.of("a", "one", "b", "two"),
                                 "getFieldF", Optional.of(new BigDecimal("100.01")),
                                 "getFieldG", Optional.of(new BigInteger("100")))),
                 // Timestamps

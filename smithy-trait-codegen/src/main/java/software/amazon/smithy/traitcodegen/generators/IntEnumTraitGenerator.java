@@ -28,7 +28,7 @@ final class IntEnumTraitGenerator extends TraitGenerator {
         writeConstructor(writer, directive.symbol());
         writeConstructorWithSourceLocation(writer, directive.symbol());
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
-        new GetterGenerator(writer, directive.symbolProvider(), directive.shape()).run();
+        new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape()).run();
         writeNestedEnumClass(writer, directive.shape(), directive.symbolProvider(), directive.model());
     }
 

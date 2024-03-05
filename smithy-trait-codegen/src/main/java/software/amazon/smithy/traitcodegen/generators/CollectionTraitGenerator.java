@@ -26,7 +26,7 @@ final class CollectionTraitGenerator extends TraitGenerator {
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
         new FromNodeGenerator(writer, directive.symbol(), directive.shape(), directive.symbolProvider(),
                 directive.model()).run();
-        new GetterGenerator(writer, directive.symbolProvider(), directive.shape()).run();
+        new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape()).run();
         new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(), directive.shape(),
                 directive.model()).run();
     }

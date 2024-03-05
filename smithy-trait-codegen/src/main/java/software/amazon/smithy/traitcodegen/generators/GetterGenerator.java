@@ -8,6 +8,7 @@ package software.amazon.smithy.traitcodegen.generators;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -43,11 +44,13 @@ import software.amazon.smithy.utils.StringUtils;
 final class GetterGenerator implements Runnable {
     private final TraitCodegenWriter writer;
     private final SymbolProvider symbolProvider;
+    private final Model model;
     private final Shape shape;
 
-    GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Shape shape) {
+    GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Model model, Shape shape) {
         this.writer = writer;
         this.symbolProvider = symbolProvider;
+        this.model = model;
         this.shape = shape;
     }
 
@@ -176,10 +179,32 @@ final class GetterGenerator implements Runnable {
             for (MemberShape member : shape.members()) {
                 // If the member is required or the type does not require an optional wrapper (such as a list or map)
                 // then do not wrap return in an Optional
+                writer.pushState(new GetterSection(member));
                 if (member.isRequired()) {
-                    generateNonOptionalGetter(member);
+                    writer.openBlock("public $T get$L() {", "}",
+                            symbolProvider.toSymbol(member),
+                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                            () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
+                    writer.popState();
+                    writer.newLine();
                 } else {
-                    generateOptionalGetter(member);
+                    writer.openBlock("public $T<$T> get$L() {", "}",
+                            Optional.class, symbolProvider.toSymbol(member),
+                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                            () -> writer.write("return $T.ofNullable($L);",
+                                    Optional.class, symbolProvider.toMemberName(member)));
+                    writer.popState();
+                    writer.newLine();
+
+                    // If the member targets a collection shape and is optional then generate an unwrapped
+                    // getter as a convenience method as well.
+                    Shape target = model.expectShape(member.getTarget());
+                    if (target.isListShape() || target.isMapShape()) {
+                        writer.openBlock("public $T get$LOrEmpty() {", "}",
+                                symbolProvider.toSymbol(member),
+                                StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                                () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
+                    }
                 }
                 writer.newLine();
             }
@@ -208,26 +233,6 @@ final class GetterGenerator implements Runnable {
             writer.writeDocStringContents("");
             writer.writeDocStringContents("@return Returns the {@code $B} enum.", symbol);
             writer.closeDocstring();
-        }
-
-        private void generateNonOptionalGetter(MemberShape member) {
-            writer.pushState(new GetterSection(member));
-            writer.openBlock("public $T get$L() {", "}",
-                    symbolProvider.toSymbol(member), StringUtils.capitalize(symbolProvider.toMemberName(member)),
-                    () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
-            writer.popState();
-            writer.newLine();
-        }
-
-        private void generateOptionalGetter(MemberShape member) {
-            writer.pushState(new GetterSection(member));
-            writer.openBlock("public $T<$T> get$L() {", "}",
-                    Optional.class, symbolProvider.toSymbol(member),
-                    StringUtils.capitalize(symbolProvider.toMemberName(member)),
-                    () -> writer.write("return $T.ofNullable($L);",
-                            Optional.class, symbolProvider.toMemberName(member)));
-            writer.popState();
-            writer.newLine();
         }
 
         private void generateValuesGetter(Shape shape) {
