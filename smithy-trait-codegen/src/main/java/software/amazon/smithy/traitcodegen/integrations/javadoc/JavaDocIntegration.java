@@ -34,6 +34,7 @@ public final class JavaDocIntegration implements TraitCodegenIntegration  {
         return ListUtils.of(
                 new DeprecatedAnnotationClassInterceptor(),
                 new DeprecatedNoteInterceptor(),
+                new UnstableAnnotationClassInterceptor(),
                 new ClassJavaDocInterceptor(),
                 new ExternalDocsInterceptor(),
                 new BuilderClassSectionDocsInterceptor(),
