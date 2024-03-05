@@ -8,6 +8,7 @@ package software.amazon.smithy.traitcodegen.generators;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -83,8 +84,9 @@ final class GetterGenerator implements Runnable {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            // Documents do not generate any getters. You must
-            // use the .toNode method to get the value of a document trait.
+            writer.openBlock("public $T getValue() {", "}", Node.class,
+                    () -> writer.writeWithNoFormatting("return toNode();"));
+            writer.newLine();
             return null;
         }
 

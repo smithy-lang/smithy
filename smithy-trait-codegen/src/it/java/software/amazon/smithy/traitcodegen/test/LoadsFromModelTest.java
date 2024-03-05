@@ -79,7 +79,7 @@ public class LoadsFromModelTest {
         return Stream.of(
                 // Document types
                 Arguments.of("documents/document-trait.smithy", DocumentTrait.class,
-                        MapUtils.of("toNode", Node.objectNodeBuilder()
+                        MapUtils.of("getValue", Node.objectNodeBuilder()
                                 .withMember("metadata", "woo")
                                 .withMember("more", "yay")
                                 .build())),
