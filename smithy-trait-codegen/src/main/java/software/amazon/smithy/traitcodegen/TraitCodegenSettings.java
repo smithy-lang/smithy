@@ -8,7 +8,9 @@ package software.amazon.smithy.traitcodegen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -30,6 +32,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class TraitCodegenSettings {
+    private static final String SMITHY_MODEL_NAMESPACE = "software.amazon.smithy.model";
     private final String packageName;
     private final String smithyNamespace;
     private final List<String> headerLines;
@@ -40,7 +43,7 @@ public final class TraitCodegenSettings {
      * {@code smithy-build.json} configuration for this plugin.
      *
      * @param packageName java package name to use for generated code. For example {@code com.example.traits}.
-     * @param smithyNamespace smithy namespace to search for traits in // TODO: Improve comment
+     * @param smithyNamespace smithy namespace to search for traits in.
      * @param headerLines lines of text to included as a header in all generated code files. This might be a
      *                    license header or copyright header that should be included in all generated files.
      * @param excludeTags smithy tags to exclude from trait code generation. Traits with these tags will be
@@ -53,6 +56,9 @@ public final class TraitCodegenSettings {
     ) {
         this.packageName = Objects.requireNonNull(packageName);
         this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
+        if (smithyNamespace.startsWith(SMITHY_MODEL_NAMESPACE)) {
+            throw new IllegalArgumentException("The `software.amazon.smithy.model` namespace is reserved.");
+        }
         this.headerLines = Objects.requireNonNull(headerLines);
         this.excludeTags = Objects.requireNonNull(excludeTags);
     }
