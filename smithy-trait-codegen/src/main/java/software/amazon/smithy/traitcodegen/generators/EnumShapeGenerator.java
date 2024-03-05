@@ -139,6 +139,7 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         writer.closeDocstring();
         writer.openBlock("public static $B from($T value) {", "}",
                 enumSymbol, getValueType(), () -> {
+                    writer.write("$T.requireNonNull(value, \"Enum value should not be null.\");", Objects.class);
                     writer.openBlock("for ($B val: values()) {", "}",
                             enumSymbol,
                             () -> writer.openBlock("if ($T.equals(val.getValue(), value)) {", "}",
