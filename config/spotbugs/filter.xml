@@ -194,4 +194,15 @@
         <Bug pattern="DE_MIGHT_IGNORE"/>
     </Match>
 
+    <!-- This checks for mutability, but it's full of false positives. Among other things, it doesn't
+         recognize SetUtils.copyOf and similar as providing immutable collections. -->
+    <Match>
+        <Bug code="EI,EI2"/>
+    </Match>
+
+    <!-- This class is effectively finalized when the exception is thrown. -->
+    <Match>
+        <Bug code="CT"/>
+    </Match>
+
 </FindBugsFilter>
