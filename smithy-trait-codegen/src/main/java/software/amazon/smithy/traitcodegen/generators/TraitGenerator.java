@@ -9,29 +9,18 @@ import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
@@ -108,17 +97,11 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
     /**
      * Returns the base class to use for a trait.
      */
-    private static final class BaseClassVisitor extends ShapeVisitor.DataShapeVisitor<Class<?>> {
+    private static final class BaseClassVisitor extends TraitVisitor<Class<?>> {
         private final SymbolProvider symbolProvider;
 
         private BaseClassVisitor(SymbolProvider symbolProvider) {
             this.symbolProvider = symbolProvider;
-        }
-
-        @Override
-        public Class<?> booleanShape(BooleanShape shape) {
-            throw new UnsupportedOperationException("Boolean traits not supported. Consider using an "
-                    + " Annotation Trait.");
         }
 
         @Override
@@ -138,47 +121,7 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        public Class<?> byteShape(ByteShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> shortShape(ShortShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> integerShape(IntegerShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> longShape(LongShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> floatShape(FloatShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
         public Class<?> documentShape(DocumentShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> doubleShape(DoubleShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> bigIntegerShape(BigIntegerShape shape) {
-            return AbstractTrait.class;
-        }
-
-        @Override
-        public Class<?> bigDecimalShape(BigDecimalShape shape) {
             return AbstractTrait.class;
         }
 
@@ -206,25 +149,12 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        public Class<?> unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Class<?> blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Class<?> memberShape(MemberShape shape) {
-            throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
-                    + "to visit " + shape);
+        protected Class<?> numberShape(NumberShape shape) {
+            return AbstractTrait.class;
         }
     }
 
-    private static final class ImplementsSmithyBuilderVisitor extends ShapeVisitor.DataShapeVisitor<Boolean> {
+    private static final class ImplementsSmithyBuilderVisitor extends TraitVisitor<Boolean> {
         private final SymbolProvider symbolProvider;
 
         private ImplementsSmithyBuilderVisitor(SymbolProvider symbolProvider) {
@@ -233,12 +163,8 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         public Boolean listShape(ListShape shape) {
-            if (!shape.hasTrait(UniqueItemsTrait.class)
-                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
-            ) {
-                return false;
-            }
-            return true;
+            return shape.hasTrait(UniqueItemsTrait.class)
+                    || !TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()));
         }
 
         @Override
@@ -247,52 +173,12 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        public Boolean byteShape(ByteShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean shortShape(ShortShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean integerShape(IntegerShape shape) {
-            return false;
-        }
-
-        @Override
         public Boolean intEnumShape(IntEnumShape shape) {
             return false;
         }
 
         @Override
-        public Boolean longShape(LongShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean floatShape(FloatShape shape) {
-            return false;
-        }
-
-        @Override
         public Boolean documentShape(DocumentShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean doubleShape(DoubleShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean bigIntegerShape(BigIntegerShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean bigDecimalShape(BigDecimalShape shape) {
             return false;
         }
 
@@ -317,27 +203,8 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         }
 
         @Override
-        public Boolean booleanShape(BooleanShape shape) {
-            throw new UnsupportedOperationException("Boolean traits not supported. Consider using an "
-                    + " Annotation Trait.");
-        }
-
-        @Override
-        public Boolean unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Boolean blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Boolean memberShape(MemberShape shape) {
-            throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
-                    + "to visit " + shape);
+        protected Boolean numberShape(NumberShape shape) {
+            return false;
         }
     }
 

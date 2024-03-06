@@ -6,28 +6,17 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -63,13 +52,7 @@ final class PropertiesGenerator implements Runnable {
         writer.newLine();
     }
 
-    private final class PropertyGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
-                    + "Consider using an Annotation (empty structure) trait instead");
-        }
+    private final class PropertyGenerator extends TraitVisitor<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
@@ -84,62 +67,14 @@ final class PropertiesGenerator implements Runnable {
         }
 
         @Override
-        public Void byteShape(ByteShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
         public Void intEnumShape(IntEnumShape shape) {
             writer.write("private final $T value;", Integer.class);
             return null;
         }
 
         @Override
-        public Void longShape(LongShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
         public Void documentShape(DocumentShape shape) {
-            // Document shapes have no properties
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
-        public Void bigIntegerShape(BigIntegerShape shape) {
-            createValueProperty(shape);
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
-            createValueProperty(shape);
+            // Document traits have no properties
             return null;
         }
 
@@ -182,21 +117,9 @@ final class PropertiesGenerator implements Runnable {
         }
 
         @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Property generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Void memberShape(MemberShape shape) {
-            throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
-                    + "to visit " + shape);
+        protected Void numberShape(NumberShape shape) {
+            createValueProperty(shape);
+            return null;
         }
 
         private void createValueProperty(Shape shape) {

@@ -17,28 +17,18 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -76,13 +66,7 @@ final class ToNodeGenerator implements Runnable {
         writer.newLine();
     }
 
-    private final class CreateNodeBodyGenerator extends ShapeVisitor.DataShapeVisitor<Void> {
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
-                    + "Consider using an Annotation (empty structure) trait instead");
-        }
+    private final class CreateNodeBodyGenerator extends TraitVisitor<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
@@ -96,56 +80,8 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
-        public Void byteShape(ByteShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void longShape(LongShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
         public Void documentShape(DocumentShape shape) {
             writer.writeWithNoFormatting("throw new UnsupportedOperationException(\"NodeCache is always set\");");
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void bigIntegerShape(BigIntegerShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
-            generateNumberTraitCreator();
             return null;
         }
 
@@ -220,9 +156,9 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
-        public Void memberShape(MemberShape shape) {
-            throw new IllegalArgumentException("CreateNodeBodyGenerator does not support member shapes."
-                + " Attempted to visit: " + shape);
+        protected Void numberShape(NumberShape shape) {
+            writer.write("return new $T(value, getSourceLocation());", NumberNode.class);
+            return null;
         }
 
         @Override
@@ -255,26 +191,12 @@ final class ToNodeGenerator implements Runnable {
         private void toStringCreator() {
             writer.write("return new $T(value.toString(), getSourceLocation());", StringNode.class);
         }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Union shapes not supported at this time.");
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Timestamp shapes not supported at this time.");
-        }
-
-        private void generateNumberTraitCreator() {
-            writer.write("return new $T(value, getSourceLocation());", NumberNode.class);
-        }
     }
 
     /**
      * Determines how to map a shape to a node.
      */
-    private final class ToNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
+    private final class ToNodeMapperVisitor extends TraitVisitor<Void> {
         private final String varName;
 
         ToNodeMapperVisitor(String varName) {
@@ -289,11 +211,6 @@ final class ToNodeGenerator implements Runnable {
                 fromNodeMapper();
             }
             return null;
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Blob Shapes are not supported at this time.");
         }
 
         @Override
@@ -330,24 +247,6 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
-        public Void byteShape(ByteShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
         public Void memberShape(MemberShape shape) {
             if (shape.hasTrait(IdRefTrait.class)) {
                 toStringMapper();
@@ -358,43 +257,19 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
+        protected Void numberShape(NumberShape shape) {
+            fromNodeMapper();
+            return null;
+        }
+
+        @Override
         public Void intEnumShape(IntEnumShape shape) {
             writer.write("$L.toNode()", varName);
             return null;
         }
 
         @Override
-        public Void longShape(LongShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
         public Void documentShape(DocumentShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void bigIntegerShape(BigIntegerShape shape) {
-            fromNodeMapper();
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
             fromNodeMapper();
             return null;
         }
@@ -409,11 +284,6 @@ final class ToNodeGenerator implements Runnable {
         public Void structureShape(StructureShape shape) {
             writer.write("$L.toNode()", varName);
             return null;
-        }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Union shapes are not supported at this time.");
         }
 
         @Override

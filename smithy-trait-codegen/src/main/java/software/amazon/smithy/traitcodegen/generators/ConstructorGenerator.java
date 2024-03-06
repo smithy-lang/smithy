@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -44,7 +45,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  *
  * <p>Static builders should be created using the {@link BuilderGenerator} generator.
  */
-final class ConstructorGenerator extends ShapeVisitor.DataShapeVisitor<Void> implements Runnable {
+final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable {
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
     private final Shape shape;
@@ -92,24 +93,6 @@ final class ConstructorGenerator extends ShapeVisitor.DataShapeVisitor<Void> imp
     }
 
     @Override
-    public Void byteShape(ByteShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
-    public Void shortShape(ShortShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
-    public Void integerShape(IntegerShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
     public Void intEnumShape(IntEnumShape shape) {
         Symbol integerSymbol = TraitCodegenUtils.fromClass(Integer.class);
         // Constructor with no source location
@@ -131,40 +114,10 @@ final class ConstructorGenerator extends ShapeVisitor.DataShapeVisitor<Void> imp
     }
 
     @Override
-    public Void longShape(LongShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
-    public Void floatShape(FloatShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
     public Void documentShape(DocumentShape shape) {
         writer.openBlock("public $T($T value) {", "}",
                 symbol, Node.class, () -> writer.writeWithNoFormatting("super(ID, value);"));
         writer.newLine();
-        return null;
-    }
-
-    @Override
-    public Void doubleShape(DoubleShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
-    public Void bigIntegerShape(BigIntegerShape shape) {
-        writeValueShapeConstructors();
-        return null;
-    }
-
-    @Override
-    public Void bigDecimalShape(BigDecimalShape shape) {
-        writeValueShapeConstructors();
         return null;
     }
 
@@ -197,32 +150,10 @@ final class ConstructorGenerator extends ShapeVisitor.DataShapeVisitor<Void> imp
     }
 
     @Override
-    public Void booleanShape(BooleanShape shape) {
-        throw new UnsupportedOperationException("Boolean traits not supported. "
-                + "Consider using an annotation trait instead.");
+    protected Void numberShape(NumberShape shape) {
+        writeValueShapeConstructors();
+        return null;
     }
-
-    @Override
-    public Void unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Does not support shape of type " + shape.getType());
-    }
-
-    @Override
-    public Void blobShape(BlobShape shape) {
-        throw new UnsupportedOperationException("Does not support shape of type " + shape.getType());
-    }
-
-    @Override
-    public Void memberShape(MemberShape shape) {
-        throw new UnsupportedOperationException("Does not support shape of type " + shape.getType());
-    }
-
-    private void writeEnumShapeConstructor(Class<?> valueType) {
-        writer.openBlock("$B($T value) {", "}",
-                symbol, valueType, () -> writer.write("this.value = value;"));
-        writer.newLine();
-    }
-
 
     private void writeConstructorWithBuilder() {
         writer.openBlock("private $T(Builder builder) {", "}", symbol, () -> {

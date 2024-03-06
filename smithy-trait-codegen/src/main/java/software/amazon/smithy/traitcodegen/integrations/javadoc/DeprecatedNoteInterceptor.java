@@ -14,7 +14,7 @@ import software.amazon.smithy.utils.CodeInterceptor;
  * Adds the {@code @deprecated} javadoc tag to generated Javadoc documentation for a class
  * if the smithy shape the class corresponds to has the {@link DeprecatedTrait} trait applied.
  *
- * <p>If the {@code DeprecatedTrait} contains a {@code since} field then a "As of " note will be added
+ * <p>If the {@code DeprecatedTrait} contains a {@code since} field, then "As of " note will be added
  * to the generated tag.
  */
 final class DeprecatedNoteInterceptor implements CodeInterceptor.Appender<JavaDocSection, TraitCodegenWriter> {

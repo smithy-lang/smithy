@@ -9,28 +9,16 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
-import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
@@ -76,7 +64,7 @@ final class ProviderGenerator implements Runnable {
         shape.accept(new ProviderMethodVisitor());
     }
 
-    private final class ProviderMethodVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
+    private final class ProviderMethodVisitor extends TraitVisitor<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
@@ -89,24 +77,6 @@ final class ProviderGenerator implements Runnable {
                         Trait.class, ShapeId.class, Node.class,
                         () -> writer.write("return new $T(value);", traitSymbol));
             });
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void bigIntegerShape(BigIntegerShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
-            generateValueShapeProvider();
             return null;
         }
 
@@ -125,36 +95,6 @@ final class ProviderGenerator implements Runnable {
         @Override
         public Void mapShape(MapShape shape) {
             generateAbstractTraitProvider();
-            return null;
-        }
-
-        @Override
-        public Void byteShape(ByteShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void longShape(LongShape shape) {
-            generateValueShapeProvider();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            generateValueShapeProvider();
             return null;
         }
 
@@ -193,25 +133,9 @@ final class ProviderGenerator implements Runnable {
         }
 
         @Override
-        public Void booleanShape(BooleanShape shape) {
-            throw new UnsupportedOperationException("Boolean shapes not supported by trait codegen."
-                    + "Consider using an Annotation Trait instead.");
-        }
-
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            throw new UnsupportedOperationException("Blob shapes are not supported by trait codegen at this time.");
-        }
-
-        @Override
-        public Void memberShape(MemberShape shape) {
-            throw new UnsupportedOperationException("Cannot generate a provider for a member shape.");
-        }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Union shapes are not supported by trait codegen at this time.");
+        protected Void numberShape(NumberShape shape) {
+            generateValueShapeProvider();
+            return null;
         }
 
         private void generateAbstractTraitProvider() {

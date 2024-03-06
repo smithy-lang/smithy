@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -41,7 +42,7 @@ import software.amazon.smithy.utils.StringUtils;
 /**
  * Generates the static {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
  */
-final class FromNodeGenerator extends ShapeVisitor.DataShapeVisitor<Void> implements Runnable {
+final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
     private final Shape shape;
@@ -60,12 +61,6 @@ final class FromNodeGenerator extends ShapeVisitor.DataShapeVisitor<Void> implem
     @Override
     public void run() {
         shape.accept(this);
-    }
-
-    @Override
-    public Void booleanShape(BooleanShape shape) {
-        throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
-                + "Consider using an Annotation (empty structure) trait instead");
     }
 
     @Override
@@ -99,47 +94,7 @@ final class FromNodeGenerator extends ShapeVisitor.DataShapeVisitor<Void> implem
     }
 
     @Override
-    public Void byteShape(ByteShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void shortShape(ShortShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void integerShape(IntegerShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void longShape(LongShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void floatShape(FloatShape shape) {
-        return null;
-    }
-
-    @Override
     public Void documentShape(DocumentShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void doubleShape(DoubleShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void bigIntegerShape(BigIntegerShape shape) {
-        return null;
-    }
-
-    @Override
-    public Void bigDecimalShape(BigDecimalShape shape) {
         return null;
     }
 
@@ -149,21 +104,9 @@ final class FromNodeGenerator extends ShapeVisitor.DataShapeVisitor<Void> implem
     }
 
     @Override
-    public Void unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Property generator does not support shape "
-                + shape + " of type " + shape.getType());
-    }
-
-    @Override
-    public Void blobShape(BlobShape shape) {
-        throw new UnsupportedOperationException("Property generator does not support shape "
-                + shape + " of type " + shape.getType());
-    }
-
-    @Override
-    public Void memberShape(MemberShape shape) {
-        throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
-                + "to visit " + shape);
+    protected Void numberShape(NumberShape shape) {
+        // Number shapes do not create a from node method
+        return null;
     }
 
     @Override
