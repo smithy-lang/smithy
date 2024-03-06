@@ -20,7 +20,7 @@ import java.nio.file.Paths
 plugins {
     id "application"
     id "org.beryx.runtime" version "1.12.7"
-    id "org.jreleaser" version "1.10.0"
+    id "org.jreleaser" version "1.11.0"
 }
 
 description = "This module implements the Smithy command line interface."
