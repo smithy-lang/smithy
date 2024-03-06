@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.time.Instant;
 import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -34,6 +35,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -140,7 +142,30 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
     @Override
     public Void timestampShape(TimestampShape shape) {
+        writeFromNodeJavaDoc();
+        writer.openBlock("public static $T fromNode($T node) {", "}",
+                symbol, Node.class, this::writeTimestampDeser);
         return null;
+    }
+
+    private void writeTimestampDeser() {
+        // If the trait has the timestamp format trait then we only need a single
+        // way to deserialize the input node. Without the timestamp format trait
+        // timestamp should be able to handle both epoch seconds and date time formats.
+        if (shape.hasTrait(TimestampFormatTrait.class)) {
+            writer.write("return new $T($C, node.getSourceLocation());",
+                    symbol,
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node")));
+        } else {
+            writer.openBlock("if (node.isNumberNode()) {", "}", () -> {
+                writer.write("return new $T($T.ofEpochSecond(node.expectNumberNode().getValue().longValue()),",
+                        symbol, Instant.class).indent();
+                writer.writeWithNoFormatting("node.getSourceLocation());").dedent();
+            });
+            writer.write("return new $T($T.parse(node.expectStringNode().getValue()), node.getSourceLocation());",
+                    symbol, Instant.class);
+        }
+        writer.newLine();
     }
 
     private void writeFromNodeJavaDoc() {

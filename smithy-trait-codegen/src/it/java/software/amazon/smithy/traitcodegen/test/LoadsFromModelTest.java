@@ -3,7 +3,6 @@ package software.amazon.smithy.traitcodegen.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-
 import com.example.traits.StringTrait;
 import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
@@ -176,8 +175,10 @@ public class LoadsFromModelTest {
                                 "getDateTime", Instant.parse("1985-04-12T23:20:50.52Z"),
                                 "getHttpDate", Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")),
                                 "getEpochSeconds", Instant.ofEpochSecond((long) 1515531081.123))),
-                Arguments.of("timestamps/timestamp-trait.smithy", TimestampTrait.class,
+                Arguments.of("timestamps/timestamp-trait-date-time.smithy", TimestampTrait.class,
                         MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
+                Arguments.of("timestamps/timestamp-trait-epoch-sec.smithy", TimestampTrait.class,
+                        MapUtils.of("getValue", Instant.ofEpochSecond((long) 1515531081.123))),
                 Arguments.of("timestamps/date-time-format-timestamp-trait.smithy", DateTimeTimestampTrait.class,
                         MapUtils.of("getValue", Instant.parse("1985-04-12T23:20:50.52Z"))),
                 Arguments.of("timestamps/http-date-format-timestamp-trait.smithy", HttpDateTimestampTrait.class,

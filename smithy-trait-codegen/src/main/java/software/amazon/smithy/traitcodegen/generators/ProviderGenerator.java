@@ -128,7 +128,7 @@ final class ProviderGenerator implements Runnable {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            generateValueShapeProvider();
+            generateAbstractTraitProvider();
             return null;
         }
 
