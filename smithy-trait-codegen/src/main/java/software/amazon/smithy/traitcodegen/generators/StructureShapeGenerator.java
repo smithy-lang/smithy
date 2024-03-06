@@ -24,7 +24,7 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
                     .openBlock("public final class $1T implements $2T, $3T<$1T> {", "}",
                             directive.symbol(), ToNode.class, ToSmithyBuilder.class, () -> {
                         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-                        new ConstructorWithBuilderGenerator(writer, directive.symbol(), directive.shape(),
+                        new ConstructorGenerator(writer, directive.symbol(), directive.shape(),
                                 directive.symbolProvider()).run();
                         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(),
                                 directive.model()).run();

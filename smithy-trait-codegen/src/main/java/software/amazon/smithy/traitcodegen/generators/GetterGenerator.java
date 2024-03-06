@@ -32,6 +32,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -124,6 +126,11 @@ final class GetterGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
+            if (!shape.hasTrait(UniqueItemsTrait.class)
+                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
+            ) {
+                return null;
+            }
             generateValuesGetter(shape);
             return null;
         }
@@ -142,6 +149,9 @@ final class GetterGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
+            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
+                return null;
+            }
             generateValueGetter(shape);
             return null;
         }

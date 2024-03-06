@@ -114,12 +114,6 @@ final class ToNodeGenerator implements Runnable {
         }
 
         @Override
-        public Void intEnumShape(IntEnumShape shape) {
-            generateNumberTraitCreator();
-            return null;
-        }
-
-        @Override
         public Void longShape(LongShape shape) {
             generateNumberTraitCreator();
             return null;
@@ -184,7 +178,20 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
+            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
+                return null;
+            }
             toStringCreator();
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            if (shape.hasTrait(TraitDefinition.class)) {
+                writer.write("return $T.from(value);", Node.class);
+            } else {
+                toStringCreator();
+            }
             return null;
         }
 

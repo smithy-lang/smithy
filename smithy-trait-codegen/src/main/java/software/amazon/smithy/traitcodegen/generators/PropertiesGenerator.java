@@ -28,6 +28,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -71,6 +73,12 @@ final class PropertiesGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
+            // Do not create a property if the shape can inherit from the StringListTrait base class.
+            if (!shape.hasTrait(UniqueItemsTrait.class)
+                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
+            ) {
+                return null;
+            }
             createValuesProperty(shape);
             return null;
         }
@@ -143,7 +151,11 @@ final class PropertiesGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
-            createValueProperty(shape);
+            // Only create a value property if the shape is not a java string.
+            // If it is a string it will use the value from the StringTrait base class.
+            if (!TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
+                createValueProperty(shape);
+            }
             return null;
         }
 

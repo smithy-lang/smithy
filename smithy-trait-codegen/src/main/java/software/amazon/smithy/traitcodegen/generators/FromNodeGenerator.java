@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -40,7 +41,7 @@ import software.amazon.smithy.utils.StringUtils;
 /**
  * Generates the static {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
  */
-final class FromNodeGenerator implements Runnable {
+final class FromNodeGenerator extends ShapeVisitor.DataShapeVisitor<Void> implements Runnable {
     private final TraitCodegenWriter writer;
     private final Symbol symbol;
     private final Shape shape;
@@ -58,6 +59,148 @@ final class FromNodeGenerator implements Runnable {
 
     @Override
     public void run() {
+        shape.accept(this);
+    }
+
+    @Override
+    public Void booleanShape(BooleanShape shape) {
+        throw new UnsupportedOperationException("Boolean shapes not supported for trait code generation. "
+                + "Consider using an Annotation (empty structure) trait instead");
+    }
+
+    @Override
+    public Void listShape(ListShape shape) {
+        if (!shape.hasTrait(UniqueItemsTrait.class)
+                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
+        ) {
+            return null;
+        }
+
+        writeFromNodeJavaDoc();
+        writer.openBlock("public static $T fromNode($T node) {", "}",
+                symbol, Node.class, () -> {
+            writer.writeWithNoFormatting("Builder builder = builder();");
+            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+            writer.writeWithNoFormatting("return builder.build();");
+        });
+        return null;
+    }
+
+    @Override
+    public Void mapShape(MapShape shape) {
+        writeFromNodeJavaDoc();
+        writer.openBlock("public static $T fromNode($T node) {", "}",
+                symbol, Node.class, () -> {
+                    writer.writeWithNoFormatting("Builder builder = builder();");
+                    shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+                    writer.writeWithNoFormatting("return builder.build();");
+                });
+        return null;
+    }
+
+    @Override
+    public Void byteShape(ByteShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void shortShape(ShortShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void integerShape(IntegerShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void longShape(LongShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void floatShape(FloatShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void documentShape(DocumentShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void doubleShape(DoubleShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void bigIntegerShape(BigIntegerShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void bigDecimalShape(BigDecimalShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void stringShape(StringShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void unionShape(UnionShape shape) {
+        throw new UnsupportedOperationException("Property generator does not support shape "
+                + shape + " of type " + shape.getType());
+    }
+
+    @Override
+    public Void blobShape(BlobShape shape) {
+        throw new UnsupportedOperationException("Property generator does not support shape "
+                + shape + " of type " + shape.getType());
+    }
+
+    @Override
+    public Void memberShape(MemberShape shape) {
+        throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
+                + "to visit " + shape);
+    }
+
+    @Override
+    public Void structureShape(StructureShape shape) {
+        writeFromNodeJavaDoc();
+        writer.write("public static $T fromNode($T node) {", symbol, Node.class);
+        writer.indent();
+        writer.write("Builder builder = builder();");
+        // If the shape has no members (i.e. is an annotation trait) then there will be no member setters, and we
+        // need to terminate the line.
+        writer.putContext("isEmpty", shape.members().isEmpty());
+        writer.write("node.expectObjectNode()${?isEmpty};${/isEmpty}");
+        writer.indent();
+        Iterator<MemberShape> memberIterator = shape.members().iterator();
+        while (memberIterator.hasNext()) {
+            MemberShape member = memberIterator.next();
+            member.accept(new MemberGenerator(member));
+            if (memberIterator.hasNext()) {
+                writer.writeInlineWithNoFormatting("\n");
+            } else {
+                writer.writeWithNoFormatting(";\n");
+            }
+        }
+        writer.dedent();
+        writer.write("return builder.build();");
+        writer.dedent().write("}");
+
+
+        return null;
+    }
+
+    @Override
+    public Void timestampShape(TimestampShape shape) {
+        return null;
+    }
+
+    private void writeFromNodeJavaDoc() {
         // Add docstring for method
         writer.openDocstring();
         writer.writeDocStringContents("Creates a {@link $T} from a {@link Node}.", symbol);
@@ -67,76 +210,6 @@ final class FromNodeGenerator implements Runnable {
         writer.writeDocStringContents("@throws $T if the given Node is invalid.",
                 ExpectationNotMetException.class);
         writer.closeDocstring();
-
-        // Write actual method
-        writer.openBlock("public static $T fromNode($T node) {", "}",
-                symbol, Node.class, () -> shape.accept(new FromNodeBodyGenerator()));
-        writer.newLine();
-    }
-
-    private final class FromNodeBodyGenerator extends ShapeVisitor.Default<Void> {
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            throw new UnsupportedOperationException("From Node Generator does not support shape "
-                    + shape + " of type " + shape.getType());
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            writer.writeWithNoFormatting("Builder builder = builder();");
-            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-            writer.writeWithNoFormatting("return builder.build();");
-
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            writer.writeWithNoFormatting("Builder builder = builder();");
-            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-            writer.writeWithNoFormatting("return builder.build();");
-            return null;
-        }
-
-        @Override
-        public Void intEnumShape(IntEnumShape shape) {
-            writer.write("return $T.from(node.expectNumberNode().getValue().intValue());", symbol);
-            return null;
-        }
-
-        @Override
-        public Void enumShape(EnumShape shape) {
-            writer.openBlock("return $T.valueOf(node.expectStringNode()", ");", symbol, () -> {
-                writer.putContext("enumVariants", shape.getEnumValues());
-                writer.write(".expectOneOf(${#enumVariants}${key:S}${^key.last},${/key.last}${/enumVariants})");
-            });
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            writer.write("Builder builder = builder();");
-            // If the shape has no members (i.e. is an annotation trait) then there will be no member setters, and we
-            // need to terminate the line.
-            writer.putContext("isEmpty", shape.members().isEmpty());
-            writer.write("node.expectObjectNode()${?isEmpty};${/isEmpty}");
-            writer.indent();
-            Iterator<MemberShape> memberIterator = shape.members().iterator();
-            while (memberIterator.hasNext()) {
-                MemberShape member = memberIterator.next();
-                member.accept(new MemberGenerator(member));
-                if (memberIterator.hasNext()) {
-                    writer.writeInlineWithNoFormatting("\n");
-                } else {
-                    writer.writeWithNoFormatting(";\n");
-                }
-            }
-            writer.dedent();
-            writer.write("return builder.build();");
-
-            return null;
-        }
     }
 
     /**
@@ -269,6 +342,13 @@ final class FromNodeGenerator implements Runnable {
                         (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
                 );
             }
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            writer.writeInline(memberPrefix + "StringMember($S, n -> builder.$L($T.from(n)))",
+                    fieldName, memberName, symbolProvider.toSymbol(shape));
             return null;
         }
 
