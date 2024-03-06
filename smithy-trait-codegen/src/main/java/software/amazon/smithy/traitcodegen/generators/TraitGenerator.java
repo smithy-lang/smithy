@@ -54,16 +54,13 @@ abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
                 writer.newLine();
                 writeTraitBody(writer, directive);
                 // Include the provider class
-                writeProvider(writer, directive);
+                new ProviderGenerator(writer, directive.model(), directive.shape(),
+                        directive.symbolProvider(), directive.symbol()).run();
             });
             writer.popState();
         });
         // Add the trait provider to the META-INF/services/TraitService file
         addSpiTraitProvider(directive.context(), directive.symbol());
-    }
-
-    protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        new ProviderGenerator(writer, directive.shape(), directive.symbol(), directive.model()).run();
     }
 
     /**

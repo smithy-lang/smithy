@@ -27,14 +27,6 @@ final class StringTraitGenerator extends TraitGenerator {
     }
 
     @Override
-    protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                StringTrait.class, directive.symbol(),
-                () -> writer.openBlock("public Provider() {", "}",
-                        () -> writer.write("super(ID, $T::new);", directive.symbol())));
-    }
-
-    @Override
     protected Class<?> getBaseClass() {
         return StringTrait.class;
     }

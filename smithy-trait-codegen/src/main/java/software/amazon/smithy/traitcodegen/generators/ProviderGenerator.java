@@ -6,19 +6,37 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
+import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 
@@ -34,15 +52,23 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 final class ProviderGenerator implements Runnable {
 
     private final TraitCodegenWriter writer;
-    private final Symbol traitSymbol;
     private final Model model;
     private final Shape shape;
+    private final SymbolProvider provider;
+    private final Symbol traitSymbol;
 
-    ProviderGenerator(TraitCodegenWriter writer, Shape shape, Symbol traitSymbol, Model model) {
+
+    ProviderGenerator(TraitCodegenWriter writer,
+                      Model model,
+                      Shape shape,
+                      SymbolProvider provider,
+                      Symbol traitSymbol
+    ) {
         this.writer = writer;
-        this.traitSymbol = traitSymbol;
         this.model = model;
         this.shape = shape;
+        this.provider = provider;
+        this.traitSymbol = traitSymbol;
     }
 
     @Override
@@ -50,25 +76,7 @@ final class ProviderGenerator implements Runnable {
         shape.accept(new ProviderMethodVisitor());
     }
 
-    private final class ProviderMethodVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        public Void getDefault(Shape shape) {
-            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
-                    AbstractTrait.class, () -> {
-                // Basic constructor
-                generateProviderConstructor();
-
-                // Provider method
-                writer.override();
-                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
-                        Trait.class, ShapeId.class, Node.class,
-                        () -> writer.write("return new $T($C, value.getSourceLocation());",
-                                traitSymbol,
-                                (Runnable) () -> shape.accept(
-                                        new FromNodeMapperVisitor(writer, model, "value"))));
-            });
-            return null;
-        }
+    private final class ProviderMethodVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
@@ -85,22 +93,90 @@ final class ProviderGenerator implements Runnable {
         }
 
         @Override
+        public Void doubleShape(DoubleShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void bigIntegerShape(BigIntegerShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void bigDecimalShape(BigDecimalShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            // If the symbol resolves to a simple java string use the simplified string
+            // provider. Otherwise, use a generic value shape provider.
+            if (TraitCodegenUtils.isJavaString(traitSymbol)) {
+                generateStringShapeProvider();
+            } else {
+                generateValueShapeProvider();
+            }
+            return null;
+        }
+
+        @Override
         public Void mapShape(MapShape shape) {
             generateAbstractTraitProvider();
             return null;
         }
 
         @Override
+        public Void byteShape(ByteShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void integerShape(IntegerShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void longShape(LongShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
         public Void listShape(ListShape shape) {
-            generateAbstractTraitProvider();
+            // If the trait is a string-only list we can use a simpler provider from the StringListTrait base class
+            if (!shape.hasTrait(UniqueItemsTrait.class)
+                    && TraitCodegenUtils.isJavaString(provider.toSymbol(shape.getMember()))
+            ) {
+                writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
+                        StringListTrait.class, traitSymbol,
+                        () -> writer.openBlock("public Provider() {", "}",
+                                () -> writer.write("super(ID, $T::new);", traitSymbol)));
+            } else {
+                generateAbstractTraitProvider();
+            }
             return null;
         }
 
         @Override
         public Void enumShape(EnumShape shape) {
-            writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                    StringTrait.class, traitSymbol, () -> writer.openBlock("public Provider() {", "}",
-                            () -> writer.write("super(ID, $T::new);", traitSymbol)));
+            generateStringShapeProvider();
             return null;
         }
 
@@ -108,6 +184,34 @@ final class ProviderGenerator implements Runnable {
         public Void structureShape(StructureShape shape) {
             generateAbstractTraitProvider();
             return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            throw new UnsupportedOperationException("Boolean shapes not supported by trait codegen."
+                    + "Consider using an Annotation Trait instead.");
+        }
+
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            throw new UnsupportedOperationException("Blob shapes are not supported by trait codegen at this time.");
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            throw new UnsupportedOperationException("Cannot generate a provider for a member shape.");
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            throw new UnsupportedOperationException("Union shapes are not supported by trait codegen at this time.");
         }
 
         private void generateAbstractTraitProvider() {
@@ -126,6 +230,32 @@ final class ProviderGenerator implements Runnable {
 
         private void generateProviderConstructor() {
             writer.openBlock("public Provider() {", "}", () -> writer.write("super(ID);")).newLine();
+        }
+
+        private void generateValueShapeProvider() {
+            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
+                    AbstractTrait.class, () -> {
+                        // Basic constructor
+                        generateProviderConstructor();
+
+                        // Provider method
+                        writer.override();
+                        writer.openBlock("public $T createTrait($T target, $T value) {", "}",
+                                Trait.class, ShapeId.class, Node.class, () -> {
+
+                            writer.write("$1T result = new $1T($2C, value.getSourceLocation());",
+                                    traitSymbol,
+                                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "value")));
+                            writer.writeWithNoFormatting("result.setNodeCache(value);");
+                            writer.writeWithNoFormatting("return result;");
+                        });
+                    });
+        }
+
+        private void generateStringShapeProvider() {
+            writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
+                    StringTrait.class, traitSymbol, () -> writer.openBlock("public Provider() {", "}",
+                            () -> writer.write("super(ID, $T::new);", traitSymbol)));
         }
     }
 }

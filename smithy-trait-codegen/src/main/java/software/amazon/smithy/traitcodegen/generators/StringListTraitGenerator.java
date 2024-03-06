@@ -21,13 +21,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * can use the base trait class {@link StringListTrait}.
  */
 final class StringListTraitGenerator extends TraitGenerator {
-    @Override
-    protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                StringListTrait.class, directive.symbol(),
-                () -> writer.openBlock("public Provider() {", "}",
-                        () -> writer.write("super(ID, $T::new);", directive.symbol())));
-    }
 
     @Override
     protected Class<?> getBaseClass() {
