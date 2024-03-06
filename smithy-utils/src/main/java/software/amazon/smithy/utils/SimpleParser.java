@@ -61,12 +61,11 @@ public class SimpleParser {
      */
     public SimpleParser(CharSequence input, int maxNestingLevel) {
         this.input = Objects.requireNonNull(input, "expression must not be null");
+        this.maxNestingLevel = maxNestingLevel;
 
         if (maxNestingLevel < 0) {
             throw new IllegalArgumentException("maxNestingLevel must be >= 0");
         }
-
-        this.maxNestingLevel = maxNestingLevel;
     }
 
     /**
