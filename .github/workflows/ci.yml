@@ -12,7 +12,7 @@ jobs:
     name: Java ${{ matrix.java }} ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17]
+        java: [8, 11, 17, 21]
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'zulu'
+          distribution: 'corretto'
 
       - name: Clean, build and javadoc
         run: ./gradlew clean build javadoc -Plog-tests --stacktrace
