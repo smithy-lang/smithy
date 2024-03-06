@@ -80,6 +80,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
             writer.writeWithNoFormatting("return builder.build();");
         });
+        writer.newLine();
+
         return null;
     }
 
@@ -92,6 +94,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                     shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
                     writer.writeWithNoFormatting("return builder.build();");
                 });
+        writer.newLine();
+
         return null;
     }
 
@@ -135,7 +139,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         writer.dedent();
         writer.write("return builder.build();");
         writer.dedent().write("}");
-
+        writer.newLine();
 
         return null;
     }
@@ -145,6 +149,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         writeFromNodeJavaDoc();
         writer.openBlock("public static $T fromNode($T node) {", "}",
                 symbol, Node.class, this::writeTimestampDeser);
+        writer.newLine();
+
         return null;
     }
 
