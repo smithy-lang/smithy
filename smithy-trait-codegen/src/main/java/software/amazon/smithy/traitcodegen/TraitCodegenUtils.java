@@ -10,7 +10,9 @@ import java.util.List;
 import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -98,6 +100,20 @@ public final class TraitCodegenUtils {
                 .orElse(symbol);
         return JAVA_STRING_SYMBOL.getName().equals(baseSymbol.getName())
                 && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
+    }
+
+    /**
+     * Checks if a symbol maps to a Java {@code List<String>}.
+     *
+     * @param shape shape to check if it resolves to a list of java strings
+     * @param symbolProvider symbol provider to use for checking member type
+     * @return Returns true if the symbol maps to a Java String List.
+     */
+    public static boolean isJavaStringList(Shape shape, SymbolProvider symbolProvider) {
+        return shape.isListShape()
+                && !shape.hasTrait(UniqueItemsTrait.class)
+                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
+                        shape.asListShape().get().getMember()));
     }
 
     /**

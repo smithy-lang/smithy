@@ -23,7 +23,6 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -101,9 +100,7 @@ final class ProviderGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             // If the trait is a string-only list we can use a simpler provider from the StringListTrait base class
-            if (!shape.hasTrait(UniqueItemsTrait.class)
-                    && TraitCodegenUtils.isJavaString(provider.toSymbol(shape.getMember()))
-            ) {
+            if (TraitCodegenUtils.isJavaStringList(shape, provider)) {
                 writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
                         StringListTrait.class, traitSymbol,
                         () -> writer.openBlock("public Provider() {", "}",

@@ -14,11 +14,15 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
+import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
@@ -50,19 +54,17 @@ final class BuilderGenerator implements Runnable {
 
     @Override
     public void run() {
-        writeToBuilderMethod();
-        writeBuilderMethod();
-        writeBuilderClass();
+        // Only create builder methods for aggregate types.
+        if (baseShape.getType().getCategory().equals(ShapeType.Category.AGGREGATE)) {
+            writeToBuilderMethod();
+            writeBuilderMethod();
+            writeBuilderClass();
+        }
     }
 
     private void writeBuilderClass() {
         writer.pushState(new BuilderClassSection(symbol));
-        writer.writeInline("public static final class Builder ");
-        if (baseShape.hasTrait(TraitDefinition.class)) {
-            writer.write("extends $T<$T, Builder> {", AbstractTraitBuilder.class, symbol);
-        } else {
-            writer.write("implements $T<$T> {", SmithyBuilder.class, symbol);
-        }
+        writer.writeInline("public static final class Builder $C", (Runnable) this::writeBuilderInterface);
         writer.indent();
         baseShape.accept(new BuilderPropertyGenerator());
         writer.newLine();
@@ -70,11 +72,36 @@ final class BuilderGenerator implements Runnable {
         baseShape.accept(new BuilderSetterGenerator());
         writer.override();
         writer.openBlock("public $T build() {", "}", symbol,
-                () -> writer.write("return new $T(this);", symbol));
+                () -> writer.write("return new $C;", (Runnable) this::writeBuilderReturn));
         writer.dedent().write("}");
         writer.popState();
         writer.newLine();
     }
+
+    private void writeBuilderInterface() {
+        if (baseShape.hasTrait(TraitDefinition.class)) {
+            if (TraitCodegenUtils.isJavaStringList(baseShape, symbolProvider)) {
+                writer.write("extends $T.Builder<$T, Builder> {", StringListTrait.class, symbol);
+            } else {
+                writer.write("extends $T<$T, Builder> {", AbstractTraitBuilder.class, symbol);
+            }
+        } else {
+            writer.write("implements $T<$T> {", SmithyBuilder.class, symbol);
+        }
+    }
+
+    private void writeBuilderReturn() {
+        // String list traits need a custom builder return
+        if (baseShape.isListShape() && !baseShape.hasTrait(UniqueItemsTrait.class)
+                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
+                baseShape.asListShape().get().getMember()))
+        ) {
+            writer.write("$T(getValues(), getSourceLocation())", symbol);
+        } else {
+            writer.write("$T(this)", symbol);
+        }
+    }
+
 
     private void writeToBuilderMethod() {
         writer.openDocstring();
@@ -92,15 +119,21 @@ final class BuilderGenerator implements Runnable {
                 writer.writeInlineWithNoFormatting(";");
             }
             writer.newLine();
+
             // Set all builder properties for any members in the shape
-            Iterator<MemberShape> memberIterator = baseShape.members().iterator();
-            while (memberIterator.hasNext()) {
-                MemberShape member = memberIterator.next();
-                writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
-                if (memberIterator.hasNext()) {
-                    writer.writeInlineWithNoFormatting("\n");
-                } else {
-                    writer.writeInlineWithNoFormatting(";\n");
+            if (baseShape.isListShape()) {
+                // TODO: handle more cleanly
+                writer.writeWithNoFormatting(".values(getValues());");
+            } else {
+                Iterator<MemberShape> memberIterator = baseShape.members().iterator();
+                while (memberIterator.hasNext()) {
+                    MemberShape member = memberIterator.next();
+                    writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
+                    if (memberIterator.hasNext()) {
+                        writer.writeInlineWithNoFormatting("\n");
+                    } else {
+                        writer.writeInlineWithNoFormatting(";\n");
+                    }
                 }
             }
             writer.dedent();
@@ -122,6 +155,10 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
+            // String list shapes do not need value properties
+            if (TraitCodegenUtils.isJavaStringList(shape, symbolProvider)) {
+                return null;
+            }
             writeValuesProperty(shape);
             return null;
         }
@@ -168,6 +205,10 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
+            // String list shapes do not need setters
+            if (TraitCodegenUtils.isJavaStringList(shape, symbolProvider)) {
+                return null;
+            }
             shape.accept(new SetterVisitor("values"));
             return null;
         }

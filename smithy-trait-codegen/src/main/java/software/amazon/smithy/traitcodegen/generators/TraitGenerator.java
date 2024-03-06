@@ -17,6 +17,7 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -24,7 +25,6 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
@@ -48,10 +48,11 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
             writer.pushState(new ClassSection(directive.shape()));
             // Add class definition context
             writer.putContext("baseClass", directive.shape().accept(new BaseClassVisitor(directive.symbolProvider())));
-            writer.putContext("implementsToBuilder", directive.shape().accept(
-                    new ImplementsSmithyBuilderVisitor(directive.symbolProvider())));
+            // Only collection types implement ToSmithyBuilder
+            boolean isAggregateType = directive.shape().getType().getCategory().equals(ShapeType.Category.AGGREGATE);
+            writer.putContext("isAggregateType", isAggregateType);
             writer.openBlock("public final class $2T extends $baseClass:T"
-                            + "${?implementsToBuilder} implements $1T<$2T>${/implementsToBuilder} {", "}",
+                            + "${?isAggregateType} implements $1T<$2T>${/isAggregateType} {", "}",
                     ToSmithyBuilder.class, directive.symbol(), () -> {
                 // All traits include a static ID property
                 writer.write("public static final $1T ID = $1T.from($2S);",
@@ -70,10 +71,8 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
                         directive.symbolProvider(), directive.model()).run();
                 new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape()).run();
                 directive.shape().accept(new NestedClassVisitor(writer, directive.symbolProvider(), directive.model()));
-                if (directive.shape().accept(new ImplementsSmithyBuilderVisitor(directive.symbolProvider()))) {
-                    new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(), directive.shape(),
-                            directive.model()).run();
-                }
+                new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(), directive.shape(),
+                        directive.model()).run();
                 new ProviderGenerator(writer, directive.model(), directive.shape(),
                         directive.symbolProvider(), directive.symbol()).run();
             });
@@ -107,9 +106,7 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         @Override
         public Class<?> listShape(ListShape shape) {
             // Do not create a property if the shape can inherit from the StringListTrait base class.
-            if (!shape.hasTrait(UniqueItemsTrait.class)
-                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
-            ) {
+            if (TraitCodegenUtils.isJavaStringList(shape, symbolProvider)) {
                 return StringListTrait.class;
             }
             return AbstractTrait.class;
@@ -151,60 +148,6 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         @Override
         protected Class<?> numberShape(NumberShape shape) {
             return AbstractTrait.class;
-        }
-    }
-
-    private static final class ImplementsSmithyBuilderVisitor extends TraitVisitor<Boolean> {
-        private final SymbolProvider symbolProvider;
-
-        private ImplementsSmithyBuilderVisitor(SymbolProvider symbolProvider) {
-            this.symbolProvider = symbolProvider;
-        }
-
-        @Override
-        public Boolean listShape(ListShape shape) {
-            return shape.hasTrait(UniqueItemsTrait.class)
-                    || !TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()));
-        }
-
-        @Override
-        public Boolean mapShape(MapShape shape) {
-            return true;
-        }
-
-        @Override
-        public Boolean intEnumShape(IntEnumShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean documentShape(DocumentShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean stringShape(StringShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean enumShape(EnumShape shape) {
-            return false;
-        }
-
-        @Override
-        public Boolean structureShape(StructureShape shape) {
-            return true;
-        }
-
-        @Override
-        public Boolean timestampShape(TimestampShape shape) {
-            return false;
-        }
-
-        @Override
-        protected Boolean numberShape(NumberShape shape) {
-            return false;
         }
     }
 

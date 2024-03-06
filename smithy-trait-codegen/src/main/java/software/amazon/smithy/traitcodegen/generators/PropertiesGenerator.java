@@ -17,7 +17,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -57,9 +56,7 @@ final class PropertiesGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             // Do not create a property if the shape can inherit from the StringListTrait base class.
-            if (!shape.hasTrait(UniqueItemsTrait.class)
-                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
-            ) {
+            if (TraitCodegenUtils.isJavaStringList(shape, symbolProvider)) {
                 return null;
             }
             createValuesProperty(shape);

@@ -36,7 +36,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
-import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -67,9 +66,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
     @Override
     public Void listShape(ListShape shape) {
-        if (!shape.hasTrait(UniqueItemsTrait.class)
-                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
-        ) {
+        if (TraitCodegenUtils.isJavaStringList(shape, symbolProvider)) {
             return null;
         }
 
