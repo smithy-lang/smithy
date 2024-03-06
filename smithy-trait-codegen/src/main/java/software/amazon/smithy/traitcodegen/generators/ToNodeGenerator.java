@@ -415,18 +415,17 @@ final class ToNodeGenerator implements Runnable {
                 switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                     case EPOCH_SECONDS:
                         writer.write("$T.from($L.getEpochSecond())", Node.class, varName);
-                        break;
+                        return null;
                     case HTTP_DATE:
                         writer.write("$T.from($T.RFC_1123_DATE_TIME.format($L))",
                                 Node.class, DateTimeFormatter.class, varName);
-                        break;
+                        return null;
                     default:
-                        toStringMapper();
+                        // Fall through on default
                         break;
                 }
-            } else {
-                toStringMapper();
             }
+            toStringMapper();
             return null;
         }
 

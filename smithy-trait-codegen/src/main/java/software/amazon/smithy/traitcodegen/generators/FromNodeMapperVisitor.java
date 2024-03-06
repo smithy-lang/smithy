@@ -156,24 +156,18 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
                 case EPOCH_SECONDS:
                     writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
                             varName, Instant.class);
-                    break;
+                    return null;
                 case HTTP_DATE:
                     writer.writeInline("$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
                             varName, Instant.class, DateTimeFormatter.class);
-                    break;
+                    return null;
                 default:
-                    defaultTimestampMapper();
+                    // Fall through on default
                     break;
             }
-        } else {
-            defaultTimestampMapper();
         }
+        writer.writeInline("$2T.parse($1L.expectStringNode().getValue())", varName, Instant.class);
         return null;
-    }
-
-    private void defaultTimestampMapper() {
-        writer.writeInline("$2T.parse($1L.expectStringNode().getValue())",
-                varName, Instant.class);
     }
 
     @Override

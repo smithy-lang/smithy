@@ -235,20 +235,14 @@ final class ProviderGenerator implements Runnable {
         private void generateValueShapeProvider() {
             writer.openBlock("public static final class Provider extends $T.Provider {", "}",
                     AbstractTrait.class, () -> {
-                        // Basic constructor
                         generateProviderConstructor();
-
-                        // Provider method
                         writer.override();
                         writer.openBlock("public $T createTrait($T target, $T value) {", "}",
-                                Trait.class, ShapeId.class, Node.class, () -> {
-
-                            writer.write("$1T result = new $1T($2C, value.getSourceLocation());",
+                                Trait.class, ShapeId.class, Node.class,
+                                () -> writer.write("return new $1T($2C, value.getSourceLocation());",
                                     traitSymbol,
-                                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "value")));
-                            writer.writeWithNoFormatting("result.setNodeCache(value);");
-                            writer.writeWithNoFormatting("return result;");
-                        });
+                                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "value")))
+                        );
                     });
         }
 
