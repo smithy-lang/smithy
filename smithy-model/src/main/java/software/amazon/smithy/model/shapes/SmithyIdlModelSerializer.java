@@ -73,7 +73,7 @@ public final class SmithyIdlModelSerializer {
     private final SmithyIdlComponentOrder componentOrder;
     private final String inlineInputSuffix;
     private final String inlineOutputSuffix;
-    private final boolean inferInlineIOSuffixes;
+    private final boolean inferInlineIoSuffixes;
 
     /**
      * Trait serialization features.
@@ -122,7 +122,7 @@ public final class SmithyIdlModelSerializer {
         this.componentOrder = builder.componentOrder;
         this.inlineInputSuffix = builder.inlineInputSuffix;
         this.inlineOutputSuffix = builder.inlineOutputSuffix;
-        this.inferInlineIOSuffixes = builder.inferInlineIOSuffixes;
+        this.inferInlineIoSuffixes = builder.inferInlineIoSuffixes;
     }
 
     /**
@@ -218,7 +218,7 @@ public final class SmithyIdlModelSerializer {
     }
 
     private Pair<String, String> determineInlineSuffixes(Model fullModel, Collection<Shape> shapes) {
-        if (!inferInlineIOSuffixes) {
+        if (!inferInlineIoSuffixes) {
             return Pair.of(inlineInputSuffix, inlineOutputSuffix);
         }
 
@@ -329,7 +329,7 @@ public final class SmithyIdlModelSerializer {
         private SmithyIdlComponentOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
         private String inlineInputSuffix = DEFAULT_INLINE_INPUT_SUFFIX;
         private String inlineOutputSuffix = DEFAULT_INLINE_OUTPUT_SUFFIX;
-        private boolean inferInlineIOSuffixes = false;
+        private boolean inferInlineIoSuffixes = false;
 
         public Builder() {}
 
@@ -457,11 +457,11 @@ public final class SmithyIdlModelSerializer {
          * <p>The suffixes set by {@link #inlineInputSuffix(String)} and {@link #inlineOutputSuffix(String)}
          * will be the default values.
          *
-         * @param shouldInferInlineIOSuffixes Whether inline IO suffixes should be inferred for each file.
+         * @param shouldinferInlineIoSuffixes Whether inline IO suffixes should be inferred for each file.
          * @return Returns the builder.
          */
-        public Builder inferInlineIOSuffixes(boolean shouldInferInlineIOSuffixes) {
-            this.inferInlineIOSuffixes = shouldInferInlineIOSuffixes;
+        public Builder inferInlineIoSuffixes(boolean shouldinferInlineIoSuffixes) {
+            this.inferInlineIoSuffixes = shouldinferInlineIoSuffixes;
             return this;
         }
 
