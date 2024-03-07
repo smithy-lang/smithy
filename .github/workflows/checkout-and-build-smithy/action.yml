@@ -7,16 +7,16 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v4
       with:
-        java-version: 17
+        java-version: 21
         distribution: 'corretto'
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         path: main
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: awslabs/smithy
         path: smithy
