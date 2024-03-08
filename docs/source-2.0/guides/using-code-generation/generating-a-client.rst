@@ -42,7 +42,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             "sources": ["model"],
             "maven": {
                 "dependencies": [
-                    "software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0"
+                    "software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__"
                 ]
             },
             "...": "..."
@@ -58,7 +58,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             :caption: build.gradle.kts
 
             dependencies {
-                smithyBuild("software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0")
+                smithyBuild("software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__")
             }
 
     .. tab:: Groovy
@@ -67,7 +67,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             :caption: build.gradle
 
             dependencies {
-                smithyBuild 'software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0'
+                smithyBuild 'software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__'
             }
 
 .. important::
