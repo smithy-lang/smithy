@@ -385,7 +385,7 @@ For example, to generate a Typescript client from a Smithy model, add the
 
                 // This dependency is required in order to apply the "typescript-client-codegen"
                 // plugin in smithy-build.json
-                smithyBuild("software.amazon.smithy.typescript:smithy-typescript-codegen:0.19.0")
+                smithyBuild("software.amazon.smithy.typescript:smithy-typescript-codegen:__smithy_typescript_version__")
             }
 
 .. tab:: Groovy
@@ -398,7 +398,7 @@ For example, to generate a Typescript client from a Smithy model, add the
 
                 // This dependency is required in order to apply the "typescript-client-codegen"
                 // plugin in smithy-build.json
-                smithyBuild 'software.amazon.smithy.typescript:smithy-typescript-codegen:0.19.0'
+                smithyBuild 'software.amazon.smithy.typescript:smithy-typescript-codegen:__smithy_typescript_version__'
             }
 
 The plugin can then be configured in the ``smithy-build.json`` to generate a typescript client
