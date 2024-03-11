@@ -6,6 +6,7 @@
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -64,10 +65,10 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-            .withMember(ENDPOINT, endpoint)
-            .withMember(DUAL_STACK, dualStack.toString())
-            .withMember(FIPS, fips.toString())
-            .build();
+                .withMember(ENDPOINT, endpoint)
+                .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
+                .withOptionalMember(FIPS, Optional.ofNullable(fips).map(Node::from))
+                .build();
     }
 
     @Override
