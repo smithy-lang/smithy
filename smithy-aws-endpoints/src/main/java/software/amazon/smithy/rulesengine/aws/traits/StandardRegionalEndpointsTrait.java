@@ -79,7 +79,7 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
         return ObjectNode.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
                 .withMember(PARTITION_SPECIAL_CASES, partitionSpecialCasesNodeBuilder.build())
-                .withMember(REGION_SPECIAL_CASES, partitionSpecialCasesNodeBuilder.build())
+                .withMember(REGION_SPECIAL_CASES, regionSpecialCasesNodeBuilder.build())
                 .build();
     }
 

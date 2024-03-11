@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 class StandardRegionalEndpointsTraitTest {
@@ -25,12 +26,12 @@ class StandardRegionalEndpointsTraitTest {
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
-        assertEquals(trait.getRegionSpecialCases().size(), 0);
+        assertEquals(trait.getPartitionSpecialCases().size(), 0);
         assertEquals(trait.getRegionSpecialCases().size(), 0);
 
         trait = getTraitFromService(model, "ns.foo#Service3");
 
-        assertEquals(trait.getRegionSpecialCases().size(), 1);
+        assertEquals(trait.getPartitionSpecialCases().size(), 1);
         assertEquals(trait.getRegionSpecialCases().size(), 1);
         List<PartitionSpecialCase> partitionSpecialCases = trait.getPartitionSpecialCases().get("aws-us-gov");
 
@@ -46,6 +47,8 @@ class StandardRegionalEndpointsTraitTest {
 
         List<RegionSpecialCase> regionSpecialCases = trait.getRegionSpecialCases().get("us-east-1");
         assertEquals(regionSpecialCases.size(), 0);
+
+        Node.assertEquals(trait.toNode(), trait.toBuilder().build().toNode());
     }
 
     private StandardRegionalEndpointsTrait getTraitFromService(Model model, String service) {
