@@ -549,19 +549,20 @@ The following example defines an error that uses a custom "Code" of
 
 Summary
     When using the :ref:`awsQuery <aws.protocols#awsQuery-trait>` protocol,
-    custom ``Code`` and ``HTTP response code`` values can be defined for an error response via
-    the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>` trait.
+    custom ``Code`` and ``HTTP response code`` values can be defined for an
+    error response via the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`
+    trait.
 
-    The ``awsQueryCompatible`` trait allows services to backward compatibly migrate from ``awsQuery`` to
-    :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>` without removing values defined in the ``awsQueryError`` trait.
+    The ``awsQueryCompatible`` trait allows services to backward compatibly
+    migrate from ``awsQuery`` to :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>`
+    without removing values defined in the ``awsQueryError`` trait.
 
-    This trait adds the ``x-amzn-query-error`` header in the form of ``Code;Fault`` to error responses.
-    ``Code`` is the value defined in the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`,
-    and ``Fault`` is one of ``Sender`` or ``Receiver``.
-
+    This trait adds the ``x-amzn-query-error`` header in the form of
+    ``Code;Fault`` to error responses. ``Code`` is the value defined in the
+    :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`, and ``Fault`` is
+    one of ``Sender`` or ``Receiver``.
 Trait selector
     ``service [trait|awsJson1_0]``
-
 Value type
     Annotation trait
 
@@ -586,6 +587,11 @@ Value type
     structure InvalidThingException {
         message: String
     }
+
+.. important::
+
+    AWS client implementations of the ``smithy.protocols#rpcv2Cbor`` protocol
+    MUST support the ``aws.protocols#awsQueryCompatible`` trait.
 
 
 .. _awsQuery-compliance-tests:
