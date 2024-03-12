@@ -14,7 +14,7 @@
  */
 
 plugins {
-    id "software.amazon.smithy" version "0.6.0"
+    id "software.amazon.smithy.gradle.smithy-jar" version "$smithyGradleVersion"
 }
 
 description = "Defines protocol tests for AWS HTTP protocols."
@@ -31,4 +31,8 @@ dependencies {
     api project(":smithy-validation-model")
 }
 
-tasks["sourcesJar"].dependsOn("smithyBuildJar")
+tasks["sourcesJar"].dependsOn("smithyBuild")
+
+smithy {
+    format.set(false)
+}
