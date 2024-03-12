@@ -31,7 +31,7 @@ dependencies {
     api project(":smithy-validation-model")
 }
 
-tasks["sourcesJar"].dependsOn("smithyBuild")
+tasks["sourcesJar"].dependsOn("smithyJarStaging")
 
 smithy {
     format.set(false)

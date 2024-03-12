@@ -28,4 +28,4 @@ dependencies {
     implementation project(path: ":smithy-cli", configuration: "shadow")
 }
 
-tasks["sourcesJar"].dependsOn("smithyBuild")
+tasks["sourcesJar"].dependsOn("smithyJarStaging")
