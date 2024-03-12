@@ -43,6 +43,7 @@ union MyUnion {
     listValue: StringList,
     mapValue: StringMap,
     structureValue: GreetingStruct,
+    unitValue: Unit,
 }
 
 apply JsonUnions @httpRequestTests([
@@ -522,6 +523,42 @@ apply JsonUnions @httpResponseTests([
                     "structureValue": {
                         "hi": "hello"
                     }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0"
+        },
+        params: {
+            contents: {
+                structureValue: {
+                    hi: "hello"
+                }
+            }
+        }
+    },
+    {
+        id: "AwsJson10DeserializeAllowNulls"
+        appliesTo: "client"
+        documentation: "Allows for `: null` to be set for all unset fields"
+        protocol: awsJson1_0
+        code: 200
+        body: """
+            {
+                "contents": {
+                  "stringValue": null,
+                  "booleanValue": null,
+                  "numberValue": null,
+                  "blobValue": null,
+                  "timestampValue": null,
+                  "enumValue": null,
+                  "intEnumValue": null,
+                  "listValue": null,
+                  "mapValue": null,
+                  "structureValue": {
+                      "hi": "hello"
+                  },
+                  "unitValue": null
                 }
             }"""
         bodyMediaType: "application/json"
