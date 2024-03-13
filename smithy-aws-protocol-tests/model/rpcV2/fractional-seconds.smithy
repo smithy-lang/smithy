@@ -19,6 +19,10 @@ apply FractionalSeconds @httpResponseTests([
         protocol: rpcv2Cbor,
         code: 200,
         body: "v2hkYXRldGltZcH7Qcw32zgPvnf/",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        },
         params: { datetime: 946845296.123 }
         bodyMediaType: "application/cbor",
         appliesTo: "client"

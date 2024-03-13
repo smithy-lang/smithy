@@ -9,11 +9,13 @@ use aws.protocoltests.shared#StringSet
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 use smithy.protocols#rpcv2Cbor
+use smithy.framework#ValidationException
 
 /// The example tests basic map serialization.
 operation RpcV2CborMaps {
     input: RpcV2CborMapsInputOutput,
-    output: RpcV2CborMapsInputOutput
+    output: RpcV2CborMapsInputOutput,
+    errors: [ValidationException]
 }
 
 apply RpcV2CborMaps @httpRequestTests([
@@ -23,7 +25,7 @@ apply RpcV2CborMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborMaps",
-        body: "v25kZW5zZVN0cnVjdE1hcL9jYmF6v2JoaWNieWX/Y2Zvb79iaGlldGhlcmX//29zcGFyc2VTdHJ1Y3RNYXC/Y2Jher9iaGljYnll/2Nmb2+/YmhpZXRoZXJl////",
+        body: "v25kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZW9zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb6FiaGlldGhlcmVjYmF6oWJoaWNieWX//w=="
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -55,7 +57,7 @@ apply RpcV2CborMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborMaps",
-        body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//",
+        body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -83,7 +85,7 @@ apply RpcV2CborMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborMaps",
-        body: "v29kZW5zZUJvb2xlYW5NYXC/YXj0/25kZW5zZU51bWJlck1hcL9heAD/cHNwYXJzZUJvb2xlYW5NYXC/YXj0/29zcGFyc2VOdW1iZXJNYXC/YXgA//8=",
+        body: "v25kZW5zZU51bWJlck1hcKFheABvc3BhcnNlTnVtYmVyTWFwv2F4AP9vZGVuc2VCb29sZWFuTWFwoWF49HBzcGFyc2VCb29sZWFuTWFwv2F49P//"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -111,7 +113,7 @@ apply RpcV2CborMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborMaps",
-        body: "v2xzcGFyc2VTZXRNYXC/YXmfYWFhYv9heJ////8=",
+        body: "v2xzcGFyc2VTZXRNYXC/YXiAYXmCYWFhYv//"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -131,7 +133,7 @@ apply RpcV2CborMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborMaps",
-        body: "v2xzcGFyc2VTZXRNYXC/YXmfYWFhYv9heJ////8=",
+        body: "oWtkZW5zZVNldE1hcKJheIBheYJhYWFi"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -174,7 +176,7 @@ apply RpcV2CborMaps @httpResponseTests([
         documentation: "Deserializes maps",
         protocol: rpcv2Cbor,
         code: 200,
-        body: "v25kZW5zZVN0cnVjdE1hcL9jYmF6v2JoaWNieWX/Y2Zvb79iaGlldGhlcmX//29zcGFyc2VTdHJ1Y3RNYXC/Y2Jher9iaGljYnll/2Nmb2+/YmhpZXRoZXJl////",
+        body: "v25kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZW9zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb6FiaGlldGhlcmVjYmF6oWJoaWNieWX//w=="
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -204,7 +206,7 @@ apply RpcV2CborMaps @httpResponseTests([
         documentation: "Deserializes null map values",
         protocol: rpcv2Cbor,
         code: 200,
-        body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//",
+        body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -230,7 +232,7 @@ apply RpcV2CborMaps @httpResponseTests([
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: rpcv2Cbor,
         code: 200,
-        body: "v29kZW5zZUJvb2xlYW5NYXC/YXj0/25kZW5zZU51bWJlck1hcL9heAD/cHNwYXJzZUJvb2xlYW5NYXC/YXj0/29zcGFyc2VOdW1iZXJNYXC/YXgA//8=",
+        body: "v25kZW5zZU51bWJlck1hcKFheABvc3BhcnNlTnVtYmVyTWFwv2F4AP9vZGVuc2VCb29sZWFuTWFwoWF49HBzcGFyc2VCb29sZWFuTWFwv2F49P//"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -274,7 +276,7 @@ apply RpcV2CborMaps @httpResponseTests([
         documentation: "A response that contains a dense map of sets.",
         protocol: rpcv2Cbor,
         code: 200,
-        body: "v2xzcGFyc2VTZXRNYXC/YXmfYWFhYv9heJ////8=",
+        body: "oWtkZW5zZVNldE1hcKJheIBheYJhYWFi"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -314,7 +316,7 @@ apply RpcV2CborMaps @httpResponseTests([
         protocol: rpcv2Cbor,
         appliesTo: "client",
         code: 200,
-        body: "v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=",
+        body: "oWtkZW5zZVNldE1hcKNheIBheYJhYWFiYXr2"
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
@@ -323,7 +325,8 @@ apply RpcV2CborMaps @httpResponseTests([
         params: {
             "denseSetMap": {
                 "x": [],
-                "y": ["a", "b"]
+                "y": ["a", "b"],
+                "z": null
             }
         }
     }
