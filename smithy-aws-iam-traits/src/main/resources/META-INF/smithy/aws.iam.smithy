@@ -119,6 +119,10 @@ structure ConditionKeyDefinition {
     /// A relative URL path that defines more information about the condition key
     /// within a set of IAM-related documentation.
     relativeDocumentation: String
+
+    // Whether a service resolved condition key is required
+    // Not applicable to request resolved condition key as the native @required trait must be used
+    required: Boolean
 }
 
 /// Contains information about a resource an IAM action can be authorized against.
