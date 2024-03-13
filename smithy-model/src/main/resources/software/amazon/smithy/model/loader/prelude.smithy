@@ -309,6 +309,7 @@ structure httpApiKeyAuth {
 ///
 /// `traitValidators` is a map of validation event IDs to validators to apply to a shape.
 /// Selectors are used to identify shapes that are incompatible with a constrained trait.
+/// The shape with the targeted trait applied MUST be a valid entry point for the selector.
 ///
 /// The following example defines a protocol that does not support document types. Each matching member found in the
 /// closure of an attached shape emits a validation event:
@@ -317,7 +318,7 @@ structure httpApiKeyAuth {
 /// @trait(selector: "service")
 /// @traitValidators(
 ///     "myCustomProtocol.NoDocuments": {
-///         selector: "member :test(> document)"
+///         selector: "~> member :test(> document)"
 ///         message: "This protocol does not support document types"
 ///     }
 /// )
