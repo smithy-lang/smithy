@@ -1,0 +1,1 @@
+[ERROR] smithy.example#DocumentOperationInput$document: Found an incompatible shape when validating the constraints of the `smithy.protocols#rpcv2Cbor` trait attached to `smithy.example#DocumentService`: This protocol does not support document types | rpcv2Cbor.NoDocuments
