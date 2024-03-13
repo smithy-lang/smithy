@@ -6,7 +6,6 @@ use smithy.protocols#rpcv2Cbor
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-
 @httpRequestTests([
     {
         id: "RpcV2CborSimpleScalarProperties",
@@ -19,26 +18,56 @@ use smithy.test#httpResponseTests
         }
         method: "POST",
         bodyMediaType: "application/cbor",
-        uri: "/service/aws.protocoltests.rpcv2Cbor.RpcV2Protocol/operation/SimpleScalarProperties",
-        body: "v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9f8="
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w=="
         params: {
-            trueBooleanValue: true,
-            falseBooleanValue: false,
             byteValue: 5,
             doubleValue: 1.889,
+            falseBooleanValue: false,
             floatValue: 7.624,
             integerValue: 256,
-            shortValue: 9898,
             longValue: 9873,
-            stringValue: "simple"
+            shortValue: 9898,
+            stringValue: "simple",
+            trueBooleanValue: true,
+            blobValue: "foo"
         }
+    },
+    {
+        id: "RpcV2CborSimpleScalarPropertiesUsingIndefiniteLength",
+        protocol: rpcv2Cbor,
+        documentation: """
+            The server should be capable of deserializing simple scalar properties
+            encoded using a map with a definite length.""",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        }
+        method: "POST",
+        bodyMediaType: "application/cbor",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "qmlieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v"
+        params: {
+            byteValue: 5,
+            doubleValue: 1.889,
+            falseBooleanValue: false,
+            floatValue: 7.624,
+            integerValue: 256,
+            longValue: 9873,
+            shortValue: 9898,
+            stringValue: "simple",
+            trueBooleanValue: true,
+            blobValue: "foo"
+        },
+        appliesTo: "server"
     },
     {
         id: "RpcV2CborClientDoesntSerializeNullStructureValues",
         documentation: "RpcV2 Cbor should not serialize null structure values",
         protocol: rpcv2Cbor,
         method: "POST",
-        uri: "/service/aws.protocoltests.rpcv2Cbor.RpcV2Protocol/operation/SimpleScalarProperties",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
         body: "v/8=",
         bodyMediaType: "application/cbor",
         headers: {
@@ -56,7 +85,7 @@ use smithy.test#httpResponseTests
         documentation: "RpcV2 Cbor should not deserialize null structure values",
         protocol: rpcv2Cbor,
         method: "POST",
-        uri: "/service/aws.protocoltests.rpcv2Cbor.RpcV2Protocol/operation/SimpleScalarProperties",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
         body: "v2tzdHJpbmdWYWx1Zfb/",
         bodyMediaType: "application/cbor",
         headers: {
@@ -120,7 +149,65 @@ use smithy.test#httpResponseTests
             doubleValue: "-Infinity",
             floatValue: "-Infinity"
         }
-    }
+    },
+    {
+        id: "RpcV2CborIndefiniteLengthStringsCanBeDeserialized",
+        protocol: rpcv2Cbor,
+        documentation: "The server should be capable of deserializing indefinite length text strings.",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        }
+        method: "POST",
+        bodyMediaType: "application/cbor",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "oWtzdHJpbmdWYWx1ZX94HUFuIGV4YW1wbGUgaW5kZWZpbml0ZSBzdHJpbmcscSBjaHVua2VkIG9uIGNvbW1h/w=="
+        params: {
+            stringValue: "An example indefinite string, chunked on comma"
+        },
+        appliesTo: "server"
+    },
+    {
+        id: "RpcV2CborIndefiniteLengthByteStringsCanBeDeserialized",
+        protocol: rpcv2Cbor,
+        documentation: "The server should be capable of deserializing indefinite length byte strings.",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        }
+        method: "POST",
+        bodyMediaType: "application/cbor",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "oWlibG9iVmFsdWVfWCJBbiBleGFtcGxlIGluZGVmaW5pdGUtYnl0ZSBzdHJpbmcsUSBjaHVua2VkIG9uIGNvbW1h/w=="
+        params: {
+            blobValue: "An example indefinite-byte string, chunked on comma"
+        },
+        appliesTo: "server"
+    },
+    {
+        id: "RpcV2CborSupportsUpcastingData",
+        protocol: rpcv2Cbor,
+        documentation: "Supports upcasting from a smaller byte representation of the same date type.",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        }
+        method: "POST",
+        bodyMediaType: "application/cbor",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "v2tkb3VibGVWYWx1Zfk+AGpmbG9hdFZhbHVl+UegbGludGVnZXJWYWx1ZRg4aWxvbmdWYWx1ZRkBAGpzaG9ydFZhbHVlCv8="
+        params: {
+            doubleValue: 1.5,
+            floatValue: 7.625,
+            integerValue: 56,
+            longValue: 256,
+            shortValue: 10
+        },
+        appliesTo: "server"
+    },
 ])
 @httpResponseTests([
     {
@@ -132,7 +219,7 @@ use smithy.test#httpResponseTests
             "Content-Type": "application/cbor"
         }
         bodyMediaType: "application/cbor",
-        body: "v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9f8=",
+        body: "v3B0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb2//"
         code: 200,
         params: {
             trueBooleanValue: true,
@@ -142,8 +229,33 @@ use smithy.test#httpResponseTests
             floatValue: 7.624,
             integerValue: 256,
             shortValue: 9898,
-            stringValue: "simple"
+            stringValue: "simple",
+            blobValue: "foo"
         }
+    },
+    {
+        id: "RpcV2CborSimpleScalarPropertiesUsingDefiniteLength",
+        protocol: rpcv2Cbor,
+        documentation: "Deserializes simple scalar properties encoded using a map with definite length",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        }
+        bodyMediaType: "application/cbor",
+        body: "qXB0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb28="
+        code: 200,
+        params: {
+            trueBooleanValue: true,
+            falseBooleanValue: false,
+            byteValue: 5,
+            doubleValue: 1.889,
+            floatValue: 7.624,
+            integerValue: 256,
+            shortValue: 9898,
+            stringValue: "simple",
+            blobValue: "foo"
+        },
+        appliesTo: "client"
     },
     {
         id: "RpcV2CborClientDoesntDeSerializeNullStructureValues",
@@ -286,6 +398,33 @@ apply RecursiveShapes @httpResponseTests([
                 }
             }
         }
+    },
+    {
+        id: "RpcV2CborRecursiveShapesUsingDefiniteLength",
+        documentation: "Deserializes recursive structures encoded using a map with definite length",
+        protocol: rpcv2Cbor,
+        code: 200,
+        body: "oWZuZXN0ZWSiY2Zvb2RGb28xZm5lc3RlZKJjYmFyZEJhcjFvcmVjdXJzaXZlTWVtYmVyomNmb29kRm9vMmZuZXN0ZWShY2JhcmRCYXIy"
+        bodyMediaType: "application/cbor",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        },
+        params: {
+            nested: {
+                foo: "Foo1",
+                nested: {
+                    bar: "Bar1",
+                    recursiveMember: {
+                        foo: "Foo2",
+                        nested: {
+                            bar: "Bar2"
+                        }
+                    }
+                }
+            }
+        },
+        appliesTo: "client"
     }
 ])
 
@@ -308,7 +447,6 @@ structure RecursiveShapesInputOutputNested2 {
     recursiveMember: RecursiveShapesInputOutputNested1,
 }
 
-
 structure SimpleScalarStructure {
     trueBooleanValue: Boolean,
     falseBooleanValue: Boolean,
@@ -319,4 +457,5 @@ structure SimpleScalarStructure {
     longValue: Long,
     shortValue: Short,
     stringValue: String,
+    blobValue: Blob
 }

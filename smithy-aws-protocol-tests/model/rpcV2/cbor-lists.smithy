@@ -16,6 +16,7 @@ use aws.protocoltests.shared#TimestampList
 use smithy.protocols#rpcv2Cbor
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
+use smithy.framework#ValidationException
 
 /// This test case serializes JSON lists for the following cases for both
 /// input and output:
@@ -27,7 +28,8 @@ use smithy.test#httpResponseTests
 @idempotent
 operation RpcV2CborLists {
     input: RpcV2CborListInputOutput,
-    output: RpcV2CborListInputOutput
+    output: RpcV2CborListInputOutput,
+    errors: [ValidationException]
 }
 
 apply RpcV2CborLists @httpRequestTests([
@@ -113,6 +115,23 @@ apply RpcV2CborLists @httpRequestTests([
         }
     },
     {
+        id: "RpcV2CborListsEmptyUsingDefiniteLength",
+        documentation: "Serializes empty JSON definite length lists",
+        protocol: rpcv2Cbor,
+        method: "POST",
+        uri: "/service/RpcV2Protocol/operation/RpcV2CborLists",
+        body: "oWpzdHJpbmdMaXN0gA=="
+        bodyMediaType: "application/cbor",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        },
+        params: {
+            stringList: []
+        }
+    },
+    {
         id: "RpcV2CborListsSerializeNull",
         documentation: "Serializes null values in lists",
         protocol: rpcv2Cbor,
@@ -127,6 +146,40 @@ apply RpcV2CborLists @httpRequestTests([
         },
         params: {
             sparseStringList: [null, "hi"]
+        }
+    },
+    {
+        id: "RpcV2CborSparseListWithIndefiniteString",
+        documentation: "Serializes indefinite length text strings inside an indefinite length list",
+        protocol: rpcv2Cbor,
+        method: "POST",
+        uri: "/service/RpcV2Protocol/operation/RpcV2CborLists",
+        body: "v3BzcGFyc2VTdHJpbmdMaXN0n394HUFuIGV4YW1wbGUgaW5kZWZpbml0ZSBzdHJpbmcsdyB3aGljaCB3aWxsIGJlIGNodW5rZWQsbiBvbiBlYWNoIGNvbW1h/394NUFub3RoZXIgZXhhbXBsZSBpbmRlZmluaXRlIHN0cmluZyB3aXRoIG9ubHkgb25lIGNodW5r/3ZUaGlzIGlzIGEgcGxhaW4gc3RyaW5n//8="
+        bodyMediaType: "application/cbor",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        },
+        params: {
+            sparseStringList: ["An example indefinite string, which will be chunked, on each comma", "Another example indefinite string with only one chunk", "This is a plain string"]
+        }
+    },
+    {
+        id: "RpcV2CborListWithIndefiniteString",
+        documentation: "Serializes indefinite length text strings inside a definite length list",
+        protocol: rpcv2Cbor,
+        method: "POST",
+        uri: "/service/RpcV2Protocol/operation/RpcV2CborLists",
+        body: "oWpzdHJpbmdMaXN0g394HUFuIGV4YW1wbGUgaW5kZWZpbml0ZSBzdHJpbmcsdyB3aGljaCB3aWxsIGJlIGNodW5rZWQsbiBvbiBlYWNoIGNvbW1h/394NUFub3RoZXIgZXhhbXBsZSBpbmRlZmluaXRlIHN0cmluZyB3aXRoIG9ubHkgb25lIGNodW5r/3ZUaGlzIGlzIGEgcGxhaW4gc3RyaW5n"
+        bodyMediaType: "application/cbor",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        },
+        params: {
+            stringList: ["An example indefinite string, which will be chunked, on each comma", "Another example indefinite string with only one chunk", "This is a plain string"]
         }
     }
 ])

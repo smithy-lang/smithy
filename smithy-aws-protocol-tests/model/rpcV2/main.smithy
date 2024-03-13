@@ -20,7 +20,8 @@ service RpcV2Protocol {
         RpcV2CborMaps,
         RecursiveShapes,
         GreetingWithErrors,
-        FractionalSeconds
+        FractionalSeconds,
+        OperationWithDefaults
     ]
 }
 
