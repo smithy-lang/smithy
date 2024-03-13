@@ -23,6 +23,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import software.amazon.smithy.diff.evaluators.configurable.ConfigurableEvaluatorLoader;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -281,6 +282,8 @@ public final class ModelDiff {
 
             List<DiffEvaluator> evaluators = new ArrayList<>();
             ServiceLoader.load(DiffEvaluator.class, classLoader).forEach(evaluators::add);
+            evaluators.addAll(ConfigurableEvaluatorLoader.loadMetadataDiffEvaluators(newModel).unwrap());
+
             Differences differences = Differences.detect(oldModel, newModel);
 
             // Applies suppressions and elevates event severities.
