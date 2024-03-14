@@ -22,7 +22,8 @@ apply OperationWithDefaults @httpRequestTests([
             "Content-Type": "application/cbor"
         },
         bodyMediaType: "application/cbor"
-        body: "v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcABrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPs/8AAAAAAAAG1kZWZhdWx0RG91Ymxl+z/wAAAAAAAAamRlZmF1bHRNYXCga2RlZmF1bHRFbnVtY0ZPT25kZWZhdWx0SW50RW51bQH/"
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2hkZWZhdWx0c65tZGVmYXVsdFN0cmluZ2JoaW5kZWZhdWx0Qm9vbGVhbvVrZGVmYXVsdExpc3SAcGRlZmF1bHRUaW1lc3RhbXDB%2BwAAAAAAAAAAa2RlZmF1bHRCbG9iY2FiY2tkZWZhdWx0Qnl0ZQFsZGVmYXVsdFNob3J0AW5kZWZhdWx0SW50ZWdlcgprZGVmYXVsdExvbmcYZGxkZWZhdWx0RmxvYXT7P%2FAAAAAAAABtZGVmYXVsdERvdWJsZfs%2F8AAAAAAAAGpkZWZhdWx0TWFwoGtkZWZhdWx0RW51bWNGT09uZGVmYXVsdEludEVudW0B%2Fw%3D%3D
+        body: "v2hkZWZhdWx0c65tZGVmYXVsdFN0cmluZ2JoaW5kZWZhdWx0Qm9vbGVhbvVrZGVmYXVsdExpc3SAcGRlZmF1bHRUaW1lc3RhbXDB+wAAAAAAAAAAa2RlZmF1bHRCbG9iY2FiY2tkZWZhdWx0Qnl0ZQFsZGVmYXVsdFNob3J0AW5kZWZhdWx0SW50ZWdlcgprZGVmYXVsdExvbmcYZGxkZWZhdWx0RmxvYXT7P/AAAAAAAABtZGVmYXVsdERvdWJsZfs/8AAAAAAAAGpkZWZhdWx0TWFwoGtkZWZhdWx0RW51bWNGT09uZGVmYXVsdEludEVudW0B/w=="
         params: {
             defaults: {}
         }
@@ -41,6 +42,7 @@ apply OperationWithDefaults @httpRequestTests([
             "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v%2F8%3D
         body: "v/8="
         params: {
         }
@@ -59,7 +61,8 @@ apply OperationWithDefaults @httpRequestTests([
             "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
-        body: "v2hkZWZhdWx0c65tZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXABa2RlZmF1bHRCbG9iYmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPtAAAAAAAAAAG1kZWZhdWx0RG91Ymxl+0AAAAAAAAAAamRlZmF1bHRNYXChZG5hbWVkSmFja2tkZWZhdWx0RW51bWNCQVJuZGVmYXVsdEludEVudW0C/w=="
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2hkZWZhdWx0c65tZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB%2Bz%2FwAAAAAAAAa2RlZmF1bHRCbG9iYmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPtAAAAAAAAAAG1kZWZhdWx0RG91Ymxl%2B0AAAAAAAAAAamRlZmF1bHRNYXChZG5hbWVkSmFja2tkZWZhdWx0RW51bWNCQVJuZGVmYXVsdEludEVudW0C%2Fw%3D%3D
+        body: "v2hkZWZhdWx0c65tZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iYmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPtAAAAAAAAAAG1kZWZhdWx0RG91Ymxl+0AAAAAAAAAAamRlZmF1bHRNYXChZG5hbWVkSmFja2tkZWZhdWx0RW51bWNCQVJuZGVmYXVsdEludEVudW0C/w=="
         params: {
             defaults: {
                 defaultString: "bye",
@@ -93,6 +96,7 @@ apply OperationWithDefaults @httpRequestTests([
             "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2hkZWZhdWx0c6D%2F
         body: "v2hkZWZhdWx0c6D/"
         params: {
             defaults: {
@@ -129,6 +133,7 @@ apply OperationWithDefaults @httpResponseTests([
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
         },
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v%2F8%3D
         body: "v/8="
         params: {
             defaultString: "hi"
@@ -159,7 +164,8 @@ apply OperationWithDefaults @httpResponseTests([
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
         },
-        body: "v21kZWZhdWx0U3RyaW5nY2J5ZW5kZWZhdWx0Qm9vbGVhbvRrZGVmYXVsdExpc3SBYWFwZGVmYXVsdFRpbWVzdGFtcAJrZGVmYXVsdEJsb2JiaGlrZGVmYXVsdEJ5dGUCbGRlZmF1bHRTaG9ydAJuZGVmYXVsdEludGVnZXIUa2RlZmF1bHRMb25nGMhsZGVmYXVsdEZsb2F0+0AAAAAAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQL/"
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v21kZWZhdWx0U3RyaW5nY2J5ZW5kZWZhdWx0Qm9vbGVhbvRrZGVmYXVsdExpc3SBYWFwZGVmYXVsdFRpbWVzdGFtcMH7QAAAAAAAAABrZGVmYXVsdEJsb2JiaGlrZGVmYXVsdEJ5dGUCbGRlZmF1bHRTaG9ydAJuZGVmYXVsdEludGVnZXIUa2RlZmF1bHRMb25nGMhsZGVmYXVsdEZsb2F0%2B0AAAAAAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQL%2F
+        body: "v21kZWZhdWx0U3RyaW5nY2J5ZW5kZWZhdWx0Qm9vbGVhbvRrZGVmYXVsdExpc3SBYWFwZGVmYXVsdFRpbWVzdGFtcMH7QAAAAAAAAABrZGVmYXVsdEJsb2JiaGlrZGVmYXVsdEJ5dGUCbGRlZmF1bHRTaG9ydAJuZGVmYXVsdEludGVnZXIUa2RlZmF1bHRMb25nGMhsZGVmYXVsdEZsb2F0+0AAAAAAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQL/"
         params: {
             defaultString: "bye",
             defaultBoolean: false,
@@ -189,7 +195,8 @@ apply OperationWithDefaults @httpResponseTests([
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
         },
-        body: "v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcABrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPs/8AAAAAAAAG1kZWZhdWx0RG91Ymxl+z/wAAAAAAAAamRlZmF1bHRNYXCga2RlZmF1bHRFbnVtY0ZPT25kZWZhdWx0SW50RW51bQH/"
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPs%2F8AAAAAAAAG1kZWZhdWx0RG91Ymxl%2Bz%2FwAAAAAAAAamRlZmF1bHRNYXCga2RlZmF1bHRFbnVtY0ZPT25kZWZhdWx0SW50RW51bQH%2F
+        body: "v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPs/8AAAAAAAAG1kZWZhdWx0RG91Ymxl+z/wAAAAAAAAamRlZmF1bHRNYXCga2RlZmF1bHRFbnVtY0ZPT25kZWZhdWx0SW50RW51bQH/"
         params: {}
     }
 ])
