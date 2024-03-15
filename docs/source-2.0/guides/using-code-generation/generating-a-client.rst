@@ -212,7 +212,7 @@ contents:
       },
       "private": true,
       "workspaces": [
-        "smithy/build/smithyprojections/smithy/client/typescript-codegen"
+        "smithy/build/smithy/source/typescript-codegen"
       ]
     }
 
