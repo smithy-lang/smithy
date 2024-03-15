@@ -38,7 +38,8 @@ use smithy.test#httpResponseTests
         protocol: rpcv2Cbor,
         documentation: """
             The server should be capable of deserializing simple scalar properties
-            encoded using a map with a definite length.""",
+            encoded using a map with a definite length. The server should also be able to parse
+            a key encoded using an indefinite length string.""",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -47,7 +48,8 @@ use smithy.test#httpResponseTests
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
-        body: "qmlieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v"
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=qmlieXRlVmFsdWUFa2RvdWJsZVZhbHVl%2Bz%2F%2BOVgQYk3Tf2VmYWxzZWdCb29sZWFuZVZhbHVl%2F%2FRqZmxvYXRWYWx1ZfpA8%2FfPbGludGVnZXJWYWx1ZRkBAGlsb25nVmFsdWUZJpFqc2hvcnRWYWx1ZRkmqmtzdHJpbmdWYWx1ZWZzaW1wbGVwdHJ1ZUJvb2xlYW5WYWx1ZfVpYmxvYlZhbHVlQ2Zvbw%3D%3D
+        body: "qmlieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3Tf2VmYWxzZWdCb29sZWFuZVZhbHVl//RqZmxvYXRWYWx1ZfpA8/fPbGludGVnZXJWYWx1ZRkBAGlsb25nVmFsdWUZJpFqc2hvcnRWYWx1ZRkmqmtzdHJpbmdWYWx1ZWZzaW1wbGVwdHJ1ZUJvb2xlYW5WYWx1ZfVpYmxvYlZhbHVlQ2Zvbw=="
         params: {
             byteValue: 5,
             doubleValue: 1.889,
