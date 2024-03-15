@@ -43,7 +43,6 @@ union MyUnion {
     listValue: StringList,
     mapValue: StringMap,
     structureValue: GreetingStruct,
-    unitValue: Unit,
 }
 
 apply JsonUnions @httpRequestTests([
