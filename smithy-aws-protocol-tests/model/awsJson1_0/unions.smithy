@@ -556,8 +556,7 @@ apply JsonUnions @httpResponseTests([
                   "mapValue": null,
                   "structureValue": {
                       "hi": "hello"
-                  },
-                  "unitValue": null
+                  }
                 }
             }"""
         bodyMediaType: "application/json"
