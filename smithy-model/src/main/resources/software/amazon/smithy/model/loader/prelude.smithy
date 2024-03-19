@@ -334,7 +334,7 @@ map traitValidators {
     value: TraitValidator
 }
 
-@internal
+@private
 structure TraitValidator {
     /// A Smithy selector that receives only the shape to which the `traitValidators` trait is applied.
     /// Any shape yielded by the selector is considered incompatible with the trait.
