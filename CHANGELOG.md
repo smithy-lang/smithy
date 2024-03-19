@@ -15,7 +15,6 @@
 
 ### Bug Fixes
 
-* Fixed a bug when creating `@standardRegionalEndpoints` nodes. ([#2179](https://github.com/smithy-lang/smithy/pull/2179))
 * Fixed build for JDK21 by adding CI matrices (and switches to Corretto), updates Gradle to 8.6 and Spotbugs to 6.0.8. ([#2171](https://github.com/smithy-lang/smithy/pull/2171))
 * Fixed the `RestJsonZeroAndFalseQueryValues` protocol test. ([#2167](https://github.com/smithy-lang/smithy/pull/2167))
 * Properly fix multi-mixin members in shape build. ([#2157](https://github.com/smithy-lang/smithy/pull/2157))
