@@ -1,37 +1,5 @@
 # Smithy Changelog
 
-## 1.46.0 (2024-03-19)
-
-### Features
-
-* Added protocol tests for `null` values in unions. ([#2180](https://github.com/smithy-lang/smithy/pull/2180))
-* Updated `ec2QueryName` tests to reflect usage. ([#2186](https://github.com/smithy-lang/smithy/pull/2186))
-* Updated model validation and protocol tests to use the new Gradle plugins. ([#2176](https://github.com/smithy-lang/smithy/pull/2176))
-* Added data-shape-only visitor class. ([#2168](https://github.com/smithy-lang/smithy/pull/2168))
-* Added protocol tests for S3 when dots are part of a key segment. ([#2166](https://github.com/smithy-lang/smithy/pull/2166))
-* Added the `@traitValidators` trait that can constrain shape closures. ([#2156](https://github.com/smithy-lang/smithy/pull/2156))
-* Added logic to infer default inline I/O suffixes in the IDL serializer. ([#2122](https://github.com/smithy-lang/smithy/pull/2122))
-* Added annotation processor base class for executing Smithy-Build plugins. ([#2073](https://github.com/smithy-lang/smithy/pull/2073))
-
-### Bug Fixes
-
-* Fixed a bug when creating `@standardRegionalEndpoints` nodes. ([#2179](https://github.com/smithy-lang/smithy/pull/2179))
-* Fixed Windows CI errors by removing no-cone on git add command. ([#2168](https://github.com/smithy-lang/smithy/pull/2168))
-* Fixed the `RestJsonZeroAndFalseQueryValues` protocol test. ([#2167](https://github.com/smithy-lang/smithy/pull/2167))
-* Properly fix multi-mixin members in shape build. ([#2157](https://github.com/smithy-lang/smithy/pull/2157))
-* Fixed text block incidental whitespace handling. ([#2147](https://github.com/smithy-lang/smithy/pull/2147)
-* Fixed issues with `AbstractCodeWriter` state stacks. ([#2142](https://github.com/smithy-lang/smithy/pull/2142))
-
-### Documentation
-
-* Remove incorrect `jsonName` protocol info. ([#2187](https://github.com/smithy-lang/smithy/pull/2187))
-* Fixed minor formattting. ([#2175](https://github.com/smithy-lang/smithy/pull/2175))
-* Added CLI and Groovy examples to guides. ([#2165](https://github.com/smithy-lang/smithy/pull/2165))
-* Updated quickstart example to use terse input/output syntax. ([#2163](https://github.com/smithy-lang/smithy/pull/2163))
-* Updated OpenApi guide to use new gradle plugin and cli. ([#2161](https://github.com/smithy-lang/smithy/pull/2161))
-* Updated Gradle quickstart example to include empty `smithy-build.json`. ([#2149](https://github.com/smithy-lang/smithy/pull/2149))
-* Multiple updates of the Gradle plugin after the 0.8.0 release. ([#2140](https://github.com/smithy-lang/smithy/pull/2140), [#2146](https://github.com/smithy-lang/smithy/pull/2146), [#2139](https://github.com/smithy-lang/smithy/pull/2139), [#2148](https://github.com/smithy-lang/smithy/pull/2148))
-
 ## 1.45.0 (2024-02-14)
 
 ### Features
