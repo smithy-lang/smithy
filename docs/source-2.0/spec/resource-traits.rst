@@ -80,7 +80,7 @@ trait applied.
 
 Use this trait on a resource operation input or output member that explicitly
 has a purpose unrelated to reading or writing resource properties. Also use
-this traith on a custom defined Smithy trait used to annotate input or output
+this trait on a custom defined Smithy trait used to annotate input or output
 members for purposes unrelated to resource property modeling such as an
 idempotency token.
 
