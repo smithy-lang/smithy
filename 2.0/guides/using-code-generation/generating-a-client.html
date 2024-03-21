@@ -129,14 +129,7 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong> We want your feedback on Smithy.</strong>
-Please consider taking our brief <a href="https://amazonmr.au1.qualtrics.com/jfe/form/SV_9Rfqo2wizSpnZPM">survey</a>
- to share your feedback.
- 
-  </aside>
-</div>
+
 
 <div class="page">
   <header class="mobile-header">
@@ -382,7 +375,7 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <span class="w">    </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.19.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
@@ -398,7 +391,7 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.19.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -408,7 +401,7 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.19.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -534,6 +527,19 @@ The generated <code class="docutils literal notranslate"><span class="pre">packa
 integrates building the Smithy model and generating the code into the
 development workflow. First, move the Smithy project into its own
 directory named <code class="docutils literal notranslate"><span class="pre">smithy/</span></code>:</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--1">Smithy CLI</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.
+└── smithy
+    ├── build
+    ├── model
+    └── smithy-build.json
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--2">Gradle</label><div class="tab-content docutils container">
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--1">Kotlin</label><div class="tab-content docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.
 └── smithy
     ├── build
@@ -542,8 +548,24 @@ directory named <code class="docutils literal notranslate"><span class="pre">smi
     └── smithy-build.json
 </pre></div>
 </div>
+</div>
+<input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--2">Groovy</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.
+└── smithy
+    ├── build
+    ├── build.gradle
+    ├── model
+    └── smithy-build.json
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>Next, create a <code class="docutils literal notranslate"><span class="pre">package.json</span></code> in the root of the project with the following
 contents:</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--1">Smithy CLI</label><div class="tab-content docutils container">
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">package.json</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -557,10 +579,33 @@ contents:</p>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;workspaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;smithy/build/smithyprojections/smithy/client/typescript-codegen&quot;</span>
+<span class="w">    </span><span class="s2">&quot;smithy/build/smithy/source/typescript-codegen&quot;</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--2">Gradle</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">package.json</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather-service&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;generate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cd smithy &amp;&amp; gradle clean build&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yarn workspace @weather-service/client build&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;@weather-service/client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;workspaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;smithy/build/smithyprojections/smithy/source/typescript-codegen&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <p>A few things to note:</p>

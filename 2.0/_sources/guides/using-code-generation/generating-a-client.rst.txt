@@ -42,7 +42,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             "sources": ["model"],
             "maven": {
                 "dependencies": [
-                    "software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0"
+                    "software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__"
                 ]
             },
             "...": "..."
@@ -58,7 +58,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             :caption: build.gradle.kts
 
             dependencies {
-                smithyBuild("software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0")
+                smithyBuild("software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__")
             }
 
     .. tab:: Groovy
@@ -67,7 +67,7 @@ named ``@weather-service/client`` with version ``0.0.1``.
             :caption: build.gradle
 
             dependencies {
-                smithyBuild 'software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0'
+                smithyBuild 'software.amazon.smithy.typescript:smithy-aws-typescript-codegen:__smithy_typescript_version__'
             }
 
 .. important::
@@ -186,35 +186,84 @@ The generated ``package.json`` contains scripts to do so:
 This example creates a mono-repo using `Yarn Workspaces`_ that
 integrates building the Smithy model and generating the code into the
 development workflow. First, move the Smithy project into its own
-directory named ``smithy/``::
+directory named ``smithy/``:
 
-    .
-    └── smithy
-        ├── build
-        ├── build.gradle.kts
-        ├── model
-        └── smithy-build.json
+.. tab:: Smithy CLI
+
+    .. code-block::
+
+        .
+        └── smithy
+            ├── build
+            ├── model
+            └── smithy-build.json
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block::
+
+            .
+            └── smithy
+                ├── build
+                ├── build.gradle.kts
+                ├── model
+                └── smithy-build.json
+
+    .. tab:: Groovy
+
+        .. code-block::
+
+            .
+            └── smithy
+                ├── build
+                ├── build.gradle
+                ├── model
+                └── smithy-build.json
 
 Next, create a ``package.json`` in the root of the project with the following
 contents:
 
-.. code-block:: json
-    :caption: package.json
+.. tab:: Smithy CLI
 
-    {
-      "name": "weather-service",
-      "scripts": {
-        "generate": "cd smithy && gradle clean build",
-        "build": "yarn workspace @weather-service/client build",
-      },
-      "dependencies": {
-        "@weather-service/client": "0.0.1"
-      },
-      "private": true,
-      "workspaces": [
-        "smithy/build/smithyprojections/smithy/client/typescript-codegen"
-      ]
-    }
+    .. code-block:: json
+        :caption: package.json
+
+        {
+          "name": "weather-service",
+          "scripts": {
+            "generate": "cd smithy && gradle clean build",
+            "build": "yarn workspace @weather-service/client build",
+          },
+          "dependencies": {
+            "@weather-service/client": "0.0.1"
+          },
+          "private": true,
+          "workspaces": [
+            "smithy/build/smithy/source/typescript-codegen"
+          ]
+        }
+
+.. tab:: Gradle
+
+    .. code-block:: json
+        :caption: package.json
+
+        {
+          "name": "weather-service",
+          "scripts": {
+            "generate": "cd smithy && gradle clean build",
+            "build": "yarn workspace @weather-service/client build",
+          },
+          "dependencies": {
+            "@weather-service/client": "0.0.1"
+          },
+          "private": true,
+          "workspaces": [
+            "smithy/build/smithyprojections/smithy/source/typescript-codegen"
+          ]
+        }
 
 A few things to note:
 
