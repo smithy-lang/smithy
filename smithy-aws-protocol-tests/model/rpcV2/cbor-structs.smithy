@@ -48,7 +48,6 @@ use smithy.test#httpResponseTests
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=qmlieXRlVmFsdWUFf2Zkb3VibGVlVmFsdWX%2F%2Bz%2F%2BOVgQYk3Tf2VmYWxzZWdCb29sZWFuZVZhbHVl%2F%2FRqZmxvYXRWYWx1ZfpA8%2FfPbGludGVnZXJWYWx1ZRkBAGlsb25nVmFsdWUZJpFqc2hvcnRWYWx1ZRkmqn9mc3RyaW5nZVZhbHVl%2F2ZzaW1wbGVwdHJ1ZUJvb2xlYW5WYWx1ZfVpYmxvYlZhbHVlQ2Zvbw%3D%3D
         body: "qmlieXRlVmFsdWUFf2Zkb3VibGVlVmFsdWX/+z/+OVgQYk3Tf2VmYWxzZWdCb29sZWFuZVZhbHVl//RqZmxvYXRWYWx1ZfpA8/fPbGludGVnZXJWYWx1ZRkBAGlsb25nVmFsdWUZJpFqc2hvcnRWYWx1ZRkmqn9mc3RyaW5nZVZhbHVl/2ZzaW1wbGVwdHJ1ZUJvb2xlYW5WYWx1ZfVpYmxvYlZhbHVlQ2Zvbw=="
         params: {
             byteValue: 5,
