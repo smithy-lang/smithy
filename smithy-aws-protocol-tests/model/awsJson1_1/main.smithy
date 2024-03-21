@@ -27,6 +27,7 @@ service JsonProtocol {
         PutAndGetInlineDocuments,
         JsonEnums,
         NullOperation,
+        SparseNullsOperation,
         GreetingWithErrors,
         JsonUnions,
 
