@@ -7,18 +7,7 @@
 
 $version: "2.0"
 
-metadata suppressions = [
-    {
-        id: "DeprecatedTrait",
-        namespace: "*",
-        reason: """
-            Some of the AWS protocols make use of deprecated traits, and some are
-            themselves deprecated traits. As this package is intended to test those
-            protocols, the warnings should be suppressed."""
-    }
-]
-
-namespace aws.protocoltests.shared
+namespace smithy.protocoltests.shared
 
 list StringList {
     member: String,

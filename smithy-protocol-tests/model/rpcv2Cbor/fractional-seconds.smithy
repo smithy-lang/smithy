@@ -1,9 +1,9 @@
 $version: "2.0"
 
-namespace aws.protocoltests.rpcv2Cbor
+namespace smithy.protocoltests.rpcv2Cbor
 
 use smithy.protocols#rpcv2Cbor
-use aws.protocoltests.shared#DateTime
+use smithy.protocoltests.shared#DateTime
 use smithy.test#httpResponseTests
 
 // These tests verify that clients can parse `DateTime` timestamps with fractional seconds.
