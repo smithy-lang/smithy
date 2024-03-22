@@ -39,7 +39,7 @@ use smithy.test#httpResponseTests
         appliesTo: "server"
     },
     {
-        id: "no_input_server_allows_empty_cbor",
+        id: "NoInputServerAllowsEmptyCbor",
         protocol: rpcv2Cbor,
         documentation: "Servers should accept CBOR empty struct if no input.",
         headers: {
@@ -53,9 +53,9 @@ use smithy.test#httpResponseTests
         appliesTo: "server"
     },
     {
-        id: "NoInputServerIngoresUnexpectedFields",
+        id: "NoInputServerAllowsEmptyBody",
         protocol: rpcv2Cbor,
-        documentation: "Servers should accept CBOR empty struct if no input.",
+        documentation: "Servers should accept empty body if no input.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -63,7 +63,7 @@ use smithy.test#httpResponseTests
         }
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/NoInputOutput",
-        body: "v/8=",
+        body: "",
         appliesTo: "server"
     }
 ])
@@ -83,29 +83,29 @@ use smithy.test#httpResponseTests
         code: 200,
     },
     {
-        id: "no_output_client_allows_accept",
-        protocol: rpcv2Cbor,
-        documentation: "Servers should allow the accept header to be set to the default content-type.",
-        headers: {
-            "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
-            "Content-Type": "application/cbor"
-        }
-        body: "",
-        code: 200,
-        appliesTo: "client",
-    },
-    {
-        id: "no_input_client_allows_empty_cbor",
+        id: "NoOutputClientAllowsEmptyCbor",
         protocol: rpcv2Cbor,
         documentation: "Client should accept CBOR empty struct if no output",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
-        body: "v/8=",
         code: 200,
+        bodyMediaType: "application/cbor",
+        body: "v/8=",
+        appliesTo: "client",
+    },
+    {
+        id: "NoOutputClientAllowsEmptyBody",
+        protocol: rpcv2Cbor,
+        documentation: "Client should accept empty body if no output",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        }
+        code: 200,
+        bodyMediaType: "application/cbor",
+        body: "",
         appliesTo: "client",
     }
 ])
@@ -130,6 +130,21 @@ operation NoInputOutput {}
         bodyMediaType: "application/cbor",
         body: "v/8=",
     },
+    {
+        id: "empty_input_no_body",
+        protocol: rpcv2Cbor,
+        documentation: "When Input structure is empty the server should accept an empty body",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        },
+        method: "POST",
+        uri: "/service/RpcV2Protocol/operation/EmptyInputOutput",
+        bodyMediaType: "application/cbor",
+        body: "",
+        appliesTo: "server"
+    },
 ])
 @httpResponseTests([
     {
@@ -143,6 +158,19 @@ operation NoInputOutput {}
             "Content-Type": "application/cbor"
         }
         code: 200,
+    },
+    {
+        id: "empty_output_no_body",
+        protocol: rpcv2Cbor,
+        documentation: "When output structure is empty the client should accept an empty body",
+        body: "",
+        bodyMediaType: "application/cbor",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        }
+        code: 200,
+        appliesTo: "client"
     },
 ])
 operation EmptyInputOutput {
