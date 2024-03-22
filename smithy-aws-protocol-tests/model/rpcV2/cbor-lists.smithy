@@ -350,7 +350,7 @@ structure StructureListMember {
             }
         }
         method: "POST"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/SparseNullsOperation",
     },
     {
         id: "RpcV2CborSparseListsSerializeNull"
@@ -370,7 +370,7 @@ structure StructureListMember {
             ]
         }
         method: "POST"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/SparseNullsOperation",
     }
 ])
 @httpResponseTests([
