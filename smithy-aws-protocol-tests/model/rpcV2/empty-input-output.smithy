@@ -25,20 +25,6 @@ use smithy.test#httpResponseTests
         body: ""
     },
     {
-        id: "no_input_server_allows_accept",
-        protocol: rpcv2Cbor,
-        documentation: "Servers should allow the Accept header to be set to the default content-type.",
-        headers: {
-            "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
-            "Content-Type": "application/cbor"
-        }
-        method: "POST",
-        uri: "/service/RpcV2Protocol/operation/NoInputOutput",
-        body: "",
-        appliesTo: "server"
-    },
-    {
         id: "NoInputServerAllowsEmptyCbor",
         protocol: rpcv2Cbor,
         documentation: "Servers should accept CBOR empty struct if no input.",
@@ -55,7 +41,9 @@ use smithy.test#httpResponseTests
     {
         id: "NoInputServerAllowsEmptyBody",
         protocol: rpcv2Cbor,
-        documentation: "Servers should accept empty body if no input.",
+        documentation: """
+            Servers should accept an empty body if there is no input. Additionally,
+            they should not raise an error if the `Accept` header is set."""
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -71,7 +59,7 @@ use smithy.test#httpResponseTests
     {
         id: "no_output",
         protocol: rpcv2Cbor,
-        documentation: "Body is empty and no Content-Type header if no response",
+        documentation: "A `Content-Type` header should not be set if the response body is empty.",
         body: "",
         bodyMediaType: "application/cbor",
         headers: {
@@ -85,7 +73,7 @@ use smithy.test#httpResponseTests
     {
         id: "NoOutputClientAllowsEmptyCbor",
         protocol: rpcv2Cbor,
-        documentation: "Client should accept CBOR empty struct if no output",
+        documentation: "Clients should accept a CBOR empty struct if there is no output.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
@@ -98,7 +86,9 @@ use smithy.test#httpResponseTests
     {
         id: "NoOutputClientAllowsEmptyBody",
         protocol: rpcv2Cbor,
-        documentation: "Client should accept empty body if no output",
+        documentation: """
+            Clients should accept an empty body if there is no output and
+            should not raise an error if the `Content-Type` header is set.""",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
