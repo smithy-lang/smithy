@@ -259,8 +259,8 @@ use smithy.test#httpResponseTests
         appliesTo: "client"
     },
     {
-        id: "RpcV2CborClientDoesntDeSerializeNullStructureValues",
-        documentation: "RpcV2 Cbor should deserialize null structure values",
+        id: "RpcV2CborClientDoesntDeserializeNullStructureValues",
+        documentation: "RpcV2 Cbor should not deserialize null structure values",
         protocol: rpcv2Cbor,
         body: "v2tzdHJpbmdWYWx1Zfb/",
         code: 200,
@@ -335,7 +335,28 @@ use smithy.test#httpResponseTests
             doubleValue: "-Infinity",
             floatValue: "-Infinity"
         }
-    }
+    },
+        {
+        id: "RpcV2CborSupportsUpcastingDataOnDeserialize",
+        protocol: rpcv2Cbor,
+        documentation: "Supports upcasting from a smaller byte representation of the same date type.",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        },
+        code: 200,
+        bodyMediaType: "application/cbor",
+        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2tkb3VibGVWYWx1Zfk%2BAGpmbG9hdFZhbHVl%2BUegbGludGVnZXJWYWx1ZRg4aWxvbmdWYWx1ZRkBAGpzaG9ydFZhbHVlCv8%3D
+        body: "v2tkb3VibGVWYWx1Zfk+AGpmbG9hdFZhbHVl+UegbGludGVnZXJWYWx1ZRg4aWxvbmdWYWx1ZRkBAGpzaG9ydFZhbHVlCv8="
+        params: {
+            doubleValue: 1.5,
+            floatValue: 7.625,
+            integerValue: 56,
+            longValue: 256,
+            shortValue: 10
+        },
+        appliesTo: "client"
+    },
 ])
 operation SimpleScalarProperties {
     input: SimpleScalarStructure,
