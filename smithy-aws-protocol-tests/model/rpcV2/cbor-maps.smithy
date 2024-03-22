@@ -435,6 +435,7 @@ apply RpcV2CborSparseMaps @httpResponseTests([
 operation RpcV2CborSparseMaps {
     input: RpcV2CborSparseMapsInputOutput
     output: RpcV2CborSparseMapsInputOutput
+    errors: [ValidationException]
 }
 
 structure RpcV2CborSparseMapsInputOutput {
