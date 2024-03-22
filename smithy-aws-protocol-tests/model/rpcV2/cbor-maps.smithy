@@ -25,7 +25,6 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborDenseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ%3D%3D
         body: "oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ=="
         bodyMediaType: "application/cbor",
         headers: {
@@ -50,7 +49,6 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborDenseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A%3D%3D
         body: "om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==",
         bodyMediaType: "application/cbor",
         headers: {
@@ -73,7 +71,6 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborDenseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=oWtkZW5zZVNldE1hcKJheIBheYJhYWFi
         body: "oWtkZW5zZVNldE1hcKJheIBheYJhYWFi",
         bodyMediaType: "application/cbor",
         headers: {
@@ -96,7 +93,6 @@ apply RpcV2CborDenseMaps @httpResponseTests([
         documentation: "Deserializes maps",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ%3D%3D
         body: "oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ==",
         bodyMediaType: "application/cbor",
         headers: {
@@ -119,7 +115,6 @@ apply RpcV2CborDenseMaps @httpResponseTests([
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A%3D%3D
         body: "om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==",
         bodyMediaType: "application/cbor",
         headers: {
@@ -140,7 +135,6 @@ apply RpcV2CborDenseMaps @httpResponseTests([
         documentation: "A response that contains a dense map of sets",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=oWtkZW5zZVNldE1hcKJheIBheYJhYWFi
         body: "oWtkZW5zZVNldE1hcKJheIBheYJhYWFi",
         bodyMediaType: "application/cbor",
         headers: {
@@ -162,7 +156,6 @@ apply RpcV2CborDenseMaps @httpResponseTests([
         protocol: rpcv2Cbor,
         appliesTo: "client",
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=oWtkZW5zZVNldE1hcKNheIBheYJhYWFiYXr2
         body: "oWtkZW5zZVNldE1hcKNheIBheYJhYWFiYXr2",
         bodyMediaType: "application/cbor",
         headers: {
@@ -220,7 +213,6 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborSparseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v29zcGFyc2VTdHJ1Y3RNYXC%2FY2Zvb79iaGlldGhlcmX%2FY2Jher9iaGljYnll%2F%2F%2F%2F
         body: "v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////",
         bodyMediaType: "application/cbor",
         headers: {
@@ -245,7 +237,6 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborSparseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v%2F%2F
         body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//"
         bodyMediaType: "application/cbor",
         headers: {
@@ -274,7 +265,6 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborSparseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2xzcGFyc2VTZXRNYXC%2FYXif%2F2F5n2FhYWL%2F%2F%2F8%3D
         body: "v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL///8="
         bodyMediaType: "application/cbor",
         headers: {
@@ -295,7 +285,6 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborSparseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2xzcGFyc2VTZXRNYXC%2FYXif%2F2F5n2FhYWL%2FYXr2%2F%2F8%3D
         body: "v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=",
         bodyMediaType: "application/cbor",
         headers: {
@@ -317,7 +306,6 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         protocol: rpcv2Cbor,
         method: "POST",
         uri: "/service/RpcV2Protocol/operation/RpcV2CborSparseMaps",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v29zcGFyc2VOdW1iZXJNYXC%2FYXgA%2F3BzcGFyc2VCb29sZWFuTWFwv2F49P%2F%2F
         body: "v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//"
         bodyMediaType: "application/cbor",
         headers: {
@@ -342,7 +330,6 @@ apply RpcV2CborSparseMaps @httpResponseTests([
         documentation: "Deserializes sparse maps",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v29zcGFyc2VTdHJ1Y3RNYXC%2FY2Zvb79iaGlldGhlcmX%2FY2Jher9iaGljYnll%2F%2F%2F%2F
         body: "v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////",
         bodyMediaType: "application/cbor",
         headers: {
@@ -365,7 +352,6 @@ apply RpcV2CborSparseMaps @httpResponseTests([
         documentation: "Deserializes null map values",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v%2F%2F
         body: "v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//"
         bodyMediaType: "application/cbor",
         headers: {
@@ -392,7 +378,6 @@ apply RpcV2CborSparseMaps @httpResponseTests([
         documentation: "A response that contains a sparse map of sets",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2xzcGFyc2VTZXRNYXC%2FYXmfYWFhYv9heJ%2F%2F%2F%2F8%3D
         body: "v2xzcGFyc2VTZXRNYXC/YXmfYWFhYv9heJ////8=",
         bodyMediaType: "application/cbor",
         headers: {
@@ -411,7 +396,6 @@ apply RpcV2CborSparseMaps @httpResponseTests([
         documentation: "A response that contains a sparse map of sets with a null",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2xzcGFyc2VTZXRNYXC%2FYXif%2F2F5n2FhYWL%2FYXr2%2F%2F8%3D
         body: "v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=",
         bodyMediaType: "application/cbor",
         headers: {
@@ -431,7 +415,6 @@ apply RpcV2CborSparseMaps @httpResponseTests([
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: rpcv2Cbor,
         code: 200,
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v29zcGFyc2VOdW1iZXJNYXC%2FYXgA%2F3BzcGFyc2VCb29sZWFuTWFwv2F49P%2F%2F
         body: "v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//"
         bodyMediaType: "application/cbor",
         headers: {
