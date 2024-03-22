@@ -346,7 +346,6 @@ use smithy.test#httpResponseTests
         },
         code: 200,
         bodyMediaType: "application/cbor",
-        // http://ec2-54-84-9-83.compute-1.amazonaws.com/hex?value=v2tkb3VibGVWYWx1Zfk%2BAGpmbG9hdFZhbHVl%2BUegbGludGVnZXJWYWx1ZRg4aWxvbmdWYWx1ZRkBAGpzaG9ydFZhbHVlCv8%3D
         body: "v2tkb3VibGVWYWx1Zfk+AGpmbG9hdFZhbHVl+UegbGludGVnZXJWYWx1ZRg4aWxvbmdWYWx1ZRkBAGpzaG9ydFZhbHVlCv8="
         params: {
             doubleValue: 1.5,
