@@ -1,11 +1,11 @@
 $version: "2.0"
 
-namespace aws.protocoltests.rpcv2Cbor
+namespace smithy.protocoltests.rpcv2Cbor
 
-use aws.protocoltests.shared#FooEnumMap
-use aws.protocoltests.shared#GreetingStruct
-use aws.protocoltests.shared#SparseStringMap
-use aws.protocoltests.shared#StringSet
+use smithy.protocoltests.shared#FooEnumMap
+use smithy.protocoltests.shared#GreetingStruct
+use smithy.protocoltests.shared#SparseStringMap
+use smithy.protocoltests.shared#StringSet
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 use smithy.protocols#rpcv2Cbor

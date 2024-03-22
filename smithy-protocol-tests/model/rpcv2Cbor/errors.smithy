@@ -1,6 +1,6 @@
 $version: "2.0"
 
-namespace aws.protocoltests.rpcv2Cbor
+namespace smithy.protocoltests.rpcv2Cbor
 
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests

@@ -2,19 +2,19 @@
 
 $version: "2.0"
 
-namespace aws.protocoltests.rpcv2Cbor
+namespace smithy.protocoltests.rpcv2Cbor
 
-use aws.protocoltests.shared#BooleanList
-use aws.protocoltests.shared#BlobList
-use aws.protocoltests.shared#FooEnumList
-use aws.protocoltests.shared#IntegerEnumList
-use aws.protocoltests.shared#IntegerList
-use aws.protocoltests.shared#NestedStringList
-use aws.protocoltests.shared#SparseStringList
-use aws.protocoltests.shared#SparseStringMap
-use aws.protocoltests.shared#StringList
-use aws.protocoltests.shared#StringSet
-use aws.protocoltests.shared#TimestampList
+use smithy.protocoltests.shared#BooleanList
+use smithy.protocoltests.shared#BlobList
+use smithy.protocoltests.shared#FooEnumList
+use smithy.protocoltests.shared#IntegerEnumList
+use smithy.protocoltests.shared#IntegerList
+use smithy.protocoltests.shared#NestedStringList
+use smithy.protocoltests.shared#SparseStringList
+use smithy.protocoltests.shared#SparseStringMap
+use smithy.protocoltests.shared#StringList
+use smithy.protocoltests.shared#StringSet
+use smithy.protocoltests.shared#TimestampList
 use smithy.protocols#rpcv2Cbor
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
