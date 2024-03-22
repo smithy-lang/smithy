@@ -190,7 +190,7 @@ use smithy.test#httpResponseTests
     {
         id: "RpcV2CborSupportsUpcastingData",
         protocol: rpcv2Cbor,
-        documentation: "Supports upcasting from a smaller byte representation of the same date type.",
+        documentation: "Supports upcasting from a smaller byte representation of the same data type.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -339,7 +339,7 @@ use smithy.test#httpResponseTests
         {
         id: "RpcV2CborSupportsUpcastingDataOnDeserialize",
         protocol: rpcv2Cbor,
-        documentation: "Supports upcasting from a smaller byte representation of the same date type.",
+        documentation: "Supports upcasting from a smaller byte representation of the same data type.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Content-Type": "application/cbor"
