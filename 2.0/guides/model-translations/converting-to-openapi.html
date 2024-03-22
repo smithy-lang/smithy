@@ -453,9 +453,9 @@ specification from a Smithy model.</p>
 <span class="w">  </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi:1.45.0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi:1.46.0&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -496,10 +496,10 @@ specification from a Smithy model.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -516,10 +516,10 @@ specification from a Smithy model.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.46.0&#39;</span>
 
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.46.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -528,7 +528,7 @@ specification from a Smithy model.</p>
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A build-only dependency on &quot;software.amazon.smithy:smithy-openapi:1.45.0&quot; is
+<p class="last">A build-only dependency on &quot;software.amazon.smithy:smithy-openapi:1.46.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -1533,10 +1533,10 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="w">  </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi:1.45.0&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi-traits:1.45.0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi:1.46.0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-openapi-traits:1.46.0&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
@@ -1558,11 +1558,11 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.46.0&quot;</span><span class="p">)</span>
 
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi-traits:1.46.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1577,11 +1577,11 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi:1.46.0&#39;</span>
 
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi-traits:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi-traits:1.46.0&#39;</span>
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.46.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1602,7 +1602,7 @@ its <a class="reference internal" href="../../spec/json-ast.html#json-ast"><span
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">specificationExtension</span></code> trait is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1697,7 +1697,7 @@ Otherwise, it defaults to the target trait's shape ID normalized with hyphens an
 <h4>Supported trait locations<a class="headerlink" href="#supported-trait-locations" title="Permalink to this heading">#</a></h4>
 <p>Only a subset of OpenAPI locations are supported in the conversion:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />
@@ -1741,7 +1741,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <span class="w">  </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">      </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.45.0&quot;</span>
+<span class="w">      </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.46.0&quot;</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
@@ -1756,7 +1756,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="literal-block-wrapper docutils container" id="id47">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id47" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1766,7 +1766,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="literal-block-wrapper docutils container" id="id48">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id48" title="Permalink to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-apigateway-openapi:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-apigateway-openapi:1.46.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -2263,7 +2263,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="literal-block-wrapper docutils container" id="id53">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id53" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -2273,7 +2273,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="literal-block-wrapper docutils container" id="id54">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id54" title="Permalink to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi:1.46.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>

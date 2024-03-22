@@ -357,7 +357,7 @@ can be used to apply additional validation to Smithy models.</p>
 <span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-linters:1.45.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-linters:1.46.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
@@ -373,7 +373,7 @@ can be used to apply additional validation to Smithy models.</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="p">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -384,7 +384,7 @@ can be used to apply additional validation to Smithy models.</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id15" title="Permalink to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-linters:1.45.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-linters:1.46.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -415,7 +415,7 @@ are considered connected.</p>
 makes the model easier to maintain.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">NOTE</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -475,7 +475,7 @@ to represent camelCase words using snake_case; utilizing strict camel
 casing makes it easier to split words apart.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -520,7 +520,7 @@ model and can lead to consistent naming in code generated from Smithy
 models.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -566,7 +566,7 @@ of it. Mistakenly not marking sensitive data accordingly carries a large risk, a
 helpful to have an automated validator to catch instances of this rather than rely on best efforts.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -632,7 +632,7 @@ allowList and denyList much more clearly indicate that something is
 allowed or denied.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -692,7 +692,7 @@ code-names, from appearing in public artifacts.</dd>
 <dt>Configuration</dt><dd><p>A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
 value is a list of objects with the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -764,7 +764,7 @@ be specified.</p>
 names match when case-insensitively <strong>containing</strong> the word. The following
 table shows matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename*</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -795,7 +795,7 @@ table shows matches for a reserved word of <code class="docutils literal notrans
 case-insensitively <strong>ending with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -826,7 +826,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 case-insensitively <strong>starting with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename*</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -857,7 +857,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 case-insensitively <strong>the same as</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -897,7 +897,7 @@ case-insensitively compared against the words in the search text for a match.</p
 or the type of character between two characters changes. The following table
 demonstrates how comparison text is parsed into words.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />
@@ -935,7 +935,7 @@ boundary searches also match if the search terms concatenated together with
 no spaces is considered a word in the search text (for example,
 <code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code> will match the word <code class="docutils literal notranslate"><span class="pre">secretid</span></code>).</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -1005,7 +1005,7 @@ in order for this validator to properly function.</p>
 API to more easily understand the semantics of an operation.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1073,7 +1073,7 @@ names do not case-insensitively repeat their container shape names.</p>
 redundant.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1128,7 +1128,7 @@ data helps to maintain a predictable SLA and helps to prevent operational
 issues in the future.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1217,7 +1217,7 @@ contain the same two words, &quot;foo&quot; and &quot;bar&quot;.</p>
 that make them easier to work with in client tooling.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -1261,7 +1261,7 @@ default value. The risk associated with such members may be unacceptable
 for some services.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />

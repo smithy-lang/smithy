@@ -357,7 +357,7 @@ extension:</p>
 </div></div>
 <p>This extension supports the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -436,12 +436,12 @@ build scripts, Smithy models are discovered using only the
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.46.0&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
 <span class="w">    </span><span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
 <span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-model-internal-common:1.0.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -471,7 +471,7 @@ build that uses the &quot;external&quot; projection.</p>
 <span class="w">        </span><span class="n">mavenCentral</span><span class="p">()</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 
 <span class="w">        </span><span class="c1">// Take a dependency on the internal model package. This</span>
 <span class="w">        </span><span class="c1">// dependency *must* be a buildscript only dependency to ensure</span>
@@ -495,12 +495,12 @@ build that uses the &quot;external&quot; projection.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.46.0&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// Any dependencies that the projected model needs must be (re)declared</span>
 <span class="w">    </span><span class="c1">// here. For example, let&#39;s assume that the smithy-aws-traits package is</span>
 <span class="w">    </span><span class="c1">// needed in the projected model too.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.46.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -600,7 +600,7 @@ will be used to generate <a class="reference internal" href="build-config.html#p
 
 <span class="w">        </span><span class="c1">// This dependency is required in order to apply the &quot;openapi&quot;</span>
 <span class="w">        </span><span class="c1">// plugin in smithy-build.json</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.45.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.46.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
