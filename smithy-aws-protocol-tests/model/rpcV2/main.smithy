@@ -21,7 +21,8 @@ service RpcV2Protocol {
         RecursiveShapes,
         GreetingWithErrors,
         FractionalSeconds,
-        OperationWithDefaults
+        OperationWithDefaults,
+        SparseNullsOperation
     ]
 }
 
