@@ -15,7 +15,7 @@ apply OperationWithDefaults @httpRequestTests([
         appliesTo: "client"
         tags: ["defaults"]
         method: "POST"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -35,7 +35,7 @@ apply OperationWithDefaults @httpRequestTests([
         protocol: rpcv2Cbor
         method: "POST"
         bodyMediaType: "application/cbor"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -53,7 +53,7 @@ apply OperationWithDefaults @httpRequestTests([
         protocol: rpcv2Cbor
         method: "POST"
         bodyMediaType: "application/cbor"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -96,7 +96,7 @@ apply OperationWithDefaults @httpRequestTests([
         protocol: rpcv2Cbor
         method: "POST"
         bodyMediaType: "application/cbor"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -141,7 +141,7 @@ apply OperationWithDefaults @httpRequestTests([
         protocol: rpcv2Cbor
         method: "POST"
         bodyMediaType: "application/cbor"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -161,7 +161,7 @@ apply OperationWithDefaults @httpRequestTests([
         protocol: rpcv2Cbor
         method: "POST"
         bodyMediaType: "application/cbor"
-        uri: "/"
+        uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
