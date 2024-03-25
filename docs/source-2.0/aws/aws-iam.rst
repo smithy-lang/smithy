@@ -432,6 +432,11 @@ Each condition key structure supports the following members:
       - ``string``
       - A relative URL path that defines more information about the condition key
         within a set of IAM-related documentation.
+    * - required
+      - ``boolean``
+      - Defines whether a service resolved condition key is required. Not 
+        applicable to request resolved condition keys as the native 
+        @required trait must be used on the field directly.
 
 .. code-block:: smithy
 
@@ -448,7 +453,14 @@ Each condition key structure supports the following members:
             type: "String"
             documentation: "The Bar string"
             externalDocumentation: "http://example.com"
-        })
+        },
+        "myservice:Baz": {
+            type: "String"
+            documentation: "The Baz string"
+            externalDocumentation: "http://baz.com"
+            required: true
+        }
+    )
     service MyService {
         version: "2017-02-11"
         resources: [MyResource]
