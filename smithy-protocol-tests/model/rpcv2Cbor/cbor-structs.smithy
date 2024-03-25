@@ -209,6 +209,36 @@ use smithy.test#httpResponseTests
         },
         appliesTo: "server"
     },
+    {
+        id: "RpcV2CborExtraFieldsInTheBodyShouldBeSkippedByServers",
+        protocol: rpcv2Cbor,
+        documentation: """
+            The server should skip over additional fields that are not part of the structure. This allows a
+            client generated against a newer Smithy model to be able to communicate with a server that is
+            generated against an older Smithy model.""",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
+            "Content-Type": "application/cbor"
+        }
+        method: "POST",
+        bodyMediaType: "application/cbor",
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
+        body: "v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989rZXh0cmFPYmplY3S/c2luZGVmaW5pdGVMZW5ndGhNYXC/a3dpdGhBbkFycmF5nwECA///cWRlZmluaXRlTGVuZ3RoTWFwo3J3aXRoQURlZmluaXRlQXJyYXmDAQIDeB1hbmRTb21lSW5kZWZpbml0ZUxlbmd0aFN0cmluZ3gfdGhhdCBoYXMsIGJlZW4gY2h1bmtlZCBvbiBjb21tYWxub3JtYWxTdHJpbmdjZm9vanNob3J0VmFsdWUZJw9uc29tZU90aGVyRmllbGR2dGhpcyBzaG91bGQgYmUgc2tpcHBlZP9saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==",
+        params: {
+            byteValue: 5,
+            doubleValue: 1.889,
+            falseBooleanValue: false,
+            floatValue: 7.624,
+            integerValue: 256,
+            longValue: 9873,
+            shortValue: 9898,
+            stringValue: "simple",
+            trueBooleanValue: true,
+            blobValue: "foo"
+        },
+        appliesTo: "server"
+    }
 ])
 @httpResponseTests([
     {
@@ -336,7 +366,7 @@ use smithy.test#httpResponseTests
             floatValue: "-Infinity"
         }
     },
-        {
+    {
         id: "RpcV2CborSupportsUpcastingDataOnDeserialize",
         protocol: rpcv2Cbor,
         documentation: "Supports upcasting from a smaller byte representation of the same data type.",
@@ -356,6 +386,34 @@ use smithy.test#httpResponseTests
         },
         appliesTo: "client"
     },
+    {
+        id: "RpcV2CborExtraFieldsInTheBodyShouldBeSkippedByClients",
+        protocol: rpcv2Cbor,
+        documentation: """
+            The client should skip over additional fields that are not part of the structure. This allows a
+            client generated against an older Smithy model to be able to communicate with a server that is
+            generated against a newer Smithy model.""",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        }
+        code: 200,
+        bodyMediaType: "application/cbor",
+        body: "v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989rZXh0cmFPYmplY3S/c2luZGVmaW5pdGVMZW5ndGhNYXC/a3dpdGhBbkFycmF5nwECA///cWRlZmluaXRlTGVuZ3RoTWFwo3J3aXRoQURlZmluaXRlQXJyYXmDAQIDeB1hbmRTb21lSW5kZWZpbml0ZUxlbmd0aFN0cmluZ3gfdGhhdCBoYXMsIGJlZW4gY2h1bmtlZCBvbiBjb21tYWxub3JtYWxTdHJpbmdjZm9vanNob3J0VmFsdWUZJw9uc29tZU90aGVyRmllbGR2dGhpcyBzaG91bGQgYmUgc2tpcHBlZP9saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==",
+        params: {
+            byteValue: 5,
+            doubleValue: 1.889,
+            falseBooleanValue: false,
+            floatValue: 7.624,
+            integerValue: 256,
+            longValue: 9873,
+            shortValue: 9898,
+            stringValue: "simple",
+            trueBooleanValue: true,
+            blobValue: "foo"
+        },
+        appliesTo: "client"
+    }
 ])
 operation SimpleScalarProperties {
     input: SimpleScalarStructure,
