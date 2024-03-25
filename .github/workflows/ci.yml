@@ -2,9 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [main, smithy-rpc-v2]
+    branches: [main]
   pull_request:
-    branches: [main, smithy-rpc-v2]
+    branches: [main]
 
 jobs:
   build:
