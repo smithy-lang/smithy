@@ -65,17 +65,24 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol byteShape(ByteShape shape) {
-        return TraitCodegenUtils.fromClass(Byte.class);
+        return TraitCodegenUtils.fromClass(Byte.class).toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(byte.class))
+                .build();
     }
 
     @Override
     public Symbol shortShape(ShortShape shape) {
-        return TraitCodegenUtils.fromClass(Short.class);
+        return TraitCodegenUtils.fromClass(Short.class).toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(short.class))
+                .build();
     }
 
     @Override
     public Symbol integerShape(IntegerShape shape) {
-        return TraitCodegenUtils.fromClass(Integer.class);
+        return TraitCodegenUtils.fromClass(Integer.class)
+                .toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(int.class))
+                .build();
     }
 
     @Override
@@ -85,17 +92,25 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol longShape(LongShape shape) {
-        return TraitCodegenUtils.fromClass(Long.class);
+        return TraitCodegenUtils.fromClass(Long.class).toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(long.class))
+                .build();
     }
 
     @Override
     public Symbol floatShape(FloatShape shape) {
-        return TraitCodegenUtils.fromClass(Float.class);
+        return TraitCodegenUtils.fromClass(Float.class)
+                .toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(float.class))
+                .build();
     }
 
     @Override
     public Symbol doubleShape(DoubleShape shape) {
-        return TraitCodegenUtils.fromClass(Double.class);
+        return TraitCodegenUtils.fromClass(Double.class)
+                .toBuilder()
+                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(double.class))
+                .build();
     }
 
     @Override

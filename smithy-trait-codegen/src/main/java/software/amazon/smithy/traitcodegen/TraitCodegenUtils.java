@@ -42,10 +42,15 @@ public final class TraitCodegenUtils {
      * @return Symbol representing the provided class.
      */
     public static Symbol fromClass(Class<?> clazz) {
-        return Symbol.builder()
+        Symbol.Builder builder =  Symbol.builder()
                 .name(clazz.getSimpleName())
-                .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".")
-                .build();
+                .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".");
+
+        if (clazz.isPrimitive()) {
+            builder.putProperty(SymbolProperties.IS_PRIMITIVE, true);
+        }
+
+        return builder.build();
     }
 
     /**

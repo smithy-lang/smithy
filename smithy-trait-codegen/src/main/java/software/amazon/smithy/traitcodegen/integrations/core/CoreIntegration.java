@@ -71,15 +71,21 @@ public final class CoreIntegration implements TraitCodegenIntegration {
                 shape.getId().getNamespace(), settings.packageName());
         String name = TraitCodegenUtils.getDefaultTraitName(shape);
 
+        // If the base symbol has an unboxed version, use that as the base symbol
+        // instead of the Boxed version.
+        if (baseSymbol.getProperty(SymbolProperties.UNBOXED_SYMBOL).isPresent()) {
+            baseSymbol = baseSymbol.expectProperty(SymbolProperties.UNBOXED_SYMBOL, Symbol.class);
+        }
+
         // Maintain all existing properties, but change the namespace and name of the shape
         // and add the base symbol as a property. The references need to be set to empty list
         // to prevent writing as parameterized classes.
         return baseSymbol.toBuilder()
-                .name(name)
-                .references(ListUtils.of())
-                .namespace(relativeNamespace, ".")
-                .definitionFile("./" + relativeNamespace.replace(".", "/") + "/" + name + ".java")
-                .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
-                .build();
+            .name(name)
+            .references(ListUtils.of())
+            .namespace(relativeNamespace, ".")
+            .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
+            .definitionFile("./" + relativeNamespace.replace(".", "/") + "/" + name + ".java")
+            .build();
     }
 }

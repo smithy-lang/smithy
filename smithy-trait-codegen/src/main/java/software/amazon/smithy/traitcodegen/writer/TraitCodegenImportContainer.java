@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.traitcodegen.SymbolProperties;
 
 /**
  * Import container for Java imports.
@@ -27,6 +28,10 @@ final class TraitCodegenImportContainer implements ImportContainer {
 
     @Override
     public void importSymbol(Symbol symbol, String alias) {
+        // Do not import primitive types
+        if (symbol.getProperty(SymbolProperties.IS_PRIMITIVE).isPresent()) {
+            return;
+        }
         Set<Symbol> duplicates = imports.computeIfAbsent(symbol.getName(), sn -> new HashSet<>());
         duplicates.add(symbol);
     }
