@@ -41,9 +41,7 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
- * Generates a constructor that takes in a static builder class as input.
- *
- * <p>Static builders should be created using the {@link BuilderGenerator} generator.
+ * Generates a constructor for a type.
  */
 final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable {
     private final TraitCodegenWriter writer;
@@ -52,9 +50,9 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     private final SymbolProvider symbolProvider;
 
     ConstructorGenerator(TraitCodegenWriter writer,
-                                           Symbol symbol,
-                                           Shape shape,
-                                           SymbolProvider symbolProvider
+                         Symbol symbol,
+                         Shape shape,
+                         SymbolProvider symbolProvider
     ) {
         this.writer = writer;
         this.symbol = symbol;

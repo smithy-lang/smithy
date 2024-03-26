@@ -40,6 +40,9 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
 
+/**
+ * Responsible for mapping Smithy {@link Shape}'s to Java types.
+ */
 final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Symbol> implements SymbolProvider {
     private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 

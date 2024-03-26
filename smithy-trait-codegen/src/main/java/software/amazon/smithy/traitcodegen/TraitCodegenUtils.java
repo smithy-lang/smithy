@@ -19,7 +19,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Provides various utility methods for trait code generation.
+ * Provides utility methods for trait code generation.
  */
 @SmithyInternalApi
 public final class TraitCodegenUtils {

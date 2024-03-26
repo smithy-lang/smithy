@@ -8,12 +8,12 @@ package software.amazon.smithy.traitcodegen;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Generates Java code implementations of traits from a Smithy model.
  */
-@SmithyInternalApi
+@SmithyUnstableApi
 public final class TraitCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER = Logger.getLogger(TraitCodegenPlugin.class.getName());
 

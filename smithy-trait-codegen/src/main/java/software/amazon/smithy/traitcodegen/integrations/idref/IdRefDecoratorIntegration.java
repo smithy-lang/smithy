@@ -18,14 +18,16 @@ import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Handles the conversion of String members and String types with the {@code IdRef} trait to
+ * Handles the conversion of String members and String types with the {@link IdRefTrait} trait to
  * the {@link ShapeId} type.
  *
- * <p>This integration is run with a high priority to ensure down-stream integrations see a
- * {@code ShapeId} type instead of a string.
+ * <p>This integration is run with a high priority to ensure downstream integrations see a
+ * {@code ShapeId} type instead of a {@code string}.
  */
+@SmithyInternalApi
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class);
 
