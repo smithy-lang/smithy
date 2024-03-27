@@ -3,7 +3,9 @@
 ## 1.47.0 (2024-03-28)
 
 ### Features
-
+* Added the `smithy-trait-codegen` package. This package provides a new `trait-codegen` plugin that 
+  can be used to generate Java implementations of Smithy traits, removing the need to hand-write 
+  most trait implementations. ([#2074](https://github.com/smithy-lang/smithy/pull/2074))
 * Added the `@smithy.protocols#rpcv2Cbor` protocol trait. Smithy RPC v2 CBOR is an RPC-based protocol over HTTP that
   sends requests and responses with [CBOR](https://www.rfc-editor.org/rfc/rfc8949.html) payloads. This trait is 
   available in the new `smithy-protocol-traits` package, with protocol tests available in the new
