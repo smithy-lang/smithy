@@ -6,7 +6,6 @@
 package software.amazon.smithy.traitcodegen;
 
 import java.net.URL;
-import java.util.List;
 import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -14,7 +13,6 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.CaseUtils;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -31,7 +29,6 @@ public final class TraitCodegenUtils {
     public static final ReservedWords MEMBER_ESCAPER = new ReservedWordsBuilder()
             .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Member")
             .build();
-    private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 
     private TraitCodegenUtils() {}
 
@@ -66,7 +63,7 @@ public final class TraitCodegenUtils {
         // otherwise, just capitalize first letter to avoid messing with user-defined
         // capitalization.
         String unescaped;
-        if (DELIMITERS.stream().anyMatch(baseName::contains)) {
+        if (baseName.contains("_")) {
             unescaped = CaseUtils.toPascalCase(shape.getId().getName());
         } else {
             unescaped = StringUtils.capitalize(baseName);

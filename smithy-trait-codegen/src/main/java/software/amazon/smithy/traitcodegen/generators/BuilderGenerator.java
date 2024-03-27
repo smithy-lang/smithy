@@ -20,7 +20,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
@@ -92,10 +91,7 @@ final class BuilderGenerator implements Runnable {
 
     private void writeBuilderReturn() {
         // String list traits need a custom builder return
-        if (baseShape.isListShape() && !baseShape.hasTrait(UniqueItemsTrait.class)
-                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
-                baseShape.asListShape().get().getMember()))
-        ) {
+        if (TraitCodegenUtils.isJavaStringList(baseShape, symbolProvider)) {
             writer.write("$T(getValues(), getSourceLocation())", symbol);
         } else {
             writer.write("$T(this)", symbol);
@@ -122,7 +118,6 @@ final class BuilderGenerator implements Runnable {
 
             // Set all builder properties for any members in the shape
             if (baseShape.isListShape()) {
-                // TODO: handle more cleanly
                 writer.writeWithNoFormatting(".values(getValues());");
             } else {
                 Iterator<MemberShape> memberIterator = baseShape.members().iterator();

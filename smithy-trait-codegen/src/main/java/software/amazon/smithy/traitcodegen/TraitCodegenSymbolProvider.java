@@ -38,13 +38,11 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.utils.CaseUtils;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Responsible for mapping Smithy {@link Shape}'s to Java types.
  */
 final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Symbol> implements SymbolProvider {
-    private static final List<String> DELIMITERS = ListUtils.of("_", " ", "-");
 
     private final String packageNamespace;
     private final String smithyNamespace;
@@ -195,7 +193,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
                     .toUpperCase(Locale.ROOT);
         }
 
-        if (DELIMITERS.stream().anyMatch(member.getMemberName()::contains)) {
+        if (member.getMemberName().contains("_")) {
             return TraitCodegenUtils.MEMBER_ESCAPER.escape(CaseUtils.toCamelCase(member.getMemberName()));
         } else {
             return TraitCodegenUtils.MEMBER_ESCAPER.escape(member.getMemberName());
