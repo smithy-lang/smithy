@@ -1,0 +1,3 @@
+[ERROR] test.smithy.traitcodegen.lists#badInputTypes: Error creating trait `test.smithy.traitcodegen.lists#StringListTrait`: Expected array element 0 to be a string but found number. | Model
+[ERROR] test.smithy.traitcodegen.lists#badInputType: Error creating trait `test.smithy.traitcodegen.lists#StringListTrait`: Expected `test.smithy.traitcodegen.lists#badInputType` to be an array of strings. Found number. | Model
+[ERROR] test.smithy.traitcodegen.lists#inconsistentInputTypes: Error creating trait `test.smithy.traitcodegen.lists#StringListTrait`: Expected array element 1 to be a string but found number. | Model

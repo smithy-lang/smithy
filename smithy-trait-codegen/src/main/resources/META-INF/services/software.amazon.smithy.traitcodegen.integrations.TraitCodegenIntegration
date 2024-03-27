@@ -1,0 +1,4 @@
+software.amazon.smithy.traitcodegen.integrations.core.CoreIntegration
+software.amazon.smithy.traitcodegen.integrations.javadoc.JavaDocIntegration
+software.amazon.smithy.traitcodegen.integrations.idref.IdRefDecoratorIntegration
+software.amazon.smithy.traitcodegen.integrations.uniqueitems.UniqueItemDecoratorIntegration
