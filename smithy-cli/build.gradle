@@ -254,6 +254,7 @@ task integ(type: Test) {
 tasks["integ"].dependsOn("runtime")
 
 // ------ Setup Jreleaser -------
+tasks["assembleDist"].dependsOn("runtimeZip")
 tasks.assembleDist.doFirst {
     // This is a workaround for a weird behavior.
     // https://github.com/jreleaser/jreleaser/issues/1292
@@ -262,7 +263,6 @@ tasks.assembleDist.doFirst {
 
 jreleaser {
     gitRootSearch = true
-
 
     project {
         website = 'https://smithy.io'
