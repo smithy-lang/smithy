@@ -571,9 +571,6 @@ apply HttpPayloadWithUnion @httpRequestTests([
         method: "PUT",
         uri: "/HttpPayloadWithUnion",
         body: "",
-        headers: {
-            "Content-Type": "application/xml",
-        },
         params: {}
     }
 ])
