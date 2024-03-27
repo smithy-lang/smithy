@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,17 +34,18 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Contains extracted resource information.
  */
 public final class CfnResource implements ToSmithyBuilder<CfnResource> {
-    private final Map<String, CfnResourceProperty> propertyDefinitions = new HashMap<>();
-    private final Map<String, CfnResourceProperty> availableProperties = new HashMap<>();
-    private final Set<ShapeId> excludedProperties = new HashSet<>();
-    private final Set<String> primaryIdentifiers = new HashSet<>();
-    private final List<Set<String>> additionalIdentifiers = new ArrayList<>();
+    private final Map<String, CfnResourceProperty> propertyDefinitions;
+    private final Map<String, CfnResourceProperty> availableProperties;
+    private final Set<ShapeId> excludedProperties;
+    private final Set<String> primaryIdentifiers;
+    private final List<Set<String>> additionalIdentifiers;
 
     private CfnResource(Builder builder) {
-        propertyDefinitions.putAll(builder.propertyDefinitions);
-        excludedProperties.addAll(builder.excludedProperties);
-        primaryIdentifiers.addAll(builder.primaryIdentifiers);
-        additionalIdentifiers.addAll(builder.additionalIdentifiers);
+        Map<String, CfnResourceProperty> propertyDefinitions = new HashMap<>(builder.propertyDefinitions);
+        Map<String, CfnResourceProperty> availableProperties = new HashMap<>();
+        this.excludedProperties = Collections.unmodifiableSet(builder.excludedProperties);
+        this.primaryIdentifiers = Collections.unmodifiableSet(builder.primaryIdentifiers);
+        this.additionalIdentifiers = Collections.unmodifiableList(builder.additionalIdentifiers);
 
         // Pre-compute the properties available, cleaning up any exclusions.
         for (Map.Entry<String, CfnResourceProperty> propertyDefinition : propertyDefinitions.entrySet()) {
@@ -65,6 +67,9 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
                 }
             }
         }
+
+        this.propertyDefinitions = Collections.unmodifiableMap(propertyDefinitions);
+        this.availableProperties = Collections.unmodifiableMap(availableProperties);
     }
 
     public static Builder builder() {

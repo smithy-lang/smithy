@@ -129,7 +129,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
      * Annotation class for the processor.
      * <p>
      * Each implementation of {@code SmithyProcessor} should have a specific package-scoped annotation
-     * used for configuration. {@link #createPluginNode(Annotation)} maps this annotation to the
+     * used for configuration. {@link #createPluginNode(Annotation, String)} maps this annotation to the
      * configuration node for the plugin specified by {@link #getPluginName()}.
      *
      * @return class of the annotation used by this processor

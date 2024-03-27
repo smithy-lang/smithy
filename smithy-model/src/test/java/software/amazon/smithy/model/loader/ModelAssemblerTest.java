@@ -49,6 +49,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
@@ -1390,5 +1391,29 @@ public class ModelAssemblerTest {
                 containsInAnyOrder(PatternTrait.ID, RequiredTrait.ID, InternalTrait.ID));
         String actualPattern = shape.expectTrait(PatternTrait.class).getValue();
         assertThat(actualPattern, equalTo("baz"));
+    }
+
+    @Test
+    public void loadsShapesWhenThereAreUnresolvedMixins() {
+        String modelText = "$version: \"2\"\n"
+                       + "namespace com.foo\n"
+                       + "\n"
+                       + "string Foo\n"
+                       + "@mixin\n"
+                       + "structure Bar {}\n"
+                       + "structure Baz with [Unknown] {}\n";
+        ValidatedResult<Model> result = Model.assembler()
+                .addUnparsedModel("foo.smithy", modelText)
+                .assemble();
+
+        assertThat(result.isBroken(), is(true));
+        assertThat(result.getResult().isPresent(), is(true));
+        Set<ShapeId> fooShapes = result.getResult().get().getShapeIds().stream()
+                .filter(id -> id.getNamespace().equals("com.foo"))
+                .collect(Collectors.toSet());
+        assertThat(fooShapes, containsInAnyOrder(
+                ShapeId.from("com.foo#Foo"),
+                ShapeId.from("com.foo#Bar")
+        ));
     }
 }

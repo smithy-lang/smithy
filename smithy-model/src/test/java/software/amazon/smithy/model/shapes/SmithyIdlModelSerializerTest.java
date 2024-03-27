@@ -294,7 +294,7 @@ public class SmithyIdlModelSerializerTest {
 
         Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
                 .shapePlacer(s -> Paths.get(s.getSourceLocation().getFilename()).getFileName())
-                .inferInlineIOSuffixes(true)
+                .inferInlineIoSuffixes(true)
                 .build()
                 .serialize(model);
 

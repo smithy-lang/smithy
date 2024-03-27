@@ -5,12 +5,12 @@ Evolving Models
 This guide describes how to evolve Smithy models without breaking your
 customers.
 
-   .. note::
+.. note::
 
-       This page does not include every possible backwards or forwards
-       compatible change. For traits, the best place to look for compatibility
-       is the specification for the trait or its model definition as defined by
-       the :ref:`breaking changes property <trait-breaking-change-rules>`.
+   This page does not include every possible backwards or forwards
+   compatible change. For traits, the best place to look for compatibility
+   is the specification for the trait or its model definition as defined by
+   the :ref:`breaking changes property <trait-breaking-change-rules>`.
 
 Updating services
 =================

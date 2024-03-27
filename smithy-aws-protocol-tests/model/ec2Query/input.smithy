@@ -156,7 +156,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: "Action=SimpleInputParams&Version=2020-01-08&A=Hi",
+        body: "Action=SimpleInputParams&Version=2020-01-08&HasQueryName=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             HasQueryName: "Hi",
@@ -174,7 +174,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: "Action=SimpleInputParams&Version=2020-01-08&B=Hi",
+        body: "Action=SimpleInputParams&Version=2020-01-08&HasQueryAndXmlName=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             HasQueryAndXmlName: "Hi",
@@ -192,7 +192,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: "Action=SimpleInputParams&Version=2020-01-08&C=Hi",
+        body: "Action=SimpleInputParams&Version=2020-01-08&UsesXmlName=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             UsesXmlName: "Hi",
@@ -267,14 +267,14 @@ structure SimpleInputParamsInput {
     Qux: Blob,
     FooEnum: FooEnum,
 
-    @ec2QueryName("A")
+    @ec2QueryName("HasQueryName")
     HasQueryName: String,
 
-    @ec2QueryName("B")
-    @xmlName("IgnoreMe")
+    @ec2QueryName("HasQueryAndXmlName")
+    @xmlName("hasQueryAndXmlName")
     HasQueryAndXmlName: String,
 
-    @xmlName("c")
+    @xmlName("usesXmlName")
     UsesXmlName: String,
 }
 

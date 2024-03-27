@@ -194,4 +194,19 @@
         <Bug pattern="DE_MIGHT_IGNORE"/>
     </Match>
 
+    <!-- This checks for mutability, but it's full of false positives. Among other things, it doesn't
+         recognize SetUtils.copyOf and similar as providing immutable collections. -->
+    <Match>
+        <Bug code="EI,EI2"/>
+    </Match>
+
+    <!-- Throwing exceptions in a constructor potentially leaves it open to finalization attacks.
+         These likely aren't important in our cases since we rarely if ever handle the sort of
+         sensitive data and connections that are at risk. The best way to prevent this is by making
+         classes final (or sealed), which we do unless we can't. Making an empty, final finalize
+         method also works, but that method is being removed. -->
+    <Match>
+        <Bug code="CT"/>
+    </Match>
+
 </FindBugsFilter>

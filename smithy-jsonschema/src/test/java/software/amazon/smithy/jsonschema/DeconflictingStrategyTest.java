@@ -87,4 +87,14 @@ public class DeconflictingStrategyTest {
                     new JsonSchemaConverter.FilterPreludeUnit(false));
         });
     }
+
+    @Test
+    public void excludesPrivatePreludeShapes() {
+        StructureShape a = StructureShape.builder().id("com.foo#Severity").build();
+        Model model = Model.assembler().addShapes(a).assemble().unwrap();
+        PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
+        RefStrategy strategy = RefStrategy
+            .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+        assertThat(strategy.toPointer(a.getId()), equalTo("#/definitions/Severity"));
+    }
 }

@@ -368,9 +368,9 @@ operation DeleteObjectTagging {
             scopedConfig: {
                 client: {
                     region: "us-west-2",
-                },
-                s3: {
-                    addressing_style: "virtual",
+                    s3: {
+                        addressing_style: "virtual",
+                    },
                 },
             },
         },
@@ -398,9 +398,9 @@ operation DeleteObjectTagging {
             scopedConfig: {
                 client: {
                     region: "us-west-2",
-                },
-                s3: {
-                    addressing_style: "virtual",
+                    s3: {
+                        addressing_style: "virtual",
+                    },
                 },
             },
         },

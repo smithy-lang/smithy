@@ -14,6 +14,7 @@
  */
 
 import java.util.stream.Collectors
+import com.github.spotbugs.snom.Effort
 
 plugins {
     id "java-library"
@@ -21,11 +22,11 @@ plugins {
     id "signing"
     id "checkstyle"
     id "jacoco"
-    id "com.github.spotbugs" version "4.7.1"
+    id "com.github.spotbugs" version "6.0.8"
     id "io.codearte.nexus-staging" version "0.30.0"
-    id "me.champeau.jmh" version "0.7.1"
+    id "me.champeau.jmh" version "0.7.2"
     id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.jreleaser" version "1.10.0"
+    id "org.jreleaser" version "1.11.0"
 }
 
 ext {
@@ -251,7 +252,7 @@ subprojects {
     tasks["spotbugsTest"].enabled = false
     // Configure the bug filter for spotbugs.
     spotbugs {
-        effort = "max"
+        effort = Effort.MAX
         excludeFilter = file("${project.rootDir}/config/spotbugs/filter.xml")
     }
 }
