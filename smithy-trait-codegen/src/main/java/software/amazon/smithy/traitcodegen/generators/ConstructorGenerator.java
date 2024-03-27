@@ -302,7 +302,8 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
         private String getBuilderValue(MemberShape member) {
             // If the member requires a builderRef we need to copy that builder ref value rather than use it directly.
             if (symbolProvider.toSymbol(member).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER).isPresent()) {
-                return writer.format("builder.$L.copy()", symbolProvider.toMemberName(member));
+                return writer.format("builder.$1L.hasValue() ? builder.$1L.copy() : null",
+                        symbolProvider.toMemberName(member));
             } else {
                 return writer.format("builder.$L", symbolProvider.toMemberName(member));
             }

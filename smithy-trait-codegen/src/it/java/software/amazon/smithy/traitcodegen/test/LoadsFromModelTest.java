@@ -169,6 +169,19 @@ public class LoadsFromModelTest {
                                 "getFieldEOrEmpty", MapUtils.of("a", "one", "b", "two"),
                                 "getFieldF", Optional.of(new BigDecimal("100.01")),
                                 "getFieldG", Optional.of(new BigInteger("100")))),
+                Arguments.of("structures/struct-with-non-existent-collections.smithy", StructureTrait.class,
+                        MapUtils.of(
+                                "getFieldA", "first",
+                                "getFieldB", Optional.of(false),
+                                "getFieldC", Optional.of(NestedA.builder()
+                                        .fieldN("nested")
+                                        .fieldQ(true)
+                                        .fieldZ(NestedB.A)
+                                        .build()),
+                                "getFieldD", Optional.empty()),
+                                "getFieldDOrEmpty", null,
+                                "getFieldE", Optional.empty(),
+                                "getFieldEOrEmpty", null),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy", StructWithNestedTimestampsTrait.class,
                         MapUtils.of("getBaseTime", Instant.parse("1985-04-12T23:20:50.52Z"),
