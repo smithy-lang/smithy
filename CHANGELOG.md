@@ -1,5 +1,26 @@
 # Smithy Changelog
 
+## 1.47.0 (2024-03-28)
+
+### Features
+* Added the `smithy-trait-codegen` package. This package provides a new `trait-codegen` plugin that 
+  can be used to generate Java implementations of Smithy traits, removing the need to hand-write 
+  most trait implementations. ([#2074](https://github.com/smithy-lang/smithy/pull/2074))
+* Added the `@smithy.protocols#rpcv2Cbor` protocol trait. Smithy RPC v2 CBOR is an RPC-based protocol over HTTP that
+  sends requests and responses with [CBOR](https://www.rfc-editor.org/rfc/rfc8949.html) payloads. This trait is 
+  available in the new `smithy-protocol-traits` package, with protocol tests available in the new
+  `smithy-protocol-tests` package. ([#2212](https://github.com/smithy-lang/smithy/pull/2212))
+* Updated several protocol tests around the `@sparse` trait to ease implementation. ([#2206](https://github.com/smithy-lang/smithy/pull/2206)) 
+* Remove content-type from no XML body protocol test. ([#2218](https://github.com/smithy-lang/smithy/pull/2218))
+
+### Bug Fixes
+
+* Fixed a bug where all shapes would fail to load in a file if a mixin was missing. ([#2214](https://github.com/smithy-lang/smithy/pull/2214))
+
+### Documentation
+
+* Clarified HTTP protocol compliance test `params` field docs. ([#2202](https://github.com/smithy-lang/smithy/pull/2202))
+
 ## 1.46.0 (2024-03-19)
 
 ### Features
