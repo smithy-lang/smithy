@@ -21,7 +21,7 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Handles the conversion of String members and String types with the {@link IdRefTrait} trait to
+ * Handles the conversion of String members and String types with the {@link IdRefTrait} trait map to
  * the {@link ShapeId} type.
  *
  * <p>This integration is run with a high priority to ensure downstream integrations see a

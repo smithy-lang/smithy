@@ -190,7 +190,7 @@ final class TraitCodegen {
                 .filter(shape -> !shape.getId().getNamespace().startsWith(settings.smithyNamespace()))
                 .collect(Collectors.toSet());
         if (!invalidNested.isEmpty()) {
-            throw new RuntimeException("Shapes: " + invalidNested + " are within the trait closure but are not within"
+            throw new RuntimeException("Shapes: " + invalidNested + " are within the trait closure but are not within "
                     + "the specified namespace `" + settings.smithyNamespace() + "`.");
         }
         traitClosure.addAll(nested);
