@@ -9,6 +9,7 @@
   available in the new `smithy-protocol-traits` package, with protocol tests available in the new
   `smithy-protocol-tests` package. ([#2212](https://github.com/smithy-lang/smithy/pull/2212))
 * Updated several protocol tests around the `@sparse` trait to ease implementation. ([#2206](https://github.com/smithy-lang/smithy/pull/2206)) 
+* Remove content-type from no XML body protocol test. ([#2218](https://github.com/smithy-lang/smithy/pull/2218))
 
 ### Bug Fixes
 
