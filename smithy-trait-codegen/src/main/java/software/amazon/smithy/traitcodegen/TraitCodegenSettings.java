@@ -80,7 +80,7 @@ public final class TraitCodegenSettings {
                         .getElementsAs(el -> el.expectStringNode().getValue()),
                 node.getArrayMember("excludeTags")
                         .map(n -> n.getElementsAs(el -> el.expectStringNode().getValue()))
-                        .orElse(new ArrayList<>())
+                        .orElse(Collections.emptyList())
         );
     }
 
