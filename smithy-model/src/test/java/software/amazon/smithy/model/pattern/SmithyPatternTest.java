@@ -130,32 +130,6 @@ public class SmithyPatternTest {
     }
 
     @Test
-    public void noMoreThanOneGreedyLabel() {
-        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
-            String target = "/{foo+}/{baz+}";
-            SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
-        });
-
-        assertThat(thrown.getMessage(), containsString("At most one greedy label segment may exist in a pattern"));
-    }
-
-    @Test
-    public void greedyLabelsMustBeLastLabelInPattern() {
-        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
-            String target = "/{foo+}/{baz}";
-            SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
-        });
-
-        assertThat(thrown.getMessage(), containsString("A greedy label must be the last label in its pattern"));
-    }
-
-    @Test
     public void noEmptyLabels() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/a/{}";

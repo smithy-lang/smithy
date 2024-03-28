@@ -1,0 +1,1 @@
+[DANGER] smithy.example#OperationOne: At most one greedy label segment may exist in a pattern: /example/{greedyOne+}/bar/{greedyTwo+} | HttpUriGreedyLabel

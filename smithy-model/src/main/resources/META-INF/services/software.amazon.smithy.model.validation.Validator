@@ -19,6 +19,7 @@ software.amazon.smithy.model.validation.validators.HttpPrefixHeadersTraitValidat
 software.amazon.smithy.model.validation.validators.HttpQueryParamsTraitValidator
 software.amazon.smithy.model.validation.validators.HttpQueryTraitValidator
 software.amazon.smithy.model.validation.validators.HttpResponseCodeSemanticsValidator
+software.amazon.smithy.model.validation.validators.HttpUriGreedyLabelValidator
 software.amazon.smithy.model.validation.validators.HttpUriConflictValidator
 software.amazon.smithy.model.validation.validators.HttpUriFormatValidator
 software.amazon.smithy.model.validation.validators.JsonNameValidator

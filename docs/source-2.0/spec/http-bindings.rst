@@ -351,8 +351,18 @@ Greedy labels
 
 A :dfn:`greedy label` is a label suffixed with the ``+`` qualifier that can be
 used to match more than one path segment. At most, one greedy label may exist
-in any path pattern, and if present, it MUST be the last label in the pattern.
+in any path pattern, and if present, it SHOULD be the last label in the pattern.
 Greedy labels MUST be bound to a string shape.
+
+.. important::
+
+    Servers implementing :ref:`Specificity Routing
+    <specificity-routing>` MAY support more than one greedy label and
+    not require it to be the last label in the pattern. The validation
+    events are therefore emitted as ``DANGER`` and can
+    suppressed. Most servers don't support having more than one greedy
+    label. Make sure that your server supports it and test that works
+    as expected before suppressing those events.
 
 Given a pattern of ``/my/uri/{label+}`` and an endpoint of ``http://yourhost``:
 
@@ -420,10 +430,9 @@ pattern of ``/prefix/{label+}/suffix`` and an endpoint of ``https://yourhost``:
 Pattern Validation and Conflict Avoidance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Smithy validates the patterns within a service against each other to ensure
-that no two patterns conflict with each other for the same HTTP method. To
-prevent ambiguity when matching requests for different operations, the
-following rules are in place:
+Smithy validates the patterns within a service against each other to
+ensure that no two patterns conflict with each other for the same HTTP
+method. The following rules are in place:
 
 #. All labels MUST be delimited by '/' characters.
 
@@ -435,12 +444,12 @@ following rules are in place:
 #. At most, one greedy label MAY exist per pattern.
 
    - ``/{foo}/{bar+}`` is legal
-   - ``/{foo+}/{bar+}`` is illegal
+   - ``/{foo+}/bar/{baz+}`` is illegal
 
-#. If present, a greedy pattern MUST be the last label in a pattern.
+#. If present, a greedy pattern SHOULD be the last label in a pattern.
 
    - ``/{foo}/{bar+}`` is legal
-   - ``/{foo+}/{bar}`` is illegal
+   - ``/{foo+}/bar/{baz}`` is illegal
 
 #. Patterns MUST NOT be equivalent if they share a host.
 
@@ -448,28 +457,125 @@ following rules are in place:
    - Pattern ``/foo/{bar}`` and ``/foo/{baz}`` conflict regardless of any
      constraint traits on the label members.
 
-#. A label and a literal SHOULD NOT both occupy the same segment in patterns
-   which are equivalent to that point if they share a host.
+#. A label and a literal MAY both occupy the same segment in patterns
+   that are equivalent to that point if they share a host. Server
+   implementations MUST route ambiguous requests to the operation with
+   the most specific URI path (see :ref:`Specificity Routing <specificity-routing>`.)
 
-   - ``/foo/bar/{baz}`` and ``/foo/baz/bam`` can coexist.
-   - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist unless pattern
-     traits prevent ``{baz}`` from evaluating to ``bar`` because the label
-     occupies the same segment of another pattern with the same prefix.
+.. _specificity-routing:
 
-#. A query string literal with no value and a query string literal with an
-   empty value are considered equivalent. For example, ``/foo?baz`` and
-   ``/foo?baz=`` are considered the same route.
+Specificity Routing
+~~~~~~~~~~~~~~~~~~~
 
-#. Patterns MAY conflict if the operations use different hosts. Different hosts
-   can be configured using the :ref:`endpoint-trait`'s ``hostPrefix`` property.
+Specificity routing allows Smithy compliant servers to support
+ambiguous URI patterns and resolve requests at runtime. The algorithm
+chooses the *best-ranked* match using the specificity of the path and
+literal query parameters when present. The core of the algorithm can
+be loosely defined as “a path with a non-label segment is considered
+more specific than one with a label segment in the same
+position. Similarly a segment with a non-greedy label is considered
+more specific than a segment with a greedy label segment in the same
+position.”
 
-   - ``/foo/bar`` and ``/foo/{baz}/bam`` can coexist if one operation has no
-     endpoint trait and the other specifies ``foo.`` as the ``hostPrefix``.
-   - ``/foo/bar`` and ``/foo/{baz}/bam`` can coexist if one operation specifies
-     ``foo.`` as the ``hostPrefix`` and the other specifies ``bar.`` as the
-     ``hostPrefix``.
+The following algorithm is used to compare two paths
 
+Given two ambiguous URI patterns ``A`` and ``B`` with segments ``[A0,
+…, An]`` and ``[B0, …, Bm]`` with query string literals ``[AQ0, …,
+AQp]`` and ``[BQ0, …, BQq]`` (with both ``p`` and ``q`` possibly zero,
+i.e., without query string literals), the following steps are taken to
+compare them, for each index ``x`` from ``0`` to ``min(n, m)``
 
+#. If ``A[x]`` and ``B[x]`` are both literals then continue (the
+   literal values have to be equal otherwise the patterns are not
+   ambiguous)
+
+#. If ``A[x]`` is a literal and ``B[x]`` is a label then ``A`` is more
+   specific than ``B``,
+
+#. If ``A[x]`` is a non-greedy label and ``B[x]`` is a greedy label
+   then ``A`` is more specific than ``B``
+
+#. If ``n > m`` then ``A`` is more specific than ``B``
+
+#. if ``p > q`` then ``A`` is more specific than ``B``
+
+**Routing Example 1**
+
+Given a service with the following URI patterns for the same method
+
+#. ``/abc/bcd/{xyz}``
+#. ``/abc/{xyz}/cde`` 
+#. ``/{xyz}/bcd/cde``
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Request URI
+      - Pattern Matched
+      - Reason
+    * - ``/abc/bcd/cde``
+      - Pattern 1
+      - Ambiguous with patterns 2 and 3. The literal ``bcd`` is more
+        specific than the label ``{xyz}``
+    * - ``/abc/foo/cde`` 
+      - Pattern 2 
+      - Ambiguous with pattern 3. The literal segment ``abc`` is more
+        specific than the label ``{xyz}``.
+    * - ``/foo/bcd/cde`` 
+      - Pattern 3
+      - Non-ambiguous.
+
+**Routing Example 2**
+
+Given a service with the following URI patterns for the same method
+
+#. ``/abc/bcd/{xyz}``
+#. ``/abc/{xyz}/cde``
+#. ``/{xyz}/bcd/cde?def=efg``
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Request URI
+      - Pattern Matched
+      - Reason
+    * - ``/abc/bcd/cde?def=efg``
+      - Pattern 1
+      - Ambiguous with numbers 2 and 3. The literal segment ``abc`` is
+        more specific than the label ``{xyz}``. Notice that path
+        specificity wins over query string literals
+    * - ``/abc/foo/cde?def=efg``
+      - Pattern 2 
+      - Ambiguous with pattern 3. The literal segment ``abc`` is more
+        specific than the label ``{xyz}``.
+    * - ``/foo/bcd/cde?def=efg``
+      - Pattern 3
+      - Non-ambiguous.
+
+**Routing Example 3**
+
+Given a service with the following URI patterns for the same method
+
+#. ``/abc/{xyz+}/bcd``
+#. ``/abc/{xyz+}``
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Request URI
+      - Pattern Matched
+      - Reason
+    * - ``/abc/foo/bar/bcd``
+      - Pattern 1
+      - Ambiguous with numbers 2. The literal segment ``bcd`` is
+        more specific than a non-segment.
+    * - ``/abc/foo/bar/baz``
+      - Pattern 2 
+      - Non-ambiguous.
+   
 .. smithy-trait:: smithy.api#httpError
 .. _httpError-trait:
 

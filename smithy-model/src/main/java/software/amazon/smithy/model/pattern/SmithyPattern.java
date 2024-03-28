@@ -54,9 +54,7 @@ public class SmithyPattern {
         segments = Objects.requireNonNull(builder.segments);
 
         checkForDuplicateLabels();
-        if (builder.allowsGreedyLabels) {
-            checkForLabelsAfterGreedyLabels();
-        } else if (segments.stream().anyMatch(Segment::isGreedyLabel)) {
+        if (!builder.allowsGreedyLabels && segments.stream().anyMatch(Segment::isGreedyLabel)) {
             throw new InvalidPatternException("Pattern must not contain a greedy label. Found " + pattern);
         }
     }
@@ -165,25 +163,6 @@ public class SmithyPattern {
                         segment.getContent(), pattern));
             }
         });
-    }
-
-    private void checkForLabelsAfterGreedyLabels() {
-        // Make sure at most one greedy label exists, and that it is the
-        // last label segment.
-        for (int i = 0; i < segments.size(); i++) {
-            Segment s = segments.get(i);
-            if (s.isGreedyLabel()) {
-                for (int j = i + 1; j < segments.size(); j++) {
-                    if (segments.get(j).isGreedyLabel()) {
-                        throw new InvalidPatternException(
-                                "At most one greedy label segment may exist in a pattern: " + pattern);
-                    } else if (segments.get(j).isLabel()) {
-                        throw new InvalidPatternException(
-                                "A greedy label must be the last label in its pattern: " + pattern);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -310,10 +289,24 @@ public class SmithyPattern {
         }
 
         /**
-         * @return True if the segment is a label.
+         * @return True if the segment is a non-label literal.
+         */
+        public boolean isLiteral() {
+            return segmentType == Type.LITERAL;
+        }
+
+        /**
+         * @return True if the segment is a label regardless of whether is greedy or not.
          */
         public boolean isLabel() {
             return segmentType != Type.LITERAL;
+        }
+
+        /**
+         * @return True if the segment is a non-greedy label.
+         */
+        public boolean isNonGreedyLabel() {
+            return segmentType == Type.LABEL;
         }
 
         /**
