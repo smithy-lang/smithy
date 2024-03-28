@@ -362,7 +362,7 @@ input parameters.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures
 that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -508,8 +508,10 @@ to parse and validate the expected data against generated data.</td>
 </tr>
 <tr class="row-odd"><td>params</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td><p class="first">Defines the input parameters used to generate the HTTP request. These
-parameters MUST be compatible with the input of the operation.</p>
+<td><p class="first">For clients, defines the input parameters used to generate the HTTP
+request. For servers, defines the input parameters extracted from the
+HTTP request. These parameters MUST be compatible with the input of the
+operation.</p>
 <p class="last">Parameter values that contain binary data MUST be defined using
 values that can be represented in plain text (for example, use &quot;foo&quot;
 and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
@@ -632,7 +634,7 @@ of output or error parameters.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>
 structures that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -706,9 +708,10 @@ base64 encoded.</td>
 </tr>
 <tr class="row-odd"><td>params</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td><p class="first">Defines the output or error parameters used to generate the HTTP
-response. These parameters MUST be compatible with the targeted
-operation's output or the targeted error structure.</p>
+<td><p class="first">For clients, defines the output or error parameters extracted from the
+HTTP response. For servers, defines the output or error parameters used
+to generate the HTTP response. These parameters MUST be compatible with
+the targeted operation's output or the targeted error structure.</p>
 <p class="last">Parameter values that contain binary data MUST be defined using
 values that can be represented in plain text (for example, use &quot;foo&quot;
 and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
@@ -890,7 +893,7 @@ request processing.</dd>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is a list of
 <code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures that support the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -953,7 +956,7 @@ in length. One test permutation is generated for each index the
 parameter lists. For example, parameters with 5 values for each key
 will generate 5 tests in total.</p>
 <p>Parameter values are substituted using the conventions described by
-the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.46.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.47.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
 parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
 formatters.</p>
 <div class="last admonition note">
@@ -972,7 +975,7 @@ interpreted as substitution expressions by the code generator.</p>
 <div class="section" id="httpmalformedrequestdefinition">
 <span id="httpmalformedrequestdefinition-struct"></span><h3>HttpMalformedRequestDefinition<a class="headerlink" href="#httpmalformedrequestdefinition" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1038,7 +1041,7 @@ base64 encoding the data (for example, use &quot;Zm9vCg==&quot; and not &quot;fo
 <div class="section" id="httpmalformedresponsedefinition">
 <span id="httpmalformedresponsedefinition-struct"></span><h3>HttpMalformedResponseDefinition<a class="headerlink" href="#httpmalformedresponsedefinition" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1075,7 +1078,7 @@ value differs from the serialized response value.</p>
 <div class="section" id="httpmalformedresponsebodydefinition">
 <span id="httpmalformedresponsebodydefinition-struct"></span><h4>HttpMalformedResponseBodyDefinition<a class="headerlink" href="#httpmalformedresponsebodydefinition" title="Permalink to this heading">#</a></h4>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -1107,7 +1110,7 @@ base64 encoded.</td>
 <p>A union describing the assertion to run against the response body. As it is a
 union, exactly one member must be set.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
