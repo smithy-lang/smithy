@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
@@ -39,6 +41,7 @@ import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -129,6 +132,29 @@ public class OpenApiJsonSchemaMapperTest {
                 .convertShape(shape);
 
         assertThat(document.getRootSchema().getExtension("deprecated").get(), equalTo(Node.from(true)));
+    }
+
+    @Test
+    public void supportsDeprecatedTraitOnAMember() {
+        StringShape string = StringShape.builder().id("smithy.api#String").build();
+        StructureShape shape = StructureShape.builder()
+        .id(ShapeId.from("a.b#C"))
+        .addMember(
+                MemberShape.builder().id(ShapeId.from("a.b#C$member"))
+                .target(string.getId())
+                .addTrait(DeprecatedTrait.builder().message(
+                        "I'm deprecated"
+                ).since("sinceVersion").build()).build()
+        ).build();
+        Model model = Model.builder().addShapes(shape, string).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .build()
+                .convertShape(shape);
+
+        Schema memberSchema =  document.getRootSchema().getProperties().get("member");
+        assertThat(memberSchema.getProperty("deprecated"), equalTo(Optional.of(Node.from(true))));
     }
 
     @Test
