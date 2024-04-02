@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -75,12 +76,12 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
 
     public String getDeprecatedDescription(ShapeType shapeType) {
         String shapeTypeString = shapeType == ShapeType.OPERATION ? "operation" : "shape";
-        if (getSince().isEmpty()) {
-            return getMessage().orElse("This " + shapeTypeString + " is deprecated.");
-        } else if (getMessage().isEmpty()) {
-            return "This " + shapeTypeString + " is deprecated since " + getSince().get();
+        if (Objects.isNull(this.since)) {
+            return this.message != null ? this.message : "This " + shapeTypeString + " is deprecated.";
+        } else if (Objects.isNull(this.message)) {
+            return "This " + shapeTypeString + " is deprecated since " + this.since;
         } else {
-            return "This " + shapeTypeString + " is deprecated since " + getSince().get() + ": " + getMessage().get();
+            return "This " + shapeTypeString + " is deprecated since " + this.since + ": " + this.message;
         }
     }
 
