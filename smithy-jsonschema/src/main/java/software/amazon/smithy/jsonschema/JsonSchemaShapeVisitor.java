@@ -18,6 +18,7 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -43,6 +44,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
@@ -274,9 +276,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the updated schema builder.
      */
     private Schema.Builder updateBuilder(Shape shape, Schema.Builder builder) {
-        shape.getMemberTrait(model, DocumentationTrait.class)
-                .map(DocumentationTrait::getValue)
-                .ifPresent(builder::description);
+        descriptionMessage(shape).ifPresent(builder::description);
 
         shape.getTrait(TitleTrait.class)
                 .map(TitleTrait::getValue)
@@ -330,6 +330,14 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         return builder;
+    }
+
+    private Optional<String> descriptionMessage(Shape shape) {
+        String deprecatedMessageSuffix = shape.getTrait(DeprecatedTrait.class)
+                .map(deprecatedTrait -> deprecatedTrait.getDeprecatedDescription(shape.getType()))
+                .map(message -> "\n" + message).orElse("");
+        return shape.getTrait(DocumentationTrait.class).map(DocumentationTrait::getValue)
+                .map(documentation -> documentation + deprecatedMessageSuffix);
     }
 
     /**

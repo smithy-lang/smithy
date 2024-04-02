@@ -19,6 +19,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -70,6 +71,17 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
      */
     public Optional<String> getMessage() {
         return Optional.ofNullable(message);
+    }
+
+    public String getDeprecatedDescription(ShapeType shapeType) {
+        String shapeTypeString = shapeType == ShapeType.OPERATION ? "operation" : "shape";
+        if (getSince().isEmpty()) {
+            return getMessage().orElse("This " + shapeTypeString + " is deprecated.");
+        } else if (getMessage().isEmpty()) {
+            return "This " + shapeTypeString + " is deprecated since " + getSince().get();
+        } else {
+            return "This " + shapeTypeString + " is deprecated since " + getSince().get() + ": " + getMessage().get();
+        }
     }
 
     @Override

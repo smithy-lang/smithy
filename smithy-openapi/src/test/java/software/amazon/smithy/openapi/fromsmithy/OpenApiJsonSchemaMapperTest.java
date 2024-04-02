@@ -43,6 +43,7 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -129,6 +130,26 @@ public class OpenApiJsonSchemaMapperTest {
                 .convertShape(shape);
 
         assertThat(document.getRootSchema().getExtension("deprecated").get(), equalTo(Node.from(true)));
+    }
+
+    @Test
+    public void appendsDeprecatedInfoInDescription() {
+        String message = "Use a.b#D instead.";
+        String since = "2020-01-01";
+        IntegerShape shape = IntegerShape.builder()
+                .id("a.b#C")
+                .addTrait(DeprecatedTrait.builder().message(message).since(since).build())
+                .addTrait(new DocumentationTrait("This is an integer."))
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .build()
+                .convertShape(shape);
+
+        String expected = "This is an integer.\nThis shape is deprecated since 2020-01-01: Use a.b#D instead.";
+        assertThat(document.getRootSchema().getDescription().get(), equalTo(expected));
     }
 
     @Test
