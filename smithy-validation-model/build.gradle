@@ -29,3 +29,7 @@ dependencies {
 }
 
 tasks["sourcesJar"].dependsOn("smithyJarStaging")
+
+smithy {
+    smithyBuildConfigs.set(project.files())
+}
