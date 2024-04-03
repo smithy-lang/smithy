@@ -19,7 +19,8 @@
   },
   "properties": {
     "FooDeprecatedMutableProperty": {
-      "type": "string"
+      "type": "string",
+      "deprecated": true
     },
     "FooId": {
       "type": "string"
