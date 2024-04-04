@@ -109,5 +109,5 @@ def setup(sphinx):
 # rewrites __smithy_gradle_version__ to the latest version found on Github
 def source_read_handler(app, docname, source):
     source[0] = source[0].replace(smithy_version_placeholder, smithy_version)
-    source[0] = source[0].replace(smithy_gradle_version_placeholder, smithy_typescript_codegen_version)
+    source[0] = source[0].replace(smithy_gradle_version_placeholder, smithy_gradle_plugin_version)
     source[0] = source[0].replace(smithy_typescript_version_placeholder, smithy_typescript_codegen_version)
