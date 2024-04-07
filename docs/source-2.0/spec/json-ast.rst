@@ -361,7 +361,7 @@ The following example defines an :ref:`enum`:
                 "type": "enum",
                 "members": {
                     "FOO": {
-                        "target": "smithy.api#Unit"
+                        "target": "smithy.api#Unit",
                         "traits": {
                             "smithy.api#enumValue": "foo"
                         }
@@ -382,7 +382,7 @@ The following example defines an :ref:`intEnum`:
                 "type": "intEnum",
                 "members": {
                     "FOO": {
-                        "target": "smithy.api#Unit"
+                        "target": "smithy.api#Unit",
                         "traits": {
                             "smithy.api#enumValue": 1
                         }
