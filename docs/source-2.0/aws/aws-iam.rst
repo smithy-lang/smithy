@@ -435,7 +435,7 @@ Each condition key structure supports the following members:
     * - required
       - ``boolean``
       - Defines whether a service resolved condition key is required. Not 
-        applicable to request resolved condition keys as the native 
+        applicable to request resolved condition keys, as the native 
         @required trait must be used on the field directly.
 
 .. code-block:: smithy
