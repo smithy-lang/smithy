@@ -17,7 +17,6 @@ package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Objects;
 import java.util.Optional;
-
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -100,10 +99,12 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     }
 
     /**
-     * Whether a service resolved condition key is required
-     * Not applicable to request resolved condition key as the native @required trait must be used
+     * Whether a service resolved condition key is required.
+     * Not applicable to request resolved condition key as the native @required trait must be used.
      **/
-    public Boolean isRequired() { return required; }
+    public Boolean isRequired() {
+        return required;
+    }
 
     @Override
     public SmithyBuilder<ConditionKeyDefinition> toBuilder() {
