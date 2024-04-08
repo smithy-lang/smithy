@@ -31,8 +31,8 @@ public class DefineConditionKeysTraitTest {
         Shape shape = result.expectShape(ShapeId.from("smithy.example#MyService"));
         DefineConditionKeysTrait trait = shape.expectTrait(DefineConditionKeysTrait.class);
         assertEquals(3,trait.getConditionKeys().size());
-        assertFalse(trait.getConditionKey("myservice:Bar").get().getRequired().get());
-        assertFalse(trait.getConditionKey("myservice:Foo").get().getRequired().get());
-        assertTrue(trait.getConditionKey("myservice:Baz").get().getRequired().get());
+        assertFalse(trait.getConditionKey("myservice:Bar").get().isRequired());
+        assertFalse(trait.getConditionKey("myservice:Foo").get().isRequired());
+        assertTrue(trait.getConditionKey("myservice:Baz").get().isRequired());
     }
 }

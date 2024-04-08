@@ -103,7 +103,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         return Optional.ofNullable(relativeDocumentation);
     }
 
-    public Optional<Boolean> getRequired() { return Optional.ofNullable(required); }
+    public Boolean isRequired() { return required; }
 
     @Override
     public SmithyBuilder<ConditionKeyDefinition> toBuilder() {
@@ -122,7 +122,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
                 .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
                 .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
-                .withOptionalMember(REQUIRED, getRequired().map(Node::from))
+                .withMember(REQUIRED, isRequired())
                 .build();
     }
 
