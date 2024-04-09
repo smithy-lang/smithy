@@ -682,7 +682,7 @@ apply NestedXmlMapWithXmlName @httpResponseTests([
         documentation: "Serializes nested XML maps in responses that have xmlName on members"
         protocol: restXml,
         code: 200,
-        body:"""
+        body: """
             <NestedXmlMapWithXmlNameResponse>
                 <nestedXmlMapWithXmlName>
                     <entry>
