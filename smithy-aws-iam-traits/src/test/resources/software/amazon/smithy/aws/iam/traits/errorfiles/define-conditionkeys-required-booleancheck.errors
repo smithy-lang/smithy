@@ -1,2 +1,0 @@
-[DANGER] -: Syntactic shape ID `trues` does not resolve to a valid shape ID: `smithy.example#trues`. Did you mean to quote this string? Are you missing a model file? | SyntacticShapeIdTarget
-[ERROR] smithy.example#MyService: Error creating trait `aws.iam#defineConditionKeys`: Expected `required` to be a boolean; found string | Model
