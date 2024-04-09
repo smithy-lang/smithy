@@ -81,7 +81,9 @@ service RestJson {
         JsonIntEnums,
         RecursiveShapes,
         JsonLists,
+        SparseJsonLists,
         JsonMaps,
+        SparseJsonMaps,
         JsonBlobs,
 
         // Documents

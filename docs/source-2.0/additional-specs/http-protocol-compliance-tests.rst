@@ -208,8 +208,10 @@ that support the following members:
         to parse and validate the expected data against generated data.
     * - params
       - ``document``
-      - Defines the input parameters used to generate the HTTP request. These
-        parameters MUST be compatible with the input of the operation.
+      - For clients, defines the input parameters used to generate the HTTP
+        request. For servers, defines the input parameters extracted from the
+        HTTP request. These parameters MUST be compatible with the input of the
+        operation.
 
         Parameter values that contain binary data MUST be defined using
         values that can be represented in plain text (for example, use "foo"
@@ -393,9 +395,10 @@ structures that support the following members:
         base64 encoded.
     * - params
       - ``document``
-      - Defines the output or error parameters used to generate the HTTP
-        response. These parameters MUST be compatible with the targeted
-        operation's output or the targeted error structure.
+      - For clients, defines the output or error parameters extracted from the
+        HTTP response. For servers, defines the output or error parameters used
+        to generate the HTTP response. These parameters MUST be compatible with
+        the targeted operation's output or the targeted error structure.
 
         Parameter values that contain binary data MUST be defined using
         values that can be represented in plain text (for example, use "foo"

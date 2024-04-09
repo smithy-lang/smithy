@@ -15,6 +15,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     waiters
     mqtt
     rules-engine/index
+    protocols/index
 
 .. seealso::
 

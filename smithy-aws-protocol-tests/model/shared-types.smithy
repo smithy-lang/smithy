@@ -55,6 +55,10 @@ list NestedStringList {
     member: StringList,
 }
 
+list ShortList {
+    member: Short,
+}
+
 list IntegerList {
     member: Integer,
 }
@@ -62,6 +66,10 @@ list IntegerList {
 @uniqueItems
 list IntegerSet {
     member: Integer,
+}
+
+list FloatList {
+    member: Float,
 }
 
 list DoubleList {
@@ -81,9 +89,17 @@ list TimestampList {
     member: Timestamp,
 }
 
+list BlobList {
+    member: Blob,
+}
+
 @uniqueItems
 list BlobSet {
     member: Blob,
+}
+
+list ByteList {
+    member: Byte,
 }
 
 @uniqueItems
@@ -96,6 +112,11 @@ list ShortSet {
 }
 
 @uniqueItems
+list LongList {
+    member: Long,
+}
+
+@uniqueItems
 list LongSet {
     member: Long,
 }
@@ -103,6 +124,10 @@ list LongSet {
 @uniqueItems
 list TimestampSet {
     member: Timestamp,
+}
+
+list DateTimeList {
+    member: DateTime,
 }
 
 @uniqueItems
@@ -192,10 +217,10 @@ list IntegerEnumList {
 
 @uniqueItems
 list IntegerEnumSet {
-     member: IntegerEnum
+    member: IntegerEnum
 }
 
 map IntegerEnumMap {
-     key: String,
-     value: IntegerEnum
+    key: String,
+    value: IntegerEnum
 }

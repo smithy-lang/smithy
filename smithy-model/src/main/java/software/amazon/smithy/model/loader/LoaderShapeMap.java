@@ -229,7 +229,7 @@ final class LoaderShapeMap {
                     emitUnresolved(shape, e.getUnresolved(), e.getResolved());
                 }
             }
-            return Collections.emptyList();
+            return e.getResolved();
         }
     }
 
