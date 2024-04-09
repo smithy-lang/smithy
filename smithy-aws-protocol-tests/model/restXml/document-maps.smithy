@@ -658,10 +658,10 @@ operation NestedXmlMapWithXmlName {
 }
 
 structure NestedXmlMapWithXmlNameInputOutput {
-    nestedXmlMapWithXmlName: NestedXmlMapWithXmlName
+    nestedXmlMapWithXmlNameMap: NestedXmlMapWithXmlNameMap
 }
 
-map NestedXmlMapWithXmlName{
+map NestedXmlMapWithXmlNameMap{
     @xmlName("OuterKey")
     key: String
     
@@ -684,7 +684,7 @@ apply NestedXmlMapWithXmlName @httpResponseTests([
         code: 200,
         body: """
             <NestedXmlMapWithXmlNameResponse>
-                <nestedXmlMapWithXmlName>
+                <nestedXmlMapWithXmlNameMap>
                     <entry>
                         <OuterKey>foo</OuterKey>
                         <value>
@@ -711,15 +711,15 @@ apply NestedXmlMapWithXmlName @httpResponseTests([
                             </entry>
                         </value>
                     </entry>
-                </nestedXmlMapWithXmlName>
-            <NestedXmlMapWithXmlNameResponse>
+                </nestedXmlMapWithXmlNameMap>
+            </NestedXmlMapWithXmlNameResponse>
         """
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
         }
         params: {
-            nestedXmlMapWithXmlName: {
+            nestedXmlMapWithXmlNameMap: {
                 foo: {
                     bar: "Baz",
                     fizz: "Buzz"
