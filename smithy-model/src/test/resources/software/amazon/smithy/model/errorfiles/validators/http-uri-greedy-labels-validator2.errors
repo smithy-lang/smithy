@@ -1,0 +1,2 @@
+[DANGER] smithy.example#OperationOne: A greedy label must be the last label in its pattern: /example/{greedyOne+}/bar/{nonGreedyLabel} | HttpUriGreedyLabel.GreedyLabelIsNotLastLabel
+

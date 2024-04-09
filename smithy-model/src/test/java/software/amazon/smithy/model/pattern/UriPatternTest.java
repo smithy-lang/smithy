@@ -112,40 +112,43 @@ public class UriPatternTest {
         UriPattern b = UriPattern.parse(patternB);
         if (a.conflictsWith(b) != isConflicting) {
             if (isConflicting) {
-                Assertions.fail("Expected conflict between `" + a + "` and `" + b + "`");
+                Assertions.fail(() -> "Expected conflict between `" + a + "` and `" + b + "`");
             } else {
-                Assertions.fail("Unexpected conflict between `" + a + "` and `" + b + "`");
+                Assertions.fail(() -> "Unexpected conflict between `" + a + "` and `" + b + "`");
             }
         }
     }
 
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                {"/a/{x}", "/{y}/a", true},
-                {"/{x}/a", "/a/{y}", true},
-                {"/a/{x}", "/a/{y}", true},
+                {"/a/{x}", "/{y}/a", false},
+                {"/{x}/a", "/a/{y}", false},
                 {"/a/{x}", "/b/{y}", false},
-                {"/{x+}", "/a", true},
-                {"/a", "/{x+}", true},
-                {"/a/{x}/b/{y}", "/a/{x+}", true},
-                {"/a/{x+}", "/a/{y}", true},
-                {"/a/{x}", "/a/{y+}", true},
+                {"/{x+}", "/a", false},
+                {"/a", "/{x+}", false},
+                {"/a/{x}/b/{y}", "/a/{x+}", false},
+                {"/a/{x+}", "/a/{y}", false},
+                {"/a/{x}", "/a/{y+}", false},
                 {"/a/{x+}", "/b/{y+}", false},
-                // Same length with conflicting labels.
-                {"/a/{x}/b", "/a/{y}/b", true},
-                // One is longer than the other.
-                {"/a/{x}/b", "/a/{y}/b/{z}", false},
-                // One is longer than the other.
-                {"/a/{x}/b", "/a/{y}/b/{z}/c", false},
-                {"/a/b/c", "/a/{b}/c", true},
-                {"/a/b/c/d", "/a/{b}/c/{d}", true},
-                {"/foo?a", "/foo?a", true},
-                {"/foo?a=b", "/foo?a=b", true},
+                {"/a/b/c/d", "/a/{b}/c/{d}", false},
                 {"/foo?a=b", "/foo?a=c", false},
-                {"/foo?a", "/foo?a=", true},
+                {"/a/{x}/b", "/a/{y}/b/{z}", false},
+                {"/a/{x}/b", "/a/{y}/b/{z}/c", false},
                 {"/a=b", "/a", false},
                 {"/a=b", "/a=", false},
                 {"/foo?a", "/foo?b", false},
+                // Conflicts can be resolved using query literals
+                {"/a/{x}/b", "/a/{y}/b?x", false},
+                {"/a/{x}/b?x", "/a/{y}/b?y", false},
+                {"/a/{x}/b?x=y", "/a/{y}/b?x=z", false},
+                // Only equivalent patterns are consider conflicts.
+                {"/a/{x}/b", "/a/{y}/b", true},
+                {"/a/{x}/b?x", "/a/{y}/b?x", true},
+                {"/a/{x}", "/a/{y}", true},
+                {"/a/{x+}", "/a/{y+}", true},
+                {"/foo?a", "/foo?a", true},
+                {"/foo?a=b", "/foo?a=b", true},
+                {"/foo?a", "/foo?a=", true},
         });
     }
 }

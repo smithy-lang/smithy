@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import software.amazon.smithy.utils.Pair;
 
@@ -70,8 +71,8 @@ public final class UriPattern extends SmithyPattern {
             throw new InvalidUriPatternException("URI pattern must not contain a fragment. Found " + uri);
         }
 
-        String[] parts = uri.split(java.util.regex.Pattern.quote("?"), 2);
-        String[] unparsedSegments = parts[0].split(java.util.regex.Pattern.quote("/"));
+        String[] parts = uri.split(Pattern.quote("?"), 2);
+        String[] unparsedSegments = parts[0].split(Pattern.quote("/"));
         List<Segment> segments = new ArrayList<>();
         // Skip the first "/" segment, and thus assume offset of 1.
         int offset = 1;
@@ -88,7 +89,7 @@ public final class UriPattern extends SmithyPattern {
             if (parts[1].contains("{") || parts[1].contains("}")) {
                 throw new InvalidUriPatternException("URI labels must not appear in the query string. Found " + uri);
             }
-            for (String kvp : parts[1].split(java.util.regex.Pattern.quote("&"))) {
+            for (String kvp : parts[1].split(Pattern.quote("&"))) {
                 String[] parameterParts = kvp.split("=", 2);
                 String actualKey = parameterParts[0];
                 if (queryLiterals.containsKey(actualKey)) {
@@ -127,30 +128,29 @@ public final class UriPattern extends SmithyPattern {
      * @return Returns true if there is a conflict.
      */
     public boolean conflictsWith(UriPattern otherPattern) {
-        if (!getConflictingLabelSegmentsMap(otherPattern).isEmpty()) {
-            return true;
-        }
-
         List<Segment> segments = getSegments();
         List<Segment> otherSegments = otherPattern.getSegments();
 
-        // By now we know there are no label conflicts, so one uri has more
-        // segments than the other then they don't conflict.
+        // If one uri has more segments than the other, they don't conflict.
         if (segments.size() != otherSegments.size()) {
             return false;
         }
 
-        // Now we need to check for the differences  in the static segments of the uri.
+        // We check if the patterns are equivalent, if so then there's a conflict.
         for (int i = 0; i < segments.size(); i++) {
             Segment segment = segments.get(i);
             Segment otherSegment = otherSegments.get(i);
-            // We've already checked for label conflicts, so we can skip them here.
-            if (segment.isLabel() || otherSegment.isLabel()) {
+            if (segment.isGreedyLabel() && otherSegment.isGreedyLabel()) {
                 continue;
             }
-            if (!segment.getContent().equals(otherSegment.getContent())) {
-                return false;
+            if (segment.isNonGreedyLabel() && otherSegment.isNonGreedyLabel()) {
+                continue;
             }
+            if (segment.isLiteral() && otherSegment.isLiteral()
+                && segment.getContent().equals(otherSegment.getContent())) {
+                continue;
+            }
+            return false;
         }
 
         // At this point, the path portions are equivalent. If the query
