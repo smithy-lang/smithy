@@ -99,7 +99,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     }
 
     /**
-     * Whether a service resolved condition key is required. Not applicable to request resolved condition key,
+     * Whether a service resolved condition key is required. Not applicable to request resolved condition keys,
      * as the native @required trait must be used.
      *
      * @return If the service resolved condition key is required.
