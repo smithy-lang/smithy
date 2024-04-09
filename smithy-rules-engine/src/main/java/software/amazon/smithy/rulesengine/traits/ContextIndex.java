@@ -1,32 +1,22 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.traits;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -73,15 +63,18 @@ public final class ContextIndex implements KnowledgeIndex {
      * @return The mapping of operation's {@link MemberShape} to {@link ContextParamTrait}.
      */
     public Map<MemberShape, ContextParamTrait> getContextParams(Shape operation) {
-        OperationShape operationShape = operation.asOperationShape()
-                .orElseThrow(() -> new IllegalArgumentException(operation.toShapeId()
-                                                                + " is not an operation shape"));
+        if (!operation.isOperationShape()) {
+            throw new IllegalArgumentException(operation.toShapeId() + " is not an operation shape");
+        }
 
-        return getModel().expectShape(operationShape.getInputShape())
-                .members().stream()
-                .map(memberShape -> Pair.of(memberShape, memberShape.getTrait(ContextParamTrait.class)))
-                .filter(pair -> pair.right.isPresent())
-                .collect(MapUtils.toUnmodifiableMap(pair -> pair.left, pair -> pair.right.get()));
+        OperationIndex operationIndex = OperationIndex.of(getModel());
+        Map<MemberShape, ContextParamTrait> contextParams = new HashMap<>();
+        for (MemberShape member : operationIndex.getInputMembers(operation).values()) {
+            if (member.hasTrait(ContextParamTrait.ID)) {
+                contextParams.put(member, member.expectTrait(ContextParamTrait.class));
+            }
+        }
+        return MapUtils.copyOf(contextParams);
     }
 
     private Model getModel() {

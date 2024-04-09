@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
+import software.amazon.smithy.jsonschema.JsonSchemaVersion;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -43,6 +44,23 @@ public class OpenApiConfig extends JsonSchemaConfig {
 
         /** The header is omitted from the OpenAPI model and a warning is logged. */
         WARN
+    }
+
+    /** Specifies how to resolve multiple error responses with same error codes. */
+    public enum ErrorStatusConflictHandlingStrategy {
+        /** The default setting that uses OpenAPI's oneOf keyword to combine multiple schemas for same media type. */
+        ONE_OF("oneOf");
+
+        private final String stringValue;
+
+        ErrorStatusConflictHandlingStrategy(String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
+        }
     }
 
     /** The JSON pointer to where OpenAPI schema components should be written. */
@@ -82,11 +100,14 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private Map<String, Node> jsonAdd = Collections.emptyMap();
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
+    private boolean disableIntegerFormat = false;
+    private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
     public OpenApiConfig() {
         super();
         setDefinitionPointer(SCHEMA_COMPONENTS_POINTER);
+        super.setJsonSchemaVersion(version.getJsonSchemaVersion());
     }
 
     public ShapeId getProtocol() {
@@ -316,6 +337,35 @@ public class OpenApiConfig extends JsonSchemaConfig {
 
     public void setVersion(OpenApiVersion version) {
         this.version = Objects.requireNonNull(version);
+        super.setJsonSchemaVersion(version.getJsonSchemaVersion());
+    }
+
+
+    public boolean getDisableIntegerFormat() {
+        return this.disableIntegerFormat;
+    }
+
+    /**
+     * Set to true to disable setting the `format` property on integer types.
+     *
+     * @param disableIntegerFormat True to disable setting format on integer types.
+     */
+    public void setDisableIntegerFormat(boolean disableIntegerFormat) {
+        this.disableIntegerFormat = disableIntegerFormat;
+    }
+
+
+    public ErrorStatusConflictHandlingStrategy getOnErrorStatusConflict() {
+        return onErrorStatusConflict;
+    }
+
+    /**
+     * Specifies what to do when multiple error responses share the same HTTP status code.
+     *
+     * @param onErrorStatusConflict Strategy to use for multiple errors with same status code.
+     */
+    public void setOnErrorStatusConflict(ErrorStatusConflictHandlingStrategy onErrorStatusConflict) {
+        this.onErrorStatusConflict = Objects.requireNonNull(onErrorStatusConflict);
     }
 
     /**
@@ -339,7 +389,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
         // warning on something intentional is just noise. It sucks
         // that this can't tell us when keys are misspelled, but it
         // does allow for a flat key-space for all extensions.
-        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
 
         // Fix and remap deprecated keys to newly supported keys.
         ObjectNode node = fixDeprecatedKeys(input.expectObjectNode());
@@ -382,5 +432,10 @@ public class OpenApiConfig extends JsonSchemaConfig {
         }
 
         return mapped;
+    }
+
+    @Override
+    public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
+        throw new OpenApiException("`jsonSchemaVersion` configuration parameter is not supported by OpenAPI plugin.");
     }
 }

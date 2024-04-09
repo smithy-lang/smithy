@@ -17,6 +17,8 @@ package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
@@ -59,6 +61,15 @@ public class StringUtilsTest {
     @Test
     public void wrapsText() {
         assertThat(StringUtils.wrap("hello, there, bud", 6), equalTo(String.format("hello,%nthere,%nbud")));
+    }
+
+    @Test
+    public void indentsText() {
+        assertEquals(StringUtils.indent("foo", 2), "  foo");
+        assertEquals(StringUtils.indent(" foo", 2), "   foo");
+        assertEquals(StringUtils.indent(String.format("foo%nbar"), 2), String.format("  foo%n  bar"));
+        assertEquals(StringUtils.indent(String.format("%nbar"), 2), String.format("  %n  bar"));
+        assertEquals(StringUtils.indent(String.format("foo%n"), 2), String.format("  foo%n"));
     }
 
     // These test cases are based on https://github.com/square/javapoet/blob/master/src/test/java/com/squareup/javapoet/UtilTest.java

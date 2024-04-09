@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.startsWith;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -16,7 +17,8 @@ public class ContextualValidationEventFormatterTest {
     @Test
     public void loadsContext() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("context.smithy"))
+                // Use the shared context file.
+                .addImport(SourceContextLoader.class.getResource("context.smithy"))
                 .assemble()
                 .unwrap();
 
@@ -29,17 +31,15 @@ public class ContextualValidationEventFormatterTest {
                 .build();
 
         String format = new ContextualValidationEventFormatter().format(event);
-        // Normalize line endings for Windows.
-        format = format.replace("\r\n", "\n");
 
         assertThat(format, startsWith("ERROR: example.smithy#Foo (foo)"));
-        assertThat(format, containsString("\n     @ "));
-        assertThat(format, endsWith(
-                "\n     |"
-                + "\n   3 | structure Foo {"
-                + "\n     | ^"
-                + "\n     = This is the message"
-                + "\n"));
+        assertThat(format, containsString(String.format("%n     @ ")));
+        assertThat(format, endsWith(String.format(
+                "%n     |"
+                + "%n   3 | structure Foo {"
+                + "%n     | ^"
+                + "%n     = This is the message"
+                + "%n")));
     }
 
     @Test
@@ -52,12 +52,11 @@ public class ContextualValidationEventFormatterTest {
                 .build();
 
         String format = new ContextualValidationEventFormatter().format(event);
-        // Normalize line endings for Windows.
-        format = format.replace("\r\n", "\n");
 
-        assertThat(format, equalTo(
+        assertThat(format, equalTo(String.format(
                 "ERROR: - (foo)"
-                + "\n     = This is the message"
-                + "\n"));
+                + "%n     = This is the message"
+                + "%n")
+        ));
     }
 }

@@ -1,4 +1,4 @@
-// Parse error at line 7, column 8 near `)\n`: Invalid number '-': '-' must be followed by a digit
+// Syntax error at line 7, column 7: Invalid number '-': '-' must be followed by a digit | Model
 namespace smithy.example
 
 @trait

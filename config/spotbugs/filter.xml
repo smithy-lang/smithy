@@ -93,6 +93,12 @@
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
+    <!-- This is a false positive. The value is guarded behind an Objects.requireNonNull -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.InitCommand"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
     <!-- Using a buffer here would actually allocate more, not less -->
     <Match>
         <Class name="software.amazon.smithy.jsonschema.SchemaDocument"/>
@@ -143,9 +149,64 @@
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
+    <!-- This is a false positive. The value is guarded behind an Objects.requireNonNull -->
+    <Match>
+        <Class name="software.amazon.smithy.model.validation.testrunner.SmithyTestCase"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
     <!-- We don't care about the return value of putIfAbsent in this cache -->
     <Match>
         <Class name="software.amazon.smithy.model.shapes.ShapeId$ShapeIdFactory"/>
         <Bug pattern="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
     </Match>
+
+    <!-- The FileWriter API that specifies a Charset is not available in Java 8 -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="software.amazon.smithy.cli.DiffCommandTest"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+
+    <!-- SecurityManager is deprecated and scheduled for removal, so this isn't a good check. -->
+    <Match>
+        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+    </Match>
+
+    <!-- We don't care if files.delete() returns true or false -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+    </Match>
+
+    <!-- Intentional fall through to handle aliased args -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.SelectCommand$Options"/>
+        <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    </Match>
+
+    <!-- It is not worth catching if the closing task of a progress bar fails to execute -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.ProgressTracker"/>
+        <Bug pattern="DE_MIGHT_IGNORE"/>
+    </Match>
+
+    <!-- This checks for mutability, but it's full of false positives. Among other things, it doesn't
+         recognize SetUtils.copyOf and similar as providing immutable collections. -->
+    <Match>
+        <Bug code="EI,EI2"/>
+    </Match>
+
+    <!-- Throwing exceptions in a constructor potentially leaves it open to finalization attacks.
+         These likely aren't important in our cases since we rarely if ever handle the sort of
+         sensitive data and connections that are at risk. The best way to prevent this is by making
+         classes final (or sealed), which we do unless we can't. Making an empty, final finalize
+         method also works, but that method is being removed. -->
+    <Match>
+        <Bug code="CT"/>
+    </Match>
+
 </FindBugsFilter>

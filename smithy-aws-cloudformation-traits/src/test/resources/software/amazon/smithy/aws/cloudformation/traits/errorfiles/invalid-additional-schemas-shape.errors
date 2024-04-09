@@ -1,0 +1,2 @@
+[ERROR] smithy.example#InvalidAdditionalSchemasShapeResource: Error validating trait `aws.cloudformation#cfnResource`.additionalSchemas.0: Shape ID `smithy.example#ListShape` does not match selector `structure` | TraitValue
+[WARNING] smithy.example#InvalidAdditionalSchemasShapeResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait

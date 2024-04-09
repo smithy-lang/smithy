@@ -15,20 +15,26 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.util.Collections;
-import java.util.List;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.HelpPrinter;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
-import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.Severity;
 
-@SmithyInternalApi
-public final class AstCommand extends SimpleCommand {
+final class AstCommand implements Command {
 
-    public AstCommand(String parentCommandName) {
-        super(parentCommandName);
+    private final String parentCommandName;
+    private final DependencyResolver.Factory dependencyResolverFactory;
+
+    AstCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        this.parentCommandName = parentCommandName;
+        this.dependencyResolverFactory = dependencyResolverFactory;
     }
 
     @Override
@@ -38,18 +44,56 @@ public final class AstCommand extends SimpleCommand {
 
     @Override
     public String getSummary() {
-        return "Reads Smithy models in and writes out a single JSON AST model";
+        return "Reads Smithy models in and writes out a single JSON AST model.";
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new BuildOptions());
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+
+        CommandAction action = HelpActionWrapper.fromCommand(
+                this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
+
+        return action.apply(arguments, env);
     }
 
-    @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
+    private static final class Options implements ArgumentReceiver {
+        static final String FLATTEN_OPTION = "--flatten";
+        private boolean flatten = false;
+
+        @Override
+        public boolean testOption(String name) {
+            if (FLATTEN_OPTION.equals(name)) {
+                flatten = true;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.option(FLATTEN_OPTION, null, "Flattens and removes mixins from the model.");
+        }
+    }
+
+    private int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
+        Model model = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(arguments.getPositional())
+                .validationPrinter(env.stderr())
+                .validationMode(Validator.Mode.QUIET)
+                .defaultSeverity(Severity.DANGER)
+                .build();
+
         ModelSerializer serializer = ModelSerializer.builder().build();
+        Options options = arguments.getReceiver(Options.class);
+        if (options.flatten) {
+            model = ModelTransformer.create().flattenAndRemoveMixins(model);
+        }
         env.stdout().println(Node.prettyPrintJson(serializer.serialize(model)));
         return 0;
     }

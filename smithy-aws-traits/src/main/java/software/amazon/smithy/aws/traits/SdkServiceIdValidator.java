@@ -114,8 +114,8 @@ public final class SdkServiceIdValidator extends AbstractValidator {
             messages.add(String.format("Must not case-insensitively end with `%s`", suffix));
         });
 
-        if (serviceId.length() < 2 || serviceId.length() > 50) {
-            messages.add("Must be between 2 and 50 characters long.");
+        if (serviceId.isEmpty() || serviceId.length() > 50) {
+            messages.add("Must be between 1 and 50 characters long.");
         }
 
         if (!messages.isEmpty()) {
@@ -133,7 +133,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
             validateServiceId(value);
             return Optional.empty();
         } catch (IllegalArgumentException e) {
-            return Optional.of(error(service, trait, e.getMessage()));
+            return Optional.of(danger(service, trait, e.getMessage()));
         }
     }
 

@@ -1,0 +1,8 @@
+{
+    "version": "1.0",
+    "plugins": {
+        "run::does-not-work": {
+            "command": "this-program-does-not-exist___"
+        }
+    }
+}

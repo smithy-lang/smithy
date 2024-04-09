@@ -1,52 +1,70 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax;
 
+import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
+
 import java.util.Objects;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A name used to identify a component of a rule-set.
+ */
 @SmithyUnstableApi
-public final class Identifier extends MandatorySourceLocation implements ToNode {
+public final class Identifier implements FromSourceLocation, ToNode {
     private final StringNode name;
+    private final SourceLocation sourceLocation;
 
-    Identifier(StringNode name) {
-        super(name);
+    private Identifier(StringNode name) {
         this.name = name;
+        sourceLocation = name.getSourceLocation();
     }
 
+    /**
+     * Creates an {@link Identifier} from the given name.
+     *
+     * @param name the name of the identifier to create.
+     * @return the created Identifier.
+     */
     public static Identifier of(String name) {
-        return new Identifier(new StringNode(name, SourceLocationUtils.javaLocation()));
+        return new Identifier(new StringNode(name, javaLocation()));
     }
 
+    /**
+     * Creates an {@link Identifier} from the given name.
+     *
+     * @param name the name of the identifier to create.
+     * @return the created Identifier.
+     */
     public static Identifier of(StringNode name) {
         return new Identifier(name);
     }
 
+    @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    /**
+     * Gets the name of this identifier.
+     *
+     * @return a node containing the name of the identifier.
+     */
     public StringNode getName() {
         return name;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    public Node toNode() {
+        return name;
     }
 
     @Override
@@ -61,16 +79,13 @@ public final class Identifier extends MandatorySourceLocation implements ToNode 
         return Objects.equals(this.name, that.name);
     }
 
-    public String toString() {
-        return name.getValue();
-    }
-
-    public String asString() {
-        return name.getValue();
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override
-    public Node toNode() {
-        return name;
+    public String toString() {
+        return name.getValue();
     }
 }

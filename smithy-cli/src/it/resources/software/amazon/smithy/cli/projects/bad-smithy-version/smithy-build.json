@@ -1,0 +1,7 @@
+{
+    "version": "1.0",
+    "maven": {
+        // This dependency does not exist, so it can't resolve.
+        "dependencies": ["software.amazon.smithy:smithy-model:[999.999.999]"]
+    }
+}

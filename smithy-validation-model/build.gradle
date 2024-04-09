@@ -14,7 +14,7 @@
  */
 
 plugins {
-    id "software.amazon.smithy" version "0.6.0"
+    id "software.amazon.smithy.gradle.smithy-jar" version "$smithyGradleVersion"
 }
 
 description = "This module provides support for validation in Smithy server SDKs"
@@ -25,5 +25,11 @@ ext {
 }
 
 dependencies {
-    implementation project(":smithy-cli")
+    implementation project(path: ":smithy-cli", configuration: "shadow")
+}
+
+tasks["sourcesJar"].dependsOn("smithyJarStaging")
+
+smithy {
+    smithyBuildConfigs.set(project.files())
 }

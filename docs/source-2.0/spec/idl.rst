@@ -93,35 +93,37 @@ The Smithy IDL is defined by the following ABNF which uses case-sensitive
 string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
-    idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
+    idl:[`WS`] `ControlSection` `MetadataSection` `ShapeSection`
 
 .. rubric:: Whitespace
 
 .. productionlist:: smithy
-    WS   :1*(`SP` / `NL` / `Comment` / ",") ; whitespace
+    WS   :1*(`SP` / `NL` / `Comment` / `Comma`) ; whitespace
+    Comma:","
     SP   :1*(%x20 / %x09) ; one or more spaces or tabs
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL:%x09 / %x20-10FFFF ; Any character except newline
-    BR   :*`SP` 1*(`Comment` / `NL`) *`WS`; line break followed by whitespace
+    BR   :[`SP`] 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
 
 .. rubric:: Comments
 
 .. productionlist:: smithy
-    Comment              : `DocumentationComment` / `LineComment`
+    Comment              :`DocumentationComment` / `LineComment`
     DocumentationComment :"///" *`NotNL` `NL`
-    LineComment          : "//" *`NotNL` `NL`
+    LineComment          :"//" [(%x09 / %x20-2E / %x30-10FFF) *`NotNL`] `NL`
+                         :  ; First character after "//" can't be "/"
 
 .. rubric:: Control
 
 .. productionlist:: smithy
     ControlSection   :*(`ControlStatement`)
-    ControlStatement :"$" `NodeObjectKey` *`SP` ":" *`SP` `NodeValue` `BR`
+    ControlStatement :"$" `NodeObjectKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     MetadataSection   :*(`MetadataStatement`)
-    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` *`SP` "=" *`SP` `NodeValue` `BR`
+    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Node values
 
@@ -129,11 +131,11 @@ string support defined in :rfc:`7405`.
     NodeValue           :`NodeArray`
                         :/ `NodeObject`
                         :/ `Number`
-                        :/ `NodeKeywords`
+                        :/ `NodeKeyword`
                         :/ `NodeStringValue`
-    NodeArray           :"[" *`WS` *(`NodeValue` *`WS`) "]"
-    NodeObject          :"{" *`WS` [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] *`WS` "}"
-    NodeObjectKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    NodeArray           :"[" [`WS`] *(`NodeValue` [`WS`]) "]"
+    NodeObject          :"{" [`WS`] [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] [`WS`] "}"
+    NodeObjectKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
     NodeObjectKey       :`QuotedText` / `Identifier`
     Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
     DecimalPoint        :%x2E ; .
@@ -145,101 +147,82 @@ string support defined in :rfc:`7405`.
     Minus               :%x2D ; -
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
-    NodeKeywords        :%s"true" / %s"false" / %s"null"
+    NodeKeyword         :%s"true" / %s"false" / %s"null"
     NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
-    QuotedChar          :%x20-21     ; space - "!"
+    QuotedChar          :%x09        ; tab
+                        :/ %x20-21     ; space - "!"
                         :/ %x23-5B     ; "#" - "["
                         :/ %x5D-10FFFF ; "]"+
                         :/ `EscapedChar`
-                        :/ `PreservedDouble`
                         :/ `NL`
-    EscapedChar         :`Escape` (`Escape` / "'" / DQUOTE / %s"b"
-                        :          / %s"f" / %s"n" / %s"r" / %s"t"
-                        :          / "/" / `UnicodeEscape`)
+    EscapedChar         :`Escape` (`Escape` / DQUOTE / %s"b" / %s"f"
+                        :           / %s"n" / %s"r" / %s"t" / "/"
+                        :           / `UnicodeEscape`)
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
-    PreservedDouble     :`Escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     Escape              :%x5C ; backslash
-    TextBlock           :`ThreeDquotes` *`SP` `NL` *`QuotedChar` `ThreeDquotes`
+    TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
+    TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    ShapeSection            :[`NamespaceStatement` `UseSection` `ShapeStatements`]
+    ShapeSection            :[`NamespaceStatement` `UseSection` [`ShapeStatements`]]
     NamespaceStatement      :%s"namespace" `SP` `Namespace` `BR`
     UseSection              :*(`UseStatement`)
     UseStatement            :%s"use" `SP` `AbsoluteRootShapeId` `BR`
-    ShapeStatements         :*(`ShapeStatement` / `ApplyStatement`)
-    ShapeStatement          :`TraitStatements` `ShapeBody` `BR`
-    ShapeBody               :`SimpleShapeStatement`
-                            :/ `EnumShapeStatement`
-                            :/ `ListStatement`
-                            :/ `MapStatement`
-                            :/ `StructureStatement`
-                            :/ `UnionStatement`
-                            :/ `ServiceStatement`
-                            :/ `OperationStatement`
-                            :/ `ResourceStatement`
-    SimpleShapeStatement    :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
+    ShapeStatements         :`ShapeOrApplyStatement` *(`BR` `ShapeOrApplyStatement`)
+    ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
+    ShapeStatement          :`TraitStatements` `Shape`
+    Shape                   :`SimpleShape`
+                            :/ `EnumShape`
+                            :/ `AggregateShape`
+                            :/ `EntityShape`
+                            :/ `OperationShape`
+    SimpleShape             :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
     SimpleTypeName          :%s"blob" / %s"boolean" / %s"document" / %s"string"
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
                             :/ %s"float" / %s"double" / %s"bigInteger"
                             :/ %s"bigDecimal" / %s"timestamp"
-    Mixins                  :*`SP` %s"with" *`WS` "[" 1*(*`WS` `ShapeId`) *`WS` "]"
-    EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] *`WS` `EnumShapeMembers`
+    Mixins                  :[`SP`] %s"with" [`WS`] "[" [`WS`] 1*(`ShapeId` [`WS`]) "]"
+    EnumShape               :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
-    EnumShapeMembers        :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
-    ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
-    ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
-    ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
-    ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
-    ElidedListMember        :%s"$member"
-    ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
-    MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `WS` `MapValue` *`WS` "}"
-    MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
-    MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
-    ElidedMapKey            :%s"$key"
-    ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
-    ElidedMapValue          :%s"$value"
-    ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
-    StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
-                            :        [`Mixins`] *`WS` `StructureMembers`
-    StructureResource       :`SP` %s"for" `SP` `ShapeId`
-    StructureMembers        :"{" *`WS` *(`TraitStatements` `StructureMember` *`WS`) "}"
-    StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
-    ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
-    ElidedStructureMember   :"$" `Identifier`
-    UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] *`WS` `UnionMembers`
-    UnionMembers            :"{" *`WS` *(`TraitStatements` `UnionMember` *`WS`) "}"
-    UnionMember             :(`ExplicitStructureMember` / `ElidedStructureMember`)
-    ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
-    OperationBody           :"{" *`WS`
-                            :    *([`OperationInput`] / [`OperationOutput`] / [`OperationErrors`])
-                            :    *`WS` "}"
-                            :    ; only one of each property can be specified.
-    OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
-    OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
-    OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `WS`
-    InlineStructure         :":=" *`WS` `TraitStatements` [`StructureResource`]
-                            :        [`Mixins`] *`WS` `StructureMembers`
+    EnumShapeMembers        :"{" [`WS`] 1*(`EnumShapeMember` [`WS`]) "}"
+    EnumShapeMember         :`TraitStatements` `Identifier` [`ValueAssignment`]
+    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` [`SP`] [`Comma`] `BR`
+    AggregateShape          :`AggregateTypeName` `SP` `Identifier` [`ForResource`] [`Mixins`]
+                            :   [`WS`] `ShapeMembers`
+    AggregateTypeName       :%s"list" / %s"map" / %s"union" / %s"structure"
+    ForResource             :`SP` %s"for" `SP` `ShapeId`
+    ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
+    ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`)
+                            :   [`ValueAssignment`]
+    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
+    ElidedShapeMember       :"$" `Identifier`
+    EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
+    EntityTypeName          :%s"service" / %s"resource"
+    OperationShape          :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
+    OperationBody           :"{" [`WS`] *(`OperationProperty` [`WS`]) "}"
+    OperationProperty       :`OperationInput` / `OperationOutput` / `OperationErrors`
+    OperationInput          :%s"input" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
+    OperationOutput         :%s"output" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
+    OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
+    InlineAggregateShape    :":=" [`WS`] `TraitStatements` [`ForResource`] [`Mixins`]
+                            :   [`WS`] `ShapeMembers`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    TraitStatements         :*(*`WS` `Trait`) *`WS`
+    TraitStatements         :*(`Trait` [`WS`])
     Trait                   :"@" `ShapeId` [`TraitBody`]
-    TraitBody               :"(" *`WS` [`TraitBodyValue`] *`WS` ")"
-    TraitBodyValue          :`TraitStructure` / `NodeValue`
-    TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
-    TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
-    ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
-    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
-    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}" `BR`
+    TraitBody               :"(" [`WS`] [`TraitStructure` / `TraitNode`] ")"
+    TraitStructure          :1*(`NodeObjectKvp` [`WS`])
+    TraitNode               :`NodeValue` [`WS`]
+    ApplyStatement          :`ApplyStatementSingular` / `ApplyStatementBlock`
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait`
+    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" [`WS`] `TraitStatements` "}"
 
 .. rubric:: Shape ID
 
@@ -720,7 +703,7 @@ Simple shapes
 -------------
 
 :ref:`Simple shapes <simple-types>` are defined using a
-:token:`smithy:SimpleShapeStatement`.
+:token:`smithy:SimpleShape`.
 
 The following example defines a ``string`` shape:
 
@@ -783,7 +766,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
 Enum shapes
 -----------
 
-The :ref:`enum` shape is defined using an :token:`smithy:EnumShapeStatement`.
+The :ref:`enum` shape is defined using an :token:`smithy:EnumShape`.
 
 The following example defines an :ref:`enum` shape:
 
@@ -846,7 +829,7 @@ IntEnum shapes
 --------------
 
 The :ref:`intEnum` shape is defined using an
-:token:`smithy:EnumShapeStatement`.
+:token:`smithy:EnumShape`.
 
 .. note::
     The :ref:`enumValue trait <enumValue-trait>` is required on all
@@ -894,7 +877,7 @@ The above intEnum is exactly equivalent to the following intEnum:
 List shapes
 -----------
 
-A :ref:`list <list>` shape is defined using a :token:`smithy:ListStatement`.
+A :ref:`list <list>` shape is defined using a :token:`smithy:AggregateShape`.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -975,7 +958,7 @@ Traits can be applied to the list shape and its member:
 Map shapes
 ----------
 
-A :ref:`map <map>` shape is defined using a :token:`smithy:MapStatement`.
+A :ref:`map <map>` shape is defined using a :token:`smithy:AggregateShape`.
 
 The following example defines a map of strings to integers:
 
@@ -1072,7 +1055,7 @@ Structure shapes
 ----------------
 
 A :ref:`structure <structure>` shape is defined using a
-:token:`smithy:StructureStatement`.
+:token:`smithy:AggregateShape`.
 
 The following example defines a structure with two members:
 
@@ -1185,7 +1168,7 @@ Is exactly equivalent to:
 Union shapes
 ------------
 
-A :ref:`union <union>` shape is defined using a :token:`smithy:UnionStatement`.
+A :ref:`union <union>` shape is defined using a :token:`smithy:AggregateShape`.
 
 The following example defines a union shape with several members:
 
@@ -1239,7 +1222,7 @@ The following example defines a union shape with several members:
 Service shape
 -------------
 
-A service shape is defined using a :token:`smithy:ServiceStatement` and the provided
+A service shape is defined using a :token:`smithy:EntityShape` and the provided
 :token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`service specification <service>`.
 
@@ -1288,7 +1271,7 @@ a resource named ``Model`` and an operation named ``PingService``:
 Operation shape
 ---------------
 
-An operation shape is defined using an :token:`smithy:OperationStatement` and
+An operation shape is defined using an :token:`smithy:OperationShape` and
 the same properties defined in the :ref:`operation specification <operation>`.
 
 The following example defines an operation shape that accepts an input
@@ -1445,7 +1428,7 @@ The suffixes for the generated names can be customized using the
 Resource shape
 --------------
 
-A resource shape is defined using a :token:`smithy:ResourceStatement` and the
+A resource shape is defined using a :token:`smithy:EntityShape` and the
 provided :token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`resource specification <resource>`.
 
@@ -1762,8 +1745,10 @@ Trait values
 ------------
 
 The value that can be provided for a trait depends on its type. A value for a
-trait is defined by enclosing the value in parenthesis. Trait values can only
-appear immediately before a shape.
+trait is defined by enclosing the value in parenthesis, provided as a
+:ref:`node value <node-values>`. Trait values MUST adhere to the JSON type
+mappings defined in :ref:`trait-node-values`. Trait values can only appear
+immediately before a shape.
 
 The following example applies various traits to a structure shape and its
 members.
@@ -1776,36 +1761,39 @@ members.
         name: smithy.api#String,
 
         @length(min: 0)
-        @tags(["private-beta"])
+        @tags(["private-beta", "metered"])
         age: smithy.api#Integer,
     }
 
 
-Structure, map, and union trait values
---------------------------------------
+.. _structured-trait-values:
 
-Traits that are a ``structure``, ``union``, or ``map`` are defined using
-a special syntax that places key-value pairs inside of the trait
-parenthesis. Wrapping braces, "{" and "}", are not permitted.
+Structure, map, and union trait value syntax
+--------------------------------------------
 
-.. code-block:: smithy
-
-    @structuredTrait(foo: "bar", baz: "bam")
-
-Nested structure, map, and union values are defined using
-:ref:`node value <node-values>` productions:
+A special syntax is provided for structure, map, and union traits that
+allows placing key-value pairs directly inside of the trait parenthesis.
 
 .. code-block:: smithy
 
-    @structuredTrait(
-        foo: {
-            bar: "baz",
-            qux: "true",
-        }
-    )
+    @structuredTrait(bar: "baz", qux: "true")
 
-Omitting a value is allowed on ``list``, ``set``, ``map``, and ``structure``
-traits if the shapes have no ``length`` constraints or ``required`` members.
+Is equivalent to:
+
+.. code-block:: smithy
+
+    @structuredTrait({bar: "baz", qux: "true"})
+
+
+Omitted trait values
+--------------------
+
+An applied trait with no value, with or without empty parenthesis, assumes
+a default value based on the shape of the trait.
+
+If a value is omitted for a ``structure`` or ``map``, the value defaults to an empty
+object (``{}``).
+
 The following applications of the ``foo`` trait are equivalent:
 
 .. tab:: Smithy
@@ -1813,8 +1801,10 @@ The following applications of the ``foo`` trait are equivalent:
     .. code-block:: smithy
 
         $version: "2"
+
         namespace smithy.example
 
+        // Define an example structure trait.
         @trait
         structure foo {}
 
@@ -1823,6 +1813,9 @@ The following applications of the ``foo`` trait are equivalent:
 
         @foo()
         string MyString2
+
+        @foo({})
+        string MyString3
 
 .. tab:: JSON
 
@@ -1848,33 +1841,68 @@ The following applications of the ``foo`` trait are equivalent:
                     "traits": {
                         "smithy.api#foo": {}
                     }
+                },
+                "smithy.example#MyString3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": {}
+                    }
                 }
             }
         }
 
+If a value is omitted for a ``list``, the value defaults to an empty list
+(``[]``).
 
-List and set trait values
--------------------------
+The following applications of the :ref:`tags-trait` are equivalent:
 
-Traits that are a ``list`` or ``set`` shape are defined inside
-of brackets (``[``) and (``]``) using a :token:`smithy:NodeArray` production.
+.. tab:: Smithy
 
-.. code-block:: smithy
+    .. code-block:: smithy
 
-    @tags(["a", "b"])
+        $version: "2"
 
+        namespace smithy.example
 
-Other trait values
-------------------
+        @tags
+        string MyString1
 
-All other trait values MUST adhere to the JSON type mappings defined
-in :ref:`trait-node-values`.
+        @tags()
+        string MyString2
 
-The following example defines a string trait value:
+        @tags([])
+        string MyString3
 
-.. code-block:: smithy
+.. tab:: JSON
 
-    @documentation("Hello")
+    .. code-block:: json
+
+        {
+            "smithy": "2",
+            "shapes": {
+                "smithy.example#MyString1": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                },
+                "smithy.example#MyString2": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                },
+                "smithy.example#MyString3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                }
+            }
+        }
+
+All other shapes default to ``null``, which may or may not be valid for the
+shape of the trait.
 
 
 .. _apply-statement:

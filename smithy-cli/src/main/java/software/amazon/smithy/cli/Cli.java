@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.Arrays;
-import java.util.logging.Logger;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.function.Supplier;
 
 /**
- * This class provides a very basic CLI abstraction.
+ * This class provides a basic CLI abstraction.
  *
  * <p>Why are we not using a library for this? Because parsing command line
  * options isn't difficult, we don't need to take a dependency, this code
@@ -28,20 +28,14 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * CLI features are supported in case we want to migrate to a library or
  * event a different language.
  */
-@SmithyUnstableApi
 public final class Cli {
 
-    private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
-    private static final boolean ANSI_SUPPORTED = isAnsiColorSupported();
-
-    // Delegate to the stdout consumer by default since this can change.
-    private CliPrinter stdoutPrinter = new CliPrinter.ConsumerPrinter(str -> System.out.print(str));
-
-    // Don't use a method reference in case System.err is changed after initialization.
-    private CliPrinter stdErrPrinter = new CliPrinter.ConsumerPrinter(str -> System.err.print(str));
-
+    private ColorFormatter colorFormatter;
+    private CliPrinter stdoutPrinter;
+    private CliPrinter stderrPrinter;
     private final ClassLoader classLoader;
     private final Command command;
+    private final StandardOptions standardOptions = new StandardOptions();
 
     /**
      * Creates a new CLI with the given name.
@@ -62,93 +56,106 @@ public final class Cli {
      * @throws CliError on error.
      */
     public int run(String[] args) {
-        Arguments arguments = new Arguments(args);
-        StandardOptions standardOptions = new StandardOptions();
+        if (colorFormatter == null) {
+            // CLI arguments haven't been parsed yet, so the CLI doesn't know if --force-color or --no-color
+            // was passed. Defer the color setting implementation by asking StandardOptions before each write.
+            colorFormatter(createDelegatedColorFormatter(standardOptions::colorSetting));
+        }
+
+        if (stdoutPrinter == null) {
+            stdout(CliPrinter.fromOutputStream(System.out));
+        }
+
+        if (stderrPrinter == null) {
+            stderr(CliPrinter.fromOutputStream(System.err));
+        }
+
+
+        LoggingArgumentsHandler arguments = new LoggingArgumentsHandler(colorFormatter,
+                                                                        stderrPrinter,
+                                                                        Arguments.of(args));
         arguments.addReceiver(standardOptions);
 
-        // Use or disable ANSI escapes in the printers.
-        CliPrinter out = ansiPrinter(stdoutPrinter, standardOptions);
-        CliPrinter err = ansiPrinter(stdErrPrinter, standardOptions);
-
-        // Setup logging after parsing all arguments.
-        arguments.onComplete((opts, positional) -> {
-            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), err);
-            LOGGER.fine(() -> "Running CLI command: " + Arrays.toString(args));
-        });
-
         try {
-            return command.execute(arguments, new Command.Env(out, err, classLoader));
-        } catch (Exception e) {
-            printException(standardOptions.stackTrace(), err, e);
-            throw CliError.wrap(e);
-        } finally {
             try {
-                LoggingUtil.restoreLogging();
-            } catch (RuntimeException e) {
-                // Show the error, but don't fail the CLI since most invocations are one-time use.
-                err.println(err.style("Unable to restore logging to previous settings", Style.RED));
-                printException(true, err, e);
+                Command.Env env = new Command.Env(colorFormatter, stdoutPrinter, stderrPrinter, classLoader);
+                return command.execute(arguments, env);
+            } catch (Exception e) {
+                stdoutPrinter.flush();
+                stderrPrinter.flush();
+                printException(e, standardOptions.stackTrace());
+                throw CliError.wrap(e);
+            } finally {
+                try {
+                    arguments.restoreLogging();
+                } catch (RuntimeException e) {
+                    // Show the error, but don't fail the CLI since most invocations are one-time use.
+                    printException(e, standardOptions.stackTrace());
+                }
+            }
+        } finally {
+            stdoutPrinter.flush();
+            stderrPrinter.flush();
+        }
+    }
+
+    public void colorFormatter(ColorFormatter colorFormatter) {
+        this.colorFormatter = colorFormatter;
+    }
+
+    public void stdout(CliPrinter stdoutPrinter) {
+        this.stdoutPrinter = stdoutPrinter;
+    }
+
+    public void stderr(CliPrinter stderrPrinter) {
+        this.stderrPrinter = stderrPrinter;
+    }
+
+    private void printException(Throwable e, boolean stacktrace) {
+        try (ColorBuffer buffer = ColorBuffer.of(colorFormatter, stderrPrinter)) {
+            if (!stacktrace) {
+                colorFormatter.println(stderrPrinter, e.getMessage(), ColorTheme.ERROR);
+            } else {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String result = writer.toString();
+                int positionOfName = result.indexOf(':');
+                buffer.print(result.substring(0, positionOfName), ColorTheme.ERROR);
+                buffer.println(result.substring(positionOfName));
             }
         }
     }
 
-    public void stdout(CliPrinter printer) {
-        stdoutPrinter = printer;
-    }
-
-    public void stderr(CliPrinter printer) {
-        stdErrPrinter = printer;
-    }
-
-    /**
-     * Does a really simple check to see if ANSI colors are supported.
-     *
-     * @return Returns true if ANSI probably works.
-     */
-    private static boolean isAnsiColorSupported() {
-        return System.console() != null && System.getenv().get("TERM") != null;
-    }
-
-    private void printException(boolean stacktrace, CliPrinter printer, Throwable throwable) {
-        if (throwable instanceof NullPointerException) {
-            printer.println(stdErrPrinter.style(
-                    "A null pointer exception occurred while running the Smithy CLI. The --stacktrace argument can be "
-                    + "used to get more information. Please open an issue with the Smithy team on GitHub so this can "
-                    + "be investigated: https://github.com/awslabs/smithy/issues", Style.RED));
-        }
-
-        printer.println(printer.style(throwable.getMessage(), Style.RED, Style.BOLD));
-
-        if (stacktrace) {
-            printer.println(printer.style(throwable.getClass().getCanonicalName() + ":", Style.RED, Style.UNDERLINE));
-            for (StackTraceElement element : throwable.getStackTrace()) {
-                printer.println("\tat " + element.toString());
-            }
-        }
-    }
-
-    /**
-     * Creates a CliPrinter that inspects provided options to determine whether
-     * to use ANSI.
-     *
-     * @param delegate Printer to delegate write and formatting to.
-     * @param options Options to query when it's parsed.
-     * @return Returns the created printer.
-     */
-    private static CliPrinter ansiPrinter(CliPrinter delegate, StandardOptions options) {
-        return new CliPrinter() {
-            @Override
-            public void println(String text) {
-                delegate.println(text);
-            }
-
+    private static ColorFormatter createDelegatedColorFormatter(Supplier<ColorFormatter> delegateSupplier) {
+        return new ColorFormatter() {
             @Override
             public String style(String text, Style... styles) {
-                if (options.forceColor() || (!options.noColor() && ANSI_SUPPORTED)) {
-                    return delegate.style(text, styles);
-                } else {
-                    return text;
-                }
+                return delegateSupplier.get().style(text, styles);
+            }
+
+            @Override
+            public void style(Appendable appendable, String text, Style... styles) {
+                delegateSupplier.get().style(appendable, text, styles);
+            }
+
+            @Override
+            public boolean isColorEnabled() {
+                return delegateSupplier.get().isColorEnabled();
+            }
+
+            @Override
+            public void println(Appendable appendable, String text, Style... styles) {
+                delegateSupplier.get().println(appendable, text, styles);
+            }
+
+            @Override
+            public void startStyle(Appendable appendable, Style... style) {
+                delegateSupplier.get().startStyle(appendable, style);
+            }
+
+            @Override
+            public void endStyle(Appendable appendable) {
+                delegateSupplier.get().endStyle(appendable);
             }
         };
     }

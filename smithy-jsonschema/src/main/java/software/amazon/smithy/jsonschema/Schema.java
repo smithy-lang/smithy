@@ -63,6 +63,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     private final String ref;
     private final String type;
     private final Collection<String> enumValues;
+    private final Collection<Integer> intEnumValues;
     private final Node constValue;
     private final Node defaultValue;
 
@@ -113,6 +114,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         ref = builder.ref;
         type = builder.type;
         enumValues = Collections.unmodifiableCollection(builder.enumValues);
+        intEnumValues = Collections.unmodifiableCollection(builder.intEnumValues);
         constValue = builder.constValue;
         defaultValue = builder.defaultValue;
 
@@ -172,6 +174,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
     public Optional<Collection<String>> getEnumValues() {
         return Optional.ofNullable(enumValues);
+    }
+
+    public Optional<Collection<Integer>> getIntEnumValues() {
+        return Optional.ofNullable(intEnumValues);
     }
 
     public Optional<Node> getConstValue() {
@@ -379,9 +385,20 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             result.withMember("required", required.stream().sorted().map(Node::from).collect(ArrayNode.collect()));
         }
 
-        if (!enumValues.isEmpty()) {
-            result.withOptionalMember("enum", getEnumValues()
-                    .map(v -> v.stream().map(Node::from).collect(ArrayNode.collect())));
+        if (!enumValues.isEmpty() || !intEnumValues.isEmpty()) {
+            ArrayNode.Builder builder = ArrayNode.builder();
+            if (getIntEnumValues().isPresent()) {
+                for (Integer i : getIntEnumValues().get()) {
+                    builder.withValue(i);
+                }
+            }
+
+            if (getEnumValues().isPresent()) {
+                for (String s : getEnumValues().get()) {
+                    builder.withValue(s);
+                }
+            }
+            result.withOptionalMember("enum", builder.build().asArrayNode());
         }
 
         if (!allOf.isEmpty()) {
@@ -486,6 +503,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 .ref(ref)
                 .type(type)
                 .enumValues(enumValues)
+                .intEnumValues(intEnumValues)
                 .constValue(constValue)
                 .defaultValue(defaultValue)
 
@@ -554,6 +572,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         private String ref;
         private String type;
         private Collection<String> enumValues = ListUtils.of();
+        private Collection<Integer> intEnumValues = ListUtils.of();
         private Node constValue;
         private Node defaultValue;
 
@@ -622,6 +641,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         public Builder enumValues(Collection<String> enumValues) {
             this.enumValues = enumValues == null ? ListUtils.of() : enumValues;
+            return this;
+        }
+
+        public Builder intEnumValues(Collection<Integer> intEnumValues) {
+            this.intEnumValues = intEnumValues == null ? ListUtils.of() : intEnumValues;
             return this;
         }
 
@@ -858,7 +882,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 case "default":
                     return this.defaultValue(null);
                 case "enum":
-                    return this.enumValues(null);
+                    return this.enumValues(null).intEnumValues(null);
                 case "multipleOf":
                     return this.multipleOf(null);
                 case "maximum":

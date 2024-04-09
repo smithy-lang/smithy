@@ -1,115 +1,103 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * A rule-set parameter, representing a value usable in conditions and rules.
+ */
 @SmithyUnstableApi
-public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
+public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
     public static final String TYPE = "type";
     public static final String DEPRECATED = "deprecated";
     public static final String DOCUMENTATION = "documentation";
     public static final String DEFAULT = "default";
     private static final String BUILT_IN = "builtIn";
     private static final String REQUIRED = "required";
+    private static final List<String> PROPERTIES = ListUtils.of(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
+            DEFAULT);
+
     private final ParameterType type;
     private final Identifier name;
-
     private final Value value;
-
     private final String builtIn;
-
     private final Value defaultValue;
-
     private final boolean required;
-
     private final SourceLocation sourceLocation;
-
     private final Deprecated deprecated;
-
     private final String documentation;
 
     private Parameter(Builder builder) {
-        if (builder.defaultValue != null && builder.builtIn == null) {
-            throw new RuntimeException("Cannot set a default value for non-builtin parameters");
-        }
         if (builder.defaultValue != null && !builder.required) {
             throw new RuntimeException("When a default value is set, the field must also be marked as required");
         }
+
         this.type = SmithyBuilder.requiredState("type", builder.type);
         this.name = SmithyBuilder.requiredState("name", builder.name);
-        this.builtIn = builder.builtIn;
         this.value = builder.value;
+        this.builtIn = builder.builtIn;
+        this.defaultValue = builder.defaultValue;
         this.required = builder.required;
         this.sourceLocation = builder.getSourceLocation();
         this.deprecated = builder.deprecated;
         this.documentation = builder.documentation;
-        this.defaultValue = builder.defaultValue;
     }
 
-    public static Parameter fromNode(StringNode name, ObjectNode node) throws RuleError {
-        // TODO: support documentation from JSON
-        return RuleError.context("while parsing the parameter `" + name + "`", node, () -> {
-            node.expectNoAdditionalProperties(Arrays.asList(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
-                    DEFAULT));
-            Builder builder = new Builder(node.getSourceLocation());
-            String builtIn = node.getStringMember(BUILT_IN).map(StringNode::getValue).orElse(null);
-            ParameterType parameterType = RuleError.context("while parsing the parameter type", node,
-                    () -> ParameterType.fromNode(node.expectStringMember(TYPE)));
-            Optional<Deprecated> deprecated = node.getObjectMember(DEPRECATED).map(Deprecated::fromNode);
-            deprecated.ifPresent(builder::deprecated);
+    /**
+     * Creates a {@link Parameter} instance from the given Node information.
+     *
+     * @param name the name of the parameter being deserialized.
+     * @param objectNode the node to deserialize.
+     * @return the created Parameter.
+     */
+    public static Parameter fromNode(StringNode name, ObjectNode objectNode) throws RuleError {
+        return RuleError.context("while parsing the parameter `" + name + "`", objectNode, () -> {
+            Builder builder = new Builder(objectNode.getSourceLocation()).name(Identifier.of(name));
+            objectNode.expectNoAdditionalProperties(PROPERTIES);
 
-            node.getStringMember(DOCUMENTATION).map(StringNode::getValue).ifPresent(builder::documentation);
-            node.getMember(DEFAULT).map(Value::fromNode).ifPresent(builder::defaultValue);
+            builder.required(objectNode.getBooleanMemberOrDefault(REQUIRED, false));
+            objectNode.getStringMember(BUILT_IN, builder::builtIn);
+            objectNode.getStringMember(DOCUMENTATION, builder::documentation);
+            objectNode.getObjectMember(DEPRECATED, node -> builder.deprecated(Deprecated.fromNode(node)));
 
-            boolean required = node.getBooleanMemberOrDefault(REQUIRED, false);
-            return builder.name(Identifier.of(name)).builtIn(builtIn).type(parameterType).required(required).build();
+            objectNode.getMember(DEFAULT).map(Value::fromNode).ifPresent(builder::defaultValue);
+            builder.type(RuleError.context("while parsing the parameter type", objectNode,
+                    () -> ParameterType.fromNode(objectNode.expectStringMember(TYPE))));
+            return builder.build();
         });
     }
 
+    /**
+     * Builder to create a {@link Parameter} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
-    }
-
-    public Optional<String> getBuiltIn() {
-        return Optional.ofNullable(builtIn);
-    }
-
-    public Optional<Value> getDefaultValue() {
-        return Optional.ofNullable(defaultValue);
     }
 
     @Override
@@ -117,104 +105,142 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return sourceLocation;
     }
 
-    public Optional<Deprecated> getDeprecated() {
-        return Optional.ofNullable(deprecated);
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public ParameterType getType() {
-        return type;
-    }
-
-    public Type toType() {
-        Type out;
-
-        switch (this.type) {
-            case STRING:
-                out = Type.string();
-                break;
-            case BOOLEAN:
-                out = Type.bool();
-                break;
-            default:
-                throw new IllegalArgumentException("unexpected parameter type: " + this.type);
-        }
-
-        if (defaultValue != null) {
-            if (!defaultValue.type().equals(out)) {
-                throw new RuntimeException(String.format("Invalid type for field \"default\": Type must match "
-                                                         + "parameter type. Expected %s, found %s.", out,
-                        defaultValue.type()));
-            }
-        }
-        if (!this.required) {
-            out = Type.optional(out);
-        }
-        return out;
-    }
-
+    /**
+     * Gets the parameter name.
+     *
+     * @return returns the parameter name as an {@link Identifier}.
+     */
     public Identifier getName() {
         return name;
     }
 
+    /**
+     * Gets the parameter in template form.
+     *
+     * @return returns the template form of the parameter.
+     */
+    public String getTemplate() {
+        return "{" + name + "}";
+    }
+
+    @Override
+    public String template() {
+        return getTemplate();
+    }
+
+    /**
+     * Gets if the parameter is required or not.
+     *
+     * @return true if the parameter is required, false otherwise.
+     */
+    public boolean isRequired() {
+        return required;
+    }
+
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
+    public ParameterType getType() {
+        return type;
+    }
+
+    /**
+     * Gets a {@link Type} for the parameter's type.
+     *
+     * @return a Type for the parameter.
+     */
+    public Type toType() {
+        Type out = Type.fromParameterType(type);
+
+        if (defaultValue != null && !defaultValue.getType().equals(out)) {
+            throw new RuntimeException(String.format("Invalid type for field \"default\": Type must match "
+                    + "parameter type. Expected `%s`, found `%s`.", out, defaultValue.getType()));
+        }
+
+        if (!required) {
+            out = Type.optionalType(out);
+        }
+        return out;
+    }
+
+    /**
+     * Gets the built-in parameter name.
+     *
+     * @return returns the optional built-in parameter name.
+     */
+    public Optional<String> getBuiltIn() {
+        return Optional.ofNullable(builtIn);
+    }
+
+    /**
+     * Gets if the parameter uses a built-in parameter.
+     *
+     * @return returns true if the parameter uses a built-in, false otherwise.
+     */
     public boolean isBuiltIn() {
         return builtIn != null;
     }
 
+    /**
+     * Gets the deprecated status.
+     *
+     * @return returns the optional deprecated state.
+     */
+    public Optional<Deprecated> getDeprecated() {
+        return Optional.ofNullable(deprecated);
+    }
+
+    /**
+     * Gets the parameter's value.
+     *
+     * @return returns the optional value.
+     */
     public Optional<Value> getValue() {
         return Optional.ofNullable(value);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, name, value, builtIn, required);
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
+    public Optional<String> getDocumentation() {
+        return Optional.ofNullable(documentation);
+    }
+
+    /**
+     * Gets the parameter's default value.
+     *
+     * @return returns the optional default value.
+     */
+    public Optional<Value> getDefault() {
+        return Optional.ofNullable(defaultValue);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Parameter parameter = (Parameter) o;
-        return required == parameter.required && type == parameter.type && name.equals(parameter.name)
-               && Objects.equals(value, parameter.value) && Objects.equals(builtIn, parameter.builtIn)
-               && Objects.equals(defaultValue, parameter.defaultValue)
-               && Objects.equals(deprecated, parameter.deprecated)
-               && Objects.equals(documentation, parameter.documentation);
+    public Condition.Builder toConditionBuilder() {
+        return Condition.builder().fn(toExpression());
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(name).append(": ").append(type);
-        if (builtIn != null) {
-            sb.append("; builtIn(").append(builtIn).append(")");
-        }
-        if (required) {
-            sb.append("; required");
-        }
-        getDeprecated().ifPresent(dep -> sb.append("; ").append(deprecated).append("!"));
-        return sb.toString();
+    public Expression toExpression() {
+        return Expression.getReference(name, SourceLocation.none());
     }
 
     @Override
     public Builder toBuilder() {
         return builder()
-                .type(getType())
-                .name(getName())
+                .type(type)
+                .name(name)
                 .builtIn(builtIn)
+                .value(value)
+                .required(required)
+                .sourceLocation(sourceLocation)
+                .deprecated(deprecated)
                 .documentation(documentation)
-                .value(value);
-    }
-
-    public String template() {
-        return "{" + name + "}";
+                .defaultValue(defaultValue);
     }
 
     @Override
@@ -237,118 +263,55 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return node.build();
     }
 
-    /**
-     * Provides a reference to this parameter as an expression.
-     *
-     * @return the reference to the parameter.
-     */
-    public Expression toExpression() {
-        return Expression.reference(this.name, SourceLocation.none());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Parameter parameter = (Parameter) o;
+        return required == parameter.required
+                && Objects.equals(type, parameter.type)
+                && name.equals(parameter.name)
+                && Objects.equals(value, parameter.value)
+                && Objects.equals(builtIn, parameter.builtIn)
+                && Objects.equals(defaultValue, parameter.defaultValue)
+                && Objects.equals(deprecated, parameter.deprecated)
+                && Objects.equals(documentation, parameter.documentation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, name, value, builtIn, required);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name).append(": ").append(type);
+        if (builtIn != null) {
+            sb.append("; builtIn(").append(builtIn).append(")");
+        }
+        if (required) {
+            sb.append("; required");
+        }
+        getDeprecated().ifPresent(dep -> sb.append("; ").append(deprecated).append("!"));
+        return sb.toString();
     }
 
     /**
-     * Provides a function comparing this parameter to a boolean value.
-     *
-     * @param b the boolean value to compare the parameter to.
-     * @return the BooleanEquals function comparing the parameter.
+     * A builder used to create a {@link Parameter} class.
      */
-    public Function equal(boolean b) {
-        return BooleanEquals.ofExpressions(this.toExpression(), Expression.of(b));
-    }
-
-    /**
-     * Provides a function comparing this parameter to expression.
-     *
-     * @param expression the expression.
-     * @return the BooleanEquals function comparing the parameter.
-     */
-    public Function equal(Expression expression) {
-        return BooleanEquals.ofExpressions(this.toExpression(), expression);
-    }
-
-    public Optional<String> getDocumentation() {
-        return Optional.ofNullable(documentation);
-    }
-
-    /**
-     * The default value for this Parameter.
-     *
-     * @return The value. This value must match the type of this parameter.
-     */
-    public Optional<Value> getDefault() {
-        return Optional.ofNullable(this.defaultValue);
-    }
-
-    public static final class Deprecated implements ToNode {
-        private static final String MESSAGE = "message";
-        private static final String SINCE = "since";
-        private final String message;
-        private final String since;
-
-        public Deprecated(String message, String since) {
-            this.message = message;
-            this.since = since;
-        }
-
-        public static Deprecated fromNode(ObjectNode objectNode) {
-            String message = objectNode.getStringMember(MESSAGE).map(StringNode::getValue).orElse(null);
-            String since = objectNode.getStringMember(SINCE).map(StringNode::getValue).orElse(null);
-            return new Deprecated(message, since);
-        }
-
-        @Override
-        public Node toNode() {
-            NodeMapper mapper = new NodeMapper();
-            mapper.disableToNodeForClass(Deprecated.class);
-            return mapper.serialize(this);
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getSince() {
-            return since;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message, since);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != this.getClass()) {
-                return false;
-            }
-            Deprecated that = (Deprecated) obj;
-            return Objects.equals(this.message, that.message)
-                   && Objects.equals(this.since, that.since);
-        }
-
-        @Override
-        public String toString() {
-            return "Deprecated["
-                   + "message=" + message + ", "
-                   + "since=" + since + ']';
-        }
-
-    }
-
-    public static final class Builder extends SourceLocationTrackingBuilder<Builder, Parameter> {
+    public static final class Builder extends RulesComponentBuilder<Builder, Parameter> {
         private ParameterType type;
         private Identifier name;
         private String builtIn;
-
         private Deprecated deprecated;
-
         private Value value;
         private boolean required;
         private String documentation;
-
         private Value defaultValue;
 
         public Builder(FromSourceLocation sourceLocation) {
@@ -392,11 +355,6 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
 
         public Builder defaultValue(Value defaultValue) {
             this.defaultValue = defaultValue;
-            return this;
-        }
-
-        public Builder sourceLocation(SourceLocation value) {
-            this.sourceLocation = value;
             return this;
         }
 

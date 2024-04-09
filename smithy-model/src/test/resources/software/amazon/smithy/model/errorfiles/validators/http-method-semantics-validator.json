@@ -6,7 +6,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#http": {
-                    "method": "GET",
+                    "method": "Get",
                     "uri": "/A"
                 }
             }
@@ -148,6 +148,12 @@
                     }
                 },
                 "payload": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "morePayload": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": {}

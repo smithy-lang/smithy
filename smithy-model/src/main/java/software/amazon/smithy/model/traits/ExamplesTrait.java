@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
@@ -56,6 +57,24 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     }
 
     @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ExamplesTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ExamplesTrait trait = (ExamplesTrait) other;
+            return this.examples.size() == trait.examples.size() && this.examples.containsAll(trait.examples);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), examples);
+    }
+
+
+    @Override
     public Builder toBuilder() {
         Builder builder = new Builder().sourceLocation(getSourceLocation());
         examples.forEach(builder::addExample);
@@ -70,7 +89,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     }
 
     /**
-     * Builds and examples trait.
+     * Builds an examples trait.
      */
     public static final class Builder extends AbstractTraitBuilder<ExamplesTrait, Builder> {
         private final List<Example> examples = new ArrayList<>();
@@ -100,6 +119,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final ObjectNode input;
         private final ObjectNode output;
         private final ErrorExample error;
+        private final boolean allowConstraintErrors;
 
         private Example(Builder builder) {
             this.title = Objects.requireNonNull(builder.title, "Example title must not be null");
@@ -107,6 +127,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             this.input = builder.input;
             this.output = builder.output;
             this.error = builder.error;
+            this.allowConstraintErrors = builder.allowConstraintErrors;
         }
 
         /**
@@ -133,8 +154,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         /**
          * @return Gets the output object.
          */
-        public ObjectNode getOutput() {
-            return output;
+        public Optional<ObjectNode> getOutput() {
+            return Optional.ofNullable(output);
         }
 
         /**
@@ -142,6 +163,13 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
          */
         public Optional<ErrorExample> getError() {
             return Optional.ofNullable(error);
+        }
+
+        /**
+         * @return Returns true if input constraints errors are allowed.
+         */
+        public boolean getAllowConstraintErrors() {
+            return allowConstraintErrors;
         }
 
         @Override
@@ -154,16 +182,40 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
             }
-            if (!output.isEmpty()) {
+            if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
+            }
+
+            if (this.allowConstraintErrors) {
+                builder.withMember("allowConstraintErrors", BooleanNode.from(allowConstraintErrors));
             }
 
             return builder.build();
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Example example = (Example) o;
+            return allowConstraintErrors == example.allowConstraintErrors && Objects.equals(title, example.title)
+                    && Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input)
+                    && Objects.equals(output, example.output) && Objects.equals(error, example.error);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, documentation, input, output, error, allowConstraintErrors);
+        }
+
+        @Override
         public Builder toBuilder() {
-            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error);
+            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
+                    .allowConstraintErrors(allowConstraintErrors);
         }
 
         public static Builder builder() {
@@ -177,8 +229,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private String title;
             private String documentation;
             private ObjectNode input = Node.objectNode();
-            private ObjectNode output = Node.objectNode();
+            private ObjectNode output;
             private ErrorExample error;
+            private boolean allowConstraintErrors;
 
             @Override
             public Example build() {
@@ -207,6 +260,11 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
             public Builder error(ErrorExample error) {
                 this.error = error;
+                return this;
+            }
+
+            public Builder allowConstraintErrors(Boolean allowConstraintErrors) {
+                this.allowConstraintErrors = allowConstraintErrors;
                 return this;
             }
         }
@@ -279,6 +337,23 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shapeId, content);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (other == null || other.getClass() != this.getClass()) {
+                return false;
+            }
+            ErrorExample otherExample = (ErrorExample) other;
+            return Objects.equals(shapeId, otherExample.shapeId) && Objects.equals(content, otherExample.content);
+        }
     }
 
     public static final class Provider implements TraitService {
@@ -302,7 +377,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .getStringMember("documentation", builder::documentation)
                     .getObjectMember("input", builder::input)
                     .getObjectMember("output", builder::output)
-                    .getMember("error", ErrorExample::fromNode, builder::error);
+                    .getMember("error", ErrorExample::fromNode, builder::error)
+                    .getBooleanMember("allowConstraintErrors", builder::allowConstraintErrors);
             return builder.build();
         }
     }

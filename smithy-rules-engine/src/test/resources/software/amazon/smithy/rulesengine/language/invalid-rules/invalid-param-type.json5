@@ -1,8 +1,9 @@
 // when parsing endpoint ruleset
 // while parsing the parameter `RegionName`
-//   at invalid-rules/invalid-param-type.json5:9
 //   at invalid-rules/invalid-param-type.json5:10
+// while parsing the parameter type
 // Unexpected parameter type `notastring`. Expected `String` or `Boolean`.
+//   at invalid-rules/invalid-param-type.json5:11
 {
   "version": "1.2",
   "parameters": {

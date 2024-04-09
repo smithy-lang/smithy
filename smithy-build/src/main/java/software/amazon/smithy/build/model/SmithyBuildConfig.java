@@ -16,7 +16,6 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -41,20 +40,30 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     private static final Set<String> BUILTIN_PLUGINS = SetUtils.of("build-info", "model", "sources");
 
     private final String version;
+    private final List<String> sources;
     private final List<String> imports;
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
     private final Map<String, ObjectNode> plugins;
     private final boolean ignoreMissingPlugins;
+    private final MavenConfig maven;
+    private final long lastModifiedInMillis;
 
     private SmithyBuildConfig(Builder builder) {
         SmithyBuilder.requiredState("version", builder.version);
         version = builder.version;
         outputDirectory = builder.outputDirectory;
+        sources = builder.sources.copy();
         imports = builder.imports.copy();
         projections = builder.projections.copy();
         plugins = builder.plugins.copy();
         ignoreMissingPlugins = builder.ignoreMissingPlugins;
+        maven = builder.maven;
+        lastModifiedInMillis = builder.lastModifiedInMillis;
+
+        if (outputDirectory != null && outputDirectory.isEmpty()) {
+            throw new IllegalArgumentException("outputDirectory must be set to a valid directory");
+        }
     }
 
     public static SmithyBuildConfig fromNode(Node node) {
@@ -78,8 +87,18 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      * <code>
      * {
      *     "version": "1.0",
+     *     "sources": ["model"],
      *     "imports": ["foo.json", "baz.json"],
      *     "outputDirectory": "build/output",
+     *     "maven" {
+     *          "dependencies": ["software.amazon.smithy:smithy-aws-traits:1.26.1"],
+     *          "repositories": [
+     *              {
+     *                  "url": "https://example.com/maven",
+     *                  "httpCredentials": "${MAVEN_USER}:${MAVEN_PASSWORD}"
+     *              }
+     *          ]
+     *     }
      *     "projections": {
      *         "projection-name": {
      *             "transforms": [
@@ -116,10 +135,12 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         return builder()
                 .version(version)
                 .outputDirectory(outputDirectory)
+                .sources(sources)
                 .imports(imports)
                 .projections(projections)
                 .plugins(plugins)
-                .ignoreMissingPlugins(ignoreMissingPlugins);
+                .ignoreMissingPlugins(ignoreMissingPlugins)
+                .maven(maven);
     }
 
     /**
@@ -132,7 +153,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
-     * Gets the paths to all of the models to import.
+     * Gets the paths to all the models to import.
      *
      * <p>Paths can point to individual model files or directories.
      * All models stored in all recursive directories will be imported.
@@ -144,6 +165,19 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
+     * Gets the paths to all model sources.
+     *
+     * <p>Paths can point to individual model files or directories.
+     * All models stored in all recursive directories will be imported.
+     * Each found Smithy model will be considered a source model.
+     *
+     * @return Gets the list of models to import.
+     */
+    public List<String> getSources() {
+        return sources;
+    }
+
+    /**
      * @return Gets the optional output directory to store artifacts.
      */
     public Optional<String> getOutputDirectory() {
@@ -151,7 +185,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
-     * Gets all of the configured projections.
+     * Gets all the configured projections.
      *
      * @return Gets the available projections as a map of name to config.
      */
@@ -181,15 +215,41 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
+     * Gets Maven dependency configuration.
+     *
+     * <p>Note that smithy-build does not directly resolve or use dependencies.
+     * It's up to other packages like the Smithy CLI to use a dependency resolver
+     * based on smithy-build.json configuration and call smithy-build with
+     * the appropriate classpath.
+     *
+     * @return Returns Maven dependency information.
+     */
+    public Optional<MavenConfig> getMaven() {
+        return Optional.ofNullable(maven);
+    }
+
+    /**
+     * Get the last modified time of the configuration file.
+     *
+     * @return Returns the last modified time in milliseconds since the epoch.
+     */
+    public long getLastModifiedInMillis() {
+        return lastModifiedInMillis;
+    }
+
+    /**
      * Builder used to create a {@link SmithyBuildConfig}.
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
         private final BuilderRef<List<String>> imports = BuilderRef.forList();
+        private final BuilderRef<List<String>> sources = BuilderRef.forList();
         private final BuilderRef<Map<String, ProjectionConfig>> projections = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, ObjectNode>> plugins = BuilderRef.forOrderedMap();
         private String version;
         private String outputDirectory;
         private boolean ignoreMissingPlugins;
+        private MavenConfig maven;
+        private long lastModifiedInMillis = 0;
 
         Builder() {}
 
@@ -225,7 +285,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
                 String content = IoUtils.readUtf8File(config);
                 Path basePath = config.getParent();
                 if (basePath == null) {
-                    basePath = Paths.get(".");
+                    basePath = SmithyBuildUtils.getCurrentWorkingDirectory();
                 }
                 Node loadedAndExpanded = SmithyBuildUtils.loadAndExpandJson(config.toString(), content);
                 return loadNode(basePath, loadedAndExpanded);
@@ -238,6 +298,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             node.expectObjectNode()
                     .expectStringMember("version", this::version)
                     .getStringMember("outputDirectory", this::outputDirectory)
+                    .getArrayMember("sources", s -> SmithyBuildUtils.resolveImportPath(basePath, s),
+                                    values -> sources.get().addAll(values))
                     .getArrayMember("imports", s -> SmithyBuildUtils.resolveImportPath(basePath, s),
                                     values -> imports.get().addAll(values))
                     .getObjectMember("projections", v -> {
@@ -251,7 +313,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
                             plugins.get().put(entry.getKey(), entry.getValue().expectObjectNode());
                         }
                     })
-                    .getBooleanMember("ignoreMissingPlugins", this::ignoreMissingPlugins);
+                    .getBooleanMember("ignoreMissingPlugins", this::ignoreMissingPlugins)
+                    .getMember("maven", MavenConfig::fromNode, this::maven);
             return this;
         }
 
@@ -264,9 +327,18 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         public Builder merge(SmithyBuildConfig config) {
             config.getOutputDirectory().ifPresent(this::outputDirectory);
             version(config.getVersion());
+            sources.get().addAll(config.getSources());
             imports.get().addAll(config.getImports());
             projections.get().putAll(config.getProjections());
             plugins.get().putAll(config.getPlugins());
+
+            if (config.getMaven().isPresent()) {
+                if (maven == null) {
+                    maven = config.maven;
+                } else {
+                    maven = maven.merge(config.maven);
+                }
+            }
 
             // If either one wants to ignore missing plugins, then ignore them.
             if (config.isIgnoreMissingPlugins()) {
@@ -296,6 +368,18 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         public Builder imports(Collection<String> imports) {
             this.imports.clear();
             this.imports.get().addAll(imports);
+            return this;
+        }
+
+        /**
+         * Replaces sources on the config.
+         *
+         * @param sources Sources to set.
+         * @return Returns the builder.
+         */
+        public Builder sources(Collection<String> sources) {
+            this.sources.clear();
+            this.sources.get().addAll(sources);
             return this;
         }
 
@@ -331,6 +415,16 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
          */
         public Builder ignoreMissingPlugins(boolean ignoreMissingPlugins) {
             this.ignoreMissingPlugins = ignoreMissingPlugins;
+            return this;
+        }
+
+        public Builder maven(MavenConfig maven) {
+            this.maven = maven;
+            return this;
+        }
+
+        public Builder lastModifiedInMillis(long lastModifiedInMillis) {
+            this.lastModifiedInMillis = lastModifiedInMillis;
             return this;
         }
     }

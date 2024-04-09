@@ -1,0 +1,5 @@
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait.smithy.rules#clientContextParams
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait.smithy.rules#endpointTests
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait.smithy.rules#endpointRuleSet
+[ERROR] smithy.example#ExampleService: The `SDK::Endpointt` built-in used is not registered, valid built-ins: SDK::Endpoint | RuleSetBuiltIn.RuleSet
+[ERROR] smithy.example#ExampleService: The `SDK::Endpointt` built-in used is not registered, valid built-ins: SDK::Endpoint | RuleSetBuiltIn.TestCase.0.Inputs.0

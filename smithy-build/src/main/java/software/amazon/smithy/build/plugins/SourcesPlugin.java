@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -108,10 +109,11 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
     private static void copyDirectory(List<String> names, FileManifest manifest, Path root, Path current) {
         try {
             if (Files.isDirectory(current)) {
-                Files.list(current)
-                        .filter(p -> !p.equals(current))
-                        .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
-                        .forEach(p -> copyDirectory(names, manifest, root, p));
+                try (Stream<Path> fileList = Files.list(current)) {
+                    fileList.filter(p -> !p.equals(current))
+                            .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
+                            .forEach(p -> copyDirectory(names, manifest, root, p));
+                }
             } else if (Files.isRegularFile(current)) {
                 if (current.toString().endsWith(".jar")) {
                     // Account for just a simple file vs recursing into directories.
@@ -145,8 +147,16 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
                     + ValidationUtils.tickedList(manifest.getFiles()));
         }
 
-        manifest.writeFile(target, contents);
-        names.add(target.toString());
+        String filename = target.toString();
+
+        // Even though sources are filtered in SmithyBuild, it's theoretically possible that someone could call this
+        // plugin manually. In that case, refuse to write unsupported files to the manifest.
+        if (filename.endsWith(".smithy") || filename.endsWith(".json")) {
+            manifest.writeFile(target, contents);
+            names.add(target.toString());
+        } else {
+            LOGGER.warning("Omitting unrecognized file from Smithy model manifest: " + filename);
+        }
     }
 
     private static void projectSources(PluginContext context) {

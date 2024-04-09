@@ -1,1 +1,1 @@
-[WARNING] smithy.example#Hi: Expected an object with possible properties of `traits`, `type`, but found additional properties: `invalid` | Model
+[WARNING] smithy.example#Hi: Expected an object with possible properties of `mixins`, `traits`, `type`, but found additional properties: `invalid` | Model

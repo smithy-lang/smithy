@@ -1,0 +1,29 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#Baz": {
+      "type": "structure",
+      "mixins": [
+        {
+          "target": "smithy.example#MyMixin"
+        }
+      ],
+      "members": {
+        "foo": {
+          "target": "smithy.api#String"
+        }
+      }
+    },
+    "smithy.example#MyMixin": {
+      "type": "structure",
+      "members": {
+        "bar": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    }
+  }
+}

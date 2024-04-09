@@ -20,6 +20,14 @@
                 }
             ]
         },
+        "ns.foo#Valid2": {
+            "type": "resource",
+            "identifiers": {
+                "a": {
+                    "target": "ns.foo#MyEnum"
+                }
+            }
+        },
         "ns.foo#Invalid1": {
             "type": "resource",
             "identifiers": {
@@ -67,6 +75,17 @@
         },
         "ns.foo#MyString": {
             "type": "string"
+        },
+        "ns.foo#MyEnum": {
+            "type": "enum",
+            "members": {
+                "VALUE_1": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "Value1"
+                    }
+                }
+            }
         }
     }
 }

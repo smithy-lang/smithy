@@ -1,0 +1,12 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#GetAnotherResourceInput$ResourceId: This shape applies a trait that is unstable: smithy.rules#contextParam | UnstableTrait
+[WARNING] example#GetResourceInput$ResourceId: This shape applies a trait that is unstable: smithy.rules#contextParam | UnstableTrait
+[WARNING] example#GetAnotherResource: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[WARNING] example#GetResource: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[ERROR] example#GetResource: Inconsistent type for `InconsistentParamType` parameter | RuleSetParameter.StaticContextParams.InconsistentType
+[ERROR] example#FizzBuzz: Type mismatch for parameter `ParameterFoo` | RuleSetParameter.RuleSet.TypeMismatch
+[ERROR] example#FizzBuzz: Parameter `ExtraParameter` exists in ruleset but not in service model | RuleSetParameter.RuleSet.UnmatchedName
+[ERROR] example#FizzBuzz: Parameter `AnotherParameterBar` exists in service model but not in ruleset | RuleSetParameter.RuleSet.UnmatchedName
+[ERROR] example#FizzBuzz: Parameter `InconsistentParamType` exists in service model but not in ruleset | RuleSetParameter.RuleSet.UnmatchedName
+[ERROR] example#FizzBuzz: Parameter `ParamNotInRuleset` exists in service model but not in ruleset | RuleSetParameter.RuleSet.UnmatchedName

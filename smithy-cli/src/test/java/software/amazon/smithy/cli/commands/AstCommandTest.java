@@ -28,24 +28,6 @@ public class AstCommandTest {
     }
 
     @Test
-    public void usesModelDiscoveryWithCustomValidClasspath() throws Exception {
-        String dir = Paths.get(getClass().getResource("valid.jar").toURI()).toString();
-        CliUtils.Result result = CliUtils.runSmithy("ast", "--debug", "--discover-classpath", dir);
-
-        assertThat(result.code(), equalTo(0));
-        assertThat(result.stdout(), containsString("{"));
-    }
-
-    @Test
-    public void usesModelDiscoveryWithCustomInvalidClasspath() throws Exception {
-        String dir = Paths.get(getClass().getResource("invalid.jar").toURI()).toString();
-        CliUtils.Result result = CliUtils.runSmithy("ast", "--debug", "--discover-classpath", dir);
-
-        assertThat(result.code(), not(0));
-        assertThat(result.stderr(), containsString("ERROR: 1"));
-    }
-
-    @Test
     public void failsOnUnknownTrait() throws Exception {
         String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
         CliUtils.Result result = CliUtils.runSmithy("ast", model);

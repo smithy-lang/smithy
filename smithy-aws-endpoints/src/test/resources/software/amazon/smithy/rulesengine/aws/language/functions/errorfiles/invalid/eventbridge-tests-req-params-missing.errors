@@ -1,0 +1,5 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[ERROR] example#FizzBuzz: Required parameter `region` is missing in at least one test case | RuleSetParameter.TestCase.RequiredMissing
+[ERROR] example#FizzBuzz: Expected `StringType` but was `EmptyType[]` with value: `<empty>` | RuleSetTestCase

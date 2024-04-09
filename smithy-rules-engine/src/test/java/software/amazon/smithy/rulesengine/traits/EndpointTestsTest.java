@@ -1,18 +1,3 @@
-/*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -38,12 +22,9 @@ public final class EndpointTestsTest {
                 .addImport(EndpointTestsTest.class.getResource("traits-test-model.smithy"))
                 .assemble()
                 .unwrap();
-
         ServiceShape serviceShape = model.expectShape(ShapeId.from("smithy.example#ExampleService"),
                 ServiceShape.class);
-
         EndpointTestsTrait ruleSetTrait = serviceShape.getTrait(EndpointTestsTrait.class).get();
-
         List<EndpointTestCase> testCases = ruleSetTrait.getTestCases();
 
         assertThat(2, equalTo(testCases.size()));
@@ -70,6 +51,7 @@ public final class EndpointTestsTest {
                                         .build())
                                 .operationParams(ObjectNode.builder()
                                         .withMember("buzz", "a buzz value")
+                                        .withMember("fizz", "a required value")
                                         .build())
                                 .builtInParams(ObjectNode.builder()
                                         .withMember("SDK::Endpoint", "https://custom.example.com")
@@ -79,13 +61,7 @@ public final class EndpointTestsTest {
                 .expect(EndpointTestExpectation.builder()
                         .endpoint(ExpectedEndpoint.builder()
                                 .url("https://example.com")
-                                .properties(MapUtils.of(
-                                        "authSchemes", ArrayNode.arrayNode(ObjectNode.builder()
-                                                .withMember("name", "v4")
-                                                .withMember("signingName", "example")
-                                                .withMember("signingScope", "us-west-2")
-                                                .build())
-                                ))
+                                .properties(MapUtils.of())
                                 .headers(MapUtils.of(
                                         "single", ListUtils.of("foo"),
                                         "multi", ListUtils.of("foo", "bar", "baz")
@@ -109,10 +85,9 @@ public final class EndpointTestsTest {
         TraitFactory traitFactory = TraitFactory.createServiceFactory();
         EndpointTestsTrait expectedTrait = (EndpointTestsTrait) traitFactory.createTrait(EndpointTestsTrait.ID,
                 ShapeId.from("ns.example#Foo"), expectedNode).get();
-
         EndpointTestsTrait actualTrait = expectedTrait.toBuilder().build();
-        assertThat(expectedTrait, equalTo(actualTrait));
 
-        assertThat(expectedNode, equalTo(actualTrait.toNode()));
+        Node.assertEquals(actualTrait.toNode(), expectedNode);
+        assertThat(expectedTrait, equalTo(actualTrait));
     }
 }

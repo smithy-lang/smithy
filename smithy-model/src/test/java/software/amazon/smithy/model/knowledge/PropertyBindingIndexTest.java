@@ -68,6 +68,7 @@ public class PropertyBindingIndexTest {
 
         assertTrue(index.doesMemberShapeRequireProperty(model.expectShape(
                 ShapeId.from("com.example#ChangeResourceOutput$id"), MemberShape.class)));
+
         Assertions.assertThrows(ValidatedResultException.class, () -> vrmodel.unwrap());
     }
 }

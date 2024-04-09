@@ -1,4 +1,12 @@
+/// This comment is ignored.
 $version: "2.0"
+
+/// This comment is ignored.
+metadata foo = [
+    /// This comment is ignored.
+    "bar"
+]
+
 /// This comment is ignored.
 namespace smithy.example
 
@@ -14,7 +22,7 @@ string MyString
 /// Structure
 structure MyStructure {
     /// Docs on member!
-    foo: String,
+    foo: String = "hi",
 
     /// Docs on another member!
     @required
@@ -45,5 +53,8 @@ operation MyOperation {
         /// operator.
         {}
 }
+
+/// This is treated as a comment because it comes before apply.
+apply MyOperation @deprecated
 
 /// This is treated as a comment.

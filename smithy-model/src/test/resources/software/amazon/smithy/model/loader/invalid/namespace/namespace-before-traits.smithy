@@ -1,2 +1,2 @@
-// Parse error at line 2, column 1 near `@i`: Expected a namespace definition, but found unexpected syntax
+// Syntax error at line 2, column 1: Expected a namespace definition but found AT('@') | Model
 @invalid

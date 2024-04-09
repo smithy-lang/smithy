@@ -1,0 +1,41 @@
+{
+    "definitions": {
+        "Foo": {
+            "type": "object",
+            "properties": {
+                "bam": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": []
+                },
+                "bar": {
+                    "type": "number",
+                    "default": 0
+                },
+                "bat": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/TestEnum"
+                        },
+                        {
+                            "default": "FOO"
+                        }
+                    ]
+                },
+                "baz": {
+                    "type": "string",
+                    "default": ""
+                }
+            }
+        },
+        "TestEnum": {
+            "type": "string",
+            "enum": [
+                "FOO",
+                "BAR"
+            ]
+        }
+    }
+}

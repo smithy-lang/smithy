@@ -66,7 +66,8 @@ final class ModelInteropTransformer {
             ShapeType.LONG,
             ShapeType.FLOAT,
             ShapeType.DOUBLE,
-            ShapeType.BOOLEAN);
+            ShapeType.BOOLEAN,
+            ShapeType.INT_ENUM); // intEnum is actually an integer in v1, but the ShapeType is different.
 
     private final Model model;
     private final List<ValidationEvent> events;
@@ -167,10 +168,9 @@ final class ModelInteropTransformer {
                && memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target);
     }
 
-    // Only apply box to members where the trait can be applied. Note that intEnum is treated
-    // like a normal integer in v1 implementations, so it is allowed to be synthetically boxed.
+    // Only apply box to members where the trait can be applied.
     private boolean canBoxTargetThisKindOfShape(Shape target) {
-        return HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || target.isIntEnumShape();
+        return HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType());
     }
 
     private boolean memberAndTargetAreNotAlreadyExplicitlyBoxed(MemberShape member, Shape target) {

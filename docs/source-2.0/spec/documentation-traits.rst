@@ -66,7 +66,8 @@ Value type
     string MyString
 
 
-.. rubric:: Effective documentation
+Effective documentation
+-----------------------
 
 The *effective documentation trait* of a shape is resolved using the following
 process:
@@ -138,11 +139,13 @@ Each ``example`` trait value is a structure with the following members:
       - :ref:`examples-ErrorExample-structure`
       - Provides an error shape ID and example error parameters for the
         operation.
+    * - allowConstraintErrors
+      - ``boolean``
+      - Set to true to lower input constraint trait validations to warnings.
+        This can only be set when ``error`` is provided.
 
-The values provided for the ``input`` and ``output`` members MUST be
-compatible with the shapes and constraints of the corresponding structure.
-These values use the same semantics and format as
-:ref:`custom trait values <trait-node-values>`.
+A value for ``output`` or ``error`` SHOULD be provided. However, both
+MUST NOT be defined for the same example.
 
 .. code-block:: smithy
 
@@ -175,16 +178,15 @@ These values use the same semantics and format as
         {
             title: "Error example for MyOperation"
             input: {
-                foo: "!",
-            }
-                foo: 1
+                foo: "!"
             }
             error: {
                 shapeId: MyOperationError
                 content: {
                     message: "Invalid 'foo'. Special character not allowed."
                 }
-            }
+            },
+            allowConstraintErrors: true
         }
     ])
 

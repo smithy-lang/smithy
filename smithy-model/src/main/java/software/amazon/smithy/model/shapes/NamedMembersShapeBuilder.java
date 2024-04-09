@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import software.amazon.smithy.utils.BuilderRef;
 
@@ -29,6 +30,11 @@ abstract class NamedMembersShapeBuilder<B extends NamedMembersShapeBuilder<B, S>
         extends AbstractShapeBuilder<B, S> {
 
     protected final BuilderRef<Map<String, MemberShape>> members = BuilderRef.forOrderedMap();
+
+    @Override
+    public Optional<MemberShape> getMember(String memberName) {
+        return Optional.ofNullable(members.get().get(memberName));
+    }
 
     @Override
     public final B id(ShapeId shapeId) {

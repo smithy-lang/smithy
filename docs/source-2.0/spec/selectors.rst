@@ -9,6 +9,8 @@ shapes within a model. Selectors are used to build custom
 :ref:`validators <EmitEachSelector>` and to specify where it is valid to
 apply a :ref:`trait <defining-traits>`.
 
+For information about how to use selectors within a code generator, see
+:ref:`Using the Semantic Model <codegen-selectors>`.
 
 Introduction
 ============
@@ -246,7 +248,7 @@ performed.
 
         .. code-block:: none
 
-            [trait|required $= '_']
+            [id|name $= '_']
     * - ``*=``
       - Matches if the attribute value contains the comparison value.
         This comparator never matches if either value does not exist.
@@ -997,9 +999,8 @@ Forward undirected neighbor
 ----------------------------
 
 A :token:`forward undirected neighbor <selectors:SelectorForwardUndirectedNeighbor>`
-(``>``) yields every shape that is connected to the current shape. For
-example, the following selector matches the key and value members of
-every map:
+(``>``) yields every shape referred to by the current shape. For example, the
+following selector matches the key and value members of every map:
 
 .. code-block:: none
 
@@ -1018,7 +1019,7 @@ Forward directed neighbors
 
 The forward undirected neighbor selector (``>``) is an *undirected* edge
 traversal. Sometimes, a directed edge traversal is necessary. For example,
-the following selector matches the "bound", "input", "output", and "error"
+the following selector matches the "input", "output", "error", and "mixin"
 relationships of each operation:
 
 .. code-block:: none
@@ -1157,64 +1158,50 @@ The table below lists the labeled directed relationships from each shape.
       - Description
     * - service
       - operation
-      - Each operation that is bound to a service.
+      - Each operation bound to a service.
     * - service
       - resource
-      - Each resource that is bound to a service.
+      - Each resource bound to a service.
     * - service
       - error
-      - Each error structure referenced by the service (if present).
+      - Each error structure referenced by the service.
     * - resource
       - identifier
-      - An identifier referenced by the resource (if specified).
+      - Each identifier shape of a resource.
     * - resource
       - property
-      - A property referenced by the resource.
-    * - resource
-      - operation
-      - Each operation that is bound to a resource through the
-        "operations", "create", "put", "read", "update", "delete", and "list"
-        properties.
-    * - resource
-      - instanceOperation
-      - Each operation that is bound to a resource through the
-        "operations", "put", "read", "update", and "delete" properties.
-    * - resource
-      - collectionOperation
-      - Each operation that is bound to a resource through the
-        "collectionOperations", "create", and "list" properties.
+      - Each property shape of a resource.
     * - resource
       - resource
-      - Each resource that is bound to a resource.
+      - Each resource bound to a resource.
+    * - resource
+      - operation
+      - Each operation bound to a resource through the "operations" property.
+    * - resource
+      - collectionOperation
+      - Each operation bound to a resource through the "collectionOperations"
+        property.
     * - resource
       - create
-      - The operation referenced by the :ref:`create-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`create-lifecycle` of a resource.
     * - resource
       - read
-      - The operation referenced by the :ref:`read-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`read-lifecycle` of a resource.
     * - resource
       - update
-      - The operation referenced by the :ref:`update-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`update-lifecycle` of a resource.
     * - resource
       - delete
-      - The operation referenced by the :ref:`delete-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`delete-lifecycle` of a resource.
     * - resource
       - list
-      - The operation referenced by the :ref:`list-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`list-lifecycle` of a resource.
     * - resource
-      - bound
-      - The service or resource to which the resource is bound.
-    * - operation
-      - bound
-      - The service or resource to which the operation is bound.
+      - put
+      - The operation defined as the :ref:`put-lifecycle` of a resource.
     * - operation
       - input
-      - The input structure of the operation (if present).
+      - The input structure of an operation.
 
         .. note::
 
@@ -1223,7 +1210,7 @@ The table below lists the labeled directed relationships from each shape.
 
     * - operation
       - output
-      - The output structure of the operation (if present).
+      - The output structure of an operation.
 
         .. note::
 
@@ -1232,23 +1219,25 @@ The table below lists the labeled directed relationships from each shape.
 
     * - operation
       - error
-      - Each error structure referenced by the operation (if present).
+      - Each error structure of an operation.
     * - list
       - member
-      - The :ref:`member` of the list, including if it was inherited from a
-        mixin. Note that this is not the shape targeted by the member.
+      - The :ref:`member <member>` of a list.
     * - map
       - member
-      - The key and value members of the map, including those inherited from
-        mixins. Note that these are not the shapes targeted by the member.
+      - The key and value members of a map.
     * - structure
       - member
-      - Each structure member, including members inherited from mixins. Note
-        that these are not the shapes targeted by the members.
+      - Each structure member.
     * - union
       - member
-      - Each union member, including members inherited from mixins. Note that
-        these are not the shapes targeted by the members.
+      - Each union member.
+    * - enum
+      - member
+      - Each enum member.
+    * - intEnum
+      - member
+      - Each intEnum member.
     * - member
       -
       - The shape targeted by the member. Note that member targets have no
@@ -1258,7 +1247,7 @@ The table below lists the labeled directed relationships from each shape.
       - Each trait applied to a shape. The neighbor shape is the shape that
         defines the trait. This kind of relationship is only traversed if the
         ``trait`` relationship is explicitly stated as a desired directed
-        neighbor relationship type.
+        neighbor relationship type (for example, ``-[trait]->``).
     * - ``*``
       - mixin
       - Every mixin applied to the shape.
@@ -1266,13 +1255,13 @@ The table below lists the labeled directed relationships from each shape.
         .. note::
 
             A normal ``member`` relationship exists from a given shape to all
-            its inherited mixin members.
+            its mixed in members.
 
-.. important::
+.. note::
 
-    Implementations MUST tolerate parsing unknown relationship types. When
-    evaluated, the directed traversal of unknown relationship types yields
-    no shapes.
+    Implementations MAY tolerate parsing unknown relationship types. When
+    evaluated, the traversal of unknown relationship types SHOULD yield
+    nothing.
 
 
 Functions
@@ -1317,8 +1306,7 @@ no documentation:
 
 .. code-block:: none
 
-    :test(-[bound, resource]->)
-    :not([trait|documentation])
+    :test(< resource) :not([trait|documentation])
 
 
 ``:is``
@@ -1401,6 +1389,88 @@ trait applied to it:
     service :not(-[trait]-> [trait|protocolDefinition])
 
 
+.. _selector-in-function:
+
+``:in``
+-------
+
+The ``:in`` function is used to test if a shape is contained within the
+result of an expression. This function is most useful when testing if a
+:ref:`variable <selector-variables>` or the result of a
+:ref:`root <selector-root-function>` function contains a shape. The ``:in``
+function requires exactly one selector. If a shape is contained in the
+result of evaluating the selector, the shape is yielded from the function.
+
+The following example finds all numbers that are used in service operation
+inputs and not used in service operation outputs:
+
+.. code-block:: none
+    :caption: :in example using variables
+    :name: in-variable-input-output-example
+
+    service
+    $outputs(~> operation -[output]-> ~> number)
+    ~> operation -[input]-> ~> number
+    :not(:in(${outputs}))
+
+.. note::
+
+    The above example returns the aggregate results of applying the selector
+    to every shape: if a model contains multiple services, and one of the
+    services uses a number 'X' in input and not output, but another service
+    uses 'X' in both input and output, 'X' is part of the matched shapes.
+    Use the :ref:`:root function <selector-root-function>` to match shapes
+    globally.
+
+
+.. _selector-root-function:
+
+``:root``
+---------
+
+The ``:root`` function evaluates a subexpression against *all* shapes in the
+model and yields all matches. The ``:root`` function is useful for breaking
+a selector down into smaller operations, and it works best when used with
+:ref:`variables <selector-variables>` or the :ref:`:in function <selector-in-function>`.
+The ``:root`` function requires exactly one selector.
+
+The following example finds all numbers that are used in any operation inputs
+and not used in any operation outputs:
+
+.. code-block:: none
+
+    number
+    :in(:root(service ~> operation -[input]-> ~> number))
+    :not(:in(:root(service ~> operation -[output]-> ~> number)))
+
+.. note::
+
+    The above example is similar to ":ref:`in-variable-input-output-example`"
+    but works independent of services. That is, if a model contains multiple
+    services, and one of the services uses a number 'X' in input and not
+    output, but another service uses 'X' in both input and output, 'X'
+    *is not* part of the matched shapes.
+
+
+:root functions are isolated subexpressions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The expression evaluated by a ``:root`` expression is evaluated in an isolated
+context from the rest of the expression. The selector provided to a ``:root``
+function cannot access variables defined outside the function, and variables
+defined in the selector do not persist outside the selector.
+
+
+:root functions are evaluated at most once
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is no need to store the result of a ``:root`` function in a variable
+because ``:root`` selector functions are considered global common
+subexpressions and are evaluated at most once during the selection process.
+Implementations MAY choose to evaluate ``:root`` expressions eagerly or
+lazily, though they MUST evaluate ``:root`` expressions no more than once.
+
+
 ``:topdown``
 ------------
 
@@ -1415,7 +1485,8 @@ hierarchy of a qualified service or resource shape. This function essentially
 allows shapes to be matched by inheriting from the resource or service they
 are bound to.
 
-.. rubric:: Selector arguments
+Selector arguments
+~~~~~~~~~~~~~~~~~~
 
 Exactly one or two selectors MUST be provided to the ``:topdown`` selector:
 
@@ -1431,7 +1502,8 @@ Exactly one or two selectors MUST be provided to the ``:topdown`` selector:
    shape because resource and operation shapes bound to the current shape
    could yield matching results.
 
-.. rubric:: Examples
+Examples
+~~~~~~~~
 
 The following selector finds all service, resource, and operation shapes that
 are marked with the ``aws.api#dataPlane`` trait or that are bound within the
@@ -1662,5 +1734,76 @@ Selectors are defined by the following :rfc:`ABNF <5234>` grammar.
     SelectorDoubleQuotedChar           :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
     SelectorVariableSet                :"$" `smithy:Identifier` "(" `Selector` ")"
     SelectorVariableGet                :"${" `smithy:Identifier` "}"
+
+
+Compliance Tests
+================
+
+Selector compliance tests are used to verify the behavior of selectors. Each compliance test is written as a Smithy file
+and includes a :ref:`metadata <metadata>` called ``selectorTests``. This metadata contains a list of test cases, each including a selector,
+the expected matched shapes, and additional configuration options. The test case contains the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - selector
+      - ``string``
+      - **REQUIRED** The selector to match shapes within the smithy model
+    * - matches
+      - ``list<shape ID>``
+      - **REQUIRED** The expected shapes ID of the matched shapes
+    * - skipPreludeShapes
+      - ``boolean``
+      - Skip :ref:`prelude shapes <prelude>` when comparing the expected shapes and the actual shapes returned from the selector. Default value is ``false``
+
+Below is an example selector compliance test:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    metadata selectorTests = [
+        {
+            selector: "[trait|length|min > 1]"
+            matches: [
+                smithy.example#AtLeastTen
+            ]
+        }
+        {
+            selector: "[trait|length|min >= 1]"
+            skipPreludeShapes: true
+            matches: [
+                smithy.example#AtLeastOne
+                smithy.example#AtLeastTen
+            ]
+        }
+        {
+            selector: "[trait|length|min < 2]"
+            skipPreludeShapes: true
+            matches: [
+                smithy.example#AtLeastOne
+            ]
+        }
+    ]
+
+    namespace smithy.example
+
+    @length(min: 1)
+    string AtLeastOne
+
+    @length(max: 5)
+    string AtMostFive
+
+    @length(min: 10)
+    string AtLeastTen
+
+The compliance tests can also be accessed in this
+`directory <https://github.com/smithy-lang/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases>`__
+of the Smithy Github repository.
+
 
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)

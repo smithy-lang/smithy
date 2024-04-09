@@ -105,8 +105,10 @@ public final class TextIndex implements KnowledgeIndex {
                 if (memberTypeShape == null) {
                     //This means the "property" key value isn't modeled in the trait's structure/shape definition
                     //and this text instance is unique
+                    propertyPath.offerLast("key");
                     textInstances.add(TextInstance.createTraitInstance(
                         memberEntry.getKey(), parentShape, trait, propertyPath));
+                    propertyPath.removeLast();
                 }
                 computeTextInstancesForAppliedTrait(memberEntry.getValue(), trait, parentShape, textInstances,
                         propertyPath, model, memberTypeShape);

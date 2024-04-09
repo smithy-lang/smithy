@@ -29,11 +29,11 @@ final class NotSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         if (!context.receivedShapes(shape, selector)) {
             return next.apply(context, shape);
         } else {
-            return true;
+            return Response.CONTINUE;
         }
     }
 }

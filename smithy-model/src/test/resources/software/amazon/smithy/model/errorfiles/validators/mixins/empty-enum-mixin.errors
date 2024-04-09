@@ -1,0 +1,2 @@
+[ERROR] smithy.example#EmptyEnumMixin: enum must have at least one entry | Model
+[ERROR] smithy.example#EmptyEnum: Cannot apply mixin to smithy.example#EmptyEnum: smithy.example#EmptyEnumMixin not found | Model

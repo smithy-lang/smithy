@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.BuilderRef;
@@ -47,21 +48,32 @@ final class NamedMemberUtils {
                 String name = member.getMemberName();
                 if (members.get().containsKey(name)) {
                     MemberShape localMember = members.get().get(name);
-                    // Rebuild the member with the proper inherited mixin if needed.
+                    // Rebuild the member with the proper inherited mixins if needed.
                     // This catches errant cases where a member is added to a structure/union
                     // but omits the mixin members of parent shapes. Arguably, that's way too
                     // nuanced and error-prone to _not_ try to smooth over.
-                    if (localMember.getMixins().isEmpty() || !mixins.containsKey(member.getId())) {
-                        localMember = localMember.toBuilder().clearMixins().addMixin(member).build();
+                    if (localMember.getMixins().isEmpty() || !localMember.getMixins().contains(member.getId())) {
+                        localMember = rebuildMemberMixins(localMember, mixins.values());
                     }
                     computedMembers.put(name, localMember);
                 } else {
-                    computedMembers.put(name, MemberShape.builder()
-                            .id(shapeId.withMember(name))
-                            .target(member.getTarget())
-                            .source(sourceLocation)
-                            .addMixin(member)
-                            .build());
+                    MemberShape previouslyDefined = computedMembers.get(name);
+                    if (previouslyDefined != null) {
+                        validateMixinMemberConflict(member, previouslyDefined);
+                        computedMembers.put(name,
+                                previouslyDefined.toBuilder()
+                                .source(member.getSourceLocation())
+                                .addMixin(member)
+                                .addTraits(member.getAllTraits().values())
+                                .build());
+                    } else {
+                        computedMembers.put(name, MemberShape.builder()
+                                .id(shapeId.withMember(name))
+                                .target(member.getTarget())
+                                .source(member.getSourceLocation())
+                                .addMixin(member)
+                                .build());
+                    }
                 }
             }
         }
@@ -72,8 +84,15 @@ final class NamedMemberUtils {
                 computedMembers.put(member.getMemberName(), member);
             }
         }
-
         return Collections.unmodifiableMap(computedMembers);
+    }
+
+    private static MemberShape rebuildMemberMixins(MemberShape member, Collection<Shape> mixins) {
+        MemberShape.Builder builder = member.toBuilder().clearMixins();
+        for (Shape mixin : mixins) {
+            mixin.getMember(member.getMemberName()).ifPresent(builder::addMixin);
+        }
+        return builder.build();
     }
 
     static Set<MemberShape> flattenMixins(
@@ -83,32 +102,56 @@ final class NamedMemberUtils {
             SourceLocation sourceLocation
     ) {
         // Ensure that the members are ordered, mixin members first, followed by local members.
-        Set<MemberShape> orderedMembers = new LinkedHashSet<>();
+        Map<String, MemberShape> orderedMembers = new LinkedHashMap<>();
+        Map<String, MemberShape> pendingMembers = new LinkedHashMap<>();
 
         // Copy members from mixins onto the shape.
         for (Shape mixin : mixins.values()) {
             for (MemberShape member : mixin.members()) {
-                SourceLocation location = sourceLocation;
-                Collection<Trait> localTraits = Collections.emptyList();
-                MemberShape existing = members.remove(member.getMemberName());
+                String memberName = member.getMemberName();
+                MemberShape existing = members.remove(memberName);
                 if (existing != null) {
-                    localTraits = existing.getIntroducedTraits().values();
-                    location = existing.getSourceLocation();
+                    // Save it for later processing, we cannot set the location and introduced traits
+                    // here, if multiple mixins override this member then they will overwrite each other.
+                    pendingMembers.put(memberName, existing);
                 }
-                orderedMembers.add(MemberShape.builder()
-                        .id(shapeId.withMember(member.getMemberName()))
+                MemberShape previouslyDefined = orderedMembers.get(memberName);
+                Collection<? extends Trait> previousTraits = Collections.emptyList();
+                if (previouslyDefined != null) {
+                    previousTraits = previouslyDefined.getAllTraits().values();
+                    validateMixinMemberConflict(member, previouslyDefined);
+                }
+                orderedMembers.put(memberName, MemberShape.builder()
+                        .id(shapeId.withMember(memberName))
                         .target(member.getTarget())
+                        .addTraits(previousTraits)
                         .addTraits(member.getAllTraits().values())
-                        .addTraits(localTraits)
-                        .source(location)
+                        .source(member.getSourceLocation())
                         .build());
             }
         }
 
-        // Add any local members _after_ mixin members. LinkedHashSet will keep insertion
+        for (Map.Entry<String, MemberShape> entry : pendingMembers.entrySet()) {
+            String memberName = entry.getKey();
+            MemberShape existing = entry.getValue();
+            MemberShape needUpdate = orderedMembers.get(memberName);
+            orderedMembers.put(memberName, needUpdate.toBuilder()
+                    .source(existing.getSourceLocation())
+                    .addTraits(existing.getIntroducedTraits().values())
+                    .build());
+        }
+
+        // Add any local members _after_ mixin members. LinkedHashMap will keep insertion
         // order, so no need to check for non-mixin members first.
-        orderedMembers.addAll(members.values());
-        return orderedMembers;
+        orderedMembers.putAll(members);
+        return new LinkedHashSet<>(orderedMembers.values());
+    }
+
+    static void validateMixinMemberConflict(MemberShape member, MemberShape previouslyDefined) {
+        if (!previouslyDefined.getTarget().equals(member.getTarget())) {
+            throw new SourceException("Member conflicts with an inherited mixin member: `"
+                    + previouslyDefined.getId() + "`", member);
+        }
     }
 
     static void cleanMixins(Shape newMixin, Map<String, MemberShape> members) {

@@ -66,7 +66,8 @@ public class FilterSuppressionsTest {
         "namespaces,filterWithProjectionImports",
         "namespaces,detectsValidatorRemoval",
         "namespaces,unchanged",
-        "noSuppressions,removeUnused"
+        "noSuppressions,removeUnused",
+        "eventHierarchy,removeUnused"
     })
     public void runTransformTests(String modelFile, String testName) throws Exception {
         Model model = Model.assembler()

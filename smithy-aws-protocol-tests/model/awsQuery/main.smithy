@@ -3,14 +3,17 @@ $version: "2.0"
 namespace aws.protocoltests.query
 
 use aws.api#service
+use aws.auth#sigv4
 use aws.protocols#awsQuery
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A query service that sends query requests and XML responses.
 @service(sdkId: "Query Protocol")
+@sigv4(name: "awsquery")
 @awsQuery
 @xmlNamespace(uri: "https://example.com/")
+@title("Sample Query Protocol Service")
 service AwsQuery {
     version: "2020-01-08",
     operations: [
@@ -62,5 +65,12 @@ service AwsQuery {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        // client-only timestamp parsing tests
+        DatetimeOffsets,
+        FractionalSeconds,
+
+        // requestCompression trait tests
+        PutWithContentEncoding
     ]
 }

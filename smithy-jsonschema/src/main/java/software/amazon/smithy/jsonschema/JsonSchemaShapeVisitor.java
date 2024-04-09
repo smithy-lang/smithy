@@ -100,9 +100,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         if (converter.isInlined(member)) {
             return member.accept(this);
         } else {
-            Schema.Builder builder = Schema.builder().ref(converter.toPointer(member.getTarget()));
-            member.getTrait(DefaultTrait.class).ifPresent(trait -> builder.defaultValue(trait.toNode()));
-            return builder.build();
+            // Wrap the ref and default in an allOf if disableDefaultValues has been not been disabled on config.
+            if (member.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
+                Schema ref = Schema.builder().ref(converter.toPointer(member.getTarget())).build();
+                Schema def = Schema.builder().defaultValue(member.expectTrait(DefaultTrait.class).toNode()).build();
+                return Schema.builder().allOf(ListUtils.of(ref, def)).build();
+            }
+            return Schema.builder().ref(converter.toPointer(member.getTarget())).build();
         }
     }
 
@@ -317,8 +321,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 .map(EnumTrait::getEnumDefinitionValues)
                 .ifPresent(builder::enumValues);
 
-        shape.getTrait(DefaultTrait.class)
-                .ifPresent(trait -> builder.defaultValue(trait.toNode()));
+        if (shape.isIntEnumShape() && !converter.getConfig().getDisableIntEnums()) {
+            builder.intEnumValues(shape.asIntEnumShape().get().getEnumValues().values());
+        }
+
+        if (shape.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
+            builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
+        }
 
         return builder;
     }
@@ -335,8 +344,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the built schema.
      */
     private Schema buildSchema(Shape shape, Schema.Builder builder) {
+        JsonSchemaMapperContext context = new JsonSchemaMapperContext(model, shape, converter.getConfig());
         for (JsonSchemaMapper mapper : mappers) {
-            mapper.updateSchema(shape, builder, converter.getConfig());
+            builder = mapper.updateSchema(context, builder);
         }
 
         return builder.build();

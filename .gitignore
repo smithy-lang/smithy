@@ -34,3 +34,9 @@ build/
 */out/
 */*/out/
 /wrapper
+
+# jdt-ls
+.metadata
+
+# Smithy
+.smithy.lsp.log

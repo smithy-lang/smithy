@@ -1,0 +1,1 @@
+[WARNING] smithy.example#FooService: This service uses multiple authentication schemes but does not have the `@auth` trait applied. The `@auth` trait defines a priority ordering of auth schemes for a client to use. Without it, the ordering of auth schemes is alphabetical based on the absolute shape ID of the auth schemes. | ServiceAuthDefinitions

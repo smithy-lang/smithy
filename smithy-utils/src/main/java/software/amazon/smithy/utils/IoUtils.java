@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,20 +20,33 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utilities for IO operations.
  */
 public final class IoUtils {
-    private static final int BUFFER_SIZE = 1024 * 4;
+
+    private static final Logger LOGGER = Logger.getLogger(IoUtils.class.getName());
+    private static final int BUFFER_SIZE = 1024 * 8;
 
     private IoUtils() {}
 
@@ -140,13 +153,12 @@ public final class IoUtils {
     }
 
     /**
-     * Runs a process using the given {@code command} at the current directory
-     * specified by {@code System.getProperty("user.dir")}.
+     * Helper to run a process.
      *
      * <p>stderr is redirected to stdout in the return value of this method.
      *
-     * @param command Process command to execute.
-     * @return Returns the combined stdout and stderr of the process.
+     * @param command String that contains the command and arguments of the command.
+     * @return        Returns the combined stdout and stderr of the process.
      * @throws RuntimeException if the process returns a non-zero exit code or fails.
      */
     public static String runCommand(String command) {
@@ -154,14 +166,13 @@ public final class IoUtils {
     }
 
     /**
-     * Runs a process using the given {@code command} relative to the given
-     * {@code directory}.
+     * Helper to run a process.
      *
      * <p>stderr is redirected to stdout in the return value of this method.
      *
-     * @param command Process command to execute.
+     * @param command   String that contains the command and arguments of the command.
      * @param directory Directory to use as the working directory.
-     * @return Returns the combined stdout and stderr of the process.
+     * @return          Returns the combined stdout and stderr of the process.
      * @throws RuntimeException if the process returns a non-zero exit code or fails.
      */
     public static String runCommand(String command, Path directory) {
@@ -170,52 +181,228 @@ public final class IoUtils {
 
         if (exitValue != 0) {
             throw new RuntimeException(String.format(
-                    "Command `%s` failed with exit code %d and output:%n%n%s", command, exitValue, sb.toString()));
+                    "Command `%s` failed with exit code %d and output:%n%n%s", command, exitValue, sb));
         }
 
         return sb.toString();
     }
 
     /**
-     * Runs a process using the given {@code command} relative to the given
-     * {@code directory} and writes stdout and stderr to {@code output}.
+     * Helper to run a process.
      *
      * <p>stderr is redirected to stdout when writing to {@code output}.
      * This method <em>does not</em> throw when a non-zero exit code is
      * encountered. For any more complex use cases, use {@link ProcessBuilder}
      * directly.
      *
-     * @param command Process command to execute.
+     * @param command   String that contains the command and arguments of the command.
      * @param directory Directory to use as the working directory.
-     * @param output Where stdout and stderr is written.
-     * @return Returns the exit code of the process.
+     * @param output    Sink destination for lines from stdout and stderr of the process.
+     * @return          Returns the exit code of the process.
      */
     public static int runCommand(String command, Path directory, Appendable output) {
-        String[] finalizedCommand;
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
-            finalizedCommand = new String[]{"cmd.exe", "/c", command};
-        } else {
-            finalizedCommand = new String[]{"sh", "-c", command};
-        }
+        return runCommand(command, directory, output, Collections.emptyMap());
+    }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(finalizedCommand)
-                .directory(directory.toFile())
+    /**
+     * Helper to run a process.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output}.
+     * This method <em>does not</em> throw when a non-zero exit code is
+     * encountered. For any more complex use cases, use {@link ProcessBuilder}
+     * directly.
+     *
+     * @param command   String that contains the command and arguments of the command.
+     * @param directory Directory to use as the working directory.
+     * @param output    Sink destination for lines from stdout and stderr of the process.
+     * @param env       Environment variables to set, possibly overriding specific inherited variables.
+     * @return          Returns the exit code of the process.
+     */
+    public static int runCommand(String command, Path directory, Appendable output, Map<String, String> env) {
+        List<String> finalizedCommand;
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
+            finalizedCommand = Arrays.asList("cmd.exe", "/c", command);
+        } else {
+            finalizedCommand = Arrays.asList("sh", "-c", command);
+        }
+        return runCommand(finalizedCommand, directory, output, env);
+    }
+
+    /**
+     * Helper to run a process.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output}.
+     * This method <em>does not</em> throw when a non-zero exit code is
+     * encountered. For any more complex use cases, use {@link ProcessBuilder}
+     * directly.
+     *
+     * @param args      List containing the program and the arguments.
+     * @param directory Directory to use as the working directory.
+     * @param output    Sink destination for lines from stdout and stderr of the process.
+     * @param env       Environment variables to set, possibly overriding specific inherited variables.
+     * @return          Returns the exit code of the process.
+     */
+    public static int runCommand(List<String> args, Path directory, Appendable output, Map<String, String> env) {
+        return runCommand(args, directory, null, output, env);
+    }
+
+    /**
+     * Helper to run a process.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output} This method <em>does not</em> throw when a
+     * non-zero exit code is encountered. For any more complex use cases, use {@link ProcessBuilder} directly.
+     *
+     * @param args      List containing the program and the arguments.
+     * @param directory Directory to use as the working directory.
+     * @param input     Data to write to the stdin of the process. Use {@code null} to send no input.
+     * @param output    Sink destination for lines from stdout and stderr of the process.
+     * @param env       Environment variables to set, possibly overriding specific inherited variables.
+     * @return          Returns the exit code of the process.
+     */
+    public static int runCommand(
+            List<String> args,
+            Path directory,
+            InputStream input,
+            Appendable output,
+            Map<String, String> env
+    ) {
+        ProcessBuilder processBuilder = new ProcessBuilder(args)
+                .directory(Objects.requireNonNull(directory.toFile(), "Process directory cannot be null"))
                 .redirectErrorStream(true);
+        processBuilder.environment().putAll(env);
 
         try {
             Process process = processBuilder.start();
-            try (BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
+
+            if (input != null) {
+                OutputStream outputStream = process.getOutputStream();
+                copyInputToOutput(input, outputStream);
+                quietlyCloseStream(args, outputStream);
+            }
+
+            try (BufferedReader bufferedStdoutReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
-                while ((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedStdoutReader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator());
                 }
             }
-            process.waitFor();
-            process.destroy();
-            return process.exitValue();
+
+            return process.waitFor();
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // Can be replaced with InputStream#transferTo in Java 9+.
+    private static void copyInputToOutput(InputStream source, OutputStream sink) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int read;
+        while ((read = source.read(buffer, 0, BUFFER_SIZE)) >= 0) {
+            sink.write(buffer, 0, read);
+        }
+    }
+
+    private static void quietlyCloseStream(List<String> args, OutputStream outputStream) {
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Unable to close outputStream for " + args, e);
+        }
+    }
+
+    /**
+     * Delete a directory and all files within.
+     *
+     * <p>Any found symlink is deleted, but the contents of a symlink are not deleted.
+     *
+     * @param dir Directory to delete.
+     * @return Returns true if the directory was deleted, or false if the directory does not exist.
+     * @throws IllegalArgumentException if the given path is not a directory.
+     * @throws RuntimeException if unable to delete a file or directory.
+     */
+    public static boolean rmdir(Path dir) {
+        if (!Files.exists(dir)) {
+            return false;
+        }
+
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException(dir + " is not a directory");
+        }
+
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    // Workaround for Windows systems that set some git packfiles to readonly
+                    file.toFile().setWritable(true);
+
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    return Files.isSymbolicLink(dir)
+                           // Don't delete symlink files, just delete the symlink.
+                           ? FileVisitResult.SKIP_SUBTREE
+                           : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                    if (e != null) {
+                        throw e;
+                    }
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting directory: " + dir + ": " + e.getMessage(), e);
+        }
+
+        return true;
+    }
+
+    public static void copyDir(Path src, Path dest) {
+        try {
+            Files.walkFileTree(src, new CopyFileVisitor(src, dest));
+        } catch (IOException e) {
+            throw new RuntimeException(String.format(
+                "Error copying directory from \"%s\" to \"%s\": %s", src, dest, e.getMessage()), e);
+        }
+    }
+
+    private static final class CopyFileVisitor extends SimpleFileVisitor<Path> {
+        private final Path source;
+        private final Path target;
+
+        CopyFileVisitor(Path source, Path target) {
+            this.source = source;
+            this.target = target;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            Path resolve = target.resolve(source.relativize(dir));
+            if (Files.notExists(resolve)) {
+                Files.createDirectories(resolve);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Path resolve = target.resolve(source.relativize(file));
+            Files.copy(file, resolve, StandardCopyOption.REPLACE_EXISTING);
+            return FileVisitResult.CONTINUE;
+
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) {
+            return FileVisitResult.TERMINATE;
         }
     }
 }

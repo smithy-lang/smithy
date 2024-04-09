@@ -100,7 +100,7 @@ preferred over ``http/1.1``.
 
     use aws.protocols#restJson1
 
-    @awsJson1_1(
+    @restJson1(
         http: ["h2", "http/1.1"],
         eventStreamHttp: ["h2", "http/1.1"]
     )
@@ -146,9 +146,8 @@ that affect serialization:
       - Binds a top-level operation input structure member to a label in
         the hostPrefix of an endpoint trait.
     * - :ref:`http <http-trait>`
-      - Configures the HTTP bindings of an operation. An operation that
-        does not define the ``http`` trait is ineligible for use with
-        this protocol.
+      - Configures the HTTP bindings of an operation. An operation bound to a
+        service with this protocol applied MUST have the ``http`` trait applied.
     * - :ref:`httpError <httpError-trait>`
       - A ``client`` error has a default status code of ``400``, and a
         ``server`` error has a default status code of ``500``. The
@@ -175,12 +174,17 @@ that affect serialization:
       - Binds a top-level input structure member to a query string parameter.
     * - :ref:`httpQueryParams <httpQueryParams-trait>`
       - Binds a map of key-value pairs to query string parameters.
+    * - :ref:`httpChecksumRequired <httpChecksumRequired-trait>`
+      - Indicates that requests MUST send a checksum.
     * - :ref:`jsonName <jsonName-trait>`
       - By default, the JSON property names used in serialized structures are
         the same as a structure member name. The ``jsonName`` trait changes
         the JSON property name to a custom value.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 
 ------------
@@ -285,6 +289,7 @@ JSON shape serialization
     * - ``union``
       - JSON object. A union is serialized identically as a ``structure``
         shape, but only a single member can be set to a non-null value.
+        Deserializers MUST ignore an unrecognized ``__type`` member if present.
 
 
 --------------------------
@@ -340,7 +345,7 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restJson1
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/restJson1
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
@@ -348,3 +353,5 @@ the expected serialized HTTP requests and responses for each case.
 *TODO: Add event stream handling specifications.*
 
 .. _`Application-Layer Protocol Negotiation (ALPN) Protocol ID`: https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids
+
+.. include:: error-rename.rst.template

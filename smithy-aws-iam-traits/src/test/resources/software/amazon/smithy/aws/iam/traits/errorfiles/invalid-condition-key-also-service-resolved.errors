@@ -1,0 +1,1 @@
+[ERROR] smithy.example#EchoInput$id1: This operation `smithy.example#Echo` scoped within the `smithy.example#MyService` service with member `smithy.example#EchoInput$id1` refers to a condition key `smithy:ServiceResolveContextKey` that is also resolved by service. | ConditionKeys

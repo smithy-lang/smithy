@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jmespath;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public final class LinterResult {
 
     public LinterResult(RuntimeType returnType, Set<ExpressionProblem> problems) {
         this.returnType = returnType;
-        this.problems = problems;
+        this.problems = Collections.unmodifiableSet(problems);
     }
 
     /**

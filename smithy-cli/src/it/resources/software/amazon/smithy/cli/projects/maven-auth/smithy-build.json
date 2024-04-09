@@ -1,0 +1,16 @@
+{
+    "version": "1.0",
+    "maven": {
+        "repositories": [
+            {
+                // Use HTTP instead of HTTPS because we're running a mock server during tests
+                "url": "http://localhost:1234/maven/not/there",
+                "httpCredentials": "xxx:yyy"
+            }
+        ],
+        "dependencies": [
+            // Normally, this could refer to SMITHY_VERSION, but that doesn't work for pre-release builds.
+            "software.amazon.smithy:smithy-aws-iam-traits:1.26.0"
+        ]
+    }
+}

@@ -1,0 +1,56 @@
+name: Get latest smithy gradle plugin version
+on:
+  workflow_dispatch: # on button click
+  # Uncomment once permissions to create PRs has been added.
+  schedule:
+    # Runs every wednesday at 11
+    - cron:  '0 11 * * WED'
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch latest smithy-gradle-plugin version
+        id: fetch-latest
+        run: |
+          echo "latestSmithyGradle=$( \
+           curl -sL https://api.github.com/repos/smithy-lang/smithy-gradle-plugin/tags | \
+           jq -r '.[0].name')" >> $GITHUB_OUTPUT
+      - name: Get current version
+        id: get-current
+        run: |
+          cat gradle.properties >> $GITHUB_OUTPUT
+      - name: Check if the current version of smithy-gradle-plugin should be updated
+        id: update-check
+        run: |
+          echo update-required=$( \
+          [ "${{ steps.get-current.outputs.smithyGradleVersion }}" = "${{ steps.fetch-latest.outputs.latestSmithyGradle }}" ] \
+          && echo "false" || echo "true") >> $GITHUB_OUTPUT
+      - name: Set up new git branch for version bump
+        id: git-setup
+        if: steps.update-check.outputs.update-required == 'true'
+        run: |
+          git checkout -b "automation/bump-smithy-gradle-version/${{ steps.fetch-latest.outputs.latestSmithyGradle }}"
+          git config --global user.email "github-aws-smithy-automation@amazon.com"
+          git config --global user.name "Smithy Automation"
+      - name: Find and replace gradle version in properties files
+        id: replace-current-version-properties
+        if: steps.update-check.outputs.update-required == 'true'
+        run: |
+          find . -type f -name 'gradle.properties' \
+          -exec sed -i "s|smithyGradleVersion=${{ steps.get-current.outputs.smithyGradleVersion }}|smithyGradleVersion=${{ steps.fetch-latest.outputs.latestSmithyGradle }}|g" {} \;
+      - name: Create PR
+        if: steps.update-check.outputs.update-required == 'true'
+        run: |
+          git add .
+          git commit -m 'Update smithy-gradle-plugin Version'
+          git push --set-upstream origin "automation/bump-smithy-gradle-version/${{ steps.fetch-latest.outputs.latestSmithyGradle }}"
+          gh pr create \
+            --title "[Automation] smithy-gradle-plugin Version Bump - \`${{ steps.fetch-latest.outputs.latestSmithyGradle }}\`" \
+            --body "Automated pull request to bump smithy gradle plugin version from ${{ steps.get-current.outputs.smithyGradleVersion }} to ${{ steps.fetch-latest.outputs.latestSmithyGradle }}" \
+            --base main
+          echo "PR Created for version bump to ${{ steps.fetch-latest.outputs.latestSmithyGradle }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}

@@ -1,6 +1,6 @@
 // when parsing endpoint ruleset
-//   at invalid-rules/no-shadowing-assignments.json5:26
 // Invalid shadowing of `Region` (first declared on line 18)
+//   at invalid-rules/no-shadowing-assignments.json5:26
 {
   "version": "1.2",
   "parameters": {

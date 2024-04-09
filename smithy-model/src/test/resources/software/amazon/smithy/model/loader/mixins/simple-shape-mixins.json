@@ -1,0 +1,40 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#MyIntMixin": {
+      "type": "integer",
+      "traits": {
+        "smithy.api#mixin": {},
+        "smithy.api#range": {
+          "min": 1
+        }
+      }
+    },
+    "smithy.example#MyStringMixin": {
+      "type": "string",
+      "traits": {
+        "smithy.api#length": {
+          "min": 2,
+          "max": 4
+        },
+        "smithy.api#mixin": {}
+      }
+    },
+    "smithy.example#MyTestInt": {
+      "type": "integer",
+      "mixins": [
+        {
+          "target": "smithy.example#MyIntMixin"
+        }
+      ]
+    },
+    "smithy.example#MyTestString": {
+      "type": "string",
+      "mixins": [
+        {
+          "target": "smithy.example#MyStringMixin"
+        }
+      ]
+    }
+  }
+}

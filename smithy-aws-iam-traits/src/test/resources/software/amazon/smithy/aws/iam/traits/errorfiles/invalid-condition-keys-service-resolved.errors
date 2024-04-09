@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: This condition keys resolved by the `smithy.example#MyService` service refer to undefined condition key(s) [`smithy:invalidkey`]. Expected one of the following defined condition keys: [`smithy:ActionContextKey1`] | ConditionKeys

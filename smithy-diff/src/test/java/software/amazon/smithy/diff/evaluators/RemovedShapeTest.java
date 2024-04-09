@@ -23,10 +23,26 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.traits.EnumDefinition;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -34,10 +50,65 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class RemovedShapeTest {
     @Test
     public void detectsShapeRemoval() {
-        Shape shapeA1 = StringShape.builder().id("foo.baz#Baz").build();
-        Shape shapeB1 = StringShape.builder().id("foo.baz#Bam").build();
+        Shape shapeA1 = StructureShape.builder().id("foo.baz#Baz").build();
+        Shape shapeB1 = StructureShape.builder().id("foo.baz#Bam").build();
         Model modelA = Model.assembler().addShapes(shapeA1, shapeB1).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shapeB1).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, shapeA1.getId()).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+    }
+
+    @Test
+    public void emitsWarningsForScalarShapes() {
+        Shape[] scalarShapes = new Shape[] {
+                IntegerShape.builder().id("foo.baz#BazOne").build(),
+                BigDecimalShape.builder().id("foo.baz#BazTwo").build(),
+                BigIntegerShape.builder().id("foo.baz#BazThree").build(),
+                BlobShape.builder().id("foo.baz#BazFour").build(),
+                BooleanShape.builder().id("foo.baz#BazFive").build(),
+                ByteShape.builder().id("foo.baz#BazSix").build(),
+                DoubleShape.builder().id("foo.baz#BazSeven").build(),
+                FloatShape.builder().id("foo.baz#BazEight").build(),
+                ShortShape.builder().id("foo.baz#BazNine").build(),
+                TimestampShape.builder().id("foo.baz#BazTen").build(),
+                LongShape.builder().id("foo.baz#BazEleven").build(),
+                StringShape.builder().id("foo.baz#BazTwelve").build()
+        };
+        Model modelA = Model.assembler().addShapes(scalarShapes).assemble().unwrap();
+        Model modelB = Model.assembler().assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "RemovedShape.ScalarShape").size(), equalTo(12));
+        assertThat("Scalar removals should be WARNING severity",
+                events.stream().allMatch(event -> Severity.WARNING.equals(event.getSeverity())));
+    }
+
+    @Test
+    public void emitsErrorForEnumString() {
+        Shape shapeA1 = StringShape.builder()
+                .id("foo.baz#Baz")
+                .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("val").build()).build())
+                .build();
+        Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes().assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, shapeA1.getId()).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+    }
+
+    @Test
+    public void emitsErrorForIntEnum() {
+        Shape shapeA1 = IntEnumShape.builder()
+                .id("foo.baz#Baz")
+                .addMember("FOO", 1)
+                .build();
+        Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(1));

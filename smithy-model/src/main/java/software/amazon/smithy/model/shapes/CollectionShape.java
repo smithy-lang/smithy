@@ -19,9 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Abstract class representing Set and List shapes.
@@ -33,14 +36,9 @@ public abstract class CollectionShape extends Shape {
 
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-        member = getRequiredMixinMember(builder, builder.member, "member");
-
-        ShapeId expected = getId().withMember("member");
-        if (!member.getId().equals(expected)) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expected, member.getId()));
-        }
+        MemberShape[] members = getRequiredMembers(builder, "member");
+        member = members[0];
+        validateMemberShapeIds();
     }
 
     /**
@@ -50,6 +48,14 @@ public abstract class CollectionShape extends Shape {
      */
     public final MemberShape getMember() {
         return member;
+    }
+
+    @Override
+    public Optional<MemberShape> getMember(String memberName) {
+        if ("member".equals(memberName)) {
+            return Optional.of(member);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -73,6 +79,15 @@ public abstract class CollectionShape extends Shape {
         private MemberShape member;
 
         @Override
+        public Optional<MemberShape> getMember(String memberName) {
+            if ("member".equals(memberName)) {
+                return Optional.ofNullable(member);
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        @Override
         public B id(ShapeId shapeId) {
             if (member != null) {
                 // Update the member name so it isn't pointing to the old shape id.
@@ -88,6 +103,12 @@ public abstract class CollectionShape extends Shape {
          */
         @SuppressWarnings("unchecked")
         public B member(MemberShape member) {
+            if (member != null && !member.getMemberName().equals("member")) {
+                String shapeTypeName = StringUtils.capitalize(this.getShapeType().toString());
+                String message = String.format("%s shapes may only have a `member` member, but found `%s`",
+                        shapeTypeName, member.getMemberName());
+                throw new SourceException(message, member);
+            }
             this.member = Objects.requireNonNull(member);
             return (B) this;
         }

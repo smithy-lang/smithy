@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -48,18 +49,8 @@ public final class TopDownIndex implements KnowledgeIndex {
 
         // Only traverse resource and operation bindings.
         Predicate<Relationship> filter = rel -> {
-            switch (rel.getRelationshipType()) {
-                case RESOURCE:
-                case OPERATION:
-                case CREATE:
-                case READ:
-                case UPDATE:
-                case DELETE:
-                case LIST:
-                    return true;
-                default:
-                    return false;
-            }
+            RelationshipType type = rel.getRelationshipType();
+            return type == RelationshipType.RESOURCE || type.isOperationBinding();
         };
 
         for (ResourceShape resource : model.getResourceShapes()) {

@@ -35,8 +35,86 @@ apply JsonMaps @httpRequestTests([
                       "baz": {
                           "hi": "bye"
                       }
-                  },
-                  "sparseStructMap": {
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseStructMap": {
+                "foo": {
+                    "hi": "there"
+                },
+                "baz": {
+                    "hi": "bye"
+                }
+            }
+        }
+    },
+    {
+        id: "RestJsonSerializesZeroValuesInMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonMaps",
+        body: """
+            {
+                "denseNumberMap": {
+                    "x": 0
+                },
+                "denseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseNumberMap": {
+                "x": 0
+            },
+            "denseBooleanMap": {
+                "x": false
+            },
+        }
+    },
+    {
+        id: "RestJsonSerializesDenseSetMap",
+        documentation: "A request that contains a dense map of sets.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonMaps",
+        body: """
+            {
+                "denseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseSetMap": {
+                "x": [],
+                "y": ["a", "b"]
+            }
+        }
+    }
+])
+
+apply JsonMaps @httpResponseTests([
+    {
+        id: "RestJsonJsonMaps",
+        documentation: "Deserializes JSON maps",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "denseStructMap": {
                       "foo": {
                           "hi": "there"
                       },
@@ -57,7 +135,151 @@ apply JsonMaps @httpRequestTests([
                 "baz": {
                     "hi": "bye"
                 }
+            }
+        }
+    },
+    {
+        id: "RestJsonDeserializesZeroValuesInMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "denseNumberMap": {
+                    "x": 0
+                },
+                "denseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseNumberMap": {
+                "x": 0
             },
+            "denseBooleanMap": {
+                "x": false
+            },
+        }
+    },
+    {
+        id: "RestJsonDeserializesDenseSetMap",
+        documentation: "A response that contains a dense map of sets.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "denseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseSetMap": {
+                "x": [],
+                "y": ["a", "b"]
+            }
+        }
+    },
+    {
+        id: "RestJsonDeserializesDenseSetMapAndSkipsNull",
+        documentation: """
+            Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
+            drop the null key-value pair.""",
+        protocol: restJson1,
+        appliesTo: "client",
+        code: 200,
+        body: """
+            {
+                "denseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseSetMap": {
+                "x": [],
+                "y": ["a", "b"]
+            }
+        }
+    }
+])
+
+structure JsonMapsInputOutput {
+    denseStructMap: DenseStructMap
+    denseNumberMap: DenseNumberMap
+    denseBooleanMap: DenseBooleanMap
+    denseStringMap: DenseStringMap
+    denseSetMap: DenseSetMap
+}
+
+map DenseStructMap {
+    key: String,
+    value: GreetingStruct
+}
+
+map DenseBooleanMap {
+    key: String,
+    value: Boolean
+}
+
+map DenseNumberMap {
+    key: String,
+    value: Integer
+}
+
+map DenseStringMap {
+    key: String,
+    value: String
+}
+
+map DenseSetMap {
+    key: String,
+    value: StringSet
+}
+
+/// This example tests sparse map serialization.
+@http(uri: "/SparseJsonMaps", method: "POST")
+operation SparseJsonMaps {
+    input: SparseJsonMapsInputOutput
+    output: SparseJsonMapsInputOutput
+}
+
+apply SparseJsonMaps @httpRequestTests([
+    {
+        id: "RestJsonSparseJsonMaps",
+        documentation: "Serializes JSON maps",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+              {
+                  "sparseStructMap": {
+                      "foo": {
+                          "hi": "there"
+                      },
+                      "baz": {
+                          "hi": "bye"
+                      }
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
             "sparseStructMap": {
                 "foo": {
                     "hi": "there"
@@ -69,11 +291,11 @@ apply JsonMaps @httpRequestTests([
         }
     },
     {
-        id: "RestJsonSerializesNullMapValues",
+        id: "RestJsonSerializesSparseNullMapValues",
         documentation: "Serializes JSON map values in sparse maps",
         protocol: restJson1,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/SparseJsonMaps",
         body: """
             {
                 "sparseBooleanMap": {
@@ -109,21 +331,15 @@ apply JsonMaps @httpRequestTests([
         }
     },
     {
-        id: "RestJsonSerializesZeroValuesInMaps",
+        id: "RestJsonSerializesZeroValuesInSparseMaps",
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: restJson1,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/SparseJsonMaps",
         body: """
             {
-                "denseNumberMap": {
-                    "x": 0
-                },
                 "sparseNumberMap": {
                     "x": 0
-                },
-                "denseBooleanMap": {
-                    "x": false
                 },
                 "sparseBooleanMap": {
                     "x": false
@@ -134,14 +350,8 @@ apply JsonMaps @httpRequestTests([
             "Content-Type": "application/json"
         },
         params: {
-            "denseNumberMap": {
-                "x": 0
-            },
             "sparseNumberMap": {
                 "x": 0
-            },
-            "denseBooleanMap": {
-                "x": false
             },
             "sparseBooleanMap": {
                 "x": false
@@ -153,7 +363,7 @@ apply JsonMaps @httpRequestTests([
         documentation: "A request that contains a sparse map of sets",
         protocol: restJson1,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/SparseJsonMaps",
         body: """
             {
                 "sparseSetMap": {
@@ -173,35 +383,11 @@ apply JsonMaps @httpRequestTests([
         }
     },
     {
-        id: "RestJsonSerializesDenseSetMap",
-        documentation: "A request that contains a dense map of sets.",
-        protocol: restJson1,
-        method: "POST",
-        uri: "/JsonMaps",
-        body: """
-            {
-                "denseSetMap": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "denseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
-        }
-    },
-    {
         id: "RestJsonSerializesSparseSetMapAndRetainsNull",
         documentation: "A request that contains a sparse map of sets.",
         protocol: restJson1,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/SparseJsonMaps",
         body: """
             {
                 "sparseSetMap": {
@@ -224,22 +410,14 @@ apply JsonMaps @httpRequestTests([
     }
 ])
 
-apply JsonMaps @httpResponseTests([
+apply SparseJsonMaps @httpResponseTests([
     {
-        id: "RestJsonJsonMaps",
+        id: "RestJsonSparseJsonMaps",
         documentation: "Deserializes JSON maps",
         protocol: restJson1,
         code: 200,
         body: """
               {
-                  "denseStructMap": {
-                      "foo": {
-                          "hi": "there"
-                      },
-                      "baz": {
-                          "hi": "bye"
-                      }
-                  },
                   "sparseStructMap": {
                       "foo": {
                           "hi": "there"
@@ -254,14 +432,6 @@ apply JsonMaps @httpResponseTests([
             "Content-Type": "application/json"
         },
         params: {
-            "denseStructMap": {
-                "foo": {
-                    "hi": "there"
-                },
-                "baz": {
-                    "hi": "bye"
-                }
-            },
             "sparseStructMap": {
                 "foo": {
                     "hi": "there"
@@ -273,7 +443,7 @@ apply JsonMaps @httpResponseTests([
         }
     },
     {
-        id: "RestJsonDeserializesNullMapValues",
+        id: "RestJsonDeserializesSparseNullMapValues",
         documentation: "Deserializes null JSON map values",
         protocol: restJson1,
         code: 200,
@@ -312,20 +482,14 @@ apply JsonMaps @httpResponseTests([
         }
     },
     {
-        id: "RestJsonDeserializesZeroValuesInMaps",
+        id: "RestJsonDeserializesZeroValuesInSparseMaps",
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: restJson1,
         code: 200,
         body: """
             {
-                "denseNumberMap": {
-                    "x": 0
-                },
                 "sparseNumberMap": {
                     "x": 0
-                },
-                "denseBooleanMap": {
-                    "x": false
                 },
                 "sparseBooleanMap": {
                     "x": false
@@ -336,14 +500,8 @@ apply JsonMaps @httpResponseTests([
             "Content-Type": "application/json"
         },
         params: {
-            "denseNumberMap": {
-                "x": 0
-            },
             "sparseNumberMap": {
                 "x": 0
-            },
-            "denseBooleanMap": {
-                "x": false
             },
             "sparseBooleanMap": {
                 "x": false
@@ -374,29 +532,6 @@ apply JsonMaps @httpResponseTests([
         }
     },
     {
-        id: "RestJsonDeserializesDenseSetMap",
-        documentation: "A response that contains a dense map of sets.",
-        protocol: restJson1,
-        code: 200,
-        body: """
-            {
-                "denseSetMap": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "denseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
-        }
-    },
-    {
         id: "RestJsonDeserializesSparseSetMapAndRetainsNull",
         documentation: "A response that contains a sparse map of sets.",
         protocol: restJson1,
@@ -420,73 +555,21 @@ apply JsonMaps @httpResponseTests([
                 "z": null
             }
         }
-    },
-    {
-        id: "RestJsonDeserializesDenseSetMapAndSkipsNull",
-        documentation: """
-            Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
-            drop the null key-value pair.""",
-        protocol: restJson1,
-        appliesTo: "client",
-        code: 200,
-        body: """
-            {
-                "denseSetMap": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "denseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
-        }
     }
 ])
 
-structure JsonMapsInputOutput {
-    denseStructMap: DenseStructMap,
-    sparseStructMap: SparseStructMap,
-    denseNumberMap: DenseNumberMap,
-    denseBooleanMap: DenseBooleanMap,
-    denseStringMap: DenseStringMap,
-    sparseNumberMap: SparseNumberMap,
-    sparseBooleanMap: SparseBooleanMap,
-    sparseStringMap: SparseStringMap,
-    denseSetMap: DenseSetMap,
-    sparseSetMap: SparseSetMap,
-}
-
-map DenseStructMap {
-    key: String,
-    value: GreetingStruct
+structure SparseJsonMapsInputOutput {
+    sparseStructMap: SparseStructMap
+    sparseNumberMap: SparseNumberMap
+    sparseBooleanMap: SparseBooleanMap
+    sparseStringMap: SparseStringMap
+    sparseSetMap: SparseSetMap
 }
 
 @sparse
 map SparseStructMap {
     key: String,
     value: GreetingStruct
-}
-
-map DenseBooleanMap {
-    key: String,
-    value: Boolean
-}
-
-map DenseNumberMap {
-    key: String,
-    value: Integer
-}
-
-map DenseStringMap {
-    key: String,
-    value: String
 }
 
 @sparse
@@ -499,11 +582,6 @@ map SparseBooleanMap {
 map SparseNumberMap {
     key: String,
     value: Integer
-}
-
-map DenseSetMap {
-    key: String,
-    value: StringSet
 }
 
 @sparse

@@ -101,7 +101,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         security.forEach(builder::addSecurity);
         servers.forEach(builder::addServer);
         tags.forEach(builder::addTag);
-        return builder.extensions(getExtensions());
+        return builder;
     }
 
     @Override
@@ -133,7 +133,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         if (!tags.isEmpty()) {
-            builder.withMember("tags", tags.stream().sorted().collect(ArrayNode.collect()));
+            builder.withMember("tags", tags.stream().collect(ArrayNode.collect()));
         }
 
         return builder;

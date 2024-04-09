@@ -15,111 +15,99 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.function.IntConsumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import java.util.StringJoiner;
 
 /**
- * Parameters used to change the ANSI public style of text.
+ * Colors and styles for use with {@link AnsiColorFormatter} or {@link CliPrinter}.
+ *
+ * <p>ANSI codes returned by this interface should not include the opening {@code \033[}, the final {@code ;m} when
+ * opening styles, or the closing {@code [0m}. These escapes are added automatically when multiple styles are
+ * applied.
  */
-@SmithyUnstableApi
-@FunctionalInterface
 public interface Style {
 
-    Style BOLD = new SingularCode(1);
-    Style FAINT = new SingularCode(2);
-    Style ITALIC = new SingularCode(3);
-    Style UNDERLINE = new SingularCode(4);
+    Style BOLD = new Constant("1");
+    Style FAINT = new Constant("2");
+    Style ITALIC = new Constant("3");
+    Style UNDERLINE = new Constant("4");
 
-    Style BLACK = new SingularCode(30);
-    Style RED = new SingularCode(31);
-    Style GREEN = new SingularCode(32);
-    Style YELLOW = new SingularCode(33);
-    Style BLUE = new SingularCode(34);
-    Style MAGENTA = new SingularCode(35);
-    Style CYAN = new SingularCode(36);
-    Style WHITE = new SingularCode(37);
+    Style BLACK = new Constant("30");
+    Style RED = new Constant("31");
+    Style GREEN = new Constant("32");
+    Style YELLOW = new Constant("33");
+    Style BLUE = new Constant("34");
+    Style MAGENTA = new Constant("35");
+    Style CYAN = new Constant("36");
+    Style WHITE = new Constant("37");
 
-    Style BRIGHT_BLACK = new SingularCode(90);
-    Style BRIGHT_RED = new SingularCode(91);
-    Style BRIGHT_GREEN = new SingularCode(92);
-    Style BRIGHT_YELLOW = new SingularCode(93);
-    Style BRIGHT_BLUE = new SingularCode(94);
-    Style BRIGHT_MAGENTA = new SingularCode(95);
-    Style BRIGHT_CYAN = new SingularCode(96);
-    Style BRIGHT_WHITE = new SingularCode(97);
+    Style BRIGHT_BLACK = new Constant("90");
+    Style BRIGHT_RED = new Constant("91");
+    Style BRIGHT_GREEN = new Constant("92");
+    Style BRIGHT_YELLOW = new Constant("93");
+    Style BRIGHT_BLUE = new Constant("94");
+    Style BRIGHT_MAGENTA = new Constant("95");
+    Style BRIGHT_CYAN = new Constant("96");
+    Style BRIGHT_WHITE = new Constant("97");
 
-    Style BG_BLACK = new SingularCode(40);
-    Style BG_RED = new SingularCode(41);
-    Style BG_GREEN = new SingularCode(42);
-    Style BG_YELLOW = new SingularCode(43);
-    Style BG_BLUE = new SingularCode(44);
-    Style BG_MAGENTA = new SingularCode(45);
-    Style BG_CYAN = new SingularCode(46);
-    Style BG_WHITE = new SingularCode(47);
+    Style BG_BLACK = new Constant("40");
+    Style BG_RED = new Constant("41");
+    Style BG_GREEN = new Constant("42");
+    Style BG_YELLOW = new Constant("43");
+    Style BG_BLUE = new Constant("44");
+    Style BG_MAGENTA = new Constant("45");
+    Style BG_CYAN = new Constant("46");
+    Style BG_WHITE = new Constant("47");
 
-    Style BG_BRIGHT_BLACK = new SingularCode(100);
-    Style BG_BRIGHT_RED = new SingularCode(101);
-    Style BG_BRIGHT_GREEN = new SingularCode(102);
-    Style BG_BRIGHT_YELLOW = new SingularCode(103);
-    Style BG_BRIGHT_BLUE = new SingularCode(104);
-    Style BG_BRIGHT_MAGENTA = new SingularCode(105);
-    Style BG_BRIGHT_CYAN = new SingularCode(106);
-    Style BG_BRIGHT_WHITE = new SingularCode(107);
+    Style BG_BRIGHT_BLACK = new Constant("100");
+    Style BG_BRIGHT_RED = new Constant("101");
+    Style BG_BRIGHT_GREEN = new Constant("102");
+    Style BG_BRIGHT_YELLOW = new Constant("103");
+    Style BG_BRIGHT_BLUE = new Constant("104");
+    Style BG_BRIGHT_MAGENTA = new Constant("105");
+    Style BG_BRIGHT_CYAN = new Constant("106");
+    Style BG_BRIGHT_WHITE = new Constant("107");
 
-    /**
-     * Pushes one or more ANSI color codes to the consumer.
-     *
-     * <p>Most implementations will push a single code, but multiple
-     * codes are needed to do things like use 8-bit colors
-     * (e.g., 38+5+206 to make pink foreground text).
-     *
-     * @param codeConsumer Consumer to push integers to.
-     */
-    void pushCodes(IntConsumer codeConsumer);
+    String getAnsiColorCode();
 
-    /**
-     * Formats the given text with ANSI escapes.
-     *
-     * <p>Each {@code styles} is one or more ANSI escape codes in the format of
-     * "1", "38;5;206" to create an 8-bit color, etc.
-     *
-     * @param text Text to format.
-     * @param styles Styles to apply.
-     * @return Returns the formatted text, and then resets the formatting.
-     * @see <a href="https://man7.org/linux/man-pages/man4/console_codes.4.html">ANSI console codes</a>
-     */
-    static String format(String text, Style... styles) {
-        StringBuilder result = new StringBuilder("\033[");
-        IntConsumer consumer = result::append;
-        boolean isAfterFirst = false;
-
-        for (Style style : styles) {
-            if (isAfterFirst) {
-                result.append(';');
-            }
-            style.pushCodes(consumer);
-            isAfterFirst = true;
+    static Style of(Style... styles) {
+        if (styles.length == 1) {
+            return styles[0];
+        } else {
+            return new Multi(styles);
         }
-
-        result.append('m');
-        result.append(text);
-        result.append("\033[0m");
-        return result.toString();
     }
 
-    /**
-     * A simple implementation of {@code Style} that pushes a single code.
-     */
-    final class SingularCode implements Style {
-        private final int code;
+    final class Constant implements Style {
+        private final String ansiColorCode;
 
-        public SingularCode(int code) {
-            this.code = code;
+        public Constant(String ansiColorCode) {
+            this.ansiColorCode = ansiColorCode;
         }
 
         @Override
-        public void pushCodes(IntConsumer codeConsumer) {
-            codeConsumer.accept(code);
+        public String getAnsiColorCode() {
+            return ansiColorCode;
+        }
+    }
+
+    final class Multi implements Style {
+        private final String ansiStyle;
+
+        public Multi(Style... styles) {
+            if (styles.length == 1) {
+                ansiStyle = styles[0].getAnsiColorCode();
+            } else {
+                StringJoiner joiner = new StringJoiner(";");
+                for (Style style : styles) {
+                    joiner.add(style.getAnsiColorCode());
+                }
+                ansiStyle = joiner.toString();
+            }
+        }
+
+        @Override
+        public String getAnsiColorCode() {
+            return ansiStyle;
         }
     }
 }

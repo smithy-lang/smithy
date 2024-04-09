@@ -20,6 +20,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -39,16 +41,23 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
 
         trait.getMin().ifPresent(min -> {
             if (size < min) {
-                emitter.accept(node, "Value provided for `" + shape.getId() + "` must have at least "
-                                     + min + " bytes, but the provided value only has " + size + " bytes");
+                emitter.accept(node, getSeverity(context), "Value provided for `" + shape.getId()
+                            + "` must have at least " + min + " bytes, but the provided value only has " + size
+                            + " bytes");
             }
         });
 
         trait.getMax().ifPresent(max -> {
             if (value.getBytes(StandardCharsets.UTF_8).length > max) {
-                emitter.accept(node, "Value provided for `" + shape.getId() + "` must have no more than "
-                                     + max + " bytes, but the provided value has " + size + " bytes");
+                emitter.accept(node, getSeverity(context), "Value provided for `" + shape.getId()
+                            + "` must have no more than " + max + " bytes, but the provided value has " + size
+                            + " bytes");
             }
         });
+    }
+
+    private Severity getSeverity(Context context) {
+        return context.hasFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS)
+                ? Severity.WARNING : Severity.ERROR;
     }
 }

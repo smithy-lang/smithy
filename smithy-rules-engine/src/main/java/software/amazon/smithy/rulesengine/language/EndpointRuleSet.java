@@ -1,94 +1,133 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
-import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.validators.AuthSchemeValidator;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * A set of EndpointRules. Endpoint Rules describe the endpoint resolution behavior for a service.
+ * A set of EndpointRules. EndpointType Rules describe the endpoint resolution behavior for a service.
  */
 @SmithyUnstableApi
-public final class EndpointRuleSet extends MandatorySourceLocation implements TypeCheck, ToNode {
+public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmithyBuilder<EndpointRuleSet>, TypeCheck {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
     private static final String RULES = "rules";
 
-    private final List<Rule> rules;
+    private static final class LazyEndpointComponentFactoryHolder {
+        static final EndpointComponentFactory INSTANCE = EndpointComponentFactory.createServiceFactory(
+                EndpointRuleSet.class.getClassLoader());
+    }
+
     private final Parameters parameters;
+    private final List<Rule> rules;
+    private final SourceLocation sourceLocation;
     private final String version;
 
     private EndpointRuleSet(Builder builder) {
-        super(builder.getSourceLocation());
-        rules = builder.rules.copy();
+        super();
         parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
+        rules = builder.rules.copy();
+        sourceLocation = SmithyBuilder.requiredState("source", builder.getSourceLocation());
         version = SmithyBuilder.requiredState("version", builder.version);
     }
 
-    public static EndpointRuleSet fromNode(Node node) throws RuleError {
-        return RuleError.context("when parsing endpoint ruleset", () -> EndpointRuleSet.newFromNode(node));
-    }
-
-    private static EndpointRuleSet newFromNode(Node node) throws RuleError {
-        ObjectNode on = node.expectObjectNode("The root of a ruleset must be an object");
-        EndpointRuleSet.Builder builder = new Builder(node);
-        Parameters parameters = Parameters.fromNode(on.expectObjectMember(PARAMETERS));
-        StringNode version = on.expectStringMember(VERSION);
-
-        on.expectArrayMember(RULES)
-                .getElements().forEach(n -> {
-                    builder.addRule(context("while parsing rule", n, () -> EndpointRule.fromNode(n)));
-                });
-        return builder.version(version.getValue()).parameters(parameters).build();
-    }
-
+    /**
+     * Builder to create a {@link EndpointRuleSet} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates an {@link EndpointRuleSet} of a specific type from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created EndpointRuleSet.
+     */
+    public static EndpointRuleSet fromNode(Node node) throws RuleError {
+        return RuleError.context("when parsing endpoint ruleset", () -> {
+            ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
+
+            EndpointRuleSet.Builder builder = new Builder(node);
+            builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
+            objectNode.expectStringMember(VERSION, builder::version);
+
+            for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
+                builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
+            }
+
+            return builder.build();
+        });
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    /**
+     * Gets the {@link Parameters} defined in this rule-set.
+     *
+     * @return the parameters defined in the rule-set.
+     */
     public Parameters getParameters() {
         return parameters;
     }
 
+    /**
+     * Gets the list of {@link Rule}s defined in this rule-set.
+     *
+     * @return the rules defined in this rule-set.
+     */
     public List<Rule> getRules() {
         return rules;
+    }
+
+    /**
+     * Gets the version of this rule-set.
+     *
+     * @return the rule-set version.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    public Type typeCheck() {
+        return typeCheck(new Scope<>());
     }
 
     @Override
@@ -98,39 +137,29 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
             for (Rule rule : rules) {
                 rule.typeCheck(scope);
             }
-            return Type.endpoint();
+            return Type.endpointType();
         });
     }
 
-    public void typecheck() {
-        typeCheck(new Scope<>());
-    }
-
     @Override
-    public Node toNode() {
-        return ObjectNode.builder()
-                .withMember(VERSION, version)
-                .withMember(PARAMETERS, parameters)
-                .withMember(RULES, rulesNode())
-                .build();
-    }
-
     public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .parameters(parameters)
-                .rules(getRules());
-    }
-
-    private Node rulesNode() {
-        ArrayNode.Builder node = ArrayNode.builder();
-        rules.forEach(node::withValue);
-        return node.build();
+                .rules(rules)
+                .version(version);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(rules, parameters, version);
+    public Node toNode() {
+        ArrayNode.Builder rulesBuilder = ArrayNode.builder();
+        rules.forEach(rulesBuilder::withValue);
+
+        return ObjectNode.builder()
+                .withMember(VERSION, version)
+                .withMember(PARAMETERS, parameters)
+                .withMember(RULES, rulesBuilder.build())
+                .build();
     }
 
     @Override
@@ -146,19 +175,68 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(rules, parameters, version);
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("version: %s%n", version));
-        builder.append("params: \n").append(indent(parameters.toString(), 2));
+        builder.append("params: \n").append(StringUtils.indent(parameters.toString(), 2));
         builder.append("rules: \n");
-        rules.forEach(rule -> builder.append(indent(rule.toString(), 2)));
+        rules.forEach(rule -> builder.append(StringUtils.indent(rule.toString(), 2)));
         return builder.toString();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleSet> {
+    /**
+     * Returns true if a built-in of the provided name has been registered.
+     *
+     * @param name the name of the built-in to check for.
+     * @return true if the built-in is present, false otherwise.
+     */
+    @SmithyInternalApi
+    public static boolean hasBuiltIn(String name) {
+        return LazyEndpointComponentFactoryHolder.INSTANCE.hasBuiltIn(name);
+    }
+
+    /**
+     * Gets the built-in names as a joined string.
+     *
+     * @return a string of the built-in names.
+     */
+    @SmithyInternalApi
+    public static String getKeyString() {
+        return LazyEndpointComponentFactoryHolder.INSTANCE.getKeyString();
+    }
+
+    /**
+     * Creates a {@link LibraryFunction} factory function using the loaded function definitions.
+     *
+     * @return the created factory.
+     */
+    @SmithyInternalApi
+    public static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory() {
+        return LazyEndpointComponentFactoryHolder.INSTANCE.createFunctionFactory();
+    }
+
+    /**
+     * Gets loaded authentication scheme validators.
+     *
+     * @return a list of {@link AuthSchemeValidator}s.
+     */
+    @SmithyInternalApi
+    public static List<AuthSchemeValidator> getAuthSchemeValidators() {
+        return LazyEndpointComponentFactoryHolder.INSTANCE.getAuthSchemeValidators();
+    }
+
+    /**
+     * A builder used to create a {@link EndpointRuleSet} class.
+     */
+    public static class Builder extends RulesComponentBuilder<Builder, EndpointRuleSet> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
-        // default the version to the latest.
+        // Default the version to the latest.
         private String version = LATEST_VERSION;
 
         /**
@@ -212,6 +290,7 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
          * @return the {@link Builder}
          */
         public Builder rules(Collection<Rule> rules) {
+            this.rules.clear();
             this.rules.get().addAll(rules);
             return this;
         }
@@ -230,7 +309,7 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
         @Override
         public EndpointRuleSet build() {
             EndpointRuleSet ruleSet = new EndpointRuleSet(this);
-            ruleSet.typecheck();
+            ruleSet.typeCheck();
             return ruleSet;
         }
     }

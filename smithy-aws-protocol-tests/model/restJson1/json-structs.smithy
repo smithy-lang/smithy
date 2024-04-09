@@ -613,7 +613,7 @@ apply JsonTimestamps @httpResponseTests([
         params: {
             httpDateOnTarget: 1398796238
         }
-    },
+    }
 ])
 
 structure JsonTimestampsInputOutput {

@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
@@ -29,6 +30,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
@@ -124,6 +126,7 @@ public class EnumShapeTest {
         EnumDefinition enumDefinition = EnumDefinition.builder()
                 .name("foo")
                 .value("bar")
+                .tags(ListUtils.of("internal"))
                 .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
@@ -132,6 +135,8 @@ public class EnumShapeTest {
                         .id(shape.getId().withMember("foo"))
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .addTrait(new InternalTrait())
+                        .addTrait(TagsTrait.builder().addValue("internal").build())
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
@@ -400,10 +405,13 @@ public class EnumShapeTest {
         StringShape string = StringShape.builder()
                 .id("ns.foo#bar")
                 .addTrait(trait)
+                .source("bar.smithy", 1, 1)
                 .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertTrue(optionalEnum.isPresent());
-        assertEquals(trait.getValues(), optionalEnum.get().expectTrait(SyntheticEnumTrait.class).getValues());
+        SyntheticEnumTrait syntheticEnumTrait = optionalEnum.get().expectTrait(SyntheticEnumTrait.class);
+        assertEquals(trait.getValues(), syntheticEnumTrait.getValues());
+        assertNotNull(syntheticEnumTrait.getSourceLocation());
 
         assertEquals(optionalEnum.get().getMember("foo").get(),
                 MemberShape.builder()
@@ -490,5 +498,63 @@ public class EnumShapeTest {
                 .build();
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertFalse(EnumShape.canConvertToEnum(string, true));
+    }
+
+    @Test
+    public void syntheticEnumSupportsDocumentation() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#DocumentedEnum")
+                .addMember("documented", "foo", builder -> {
+                    builder.addTrait(new DocumentationTrait("bar"));
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertEquals("bar", trait.getValues().get(0).getDocumentation().get());
+    }
+
+    @Test
+    public void syntheticEnumSupportsDeprecated() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#DeprecatedEnum")
+                .addMember("deprecated", "foo", builder -> {
+                    builder.addTrait(DeprecatedTrait.builder().build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertTrue(trait.getValues().get(0).isDeprecated());
+    }
+
+    @Test
+    public void syntheticEnumSupportsTags() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#TaggedEnum")
+                .addMember("tagged", "foo", builder -> {
+                    builder.addTrait(TagsTrait.builder().addValue("bar").build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        assertEquals(ListUtils.of("bar"), trait.getValues().get(0).getTags());
+    }
+
+    @Test
+    public void syntheticEnumSupportsInternal() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#InternalEnum")
+                .addMember("withoutTag", "foo", builder -> {
+                    builder.addTrait(new InternalTrait());
+                })
+                .addMember("withTag", "bar", builder -> {
+                    builder.addTrait(new InternalTrait());
+                    builder.addTrait(TagsTrait.builder().addValue("internal").build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        for (EnumDefinition definition : trait.getValues()) {
+            assertEquals(ListUtils.of("internal"), definition.getTags());
+        }
     }
 }

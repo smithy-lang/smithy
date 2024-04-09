@@ -28,7 +28,9 @@ Value type
 
 .. important::
 
-    This protocol does not support document types.
+    * This protocol does not support document types.
+    * This protocol does not support :ref:`HTTP binding traits <http-traits>`.
+      HTTP binding traits MUST be ignored if they are present.
 
 .. tabs::
 
@@ -194,6 +196,9 @@ that affect serialization:
         for the targeted shape.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 .. important::
 
@@ -387,10 +392,12 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
 
 
 *TODO: Add specifications, protocol examples, etc.*
+
+.. include:: error-rename.rst.template

@@ -296,6 +296,11 @@ Then following example enables request validation on a service:
     This trait should be considered internal-only and not exposed to your
     customers.
 
+.. warning::
+
+    API Gateway request validation uses `JSON Schema <https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04>`_
+    to validate requests against models and may not meet all the
+    validation needs of your application.
 
 .. smithy-trait:: aws.apigateway#integration
 .. _aws.apigateway#integration-trait:
@@ -413,7 +418,7 @@ operation within the service.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "version": "2.0",
         "shapes": {
             "smithy.example#Weather": {
                 "type": "service",
@@ -526,7 +531,7 @@ The following example defines an operation that uses a mock integration.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",

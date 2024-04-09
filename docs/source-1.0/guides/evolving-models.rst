@@ -5,6 +5,13 @@ Evolving Models
 This guide describes how to evolve Smithy models without breaking your
 customers.
 
+   .. note::
+
+       This page does not include every possible backwards or forwards
+       compatible change. For traits, the best place to look for compatibility
+       is the specification for the trait or its model definition as defined by
+       the :ref:`breaking changes property <trait-breaking-change-rules>`.
+
 
 Updating services
 =================
@@ -122,6 +129,6 @@ The following changes to trait definitions are backward compatible:
 Using Smithy Diff
 =================
 
-`Smithy Diff <https://github.com/awslabs/smithy/tree/main/smithy-diff>`_ is a
+`Smithy Diff <https://github.com/smithy-lang/smithy/tree/main/smithy-diff>`_ is a
 tool used to compare two Smithy models to check for backward compatibility
 issues. Smithy Diff can be run via a Java library or via the Smithy CLI.

@@ -93,6 +93,23 @@ public class ValidationEventTest {
     }
 
     @Test
+    public void loadsWithFromNodeWithHint() {
+        ShapeId id = ShapeId.from("ns.foo#baz");
+        ValidationEvent event = ValidationEvent.fromNode(Node.parse(
+            "{\"id\": \"abc.foo\", \"severity\": \"SUPPRESSED\", \"suppressionReason\": \"my reason\", "
+            + "\"shapeId\": \"ns.foo#baz\", \"message\": \"The message\", "
+            + "\"hint\": \"The hint\", \"filename\": \"/path/to/file.smithy\", \"line\": 7, \"column\": 2}"));
+
+        assertThat(event.getSeverity(), equalTo(Severity.SUPPRESSED));
+        assertThat(event.getMessage(), equalTo("The message"));
+        assertThat(event.getId(), equalTo("abc.foo"));
+        assertThat(event.getSuppressionReason().get(), equalTo("my reason"));
+        assertThat(event.getShapeId().get(), is(id));
+        assertThat(event.getHint().get(),equalTo("The hint"));
+    }
+
+
+    @Test
     public void hasGetters() {
         ShapeId id = ShapeId.from("ns.foo#baz");
         ValidationEvent event = ValidationEvent.builder()
@@ -101,6 +118,7 @@ public class ValidationEventTest {
                 .shapeId(id)
                 .id("abc.foo")
                 .suppressionReason("my reason")
+                .hint("The hint")
                 .build();
 
         assertThat(event.getSeverity(), equalTo(Severity.SUPPRESSED));
@@ -108,6 +126,7 @@ public class ValidationEventTest {
         assertThat(event.getId(), equalTo("abc.foo"));
         assertThat(event.getSuppressionReason().get(), equalTo("my reason"));
         assertThat(event.getShapeId().get(), is(id));
+        assertThat(event.getHint().get(), equalTo("The hint"));
         assertThat(event.getSeverity(), is(Severity.SUPPRESSED));
     }
 
@@ -145,6 +164,7 @@ public class ValidationEventTest {
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .id("abc.foo")
+                .hint("The hint")
                 .suppressionReason("my reason")
                 .build();
         ValidationEvent other = event.toBuilder().build();
@@ -269,6 +289,23 @@ public class ValidationEventTest {
     }
 
     @Test
+    public void differentHintAreNotEqual() {
+        ValidationEvent a = ValidationEvent.builder()
+                                           .message("The message")
+                                           .severity(Severity.SUPPRESSED)
+                                           .shapeId(ShapeId.from("ns.foo#bar"))
+                                           .id("abc.foo")
+                                           .suppressionReason("my reason")
+                                           .hint("The hint")
+                                           .sourceLocation(SourceLocation.none())
+                                           .build();
+        ValidationEvent b = a.toBuilder().hint("other hint").build();
+
+        assertNotEquals(a, b);
+        assertNotEquals(a.hashCode(), b.hashCode());
+    }
+
+    @Test
     public void toStringContainsSeverityAndEventId() {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
@@ -316,6 +353,21 @@ public class ValidationEventTest {
                 .build();
 
         assertEquals(a.toString(), "[SUPPRESSED] ns.foo#baz: The message (Foo baz bar) | abc.foo file:1:2");
+    }
+
+    @Test
+    public void toStringDoesContainsHint() {
+        ValidationEvent a = ValidationEvent.builder()
+                                           .message("The message")
+                                           .severity(Severity.SUPPRESSED)
+                                           .id("abc.foo")
+                                           .shapeId(ShapeId.from("ns.foo#baz"))
+                                           .suppressionReason("Foo baz bar")
+                                           .hint("The hint")
+                                           .sourceLocation(new SourceLocation("file", 1, 2))
+                                           .build();
+
+        assertEquals(a.toString(), "[SUPPRESSED] ns.foo#baz: The message (Foo baz bar) [The hint] | abc.foo file:1:2");
     }
 
     @Test

@@ -24,6 +24,7 @@ import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonAdd;
 import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonSubstitutions;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveEmptyComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
+import software.amazon.smithy.openapi.fromsmithy.mappers.SpecificationExtensionsMapper;
 import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraits;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJson1Protocol;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4Converter;
@@ -62,7 +63,8 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
                 new OpenApiJsonAdd(),
                 new RemoveUnusedComponents(),
                 new UnsupportedTraits(),
-                new RemoveEmptyComponents()
+                new RemoveEmptyComponents(),
+                new SpecificationExtensionsMapper()
         );
     }
 

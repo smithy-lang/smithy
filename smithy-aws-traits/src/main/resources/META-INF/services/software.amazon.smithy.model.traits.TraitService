@@ -21,5 +21,6 @@ software.amazon.smithy.aws.traits.protocols.RestXmlTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_0Trait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_1Trait$Provider
 software.amazon.smithy.aws.traits.auth.SigV4Trait$Provider
+software.amazon.smithy.aws.traits.auth.SigV4ATrait$Provider
 software.amazon.smithy.aws.traits.tagging.TagEnabledTrait$Provider
 software.amazon.smithy.aws.traits.tagging.TaggableTrait$Provider

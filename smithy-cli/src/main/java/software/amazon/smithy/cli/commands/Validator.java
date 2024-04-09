@@ -18,7 +18,10 @@ package software.amazon.smithy.cli.commands;
 import java.util.StringJoiner;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.ColorBuffer;
+import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -28,9 +31,17 @@ import software.amazon.smithy.model.validation.ValidatedResult;
  */
 final class Validator {
 
+    enum Mode {
+        QUIET, QUIET_CORE_ONLY, ENABLE;
+
+        static Mode from(StandardOptions standardOptions) {
+            return standardOptions.quiet() ? Mode.QUIET : Mode.ENABLE;
+        }
+    }
+
     private Validator() {}
 
-    static void validate(boolean quiet, CliPrinter printer, ValidatedResult<Model> result) {
+    static void validate(boolean quiet, ColorFormatter colors, CliPrinter printer, ValidatedResult<Model> result) {
         int notes = result.getValidationEvents(Severity.NOTE).size();
         int warnings = result.getValidationEvents(Severity.WARNING).size();
         int errors = result.getValidationEvents(Severity.ERROR).size();
@@ -39,50 +50,47 @@ final class Validator {
         boolean isFailed = errors > 0 || dangers > 0;
         boolean hasEvents = warnings > 0 || notes > 0 || isFailed;
 
-        StringBuilder output = new StringBuilder();
-        if (isFailed) {
-            output.append(printer.style("FAILURE: ", Style.RED, Style.BOLD));
-        } else {
-            output.append(printer.style("SUCCESS: ", Style.GREEN, Style.BOLD));
-        }
-        output.append("Validated ").append(shapeCount).append(" shapes");
+        try (ColorBuffer output = ColorBuffer.of(colors, new StringBuilder())) {
+            if (isFailed) {
+                output.append(colors.style("FAILURE: ", ColorTheme.ERROR));
+            } else {
+                output.append(colors.style("SUCCESS: ", ColorTheme.SUCCESS));
+            }
+            output.append("Validated " + shapeCount).append(" shapes");
 
-        if (hasEvents) {
-            output.append(' ').append('(');
-            StringJoiner joiner = new StringJoiner(", ");
-            if (errors > 0) {
-                appendSummaryCount(joiner, printer, "ERROR", errors, Style.BRIGHT_RED);
+            if (hasEvents) {
+                output.append(' ').append('(');
+                StringJoiner joiner = new StringJoiner(", ");
+                if (errors > 0) {
+                    appendSummaryCount(joiner, "ERROR", errors);
+                }
+
+                if (dangers > 0) {
+                    appendSummaryCount(joiner, "DANGER", dangers);
+                }
+
+                if (warnings > 0) {
+                    appendSummaryCount(joiner, "WARNING", warnings);
+                }
+
+                if (notes > 0) {
+                    appendSummaryCount(joiner, "NOTE", notes);
+                }
+                output.append(joiner.toString());
+                output.append(')');
             }
 
-            if (dangers > 0) {
-                appendSummaryCount(joiner, printer, "DANGER", dangers, Style.RED);
-            }
+            output.append(System.lineSeparator());
 
-            if (warnings > 0) {
-                appendSummaryCount(joiner, printer, "WARNING", warnings, Style.YELLOW);
+            if (!result.getResult().isPresent() || errors + dangers > 0) {
+                throw new CliError(output.toString());
+            } else if (!quiet) {
+                printer.println(output.toString());
             }
-
-            if (notes > 0) {
-                appendSummaryCount(joiner, printer, "NOTE", notes, Style.WHITE);
-            }
-            output.append(joiner.toString());
-            output.append(')');
-        }
-
-        if (!result.getResult().isPresent() || errors + dangers > 0) {
-            throw new CliError(output.toString());
-        } else if (!quiet) {
-            printer.println(output.toString());
         }
     }
 
-    private static void appendSummaryCount(
-            StringJoiner joiner,
-            CliPrinter printer,
-            String label,
-            int count,
-            Style color
-    ) {
-        joiner.add(printer.style(label, color) + ": " + count);
+    private static void appendSummaryCount(StringJoiner joiner, String label, int count) {
+        joiner.add(label + ": " + count);
     }
 }

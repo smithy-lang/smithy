@@ -34,6 +34,7 @@ final class AttributeSelector implements InternalSelector {
     private final List<AttributeValue> expected;
     private final AttributeComparator comparator;
     private final boolean caseInsensitive;
+    private final Function<Model, Collection<? extends Shape>> optimizer;
 
     AttributeSelector(
             List<String> path,
@@ -54,14 +55,7 @@ final class AttributeSelector implements InternalSelector {
                 this.expected.add(AttributeValue.literal(validValue));
             }
         }
-    }
 
-    static AttributeSelector existence(List<String> path) {
-        return new AttributeSelector(path, null, null, false);
-    }
-
-    @Override
-    public Function<Model, Collection<? extends Shape>> optimize() {
         // Optimization for loading shapes with a specific trait.
         // This optimization can only be applied when there's no comparator,
         // and it doesn't matter how deep into the trait the selector descends.
@@ -69,23 +63,32 @@ final class AttributeSelector implements InternalSelector {
                 && path.size() >= 2
                 && path.get(0).equals("trait")     // only match on traits
                 && !path.get(1).startsWith("(")) { // don't match projections
-            return model -> {
+            optimizer = model -> {
                 // The trait name might be relative to the prelude, so ensure it's absolute.
                 String absoluteShapeId = Trait.makeAbsoluteName(path.get(1));
                 ShapeId trait = ShapeId.from(absoluteShapeId);
                 return model.getShapesWithTrait(trait);
             };
         } else {
-            return null;
+            optimizer = Model::toSet;
         }
     }
 
+    static AttributeSelector existence(List<String> path) {
+        return new AttributeSelector(path, null, null, false);
+    }
+
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Collection<? extends Shape> getStartingShapes(Model model) {
+        return optimizer.apply(model);
+    }
+
+    @Override
+    public Response push(Context context, Shape shape, Receiver next) {
         if (matchesAttribute(shape, context)) {
             return next.apply(context, shape);
         } else {
-            return true;
+            return Response.CONTINUE;
         }
     }
 

@@ -115,12 +115,12 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
      * Gets a map of identifier names to input member names that provide a
      * value for that identifier.
      *
-     * @deprecated Use {@link #getOperationInputBindings} instead.
-     *
      * @param resource Shape ID of a resource.
      * @param operation Shape ID of an operation.
      * @return Returns the identifier bindings map or an empty map if the
      *  binding is invalid or cannot be found.
+     *
+     * @deprecated Use {@link #getOperationInputBindings} instead.
      */
     @Deprecated
     public Map<String, String> getOperationBindings(ToShapeId resource, ToShapeId operation) {

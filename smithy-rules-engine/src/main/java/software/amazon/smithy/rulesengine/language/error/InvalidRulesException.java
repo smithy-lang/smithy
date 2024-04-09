@@ -1,23 +1,12 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.error;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -27,6 +16,12 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class InvalidRulesException extends RuntimeException implements FromSourceLocation {
     private final transient SourceLocation sourceLocation;
 
+    /**
+     * Constructs a new invalid rule exception with the given message and source location.
+     *
+     * @param message the detail message.
+     * @param location the location of the invalid rule.
+     */
     public InvalidRulesException(String message, FromSourceLocation location) {
         super(createMessage(message, location.getSourceLocation()));
         sourceLocation = location.getSourceLocation();
@@ -41,8 +36,24 @@ public final class InvalidRulesException extends RuntimeException implements Fro
         if (sourceLocation == SourceLocation.NONE) {
             return message;
         } else {
-            String prettyLocation = SourceLocationUtils.stackTraceForm(sourceLocation);
+            String prettyLocation = stackTraceForm(sourceLocation);
             return message.contains(prettyLocation) ? message : message + " (" + prettyLocation + ")";
         }
+    }
+
+    private static String stackTraceForm(SourceLocation sourceLocation) {
+        if (sourceLocation == SourceLocation.NONE) {
+            return "N/A";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (sourceLocation.getFilename() != null) {
+            sb.append(sourceLocation.getFilename());
+        }
+        if (sourceLocation.getLine() != 0) {
+            sb.append(":").append(sourceLocation.getLine());
+        }
+        // column is ignored in stack trace form
+        return sb.toString();
     }
 }

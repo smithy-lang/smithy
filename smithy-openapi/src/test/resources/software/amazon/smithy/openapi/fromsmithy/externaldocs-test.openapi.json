@@ -1,0 +1,50 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyDocs",
+    "version": "2018-01-01"
+  },
+  "externalDocumentation": {
+    "description": "API Reference",
+    "url": "https://localhost/docs/service"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "externalDocs": {
+          "description": "API Reference",
+          "url": "https://localhost/docs/operation"
+        },
+        "operationId": "MyDocsOperation",
+        "responses": {
+          "200": {
+            "description": "MyDocsOperation 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyDocsOperationResponseContent"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MyDocsOperationResponseContent": {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string"
+          }
+        },
+        "externalDocs": {
+          "description": "API Reference",
+          "url": "https://localhost/docs/output"
+        }
+      }
+    }
+  }
+}

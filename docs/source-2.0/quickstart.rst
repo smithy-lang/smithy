@@ -89,14 +89,35 @@ weather service.
 1. This service provides weather information for cities.
 2. This service consists of ``City`` resources and ``Forecast`` resources.
 3. The ``Weather`` service has many ``City`` resources, and a ``City``
-   resource contains a single ``Forecast`` singleton resource.
-4. This service closure contains the following operations:
+   resource contains a single ``Forecast`` resource.
+4. This service and its resources contain the following operations:
    ``ListCities``, ``GetCity``, ``GetForecast``, ``GetCurrentTime``.
 
-``Weather`` is a :ref:`service` shape that is defined inside of a
-:ref:`namespace <namespaces>`.
+First, create a directory called `smithy-quickstart` with a `model` directory
+and a ``weather.smithy`` model file such that your `smithy-quickstart` directory has the
+following file structure:
+
+.. code-block:: text
+
+    smithy-quickstart/
+    └── model/
+        └── weather.smithy
+
+.. tip::
+
+    Run the following command to create the quickstart directory and weather model file
+
+    .. code-block:: text
+
+        mkdir -p smithy-quickstart/model \
+        && touch smithy-quickstart/model/weather.smithy \
+        && cd smithy-quickstart
+
+Next, we will start to model a ``Weather`` service in the ``weather.smithy`` file.
+``Weather`` is a :ref:`service` shape that is defined inside of a :ref:`namespace <namespaces>`.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     $version: "2"
     namespace example.weather
@@ -129,6 +150,7 @@ A resource is contained within a service or another resource. Resources have
 identifiers, operations, and any number of child resources.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     $version: "2"
     namespace example.weather
@@ -136,7 +158,9 @@ identifiers, operations, and any number of child resources.
     /// Provides weather forecasts.
     service Weather {
         version: "2006-03-01"
-        resources: [City]
+        resources: [
+            City
+        ]
     }
 
     resource City {
@@ -160,15 +184,18 @@ the resource so that input members of the operation are used to provide the
 identity of the resource.
 
 Each ``City`` has a single ``Forecast``. This can be defined by adding the
-``Forecast`` to the ``resources`` property of the ``City``.
+``Forecast`` resource to the ``resources`` property of the ``City`` resource.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     resource City {
         identifiers: { cityId: CityId }
         read: GetCity
         list: ListCities
-        resources: [Forecast]
+        resources: [
+            Forecast
+        ]
     }
 
     resource Forecast {
@@ -189,13 +216,26 @@ members of resource operations map to resource properties or identifiers to
 perform updates on or examine the state of a resource.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     resource City {
         identifiers: { cityId: CityId }
         properties: { coordinates: CityCoordinates }
         read: GetCity
-        resources: [Forecast]
+        list: ListCities
+        resources: [
+            Forecast
+        ]
     }
+
+    structure CityCoordinates {
+        @required
+        latitude: Float
+
+        @required
+        longitude: Float
+    }
+
 
     structure GetCityOutput for City {
         $coordinates
@@ -243,40 +283,33 @@ your API.
 Let's define the operation used to "read" a ``City``.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     @readonly
     operation GetCity {
-        input: GetCityInput
-        output: GetCityOutput
-        errors: [NoSuchResource]
-    }
+        input := for City {
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            $cityId
+        }
 
-    @input
-    structure GetCityInput for City {
-        // "cityId" provides the identifier for the resource and
-        // has to be marked as required.
-        @required
-        $cityId
-    }
+        output := for City {
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
+            @required
+            @notProperty
+            name: String
 
-    @output
-    structure GetCityOutput {
-        // "required" is used on output to indicate if the service
-        // will always provide a value for the member.
-        @required
-        @notProperty
-        name: String
+            @required
+            $coordinates
+        }
 
-        @required
-        $coordinates
-    }
-
-    structure CityCoordinates {
-        @required
-        latitude: Float
-
-        @required
-        longitude: Float
+        errors: [
+            NoSuchResource
+        ]
     }
 
     // "error" is a trait that is used to specialize
@@ -290,24 +323,20 @@ Let's define the operation used to "read" a ``City``.
 And define the operation used to "read" a ``Forecast``.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput
-        output: GetForecastOutput
-    }
+        // "cityId" provides the only identifier for the resource since
+        // a Forecast doesn't have its own.
+        input := for Forecast {
+            @required
+            $cityId
+        }
 
-    // "cityId" provides the only identifier for the resource since
-    // a Forecast doesn't have its own.
-    @input
-    structure GetForecastInput {
-        @required
-        cityId: CityId
-    }
-
-    @output
-    structure GetForecastOutput {
-        chanceOfRain: Float
+        output := for Forecast {
+            $chanceOfRain
+        }
     }
 
 .. admonition:: Review
@@ -331,13 +360,15 @@ bind the identifier of a ``City`` to its input structure; we are listing
 cities, so there's no way we could provide a ``City`` identifier.
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     /// Provides weather forecasts.
-    @paginated(inputToken: "nextToken", outputToken: "nextToken",
-               pageSize: "pageSize")
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
+        resources: [
+            City
+        ]
     }
 
     // The paginated trait indicates that the operation may
@@ -346,22 +377,17 @@ cities, so there's no way we could provide a ``City`` identifier.
     @paginated(items: "items")
     @readonly
     operation ListCities {
-        input: ListCitiesInput
-        output: ListCitiesOutput
-    }
+        input := {
+            nextToken: String
+            pageSize: Integer
+        }
 
-    @input
-    structure ListCitiesInput {
-        nextToken: String
-        pageSize: Integer
-    }
+        output := {
+            nextToken: String
 
-    @output
-    structure ListCitiesOutput {
-        nextToken: String
-
-        @required
-        items: CitySummaries
+            @required
+            items: CitySummaries
+        }
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -370,7 +396,11 @@ cities, so there's no way we could provide a ``City`` identifier.
     }
 
     // CitySummary contains a reference to a City.
-    @references([{resource: City}])
+    @references([
+        {
+            resource: City
+        }
+    ])
     structure CitySummary {
         @required
         cityId: CityId
@@ -412,168 +442,215 @@ service.
 
 
 .. code-block:: smithy
+    :caption: model/weather.smithy
 
     /// Provides weather forecasts.
-    @paginated(inputToken: "nextToken", outputToken: "nextToken",
-               pageSize: "pageSize")
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
-        operations: [GetCurrentTime]
+        resources: [
+            City
+        ]
+        operations: [
+            GetCurrentTime
+        ]
     }
 
     @readonly
     operation GetCurrentTime {
-        input: GetCurrentTimeInput
-        output: GetCurrentTimeOutput
-    }
-
-    @input
-    structure GetCurrentTimeInput {}
-
-    @output
-    structure GetCurrentTimeOutput {
-        @required
-        time: Timestamp
+        output := {
+            @required
+            time: Timestamp
+        }
     }
 
 
 Building the Model
 ==================
 
-Now that you have a model, you'll want to build it and generate things from it.
-Building the model creates projections of the model, applies plugins to
-generate artifacts, runs validation, and creates a JAR that contains the
-filtered projection. The `Smithy Gradle Plugin`_ is the best way to get started
-building a Smithy model. First, create a ``smithy-build.json`` file:
+Now that you have a model, you'll want to build it and generate additional
+artifacts from it. Building the model creates projections of the model, applies plugins to
+generate artifacts, and runs validation.
 
-.. code-block:: json
+.. tab:: Smithy CLI
 
-    {
-        "version": "1.0"
-    }
+    .. admonition:: Install required tools
+        :class: tip
 
-Then create a new ``build.gradle.kts`` file:
+        Before you proceed, make sure you have the :ref:`Smithy CLI installed <cli_installation>`.
 
-.. code-block:: kotlin
+    To build a Smithy model using the :ref:`the Smithy CLI <smithy-cli>`,
+    create a :ref:`smithy-build.json <smithy-build-json>` file in the ``smithy-quickstart`` directory:
 
-    plugins {
-        id("software.amazon.smithy").version("0.6.0")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+        {
+            // Version of the smithy-build.json file specification
+            "version": "1.0",
+            // Location to search for Smithy model source files
+            "sources": ["model"]
+        }
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-    }
+    Next, run ``smithy build``. That's it! We just created a simple, read-only, ``Weather`` service.
 
-    configure<software.amazon.smithy.gradle.SmithyExtension> {
-        // Uncomment this to use a custom projection when building the JAR.
-        // projection = "foo"
-    }
+.. tab:: Gradle
 
-    // Uncomment to disable creating a JAR.
-    //tasks["jar"].enabled = false
+    .. admonition:: Install required tools
+        :class: tip
 
-Finally, copy the weather model to ``model/weather.smithy`` and
-then run ``gradle build`` (make sure you have `gradle installed`_).
+        Before you proceed, make sure you have `gradle installed`_.
+
+
+    To build a Smithy model using the :ref:`Smithy Gradle Plugin <smithy-gradle-plugin>`,
+    first, create a gradle build script file in the ``smithy-quickstart`` directory:
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            plugins {
+                `java-library`
+                id("software.amazon.smithy.gradle.smithy-jar").version("__smithy_gradle_version__")
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            plugins {
+                id 'java-library'
+                id 'software.amazon.smithy.gradle.smithy-jar' version '__smithy_gradle_version__'
+            }
+
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+    Next, create a :ref:`smithy-build.json <smithy-build-json>` file in the
+    ``smithy-quickstart`` directory:
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            // Version of the smithy-build.json file specification
+            "version": "1.0"
+        }
+
+    Finally, run ``gradle build``. That's it! We just created a simple, read-only, ``Weather`` service.
+
 
 Next steps
 ==========
-
-That's it! We just created a simple, read-only, ``Weather`` service.
 
 1. Try adding a "create" lifecycle operation to ``City``.
 2. Try adding a "delete" lifecycle operation to ``City``.
 3. Try adding :ref:`HTTP binding traits <http-traits>` to the API.
 4. Try adding :ref:`tags <tags-trait>` to shapes and filtering them out with
    :ref:`excludeShapesByTag <excludeShapesByTag-transform>`.
+5. Follow the :ref:`Using Code Generation Guide <using-code-generation>`
+   to generate code for the ``Weather`` service.
 
-There's plenty more to explore in Smithy. The
-:ref:`Smithy specification <smithy-specification>` can teach you everything you
-need to know about Smithy models. :ref:`Building Smithy Models <building-models>`
-can teach you more about the build process, including how to use
-transformations, projections, plugins, and more. For more sample build
-configurations, see the `examples directory`_ of the Smithy Gradle plugin
-repository.
+There's plenty more to explore in Smithy.
+
+* The :ref:`Smithy specification <smithy-specification>` can teach you
+  everything you need to know about Smithy models.
+* :ref:`The Smithy CLI <smithy-cli>` is the easiest way to do interesting
+  things with Smithy models like code generation, creating different
+  versions of a model for different audiences, and more.
+* The `Smithy Examples <https://github.com/smithy-lang/smithy-examples>`_
+  repo on GitHub provides various example models and package layouts that
+  show how to use tools like the Smithy CLI or
+  :ref:`Gradle plugin <smithy-gradle-plugin>`.
+
 
 Complete example
 ================
 
-If you followed all the steps in this guide, you should have three files, laid
-out like so::
 
-    .
-    ├── build.gradle.kts
-    ├── model
-    │   └── weather.smithy
-    └── smithy-build.json
 
-The ``smithy-build.json`` should have the following contents:
+.. note::
 
-.. code-block:: json
+    You can clone a working version of this quickstart example using the
+    :ref:`Smithy CLI <smithy-cli>` ``init`` command.
 
-    {
-        "version": "1.0"
-    }
+    .. tab:: Quickstart with Smithy CLI
 
-The ``build.gradle.kts`` should have the following contents:
+        .. code-block::
 
-.. code-block:: kotlin
+            smithy init -o <output_directory>
 
-    plugins {
-        id("software.amazon.smithy").version("0.6.0")
-    }
+    .. tab:: Quickstart with Gradle
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
+        .. code-block::
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-    }
+            smithy init -t quickstart-gradle -o <output_directory>
 
-    configure<software.amazon.smithy.gradle.SmithyExtension> {
-        // Uncomment this to use a custom projection when building the JAR.
-        // projection = "foo"
-    }
+If you followed all the steps in this guide, your working directory should be laid out like so:
 
-    // Uncomment to disable creating a JAR.
-    //tasks["jar"].enabled = false
+.. tab:: Smithy CLI
 
-Finally, the complete ``weather.smithy`` model should look like:
+    .. code-block:: text
+
+        .
+        ├── smithy-build.json
+        └── model
+            └── weather.smithy
+
+.. tab:: Gradle
+
+    .. code-block:: text
+
+        .
+        ├── build.gradle.kts
+        ├── smithy-build.json
+        └── model
+            └── weather.smithy
+
+The complete ``weather.smithy`` model should look like:
 
 .. code-block:: smithy
+    :caption: weather.smithy
 
     $version: "2"
+
     namespace example.weather
 
     /// Provides weather forecasts.
-    @paginated(
-        inputToken: "nextToken"
-        outputToken: "nextToken"
-        pageSize: "pageSize"
-    )
+    @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
     service Weather {
         version: "2006-03-01"
-        resources: [City]
-        operations: [GetCurrentTime]
+        resources: [
+            City
+        ]
+        operations: [
+            GetCurrentTime
+        ]
     }
 
     resource City {
         identifiers: { cityId: CityId }
+        properties: { coordinates: CityCoordinates }
         read: GetCity
         list: ListCities
-        resources: [Forecast]
+        resources: [
+            Forecast
+        ]
     }
 
     resource Forecast {
         identifiers: { cityId: CityId }
-        read: GetForecast,
+        properties: { chanceOfRain: Float }
+        read: GetForecast
     }
 
     // "pattern" is a trait.
@@ -582,28 +659,29 @@ Finally, the complete ``weather.smithy`` model should look like:
 
     @readonly
     operation GetCity {
-        input: GetCityInput
-        output: GetCityOutput
-        errors: [NoSuchResource]
-    }
+        input := for City {
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            $cityId
+        }
 
-    @input
-    structure GetCityInput {
-        // "cityId" provides the identifier for the resource and
-        // has to be marked as required.
-        @required
-        cityId: CityId
-    }
+        output := for City {
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            // "notProperty" indicates that top-level input member "name"
+            // is not bound to any resource property.
+            @required
+            @notProperty
+            name: String
 
-    @output
-    structure GetCityOutput {
-        // "required" is used on output to indicate if the service
-        // will always provide a value for the member.
-        @required
-        name: String
+            @required
+            $coordinates
+        }
 
-        @required
-        coordinates: CityCoordinates
+        errors: [
+            NoSuchResource
+        ]
     }
 
     // This structure is nested within GetCityOutput.
@@ -628,22 +706,17 @@ Finally, the complete ``weather.smithy`` model should look like:
     @readonly
     @paginated(items: "items")
     operation ListCities {
-        input: ListCitiesInput
-        output: ListCitiesOutput
-    }
+        input := {
+            nextToken: String
+            pageSize: Integer
+        }
 
-    @input
-    structure ListCitiesInput {
-        nextToken: String
-        pageSize: Integer
-    }
+        output := {
+            nextToken: String
 
-    @output
-    structure ListCitiesOutput {
-        nextToken: String
-
-        @required
-        items: CitySummaries
+            @required
+            items: CitySummaries
+        }
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -652,7 +725,11 @@ Finally, the complete ``weather.smithy`` model should look like:
     }
 
     // CitySummary contains a reference to a City.
-    @references([{resource: City}])
+    @references([
+        {
+            resource: City
+        }
+    ])
     structure CitySummary {
         @required
         cityId: CityId
@@ -663,36 +740,24 @@ Finally, the complete ``weather.smithy`` model should look like:
 
     @readonly
     operation GetCurrentTime {
-        input: GetCurrentTimeInput
-        output: GetCurrentTimeOutput
-    }
-
-    @input
-    structure GetCurrentTimeInput {}
-
-    @output
-    structure GetCurrentTimeOutput {
-        @required
-        time: Timestamp
+        output := {
+            @required
+            time: Timestamp
+        }
     }
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput
-        output: GetForecastOutput
-    }
+        input := for Forecast {
+            // "cityId" provides the only identifier for the resource since
+            // a Forecast doesn't have its own.
+            @required
+            $cityId
+        }
 
-    // "cityId" provides the only identifier for the resource since
-    // a Forecast doesn't have its own.
-    @input
-    structure GetForecastInput {
-        @required
-        cityId: CityId
-    }
-
-    @output
-    structure GetForecastOutput {
-        chanceOfRain: Float
+        output := for Forecast {
+            $chanceOfRain
+        }
     }
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples

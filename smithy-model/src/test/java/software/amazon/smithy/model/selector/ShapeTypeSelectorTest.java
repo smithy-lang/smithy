@@ -50,4 +50,11 @@ public class ShapeTypeSelectorTest {
         assertThat("smithy.example#Integer", in(ids));
         assertThat("smithy.example#IntEnum", in(ids));
     }
+
+    @Test
+    public void hasContainsOptimization() {
+        Set<String> ids = SelectorTest.ids(model, ":in(enum) [id|namespace = smithy.example]");
+
+        assertThat("smithy.example#Enum", in(ids));
+    }
 }

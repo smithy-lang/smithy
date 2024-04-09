@@ -1,0 +1,3 @@
+[ERROR] smithy.example#SayHello: Conflicting `smithy.test#smokeTests` test case IDs found for ID `say_hello`: `smithy.example#SayHello`, `smithy.example#SayHello`, `smithy.example#SayHello2` | UniqueSmokeTestCaseId
+[ERROR] smithy.example#SayHello2: Conflicting `smithy.test#smokeTests` test case IDs found for ID `say_hello`: `smithy.example#SayHello`, `smithy.example#SayHello`, `smithy.example#SayHello2` | UniqueSmokeTestCaseId
+[ERROR] smithy.example#SayHello3: Conflicting `smithy.test#smokeTests` test case IDs found for ID `say_hello`: `smithy.example#SayHello3`, `smithy.example#SayHello3` | UniqueSmokeTestCaseId

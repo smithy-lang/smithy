@@ -1,0 +1,7 @@
+--------------------
+Error shape renaming
+--------------------
+
+By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the :ref:`service closure <service-closure>` via the ``rename`` property. However, services using this protocol are
+not allowed to rename error shapes (shapes with :ref:`error trait <error-trait>` applied).

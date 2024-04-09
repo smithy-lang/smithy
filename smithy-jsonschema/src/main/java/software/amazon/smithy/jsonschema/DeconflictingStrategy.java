@@ -21,12 +21,14 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -78,7 +80,8 @@ final class DeconflictingStrategy implements RefStrategy {
                || shape.isResourceShape()
                || shape.isServiceShape()
                || shape.isOperationShape()
-               || shape.isMemberShape();
+               || shape.isMemberShape()
+               || (Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class));
     }
 
     private String deconflict(Shape shape, String pointer, Map<String, ShapeId> reversePointers) {

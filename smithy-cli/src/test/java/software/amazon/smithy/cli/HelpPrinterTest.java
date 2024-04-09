@@ -2,6 +2,7 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ public class HelpPrinterTest {
     public void worksWithNoArguments() {
         BufferPrinter printer = new BufferPrinter();
         HelpPrinter help = new HelpPrinter("foo");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), containsString("Usage: foo"));
     }
@@ -21,7 +22,7 @@ public class HelpPrinterTest {
         BufferPrinter printer = new BufferPrinter();
         HelpPrinter help = new HelpPrinter("foo");
         help.option("--foo", "-f", "The foo value");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] \n"
@@ -37,7 +38,7 @@ public class HelpPrinterTest {
         help.option("--foo", "-f", "The foo value");
         help.option("--bar", null, "The bar value");
         help.option(null, "-b", "What is this");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] [--bar] [-b] \n"
@@ -58,7 +59,7 @@ public class HelpPrinterTest {
         help.option("--bar", null, "The bar value");
         help.option(null, "-b", "What is this");
         help.param("--baz", "-a", "BAZ", "The baz param");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] [--bar] [-b] [--baz | -a BAZ] \n"
@@ -82,7 +83,7 @@ public class HelpPrinterTest {
         help.option("--bar", null, "The bar value");
         help.option(null, "-b", "What is this");
         help.param("--baz", "-a", "BAZ", "The baz param");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] [--bar] [-b] [--baz | -a BAZ] [FILE...]\n"
@@ -107,7 +108,7 @@ public class HelpPrinterTest {
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo.");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] \n"
@@ -127,7 +128,7 @@ public class HelpPrinterTest {
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo.");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] \n"
@@ -148,7 +149,7 @@ public class HelpPrinterTest {
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo "
                                    + "foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo foo.");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] \n"
@@ -171,9 +172,9 @@ public class HelpPrinterTest {
         help.documentation("Goodbye1 Goodbye2 Goodbye3 Goodbye4 Goodbye5 Goodbye6 Goodbye7 Goodbye8 Goodbye9 "
                            + "Goodbye10 Goodbye11 Goodbye12 Goodbye13 Goodbye14 Goodbye15 Goodbye16 Goodbye17 "
                            + "Goodbye18 Goodbye19 Goodbye20 Goodbye21.");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
-        assertThat(printer.toString(), startsWith(
+        assertThat(printer.toString().trim(), equalTo(
                 "Usage: foo [--foo | -f] \n"
                 + "\n"
                 + "Hello1 Hello2 Hello3 Hello4 Hello5 Hello6 Hello7 Hello8 Hello9 Hello10 Hello11 Hello12 Hello13 \n"
@@ -184,8 +185,7 @@ public class HelpPrinterTest {
                 + "        The foo value\n"
                 + "    \n"
                 + "Goodbye1 Goodbye2 Goodbye3 Goodbye4 Goodbye5 Goodbye6 Goodbye7 Goodbye8 Goodbye9 Goodbye10 Goodbye11\n"
-                + " Goodbye12 Goodbye13 Goodbye14 Goodbye15 Goodbye16 Goodbye17 Goodbye18 Goodbye19 Goodbye20 \n"
-                + "Goodbye21."));
+                + "Goodbye12 Goodbye13 Goodbye14 Goodbye15 Goodbye16 Goodbye17 Goodbye18 Goodbye19 Goodbye20 Goodbye21."));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class HelpPrinterTest {
         HelpPrinter help = new HelpPrinter("foo");
         help.option("--foo", "-f", "The foo value");
         help.summary("Hello1\r\nHello2\r\rHello3\rHello4.\r");
-        help.print(printer);
+        help.print(AnsiColorFormatter.NO_COLOR, printer);
 
         assertThat(printer.toString(), startsWith(
                 "Usage: foo [--foo | -f] \n"
@@ -203,25 +203,5 @@ public class HelpPrinterTest {
                 + "\n"
                 + "    --foo, -f\n"
                 + "        The foo value\n"));
-    }
-
-    private static final class BufferPrinter implements CliPrinter {
-        private final StringBuilder builder = new StringBuilder();
-
-        @Override
-        public void println(String text) {
-            builder.append(text);
-        }
-
-        @Override
-        public String style(String text, Style... styles) {
-            return text;
-        }
-
-        @Override
-        public String toString() {
-            // normalize line endings for tests.
-            return builder.toString().replace("\r\n", "\n").replace("\r", "\n");
-        }
     }
 }

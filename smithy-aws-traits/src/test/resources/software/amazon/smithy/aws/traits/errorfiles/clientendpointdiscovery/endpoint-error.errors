@@ -1,2 +1,2 @@
-[DANGER] ns.foo#FooService: Services SHOULD define an error which indicates an endpoint is invalid. | ClientEndpointDiscovery
+[DANGER] ns.foo#FooService: Services SHOULD define an error which indicates an endpoint is invalid. | ClientEndpointDiscovery.MissingErrorDefinition
 [ERROR] ns.foo#GetObject: The operation `ns.foo#GetObject` is marked with `aws.api#clientDiscoveredEndpoint` and is bound to the service `ns.foo#BarService` but does not have the required error `ns.foo#InvalidEndpointError`. | ClientEndpointDiscovery

@@ -1,0 +1,46 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/operation1": {
+      "get": {
+        "operationId": "Operation1",
+        "tags": ["one", "two", "three", "four", "five", "six", "seven", "eight"],
+        "responses": {
+          "200": {
+            "description": "Operation1 200 response"
+          }
+        }
+      }
+    },
+    "/operation2": {
+      "get": {
+        "operationId": "Operation2",
+        "tags": ["one", "three", "five", "seven"],
+        "responses": {
+          "200": {
+            "description": "Operation2 200 response"
+          }
+        }
+      }
+    }
+  },
+  "components": { },
+  "tags": [
+    {
+      "name": "two"
+    },
+    {
+      "name": "four"
+    },
+    {
+      "name": "six"
+    },
+    {
+      "name": "eight"
+    }
+  ]
+}

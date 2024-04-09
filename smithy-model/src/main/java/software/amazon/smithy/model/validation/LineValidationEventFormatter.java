@@ -29,6 +29,10 @@ public final class LineValidationEventFormatter implements ValidationEventFormat
         if (reason != null) {
             message += " (" + reason + ")";
         }
+        String hint = event.getHint().orElse(null);
+        if (hint != null) {
+            message += " [" + hint + "]";
+        }
 
         return String.format(
                 "[%s] %s: %s | %s %s:%s:%s",

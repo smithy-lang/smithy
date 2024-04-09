@@ -78,7 +78,7 @@ public final class NodeMapper {
         /**
          * Ignores unknown properties.
          */
-        INGORE {
+        IGNORE {
             public void handle(Type into, String pointer, String property, Node value) {
             }
         };

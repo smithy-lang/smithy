@@ -15,69 +15,82 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
+import software.amazon.smithy.build.SmithyBuild;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.HelpPrinter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Arguments available to commands that load and build models.
  */
-@SmithyInternalApi
-public final class BuildOptions implements ArgumentReceiver {
+final class BuildOptions implements ArgumentReceiver {
 
-    public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
-    public static final String DISCOVER = "--discover";
-    public static final String DISCOVER_SHORT = "-d";
-    public static final String DISCOVER_CLASSPATH = "--discover-classpath";
-    public static final String MODELS = "<MODELS>";
+    static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+    static final String ALLOW_UNKNOWN_TRAITS_SHORT = "--aut";
+    static final String MODELS = "<MODELS>";
 
-    private String discoverClasspath;
     private boolean allowUnknownTraits;
-    private boolean discover;
+    private String output;
+    private boolean noPositionalArguments;
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignores unknown traits when validating models");
-        printer.option(DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars");
-        printer.param(DISCOVER_CLASSPATH, null, "CLASSPATH",
-                            "Enables model discovery using a custom classpath for models");
-        printer.positional(MODELS, "Model files and directories to load");
+        printer.option(ALLOW_UNKNOWN_TRAITS, ALLOW_UNKNOWN_TRAITS_SHORT,
+                       "Ignore unknown traits when validating models.");
+        printer.param("--output", null, "OUTPUT_PATH",
+                      "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
+
+        if (!noPositionalArguments) {
+            printer.positional(MODELS, "Model files and directories to load.");
+        }
     }
 
     @Override
     public boolean testOption(String name) {
-        switch (name) {
-            case ALLOW_UNKNOWN_TRAITS:
-                allowUnknownTraits = true;
-                return true;
-            case DISCOVER:
-            case DISCOVER_SHORT:
-                discover = true;
-                return true;
-            default:
-                return false;
+        if (ALLOW_UNKNOWN_TRAITS.equals(name) || ALLOW_UNKNOWN_TRAITS_SHORT.equalsIgnoreCase(name)) {
+            allowUnknownTraits = true;
+            return true;
         }
+        return false;
     }
 
     @Override
     public Consumer<String> testParameter(String name) {
-        if (DISCOVER_CLASSPATH.equals(name)) {
-            return value -> discoverClasspath = value;
+        if ("--output".equals(name)) {
+            return value -> output = value;
         }
-
         return null;
     }
 
-    public String discoverClasspath() {
-        return discoverClasspath;
-    }
-
-    public boolean allowUnknownTraits() {
+    boolean allowUnknownTraits() {
         return allowUnknownTraits;
     }
 
-    public boolean discover() {
-        return discover;
+    String output() {
+        return output;
+    }
+
+    void noPositionalArguments(boolean noPositionalArguments) {
+        this.noPositionalArguments = noPositionalArguments;
+    }
+
+    /**
+     * Resolves the correct build directory by looking at the --output argument, outputDirectory config setting,
+     * and finally the default build directory.
+     *
+     * @param config Config to check.
+     * @return Returns the resolved build directory.
+     */
+    Path resolveOutput(SmithyBuildConfig config) {
+        if (output != null) {
+            return Paths.get(output);
+        } else {
+            return config.getOutputDirectory()
+                    .map(Paths::get)
+                    .orElseGet(SmithyBuild::getDefaultOutputDirectory);
+        }
     }
 }

@@ -1,0 +1,29 @@
+name: 'Checkout and build Smithy repo'
+description: 'Checkout and build Smithy repo'
+outputs:
+  smithy-version:
+    description: "Smithy version"
+    value: ${{ steps.smithy-version.outputs.smithy-version }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        java-version: 21
+        distribution: 'corretto'
+
+    - uses: actions/checkout@v4
+      with:
+        path: main
+
+    - uses: actions/checkout@v4
+      with:
+        repository: awslabs/smithy
+        path: smithy
+
+    - run: cd ./smithy && ./gradlew clean build publishToMavenLocal
+      shell: bash
+
+    - id: smithy-version
+      run: cd ./smithy && echo "smithy-version=$(cat ./VERSION)" >> $GITHUB_OUTPUT
+      shell: bash

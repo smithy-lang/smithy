@@ -42,6 +42,9 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private static final Set<String> VALID_INPUT_MEMBERS = SetUtils.of("Operation", "Identifiers");
+    private static final String MISSING_ERROR_DEFINITION = "MissingErrorDefinition";
+    private static final String UNBOUND_OPERATION = "UnboundOperation";
+    private static final String NO_OPERATIONS = "NoOperations";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -73,7 +76,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private List<ValidationEvent> validateTrait(ServiceShape service, ClientEndpointDiscoveryTrait trait) {
         if (!trait.getOptionalError().isPresent()) {
             return ListUtils.of(danger(service, trait,
-                    "Services SHOULD define an error which indicates an endpoint is invalid."));
+                    "Services SHOULD define an error which indicates an endpoint is invalid.",
+                    MISSING_ERROR_DEFINITION));
         }
         return Collections.emptyList();
     }
@@ -86,8 +90,9 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
                 .filter(pair -> !pair.getKey().getAllOperations().contains(pair.getValue().getOperation()))
                 .map(pair -> error(pair.getKey(), String.format(
                         "The operation `%s` must be bound to the service `%s` to use it as the endpoint operation.",
-                        pair.getValue().getOperation(), pair.getKey()
-                )))
+                        pair.getValue().getOperation(), pair.getKey()),
+                        UNBOUND_OPERATION, pair.getValue().getOperation().getName()
+                ))
                 .collect(Collectors.toList());
 
         validationEvents.addAll(endpointDiscoveryServices.keySet().stream()
@@ -96,8 +101,9 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
                         "The service `%s` is configured to use endpoint discovery, but has no operations bound with "
                                 + "the `%s` trait.",
                         service.getId().toString(),
-                        ClientDiscoveredEndpointTrait.ID.toString()
-                )))
+                        ClientDiscoveredEndpointTrait.ID.toString()),
+                        NO_OPERATIONS
+                ))
                 .collect(Collectors.toList()));
         return validationEvents;
     }

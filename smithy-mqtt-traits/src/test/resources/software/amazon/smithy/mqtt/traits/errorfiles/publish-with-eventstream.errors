@@ -1,1 +1,1 @@
-[ERROR] smithy.example#PublishInput$messages: The input of `smithy.mqtt#publish` operations cannot contain event streams, and this member is used as part of the input of the `smithy.example#Publish` operation. | MqttPublishInput
+[ERROR] smithy.example#PublishInput$messages: Found an incompatible shape when validating the constraints of the `smithy.mqtt#publish` trait attached to `smithy.example#Publish`: The input of `smithy.mqtt#publish` operations cannot contain event streams | MqttPublishInput.NoEventStreams

@@ -99,7 +99,7 @@ public class SmithyPatternTest {
                     .build();
         });
 
-        assertThat(thrown.getMessage(), containsString("Segments must not be empty"));
+        assertThat(thrown.getMessage(), containsString("Segments must not be empty at index 1"));
     }
 
     @Test
@@ -158,14 +158,14 @@ public class SmithyPatternTest {
     @Test
     public void noEmptyLabels() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
-            String target = "/{}";
+            String target = "/a/{}";
             SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
         });
 
-        assertThat(thrown.getMessage(), containsString("Empty label declaration"));
+        assertThat(thrown.getMessage(), containsString("Empty label declaration in pattern at index 2"));
     }
 
     @Test
@@ -179,6 +179,7 @@ public class SmithyPatternTest {
         });
 
         assertThat(thrown.getMessage(), containsString("Invalid label name"));
+        assertThat(thrown.getMessage(), containsString("at index 1"));
     }
 
     @Test
@@ -192,5 +193,6 @@ public class SmithyPatternTest {
         });
 
         assertThat(thrown.getMessage(), containsString("Literal segments must not contain"));
+        assertThat(thrown.getMessage(), containsString("at index 1"));
     }
 }

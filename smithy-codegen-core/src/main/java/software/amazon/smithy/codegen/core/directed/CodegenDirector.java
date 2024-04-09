@@ -16,6 +16,7 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.ImportContainer;
+import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolWriter;
@@ -34,8 +36,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -71,10 +75,12 @@ public final class CodegenDirector<
     private ShapeId service;
     private Model model;
     private S settings;
+    private ObjectNode integrationSettings = Node.objectNode();
     private FileManifest fileManifest;
     private Supplier<Iterable<I>> integrationFinder;
     private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
+    private ShapeGenerationOrder shapeGenerationOrder = ShapeGenerationOrder.TOPOLOGICAL;
 
     /**
      * Simplifies a Smithy model for code generation of a single service.
@@ -139,6 +145,8 @@ public final class CodegenDirector<
     /**
      * Sets the required settings object used for code generation.
      *
+     * <p>{@link #integrationSettings} MUST also be set.
+     *
      * @param settings Settings object.
      */
     public void settings(S settings) {
@@ -155,6 +163,9 @@ public final class CodegenDirector<
      * You will need to manually deserialize your settings if using types that
      * are not supported by Smithy's {@link NodeMapper}.
      *
+     * <p>This will also set {@link #integrationSettings} if the {@code integrations}
+     * key is present.
+     *
      * @param settingsType Settings type to deserialize into.
      * @param settingsNode Settings node value to deserialize.
      * @return Returns the deserialized settings as this is needed to provide a service shape ID.
@@ -163,7 +174,46 @@ public final class CodegenDirector<
         LOGGER.fine(() -> "Loading codegen settings from node value: " + settingsNode.getSourceLocation());
         S deserialized = new NodeMapper().deserialize(settingsNode, settingsType);
         settings(deserialized);
+        settingsNode.asObjectNode()
+            .flatMap(node -> node.getObjectMember("integrations"))
+            .ifPresent(this::integrationSettings);
         return deserialized;
+    }
+
+    /**
+     * Sets the settings node to be passed to integrations.
+     *
+     * <p>Generators MUST set this with the {@code integrations} key from their
+     * plugin settings.
+     *
+     * <pre>{@code
+     * {
+     *     "version": "1.0",
+     *     "projections": {
+     *         "codegen-projection": {
+     *             "plugins": {
+     *                 "code-generator": {
+     *                     "service": "com.example#DocumentedService",
+     *                     "integrations": {
+     *                         "my-integration": {
+     *                             "example-setting": "foo"
+     *                         }
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>In this example, the value of the {@code integrations} key is what must
+     * be passed to this method. The value of the {@code my-integration} key will
+     * then be provided to an integration with the name {@code my-integration}.
+     *
+     * @param integrationSettings Settings used to configure integrations.
+     */
+    public void integrationSettings(ObjectNode integrationSettings) {
+        this.integrationSettings = Objects.requireNonNull(integrationSettings);
     }
 
     /**
@@ -251,6 +301,18 @@ public final class CodegenDirector<
     }
 
     /**
+     * Sets the shapes order for code generation.
+     *
+     * <p>CodegenDirector order the shapes appropriately before passing them to the code generators.
+     * The default order is topological, and can be overridden with this method
+     *
+     * @param order the order to use for the shape generation process.
+     */
+    public void shapeGenerationOrder(ShapeGenerationOrder order) {
+        this.shapeGenerationOrder = order;
+    }
+
+    /**
      * Sorts all members of the model prior to codegen.
      *
      * <p>This should only be used by languages where changing the order of members
@@ -328,6 +390,7 @@ public final class CodegenDirector<
         SmithyBuilder.requiredState("settings", settings);
         SmithyBuilder.requiredState("fileManifest", fileManifest);
         SmithyBuilder.requiredState("directedCodegen", directedCodegen);
+        SmithyBuilder.requiredState("shapeGenerationOrder", shapeGenerationOrder);
 
         // Use a default integration finder implementation.
         if (integrationFinder == null) {
@@ -349,7 +412,10 @@ public final class CodegenDirector<
     private List<I> findIntegrations() {
         LOGGER.fine(() -> "Finding integration implementations of " + integrationClass.getName());
         List<I> integrations = SmithyIntegration.sort(integrationFinder.get());
-        integrations.forEach(i -> LOGGER.finest(() -> "Found integration " + i.getClass().getCanonicalName()));
+        integrations.forEach(i -> {
+            LOGGER.finest(() -> "Found integration " + i.getClass().getCanonicalName());
+            i.configure(settings, integrationSettings.getObjectMember(i.name()).orElse(Node.objectNode()));
+        });
         return integrations;
     }
 
@@ -390,16 +456,36 @@ public final class CodegenDirector<
     }
 
     private void generateShapesInService(C context, ServiceShape serviceShape) {
-        LOGGER.fine(() -> "Generating shapes for " + directedCodegen.getClass().getName());
+        LOGGER.fine(() -> String.format("Generating shapes for %s in %s order",
+                directedCodegen.getClass().getName(), this.shapeGenerationOrder.name()));
         Set<Shape> shapes = new Walker(context.model()).walkShapes(serviceShape);
-        TopologicalIndex topologicalIndex = TopologicalIndex.of(context.model());
         ShapeGenerator<W, C, S> generator = new ShapeGenerator<>(context, serviceShape, directedCodegen);
-        for (Shape shape : topologicalIndex.getOrderedShapes()) {
-            if (shapes.contains(shape)) {
-                shape.accept(generator);
-            }
+        List<Shape> orderedShapes = new ArrayList<>();
+
+        switch (this.shapeGenerationOrder) {
+            case ALPHABETICAL:
+                orderedShapes.addAll(shapes);
+                orderedShapes.sort(Comparator.comparing(s -> s.getId().getName(serviceShape)));
+                break;
+            case NONE:
+                orderedShapes.addAll(shapes);
+                break;
+            case TOPOLOGICAL:
+            default:
+                TopologicalIndex topologicalIndex = TopologicalIndex.of(context.model());
+                for (Shape shape : topologicalIndex.getOrderedShapes()) {
+                    if (shapes.contains(shape)) {
+                        orderedShapes.add(shape);
+                    }
+                }
+                for (Shape shape : topologicalIndex.getRecursiveShapes()) {
+                    if (shapes.contains(shape)) {
+                        orderedShapes.add(shape);
+                    }
+                }
         }
-        for (Shape shape : topologicalIndex.getRecursiveShapes()) {
+
+        for (Shape shape : orderedShapes) {
             if (shapes.contains(shape)) {
                 shape.accept(generator);
             }
@@ -440,6 +526,14 @@ public final class CodegenDirector<
             LOGGER.finest(() -> "Generating resource " + shape.getId());
             directedCodegen.generateResource(
                     new GenerateResourceDirective<>(context, serviceShape, shape));
+            return null;
+        }
+
+        @Override
+        public Void operationShape(OperationShape shape) {
+            LOGGER.finest(() -> "Generating operation " + shape.getId());
+            directedCodegen.generateOperation(
+                new GenerateOperationDirective<>(context, serviceShape, shape));
             return null;
         }
 

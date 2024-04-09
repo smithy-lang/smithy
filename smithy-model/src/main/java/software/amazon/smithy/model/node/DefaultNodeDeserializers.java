@@ -186,6 +186,13 @@ final class DefaultNodeDeserializers {
 
                 // Extract out the expected generic type of the collection.
                 Type memberType = Object.class;
+
+                // If given a Class, then attempt to find the generic superclass (e.g., extending ArrayList with a
+                // concrete generic type).
+                if (targetType instanceof Class) {
+                    targetType = ((Class<?>) target).getGenericSuperclass();
+                }
+
                 if (targetType instanceof ParameterizedType) {
                     Type[] genericTypes = ((ParameterizedType) targetType).getActualTypeArguments();
                     if (genericTypes.length > 0) {
@@ -621,12 +628,10 @@ final class DefaultNodeDeserializers {
 
     // Creates an ObjectCreatorFactory that caches the result of finding ObjectCreators.
     private static ObjectCreatorFactory cachedCreator(ObjectCreatorFactory delegate) {
-        ConcurrentMap<String, NodeMapper.ObjectCreator> cache = new ConcurrentHashMap<>();
+        IdentityClassCache<String, NodeMapper.ObjectCreator> cache = new IdentityClassCache<>();
         return (nodeType, target, nodeMapper) -> {
             String key = nodeType.getNodeClass() + ":" + target.getTypeName();
-            return cache.computeIfAbsent(key, pair -> {
-                return delegate.getCreator(nodeType, target, nodeMapper);
-            });
+            return cache.getForClass(key, target, () -> delegate.getCreator(nodeType, target, nodeMapper));
         };
     }
 

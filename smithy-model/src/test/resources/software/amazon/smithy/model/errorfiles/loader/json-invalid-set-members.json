@@ -1,0 +1,23 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "com.test#NoMemberSet": {
+      "type": "set"
+    },
+    "com.test#WrongMemberSet": {
+      "type": "set",
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#ExtraMemberSet": {
+      "type": "set",
+      "member": {
+        "target": "smithy.api#String"
+      },
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "example.weather.resources#DummyOperation": {
+      "type": "operation",
+      "input": {
+        "target": "example.weather.resources#DummyOperationInput"
+      },
+      "output": {
+        "target": "smithy.api#Unit"
+      },
+      "traits": {
+      }
+    },
+    "example.weather.resources#DummyOperationInput": {
+      "type": "structure",
+      "members": {
+        "dummyInput": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "example.weather.mixins#ResourceMixin": {
+      "type": "resource",
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    },
+    "example.weather.resources#ResourceWithMixin": {
+      "type": "resource",
+      "mixins": [
+        {
+          "target": "example.weather.mixins#ResourceMixin"
+        }
+      ],
+      "operations": [
+        {
+          "target": "example.weather.resources#DummyOperation"
+        }
+      ]
+    }
+  }
+}

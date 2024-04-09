@@ -5,8 +5,10 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -939,6 +941,59 @@ public class NodeMapperTest {
     public static final class NonZeroArgConstructorCollection extends ArrayList<String> {
         public NonZeroArgConstructorCollection(String notGonnaWork) {}
     }
+
+    // We previously reported this kind of deserialization as working, but it actually was storing objects of the
+    // wrong type in collections, causing ClassCastExceptions at runtime.
+    @Test
+    public void deserializesIntoTypedList() {
+        Node value = Node.parse("[{\"a\": true}, {\"a\": false}]");
+        NodeMapper mapper = new NodeMapper();
+
+        FooList result = mapper.deserialize(value, FooList.class);
+
+        assertThat(result, hasSize(2));
+        assertThat(result.get(0), instanceOf(FooList.Foo.class));
+        assertThat(result.get(0).a(), is(true));
+        assertThat(result.get(1), instanceOf(FooList.Foo.class));
+        assertThat(result.get(1).a(), is(false));
+    }
+
+    public static final class FooList extends ArrayList<FooList.Foo> {
+        public static final class Foo {
+            boolean a;
+
+            public boolean a() {
+                return a;
+            }
+
+            public void a(boolean a) {
+                this.a = a;
+            }
+        }
+    }
+
+    // Throw some nested generics at the NodeMapper to ensure it works with them.
+    @Test
+    public void deserializesIntoTypedListWithNestedGenerics() {
+        Node value = Node.parse("[ [[{\"a\": true}]], [[{\"a\": false}]] ]");
+        NodeMapper mapper = new NodeMapper();
+        NestedFooList result = mapper.deserialize(value, NestedFooList.class);
+
+        assertThat(result, hasSize(2));
+        assertThat(result.get(0), instanceOf(ArrayList.class));
+        assertThat(result.get(0), hasSize(1));
+        assertThat(result.get(0).get(0), hasSize(1));
+        assertThat(result.get(0).get(0), instanceOf(FooList.class));
+        assertThat(result.get(0).get(0).get(0), instanceOf(FooList.Foo.class));
+
+        assertThat(result.get(1), instanceOf(ArrayList.class));
+        assertThat(result.get(1), hasSize(1));
+        assertThat(result.get(1).get(0), hasSize(1));
+        assertThat(result.get(1).get(0), instanceOf(FooList.class));
+        assertThat(result.get(1).get(0).get(0), instanceOf(FooList.Foo.class));
+    }
+
+    public static final class NestedFooList extends ArrayList<ArrayList<FooList>> {}
 
     @Test
     public void deserializedIntoMap() {

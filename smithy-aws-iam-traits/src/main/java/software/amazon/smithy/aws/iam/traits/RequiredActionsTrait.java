@@ -22,6 +22,12 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Use the {@code @iamAction} trait's {@code requiredActions} property instead.
+ *
+ * @deprecated As of release 1.44.0, replaced by {@link IamActionTrait#resolveRequiredActions}.
+ */
+@Deprecated
 public final class RequiredActionsTrait extends StringListTrait implements ToSmithyBuilder<RequiredActionsTrait> {
     public static final ShapeId ID = ShapeId.from("aws.iam#requiredActions");
 

@@ -60,7 +60,7 @@ public final class DeprecatedTraitValidator extends AbstractValidator {
                     for (Shape shape : shapesWithTrait) {
                         // Ignore the use of @box on prelude shapes.
                         if (!Prelude.isPreludeShape(shape)) {
-                            events.add(warning(shape, trait, format(
+                            events.add(warning(shape, shape.findTrait(trait.getId()).get(), format(
                                     "This shape applies a trait that is deprecated: %s", traitMessage)));
                         }
                     }

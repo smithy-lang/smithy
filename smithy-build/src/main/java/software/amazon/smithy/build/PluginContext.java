@@ -47,11 +47,13 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     private final FileManifest fileManifest;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
+    private final String artifactName;
     private Model nonTraitsModel;
 
     private PluginContext(Builder builder) {
         model = SmithyBuilder.requiredState("model", builder.model);
         fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
+        artifactName = builder.artifactName;
         projection = builder.projection;
         projectionName = builder.projectionName;
         originalModel = builder.originalModel;
@@ -86,6 +88,20 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
      */
     public String getProjectionName() {
         return projectionName;
+    }
+
+    /**
+     * Gets the plugin artifact name, if present.
+     *
+     * <p>An artifact name is given to a plugin by defining the plugin as "bar::foo", where "foo" is the artifact
+     * name and "bar" is the plugin name. An artifact name is useful for cases when a plugin is applied multiple times
+     * in a single projection. The artifact name changes the directory of where the plugin writes files. A plugin
+     * implementation should use the plugin name as the artifact name if no explicit artifact name is provided.
+     *
+     * @return Returns the optional artifact name.
+     */
+    public Optional<String> getArtifactName() {
+        return Optional.ofNullable(artifactName);
     }
 
     /**
@@ -238,15 +254,17 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .projection(projectionName, projection)
+        Builder builder =  builder()
                 .model(model)
-                .originalModel(originalModel)
                 .events(events)
                 .settings(settings)
                 .fileManifest(fileManifest)
                 .pluginClassLoader(pluginClassLoader)
-                .sources(sources);
+                .sources(sources)
+                .artifactName(artifactName);
+        getProjection().ifPresent(config -> builder.projection(projectionName, config));
+        getOriginalModel().ifPresent(builder::originalModel);
+        return builder;
     }
 
     /**
@@ -262,6 +280,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         private FileManifest fileManifest;
         private ClassLoader pluginClassLoader;
         private BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
+        private String artifactName;
 
         private Builder() {}
 
@@ -362,6 +381,20 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         public Builder sources(Collection<Path> sources) {
             this.sources.clear();
             this.sources.get().addAll(sources);
+            return this;
+        }
+
+        /**
+         * Set a custom artifact name used to change the output directory of a plugin.
+         *
+         * <p>An artifact name is useful when running plugins like "run" or when running a plugin multiple times
+         * in a single projection.
+         *
+         * @param artifactName Custom artifact name to set.
+         * @return Returns the builder.
+         */
+        public Builder artifactName(String artifactName) {
+            this.artifactName = artifactName;
             return this;
         }
     }

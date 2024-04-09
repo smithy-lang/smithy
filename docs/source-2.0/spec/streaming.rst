@@ -15,7 +15,7 @@ Data streams
 
 Operations can contain :dfn:`data streams`, a potentially unbounded sequence of
 bytes or UTF-8 characters. A data stream is created by applying the
-:ref:`streaming-trait` to a blob or string. This stream can then be referenced
+:ref:`streaming-trait` to a blob. This stream can then be referenced
 by a single top-level operation input or output structure member. For example:
 
 .. code-block:: smithy

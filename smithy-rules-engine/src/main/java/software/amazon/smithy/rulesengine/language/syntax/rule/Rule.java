@@ -1,22 +1,12 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
+import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
-import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,25 +14,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.Into;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
-import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.ToCondition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * The core functionality of a rule-set rule.
+ */
 @SmithyUnstableApi
 public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public static final String DOCUMENTATION = "documentation";
@@ -52,104 +42,127 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public static final String RULES = "rules";
     public static final String TYPE = "type";
     private static final String CONDITIONS = "conditions";
-    private final SourceLocation sourceLocation;
-    private final List<Condition> conditions;
+
+    private final List<Condition> conditions = new ArrayList<>();
     private final String documentation;
+    private final SourceLocation sourceLocation;
 
     protected Rule(Builder builder) {
-        this.conditions = builder.conditions;
-        this.documentation = builder.documentation;
-        this.sourceLocation = builder.sourceLocation;
+        for (ToCondition condition : builder.conditions) {
+            conditions.add(condition.toCondition());
+        }
+        documentation = builder.documentation;
+        sourceLocation = builder.sourceLocation;
     }
 
+    /**
+     * Builder to create a {@link Rule} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Builder to create a {@link Rule} instance.
+     *
+     * @param sourceLocation the source of the rule.
+     * @return returns a new Builder.
+     */
     public static Builder builder(FromSourceLocation sourceLocation) {
         return new Builder(sourceLocation);
     }
 
+    /**
+     * Creates a {@link Rule} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created Rule.
+     */
     public static Rule fromNode(Node node) {
-        ObjectNode on = node.expectObjectNode();
+        ObjectNode objectNode = node.expectObjectNode();
 
         Builder builder = new Builder(node);
+        objectNode.getStringMember(DOCUMENTATION, builder::description);
+        builder.conditions(objectNode.expectArrayMember(CONDITIONS).getElementsAs(Condition::fromNode));
 
-        ArrayNode conditionsNode = on.expectArrayMember(CONDITIONS);
-
-        List<Node> fnNodes = new ArrayList<>(conditionsNode.getElements());
-        List<Condition> conditions = fnNodes.stream().map(Condition::fromNode).collect(Collectors.toList());
-        builder.conditions(conditions);
-        Optional<String> description = on.getStringMember(DOCUMENTATION).map(StringNode::getValue);
-        description.ifPresent(builder::description);
-
-        String type = on.expectStringMember(TYPE).getValue();
+        String type = objectNode.expectStringMember(TYPE).getValue();
         switch (type) {
             case ENDPOINT:
-                return builder.endpoint(Endpoint.fromNode(on.expectMember(ENDPOINT)));
+                return builder.endpoint(Endpoint.fromNode(objectNode.expectMember(ENDPOINT)));
             case ERROR:
-                return builder.error(on.expectMember(ERROR));
+                return builder.error(objectNode.expectMember(ERROR));
             case TREE:
-                return builder.treeRule(on.expectArrayMember(RULES)
-                        .getElements()
-                        .stream()
-                        .map(Rule::fromNode)
-                        .collect(Collectors.toList()));
+                return builder.treeRule(objectNode.expectArrayMember(RULES).getElementsAs(Rule::fromNode));
             default:
                 throw new IllegalStateException("Unexpected rule type: " + type);
         }
     }
-
-    public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
     @Override
     public SourceLocation getSourceLocation() {
         return sourceLocation;
     }
 
+    /**
+     * Gets the conditions required to satisfy this rule.
+     *
+     * @return the list of conditions.
+     */
     public List<Condition> getConditions() {
         return conditions;
     }
 
-    @Override
-    public Type typeCheck(Scope<Type> scope) {
-        // ensure that we don't leak scope
-        return scope.inScope(() -> {
-            for (Condition condition : this.conditions) {
-                context(String.format("while typechecking %s", condition.getFn()), condition,
-                        () -> condition.typeCheck(scope));
-            }
-            return context(String.format("while typechecking%s", this
-                            .getDocumentation()
-                            .map(doc -> String.format(" `%s`", doc))
-                            .orElse("")),
-                    this, () -> typecheckValue(scope));
-        });
-    }
-
-    protected abstract Type typecheckValue(Scope<Type> scope);
-
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
     public Optional<String> getDocumentation() {
         return Optional.ofNullable(documentation);
     }
 
-    @Override
-    public Node toNode() {
-        ObjectNode.Builder ruleNode = ObjectNode.builder();
-        ArrayNode conditionsNode = conditions.stream().map(ToNode::toNode).collect(ArrayNode.collect());
-        ruleNode.withMember(CONDITIONS, conditionsNode);
-        if (documentation != null) {
-            ruleNode.withMember(DOCUMENTATION, documentation);
-        }
-        withValueNode(ruleNode);
-        return ruleNode.build();
-    }
+    /**
+     * Invoke the {@link RuleValueVisitor} functions for this Rule.
+     *
+     * @param visitor the visitor to be invoked.
+     * @param <T>     the visitor return type.
+     * @return the return value of the visitor.
+     */
+    public abstract <T> T accept(RuleValueVisitor<T> visitor);
+
+    protected abstract Type typecheckValue(Scope<Type> scope);
 
     abstract void withValueNode(ObjectNode.Builder builder);
 
     @Override
-    public int hashCode() {
-        return Objects.hash(conditions, documentation);
+    public Type typeCheck(Scope<Type> scope) {
+        return scope.inScope(() -> { // Ensure that we don't leak scope.
+            for (Condition condition : conditions) {
+                condition.typeCheck(scope);
+            }
+            String docs = documentation == null ? "" : String.format(" `%s`", documentation);
+            return context(String.format("while typechecking%s", docs), this, () -> typecheckValue(scope));
+        });
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = ObjectNode.builder();
+
+        ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
+        for (Condition condition : conditions) {
+            conditionsBuilder.withValue(condition.toNode());
+        }
+        builder.withMember(CONDITIONS, conditionsBuilder.build());
+
+        if (documentation != null) {
+            builder.withMember(DOCUMENTATION, documentation);
+        }
+
+        withValueNode(builder);
+        return builder.build();
     }
 
     @Override
@@ -165,6 +178,11 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(conditions, documentation);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (documentation != null) {
@@ -175,16 +193,18 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         } else {
             sb.append("when:\n");
             for (Condition condition : conditions) {
-                sb.append(indent(condition.toString(), 2));
+                sb.append(StringUtils.indent(condition.toString(), 2));
             }
             sb.append("then:\n");
         }
         return sb.toString();
     }
 
+    /**
+     * A builder used to create a {@link Rule} class.
+     */
     public static final class Builder {
-
-        private final List<Condition> conditions = new ArrayList<>();
+        private final List<ToCondition> conditions = new ArrayList<>();
         private final SourceLocation sourceLocation;
         private Function<Rule, Rule> onBuild = Function.identity();
         private String documentation;
@@ -193,19 +213,20 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             this.sourceLocation = sourceLocation.getSourceLocation();
         }
 
-        @SafeVarargs
-        public final Builder conditions(Into<Condition>... conditions) {
-            this.conditions.addAll(Arrays.stream(conditions).map(Into::into).collect(Collectors.toList()));
+        public Builder conditions(ToCondition... conditions) {
+            for (ToCondition condition : conditions) {
+                condition(condition.toCondition());
+            }
             return this;
         }
 
-        public Builder conditions(List<Condition> conditions) {
+        public Builder conditions(List<ToCondition> conditions) {
             this.conditions.addAll(conditions);
             return this;
         }
 
-        public Builder condition(Into<Condition> condition) {
-            this.conditions.add(condition.into());
+        public Builder condition(ToCondition condition) {
+            this.conditions.add(condition);
             return this;
         }
 
@@ -222,7 +243,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         }
 
         public Rule treeRule(Rule... rules) {
-            return this.treeRule(Arrays.stream(rules).collect(Collectors.toList()));
+            return this.treeRule(Arrays.asList(rules));
         }
 
         @SafeVarargs
@@ -240,41 +261,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         }
 
         /**
-         * If `condition` IS met, return an error. Otherwise, proceed with the rules generated by the returned builder
-         */
-        @SafeVarargs
-        public final Builder errorOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceLocationUtils.javaLocation());
-            next.onBuild = (Rule r) -> this.treeRule(
-                    Rule.builder().conditions(condition).error(error),
-                    r
-            );
-            return next;
-
-        }
-
-        /**
-         * If `condition` is not met, return an error. Otherwise, proceed with the rules generated by
-         * the returned builder.
-         * <p>
-         * This method returns a new builder that must be used!
-         *
-         * @param condition a coercible {@link Condition}
-         * @param error     an error description if the condition is not matched
-         * @return a new builder to attach subsequent rules to
-         */
-        public Builder validateOrElse(Into<Condition> condition, String error) {
-            Builder next = new Builder(SourceLocationUtils.javaLocation());
-            next.onBuild = (Rule r) -> this.treeRule(
-                    Rule.builder().conditions(condition).treeRule(r),
-                    Rule.builder().error(error)
-            );
-            return next;
-        }
-
-
-        /**
-         * If `condition` is not met, return an error. Otherwise, proceed with the rules generated by
+         * If `condition` IS met, return an error. Otherwise, proceed with the rules generated by
          * the returned builder.
          * <p>
          * This method returns a new builder that must be used!
@@ -283,12 +270,28 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
          * @param error     an error description if the condition is not matched
          * @return new builder to attach subsequent rules to
          */
-        public Builder validateOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceLocationUtils.javaLocation());
-            next.onBuild = (Rule r) -> this.treeRule(
-                    Rule.builder().conditions(condition).treeRule(r),
-                    Rule.builder().error(error)
-            );
+        public Builder errorOrElse(String error, ToCondition... condition) {
+            Builder next = new Builder(javaLocation());
+            next.onBuild = (Rule rule) -> this.treeRule(Rule.builder().conditions(condition).error(error), rule);
+            return next;
+
+        }
+
+        /**
+         * If `condition` IS NOT met, return an error. Otherwise, proceed with the rules generated by
+         * the returned builder.
+         * <p>
+         * This method returns a new builder that must be used!
+         *
+         * @param condition a coercible {@link Condition}
+         * @param error     an error description if the condition is not matched
+         * @return new builder to attach subsequent rules to
+         */
+        public Builder validateOrElse(String error, ToCondition... condition) {
+            Builder next = new Builder(javaLocation());
+            next.onBuild = (Rule rule) -> this.treeRule(
+                    Rule.builder().conditions(condition).treeRule(rule),
+                    Rule.builder().error(error));
             return next;
         }
     }

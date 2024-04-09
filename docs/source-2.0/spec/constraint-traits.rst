@@ -12,6 +12,20 @@ impact the types signatures of generated code.
        that also functions like a constraint.
 
 
+Constraint trait enforcement
+============================
+
+Constraint traits SHOULD be enforced after deserializing input. For example,
+when a server deserializes a request from a client, the server SHOULD enforce
+any defined constraint traits and reject the request if appropriate.
+
+Constraint traits SHOULD NOT be enforced when serializing shapes or when
+deserializing output. For example, when returning a response from a server
+to a client, failing to serialize a response due to a constraint trait
+violation would prevent a client from observing a state change of the server
+and would provide no real recourse for the client or server to recover.
+
+
 .. smithy-trait:: smithy.api#idRef
 .. _idref-trait:
 
@@ -110,6 +124,7 @@ Given the following model,
   ``smithy.example#MyShape``.
 
 
+.. smithy-trait:: smithy.api#length
 .. _length-trait:
 
 ``length`` trait
@@ -434,6 +449,13 @@ An *enum definition* is a structure that supports the following members:
       - ``boolean``
       - Whether the enum value should be considered deprecated for consumers of
         the Smithy model.
+
+
+.. note::
+
+    While the :ref:`changeStringEnumsToEnumShapes <changeStringEnumsToEnumShapes>`
+    transform can be used to convert to an enum shape, it is recommended to use
+    the :ref:`enum shape <enum>` instead.
 
 
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns

@@ -42,7 +42,7 @@ public class SdkServiceIdValidatorTest {
                 .discoverModels(getClass().getClassLoader())
                 .assemble();
 
-        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+        assertThat(result.getValidationEvents(Severity.DANGER), not(empty()));
     }
 
     @Test
@@ -76,9 +76,9 @@ public class SdkServiceIdValidatorTest {
     @Test
     public void doesNotAllowShortIds() {
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
-                SdkServiceIdValidator.validateServiceId("F"));
+                SdkServiceIdValidator.validateServiceId(""));
 
-        assertThat(thrown.getMessage(), containsString("2 and 50"));
+        assertThat(thrown.getMessage(), containsString("1 and 50"));
     }
 
     @Test
@@ -86,6 +86,6 @@ public class SdkServiceIdValidatorTest {
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 SdkServiceIdValidator.validateServiceId("Foobarbazqux Foobarbazqux Foobarbazqux Foobarbazqux"));
 
-        assertThat(thrown.getMessage(), containsString("2 and 50"));
+        assertThat(thrown.getMessage(), containsString("1 and 50"));
     }
 }

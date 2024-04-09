@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.iam.traits;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -32,11 +33,15 @@ public final class IamResourceTrait extends AbstractTrait
         implements ToSmithyBuilder<IamResourceTrait> {
     public static final ShapeId ID = ShapeId.from("aws.iam#iamResource");
 
-    public final String name;
+    private final String name;
+    private final String relativeDocumentation;
+    private final boolean disableConditionKeyInheritance;
 
     private IamResourceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         name = builder.name;
+        relativeDocumentation = builder.relativeDocumentation;
+        disableConditionKeyInheritance = builder.disableConditionKeyInheritance;
     }
 
     /**
@@ -45,7 +50,47 @@ public final class IamResourceTrait extends AbstractTrait
      * @return Returns the name.
      */
     public Optional<String> getName() {
-        return Optional.of(name);
+        return Optional.ofNullable(name);
+    }
+
+
+
+    /**
+     * Resolves the IAM resource name for the given resource. Uses the following
+     * resolution order:
+     *
+     * <ol>
+     *     <li>Value of the {@code @iamResource} trait's {@code name} property</li>
+     *     <li>The resource's name</li>
+     * </ol>
+     *
+     * @param resource the resource to resolve a name for.
+     * @return The resolved resource name.
+     */
+    public static String resolveResourceName(ResourceShape resource) {
+        return resource.getTrait(IamResourceTrait.class)
+                .flatMap(IamResourceTrait::getName)
+                .orElse(resource.getId().getName());
+    }
+
+    /**
+     * Get the relative URL path that defines more information about the resource
+     * within a set of IAM-related documentation.
+     *
+     * @return A relative URL to the documentation page.
+     */
+    public Optional<String> getRelativeDocumentation() {
+        return Optional.ofNullable(relativeDocumentation);
+    }
+
+    /**
+     * Gets if this IAM resource's condition keys are decoupled from
+     * those of its parent resource(s).
+     *
+     * @return Returns true if condition key inheritance is disabled.
+     */
+    public boolean isDisableConditionKeyInheritance() {
+        return disableConditionKeyInheritance;
     }
 
     public static Builder builder() {
@@ -80,6 +125,8 @@ public final class IamResourceTrait extends AbstractTrait
 
     public static final class Builder extends AbstractTraitBuilder<IamResourceTrait, Builder> {
         private String name;
+        private String relativeDocumentation;
+        private boolean disableConditionKeyInheritance;
 
         private Builder() {}
 
@@ -90,6 +137,16 @@ public final class IamResourceTrait extends AbstractTrait
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder relativeDocumentation(String relativeDocumentation) {
+            this.relativeDocumentation = relativeDocumentation;
+            return this;
+        }
+
+        public Builder disableConditionKeyInheritance(boolean disableConditionKeyInheritance) {
+            this.disableConditionKeyInheritance = disableConditionKeyInheritance;
             return this;
         }
     }

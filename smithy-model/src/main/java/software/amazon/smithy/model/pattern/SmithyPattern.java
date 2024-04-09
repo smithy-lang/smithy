@@ -235,10 +235,14 @@ public class SmithyPattern {
         private final Type segmentType;
 
         public Segment(String content, Type segmentType) {
+            this(content, segmentType, null);
+        }
+
+        public Segment(String content, Type segmentType, Integer offset) {
             this.content = Objects.requireNonNull(content);
             this.segmentType = segmentType;
 
-            checkForInvalidContents();
+            checkForInvalidContents(offset);
 
             if (segmentType == Type.GREEDY_LABEL) {
                 asString = "{" + content + "+}";
@@ -249,19 +253,25 @@ public class SmithyPattern {
             }
         }
 
-        private void checkForInvalidContents() {
+        private void checkForInvalidContents(Integer offset) {
+            String offsetString = "";
+            if (offset != null) {
+                offsetString += " at index " + offset;
+            }
             if (segmentType == Type.LITERAL) {
                 if (content.isEmpty()) {
-                    throw new InvalidPatternException("Segments must not be empty");
+                    throw new InvalidPatternException("Segments must not be empty" + offsetString);
                 } else if (content.contains("{") || content.contains("}")) {
                     throw new InvalidPatternException(
-                            "Literal segments must not contain `{` or `}` characters. Found segment `" + content + "`");
+                            "Literal segments must not contain `{` or `}` characters. Found segment `"
+                                    + content + "`" + offsetString);
                 }
             } else if (content.isEmpty()) {
-                throw new InvalidPatternException("Empty label declaration in pattern.");
+                throw new InvalidPatternException("Empty label declaration in pattern" + offsetString + ".");
             } else if (!ShapeId.isValidIdentifier(content)) {
                 throw new InvalidPatternException(
-                        "Invalid label name in pattern: '" + content + "'. Labels must contain value identifiers.");
+                        "Invalid label name in pattern: '" + content + "'" + offsetString
+                                + ". Labels must contain value identifiers.");
             }
         }
 
@@ -269,7 +279,7 @@ public class SmithyPattern {
          * Parse a segment from the given offset.
          *
          * @param content Content of the segment.
-         * @param offset Character offset where the segment starts.
+         * @param offset Character offset where the segment starts in the containing pattern.
          * @return Returns the created segment.
          * @throws InvalidPatternException if the segment is invalid.
          */
@@ -279,9 +289,9 @@ public class SmithyPattern {
                 content = labelType == Type.GREEDY_LABEL
                           ? content.substring(1, content.length() - 2)
                           : content.substring(1, content.length() - 1);
-                return new Segment(content, labelType);
+                return new Segment(content, labelType, offset);
             } else {
-                return new Segment(content, Type.LITERAL);
+                return new Segment(content, Type.LITERAL, offset);
             }
         }
 

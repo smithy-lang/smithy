@@ -2,6 +2,7 @@
 // trait and other features that modify the host.
 
 $version: "2.0"
+$operationInputSuffix: "Request"
 
 namespace aws.protocoltests.restxml
 
@@ -26,7 +27,6 @@ use smithy.test#httpRequestTests
 @http(uri: "/EndpointOperation", method: "POST")
 operation EndpointOperation {}
 
-
 @httpRequestTests([
     {
         id: "RestXmlEndpointTraitWithHostLabel",
@@ -38,9 +38,9 @@ operation EndpointOperation {}
         method: "POST",
         uri: "/EndpointWithHostLabelOperation",
         body: """
-              <HostLabelInput>
+              <EndpointWithHostLabelOperationRequest>
                   <label>bar</label>
-              </HostLabelInput>
+              </EndpointWithHostLabelOperationRequest>
               """,
         bodyMediaType: "application/xml",
         host: "example.com",
@@ -53,13 +53,11 @@ operation EndpointOperation {}
 @endpoint(hostPrefix: "foo.{label}.")
 @http(uri: "/EndpointWithHostLabelOperation", method: "POST")
 operation EndpointWithHostLabelOperation {
-    input: HostLabelInput,
-}
-
-structure HostLabelInput {
-    @required
-    @hostLabel
-    label: String,
+    input := {
+        @required
+        @hostLabel
+        label: String
+    }
 }
 
 @httpRequestTests([

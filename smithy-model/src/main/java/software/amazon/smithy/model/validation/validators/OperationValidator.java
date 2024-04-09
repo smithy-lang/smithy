@@ -95,7 +95,7 @@ public final class OperationValidator extends AbstractValidator {
                     }
                 } else if (relName.equals(invalid)) {
                     // Input shouldn't reference output, and vice versa.
-                    events.add(emitInvalidOperationBinding(rel.getShape(), descriptor, invalid));
+                    events.add(emitInvalidOperationBinding(rel.getShape(), shape, relName, descriptor));
                 } else if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
                     // Members can't target shapes marked with @input or @output.
                     events.add(emitInvalidMemberRef(rel.getShape().asMemberShape().get(), descriptor));
@@ -109,12 +109,19 @@ public final class OperationValidator extends AbstractValidator {
         }
     }
 
-    private ValidationEvent emitInvalidOperationBinding(Shape operation, String property, String invalid) {
+    private ValidationEvent emitInvalidOperationBinding(
+            Shape operation,
+            Shape target,
+            String property,
+            String invalid
+    ) {
         return ValidationEvent.builder()
                 .id(OPERATION_INPUT_OUTPUT_MISUSE)
                 .severity(Severity.ERROR)
                 .shape(operation)
-                .message("Operation " + property + " cannot target structures marked with the @" + invalid + " trait")
+                .message(String.format(
+                        "Operation `%s` cannot target structures marked with the `@%s` trait: `%s`",
+                        property, invalid, target.getId()))
                 .build();
     }
 
@@ -141,7 +148,7 @@ public final class OperationValidator extends AbstractValidator {
         return ValidationEvent.builder()
                 .severity(Severity.WARNING)
                 .shape(operation)
-                .id(OPERATION_INPUT_OUTPUT_NAME)
+                .id(OPERATION_INPUT_OUTPUT_NAME + "." + property)
                 .message(String.format(
                         "The %s of this operation should target a shape that starts with the operation's name, '%s', "
                         + "but the targeted shape is `%s`", property, operation.getId().getName(), target))

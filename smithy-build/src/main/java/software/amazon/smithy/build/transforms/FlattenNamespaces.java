@@ -28,8 +28,8 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
@@ -120,9 +120,23 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
             throw new SmithyBuildException(
                     "'namespace' and 'service' properties must be set on flattenNamespace transformer.");
         }
+
         Model model = context.getModel();
+        if (!model.getShape(config.getService()).isPresent()) {
+            throw new SmithyBuildException("Configured service, " + config.getService()
+                    + ", not found in model when performing flattenNamespaces transform.");
+        }
+
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapes(config, model);
-        return ModelTransformer.create().renameShapes(model, shapesToRename);
+        model = context.getTransformer().renameShapes(model, shapesToRename);
+
+        // Remove service renames since they've now been applied, so consumers don't fail service shape validation
+        ShapeId updatedServiceId = shapesToRename.get(config.getService());
+        ServiceShape updatedService = model.expectShape(updatedServiceId, ServiceShape.class)
+                .toBuilder()
+                .clearRename()
+                .build();
+        return context.getTransformer().replaceShapes(model, ListUtils.of(updatedService));
     }
 
     @Override
@@ -131,11 +145,6 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
     }
 
     private Map<ShapeId, ShapeId> getRenamedShapes(Config config, Model model) {
-        if (!model.getShape(config.getService()).isPresent()) {
-            throw new SmithyBuildException("Configured service, " + config.getService()
-                    + ", not found in model when performing flattenNamespaces transform.");
-        }
-
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapesConnectedToService(config, model);
         Set<ShapeId> taggedShapesToInclude = getTaggedShapesToInclude(config.getIncludeTagged(), model);
 

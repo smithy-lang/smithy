@@ -55,6 +55,10 @@ list NestedStringList {
     member: StringList,
 }
 
+list ShortList {
+    member: Short,
+}
+
 list IntegerList {
     member: Integer,
 }
@@ -62,6 +66,10 @@ list IntegerList {
 @uniqueItems
 list IntegerSet {
     member: Integer,
+}
+
+list FloatList {
+    member: Float,
 }
 
 list DoubleList {
@@ -72,8 +80,84 @@ list BooleanList {
     member: Boolean,
 }
 
+@uniqueItems
+list BooleanSet {
+    member: Boolean,
+}
+
 list TimestampList {
     member: Timestamp,
+}
+
+list BlobList {
+    member: Blob,
+}
+
+@uniqueItems
+list BlobSet {
+    member: Blob,
+}
+
+list ByteList {
+    member: Byte,
+}
+
+@uniqueItems
+list ByteSet {
+    member: Byte,
+}
+@uniqueItems
+list ShortSet {
+    member: Short,
+}
+
+@uniqueItems
+list LongList {
+    member: Long,
+}
+
+@uniqueItems
+list LongSet {
+    member: Long,
+}
+
+@uniqueItems
+list TimestampSet {
+    member: Timestamp,
+}
+
+list DateTimeList {
+    member: DateTime,
+}
+
+@uniqueItems
+list DateTimeSet {
+    member: DateTime,
+}
+
+@uniqueItems
+list HttpDateSet {
+    member: HttpDate,
+}
+
+@uniqueItems
+list ListSet {
+    member: StringList
+}
+
+@uniqueItems
+list StructureSet {
+    member: GreetingStruct
+}
+
+@uniqueItems
+list UnionSet {
+    member: FooUnion
+}
+
+union FooUnion {
+    string: String
+    integer: Integer
 }
 
 enum FooEnum {
@@ -114,7 +198,7 @@ blob TextPlainBlob
 blob JpegBlob
 
 structure GreetingStruct {
-    hi: String,
+    hi: String
 }
 
 list GreetingList {
@@ -133,10 +217,10 @@ list IntegerEnumList {
 
 @uniqueItems
 list IntegerEnumSet {
-     member: IntegerEnum
+    member: IntegerEnum
 }
 
 map IntegerEnumMap {
-     key: String,
-     value: IntegerEnum
+    key: String,
+    value: IntegerEnum
 }

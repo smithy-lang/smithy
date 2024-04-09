@@ -509,4 +509,66 @@ apply JsonUnions @httpResponseTests([
             }
         }
     },
+    {
+        id: "AwsJson10DeserializeIgnoreType"
+        appliesTo: "client"
+        documentation: "Ignores an unrecognized __type property"
+        protocol: awsJson1_0
+        code: 200
+        body: """
+            {
+                "contents": {
+                    "__type": "aws.protocoltests.json10#MyUnion",
+                    "structureValue": {
+                        "hi": "hello"
+                    }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0"
+        },
+        params: {
+            contents: {
+                structureValue: {
+                    hi: "hello"
+                }
+            }
+        }
+    },
+    {
+        id: "AwsJson10DeserializeAllowNulls"
+        appliesTo: "client"
+        documentation: "Allows for `: null` to be set for all unset fields"
+        protocol: awsJson1_0
+        code: 200
+        body: """
+            {
+                "contents": {
+                  "stringValue": null,
+                  "booleanValue": null,
+                  "numberValue": null,
+                  "blobValue": null,
+                  "timestampValue": null,
+                  "enumValue": null,
+                  "intEnumValue": null,
+                  "listValue": null,
+                  "mapValue": null,
+                  "structureValue": {
+                      "hi": "hello"
+                  }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0"
+        },
+        params: {
+            contents: {
+                structureValue: {
+                    hi: "hello"
+                }
+            }
+        }
+    }
 ])

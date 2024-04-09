@@ -334,11 +334,12 @@ Simple shapes
     * - bigDecimal
       - Arbitrary precision signed decimal number
     * - timestamp
-      - Represents an instant in time with no UTC offset or timezone. The
-        serialization of a timestamp is an implementation detail that is
-        determined by a :ref:`protocol <protocolDefinition-trait>` and
-        MUST NOT have any effect on the types exposed by tooling to
-        represent a timestamp value.
+      - A timestamp represents an instant in time in the proleptic Gregorian
+        calendar, independent of local times or timezones. Timestamps support
+        an allowable date range between midnight January 1, 0001 CE to
+        23:59:59.999 on December 31, 9999 CE, with a temporal resolution of 1
+        millisecond. This resolution and range ensures broad support across
+        programming languages and guarantees compatibility with :rfc:`3339`.
     * - document
       - Represents protocol-agnostic open content that functions as a kind of
         "any" type. Document types are represented by a JSON-like data model
@@ -1141,9 +1142,9 @@ The service shape supports the following properties:
           shape name or the name of a non-renamed shape contained in the
           service.
         * Member shapes MAY NOT be renamed.
-        * Resource, operation, and shapes marked with the :ref:`error-trait`
-          MAY NOT be renamed. Renaming shapes is intended for incidental naming
-          conflicts, not for renaming the fundamental concepts of a service.
+        * Resource and operation shapes MAY NOT be renamed. Renaming shapes is intended
+          for incidental naming conflicts, not for renaming the fundamental concepts
+          of a service.
         * Shapes from other namespaces marked as :ref:`private <private-trait>`
           MAY be renamed.
         * A rename MUST use a name that is case-sensitively different from the
@@ -2786,7 +2787,7 @@ model can use these rules to detect breaking or risky changes.
           assumed severity.
         - ``DANGER``: The change is very likely backward incompatible.
         - ``WARNING``: The change might be backward incompatible.
-        - ``NOTICE``: The change is likely ok, but should be noted during
+        - ``NOTE``: The change is likely ok, but should be noted during
           things like code reviews.
     * - message
       - ``string``

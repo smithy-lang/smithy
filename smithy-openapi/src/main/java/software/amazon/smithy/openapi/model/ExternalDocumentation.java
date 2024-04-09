@@ -15,13 +15,19 @@
 
 package software.amazon.smithy.openapi.model;
 
+import java.util.Comparator;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
-public final class ExternalDocumentation extends Component implements ToSmithyBuilder<ExternalDocumentation> {
+public final class ExternalDocumentation extends Component
+        implements ToSmithyBuilder<ExternalDocumentation>, Comparable<ExternalDocumentation> {
+
+    private static final Comparator<String> STRING_COMPARATOR = Comparator
+            .nullsFirst(String::compareTo);
+
     private final String description;
     private final String url;
 
@@ -56,6 +62,13 @@ public final class ExternalDocumentation extends Component implements ToSmithyBu
         return Node.objectNodeBuilder()
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withMember("url", url);
+    }
+
+    @Override
+    public int compareTo(ExternalDocumentation that) {
+        return Comparator.comparing(ExternalDocumentation::getUrl, STRING_COMPARATOR)
+            .thenComparing(ed -> ed.description, STRING_COMPARATOR)
+            .compare(this, that);
     }
 
     public static final class Builder extends Component.Builder<Builder, ExternalDocumentation> {

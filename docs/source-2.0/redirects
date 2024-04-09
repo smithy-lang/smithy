@@ -1,0 +1,6 @@
+implementations.rst https://github.com/smithy-lang/awesome-smithy
+guides/building-models/gradle-plugin.rst guides/gradle-plugin.html
+guides/building-models/build-config.rst guides/smithy-build-json.html
+guides/converting-to-openapi.rst guides/model-translations/converting-to-openapi.html
+guides/migrating-idl-1-to-2.rst guides/model-translations/migrating-idl-1-to-2.html
+guides/generating-cloudformation-resources.rst guides/model-translations/generating-cloudformation-resources.html

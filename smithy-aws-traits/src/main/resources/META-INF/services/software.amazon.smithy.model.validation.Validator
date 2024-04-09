@@ -10,3 +10,5 @@ software.amazon.smithy.aws.traits.tagging.TagEnabledServiceValidator
 software.amazon.smithy.aws.traits.tagging.TaggableResourceValidator
 software.amazon.smithy.aws.traits.tagging.TagResourcePropertyTypeValidator
 software.amazon.smithy.aws.traits.tagging.TagResourcePropertyNameValidator
+software.amazon.smithy.aws.traits.ErrorRenameValidator
+software.amazon.smithy.aws.traits.auth.SigV4TraitsValidator

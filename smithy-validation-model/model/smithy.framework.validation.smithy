@@ -7,10 +7,9 @@ namespace smithy.framework
 /// falls outside of the modeled or documented constraints.
 @error("client")
 structure ValidationException {
-
     /// A summary of the validation failure.
     @required
-    message: String,
+    message: String
 
     /// A list of specific failures encountered while validating the input.
     /// A member can appear in this list more than once if it failed to satisfy multiple constraints.
@@ -21,7 +20,7 @@ structure ValidationException {
 structure ValidationExceptionField {
     /// A JSONPointer expression to the structure member whose value failed to satisfy the modeled constraints.
     @required
-    path: String,
+    path: String
 
     /// A detailed description of the validation failure.
     @required

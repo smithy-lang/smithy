@@ -1,5 +1,6 @@
 // when parsing endpoint ruleset
-//   at invalid-rules/default-must-be-required.json5:7
+// while parsing the parameter `RegionName`
+//   at invalid-rules/default-must-be-required.json5:8
 // When a default value is set, the field must also be marked as required
 {
   "version": "1.2",

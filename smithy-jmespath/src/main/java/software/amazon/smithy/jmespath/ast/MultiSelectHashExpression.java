@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jmespath.ast;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
@@ -35,7 +36,7 @@ public final class MultiSelectHashExpression extends JmespathExpression {
 
     public MultiSelectHashExpression(Map<String, JmespathExpression> expressions, int line, int column) {
         super(line, column);
-        this.expressions = expressions;
+        this.expressions = Collections.unmodifiableMap(expressions);
     }
 
     @Override

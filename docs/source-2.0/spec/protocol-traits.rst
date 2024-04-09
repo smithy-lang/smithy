@@ -162,7 +162,8 @@ The following example defines a ``video/quicktime`` blob:
     @mediaType("video/quicktime")
     blob VideoData
 
-.. rubric:: Use cases
+Use cases
+---------
 
 The primary function of the ``mediaType`` trait is to send open content
 data over the wire inside of values that are isolated from the rest of
@@ -176,7 +177,8 @@ validation, special-cased helpers to serialize and deserialize media type
 contents in code, assigning a fixed Content-Type when using
 :ref:`HTTP bindings <http-traits>`, etc.
 
-.. rubric:: Comparisons to document types
+Comparisons to document types
+-----------------------------
 
 The serialization format of a shape marked with the ``@mediaType`` trait is
 an important part of its contract. In contrast, document types are
@@ -206,7 +208,8 @@ the :ref:`protocol <protocolDefinition-trait>` of a service; however, the
 serialization format can be explicitly configured in some protocols to
 override the default format using the ``timestampFormat`` trait.
 
-.. rubric:: Timestamp formats
+Timestamp formats
+-----------------
 
 Smithy defines the following built-in timestamp formats:
 
@@ -218,22 +221,27 @@ Smithy defines the following built-in timestamp formats:
       - Description
     * - date-time
       - Date time as defined by the ``date-time`` production in
-        :rfc:`3339#section-5.6`
-        with no UTC offset and optional fractional precision (for example,
-        ``1985-04-12T23:20:50.52Z``).
+        :rfc:`3339#section-5.6` with optional millisecond precision but no
+        UTC offset (for example, ``1985-04-12T23:20:50.520Z``). Values that
+        are more granular than millisecond precision SHOULD be truncated to
+        fit millisecond precision. Deserializers SHOULD parse ``date-time``
+        values that contain offsets gracefully by normalizing them to UTC.
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
         :rfc:`7231#section-7.1.1.1` (for example,
-        ``Tue, 29 Apr 2014 18:30:38 GMT``). Note that in addition to the
-        ``IMF-fixdate`` format specified in the RFC, implementations MUST
-        also support optional fractional seconds (for example,
-        ``Sun, 02 Jan 2000 20:34:56.000 GMT``).
+        ``Tue, 29 Apr 2014 18:30:38 GMT``). A deserializer that encounters an
+        ``http-date`` timestamp with fractional precision SHOULD fail to
+        deserialize the value (for example, an HTTP server SHOULD return a 400
+        status code).
     * - epoch-seconds
       - Also known as Unix time, the number of seconds that have elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
-        with optional fractional precision (for example, ``1515531081.1234``).
+        with optional millisecond precision (for example, ``1515531081.123``).
+        Values that are more granular than millisecond precision SHOULD be
+        truncated to fit millisecond precision.
 
-.. rubric:: Resolving timestamp formats
+Resolving timestamp formats
+---------------------------
 
 The following steps are taken to determine the serialization format of a
 :ref:`member <member>` that targets a timestamp:

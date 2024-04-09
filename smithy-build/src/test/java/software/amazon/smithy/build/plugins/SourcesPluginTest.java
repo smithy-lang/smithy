@@ -3,6 +3,7 @@ package software.amazon.smithy.build.plugins;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URISyntaxException;
@@ -11,8 +12,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
+import software.amazon.smithy.build.SmithyBuild;
+import software.amazon.smithy.build.SmithyBuildResult;
 import software.amazon.smithy.build.SourcesConflictException;
 import software.amazon.smithy.build.model.ProjectionConfig;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.utils.ListUtils;
@@ -181,5 +185,51 @@ public class SourcesPluginTest {
                 .build();
 
         Assertions.assertThrows(SourcesConflictException.class, () -> new SourcesPlugin().execute(context));
+    }
+
+    @Test
+    public void copiesModelsDefinedInConfigAsSources() throws URISyntaxException {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("sources/copiesModelsDefinedInConfigAsSources.json").toURI()))
+                .build();
+        SmithyBuild b = new SmithyBuild();
+        b.fileManifestFactory(p -> new MockManifest());
+        b.config(config);
+        SmithyBuildResult result = b.build();
+
+        MockManifest manifest = (MockManifest) result
+                .getProjectionResult("source")
+                .get()
+                .getPluginManifest("sources")
+                .get();
+
+        assertThat(manifest.getFileString("manifest").get(), containsString("a.smithy"));
+        assertThat(manifest.getFileString("manifest").get(), not(containsString("d.smithy")));
+        assertThat(manifest.hasFile("a.smithy"), is(true));
+        assertThat(manifest.hasFile("d.smithy"), is(false));
+    }
+
+    // When the sources plugin sees a file it does not support, it is ignored.
+    @Test
+    public void omitsUnsupportedFilesFromManifest() throws URISyntaxException {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("sources-ignores-unrecognized-files/a.smithy"))
+                .addImport(getClass().getResource("sources-ignores-unrecognized-files/foo.md"))
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .model(model)
+                .originalModel(model)
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources-ignores-unrecognized-files").toURI())))
+                .build();
+        new SourcesPlugin().execute(context);
+        String manifestString = manifest.getFileString("manifest").get();
+        // Normalize for Windows.
+        manifestString = manifestString.replace("\\", "/");
+
+        assertThat(manifestString, containsString("a.smithy\n"));
+        assertThat(manifestString, not(containsString("foo.md")));
     }
 }

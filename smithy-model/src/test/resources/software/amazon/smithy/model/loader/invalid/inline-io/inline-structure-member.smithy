@@ -1,4 +1,4 @@
-// Parse error at line 6, column 14 near `= `: Expected a valid identifier character, but found '='
+// Syntax error at line 6, column 13: Expected COLON(':') but found WALRUS(':=') | Model
 $version: "2.0"
 namespace smithy.example
 

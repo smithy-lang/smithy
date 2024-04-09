@@ -44,6 +44,9 @@ public class RecursiveNeighborSelectorTest {
         Set<String> result = selectIds("service[id=smithy.example#MyService2] ~> *");
 
         assertThat(result, containsInAnyOrder(
+                "smithy.example#MyResource",
+                "smithy.example#GetMyResource",
+                "smithy.example#DeleteMyResource",
                 "smithy.example#Input",
                 "smithy.example#Output$foo",
                 "smithy.example#Error$foo",

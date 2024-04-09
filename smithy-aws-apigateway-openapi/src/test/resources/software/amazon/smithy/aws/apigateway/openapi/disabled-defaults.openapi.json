@@ -1,0 +1,98 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2020-07-02"
+    },
+    "paths": {
+        "/defaults": {
+            "post": {
+                "operationId": "HasDefault",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/HasDefaultRequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "HasDefault 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HasDefaultResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DefaultEnum": {
+                "type": "string",
+                "enum": [
+                    "FOO",
+                    "BAR"
+                ]
+            },
+            "Foo_Baz": {
+                "type": "object"
+            },
+            "HasDefaultRequestContent": {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "bar": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "HasDefaultResponseContent": {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "bar": {
+                        "type": "array",
+                        "default": [],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "baz": {
+                        "allOf": [
+                            {
+                            "$ref": "#/components/schemas/DefaultEnum"
+                            },
+                            {
+                                "default": "FOO"
+                            }
+                        ]
+                    },
+                    "withAlphaOnlyRef": {
+                        "$ref": "#/components/schemas/Foo_Baz"
+                    },
+                    "anInt": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            }
+        }
+    }
+}

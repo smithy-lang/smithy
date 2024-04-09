@@ -5,10 +5,14 @@ Guides
 .. toctree::
     :maxdepth: 1
 
-    building-models/index
+    smithy-cli/index
+    smithy-build-json
+    gradle-plugin/index
+    using-code-generation/index
     model-linters
+    model-validation-examples
     evolving-models
     style-guide
-    converting-to-openapi
-    generating-cloudformation-resources
-    migrating-idl-1-to-2
+    model-translations/index
+    building-codegen/index
+    glossary

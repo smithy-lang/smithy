@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,38 +19,49 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
-import software.amazon.smithy.model.validation.suppressions.Suppression;
+import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
 import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
 import software.amazon.smithy.model.validation.validators.TargetValidator;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
- * Validates a model, including validators and suppressions loaded from
- * traits and metadata.
+ * Validates a model, including validators and suppressions loaded from traits and metadata.
  *
- * <p>Validators found in metadata and suppressions found in traits are
- * automatically created and applied to the model. Explicitly provided
- * validators are merged together with the validators and suppressions
- * loaded from metadata.
+ * <p>Validators found in metadata and suppressions found in traits are automatically created and applied to the
+ * model. Explicitly provided validators are merged with the validators and suppressions loaded from metadata.
+ *
+ * <p>The internal implementation of this class is broken into three parts: a builder, a validator, and a loaded
+ * validator.
+ *
+ * <pre>
+ * ModelValidator.builder().build().validate(model);
+ * //            ^ creates Builder
+ * //                      ^ creates ModelValidator
+ * //                              ^ creates a LoadedModelValidator
+ * </pre>
+ *
+ * <p>The builder is used to build up the customized context of the validator. ModelValidator is the created
+ * {@link Validator} implementation isolated from the builder. LoadedModelValidator loads metadata from a Model and
+ * performs the actual validation in an isolated context from the ModelValidator.
  */
-final class ModelValidator {
-
-    private static final String SUPPRESSIONS = "suppressions";
+final class ModelValidator implements Validator {
 
     // Lazy initialization holder class idiom to hold a default validator factory.
     private static final class LazyValidatorFactoryHolder {
@@ -59,274 +70,271 @@ final class ModelValidator {
     }
 
     /** If these validators fail, then many others will too. Validate these first. */
-    private static final Set<Class<? extends Validator>> CORE_VALIDATORS = SetUtils.of(
-            TargetValidator.class,
-            ResourceCycleValidator.class
+    private static final Map<Class<?>, Validator> CORRECTNESS_VALIDATORS = MapUtils.of(
+            TargetValidator.class, new TargetValidator(),
+            ResourceCycleValidator.class, new ResourceCycleValidator()
     );
 
-    private final List<Validator> validators = new ArrayList<>();
-    private final List<Suppression> suppressions = new ArrayList<>();
-    private final List<ValidationEvent> includeEvents = new ArrayList<>();
-    private ValidatorFactory validatorFactory;
-    private Consumer<ValidationEvent> eventListener;
+    private final ValidatorFactory validatorFactory;
+    private final List<ValidationEvent> events;
+    private final List<Validator> validators;
+    private final List<Validator> criticalValidators;
+    private final ValidationEventDecorator validationEventDecorator;
+    private final Consumer<ValidationEvent> eventListener;
+    private final boolean legacyValidationMode;
 
-    /**
-     * Sets the custom {@link Validator}s to use when running the ModelValidator.
-     *
-     * @param validators Validators to set.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator validators(Collection<? extends Validator> validators) {
-        this.validators.clear();
-        validators.forEach(this::addValidator);
-        return this;
+    ModelValidator(Builder builder) {
+        this.validatorFactory = builder.validatorFactory;
+        this.eventListener = builder.eventListener;
+        this.validationEventDecorator = builder.validationEventDecorator;
+        this.events = builder.includeEvents.copy();
+        this.validators = builder.validators.copy();
+        this.criticalValidators = builder.criticalValidators.copy();
+        this.legacyValidationMode = builder.legacyValidationMode;
     }
 
-    /**
-     * Adds a custom {@link Validator} to the ModelValidator.
-     *
-     * @param validator Validator to add.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator addValidator(Validator validator) {
-        validators.add(Objects.requireNonNull(validator));
-        return this;
+    @Override
+    public List<ValidationEvent> validate(Model model) {
+        return new LoadedModelValidator(model, this).validate();
     }
 
-    /**
-     * Sets the {@link Suppression}s to use with the validator.
-     *
-     * @param suppressions Suppressions to set.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator suppressions(Collection<? extends Suppression> suppressions) {
-        this.suppressions.clear();
-        suppressions.forEach(this::addSuppression);
-        return this;
+    static Builder builder() {
+        return new Builder();
     }
 
-    /**
-     * Adds a custom {@link Suppression} to the validator.
-     *
-     * @param suppression Suppression to add.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator addSuppression(Suppression suppression) {
-        suppressions.add(Objects.requireNonNull(suppression));
-        return this;
+    static ValidatorFactory defaultValidationFactory() {
+        return LazyValidatorFactoryHolder.INSTANCE;
     }
 
-    /**
-     * Sets the factory used to find built-in {@link Validator}s and to load
-     * validators found in model metadata.
-     *
-     * @param validatorFactory Factory to use to load {@code Validator}s.
-     *
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator validatorFactory(ValidatorFactory validatorFactory) {
-        this.validatorFactory = validatorFactory;
-        return this;
-    }
+    static final class Builder implements SmithyBuilder<ModelValidator> {
 
-    /**
-     * Sets a custom event listener that receives each {@link ValidationEvent}
-     * as it is emitted.
-     *
-     * @param eventListener Event listener that consumes each event.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator eventListener(Consumer<ValidationEvent> eventListener) {
-        this.eventListener = eventListener;
-        return this;
-    }
+        private final BuilderRef<List<Validator>> validators = BuilderRef.forList();
+        private final BuilderRef<List<Validator>> criticalValidators = BuilderRef.forList();
+        private final BuilderRef<List<ValidationEvent>> includeEvents = BuilderRef.forList();
+        private ValidatorFactory validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
+        private Consumer<ValidationEvent> eventListener = event -> { };
+        private ValidationEventDecorator validationEventDecorator;
+        private boolean legacyValidationMode = false;
 
-    /**
-     * Includes a set of events that were already encountered in the result.
-     *
-     * <p>The included events may be suppressed if they match any registered
-     * suppressions or suppressions loaded from the model.
-     *
-     * @param events Events to include.
-     * @return Returns the ModelValidator.
-     */
-    public ModelValidator includeEvents(List<ValidationEvent> events) {
-        this.includeEvents.clear();
-        this.includeEvents.addAll(events);
-        return this;
-    }
+        private Builder() {}
 
-    /**
-     * Creates a reusable Model Validator that uses every registered validator,
-     * suppression, and extracts validators and suppressions from each
-     * provided model.
-     *
-     * @return Returns the created {@link Validator}.
-     */
-    public Validator createValidator() {
-        if (validatorFactory == null) {
-            validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
+        /**
+         * Adds an array of {@link Validator}s to use when running the ModelValidator.
+         *
+         * @param validators Validators to add.
+         * @return Returns the builder.
+         */
+        public Builder addValidators(Collection<? extends Validator> validators) {
+            for (Validator validator : validators) {
+                addValidator(validator);
+            }
+            return this;
         }
 
-        List<Validator> staticValidators = resolveStaticValidators();
+        /**
+         * Adds a {@link Validator}.
+         *
+         * @param validator Validator to add.
+         * @return Returns the builder.
+         */
+        public Builder addValidator(Validator validator) {
+            if (!CORRECTNESS_VALIDATORS.containsKey(validator.getClass())) {
+                if (ValidationUtils.isCriticalValidator(validator.getClass())) {
+                    criticalValidators.get().add(validator);
+                } else {
+                    validators.get().add(validator);
+                }
+            }
+            return this;
+        }
 
-        return model -> {
-            List<ValidationEvent> coreEvents = new ArrayList<>();
+        /**
+         * Sets the factory used to find built-in {@link Validator}s and to load validators found in model metadata.
+         *
+         * @param validatorFactory Factory to use to load {@code Validator}s.
+         * @param validationEventDecorator Provide a previously loaded and composed decorator.
+         * @return Returns the builder.
+         */
+        public Builder validatorFactory(
+                ValidatorFactory validatorFactory,
+                ValidationEventDecorator validationEventDecorator
+        ) {
+            this.validatorFactory = Objects.requireNonNull(validatorFactory);
+            this.validationEventDecorator = validationEventDecorator;
+            return this;
+        }
 
-            // Add suppressions found in the model via metadata.
-            List<Suppression> modelSuppressions = new ArrayList<>(suppressions);
-            loadModelSuppressions(modelSuppressions, model, coreEvents);
+        /**
+         * Sets a custom event listener that receives each {@link ValidationEvent} as it is emitted.
+         *
+         * @param eventListener Event listener that consumes each event.
+         * @return Returns the builder.
+         */
+        public Builder eventListener(Consumer<ValidationEvent> eventListener) {
+            this.eventListener = Objects.requireNonNull(eventListener);
+            return this;
+        }
 
-            // Add validators defined in the model through metadata.
-            List<Validator> modelValidators = new ArrayList<>(staticValidators);
-            loadModelValidators(validatorFactory, modelValidators, model, coreEvents, modelSuppressions);
+        /**
+         * Includes a set of events that were already encountered in the result.
+         *
+         * <p>Suppressions and severity overrides will be applied to the given {@code events}. However, the validator
+         * assumes that the event has already been decorated and the event listener has already seen the event.
+         *
+         * @param events Events to include.
+         * @return Returns the builder.
+         */
+        public Builder includeEvents(List<ValidationEvent> events) {
+            this.includeEvents.get().addAll(events);
+            return this;
+        }
 
-            // Perform critical validation before other more granular semantic validators.
-            // If these validators fail, then many other validators will fail as well,
-            // which will only obscure the root cause.
-            coreEvents.addAll(new TargetValidator().validate(model));
-            coreEvents.addAll(new ResourceCycleValidator().validate(model));
-            // Emit any events that have already occurred.
-            coreEvents.forEach(eventListener);
+        /**
+         * Enables legacy validation mode that does not fail if critical Validators emit an ERROR.
+         *
+         * @param legacyValidationMode Set to true to enable legacy validation mode.
+         * @return Returns the builder.
+         */
+        public Builder legacyValidationMode(boolean legacyValidationMode) {
+            this.legacyValidationMode = legacyValidationMode;
+            return this;
+        }
 
-            if (LoaderUtils.containsErrorEvents(coreEvents)) {
-                return coreEvents;
+        @Override
+        public ModelValidator build() {
+            // Adding built-in validators is deferred to allow for a custom factory to be set on the builder.
+            addValidators(validatorFactory.loadBuiltinValidators());
+            return new ModelValidator(this);
+        }
+    }
+
+    private static final class LoadedModelValidator {
+
+        private final Model model;
+        private final List<Validator> validators;
+        private final List<Validator> criticalValidators;
+        private final List<ValidationEvent> events = new ArrayList<>();
+        private final ValidationEventDecorator validationEventDecorator;
+        private final Consumer<ValidationEvent> eventListener;
+        private final boolean legacyValidationMode;
+
+        private LoadedModelValidator(Model model, ModelValidator validator) {
+            this.model = model;
+            this.eventListener = validator.eventListener;
+            this.validators = new ArrayList<>(validator.validators);
+            this.criticalValidators = Collections.unmodifiableList(validator.criticalValidators);
+            this.legacyValidationMode = validator.legacyValidationMode;
+
+            // Suppressing and elevating events is handled by composing a given decorator with a
+            // ModelBasedEventDecorator.
+            ModelBasedEventDecorator modelBasedEventDecorator = new ModelBasedEventDecorator();
+            ValidatedResult<ValidationEventDecorator> result = modelBasedEventDecorator.createDecorator(model);
+            this.validationEventDecorator = result.getResult()
+                    .map(decorator -> ValidationEventDecorator.compose(
+                            ListUtils.of(decorator, validator.validationEventDecorator)))
+                    .orElse(validator.validationEventDecorator);
+
+            // Events encountered while loading suppressions and overrides have been modified by everything the
+            // modelBasedEventDecorator knows about, but has not been modified by any custom decorator (if any).
+            for (ValidationEvent event : result.getValidationEvents()) {
+                if (validationEventDecorator.canDecorate(event)) {
+                    event = validationEventDecorator.decorate(event);
+                }
+                events.add(event);
             }
 
-            List<ValidationEvent> result = modelValidators.parallelStream()
+            // Now that the decorator is available, emit/decorate/suppress/collect explicitly provided events.
+            for (ValidationEvent event : validator.events) {
+                pushEvent(event);
+            }
+
+            // The decorator itself doesn't handle loading and applying validators, just modifying events.
+            loadModelValidators(validator.validatorFactory);
+        }
+
+        private void loadModelValidators(ValidatorFactory validatorFactory) {
+            // Load validators defined in metadata.
+            ValidatedResult<List<ValidatorDefinition>> loaded = ValidationLoader
+                    .loadValidators(model.getMetadata());
+            pushEvents(loaded.getValidationEvents());
+            List<ValidatorDefinition> definitions = loaded.getResult().orElseGet(Collections::emptyList);
+            ValidatorFromDefinitionFactory factory = new ValidatorFromDefinitionFactory(validatorFactory);
+
+            // Attempt to create the Validator instances and collect errors along the way.
+            for (ValidatorDefinition val : definitions) {
+                ValidatedResult<Validator> result = factory.loadValidator(val);
+                result.getResult().ifPresent(validators::add);
+                pushEvents(result.getValidationEvents());
+                if (result.getValidationEvents().isEmpty() && !result.getResult().isPresent()) {
+                    ValidationEvent event = unknownValidatorError(val.name, val.sourceLocation);
+                    pushEvent(event);
+                }
+            }
+        }
+
+        // Unknown validators don't fail the build!
+        private static ValidationEvent unknownValidatorError(String name, SourceLocation location) {
+            return ValidationEvent.builder()
+                    // Per the spec, the eventID is "UnknownValidator_<validatorName>".
+                    .id("UnknownValidator_" + name)
+                    .severity(Severity.WARNING)
+                    .sourceLocation(location)
+                    .message("Unable to locate a validator named `" + name + "`")
+                    .build();
+        }
+
+        private void pushEvents(List<ValidationEvent> source) {
+            for (ValidationEvent event : source) {
+                pushEvent(event);
+            }
+        }
+
+        private void pushEvent(ValidationEvent event) {
+            events.add(updateAndEmitEvent(event));
+        }
+
+        private ValidationEvent updateAndEmitEvent(ValidationEvent event) {
+            if (validationEventDecorator.canDecorate(event)) {
+                event = validationEventDecorator.decorate(event);
+            }
+            eventListener.accept(event);
+            return event;
+        }
+
+        private List<ValidationEvent> validate() {
+            // Perform critical correctness validation before other critical validators.
+            events.addAll(streamEvents(CORRECTNESS_VALIDATORS.values().stream()));
+            if (LoaderUtils.containsErrorEvents(events)) {
+                return events;
+            }
+
+            // Same thing, but for other critical validators.
+            events.addAll(streamEvents(criticalValidators.parallelStream()));
+
+            // Only fail early here if legacy validation mode is enabled.
+            if (!legacyValidationMode && LoaderUtils.containsErrorEvents(events)) {
+                return events;
+            }
+
+            events.addAll(streamEvents(validators.parallelStream()));
+            return events;
+        }
+
+        private List<ValidationEvent> streamEvents(Stream<Validator> validators) {
+            return validators
                     .flatMap(validator -> validator.validate(model).stream())
-                    .filter(ModelValidator::filterPrelude)
-                    .map(event -> suppressEvent(model, event, modelSuppressions))
-                    // Emit events as they occur during validation.
-                    .peek(eventListener)
+                    .filter(this::filterPrelude)
+                    .map(this::updateAndEmitEvent)
                     .collect(Collectors.toList());
-
-            for (ValidationEvent event : includeEvents) {
-                if (ModelValidator.filterPrelude(event)) {
-                    result.add(suppressEvent(model, event, modelSuppressions));
-                }
-            }
-
-            // Add in events encountered while building up validators and suppressions.
-            result.addAll(coreEvents);
-
-            return result;
-        };
-    }
-
-    private List<Validator> resolveStaticValidators() {
-        List<Validator> resolvedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
-        resolvedValidators.addAll(validators);
-        // These core validators are applied first, so don't run them again.
-        resolvedValidators.removeIf(v -> CORE_VALIDATORS.contains(v.getClass()));
-        return resolvedValidators;
-    }
-
-    private static boolean filterPrelude(ValidationEvent event) {
-        // Don't emit any non-error events for prelude shapes and traits.
-        // This prevents custom validators from unnecessarily needing to
-        // worry about prelude shapes and trait definitions, but still
-        // allows for validation events when the prelude is broken.
-        return event.getSeverity() == Severity.ERROR || !event.getShapeId()
-                .filter(Prelude::isPreludeShape)
-                .isPresent();
-    }
-
-    private static void loadModelValidators(
-            ValidatorFactory validatorFactory,
-            List<Validator> validators,
-            Model model,
-            List<ValidationEvent> events,
-            List<Suppression> suppressions
-    ) {
-        // Load validators defined in metadata.
-        ValidatedResult<List<ValidatorDefinition>> loaded = ValidationLoader
-                .loadValidators(model.getMetadata());
-        events.addAll(loaded.getValidationEvents());
-        List<ValidatorDefinition> definitions = loaded.getResult().orElseGet(Collections::emptyList);
-        ValidatorFromDefinitionFactory factory = new ValidatorFromDefinitionFactory(validatorFactory);
-
-        // Attempt to create the Validator instances and collect errors along the way.
-        for (ValidatorDefinition val : definitions) {
-            ValidatedResult<Validator> result = factory.loadValidator(val);
-            result.getResult().ifPresent(validators::add);
-            events.addAll(result.getValidationEvents());
-            if (result.getValidationEvents().isEmpty() && !result.getResult().isPresent()) {
-                ValidationEvent event = unknownValidatorError(val.name, val.sourceLocation);
-                events.add(suppressEvent(model, event, suppressions));
-            }
-        }
-    }
-
-    // Unknown validators don't fail the build!
-    private static ValidationEvent unknownValidatorError(String name, SourceLocation location) {
-        return ValidationEvent.builder()
-                // Per the spec, the eventID is "UnknownValidator_<validatorName>".
-                .id("UnknownValidator_" + name)
-                .severity(Severity.WARNING)
-                .sourceLocation(location)
-                .message("Unable to locate a validator named `" + name + "`")
-                .build();
-    }
-
-    private static void loadModelSuppressions(
-            List<Suppression> suppressions,
-            Model model,
-            List<ValidationEvent> events
-    ) {
-        model.getMetadataProperty(SUPPRESSIONS).ifPresent(value -> {
-            List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
-            for (ObjectNode rule : values) {
-                try {
-                    suppressions.add(Suppression.fromMetadata(rule));
-                } catch (SourceException e) {
-                    events.add(ValidationEvent.fromSourceException(e));
-                }
-            }
-        });
-    }
-
-    private static ValidationEvent suppressEvent(Model model, ValidationEvent event, List<Suppression> suppressions) {
-        // ERROR and SUPPRESSED events cannot be suppressed.
-        if (!event.getSeverity().canSuppress()) {
-            return event;
         }
 
-        Suppression matchedSuppression = findMatchingSuppression(model, event, suppressions);
-
-        if (matchedSuppression == null) {
-            return event;
+        private boolean filterPrelude(ValidationEvent event) {
+            // Don't emit any non-error events for prelude shapes and traits.
+            // This prevents custom validators from unnecessarily needing to worry about prelude shapes and trait
+            // definitions, but still allows for validation events when the prelude is broken.
+            return event.getSeverity() == Severity.ERROR || !event.getShapeId()
+                    .filter(Prelude::isPreludeShape)
+                    .isPresent();
         }
-
-        // The event was suppressed so change the severity and reason.
-        ValidationEvent.Builder builder = event.toBuilder();
-        builder.severity(Severity.SUPPRESSED);
-        matchedSuppression.getReason().ifPresent(builder::suppressionReason);
-
-        return builder.build();
-    }
-
-    private static Suppression findMatchingSuppression(
-            Model model,
-            ValidationEvent event,
-            List<Suppression> suppressions
-    ) {
-        return event.getShapeId()
-                .flatMap(model::getShape)
-                // First check for trait based suppressions.
-                .flatMap(shape -> shape.hasTrait(SuppressTrait.class)
-                                  ? Optional.of(Suppression.fromSuppressTrait(shape))
-                                  : Optional.empty())
-                // Try to suppress it.
-                .flatMap(suppression -> suppression.test(event) ? Optional.of(suppression) : Optional.empty())
-                // If it wasn't suppressed, then try the rules loaded from metadata.
-                .orElseGet(() -> {
-                    for (Suppression suppression : suppressions) {
-                        if (suppression.test(event)) {
-                            return suppression;
-                        }
-                    }
-                    return null;
-                });
     }
 }

@@ -205,9 +205,52 @@ public class SmithyBuildConfigTest {
                 .expectObjectNode();
         SmithyBuildConfig config = SmithyBuildConfig.fromNode(value);
 
-        Path cwd = Paths.get(".");
+        Path cwd = SmithyBuildUtils.getCurrentWorkingDirectory();
 
         assertThat(config.getImports(), contains(cwd.resolve("foo.json").toString()));
         assertThat(config.getProjections().get("a").getImports(), contains(cwd.resolve("baz.json").toString()));
+    }
+
+    @Test
+    public void outputDirCannotBeEmpty() throws IOException {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SmithyBuildConfig.builder()
+                    .version("1.0")
+                    .outputDirectory("")
+                    .build();
+        });
+    }
+
+    @Test
+    public void mergingTakesOtherMavenConfigWhenHasNone() {
+        SmithyBuildConfig a = SmithyBuildConfig.builder().version("1").build();
+        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1")
+                .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0")).build())
+                .build();
+
+        assertThat(a.toBuilder().merge(b).build().getMaven(), equalTo(b.getMaven()));
+    }
+
+    @Test
+    public void mergingTakesSelfMavenConfigWhenOtherHasNone() {
+        SmithyBuildConfig a = SmithyBuildConfig.builder().version("1")
+                .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0")).build())
+                .build();
+        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1").build();
+
+        assertThat(a.toBuilder().merge(b).build().getMaven(), equalTo(a.getMaven()));
+    }
+
+    @Test
+    public void mergingCombinesMavenConfigsWhenBothPresent() {
+        SmithyBuildConfig a = SmithyBuildConfig.builder().version("1")
+                .maven(MavenConfig.builder().dependencies(ListUtils.of("c:d:1.0.0")).build())
+                .build();
+        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1")
+                .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0", "c:d:1.0.0")).build())
+                .build();
+
+        assertThat(a.toBuilder().merge(b).build().getMaven().get().getDependencies(),
+                   contains("c:d:1.0.0", "a:b:1.0.0"));
     }
 }

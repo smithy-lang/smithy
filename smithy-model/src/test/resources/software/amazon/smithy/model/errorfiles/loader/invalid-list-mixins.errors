@@ -1,0 +1,6 @@
+[ERROR] com.test#ExtraMemberAndValidMixin: List shapes may only have a `member` member, but found `foo` | Model
+[ERROR] com.test#NoMemberMixin: Missing required member of shape `com.test#NoMemberMixin`: member | Model
+[ERROR] com.test#ExtraMemberMixin: List shapes may only have a `member` member, but found `foo` | Model
+[ERROR] com.test#ValidWithNoMemberMixin: Cannot apply mixin to com.test#ValidWithNoMemberMixin: com.test#NoMemberMixin not found | Model
+[ERROR] com.test#InvalidWithNoMemberMixin: Cannot apply mixin to com.test#InvalidWithNoMemberMixin: com.test#NoMemberMixin not found | Model
+[ERROR] com.test#ElidingMemberFromNoMemberMixin: Cannot apply mixin to com.test#ElidingMemberFromNoMemberMixin$member: com.test#NoMemberMixin not found | Model

@@ -87,6 +87,9 @@ that affect serialization:
         ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
         The "Code" of an ``awsQuery`` error is used by clients to determine
         which type of error was encountered.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
@@ -456,7 +459,7 @@ Trait selector
 Value type
     Annotation trait.
 See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
+    `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
 
 .. tabs::
 
@@ -631,7 +634,9 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
+
+.. include:: error-rename.rst.template

@@ -802,6 +802,16 @@ public final class Model implements ToSmithyBuilder<Model> {
             public Iterator<Shape> iterator() {
                 return shapeMap.values().iterator();
             }
+
+            @Override
+            public Stream<Shape> stream() {
+                return shapes();
+            }
+
+            @Override
+            public Stream<Shape> parallelStream() {
+                return shapes().parallel();
+            }
         };
     }
 

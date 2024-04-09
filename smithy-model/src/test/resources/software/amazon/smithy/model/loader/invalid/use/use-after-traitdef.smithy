@@ -1,4 +1,4 @@
-// Parse error at line 7, column 4 near ` smithy`: A use statement must come before any shape definition
+// Syntax error at line 7, column 1: Unknown shape type: use | Model
 namespace smithy.example
 
 @trait

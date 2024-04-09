@@ -45,16 +45,16 @@ Smithy models SHOULD resemble the following example:
     structure MyMixin {}
 
     // When using a single mixin, place "with" and the shape on the same line
-    structure UsesMixin with MyMixin {
+    structure UsesMixin with [MyMixin] {
         foo: String
     }
 
     // When using multiple mixins, place each shape ID on its own line,
     // followed by a line that contains the opening brace.
-    structure UsesMixin with
+    structure UsesMixin with [
         MyMixin
         SomeOtherMixin
-    {
+    ] {
         foo: String
     }
 
@@ -173,7 +173,16 @@ Naming
 Shape names
 -----------
 
-Shape names use a strict form of UpperCamelCase (e.g., "XmlRequest", "FooId").
+* Shape names use a strict form of UpperCamelCase (e.g., "XmlRequest", "FooId").
+* Numeric shapes should use descriptive names, including units of measurement
+  (e.g., prefer "SizeInMb" over "Size").
+* Enums should use a singular noun (e.g., prefer "Suit" over "Suits").
+* Lists should use plural names (e.g., prefer "Users" over "UserList").
+* Operations should follow the format of "VerbNoun" (e.g., "UpdateUser").
+* Resources should use a singular noun (e.g., use "User" over "Users").
+* Services should be named after the name of a service, omitting the word
+  "Service" and branding when possible (e.g., prefer "S3" over
+  "AmazonS3Service").
 
 
 Member names

@@ -1,0 +1,2 @@
+[ERROR] test.smithy.traitcodegen.enums#notAValidVariant: Error validating trait `test.smithy.traitcodegen.enums#StringEnum`: String value provided for `test.smithy.traitcodegen.enums#StringEnum` must be one of the following values: `no`, `yes` | TraitValue
+[ERROR] test.smithy.traitcodegen.enums#incorrectValueCasing: Error validating trait `test.smithy.traitcodegen.enums#StringEnum`: String value provided for `test.smithy.traitcodegen.enums#StringEnum` must be one of the following values: `no`, `yes` | TraitValue

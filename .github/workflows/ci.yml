@@ -12,23 +12,31 @@ jobs:
     name: Java ${{ matrix.java }} ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17]
+        java: [8, 11, 17, 21]
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: gradle/wrapper-validation-action@v1
+      - uses: actions/checkout@v4
+      - uses: gradle/wrapper-validation-action@v2
 
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'zulu'
+          distribution: 'corretto'
 
-      - name: Clean and build
-        run: ./gradlew clean build -Plog-tests
+      - name: Clean, build and javadoc
+        run: ./gradlew clean build javadoc -Plog-tests --stacktrace
 
-      - uses: actions/upload-artifact@v3
+      - name: Allow long file names in git for windows
+        if: matrix.os == 'windows-latest'
+        run: git config --system core.longpaths true
+
+      - name: CLI integration tests
+        if: matrix.java == 17
+        run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
+
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
@@ -38,10 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Build
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python 3.x
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -51,7 +59,7 @@ jobs:
     - name: Build docs
       run: cd docs && make html
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: built-docs
         path: docs/build/html

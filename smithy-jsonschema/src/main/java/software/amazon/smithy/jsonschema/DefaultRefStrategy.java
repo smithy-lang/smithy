@@ -35,8 +35,8 @@ import software.amazon.smithy.model.traits.EnumTrait;
  *         JSON schema definition.
  *     </li>
  *     <li>
- *         <p>Members that target structures, unions, enums, and maps use a $ref to the
- *         targeted shape. With the exception of maps, these kinds of shapes are almost
+ *         <p>Members that target structures, unions, enums, intEnums, and maps use a $ref to
+ *         the targeted shape. With the exception of maps, these kinds of shapes are almost
  *         always generated as concrete types by code generators, so it's useful to reuse
  *         them throughout the schema. However, this means that member documentation
  *         and other member traits need to be moved in some way to the containing
@@ -154,6 +154,10 @@ final class DefaultRefStrategy implements RefStrategy {
         // use a good name for any generated types, and it cuts down on the
         // duplication of documentation and constraints in the generated schema.
         if (shape.hasTrait(EnumTrait.class)) {
+            return false;
+        }
+
+        if (shape.isIntEnumShape() && !config.getDisableIntEnums()) {
             return false;
         }
 

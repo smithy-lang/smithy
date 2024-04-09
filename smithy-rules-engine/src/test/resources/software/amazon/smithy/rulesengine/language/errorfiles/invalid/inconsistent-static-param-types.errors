@@ -1,0 +1,4 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#GetAnotherResource: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[WARNING] example#GetResource: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[ERROR] example#GetResource: Inconsistent type for `InconsistentParamType` parameter | RuleSetParameter.StaticContextParams.InconsistentType

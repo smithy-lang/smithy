@@ -99,6 +99,28 @@ apply AllQueryStringTypes @httpRequestTests([
             queryEnumList: ["Foo", "Baz", "Bar"],
             queryIntegerEnum: 1,
             queryIntegerEnumList: [1, 2, 3],
+            queryParamsMapOfStringList: {
+                "String": ["Hello there"],
+                "StringList": ["a", "b", "c"],
+                "StringSet": ["a", "b", "c"],
+                "Byte": ["1"],
+                "Short": ["2"],
+                "Integer": ["3"],
+                "IntegerList": ["1", "2", "3"],
+                "IntegerSet": ["1", "2", "3"],
+                "Long": ["4"],
+                "Float": ["1.1"],
+                "Double": ["1.1"],
+                "DoubleList": ["1.1", "2.1", "3.1"],
+                "Boolean": ["true"],
+                "BooleanList": ["true", "false", "true"],
+                "Timestamp": ["1970-01-01T00:00:01Z"],
+                "TimestampList": ["1970-01-01T00:00:01Z", "1970-01-01T00:00:02Z", "1970-01-01T00:00:03Z"],
+                "Enum": ["Foo"],
+                "EnumList": ["Foo", "Baz", "Bar"],
+                "IntegerEnum": ["1"],
+                "IntegerEnumList": ["1", "2", "3"]
+            },
         }
     },
     {
@@ -127,10 +149,13 @@ apply AllQueryStringTypes @httpRequestTests([
         uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
-		"String=%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
+		"String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
         ],
         params: {
-		queryString: "%:/?#[]@!$&'()*+,;=😹"
+		queryString: " %:/?#[]@!$&'()*+,;=😹",
+		queryParamsMapOfStringList: {
+                    "String": [" %:/?#[]@!$&'()*+,;=😹"]
+                }
         }
     },
     {
@@ -193,6 +218,26 @@ apply AllQueryStringTypes @httpRequestTests([
             }
         }
     },
+    {
+        id: "RestJsonZeroAndFalseQueryValues"
+        documentation: "Query values of 0 and false are serialized"
+        protocol: restJson1
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: [
+            "Integer=0"
+            "Boolean=false"
+        ]
+        params: {
+            queryInteger: 0
+            queryBoolean: false
+            queryParamsMapOfStringList: {
+                "Integer": ["0"]
+                "Boolean": ["false"]
+            }
+        }
+    }
 ])
 
 @suppress(["HttpQueryParamsTrait"])
@@ -389,6 +434,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
 
 structure IgnoreQueryParamsInResponseOutput {
     @httpQuery("baz")
+    @suppress(["HttpBindingTraitIgnored"])
     baz: String
 }
 
@@ -449,6 +495,59 @@ structure OmitsNullSerializesEmptyStringInput {
 
     @httpQuery("Empty")
     emptyString: String,
+}
+
+/// Omits serializing empty lists. Because empty strings are serilized as
+/// `Foo=`, empty lists cannot also be serialized as `Foo=` and instead
+/// must be omitted.
+@http(uri: "/OmitsSerializingEmptyLists", method: "POST")
+@tags(["client-only"])
+operation OmitsSerializingEmptyLists {
+    input: OmitsSerializingEmptyListsInput
+}
+
+apply OmitsSerializingEmptyLists @httpRequestTests([
+    {
+        id: "RestJsonOmitsEmptyListQueryValues",
+        documentation: "Supports omitting empty lists.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/OmitsSerializingEmptyLists",
+        body: "",
+        queryParams: [],
+        params: {
+            queryStringList: [],
+            queryIntegerList: [],
+            queryDoubleList: [],
+            queryBooleanList: [],
+            queryTimestampList: [],
+            queryEnumList: [],
+            queryIntegerEnumList: [],
+        }
+    }
+])
+
+structure OmitsSerializingEmptyListsInput {
+    @httpQuery("StringList")
+    queryStringList: StringList,
+
+    @httpQuery("IntegerList")
+    queryIntegerList: IntegerList,
+
+    @httpQuery("DoubleList")
+    queryDoubleList: DoubleList,
+
+    @httpQuery("BooleanList")
+    queryBooleanList: BooleanList,
+
+    @httpQuery("TimestampList")
+    queryTimestampList: TimestampList,
+
+    @httpQuery("EnumList")
+    queryEnumList: FooEnumList,
+
+    @httpQuery("IntegerEnumList")
+    queryIntegerEnumList: IntegerEnumList,
 }
 
 /// Automatically adds idempotency tokens.

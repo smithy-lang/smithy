@@ -20,5 +20,4 @@
 [ERROR] ns.foo#InvalidResourceLifecycle: Resource delete lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InvalidResourceLifecycle: Resource read lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InvalidResourceLifecycle: Resource update lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`) | Target
-[ERROR] ns.foo#InvalidResourceLifecycle: resource shape `operation` relationships must target a operation shape, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InvalidTraitReference$member: Found a MEMBER_TARGET reference to trait definition `ns.foo#fooTrait`. Trait definitions cannot be targeted by members or referenced by shapes in any other context other than applying them as traits. | Target

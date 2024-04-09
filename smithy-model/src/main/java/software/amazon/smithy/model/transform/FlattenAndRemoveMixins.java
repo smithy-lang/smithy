@@ -38,7 +38,7 @@ final class FlattenAndRemoveMixins {
             }
         }
 
-        if (!updatedShapes.isEmpty()) {
+        if (!updatedShapes.isEmpty() || !toRemove.isEmpty()) {
             Model.Builder builder = model.toBuilder();
             updatedShapes.forEach(builder::addShape);
             // Don't use the removeShapes transform because that would further mutate shapes and remove the things

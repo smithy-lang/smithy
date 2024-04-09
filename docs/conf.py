@@ -1,4 +1,5 @@
 from smithy.lexer import SmithyLexer
+import requests
 
 project = u'Smithy'
 copyright = u'2022, Amazon Web Services'
@@ -6,8 +7,8 @@ author = u'Amazon Web Services'
 
 # -- General configuration ------------------------------------------------
 
-extensions = ['sphinx_copybutton', 'smithy']
-templates_path = ['../_templates', '../root-redirects']
+extensions = ['sphinx_copybutton', 'sphinx_substitution_extensions', 'smithy']
+templates_path = ['../_templates', '../root']
 
 pygments_style = "default"
 pygments_dark_style = "gruvbox-dark"
@@ -73,12 +74,40 @@ def __load_version():
 smithy_version = __load_version()
 smithy_version_placeholder = "__smithy_version__"
 
+## Find the latest version of the gradle plugin from github
+def __load_gradle_version():
+    return requests.get('https://api.github.com/repos/smithy-lang/smithy-gradle-plugin/tags').json()[0]['name']
+
+# We use the __smithy_gradle_version__ placeholder in documentation to represent
+# the current gradle plugin version number. This is found and replaced
+# using a source-read pre-processor so that the generated documentation
+# always references the latest release of the gradle plugin
+smithy_gradle_plugin_version = __load_gradle_version()
+smithy_gradle_version_placeholder = "__smithy_gradle_version__"
+
+## Find the latest version of the typescript codegen plugin from maven repo
+def __load_typescript_codegen_version():
+    return requests.get('https://search.maven.org/solrsearch/select?q=g:"software.amazon.smithy.typescript"'
+        + '+AND+a:"smithy-typescript-codegen"&wt=json').json()['response']['docs'][0]['latestVersion']
+
+# We use the __smithy_typescript_version__ placeholder in documentation to represent
+# the current gradle plugin version number. This is found and replaced
+# using a source-read pre-processor so that the generated documentation
+# always references the latest release of the gradle plugin
+smithy_typescript_codegen_version = __load_typescript_codegen_version()
+smithy_typescript_version_placeholder = "__smithy_typescript_version__"
 
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer)
     sphinx.connect('source-read', source_read_handler)
     print("Finding and replacing '" + smithy_version_placeholder + "' with '" + smithy_version + "'")
+    print("Finding and replacing '" + smithy_gradle_version_placeholder + "' with '" + smithy_gradle_plugin_version + "'")
+    print("Finding and replacing '" + smithy_typescript_version_placeholder + "' with '" + smithy_typescript_codegen_version + "'")
 
-# Rewrites __smithy_version__ to the version found in ../VERSION
+
+# Rewrites __smithy_version__ to the version found in ../VERSION and
+# rewrites __smithy_gradle_version__ to the latest version found on Github
 def source_read_handler(app, docname, source):
     source[0] = source[0].replace(smithy_version_placeholder, smithy_version)
+    source[0] = source[0].replace(smithy_gradle_version_placeholder, smithy_gradle_plugin_version)
+    source[0] = source[0].replace(smithy_typescript_version_placeholder, smithy_typescript_codegen_version)

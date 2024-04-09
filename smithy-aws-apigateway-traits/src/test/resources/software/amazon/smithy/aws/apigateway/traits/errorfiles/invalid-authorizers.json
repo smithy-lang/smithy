@@ -9,9 +9,6 @@
                     "name": "someservice"
                 },
                 "aws.apigateway#authorizers": {
-                    "invalid": {
-                        "scheme": "ns.foo#invalid"
-                    },
                     "another": {
                         "scheme": "smithy.api#httpBasicAuth",
                         "type": "token",

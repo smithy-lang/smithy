@@ -25,21 +25,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.model.validation.Validator;
 
 /**
  * Runs test cases against a directory of models and error files.
  */
 public final class SmithyTestSuite {
+
+    private static final Logger LOGGER = Logger.getLogger(SmithyTestSuite.class.getName());
     private static final String DEFAULT_TEST_CASE_LOCATION = "errorfiles";
 
     private final List<SmithyTestCase> cases = new ArrayList<>();
@@ -66,13 +75,13 @@ public final class SmithyTestSuite {
      * of the given {@code contextClass}, and that model discovery should be
      * used using the given {@code contextClass}.
      *
-     * <p>Each returns {@code Object[]} contains the filename of the test as
+     * <p>Each returned {@code Object[]} contains the filename of the test as
      * the first argument, followed by a {@code Callable<SmithyTestCase.Result>}
      * as the second argument. All a parameterized test needs to do is call
      * {@code call} on the provided {@code Callable} to execute the test and
      * fail if the test case is invalid.
      *
-     * <p>For example, the following can used as a unit test:
+     * <p>For example, the following can be used as a unit test:
      *
      * <pre>{@code
      * import java.util.concurrent.Callable;
@@ -107,7 +116,49 @@ public final class SmithyTestSuite {
                 .parameterizedTestSource();
     }
 
-    private Stream<Object[]> parameterizedTestSource() {
+    /**
+     * Factory method used to create a JUnit 5 {@code ParameterizedTest}
+     * {@code MethodSource}.
+     *
+     * <p>Test cases need to be added to the test suite before calling this,
+     * for example by using {@link #addTestCasesFromDirectory(Path)}.
+     *
+     * <p>Each returned {@code Object[]} contains the filename of the test as
+     * the first argument, followed by a {@code Callable<SmithyTestCase.Result>}
+     * as the second argument. All a parameterized test needs to do is call
+     * {@code call} on the provided {@code Callable} to execute the test and
+     * fail if the test case is invalid.
+     *
+     * <p>For example, the following can be used as a unit test:
+     *
+     * <pre>{@code
+     * import java.util.concurrent.Callable;
+     * import java.util.stream.Stream;
+     * import org.junit.jupiter.params.ParameterizedTest;
+     * import org.junit.jupiter.params.provider.MethodSource;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
+     *
+     * public class TestRunnerTest {
+     *     \@ParameterizedTest(name = "\{0\}")
+     *     \@MethodSource("source")
+     *     public void testRunner(String filename, Callable&lt;SmithyTestCase.Result&gt; callable) throws Exception {
+     *         callable.call();
+     *     }
+     *
+     *     public static Stream&lt;?&gt; source() {
+     *         ModelAssembler assembler = Model.assembler(TestRunnerTest.class.getClassLoader());
+     *         return SmithyTestSuite.runner()
+     *                 .setModelAssemblerFactory(assembler::copy)
+     *                 .addTestCasesFromUrl(TestRunnerTest.class.getResource("errorfiles"))
+     *                 .parameterizedTestSource();
+     *     }
+     * }
+     * }</pre>
+     *
+     * @return Returns the Stream that should be used as a JUnit 5 {@code MethodSource} return value.
+     */
+    public Stream<Object[]> parameterizedTestSource() {
         return cases.stream().map(testCase -> {
             Callable<SmithyTestCase.Result> callable = createTestCaseCallable(testCase);
             Callable<SmithyTestCase.Result> wrappedCallable = () -> callable.call().unwrap();
@@ -205,11 +256,58 @@ public final class SmithyTestSuite {
     }
 
     private Callable<SmithyTestCase.Result> createTestCaseCallable(SmithyTestCase testCase) {
+        boolean useLegacyValidationMode = isLegacyValidationRequired(testCase);
         return () -> {
             ModelAssembler assembler = modelAssemblerFactory.get();
             assembler.addImport(testCase.getModelLocation());
+            if (useLegacyValidationMode) {
+                assembler.putProperty("LEGACY_VALIDATION_MODE", true);
+            }
             return testCase.createResult(assembler.assemble());
         };
+    }
+
+    // We introduced the concept of "critical" validation events after many errorfiles were created that relied
+    // on all validators being run, including validators now considered critical that prevent further validation.
+    // If we didn't account for that here, the addition of "critical" validators would have been a breaking change.
+    // To make it backward compatible, we preemptively detect if the errorfiles contains both critical and
+    // non-critical validation event assertions, and if so, we run validation using an internal-only validation
+    // mode that doesn't fail after critical validators report errors.
+    private boolean isLegacyValidationRequired(SmithyTestCase testCase) {
+        Set<String> criticalEvents = new TreeSet<>();
+        Set<String> nonCriticalEvents = new TreeSet<>();
+
+        for (ValidationEvent event : testCase.getExpectedEvents()) {
+            if (isCriticalValidationEvent(event)) {
+                criticalEvents.add(event.getId());
+            } else {
+                nonCriticalEvents.add(event.getId());
+            }
+        }
+
+        if (!criticalEvents.isEmpty() && !nonCriticalEvents.isEmpty()) {
+            LOGGER.warning(String.format("Test suite `%s` relies on the emission of non-critical validation events "
+                                         + "after critical validation events were emitted. This test case should be "
+                                         + "refactored so that critical validation events are tested using separate "
+                                         + "test cases from non-critical events. Critical events: %s. Non-critical "
+                                         + "events: %s",
+                                         testCase.getModelLocation(),
+                                         criticalEvents,
+                                         nonCriticalEvents));
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isCriticalValidationEvent(ValidationEvent event) {
+        if (ValidationUtils.isCriticalEvent(event.getId())) {
+            return true;
+        }
+
+        // In addition to the method to the check based on Validator classes, MODEL validation event IDs marked as
+        // ERROR that go along with non-critical events requires legacy validation.
+        return event.getId().equals(Validator.MODEL_ERROR) && event.getSeverity() == Severity.ERROR;
     }
 
     /**

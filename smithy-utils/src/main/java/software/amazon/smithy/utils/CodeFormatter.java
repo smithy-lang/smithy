@@ -91,7 +91,7 @@ final class CodeFormatter {
         void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException;
 
         // Writes literal segments of the input string.
-        static Operation stringSlice(String source, int start, int end) {
+        static Operation stringSlice(CharSequence source, int start, int end) {
             return (sink, writer) -> Sink.writeString(sink, source, start, end);
         }
 
@@ -432,7 +432,7 @@ final class CodeFormatter {
             } else {
                 // Output any pending captured text before the output of the expression.
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, parser.position() - 1));
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, parser.position() - 1));
                 }
                 pushOperation(parseNormalArgument());
             }
@@ -456,7 +456,7 @@ final class CodeFormatter {
                 parser.skip();
                 if (pendingTextStart > -1) {
                     while (startPosition > pendingTextStart
-                           && Character.isWhitespace(parser.expression().charAt(startPosition - 1))) {
+                           && Character.isWhitespace(parser.input().charAt(startPosition - 1))) {
                         startPosition--;
                     }
                 }
@@ -474,7 +474,7 @@ final class CodeFormatter {
 
             // Output any pending captured text before the output of the expression.
             if (pendingTextStart > -1) {
-                pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
             }
 
             Operation operation = parseNormalArgument();
@@ -482,7 +482,7 @@ final class CodeFormatter {
             if (parser.peek() == '@') {
                 parser.skip();
                 int start = parser.position();
-                parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                parser.consumeWhile(this::isNameCharacter);
                 String sectionName = parser.sliceFrom(start);
                 ensureNameIsValid(sectionName);
                 operation = Operation.inlineSection(sectionName, operation);
@@ -518,7 +518,7 @@ final class CodeFormatter {
         }
 
         void skipTrailingWhitespaceInParser() {
-            parser.consumeUntilNoLongerMatches(Character::isWhitespace);
+            parser.consumeWhile(Character::isWhitespace);
         }
 
         private boolean isAllLeadingWhitespaceOnLine(int startPosition, int startColumn) {
@@ -549,13 +549,13 @@ final class CodeFormatter {
                         parser.expect('s');
                         parser.sp();
                         int startPos = parser.position();
-                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        parser.consumeWhile(this::isNameCharacter);
                         keyPrefix = parser.sliceFrom(startPos);
                         ensureNameIsValid(keyPrefix);
                         parser.expect(',');
                         parser.sp();
                         startPos = parser.position();
-                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        parser.consumeWhile(this::isNameCharacter);
                         value = parser.sliceFrom(startPos);
                         ensureNameIsValid(value);
                     }
@@ -583,16 +583,16 @@ final class CodeFormatter {
             if (parser.peek() != '\r' && parser.peek() != '\n' && parser.peek() != Character.MIN_VALUE) {
                 // If the expression is not followed directly by a newline, then all leading text.
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
                 }
             } else if (isAllLeadingWhitespaceOnLine(startPosition, startColumn)) {
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart,
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart,
                                                         startPosition - startColumn));
                 }
                 parser.skip();
             } else if (pendingTextStart > -1) {
-                pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
             }
         }
 
@@ -635,7 +635,7 @@ final class CodeFormatter {
             // Parse the formatter and apply it.
             int line = parser.line();
             int column = parser.column();
-            char identifier = parser.expect(CodeWriterFormatterContainer.VALID_FORMATTER_CHARS);
+            char identifier = parser.expect(AbstractCodeWriter.VALID_FORMATTER_CHARS);
 
             // The error message needs to be created here and given to the operation in way that it can
             // throw with an appropriate message.
@@ -646,7 +646,7 @@ final class CodeFormatter {
 
         private String parseArgumentName() {
             int start = parser.position();
-            parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+            parser.consumeWhile(this::isNameCharacter);
             String name = parser.sliceFrom(start);
             ensureNameIsValid(name);
             return name;
@@ -694,7 +694,7 @@ final class CodeFormatter {
 
             relativeIndex = -1;
             int startPosition = parser.position();
-            parser.consumeUntilNoLongerMatches(Character::isDigit);
+            parser.consumeWhile(Character::isDigit);
             int index = Integer.parseInt(parser.sliceFrom(startPosition)) - 1;
 
             if (index < 0 || index >= arguments.length) {
@@ -713,7 +713,7 @@ final class CodeFormatter {
             }
         }
 
-        private boolean isNameCharacter(char c) {
+        private boolean isNameCharacter(int c) {
             return (c >= 'a' && c <= 'z')
                    || (c >= 'A' && c <= 'Z')
                    || (c >= '0' && c <= '9')

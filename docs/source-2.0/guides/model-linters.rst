@@ -1,6 +1,6 @@
-=============
-Model linters
-=============
+==============
+Linting Models
+==============
 
 This guide describes how to apply optional linters to a Smithy model.
 
@@ -14,15 +14,45 @@ that is configurable. Linter implementations are found in code. The
 `smithy-linters`_ package in Maven Central contains several linters that
 can be used to apply additional validation to Smithy models.
 
-The following example adds ``smithy-linters`` as a Gradle dependency
-to a ``build.gradle.kts`` file:
+The following example adds ``smithy-linters`` as a dependency to a Smithy project:
 
-.. code-block:: kotlin
+.. tab:: Smithy CLI
 
-    dependencies {
-        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-        implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
-    }
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "...": "...",
+            "maven": {
+                "dependencies": [
+                    "software.amazon.smithy:smithy-linters:__smithy_version__"
+                ]
+            },
+            "...": "..."
+        }
+
+.. tab:: Gradle
+
+    .. tab:: Kotlin
+
+        .. code-block:: kotlin
+            :caption: build.gradle.kts
+
+            dependencies {
+                ...
+                implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
+            }
+
+    .. tab:: Groovy
+
+        .. code-block:: groovy
+            :caption: build.gradle
+
+            dependencies {
+                ...
+                implementation 'software.amazon.smithy:smithy-linters:__smithy_version__'
+            }
+
 
 After the dependency is added and available on the Java classpath, validators
 defined in the package and registered using `Java SPI`_ are available for
@@ -33,7 +63,67 @@ use in Smithy models.
 Linters in ``smithy-linters``
 -----------------------------
 
-The ``smithy-linters`` package defines the following linters.
+For Java developers using Smithy's reference implementation, the following
+linters (except for UnreferencedShape) are defined in the  ``software.amazon.smithy:smithy-linters``
+Maven package.
+
+
+.. _UnreferencedShape:
+
+UnreferencedShape
+=================
+
+Emits when a shape is not connected to the rest of the model. If no
+configuration is provided, the linter will check if a shape is connected to
+the closure of any service shape. A selector can be provided to define a
+custom set of "root" shapes to customize how the linter determines if a shape
+is unreferenced. Shapes that are connected through the :ref:`idref-trait`
+are considered connected.
+
+Rationale
+    Just like unused variables in code, removing unused shapes from a model
+    makes the model easier to maintain.
+
+Default severity
+    ``NOTE``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - rootShapeSelector
+         - ``string``
+         - A :ref:`selector <selectors>` that specifies the root shape(s)
+           from which to detect if other shapes are connected. Defaults
+           to "service", meaning any shape connected to any service shape
+           in the model is considered referenced.
+
+Example:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    metadata validators = [
+        {
+            // Find shapes that aren't connected to service shapes or shapes
+            // marked with the trait, smithy.example#myCustomTrait.
+            name: "UnreferencedShape"
+            configuration: {
+                rootShapeSelector: ":is(service, [trait|smithy.example#myCustomTrait])"
+            }
+        }
+    ]
+
+.. note::
+
+    For backward compatibility reasons, the ``UnreferencedShape`` validator is available
+    in ``software.amazon.smithy:smithy-model`` Maven package and does not require
+    additional dependencies.
 
 
 .. _AbbreviationName:
@@ -87,7 +177,8 @@ CamelCase
 Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
-use lowerCamelCase.
+use *either* lowerCamelCase or UpperCamelCase (depending on which is currently more
+prevalent in each service closure).
 
 Rationale
     Utilizing a consistent camelCase style makes it easier to understand a
@@ -108,7 +199,7 @@ Configuration
        * - memberNames
          - ``string``
          - Specifies the camelCase style of member names. Can be set to either
-           "upper" or "lower" (the default).
+           "upper", "lower", or "auto" (the default).
 
 Example:
 
@@ -641,14 +732,16 @@ Configuration
            indicate that an operation MUST be paginated. A ``DANGER`` event
            is emitted if an operation is found to have an input member name
            that case-insensitively matches one of these member names.
-           Defaults to ``["maxResults", "pageSize", "limit", "nextToken", "pageToken", "token"]``
+           Defaults to ``["maxresults", "maxitems", "pagesize", "limit",
+           "nexttoken", "pagetoken", "token", "marker"]``
        * - outputMembersRequirePagination
          - [``string``]
          - Defines the case-insensitive operation output member names that
            indicate that an operation MUST be paginated. A ``DANGER`` event
            is emitted if an operation is found to have an output member name
            that case-insensitively matches one of these member names.
-           Defaults to ``["nextToken", "pageToken", "token", "marker", "nextPage"]``.
+           Defaults to ``["nexttoken", "pagetoken", "token", "marker", "nextpage", "nextpagetoken", "position", "nextmarker",
+           "paginationtoken", "nextpagemarker"]``.
 
 Example:
 

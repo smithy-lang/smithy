@@ -41,6 +41,11 @@ map MixedMap {
     value: String
 }
 
+map MixedMapRedefineValue {
+    key: String
+    value: String
+}
+
 service MixedService {}
 
 resource MixedResource {}

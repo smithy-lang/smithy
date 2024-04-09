@@ -160,7 +160,8 @@ a model validator:
 
 .. _merging-metadata:
 
-.. rubric:: Metadata conflicts
+Metadata conflicts
+==================
 
 When a conflict occurs between top-level metadata key-value pairs,
 the following conflict resolution logic is used:
@@ -250,7 +251,8 @@ The following example defines a :ref:`trait <traits>` using a node value:
     @length(min: 1, max: 10)
     string MyString
 
-.. rubric:: Node value types
+Node value types
+================
 
 Node values have the same data model as JSON; they consist of the following
 kinds of values:
@@ -285,11 +287,11 @@ Multiple :ref:`model files <model-files>` can be used to create a
 :ref:`semantic model <semantic-model>`. Implementations MUST
 take the following steps when merging two or more model files:
 
-#. Merge the metadata objects of all model files. If top-level metadata
+1. Merge the metadata objects of all model files. If top-level metadata
    key-value pairs conflict, :ref:`merge the metadata <merging-metadata>`
    if possible or fail.
-#. Shapes defined in a single model file are added to the semantic model as-is.
-#. Shapes with the same shape ID defined in multiple model files are
+2. Shapes defined in a single model file are added to the semantic model as-is.
+3. Shapes with the same shape ID defined in multiple model files are
    reconciled using the following rules:
 
    #. All conflicting shapes MUST have the same shape type.
@@ -297,9 +299,12 @@ take the following steps when merging two or more model files:
       the same members that target the same shapes.
    #. Conflicting :ref:`service shape types <service-types>` MUST contain the
       same properties and target the same shapes.
-#. Conflicting traits defined in shape definitions or through
-   :ref:`apply statements <apply-statements>` are reconciled using
-   :ref:`trait conflict resolution <trait-conflict-resolution>`.
+   #. The traits from each shape are treated as if they are defined using
+      an :ref:`apply statement <apply-statements>`: non-conflicting traits are
+      added to the merged shape, and conflicting traits are resolved through
+      step (4).
+4. Conflicting traits defined in shape definitions or through apply statements
+   are reconciled using :ref:`trait conflict resolution <trait-conflict-resolution>`.
 
 
 .. _shapes:
@@ -616,7 +621,8 @@ immediately precede a shape. The following example applies the
 * Refer to the :ref:`JSON AST specification <json-ast>` for a
   description of how traits are applied in the JSON AST.
 
-.. rubric:: Scope of member traits
+Scope of member traits
+----------------------
 
 Traits that target :ref:`members <member>` apply only in the context of
 the member shape and do not affect the shape targeted by the member. Traits
@@ -789,8 +795,8 @@ target from traits and how their values are defined in
       - number | string
       - If a number is provided, it represents Unix epoch seconds with optional
         millisecond precision. If a string is provided, it MUST be a valid
-        :rfc:`3339` string with no UTC offset and optional fractional
-        precision (for example, ``1985-04-12T23:20:50.52Z``).
+        :rfc:`3339` string with optional fractional precision but no UTC offset 
+        (for example, ``1985-04-12T23:20:50.52Z``).
     * - list
       - array
       - Each value in the array MUST be compatible with the targeted member.
@@ -810,10 +816,10 @@ target from traits and how their values are defined in
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
 
-.. rubric:: Constraint traits
+.. important::
 
-Trait values MUST be compatible with the :ref:`required-trait` and any
-associated :doc:`constraint traits <constraint-traits>`.
+    Trait values MUST be compatible with the :ref:`required-trait` and any
+    associated :doc:`constraint traits <constraint-traits>`.
 
 
 .. _trait-shapes:
@@ -878,13 +884,15 @@ The following example defines two custom traits: ``beta`` and
         ipsum: "lorem and ipsum are both required values.")
     string StringShape
 
-.. rubric:: Prelude traits
+Prelude traits
+--------------
 
 When using the IDL, built-in traits defined in the Smithy
 :ref:`prelude <prelude>` namespace, ``smithy.api``, are automatically
 available in every Smithy model and namespace through relative shape IDs.
 
-.. rubric:: References to traits
+References to traits
+--------------------
 
 The only valid reference to a trait is through applying a trait to a
 shape. Members and references within a model MUST NOT target shapes.
@@ -907,7 +915,8 @@ Trait selector
 Value type
     ``structure``
 
-.. rubric:: Trait properties
+Trait properties
+^^^^^^^^^^^^^^^^
 
 ``smithy.api#trait`` is a structure that supports the following members:
 
@@ -1033,7 +1042,7 @@ model can use these rules to detect breaking or risky changes.
           assumed severity.
         - ``DANGER``: The change is very likely backward incompatible.
         - ``WARNING``: The change might be backward incompatible.
-        - ``NOTICE``: The change is likely ok, but should be noted during
+        - ``NOTE``: The change is likely ok, but should be noted during
           things like code reviews.
     * - message
       - ``string``
@@ -1114,7 +1123,8 @@ Is changed to:
 Then the change to the ``foo`` member from "a" to "b" is backward
 incompatible, as is the removal of the ``baz`` member.
 
-.. rubric:: Referring to list members
+Referring to list members
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The JSON pointer can path into the members of a list using a ``member``
 segment.
@@ -1158,7 +1168,8 @@ Is changed to:
 Then the change to the second value of the ``names`` member is
 backward incompatible because it changed from ``Luke`` to ``Chewy``.
 
-.. rubric:: Referring to map members
+Referring to map members
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Members of a map shape can be referenced in a JSON pointer using
 ``key`` and ``value``.
@@ -1247,67 +1258,18 @@ Prelude
 
 All Smithy models automatically include a *prelude*. The prelude defines
 various simple shapes and every trait defined in the core specification.
-When using the :ref:`IDL <idl>`, shapes defined in the prelude can be
-referenced from within any namespace using a relative shape ID.
+When using the :ref:`IDL <idl>`, shapes defined in the prelude that are not
+marked with the :ref:`private-trait` can be referenced from within any
+namespace using a relative shape ID.
 
-.. code-block:: smithy
-    :caption: Public prelude shapes
+.. literalinclude:: ../../../smithy-model/src/main/resources/software/amazon/smithy/model/loader/prelude.smithy
+    :language: smithy
+    :caption: Smithy Prelude
     :name: prelude-shapes
 
-    $version: "2"
-    namespace smithy.api
+.. note::
 
-    string String
-
-    blob Blob
-
-    bigInteger BigInteger
-
-    bigDecimal BigDecimal
-
-    timestamp Timestamp
-
-    document Document
-
-    boolean Boolean
-
-    byte Byte
-
-    short Short
-
-    integer Integer
-
-    long Long
-
-    float Float
-
-    double Double
-
-    /// The single unit type shape, similar to Void and None in other
-    /// languages, used to represent no meaningful value.
-    @unitType
-    structure Unit {}
-
-    @default(false)
-    boolean PrimitiveBoolean
-
-    @default(0)
-    byte PrimitiveByte
-
-    @default(0)
-    short PrimitiveShort
-
-    @default(0)
-    integer PrimitiveInteger
-
-    @default(0)
-    long PrimitiveLong
-
-    @default(0)
-    float PrimitiveFloat
-
-    @default(0)
-    double PrimitiveDouble
+    Private shapes defined in the prelude are subject to change at any time.
 
 
 .. _unit-type:

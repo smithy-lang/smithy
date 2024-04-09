@@ -22,8 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -198,13 +197,13 @@ abstract class LoadOperation implements FromSourceLocation {
     static final class ForwardReference extends LoadOperation {
         final String namespace;
         final String name;
-        private final BiConsumer<ShapeId, Function<ShapeId, ShapeType>> consumer;
+        private final BiFunction<ShapeId, ShapeType, ValidationEvent> receiver;
 
-        ForwardReference(String namespace, String name, BiConsumer<ShapeId, Function<ShapeId, ShapeType>> consumer) {
+        ForwardReference(String namespace, String name, BiFunction<ShapeId, ShapeType, ValidationEvent> receiver) {
             super(Version.UNKNOWN);
             this.namespace = namespace;
             this.name = name;
-            this.consumer = consumer;
+            this.receiver = receiver;
         }
 
         @Override
@@ -212,8 +211,8 @@ abstract class LoadOperation implements FromSourceLocation {
             visitor.forwardReference(this);
         }
 
-        void resolve(ShapeId id, Function<ShapeId, ShapeType> typeProvider) {
-            consumer.accept(id, typeProvider);
+        ValidationEvent resolve(ShapeId id, ShapeType type) {
+            return receiver.apply(id, type);
         }
     }
 

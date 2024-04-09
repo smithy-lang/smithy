@@ -1,0 +1,5 @@
+[WARNING] smithy.example#SayHello: Smoke test case with ID `missing_vendor_params` defined a `vendorParamsShape` but no `vendorParams` | SmokeTestCase
+[WARNING] smithy.example#SayHello: Smoke test case with ID `missing_vendor_params_shape` defined `vendorParams` but no `vendorParamsShape` | SmokeTestCase
+[WARNING] smithy.example#SayHello: smithy.test#smokeTests.extra_vendor_params_member.vendorParams: Invalid structure member `bar` found for `smithy.example#VendorParams` | SmokeTestCase
+[ERROR] smithy.example#SayHello: smithy.test#smokeTests.missing_vendor_params_member.vendorParams: Missing required structure member `foo` for `smithy.example#VendorParams` | SmokeTestCase
+[ERROR] smithy.example#SayHello: smithy.test#smokeTests.wrong_vendor_params_member_type.vendorParams.foo: Expected string value for string shape, `smithy.api#String`; found number value, `1` | SmokeTestCase

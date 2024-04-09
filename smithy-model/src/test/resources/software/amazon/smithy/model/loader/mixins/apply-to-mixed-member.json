@@ -1,0 +1,34 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.example#Common": {
+            "type": "structure",
+            "members": {
+                "description": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "com.example#Thing": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "com.example#Common"
+                }
+            ],
+            "members": {}
+        },
+        "com.example#Thing$description": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#default": "test"
+            }
+        }
+    }
+}

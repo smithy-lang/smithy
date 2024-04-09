@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URISyntaxException;
@@ -87,7 +88,7 @@ public class ValidateCommandTest {
         assertThat(result, containsString("EmitNotes"));
         assertThat(result, containsString("EmitWarnings"));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -95,11 +96,11 @@ public class ValidateCommandTest {
         CliUtils.Result cliResult = runValidationEventsTest(Severity.NOTE);
         String result = cliResult.stdout();
 
-        assertThat(result, not(containsString("EmitSuppressed")));
-        assertThat(result, containsString("EmitNotes"));
-        assertThat(result, containsString("EmitWarnings"));
-        assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, not(containsString("─ EmitSuppressed")));
+        assertThat(result, containsString("─ EmitNotes"));
+        assertThat(result, containsString("─ EmitWarnings"));
+        assertThat(result, containsString("─ EmitDangers"));
+        assertThat(result, containsString("─ HttpLabelTrait"));
     }
 
     @Test
@@ -111,7 +112,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, containsString("EmitWarnings"));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -123,7 +124,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, not(containsString("EmitWarnings")));
         assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     @Test
@@ -135,7 +136,7 @@ public class ValidateCommandTest {
         assertThat(result, not(containsString("EmitNotes")));
         assertThat(result, not(containsString("EmitWarnings")));
         assertThat(result, not(containsString("EmitDangers")));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, containsString("HttpLabelTrait"));
     }
 
     private CliUtils.Result runValidationEventsTest(Severity severity) throws Exception {
@@ -150,5 +151,108 @@ public class ValidateCommandTest {
 
         assertThat(result.code(), not(0));
         assertThat(result.stderr(), containsString("Invalid severity"));
+    }
+
+    @Test
+    public void showAndHideAreExclusive() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--show-validators", "X", "--hide-validators", "Y");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("--show-validators and --hide-validators are mutually exclusive"));
+    }
+
+    @Test
+    public void hideAndShowAreExclusive() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--hide-validators", "Y", "--show-validators", "X");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("--show-validators and --hide-validators are mutually exclusive"));
+    }
+
+    @Test
+    public void validatesEventIdsAreNotEmpty() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--show-validators", "Foo,,Bar");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Invalid validation event ID"));
+    }
+
+    @Test
+    public void validatesEventIdsAreNotBlank() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--show-validators", "Foo, ,Bar");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Invalid validation event ID"));
+    }
+
+    @Test
+    public void validatesEventIdsAreNotLeadingEmpty() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--show-validators", ",Bar");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Invalid validation event ID"));
+    }
+
+    @Test
+    public void canShowEventsById() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--show-validators", "EmitWarnings",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), not(containsString("EmitDangers")));
+        assertThat(result.stdout(), not(containsString("HttpLabelTrait")));
+    }
+
+    @Test
+    public void canHideEventsById() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--hide-validators", "EmitDangers",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), not(containsString("EmitDangers")));
+        assertThat(result.stdout(), containsString("HttpLabelTrait"));
+    }
+
+    @Test
+    public void canOutputCsv() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "csv",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), containsString("suppressionReason"));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), containsString("EmitDangers"));
+        assertThat(result.stdout(), containsString("HttpLabelTrait"));
+        assertThat(result.stdout(), not(containsString("FAILURE"))); // stderr
+
+        String[] lines = result.stdout().split("(\\r\\n|\\r|\\n)");
+        assertThat(lines[0], containsString("severity,id,shape,file,line,column,message,hint,suppressionReason"));
+    }
+
+    @Test
+    public void canOutputText() throws Exception {
+        Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "text",
+                                                    validationEventsModel.toString());
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stdout(), not(containsString("suppressionReason")));
+        assertThat(result.stdout(), containsString("EmitWarnings"));
+        assertThat(result.stdout(), containsString("EmitDangers"));
+        assertThat(result.stdout(), containsString("HttpLabelTrait"));
+        assertThat(result.stdout(), not(containsString("FAILURE"))); // stderr
+    }
+
+    @Test
+    public void outputFormatMustBeValid() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "HELLO");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Unexpected --format: `HELLO`"));
     }
 }

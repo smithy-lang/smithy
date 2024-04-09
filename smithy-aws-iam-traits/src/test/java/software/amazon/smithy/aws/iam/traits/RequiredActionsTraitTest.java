@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 
 public class RequiredActionsTraitTest {
     @Test
+    @SuppressWarnings("deprecation")
     public void loadsFromModel() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())

@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,14 +45,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.JarUtils;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -71,6 +80,8 @@ import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
+import software.amazon.smithy.model.traits.PatternTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
@@ -116,6 +127,51 @@ public class ModelAssemblerTest {
         ValidatedResult<Model> result = new ModelAssembler()
                 .addShape(shape)
                 .addTrait(shape.toShapeId(), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
+    public void addsExplicitTraitsToBuiltModel() {
+        StringShape shape = StringShape.builder().id("ns.foo#Bar").build();
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addModel(Model.assembler().addShape(shape).assemble().unwrap())
+                .addTrait(shape.toShapeId(), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
+    public void addsExplicitTraitsToUnparsedModel() {
+        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel(SourceLocation.NONE.getFilename(), unparsed)
+                .addTrait(ShapeId.from("ns.foo#Bar"), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
+    public void addsExplicitTraitsToParsedDocumentNode() {
+        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addDocumentNode(Node.parse(unparsed, SourceLocation.NONE.getFilename()))
+                .addTrait(ShapeId.from("ns.foo#Bar"), trait)
                 .assemble();
 
         assertThat(result.getValidationEvents(), empty());
@@ -389,6 +445,26 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void metadataIsNotAffectedByTheSourceName() {
+        Model model1 = new ModelAssembler()
+                .addUnparsedModel("a1.smithy", "metadata items = [1]")
+                .addUnparsedModel("a2.smithy", "metadata items = [2]")
+                .addUnparsedModel("a3.smithy", "metadata items = [3]")
+                .assemble()
+                .unwrap();
+        Model model2 = new ModelAssembler()
+                .addUnparsedModel("b1.smithy", "metadata items = [1]")
+                .addUnparsedModel("b2.smithy", "metadata items = [2]")
+                .addUnparsedModel("b3.smithy", "metadata items = [3]")
+                .assemble()
+                .unwrap();
+        List<Number> metadata1 = model1.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
+        List<Number> metadata2 = model2.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
+        assertThat(metadata1, is(metadata2));
+    }
+
+
+    @Test
     public void mergesMultipleModels() {
         Model model = new ModelAssembler()
                 .addImport(getClass().getResource("merges-1.json"))
@@ -467,6 +543,35 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void canSuppressCoreEvents() {
+        Map<String, ObjectNode> loaded = new HashMap<>();
+        ValidatorFactory factory = new ValidatorFactory() {
+            @Override
+            public List<Validator> loadBuiltinValidators() {
+                return ListUtils.of();
+            }
+
+            @Override
+            public Optional<Validator> createValidator(String name, ObjectNode configuration) {
+                loaded.put(name, configuration);
+                return Optional.of(model -> ListUtils.of());
+            }
+        };
+        List<ValidationEvent> collectedEvents = Collections.synchronizedList(new ArrayList<>());
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addImport(getClass().getResource("core-events.smithy"))
+                .validatorFactory(factory)
+                .validationEventListener(collectedEvents::add)
+                .assemble();
+        for (ValidationEvent event : result.getValidationEvents()) {
+            assertEquals(event.getSeverity(), Severity.SUPPRESSED);
+        }
+        for (ValidationEvent event : collectedEvents) {
+            assertEquals(event.getSeverity(), Severity.SUPPRESSED);
+        }
+    }
+
+    @Test
     public void canIgnoreUnknownTraits() {
         String document =
                 "{\"smithy\": \"" + Model.MODEL_VERSION + "\", "
@@ -495,6 +600,27 @@ public class ModelAssemblerTest {
             assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
                        startsWith("jar:file:"));
         }
+    }
+
+    @Test
+    public void canLoadTraitFromJarMultipleTimes() {
+        URL jar = getClass().getResource("jar-traits-import.jar");
+        URL file = getClass().getResource("loads-jar-traits.smithy");
+
+        Supplier<Model> modelSupplier = () -> {
+            URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {jar});
+             return Model.assembler(urlClassLoader)
+                    .discoverModels(urlClassLoader)
+                    .addImport(file)
+                    .assemble()
+                    .unwrap();
+        };
+
+        Model model = modelSupplier.get();
+        assertTrue(model.getShape(ShapeId.from("smithy.test#test")).isPresent());
+
+        Model reloadedModel = modelSupplier.get();
+        assertTrue(reloadedModel.getShape(ShapeId.from("smithy.test#test")).isPresent());
     }
 
     @Test
@@ -1135,5 +1261,159 @@ public class ModelAssemblerTest {
         // These members are considered boxed in 1.0.
         assertThat(fooBam.getAllTraits(), hasKey(BoxTrait.ID));
         assertThat(fooBam.expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+    }
+
+    @Test
+    public void ignoresUnrecognizedFileExtensions() throws URISyntaxException {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("assembler-ignore-unrecognized-files").toURI()))
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.DANGER), empty());
+        assertThat(result.getValidationEvents(Severity.ERROR), empty());
+
+        result.unwrap().expectShape(ShapeId.from("smithy.example#MyString"));
+    }
+
+    @Test
+    public void ignoresUnrecognizedJsonFiles() throws URISyntaxException {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("assembler-ignore-unrecognized-json").toURI()))
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.DANGER), empty());
+        assertThat(result.getValidationEvents(Severity.ERROR), empty());
+
+        result.unwrap().expectShape(ShapeId.from("smithy.example#MyString"));
+    }
+
+    @Test
+    public void failsOnInvalidJarJsonFile() throws URISyntaxException, IOException {
+        Path jar = JarUtils.createJarFromDir(Paths.get(getClass().getResource("assembler-fail-invalid-jar").toURI()));
+
+        ModelImportException e = Assertions.assertThrows(ModelImportException.class, () -> {
+            Model.assembler().addImport(jar).assemble();
+        });
+
+        assertThat(e.getMessage(), containsString("Invalid file referenced by Smithy JAR manifest"));
+    }
+
+    @Test
+    public void doesNotThrowOnInvalidSuppression() {
+        ObjectNode node = Node.objectNode()
+                .withMember("smithy", "1.0")
+                .withMember("metadata", Node.objectNode().withMember("suppressions", "hi!"));
+
+        ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+    }
+
+    @Test
+    public void modelLoadingErrorsAreEmittedToListener() {
+        ObjectNode node = Node.objectNode().withMember("smithy", Node.fromStrings("Hi", "there"));
+        List<ValidationEvent> events = new ArrayList<>();
+
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addDocumentNode(node)
+                .validationEventListener(events::add)
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
+        assertThat(events, equalTo(result.getValidationEvents()));
+    }
+
+    @Test
+    public void exceptionsThrownWhenCreatingTraitsDontCrashSmithy() {
+        String document = "{\n"
+                          + "\"smithy\": \"" + Model.MODEL_VERSION + "\",\n"
+                          + "    \"shapes\": {\n"
+                          + "        \"ns.foo#Test\": {\n"
+                          + "            \"type\": \"string\",\n"
+                          + "            \"traits\": {\"smithy.foo#baz\": true}\n"
+                          + "        }\n"
+                          + "    }\n"
+                          + "}";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
+                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                .traitFactory((traitId, target, value) -> {
+                    throw new RuntimeException("Oops!");
+                })
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+        assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(),
+                   equalTo("Error creating trait `smithy.foo#baz`: Oops!"));
+    }
+
+    @Test
+    public void resolvesDuplicateTraitApplicationsToDuplicateMixedInMembers() throws Exception {
+        String model = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/apply-to-mixed-member.json").toURI()));
+        // Should be able to de-conflict the apply statements when the same model is loaded multiple times.
+        // See https://github.com/smithy-lang/smithy/issues/2004
+        Model.assembler()
+                .addUnparsedModel("test.json", model)
+                .addUnparsedModel("test2.json", model)
+                .addUnparsedModel("test3.json", model)
+                .assemble()
+                .unwrap();
+    }
+
+    @Test
+    public void resolvesDuplicateTraitApplicationsToSameMixedInMember() throws Exception {
+        String modelToApplyTo = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/mixed-member.smithy").toURI()));
+        String modelWithApply = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/member-apply-other-namespace.smithy").toURI()));
+        // Should be able to load when you have multiple identical apply statements to the same mixed in member.
+        // See https://github.com/smithy-lang/smithy/issues/2004
+        Model.assembler()
+                .addUnparsedModel("mixed-member.smithy", modelToApplyTo)
+                .addUnparsedModel("member-apply-1.smithy", modelWithApply)
+                .addUnparsedModel("member-apply-2.smithy", modelWithApply)
+                .assemble()
+                .unwrap();
+    }
+
+    @Test
+    public void handlesMultipleInheritanceForMixinMembers() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/multiple-inheritance-with-introduction.smithy"))
+                .assemble()
+                .unwrap();
+
+        MemberShape shape = model.expectShape(ShapeId.from("com.example#FinalStructure$member"), MemberShape.class);
+
+        assertThat(shape.getMixins(), contains(
+                ShapeId.from("com.example#MixinA$member"),
+                ShapeId.from("com.example#MixinB$member")
+        ));
+        assertThat(shape.getAllTraits().keySet(),
+                containsInAnyOrder(PatternTrait.ID, RequiredTrait.ID, InternalTrait.ID));
+        String actualPattern = shape.expectTrait(PatternTrait.class).getValue();
+        assertThat(actualPattern, equalTo("baz"));
+    }
+
+    @Test
+    public void loadsShapesWhenThereAreUnresolvedMixins() {
+        String modelText = "$version: \"2\"\n"
+                       + "namespace com.foo\n"
+                       + "\n"
+                       + "string Foo\n"
+                       + "@mixin\n"
+                       + "structure Bar {}\n"
+                       + "structure Baz with [Unknown] {}\n";
+        ValidatedResult<Model> result = Model.assembler()
+                .addUnparsedModel("foo.smithy", modelText)
+                .assemble();
+
+        assertThat(result.isBroken(), is(true));
+        assertThat(result.getResult().isPresent(), is(true));
+        Set<ShapeId> fooShapes = result.getResult().get().getShapeIds().stream()
+                .filter(id -> id.getNamespace().equals("com.foo"))
+                .collect(Collectors.toSet());
+        assertThat(fooShapes, containsInAnyOrder(
+                ShapeId.from("com.foo#Foo"),
+                ShapeId.from("com.foo#Bar")
+        ));
     }
 }

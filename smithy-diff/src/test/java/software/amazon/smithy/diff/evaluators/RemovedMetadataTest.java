@@ -32,6 +32,6 @@ public class RemovedMetadataTest {
         Model modelB = Model.assembler().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "RemovedMetadata").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "RemovedMetadata.foo").size(), equalTo(1));
     }
 }

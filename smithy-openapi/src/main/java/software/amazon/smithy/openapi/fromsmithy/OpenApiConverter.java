@@ -189,6 +189,11 @@ public final class OpenApiConverter {
         // Remove mixins from the model.
         model = ModelTransformer.create().flattenAndRemoveMixins(model);
 
+        // Dejjjqconflict errors that share the same status code.
+        if (OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF == config.getOnErrorStatusConflict()) {
+            model = ModelTransformer.create().deconflictErrorsWithSharedStatusCode(model, service);
+        }
+
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 
@@ -330,7 +335,7 @@ public final class OpenApiConverter {
         openapi.components(environment.components.build());
 
         // Add arbitrary extensions if they're configured.
-        openapi.extensions(context.getConfig().getSchemaDocumentExtensions());
+        openapi.getExtensions().putAll(context.getConfig().getSchemaDocumentExtensions().getStringMap());
 
         return mapper.after(context, openapi.build());
     }
@@ -448,6 +453,10 @@ public final class OpenApiConverter {
                 shape.getTrait(DocumentationTrait.class)
                         .map(DocumentationTrait::getValue)
                         .ifPresent(description -> result.getOperation().description(description));
+
+                // The externalDocumentation trait of the operation maps to externalDocs.
+                OpenApiJsonSchemaMapper.getResolvedExternalDocs(shape, context.getConfig())
+                        .ifPresent(result.getOperation()::externalDocs);
 
                 OperationObject builtOperation = result.getOperation().build();
 

@@ -64,11 +64,11 @@ final class ScopedAttributeSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         if (matchesAssertions(shape, context.getVars())) {
             return next.apply(context, shape);
         } else {
-            return true;
+            return Response.CONTINUE;
         }
     }
 
@@ -96,11 +96,17 @@ final class ScopedAttributeSelector implements InternalSelector {
         // Ensure that each assertion matches, and provide them the scope.
         for (Assertion assertion : assertions) {
             AttributeValue lhs = assertion.lhs.create(scope);
+            boolean matchedOneRhs = false;
             for (ScopedFactory factory : assertion.rhs) {
                 AttributeValue rhs = factory.create(scope);
-                if (!assertion.comparator.compare(lhs, rhs, assertion.caseInsensitive)) {
-                    return false;
+                if (assertion.comparator.compare(lhs, rhs, assertion.caseInsensitive)) {
+                    matchedOneRhs = true;
+                    break;
                 }
+            }
+
+            if (!matchedOneRhs) {
+                return false;
             }
         }
 

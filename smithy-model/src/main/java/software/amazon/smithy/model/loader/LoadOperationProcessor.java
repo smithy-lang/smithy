@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 
 final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
@@ -46,14 +48,25 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             TraitFactory traitFactory,
             Model prelude,
             boolean allowUnknownTraits,
-            Consumer<ValidationEvent> validationEventListener
+            Consumer<ValidationEvent> validationEventListener,
+            ValidationEventDecorator decorator
     ) {
         // Emit events as the come in.
         this.events = new ArrayList<ValidationEvent>() {
             @Override
             public boolean add(ValidationEvent e) {
+                e = decorator.decorate(e);
                 validationEventListener.accept(e);
                 return super.add(e);
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends ValidationEvent> validationEvents) {
+                ensureCapacity(size() + validationEvents.size());
+                for (ValidationEvent e : validationEvents) {
+                    add(e);
+                }
+                return true;
             }
         };
 
@@ -142,10 +155,17 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             if (reference.namespace == null) {
                 // Assume smithy.api if there is no namespace. This can happen in metadata and control sections.
                 ShapeId absolute = ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, reference.name);
-                reference.resolve(absolute, shapeMap::getShapeType);
+                resolveReference(reference, absolute, shapeMap.getShapeType(absolute));
             } else {
                 detectAndEmitForwardReference(reference);
             }
+        }
+    }
+
+    private void resolveReference(LoadOperation.ForwardReference reference, ShapeId id, ShapeType type) {
+        ValidationEvent event = reference.resolve(id, type);
+        if (event != null) {
+            events.add(event);
         }
     }
 
@@ -155,14 +175,14 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
         ShapeType inNamespaceType = shapeMap.getShapeType(inNamespace);
 
         if (inNamespaceType != null) {
-            reference.resolve(inNamespace, test -> inNamespaceType);
+            resolveReference(reference, inNamespace, inNamespaceType);
         } else {
             // Try to find a prelude shape by ID if no ID exists in the namespace with this name.
             ShapeId preludeId = ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, reference.name);
             if (prelude != null && prelude.getShapeIds().contains(preludeId)) {
-                reference.resolve(preludeId, test -> prelude.expectShape(test).getType());
+                resolveReference(reference, preludeId, prelude.expectShape(preludeId).getType());
             } else {
-                reference.resolve(inNamespace, test -> null);
+                resolveReference(reference, inNamespace, null);
             }
         }
     }

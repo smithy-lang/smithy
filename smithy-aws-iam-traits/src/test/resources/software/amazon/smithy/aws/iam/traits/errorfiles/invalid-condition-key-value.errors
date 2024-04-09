@@ -1,0 +1,1 @@
+[ERROR] smithy.example#EchoInput$id1: This operation `smithy.example#Echo` scoped within the `smithy.example#MyService` service with member `smithy.example#EchoInput$id1` refers to an undefined condition key `smithy:InvalidConditionKey`. Expected one of the following defined condition keys: [`smithy:ActionContextKey1`] | ConditionKeys

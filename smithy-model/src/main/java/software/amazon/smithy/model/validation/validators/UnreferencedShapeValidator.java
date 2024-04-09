@@ -27,7 +27,11 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Adds a validation note event for each shape in the model that is not
  * connected to a service shape.
+ *
+ * <p>This validator is deprecated and no longer applied by default.
+ * Use the UnreferencedShapeValidator from smithy-linters instead.
  */
+@Deprecated
 public final class UnreferencedShapeValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

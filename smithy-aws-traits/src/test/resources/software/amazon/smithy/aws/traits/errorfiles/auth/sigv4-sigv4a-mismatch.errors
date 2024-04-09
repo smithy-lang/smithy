@@ -1,0 +1,1 @@
+[WARNING] smithy.example#InvalidService: Value for `aws.auth#sigv4$name` "sigv4signingname" and value for `aws.auth#sigv4a$name` "sigv4asigningname" SHOULD match. | SigV4Traits

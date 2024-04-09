@@ -89,6 +89,9 @@ that affect serialization:
         ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
         The "Code" of an ``awsQuery`` error is used by clients to determine
         which type of error was encountered.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
@@ -456,7 +459,7 @@ Trait selector
 Value type
     Annotation trait.
 See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
+    `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
 
 .. code-block:: smithy
 
@@ -546,19 +549,20 @@ The following example defines an error that uses a custom "Code" of
 
 Summary
     When using the :ref:`awsQuery <aws.protocols#awsQuery-trait>` protocol,
-    custom ``Code`` and ``HTTP response code`` values can be defined for an error response via
-    the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>` trait.
+    custom ``Code`` and ``HTTP response code`` values can be defined for an
+    error response via the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`
+    trait.
 
-    The ``awsQueryCompatible`` trait allows services to backward compatibly migrate from ``awsQuery`` to
-    :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>` without removing values defined in the ``awsQueryError`` trait.
+    The ``awsQueryCompatible`` trait allows services to backward compatibly
+    migrate from ``awsQuery`` to :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>`
+    without removing values defined in the ``awsQueryError`` trait.
 
-    This trait adds the ``x-amzn-query-error`` header in the form of ``Code;Fault`` to error responses.
-    ``Code`` is the value defined in the :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`,
-    and ``Fault`` is one of ``Sender`` or ``Receiver``.
-
+    This trait adds the ``x-amzn-query-error`` header in the form of
+    ``Code;Fault`` to error responses. ``Code`` is the value defined in the
+    :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`, and ``Fault`` is
+    one of ``Sender`` or ``Receiver``.
 Trait selector
     ``service [trait|awsJson1_0]``
-
 Value type
     Annotation trait
 
@@ -584,6 +588,11 @@ Value type
         message: String
     }
 
+.. important::
+
+    AWS client implementations of the ``smithy.protocols#rpcv2Cbor`` protocol
+    MUST support the ``aws.protocols#awsQueryCompatible`` trait.
+
 
 .. _awsQuery-compliance-tests:
 
@@ -592,7 +601,9 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
+
+.. include:: error-rename.rst.template

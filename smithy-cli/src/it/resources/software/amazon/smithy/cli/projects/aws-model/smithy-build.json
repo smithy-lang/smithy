@@ -1,0 +1,7 @@
+{
+    "version": "1.0",
+    "maven": {
+        // Normally, this could refer to SMITHY_VERSION, but that doesn't work for pre-release builds.
+        "dependencies": ["software.amazon.smithy:smithy-aws-traits:1.26.0"]
+    }
+}

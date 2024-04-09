@@ -159,25 +159,6 @@ apply JsonLists @httpRequestTests([
         params: {
             stringList: []
         }
-    },
-    {
-          id: "RestJsonListsSerializeNull",
-          documentation: "Serializes null values in lists",
-          protocol: restJson1,
-          method: "PUT",
-          uri: "/JsonLists",
-          body: """
-                {
-                    "sparseStringList": [
-                        null,
-                        "hi"
-                    ]
-                }""",
-          bodyMediaType: "application/json",
-          headers: {"Content-Type": "application/json"},
-          params: {
-              sparseStringList: [null, "hi"]
-          }
     }
 ])
 
@@ -305,31 +286,11 @@ apply JsonLists @httpResponseTests([
         params: {
             stringList: []
         }
-    },
-    {
-          id: "RestJsonListsSerializeNull",
-          documentation: "Serializes null values in sparse lists",
-          protocol: restJson1,
-          code: 200,
-          body: """
-                {
-                    "sparseStringList": [
-                        null,
-                        "hi"
-                    ]
-                }""",
-          bodyMediaType: "application/json",
-          headers: {"Content-Type": "application/json"},
-          params: {
-              sparseStringList: [null, "hi"]
-          }
     }
 ])
 
 structure JsonListsInputOutput {
     stringList: StringList,
-
-    sparseStringList: SparseStringList,
 
     stringSet: StringSet,
 
@@ -359,4 +320,56 @@ structure StructureListMember {
 
     @jsonName("other")
     b: String,
+}
+
+@httpRequestTests([
+    {
+        id: "RestJsonSparseListsSerializeNull"
+        documentation: "Serializes null values in sparse lists"
+        protocol: restJson1
+        method: "PUT"
+        uri: "/SparseJsonLists"
+        body: """
+                {
+                    "sparseStringList": [
+                        null,
+                        "hi"
+                    ]
+                }"""
+        bodyMediaType: "application/json"
+        headers: {"Content-Type": "application/json"}
+        params: {
+            sparseStringList: [null, "hi"]
+        }
+    }
+])
+@httpResponseTests([
+    {
+        id: "RestJsonSparseListsSerializeNull"
+        documentation: "Serializes null values in sparse lists"
+        protocol: restJson1
+        code: 200
+        body: """
+                {
+                    "sparseStringList": [
+                        null,
+                        "hi"
+                    ]
+                }"""
+        bodyMediaType: "application/json"
+        headers: {"Content-Type": "application/json"}
+        params: {
+            sparseStringList: [null, "hi"]
+        }
+    }
+])
+@idempotent
+@http(uri: "/SparseJsonLists", method: "PUT")
+operation SparseJsonLists {
+    input: SparseJsonListsInputOutput
+    output: SparseJsonListsInputOutput
+}
+
+structure SparseJsonListsInputOutput {
+    sparseStringList: SparseStringList
 }

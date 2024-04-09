@@ -34,6 +34,15 @@
                 },
                 {
                     "target": "ns.foo#InvalidNestedInput"
+                },
+                {
+                    "target": "ns.foo#DangerSizeByte"
+                },
+                {
+                    "target": "ns.foo#DangerSizeShort"
+                },
+                {
+                    "target": "ns.foo#DangerSizeLong"
                 }
             ]
         },
@@ -300,6 +309,93 @@
                     "outputToken": "nextToken",
                     "items": "items",
                     "pageSize": "input.pageSize"
+                }
+            }
+        },
+        "ns.foo#DangerSizeByte": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#DangerSizeByteInput"
+            },
+            "output": {
+                "target": "ns.foo#ValidOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                }
+            }
+        },
+        "ns.foo#DangerSizeByteInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "target": "smithy.api#Byte"
+                }
+            }
+        },
+        "ns.foo#DangerSizeShort": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#DangerSizeShortInput"
+            },
+            "output": {
+                "target": "ns.foo#ValidOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                }
+            }
+        },
+        "ns.foo#DangerSizeShortInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "target": "smithy.api#Short"
+                }
+            }
+        },
+        "ns.foo#DangerSizeLong": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#DangerSizeLongInput"
+            },
+            "output": {
+                "target": "ns.foo#ValidOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                }
+            }
+        },
+        "ns.foo#DangerSizeLongInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "target": "smithy.api#Long"
                 }
             }
         },

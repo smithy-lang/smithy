@@ -35,8 +35,12 @@ public final class UnstableTraitValidator extends AbstractValidator {
 
         for (Shape trait : model.getShapesWithTrait(UnstableTrait.class)) {
             for (Shape appliedTo : model.getShapesWithTrait(trait)) {
-                events.add(warning(appliedTo, trait, format(
-                        "This shape applies a trait that is unstable: %s", trait.toShapeId())));
+                events.add(warning(
+                        appliedTo,
+                        appliedTo.findTrait(trait.getId()).get(), // point to the applied trait which for sure exists.
+                        format("This shape applies a trait that is unstable: %s", trait.toShapeId()),
+                        trait.toShapeId().toString())
+                );
             }
         }
 
