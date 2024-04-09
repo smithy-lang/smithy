@@ -78,3 +78,12 @@ If you discover a potential security issue in this project we ask that you notif
 ## Licensing
 
 See the [LICENSE](https://github.com/smithy-lang/smithy/blob/main/LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+
+Please use the following license header in new code files:
+
+```
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+```
