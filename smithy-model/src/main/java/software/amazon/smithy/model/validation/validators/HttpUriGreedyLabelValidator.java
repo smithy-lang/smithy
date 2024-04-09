@@ -32,6 +32,9 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  */
 public class HttpUriGreedyLabelValidator extends AbstractValidator {
 
+    private static final String MULTIPLE_GREEDY_LABELS = "MultipleGreedyLabels";
+    private static final String GREEDY_LABEL_IS_NOT_LAST_LABEL = "GreedyLabelIsNotLastLabel";
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
@@ -49,10 +52,13 @@ public class HttpUriGreedyLabelValidator extends AbstractValidator {
                     for (int j = i + 1; j < segments.size(); j++) {
                         if (segments.get(j).isGreedyLabel()) {
                             events.add(danger(shape, trait,
-                                              "At most one greedy label segment may exist in a pattern: " + pattern));
-                        } else if (segments.get(j).isLabel()) {
+                                              "At most one greedy label segment may exist in a pattern: " + pattern,
+                                              MULTIPLE_GREEDY_LABELS));
+                        }
+                        if (segments.get(j).isLabel()) {
                             events.add(danger(shape, trait,
-                                              "A greedy label must be the last label in its pattern: " + pattern));
+                                              "A greedy label must be the last label in its pattern: " + pattern,
+                                              GREEDY_LABEL_IS_NOT_LAST_LABEL));
                         }
                     }
                 }
