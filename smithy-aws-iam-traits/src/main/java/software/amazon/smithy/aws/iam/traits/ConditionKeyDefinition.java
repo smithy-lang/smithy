@@ -31,7 +31,6 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     private static final String EXTERNAL_DOCUMENTATION = "externalDocumentation";
     private static final String RELATIVE_DOCUMENTATION = "relativeDocumentation";
     private static final String REQUIRED = "required";
-
     private final String type;
     private final String documentation;
     private final String externalDocumentation;
