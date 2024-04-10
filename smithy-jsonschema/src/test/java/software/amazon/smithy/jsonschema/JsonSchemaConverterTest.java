@@ -873,7 +873,7 @@ public class JsonSchemaConverterTest {
         ).build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
-        config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
+        config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT07);
         SchemaDocument document = JsonSchemaConverter.builder()
                 .model(model)
                 .config(config)
@@ -881,6 +881,6 @@ public class JsonSchemaConverterTest {
                 .convertShape(shape);
 
         Schema memberSchema = document.getRootSchema().getProperties().get("member");
-        assertThat(memberSchema.isDeprecated(), equalTo(true));
+        assertThat(memberSchema.isDeprecated(), equalTo(false));
     }
 }
