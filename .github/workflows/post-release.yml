@@ -1,0 +1,29 @@
+# Runs certain jobs after a release is published or on an as-needed basis (manually),
+# e.g. triggering an update to the homebrew-tap when a new version of the CLI is available
+
+name: post-release
+on:
+  release:
+    types: [released]
+  workflow_dispatch: # on button click
+    inputs:
+      version:
+        description: 'The version that was released (e.g. 1.47.0)'
+        required: true
+        type: string
+
+env:
+  version: ${{ github.event.inputs.version || github.ref_name }}
+
+jobs:
+  homebrew-tap:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger homebrew-tap update 
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: autoupdate
+        repo: smithy-lang/homebrew-tap
+        inputs: '{ "version": "${{ env.version }}" }'
+        # Required when using the `repo` option
+        token: "${{ secrets.PR_TOKEN }}"
