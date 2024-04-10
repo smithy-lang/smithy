@@ -54,6 +54,7 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -779,5 +780,30 @@ public class JsonSchemaConverterTest {
         Node expected = Node.parse(
                 IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums-disabled.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void supportsDeprecatedTraitOnAMember() {
+        StringShape string = StringShape.builder().id("smithy.api#String").build();
+        StructureShape shape = StructureShape.builder()
+        .id(ShapeId.from("a.b#C"))
+        .addMember(
+                MemberShape.builder().id(ShapeId.from("a.b#C$member"))
+                .target(string.getId())
+                .addTrait(DeprecatedTrait.builder().message(
+                        "I'm deprecated"
+                ).since("sinceVersion").build()).build()
+        ).build();
+        Model model = Model.builder().addShapes(shape, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        Schema memberSchema = document.getRootSchema().getProperties().get("member");
+        assertThat(memberSchema.isDeprecated(), equalTo(true));
     }
 }

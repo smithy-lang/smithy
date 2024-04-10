@@ -135,29 +135,6 @@ public class OpenApiJsonSchemaMapperTest {
     }
 
     @Test
-    public void supportsDeprecatedTraitOnAMember() {
-        StringShape string = StringShape.builder().id("smithy.api#String").build();
-        StructureShape shape = StructureShape.builder()
-        .id(ShapeId.from("a.b#C"))
-        .addMember(
-                MemberShape.builder().id(ShapeId.from("a.b#C$member"))
-                .target(string.getId())
-                .addTrait(DeprecatedTrait.builder().message(
-                        "I'm deprecated"
-                ).since("sinceVersion").build()).build()
-        ).build();
-        Model model = Model.builder().addShapes(shape, string).build();
-        SchemaDocument document = JsonSchemaConverter.builder()
-                .addMapper(new OpenApiJsonSchemaMapper())
-                .model(model)
-                .build()
-                .convertShape(shape);
-
-        Schema memberSchema =  document.getRootSchema().getProperties().get("member");
-        assertThat(memberSchema.getProperty("deprecated"), equalTo(Optional.of(Node.from(true))));
-    }
-
-    @Test
     public void supportsInt32() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();

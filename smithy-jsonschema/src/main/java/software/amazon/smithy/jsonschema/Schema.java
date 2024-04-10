@@ -428,6 +428,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             result.withMember("writeOnly", Node.from(true));
         }
 
+        if (deprecated) {
+            result.withMember("deprecated", Node.from(true));
+        }
+
         for (Map.Entry<String, ToNode> entry : extensions.entrySet()) {
             result.withMember(entry.getKey(), entry.getValue().toNode());
         }

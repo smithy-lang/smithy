@@ -102,7 +102,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             return member.accept(this);
         } else {
             Schema.Builder refBuilder = Schema.builder().ref(converter.toPointer(member.getTarget()));
-            if (member.hasTrait(DeprecatedTrait.class)) {
+            if (member.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
                 refBuilder.deprecated(true);
             }
             // Wrap the ref and default in an allOf if disableDefaultValues has been not been disabled on config.
@@ -333,7 +333,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
         }
 
-        shape.getTrait(DeprecatedTrait.class).ifPresent(t -> builder.deprecated(true));
+        shape.getTrait(DeprecatedTrait.class)
+          .filter(t -> getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07)
+          .ifPresent(t -> builder.deprecated(true));
 
         return builder;
     }
@@ -356,5 +358,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         return builder.build();
+    }
+
+    private JsonSchemaVersion getJsonSchemaVersion() {
+        return converter.getConfig().getJsonSchemaVersion();
     }
 }
