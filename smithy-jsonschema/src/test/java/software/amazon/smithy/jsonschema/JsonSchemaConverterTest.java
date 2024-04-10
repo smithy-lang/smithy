@@ -783,6 +783,32 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void supportsDeprecatedTraitOnAStruct() {
+        StringShape string = StringShape.builder().id("smithy.api#String").build();
+        StructureShape shape = StructureShape.builder()
+        .id(ShapeId.from("a.b#C"))
+        .addMember(
+                MemberShape.builder().id(ShapeId.from("a.b#C$member"))
+                .target(string.getId())
+                .build()
+        )
+        .addTrait(DeprecatedTrait.builder().message(
+                        "I'm deprecated"
+                ).since("sinceVersion").build())
+        .build();
+        Model model = Model.builder().addShapes(shape, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        assertThat(document.getRootSchema().isDeprecated(), equalTo(true));
+    }
+
+    @Test
     public void supportsDeprecatedTraitOnAMember() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
