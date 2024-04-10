@@ -333,9 +333,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
         }
 
-        shape.getTrait(DeprecatedTrait.class)
-          .filter(t -> getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07)
-          .ifPresent(t -> builder.deprecated(true));
+        if (shape.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
+            builder.deprecated(true);
+        }
 
         return builder;
     }
