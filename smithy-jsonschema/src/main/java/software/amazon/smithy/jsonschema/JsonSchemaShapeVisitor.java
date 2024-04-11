@@ -18,6 +18,7 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -278,9 +279,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the updated schema builder.
      */
     private Schema.Builder updateBuilder(Shape shape, Schema.Builder builder) {
-        shape.getMemberTrait(model, DocumentationTrait.class)
-                .map(DocumentationTrait::getValue)
-                .ifPresent(builder::description);
+        descriptionMessage(shape).ifPresent(builder::description);
 
         shape.getTrait(TitleTrait.class)
                 .map(TitleTrait::getValue)
@@ -338,6 +337,24 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         return builder;
+    }
+
+    private Optional<String> descriptionMessage(Shape shape) {
+        StringBuilder builder = new StringBuilder();
+        shape
+            .getTrait(DocumentationTrait.class)
+            .ifPresent(trait ->
+                builder.append(trait.getValue())
+            );
+        shape
+            .getTrait(DeprecatedTrait.class)
+            .ifPresent(trait ->
+                builder
+                    .append("\n")
+                    .append(trait.getDeprecatedDescription(shape.getType()))
+            );
+        String description = builder.toString().trim();
+        return description.isEmpty() ? Optional.empty() : Optional.of(description);
     }
 
     /**

@@ -19,7 +19,8 @@
   },
   "properties": {
     "FooDeprecatedMutableProperty": {
-      "type": "string"
+      "type": "string",
+      "description": "This shape is deprecated: Use the `fooValidFullyMutableProperty` property."
     },
     "FooId": {
       "type": "string"
