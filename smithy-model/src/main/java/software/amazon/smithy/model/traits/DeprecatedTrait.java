@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;

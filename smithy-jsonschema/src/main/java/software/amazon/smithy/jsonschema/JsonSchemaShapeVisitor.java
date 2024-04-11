@@ -334,9 +334,19 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     private Optional<String> descriptionMessage(Shape shape) {
         StringBuilder builder = new StringBuilder();
-        shape.getTrait(DocumentationTrait.class).ifPresent(trait -> builder.append(trait.getValue());
-        shape.getTrait(DeprecatedTrait.class).ifPresent(trait -> builder.append("\n").append(trait.getValue());
-        return builder.toString().trim();
+        shape
+            .getTrait(DocumentationTrait.class)
+            .ifPresent(trait ->
+                builder.append(trait.getValue())
+            );
+        shape
+            .getTrait(DeprecatedTrait.class)
+            .ifPresent(trait ->
+                builder
+                    .append("\n")
+                    .append(trait.getDeprecatedDescription(shape.getType()))
+            );
+        return builder.isEmpty() ? Optional.empty() : Optional.of(builder.toString().trim());
     }
 
     /**

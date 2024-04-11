@@ -60,13 +60,13 @@ public class DeprecatedTraitTest {
     @Test
     public void returnDescriptionWhenMessageSet() {
         DeprecatedTrait deprecatedTrait = DeprecatedTrait.builder().message("Use X shape instead.").build();
-        assertThat(deprecatedTrait.getDeprecatedDescription(ShapeType.STRING), equalTo("Use X shape instead."));
+        assertThat(deprecatedTrait.getDeprecatedDescription(ShapeType.STRING), equalTo("This shape is deprecated: Use X shape instead."));
     }
 
     @Test
     public void returnDescriptionWhenSinceSet() {
         DeprecatedTrait deprecatedTrait = DeprecatedTrait.builder().since("2020-01-01").build();
-        assertThat(deprecatedTrait.getDeprecatedDescription(ShapeType.STRING), equalTo("This shape is deprecated since 2020-01-01"));
+        assertThat(deprecatedTrait.getDeprecatedDescription(ShapeType.STRING), equalTo("This shape is deprecated since 2020-01-01."));
     }
 
     @Test
