@@ -102,6 +102,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     private final boolean writeOnly;
     private final String comment;
     private final Node examples;
+    private final boolean deprecated;
 
     private final String contentEncoding;
     private final String contentMediaType;
@@ -153,6 +154,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         writeOnly = builder.writeOnly;
         comment = builder.comment;
         examples = builder.examples;
+        deprecated = builder.deprecated;
 
         contentEncoding = builder.contentEncoding;
         contentMediaType = builder.contentMediaType;
@@ -312,6 +314,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         return Optional.ofNullable(examples);
     }
 
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
     public Optional<String> getContentEncoding() {
         return Optional.ofNullable(contentEncoding);
     }
@@ -364,6 +370,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
                 .withOptionalMember("comment", getComment().map(Node::from))
                 .withOptionalMember("examples", getExamples())
+                .withOptionalMember("deprecated", this.deprecated ? Optional.of(Node.from(true)) : Optional.empty())
                 .withOptionalMember("title", getTitle().map(Node::from))
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withOptionalMember("format", getFormat().map(Node::from))
@@ -419,6 +426,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         if (writeOnly) {
             result.withMember("writeOnly", Node.from(true));
+        }
+
+        if (deprecated) {
+            result.withMember("deprecated", Node.from(true));
         }
 
         for (Map.Entry<String, ToNode> entry : extensions.entrySet()) {
@@ -540,6 +551,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 .writeOnly(writeOnly)
                 .comment(comment)
                 .examples(examples)
+                .deprecated(deprecated)
 
                 .contentEncoding(contentEncoding)
                 .contentMediaType(contentMediaType);
@@ -611,6 +623,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         private boolean writeOnly;
         private String comment;
         private Node examples;
+        private boolean deprecated;
 
         private String contentEncoding;
         private String contentMediaType;
@@ -853,6 +866,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             return this;
         }
 
+        public Builder deprecated(boolean deprecated) {
+            this.deprecated = deprecated;
+            return this;
+        }
+
         public Builder extensions(Map<String, Node> extensions) {
             this.extensions.clear();
             this.extensions.putAll(extensions);
@@ -945,6 +963,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     return this.contentMediaType(null);
                 case "examples":
                     return this.examples(null);
+                case "deprecated":
+                    return this.deprecated(false);
                 default:
                     LOGGER.warning("Unknown JSON Schema config 'disable' property: " + propertyName);
                     return this;

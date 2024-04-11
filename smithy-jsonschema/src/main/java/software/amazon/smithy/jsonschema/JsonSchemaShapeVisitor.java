@@ -43,6 +43,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
@@ -100,13 +101,16 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         if (converter.isInlined(member)) {
             return member.accept(this);
         } else {
+            Schema.Builder refBuilder = Schema.builder().ref(converter.toPointer(member.getTarget()));
+            if (member.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
+                refBuilder.deprecated(true);
+            }
             // Wrap the ref and default in an allOf if disableDefaultValues has been not been disabled on config.
             if (member.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
-                Schema ref = Schema.builder().ref(converter.toPointer(member.getTarget())).build();
                 Schema def = Schema.builder().defaultValue(member.expectTrait(DefaultTrait.class).toNode()).build();
-                return Schema.builder().allOf(ListUtils.of(ref, def)).build();
+                return Schema.builder().allOf(ListUtils.of(refBuilder.build(), def)).build();
             }
-            return Schema.builder().ref(converter.toPointer(member.getTarget())).build();
+            return refBuilder.build();
         }
     }
 
@@ -329,6 +333,10 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
         }
 
+        if (shape.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
+            builder.deprecated(true);
+        }
+
         return builder;
     }
 
@@ -350,5 +358,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         return builder.build();
+    }
+
+    private JsonSchemaVersion getJsonSchemaVersion() {
+        return converter.getConfig().getJsonSchemaVersion();
     }
 }
