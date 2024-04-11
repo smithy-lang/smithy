@@ -218,7 +218,7 @@ structure protocolDefinition {
     traits: TraitShapeIdList
 
     /// Set to true if inline documents are not supported by this protocol.
-    @deprecated(message: "Use the `@constrainShapes` trait instead")
+    @deprecated(message: "Use the `@traitValidators` trait instead")
     noInlineDocumentSupport: Boolean
 }
 
