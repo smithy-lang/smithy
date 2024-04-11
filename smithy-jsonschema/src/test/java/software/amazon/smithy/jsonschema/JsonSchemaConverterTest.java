@@ -838,14 +838,16 @@ public class JsonSchemaConverterTest {
     public void supportsDeprecatedTraitOnAMember() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
-        .id(ShapeId.from("a.b#C"))
-        .addMember(
-                MemberShape.builder().id(ShapeId.from("a.b#C$member"))
-                .target(string.getId())
-                .addTrait(DeprecatedTrait.builder().message(
-                        "I'm deprecated"
-                ).since("sinceVersion").build()).build()
-        ).build();
+                .id(ShapeId.from("a.b#C"))
+                .addMember(MemberShape.builder()
+                        .id(ShapeId.from("a.b#C$member"))
+                        .target(string.getId())
+                        .addTrait(DeprecatedTrait.builder()
+                                .message("I'm deprecated")
+                                .since("sinceVersion")
+                                .build())
+                        .build())
+                .build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
