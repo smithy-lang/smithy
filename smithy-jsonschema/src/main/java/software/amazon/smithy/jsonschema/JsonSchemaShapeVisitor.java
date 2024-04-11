@@ -333,11 +333,10 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     }
 
     private Optional<String> descriptionMessage(Shape shape) {
-        String deprecatedMessageSuffix = shape.getTrait(DeprecatedTrait.class)
-                .map(deprecatedTrait -> deprecatedTrait.getDeprecatedDescription(shape.getType()))
-                .map(message -> "\n" + message).orElse("");
-        return shape.getTrait(DocumentationTrait.class).map(DocumentationTrait::getValue)
-                .map(documentation -> documentation + deprecatedMessageSuffix);
+        StringBuilder builder = new StringBuilder();
+        shape.getTrait(DocumentationTrait.class).ifPresent(trait -> builder.append(trait.getValue());
+        shape.getTrait(DeprecatedTrait.class).ifPresent(trait -> builder.append("\n").append(trait.getValue());
+        return builder.toString().trim();
     }
 
     /**
