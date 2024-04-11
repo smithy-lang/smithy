@@ -75,14 +75,17 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
     }
 
     public String getDeprecatedDescription(ShapeType shapeType) {
-        String shapeTypeString = shapeType == ShapeType.OPERATION ? "operation" : "shape";
-        if (Objects.isNull(this.since)) {
-            return this.message != null ? this.message : "This " + shapeTypeString + " is deprecated.";
-        } else if (Objects.isNull(this.message)) {
-            return "This " + shapeTypeString + " is deprecated since " + this.since;
-        } else {
-            return "This " + shapeTypeString + " is deprecated since " + this.since + ": " + this.message;
+        StringBuilder builder = new StringBuilder("This ");
+        builder.append(shapeType == ShapeType.OPERATION ? "operation" : "shape").append(" is deprecated");
+        if (since != null) {
+            builder.append(" since ").append(since);
         }
+        if (message != null) {
+            builder.append(": ").append(message);
+        } else {
+            builder.append(".");
+        }
+        return builder.toString();
     }
 
     @Override
