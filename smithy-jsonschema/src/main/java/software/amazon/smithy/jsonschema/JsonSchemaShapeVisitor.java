@@ -346,7 +346,8 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                     .append("\n")
                     .append(trait.getDeprecatedDescription(shape.getType()))
             );
-        return builder.isEmpty() ? Optional.empty() : Optional.of(builder.toString().trim());
+        String description = builder.toString().trim();
+        return description.isEmpty() ? Optional.empty() : Optional.of(description);
     }
 
     /**
