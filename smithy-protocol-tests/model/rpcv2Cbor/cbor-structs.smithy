@@ -13,9 +13,11 @@ use smithy.test#httpResponseTests
         documentation: "Serializes simple scalar properties",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -42,9 +44,11 @@ use smithy.test#httpResponseTests
             a key encoded using an indefinite length string.""",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -73,9 +77,11 @@ use smithy.test#httpResponseTests
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             stringValue: null
         },
@@ -91,9 +97,11 @@ use smithy.test#httpResponseTests
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {},
         appliesTo: "server"
     },
@@ -103,9 +111,11 @@ use smithy.test#httpResponseTests
         documentation: "Supports handling NaN float values.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -121,9 +131,11 @@ use smithy.test#httpResponseTests
         documentation: "Supports handling Infinity float values.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -139,9 +151,11 @@ use smithy.test#httpResponseTests
         documentation: "Supports handling Infinity float values.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -157,9 +171,11 @@ use smithy.test#httpResponseTests
         documentation: "The server should be capable of deserializing indefinite length text strings.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -175,9 +191,11 @@ use smithy.test#httpResponseTests
         documentation: "The server should be capable of deserializing indefinite length byte strings.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -193,9 +211,11 @@ use smithy.test#httpResponseTests
         documentation: "Supports upcasting from a smaller byte representation of the same data type.",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -218,9 +238,11 @@ use smithy.test#httpResponseTests
             generated against an older Smithy model.""",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         }
+        requireHeaders: [
+            "Content-Length"
+        ],
         method: "POST",
         bodyMediaType: "application/cbor",
         uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties",
@@ -431,9 +453,11 @@ apply RecursiveShapes @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 foo: "Foo1",
