@@ -29,9 +29,11 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "denseStructMap": {
                 "foo": {
@@ -53,9 +55,11 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "denseNumberMap": {
                 "x": 0
@@ -75,9 +79,11 @@ apply RpcV2CborDenseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "denseSetMap": {
                 "x": [],
@@ -217,9 +223,11 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "sparseStructMap": {
                 "foo": {
@@ -241,9 +249,11 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "sparseBooleanMap": {
                 "x": null
@@ -269,9 +279,11 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "sparseSetMap": {
                 "x": [],
@@ -289,9 +301,11 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "sparseSetMap": {
                 "x": [],
@@ -310,9 +324,11 @@ apply RpcV2CborSparseMaps @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "sparseNumberMap": {
                 "x": 0

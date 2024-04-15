@@ -14,7 +14,6 @@ use smithy.test#httpResponseTests
         documentation: "Body is empty and no Content-Type header if no input",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
         },
         forbidHeaders: [
             "Content-Type",
@@ -109,9 +108,11 @@ operation NoInputOutput {}
         documentation: "When Input structure is empty we write CBOR equivalent of {}",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         forbidHeaders: [
             "X-Amz-Target"
         ]
@@ -124,6 +125,22 @@ operation NoInputOutput {}
         id: "empty_input_no_body",
         protocol: rpcv2Cbor,
         documentation: "When Input structure is empty the server should accept an empty body",
+        headers: {
+            "smithy-protocol": "rpc-v2-cbor",
+            "Content-Type": "application/cbor"
+        },
+        method: "POST",
+        uri: "/service/RpcV2Protocol/operation/EmptyInputOutput",
+        bodyMediaType: "application/cbor",
+        body: "",
+        appliesTo: "server"
+    },
+    {
+        id: "empty_input_no_body_has_accept",
+        protocol: rpcv2Cbor,
+        documentation: """
+            When input structure, is empty the server should accept an empty body
+            even if the Accept header is set.""",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
             "Accept": "application/cbor",
@@ -175,7 +192,6 @@ operation EmptyInputOutput {
         documentation: "When input is empty we write CBOR equivalent of {}",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
         forbidHeaders: [

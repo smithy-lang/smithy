@@ -18,9 +18,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         bodyMediaType: "application/cbor"
         body: "v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JDYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX7P/AAAAAAAABqZGVmYXVsdE1hcKBrZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JAaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfsAAAAAAAAAAP8="
         params: {
@@ -38,9 +40,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v/8="
         params: {
         }
@@ -56,9 +60,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v2hkZWZhdWx0c7dtZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iQmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPpAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQJrZW1wdHlTdHJpbmdjZm9vbGZhbHNlQm9vbGVhbvVpZW1wdHlCbG9iQmhpaHplcm9CeXRlAWl6ZXJvU2hvcnQBa3plcm9JbnRlZ2VyAWh6ZXJvTG9uZwFpemVyb0Zsb2F0+j+AAABqemVyb0RvdWJsZfs/8AAAAAAAAP8="
         params: {
             defaults: {
@@ -99,9 +105,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v2hkZWZhdWx0c6D/"
         params: {
             defaults: {
@@ -144,9 +152,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v290b3BMZXZlbERlZmF1bHRiaGl0b3RoZXJUb3BMZXZlbERlZmF1bHQA/w=="
         params: {
             topLevelDefault: "hi",
@@ -164,9 +174,11 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v3ZjbGllbnRPcHRpb25hbERlZmF1bHRzoP8="
         params: {
             clientOptionalDefaults: {}

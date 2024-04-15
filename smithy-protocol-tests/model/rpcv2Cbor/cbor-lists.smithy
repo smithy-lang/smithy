@@ -45,9 +45,11 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             "stringList": [
                 "foo",
@@ -114,9 +116,11 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             stringList: []
         }
@@ -132,9 +136,11 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             stringList: []
         }
@@ -149,9 +155,11 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             stringList: ["An example indefinite string, which will be chunked, on each comma", "Another example indefinite string with only one chunk", "This is a plain string"]
         }
@@ -167,9 +175,11 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             stringList: ["An example indefinite string, which will be chunked, on each comma", "Another example indefinite string with only one chunk", "This is a plain string"]
         },
@@ -333,9 +343,11 @@ structure StructureListMember {
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v29zcGFyc2VTdHJpbmdNYXC/Y2Zvb/b//w=="
         params: {
             "sparseStringMap": {
@@ -352,9 +364,11 @@ structure StructureListMember {
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: "v3BzcGFyc2VTdHJpbmdMaXN0n/b//w=="
         params: {
             "sparseStringList": [
