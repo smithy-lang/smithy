@@ -348,9 +348,15 @@ final class LoaderShapeMap {
                                                        previous.getSourceLocation(), joiner.toString()));
                 return false;
             } else if (!LoaderUtils.isSameLocation(built, previous)) {
-                LOGGER.warning(() -> "Ignoring duplicate but equivalent shape definition: " + id
-                                     + " defined at " + built.getSourceLocation() + " and "
-                                     + previous.getSourceLocation());
+                events.add(ValidationEvent.builder()
+                        .id(Validator.MODEL_ERROR + ".IgnoredDuplicateDefinition")
+                        .severity(Severity.NOTE)
+                        .sourceLocation(previous.getSourceLocation())
+                        .shapeId(id)
+                        .message("Ignoring duplicate but equivalent shape definition: " + id
+                                + " defined at " + built.getSourceLocation() + " and "
+                                + previous.getSourceLocation())
+                        .build());
             }
         }
         return true;
