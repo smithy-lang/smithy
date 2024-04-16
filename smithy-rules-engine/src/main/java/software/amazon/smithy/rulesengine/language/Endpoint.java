@@ -12,8 +12,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -30,6 +33,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -42,6 +46,8 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
     private static final String URL = "url";
     private static final String PROPERTIES = "properties";
     private static final String HEADERS = "headers";
+    private static final Identifier ID_AUTH_SCHEMES = Identifier.of("authSchemes");
+    private static final Identifier ID_NAME = Identifier.of("name");
 
     private final Map<String, List<Expression>> headers;
     private final Map<Identifier, Literal> properties;
@@ -57,12 +63,12 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
         List<Literal> authSchemes = new ArrayList<>();
         for (Map.Entry<Identifier, Map<Identifier, Literal>> authScheme : builder.authSchemes.get().entrySet()) {
             Map<Identifier, Literal> base = new TreeMap<>(Comparator.comparing(Identifier::toString));
-            base.put(Identifier.of("name"), Literal.of(authScheme.getKey().toString()));
+            base.put(ID_NAME, Literal.of(authScheme.getKey().toString()));
             base.putAll(authScheme.getValue());
             authSchemes.add(Literal.recordLiteral(base));
         }
         if (!authSchemes.isEmpty()) {
-            builder.putProperty(Identifier.of("authSchemes"), Literal.tupleLiteral(authSchemes));
+            builder.putProperty(ID_AUTH_SCHEMES, Literal.tupleLiteral(authSchemes));
         }
 
         this.properties = builder.properties.copy();
@@ -137,6 +143,30 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
      */
     public Map<Identifier, Literal> getProperties() {
         return properties;
+    }
+
+    /**
+     * Get the endpoint `authSchemes` property as a map of {@link Identifier} to {@link Literal} values.
+     *
+     * @return the endpoint `authSchemes` property map
+     */
+    @SmithyInternalApi
+    public List<Map<Identifier, Literal>> getEndpointAuthSchemes() {
+        return Optional.ofNullable(getProperties().get(ID_AUTH_SCHEMES))
+            .map(a -> a.asTupleLiteral().get().stream()
+                .map(l -> l.asRecordLiteral().get())
+                .collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
+    }
+
+    /**
+     * Get the endpoint auth scheme `name` property.
+     *
+     * @return the name of the endpoint auth scheme
+     */
+    @SmithyInternalApi
+    public static String getEndpointAuthSchemeName(Map<Identifier, Literal> authScheme) {
+        return authScheme.get(ID_NAME).asStringLiteral().get().expectLiteral();
     }
 
     @Override
