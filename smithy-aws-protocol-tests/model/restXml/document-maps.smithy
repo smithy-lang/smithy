@@ -650,6 +650,151 @@ apply NestedXmlMaps @httpResponseTests([
     },
 ])
 
+/// Nested Xml Maps with key/values with @xmlName
+@http(uri: "/NestedXmlMapWithXmlName", method: "POST")
+operation NestedXmlMapWithXmlName {
+    input: NestedXmlMapWithXmlNameInputOutput
+    output: NestedXmlMapWithXmlNameInputOutput
+}
+
+structure NestedXmlMapWithXmlNameInputOutput {
+    nestedXmlMapWithXmlNameMap: NestedXmlMapWithXmlNameMap
+}
+
+map NestedXmlMapWithXmlNameMap{
+    @xmlName("OuterKey")
+    key: String
+    
+    value: NestedXmlMapWithXmlNameInnerMap
+}
+
+map NestedXmlMapWithXmlNameInnerMap{
+    @xmlName("InnerKey")
+    key: String
+    
+    @xmlName("InnerValue")
+    value: String
+}
+
+apply NestedXmlMapWithXmlName @httpRequestTests([
+    {
+        id : "NestedXmlMapWithXmlNameSerializes",
+        documentation : "Serializes nested XML Maps in requests that have xmlName on members",
+        protocol: restXml,
+        method: "POST",
+        uri: "/NestedXmlMapWithXmlName",
+        body: """
+            <NestedXmlMapWithXmlNameRequest>
+                <nestedXmlMapWithXmlNameMap>
+                    <entry>
+                        <OuterKey>foo</OuterKey>
+                        <value>
+                            <entry>
+                                <InnerKey>bar</InnerKey>
+                                <InnerValue>Baz</InnerValue>
+                            </entry>
+                            <entry>
+                                <InnerKey>fizz</InnerKey>
+                                <InnerValue>Buzz</InnerValue>
+                            </entry>
+                        </value>
+                    </entry>
+                    <entry>
+                        <OuterKey>qux</OuterKey>
+                        <value>
+                            <entry>
+                                <InnerKey>foobar</InnerKey>
+                                <InnerValue>Bar</InnerValue>
+                            </entry>
+                            <entry>
+                                <InnerKey>fizzbuzz</InnerKey>
+                                <InnerValue>Buzz</InnerValue>
+                            </entry>
+                        </value>
+                    </entry>
+                </nestedXmlMapWithXmlNameMap>
+            </NestedXmlMapWithXmlNameRequest>
+        """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            nestedXmlMapWithXmlNameMap: {
+                foo: {
+                    bar: "Baz",
+                    fizz: "Buzz"
+                },
+                qux: {
+                    foobar: "Bar",
+                    fizzbuzz: "Buzz"
+                }
+            }
+        }
+    }
+
+
+
+
+])
+
+apply NestedXmlMapWithXmlName @httpResponseTests([
+    {
+        id: "NestedXmlMapWithXmlNameDeserializes",
+        documentation: "Serializes nested XML maps in responses that have xmlName on members",
+        protocol: restXml,
+        code: 200,
+        body: """
+            <NestedXmlMapWithXmlNameResponse>
+                <nestedXmlMapWithXmlNameMap>
+                    <entry>
+                        <OuterKey>foo</OuterKey>
+                        <value>
+                            <entry>
+                                <InnerKey>bar</InnerKey>
+                                <InnerValue>Baz</InnerValue>
+                            </entry>
+                            <entry>
+                                <InnerKey>fizz</InnerKey>
+                                <InnerValue>Buzz</InnerValue>
+                            </entry>
+                        </value>
+                    </entry>
+                    <entry>
+                        <OuterKey>qux</OuterKey>
+                        <value>
+                            <entry>
+                                <InnerKey>foobar</InnerKey>
+                                <InnerValue>Bar</InnerValue>
+                            </entry>
+                            <entry>
+                                <InnerKey>fizzbuzz</InnerKey>
+                                <InnerValue>Buzz</InnerValue>
+                            </entry>
+                        </value>
+                    </entry>
+                </nestedXmlMapWithXmlNameMap>
+            </NestedXmlMapWithXmlNameResponse>
+        """
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        }
+        params: {
+            nestedXmlMapWithXmlNameMap: {
+                foo: {
+                    bar: "Baz",
+                    fizz: "Buzz"
+                },
+                qux: {
+                    foobar: "Bar",
+                    fizzbuzz: "Buzz"
+                }
+            }
+        }
+    }
+])
+
 /// Maps with @xmlNamespace and @xmlName
 @http(uri: "/XmlMapWithXmlNamespace", method: "POST")
 operation XmlMapWithXmlNamespace {
