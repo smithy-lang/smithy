@@ -11,6 +11,8 @@ ext {
 }
 
 dependencies {
+    api project(":smithy-aws-traits")
+    api project(":smithy-diff")
     api project(":smithy-rules-engine")
     api project(":smithy-model")
     api project(":smithy-utils")

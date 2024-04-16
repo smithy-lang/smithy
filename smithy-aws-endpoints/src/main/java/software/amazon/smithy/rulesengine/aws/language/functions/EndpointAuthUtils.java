@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import software.amazon.smithy.aws.traits.auth.SigV4ATrait;
+import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -26,15 +28,19 @@ import software.amazon.smithy.utils.MapUtils;
  * Utilities for constructing and validating AWS-specific authentication components for rule-sets.
  */
 public final class EndpointAuthUtils {
-    private static final String SIGV_4 = "sigv4";
-    private static final String SIG_V4A = "sigv4a";
+    private static final String SIGV4 = "sigv4";
+    private static final String SIGV4_SHAPE_ID = SigV4Trait.ID.toString();
+    private static final String SIGV4_SUB = "sigv4-";
+    private static final String SIGV4_S3EXPRESS = "sigv4-s3express";
+    private static final String SIGV4A = "sigv4a";
+    private static final String SIGV4A_SHAPE_ID = SigV4ATrait.ID.toString();
     private static final String SIGNING_NAME = "signingName";
     private static final String SIGNING_REGION = "signingRegion";
     private static final String SIGNING_REGION_SET = "signingRegionSet";
 
-    private static final Identifier ID_SIGNING_NAME = Identifier.of("signingName");
-    private static final Identifier ID_SIGNING_REGION = Identifier.of("signingRegion");
-    private static final Identifier ID_SIGNING_REGION_SET = Identifier.of("signingRegionSet");
+    private static final Identifier ID_SIGNING_NAME = Identifier.of(SIGNING_NAME);
+    private static final Identifier ID_SIGNING_REGION = Identifier.of(SIGNING_REGION);
+    private static final Identifier ID_SIGNING_REGION_SET = Identifier.of(SIGNING_REGION_SET);
     private static final Identifier ID_DISABLE_DOUBLE_ENCODING = Identifier.of("disableDoubleEncoding");
     private static final Identifier ID_DISABLE_NORMALIZE_PATH = Identifier.of("disableNormalizePath");
 
@@ -49,7 +55,7 @@ public final class EndpointAuthUtils {
      * @return the updated endpoint builder.
      */
     public static Endpoint.Builder sigv4(Endpoint.Builder builder, Literal signingRegion, Literal signingService) {
-        return builder.addAuthScheme(SIGV_4, MapUtils.of(
+        return builder.addAuthScheme(SIGV4, MapUtils.of(
                 SIGNING_NAME, signingService,
                 SIGNING_REGION, signingRegion));
     }
@@ -67,9 +73,41 @@ public final class EndpointAuthUtils {
             List<Literal> signingRegionSet,
             Literal signingService
     ) {
-        return builder.addAuthScheme(SIG_V4A, MapUtils.of(
+        return builder.addAuthScheme(SIGV4A, MapUtils.of(
                 SIGNING_NAME, signingService,
                 SIGNING_REGION_SET, Literal.tupleLiteral(signingRegionSet)));
+    }
+
+    /**
+     * Returns if a given auth scheme is equivalent to {@code aws.auth#sigv4}.
+     *
+     * @param authScheme name of the auth scheme.
+     * @return whether the auth scheme is equivalent to {@code aws.auth#sigv4}.
+     */
+    public static boolean isSigV4EquivalentAuthScheme(String authScheme) {
+        if (authScheme.equals(SIGV4) || authScheme.equals(SIGV4_SHAPE_ID)) {
+            return true;
+        }
+        if (authScheme.startsWith(SIGV4_SUB) && !authScheme.equals(SIGV4_S3EXPRESS)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns if a given auth scheme is equivalent to {@code aws.auth#sigv4a}.
+     *
+     * @param authScheme name of the auth scheme.
+     * @return whether the auth scheme is equivalent to {@code aws.auth#sigv4a}.
+     */
+    public static boolean isSigV4AEquivalentAuthScheme(String authScheme) {
+        if (authScheme.equals(SIGV4A) || authScheme.equals(SIGV4A_SHAPE_ID)) {
+            return true;
+        }
+        if (authScheme.equals(SIGV4_S3EXPRESS)) {
+            return true;
+        }
+        return false;
     }
 
     static final class SigV4SchemeValidator implements AuthSchemeValidator {
@@ -77,7 +115,7 @@ public final class EndpointAuthUtils {
 
         @Override
         public boolean test(String name) {
-            return name.equals("sigv4");
+            return name.equals(SIGV4);
         }
 
         @Override
@@ -126,7 +164,7 @@ public final class EndpointAuthUtils {
 
         @Override
         public boolean test(String name) {
-            return name.equals("sigv4a");
+            return name.equals(SIGV4A);
         }
 
         @Override
@@ -173,7 +211,7 @@ public final class EndpointAuthUtils {
 
         @Override
         public boolean test(String name) {
-            return name.startsWith("sigv4-");
+            return name.startsWith(SIGV4_SUB);
         }
 
         @Override
