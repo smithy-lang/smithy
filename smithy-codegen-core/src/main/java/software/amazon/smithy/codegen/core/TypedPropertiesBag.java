@@ -62,6 +62,7 @@ class TypedPropertiesBag {
      * Get a typed property if present.
      *
      * @param property   property key to get by exact reference identity.
+     * @param <T> value type of the property
      * @return Returns the optionally found property.
      */
     @SuppressWarnings("unchecked")
@@ -123,8 +124,8 @@ class TypedPropertiesBag {
      * Get a property and throw if it isn't present.
      *
      * @param property property key to get by exact reference identity.
-     * @param <T> Returns the value.
-     * @throws NullPointerException if the property isn't found.
+     * @param <T> value type of the property.
+     * @throws IllegalArgumentException if the property isn't found.
      */
     <T> T expectProperty(Property<T> property) {
         return getProperty(property).orElseThrow(() -> new IllegalArgumentException(String.format(
