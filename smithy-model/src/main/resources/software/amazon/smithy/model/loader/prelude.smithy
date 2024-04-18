@@ -191,7 +191,42 @@ map externalDocumentation {
 }
 
 /// Defines the ordered list of supported authentication schemes.
-@trait(selector: ":is(service, operation)")
+@trait(
+    selector: ":is(service, operation)"
+    breakingChanges: [
+        {
+            change: "add"
+            severity: "DANGER"
+            message: """
+                Adding the `@auth` trait will explicitly define the order of the \
+                authentication scheme traits for the target shape. \
+                If the target shape is a service, all contained operations will \
+                inherit the same `@auth` trait unless a contained operation has \
+                its own `@auth` trait applied."""
+        }
+        {
+            change: "remove"
+            severity: "DANGER"
+            message: """
+                Removing the `@auth` trait will default to using the alphabetical \
+                order of the absolute shape IDs of each authentication scheme trait \
+                for the target shape. \
+                If the target shape is a service, all contained operations will \
+                inherit the same alphabetical order unless a contained operation \
+                has its own `@auth` trait applied."""
+        }
+        {
+            change: "update"
+            severity: "DANGER"
+            message: """
+                Since the `@auth` trait is priority ordered, updating the order of \
+                the authentication schemes may break authentication for clients. \
+                If the target shape is a service, all contained operations will \
+                inherit the changed `@auth` trait unless a contained operation has \
+                its own `@auth` trait applied."""
+        }
+    ]
+)
 @uniqueItems
 list auth {
     member: AuthTraitReference

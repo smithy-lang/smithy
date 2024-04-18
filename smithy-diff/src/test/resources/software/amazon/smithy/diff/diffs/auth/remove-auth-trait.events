@@ -1,0 +1,8 @@
+[DANGER] ns.foo#Service1: Removed trait `smithy.api#auth`. Previous trait value: 
+```
+[
+    "smithy.api#httpBearerAuth",
+    "smithy.api#httpBasicAuth"
+]
+```
+; Removing the `@auth` trait will default to using the alphabetical order of the absolute shape IDs of each authentication scheme trait for the target shape. If the target shape is a service, all contained operations will inherit the same alphabetical order unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Remove.smithy.api#auth
