@@ -23,9 +23,11 @@ import software.amazon.smithy.utils.BuilderRef;
 class TypedPropertiesBag {
 
     private final Map<String, Object> properties;
+    private final Map<Property<?>, Object> typedProperties;
 
     TypedPropertiesBag(Builder<?> bagBuilder) {
         this.properties = bagBuilder.properties.copy();
+        this.typedProperties = bagBuilder.typedProperties.copy();
     }
 
     /**
@@ -38,6 +40,15 @@ class TypedPropertiesBag {
     }
 
     /**
+     * Gets the additional typed properties of the object.
+     *
+     * @return Returns a map of additional typed properties.
+     */
+    public Map<Property<?>, Object> getTypedProperties() {
+        return typedProperties;
+    }
+
+    /**
      * Gets a specific property if present.
      *
      * @param name Property to retrieve.
@@ -45,6 +56,17 @@ class TypedPropertiesBag {
      */
     public Optional<Object> getProperty(String name) {
         return Optional.ofNullable(properties.get(name));
+    }
+
+    /**
+     * Get a typed property if present.
+     *
+     * @param property   property key to get by exact reference identity.
+     * @return Returns the optionally found property.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getProperty(Property<T> property) {
+        return Optional.ofNullable((T) typedProperties.get(property));
     }
 
     /**
@@ -97,6 +119,18 @@ class TypedPropertiesBag {
                 "Property `%s` is not part of %s, `%s`", name, getClass().getSimpleName(), this)));
     }
 
+    /**
+     * Get a property and throw if it isn't present.
+     *
+     * @param property property key to get by exact reference identity.
+     * @param <T> Returns the value.
+     * @throws NullPointerException if the property isn't found.
+     */
+    <T> T expectProperty(Property<T> property) {
+        return getProperty(property).orElseThrow(() -> new IllegalArgumentException(String.format(
+                "Property `%s` expected but not found on %s", property, this)));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -118,6 +152,7 @@ class TypedPropertiesBag {
      */
     abstract static class Builder<T extends Builder<T>> {
         BuilderRef<Map<String, Object>> properties = BuilderRef.forOrderedMap();
+        BuilderRef<Map<Property<?>, Object>> typedProperties = BuilderRef.forOrderedMap();
 
         /**
          * Sets a specific custom property.
@@ -129,6 +164,19 @@ class TypedPropertiesBag {
         @SuppressWarnings("unchecked")
         public T putProperty(String key, Object value) {
             properties.get().put(key, value);
+            return (T) this;
+        }
+
+        /**
+         * Sets a specific, typed custom property.
+         *
+         * @param property Key to set.
+         * @param value Value to set.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public <K> T putProperty(Property<K> property, K value) {
+            typedProperties.get().put(property, value);
             return (T) this;
         }
 
@@ -145,7 +193,19 @@ class TypedPropertiesBag {
         }
 
         /**
-         * Replaces all of the custom properties.
+         * Removes a specific, typed custom property.
+         *
+         * @param property Property to remove.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public T removeProperty(Property<?> property) {
+            typedProperties.get().remove(property);
+            return (T) this;
+        }
+
+        /**
+         * Replaces all the custom properties.
          *
          * @param properties Custom properties to replace with.
          * @return Returns the builder.
