@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Test$member: Changed trait `smithy.api#jsonName` from `a` to `b` | TraitBreakingChange.Update.smithy.api#jsonName

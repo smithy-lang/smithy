@@ -1,0 +1,38 @@
+[NOTE] ns.foo#TestA: Changed trait `smithy.api#tags` from 
+```
+[
+    "toAdd"
+]
+```
+ to 
+```
+[
+    "toAdd",
+    "added"
+]
+```
+ | ModifiedTrait.Update.smithy.api#tags
+-----
+[NOTE] ns.foo#TestB: Changed trait `smithy.api#tags` from 
+```
+[
+    "toRemove"
+]
+```
+ to `[]` | ModifiedTrait.Update.smithy.api#tags
+-----
+[NOTE] ns.foo#TestC: Changed trait `smithy.api#tags` from 
+```
+[
+    "to",
+    "switch"
+]
+```
+ to 
+```
+[
+    "switch",
+    "to"
+]
+```
+ | ModifiedTrait.Update.smithy.api#tags
