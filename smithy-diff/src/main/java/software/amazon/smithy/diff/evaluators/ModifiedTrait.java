@@ -145,8 +145,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             List<DiffStrategy> strategies = createStrategiesForShape(shape, true);
             if (!strategies.isEmpty()) {
                 result.put(shape.getId(), strategies);
-            } else if (definition.getBreakingChanges().isEmpty()) {
-                // Avoid duplicate validation events; only perform the default validation when there are no diff rules.
+            } else if (!definition.getBreakingChanges().isEmpty()) {
+                // Avoid duplicate validation events; delegate emitting events to TraitBreakingChange.
+                result.put(shape.getId(), Collections.emptyList());
+            } else {
                 result.put(shape.getId(), DEFAULT_STRATEGIES);
             }
         }

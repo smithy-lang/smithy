@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -365,5 +366,24 @@ public class ModifiedTraitTest {
                         .build()));
 
         assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
+    }
+
+    @Test
+    public void letsTraitBreakingChangeHandleDiffEvents() {
+        String originalModel =
+            "$version: \"2.0\"\n"
+          + "namespace smithy.example\n"
+          + "structure Test {\n"
+          + "   @jsonName(\"a\")\n"
+          + "   member: String\n"
+          + "}";
+        Model oldModel = Model.assembler().addUnparsedModel("foo.smithy", originalModel).assemble().unwrap();
+        Model newModel = ModelTransformer.create().replaceShapes(oldModel, ListUtils.of(
+                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Test$member")))
+                        .removeTrait(JsonNameTrait.ID)
+                        .build()));
+
+        assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
+        assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "TraitBreakingChange"), hasSize(1));
     }
 }

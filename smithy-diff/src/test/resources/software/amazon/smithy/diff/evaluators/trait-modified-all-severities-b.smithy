@@ -56,4 +56,7 @@ structure aTrait {
 
     @tags(["diff.warning.const"])
     l: String,
+
+    @tags(["diff.contents"])
+    m: String,
 }
