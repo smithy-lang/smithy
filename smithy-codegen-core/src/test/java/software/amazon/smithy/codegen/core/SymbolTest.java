@@ -19,10 +19,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Map;
+import java.util.Properties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.MapUtils;
 
 public class SymbolTest {
     @Test
@@ -38,7 +42,7 @@ public class SymbolTest {
     }
 
     @Test
-    public void getsTypedProperties() {
+    public void getsPropertiesFromClass() {
         Symbol symbol = Symbol.builder()
                 .name("foo")
                 .putProperty("baz", "bar")
@@ -50,11 +54,36 @@ public class SymbolTest {
     }
 
     @Test
+    public void getsTypedProperties() {
+        Property<String> stringProperty = Property.named("string");
+        Property<Integer> integerProperty = Property.named("int");
+
+        Symbol symbol = Symbol.builder()
+                .name("foo")
+                .putProperty(stringProperty, "foo")
+                .putProperty(integerProperty, 100)
+                .build();
+
+        assertThat(symbol.expectProperty(stringProperty), equalTo("foo"));
+        assertThat(symbol.expectProperty(integerProperty), equalTo(100));
+    }
+
+    @Test
     public void throwsIfExpectedPropertyIsNotPresent() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Symbol symbol = Symbol.builder().name("foo").build();
 
             symbol.expectProperty("baz");
+        });
+    }
+
+    @Test
+    public void throwsIfExpectedTypedPropertyIsNotPresent() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Property<String> prop = Property.named("prop");
+            Symbol symbol = Symbol.builder().name("foo").build();
+
+            symbol.expectProperty(prop);
         });
     }
 
