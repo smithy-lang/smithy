@@ -15,8 +15,11 @@ public class TestRunnerTest {
     }
 
     public static EndpointRuleSet getMinimalEndpointRuleSet() {
-        return EndpointRuleSet.fromNode(Node.parse(IoUtils.readUtf8Resource(
-                TestRunnerTest.class, "minimal-ruleset.json")));
+        return getEndpointRuleSet(TestRunnerTest.class, "minimal-ruleset.json");
+    }
+
+    public static EndpointRuleSet getEndpointRuleSet(Class klass, String file) {
+        return EndpointRuleSet.fromNode(Node.parseJsonWithComments(IoUtils.readUtf8Resource(klass, file)));
     }
 
     @ParameterizedTest(name = "{0}")

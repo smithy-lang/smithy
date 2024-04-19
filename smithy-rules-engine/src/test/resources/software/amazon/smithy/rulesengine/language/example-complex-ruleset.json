@@ -1,0 +1,243 @@
+// Modified AWS service ruleset (may not actually resolve any endpoints correctly)
+{
+    "version": "1.0",
+    "parameters": {
+        "Region": {
+            "required": false,
+            "type": "String"
+        },
+        "UseFIPS": {
+            "required": true,
+            "type": "Boolean"
+        },
+        "Endpoint": {
+            "builtIn": "SDK::Endpoint",
+            "required": false,
+            "documentation": "Override the endpoint used to send this request",
+            "type": "String"
+        }
+    },
+    "rules": [
+        {
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "Endpoint"
+                        }
+                    ]
+                }
+            ],
+            "rules": [
+                {
+                    "conditions": [
+                        {
+                            "fn": "booleanEquals",
+                            "argv": [
+                                {
+                                    "ref": "UseFIPS"
+                                },
+                                true
+                            ]
+                        }
+                    ],
+                    "error": "Invalid Configuration: FIPS and custom endpoint are not supported",
+                    "type": "error"
+                },
+                {
+                    "conditions": [],
+                    "endpoint": {
+                        "url": {
+                            "ref": "Endpoint"
+                        },
+                        "properties": {},
+                        "headers": {}
+                    },
+                    "type": "endpoint"
+                }
+            ],
+            "type": "tree"
+        },
+        {
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "Region"
+                        }
+                    ]
+                }
+            ],
+            "rules": [
+                {
+                    "conditions": [
+                        {
+                            "fn": "parseURL",
+                            "argv": [
+                                {
+                                    "ref": "Region"
+                                }
+                            ],
+                            "assign": "PartitionResult"
+                        }
+                    ],
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "fn": "booleanEquals",
+                                    "argv": [
+                                        true,
+                                        {
+                                            "fn": "getAttr",
+                                            "argv": [
+                                                {
+                                                    "ref": "PartitionResult"
+                                                },
+                                                "isIp"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "rules": [
+                                {
+                                    "conditions": [
+                                        {
+                                            "fn": "booleanEquals",
+                                            "argv": [
+                                                {
+                                                    "ref": "UseFIPS"
+                                                },
+                                                true
+                                            ]
+                                        }
+                                    ],
+                                    "rules": [
+                                        {
+                                            "conditions": [
+                                                {
+                                                    "fn": "booleanEquals",
+                                                    "argv": [
+                                                        {
+                                                            "fn": "getAttr",
+                                                            "argv": [
+                                                                {
+                                                                    "ref": "PartitionResult"
+                                                                },
+                                                                "isIp"
+                                                            ]
+                                                        },
+                                                        true
+                                                    ]
+                                                }
+                                            ],
+                                            "rules": [
+                                                {
+                                                    "conditions": [],
+                                                    "endpoint": {
+                                                        "url": "https://example-fips.{Region}.dual-stack-dns-suffix.com",
+                                                        "properties": {},
+                                                        "headers": {}
+                                                    },
+                                                    "type": "endpoint"
+                                                }
+                                            ],
+                                            "type": "tree"
+                                        },
+                                        {
+                                            "conditions": [],
+                                            "error": "FIPS is enabled but this partition does not support FIPS",
+                                            "type": "error"
+                                        }
+                                    ],
+                                    "type": "tree"
+                                },
+                                {
+                                    "conditions": [],
+                                    "endpoint": {
+                                        "url": "https://example.{Region}.dual-stack-dns-suffix.com",
+                                        "properties": {},
+                                        "headers": {}
+                                    },
+                                    "type": "endpoint"
+                                }
+                            ],
+                            "type": "tree"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "fn": "booleanEquals",
+                                    "argv": [
+                                        {
+                                            "ref": "UseFIPS"
+                                        },
+                                        true
+                                    ]
+                                }
+                            ],
+                            "rules": [
+                                {
+                                    "conditions": [
+                                        {
+                                            "fn": "booleanEquals",
+                                            "argv": [
+                                                {
+                                                    "fn": "getAttr",
+                                                    "argv": [
+                                                        {
+                                                            "ref": "PartitionResult"
+                                                        },
+                                                        "isIp"
+                                                    ]
+                                                },
+                                                true
+                                            ]
+                                        }
+                                    ],
+                                    "rules": [
+                                        {
+                                            "conditions": [],
+                                            "endpoint": {
+                                                "url": "https://example-fips.{Region}.dual-stack-dns-suffix.com",
+                                                "properties": {},
+                                                "headers": {}
+                                            },
+                                            "type": "endpoint"
+                                        }
+                                    ],
+                                    "type": "tree"
+                                },
+                                {
+                                    "conditions": [],
+                                    "error": "FIPS is enabled but this partition does not support FIPS",
+                                    "type": "error"
+                                }
+                            ],
+                            "type": "tree"
+                        },
+                        {
+                            "conditions": [],
+                            "endpoint": {
+                                "url": "https://example.{Region}.dual-stack-dns-suffix.com",
+                                "properties": {},
+                                "headers": {}
+                            },
+                            "type": "endpoint"
+                        }
+                    ],
+                    "type": "tree"
+                }
+            ],
+            "type": "tree"
+        },
+        {
+            "conditions": [],
+            "error": "Invalid Configuration: Missing Region",
+            "type": "error"
+        }
+    ]
+}
