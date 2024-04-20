@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyStructure$foo: The shape targeted by the member `smithy.example#MyStructure$foo` changed from `smithy.api#Integer` (integer) to `smithy.api#String` (string). The type of the targeted shape changed from integer to string. | ChangedMemberTarget
