@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.StringUtils;
  *     if no base type is found (i.e. type is not a trait) then this formatter behaves exactly the
  *     same as the {@link JavaTypeFormatter}.</dd>
  *     <dt>{@link CapitalizingFormatter}|{@code 'U'}</dt>
- *     <dd>This formatter will capitalize the first letter of any string provided it is used to format.</dd>
+ *     <dd>This formatter will capitalize the first letter of any string literal it is used to format.</dd>
  * </dl>
  */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
@@ -180,7 +180,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         private final TraitCodegenSettings settings;
 
         /**
-         * @param settings The python plugin settings.
+         * @param settings The Trait codegen plugin settings.
          */
         public Factory(TraitCodegenSettings settings) {
             this.settings = settings;
