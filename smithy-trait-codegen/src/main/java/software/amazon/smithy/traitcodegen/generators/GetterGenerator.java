@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates getter methods for each shape member or the value type held by the trait.
@@ -118,16 +117,15 @@ final class GetterGenerator implements Runnable {
                 // then do not wrap return in an Optional
                 writer.pushState(new GetterSection(member));
                 if (member.isRequired()) {
-                    writer.openBlock("public $T get$L() {", "}",
+                    writer.openBlock("public $T get$U() {", "}",
                             symbolProvider.toSymbol(member),
-                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                            symbolProvider.toMemberName(member),
                             () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
                     writer.popState();
                     writer.newLine();
                 } else {
-                    writer.openBlock("public $T<$T> get$L() {", "}",
-                            Optional.class, symbolProvider.toSymbol(member),
-                            StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                    writer.openBlock("public $T<$T> get$U() {", "}",
+                            Optional.class, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member),
                             () -> writer.write("return $T.ofNullable($L);",
                                     Optional.class, symbolProvider.toMemberName(member)));
                     writer.popState();
@@ -137,9 +135,9 @@ final class GetterGenerator implements Runnable {
                     // getter as a convenience method as well.
                     Shape target = model.expectShape(member.getTarget());
                     if (target.isListShape() || target.isMapShape()) {
-                        writer.openBlock("public $T get$LOrEmpty() {", "}",
+                        writer.openBlock("public $T get$UOrEmpty() {", "}",
                                 symbolProvider.toSymbol(member),
-                                StringUtils.capitalize(symbolProvider.toMemberName(member)),
+                                symbolProvider.toMemberName(member),
                                 () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
                     }
                 }

@@ -26,7 +26,6 @@ import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates a static builder for a Java class.
@@ -243,29 +242,27 @@ final class BuilderGenerator implements Runnable {
         public Void listShape(ListShape shape) {
             writer.openBlock("public Builder $1L($2B $1L) {", "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
-                        writer.write("clear$L();", StringUtils.capitalize(memberName));
+                        writer.write("clear$U();", memberName);
                         writer.write("this.$1L.get().addAll($1L);", memberName);
                         writer.writeWithNoFormatting("return this;");
                     }).newLine();
 
             // Clear all
-            writer.openBlock("public Builder clear$L() {", "}",
-                    StringUtils.capitalize(memberName), () -> {
+            writer.openBlock("public Builder clear$U() {", "}", memberName, () -> {
                         writer.write("$L.get().clear();", memberName);
                         writer.writeWithNoFormatting("return this;");
                     }).newLine();
 
             // Set one
-            writer.openBlock("public Builder add$L($T value) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
-                    () -> {
+            writer.openBlock("public Builder add$U($T value) {", "}",
+                    memberName, symbolProvider.toSymbol(shape.getMember()), () -> {
                         writer.write("$L.get().add(value);", memberName);
                         writer.write("return this;");
                     }).newLine();
 
             // Remove one
-            writer.openBlock("public Builder remove$L($T value) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()),
+            writer.openBlock("public Builder remove$U($T value) {", "}",
+                    memberName, symbolProvider.toSymbol(shape.getMember()),
                     () -> {
                         writer.write("$L.get().remove(value);", memberName);
                         writer.write("return this;");
@@ -278,14 +275,14 @@ final class BuilderGenerator implements Runnable {
             // Set all
             writer.openBlock("public Builder $1L($2B $1L) {", "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
-                        writer.write("clear$L();", StringUtils.capitalize(memberName));
+                        writer.write("clear$U();", memberName);
                         writer.write("this.$1L.get().putAll($1L);", memberName);
                         writer.write("return this;");
                     });
             writer.newLine();
 
             // Clear all
-            writer.openBlock("public Builder clear$L() {", "}", StringUtils.capitalize(memberName), () -> {
+            writer.openBlock("public Builder clear$U() {", "}", memberName, () -> {
                 writer.write("this.$L.get().clear();", memberName);
                 writer.write("return this;");
             }).newLine();
@@ -293,16 +290,15 @@ final class BuilderGenerator implements Runnable {
             // Set one
             MemberShape keyShape = shape.getKey();
             MemberShape valueShape = shape.getValue();
-            writer.openBlock("public Builder put$L($T key, $T value) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape),
-                    symbolProvider.toSymbol(valueShape), () -> {
+            writer.openBlock("public Builder put$U($T key, $T value) {", "}",
+                    memberName, symbolProvider.toSymbol(keyShape), symbolProvider.toSymbol(valueShape), () -> {
                         writer.write("this.$L.get().put(key, value);", memberName);
                         writer.write("return this;");
                     }).newLine();
 
             // Remove one
-            writer.openBlock("public Builder remove$L($T $L) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape), memberName, () -> {
+            writer.openBlock("public Builder remove$U($T $L) {", "}",
+                    memberName, symbolProvider.toSymbol(keyShape), memberName, () -> {
                         writer.write("this.$1L.get().remove($1L);", memberName);
                         writer.write("return this;");
                     }).newLine();

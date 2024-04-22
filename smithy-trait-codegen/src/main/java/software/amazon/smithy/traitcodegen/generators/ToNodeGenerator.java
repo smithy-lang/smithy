@@ -34,7 +34,6 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates methods to serialize a Java class to a smithy {@code Node}.
@@ -145,8 +144,8 @@ final class ToNodeGenerator implements Runnable {
                             mem.getMemberName(),
                             (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
                 } else {
-                    writer.write(".withOptionalMember($S, get$L().map(m -> $C))",
-                            mem.getMemberName(), StringUtils.capitalize(symbolProvider.toMemberName(mem)),
+                    writer.write(".withOptionalMember($S, get$U().map(m -> $C))",
+                            mem.getMemberName(), symbolProvider.toMemberName(mem),
                             (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m")));
                 }
             }
