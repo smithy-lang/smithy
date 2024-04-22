@@ -20,6 +20,7 @@ import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -27,17 +28,20 @@ import software.amazon.smithy.utils.StringUtils;
  *
  * <p>This writer supports two custom formatters, a Java type formatter '$T' and
  * a Base type formatter '$B'.
- * <ul>
- *     <li>{@link JavaTypeFormatter}|{@code 'T'}: This formatter handles the formatting of
+ * <dl>
+ *     <dt>{@link JavaTypeFormatter}|{@code 'T'}</dt>
+ *     <dd>This formatter handles the formatting of
  *     Java types and also ensures that parameterized types (such as {@code List<String>} are
- *     written correctly.
- *
- *     <li>{@link BaseTypeFormatter}|{@code 'B'}: This formatter allows you to use the base type
+ *     written correctly.</dd>
+ *     <dt>{@link BaseTypeFormatter}|{@code 'B'}</dt>
+ *     <dd>This formatter allows you to use the base type
  *     for a trait. For example a String Trait may have a base type of {@code ShapeId}. To write
  *     this base type, use the {@code $B} formatter and provide the trait symbol. Note that
  *     if no base type is found (i.e. type is not a trait) then this formatter behaves exactly the
- *     same as the {@link JavaTypeFormatter}.
- * </ul>
+ *     same as the {@link JavaTypeFormatter}.</dd>
+ *     <dt>{@link CapitalizingFormatter}|{@code 'U'}</dt>
+ *     <dd>This formatter will capitalize the first letter of any string literal it is used to format.</dd>
+ * </dl>
  */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
@@ -62,6 +66,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
         putFormatter('T', new JavaTypeFormatter());
         putFormatter('B', new BaseTypeFormatter());
+        putFormatter('U', new CapitalizingFormatter());
     }
 
 
@@ -118,14 +123,13 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         builder.append(getImportContainer().toString()).append(getNewline());
 
         // Handle duplicates that may need to use full name
-        putContext(resolveNameContext());
+        resolveNameContext();
         builder.append(format(super.toString()));
 
         return builder.toString();
     }
 
-    private Map<String, Object> resolveNameContext() {
-        Map<String, Object> contextMap = new HashMap<>();
+    private void resolveNameContext() {
         for (Map.Entry<String, Set<Symbol>> entry : symbolNames.entrySet()) {
             Set<Symbol> duplicates = entry.getValue();
             // If the duplicates list has more than one entry
@@ -135,18 +139,16 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                     // If we are in the namespace of a Symbol, use its
                     // short name, otherwise use the full name
                     if (dupe.getNamespace().equals(namespace)) {
-                        contextMap.put(dupe.getFullName(), dupe.getName());
+                        putContext(dupe.getFullName(), dupe.getName());
                     } else {
-                        contextMap.put(dupe.getFullName(), dupe.getFullName());
+                        putContext(dupe.getFullName(), dupe.getFullName());
                     }
                 });
             } else {
                 Symbol symbol = duplicates.iterator().next();
-                contextMap.put(symbol.getFullName(), symbol.getName());
+                putContext(symbol.getFullName(), symbol.getName());
             }
         }
-
-        return contextMap;
     }
 
     public String getPackageHeader() {
@@ -168,6 +170,26 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
     public void override() {
         writeWithNoFormatting("@Override");
+    }
+
+    /**
+     * A factory class to create {@link TraitCodegenWriter}s.
+     */
+    public static final class Factory implements SymbolWriter.Factory<TraitCodegenWriter> {
+
+        private final TraitCodegenSettings settings;
+
+        /**
+         * @param settings The Trait codegen plugin settings.
+         */
+        public Factory(TraitCodegenSettings settings) {
+            this.settings = settings;
+        }
+
+        @Override
+        public TraitCodegenWriter apply(String filename, String namespace) {
+            return new TraitCodegenWriter(filename, namespace, settings);
+        }
     }
 
     /**
@@ -207,15 +229,17 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         }
 
         private String getPlaceholder(Symbol symbol) {
+            Symbol normalizedSymbol = symbol.toBuilder().references(ListUtils.of()).build();
+
             // Add symbol to import container
-            addImport(symbol);
+            addImport(normalizedSymbol);
 
             // Add symbol to symbol map, so we can handle potential type name conflicts
-            Set<Symbol> nameSet = symbolNames.computeIfAbsent(symbol.getName(), n -> new HashSet<>());
-            nameSet.add(symbol);
+            Set<Symbol> nameSet = symbolNames.computeIfAbsent(normalizedSymbol.getName(), n -> new HashSet<>());
+            nameSet.add(normalizedSymbol);
 
             // Return a placeholder value that will be filled when toString is called
-            return format("$${$L:L}", symbol.getFullName());
+            return format("$${$L:L}", normalizedSymbol.getFullName());
         }
     }
 
@@ -239,4 +263,21 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             return javaTypeFormatter.apply(symbol, indent);
         }
     }
+
+    /**
+     * Implements a formatter for {@code $U} that capitalizes the first letter of a string literal.
+     */
+    private static final class CapitalizingFormatter implements BiFunction<Object, String, String> {
+        @Override
+        public String apply(Object type, String indent) {
+            if (type instanceof String) {
+                return StringUtils.capitalize((String) type);
+            }
+            throw new IllegalArgumentException(
+                    "Invalid type provided for $U. Expected a String but found: `"
+                            + type + "`."
+            );
+        }
+    }
+
 }

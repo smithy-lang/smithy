@@ -40,7 +40,7 @@ public final class TraitCodegenContext implements CodegenContext<TraitCodegenSet
         this.fileManifest = fileManifest;
         this.integrations = integrations;
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider,
-                (filename, namespace) -> new TraitCodegenWriter(filename, namespace, settings));
+                new TraitCodegenWriter.Factory(settings));
     }
 
     @Override
