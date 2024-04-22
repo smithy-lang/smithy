@@ -169,6 +169,7 @@ public final class SymbolReference
                 .symbol(symbol)
                 .options(options)
                 .properties(getProperties())
+                .typedProperties(getTypedProperties())
                 .alias(alias);
     }
 

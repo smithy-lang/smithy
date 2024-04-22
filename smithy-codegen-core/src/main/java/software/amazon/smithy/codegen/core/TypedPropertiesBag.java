@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,8 +44,8 @@ class TypedPropertiesBag {
      *
      * @return Returns a map of additional typed properties.
      */
-    public Iterator<Property<?>> getTypedProperties() {
-        return typedProperties.keySet().iterator();
+    public Map<Property<?>, Object> getTypedProperties() {
+        return typedProperties;
     }
 
     /**
@@ -128,7 +127,7 @@ class TypedPropertiesBag {
      * @param <T> value type of the property.
      * @throws IllegalArgumentException if the property isn't found.
      */
-    <T> T expectProperty(Property<T> property) {
+    public <T> T expectProperty(Property<T> property) {
         return getProperty(property).orElseThrow(() -> new IllegalArgumentException(String.format(
                 "Property `%s` expected but not found on %s", property, this)));
     }
@@ -216,6 +215,19 @@ class TypedPropertiesBag {
         public T properties(Map<String, Object> properties) {
             this.properties.clear();
             this.properties.get().putAll(properties);
+            return (T) this;
+        }
+
+        /**
+         * Replaces all the custom typed properties.
+         *
+         * @param properties Custom typed properties to replace with.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public T typedProperties(Map<Property<?>, Object> properties) {
+            this.typedProperties.clear();
+            this.typedProperties.get().putAll(properties);
             return (T) this;
         }
     }

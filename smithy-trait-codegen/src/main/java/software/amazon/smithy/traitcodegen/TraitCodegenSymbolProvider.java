@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -37,6 +38,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.CaseUtils;
 
 /**
@@ -126,10 +128,16 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol listShape(ListShape shape) {
-        Symbol.Builder builder = TraitCodegenUtils.fromClass(List.class).toBuilder()
+        if (shape.hasTrait(UniqueItemsTrait.class)) {
+            return TraitCodegenUtils.fromClass(Set.class).toBuilder()
+                    .addReference(toSymbol(shape.getMember()))
+                    .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedSet()")
+                    .build();
+        }
+        return TraitCodegenUtils.fromClass(List.class).toBuilder()
                 .addReference(toSymbol(shape.getMember()))
-                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forList()");
-        return builder.build();
+                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forList()")
+                .build();
     }
 
     @Override

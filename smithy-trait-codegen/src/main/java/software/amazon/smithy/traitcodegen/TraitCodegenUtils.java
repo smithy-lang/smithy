@@ -98,8 +98,7 @@ public final class TraitCodegenUtils {
      * @return Returns true if the symbol maps to a Java String.
      */
     public static boolean isJavaString(Symbol symbol) {
-        Symbol baseSymbol = symbol.getProperty(SymbolProperties.BASE_SYMBOL, Symbol.class)
-                .orElse(symbol);
+        Symbol baseSymbol = symbol.getProperty(SymbolProperties.BASE_SYMBOL).orElse(symbol);
         return JAVA_STRING_SYMBOL.getName().equals(baseSymbol.getName())
                 && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
     }

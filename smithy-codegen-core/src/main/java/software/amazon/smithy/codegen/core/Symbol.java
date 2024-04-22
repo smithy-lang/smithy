@@ -271,6 +271,7 @@ public final class Symbol extends TypedPropertiesBag
         return builder.namespace(namespace, namespaceDelimiter)
                 .name(name)
                 .properties(getProperties())
+                .typedProperties(getTypedProperties())
                 .definitionFile(definitionFile)
                 .declarationFile(declarationFile)
                 .references(references)

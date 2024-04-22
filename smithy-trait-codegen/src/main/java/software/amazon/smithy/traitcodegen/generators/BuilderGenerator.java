@@ -172,7 +172,7 @@ final class BuilderGenerator implements Runnable {
 
         private void writeProperty(MemberShape shape) {
             Optional<String> builderRefOptional =
-                    symbolProvider.toSymbol(shape).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER, String.class);
+                    symbolProvider.toSymbol(shape).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER);
             if (builderRefOptional.isPresent()) {
                 writer.write("private final $1T<$2B> $3L = $1T.$4L;", BuilderRef.class,
                         symbolProvider.toSymbol(shape),
