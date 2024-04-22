@@ -74,7 +74,7 @@ public final class CoreIntegration implements TraitCodegenIntegration {
         // If the base symbol has an unboxed version, use that as the base symbol
         // instead of the Boxed version.
         if (baseSymbol.getProperty(SymbolProperties.UNBOXED_SYMBOL).isPresent()) {
-            baseSymbol = baseSymbol.expectProperty(SymbolProperties.UNBOXED_SYMBOL, Symbol.class);
+            baseSymbol = baseSymbol.expectProperty(SymbolProperties.UNBOXED_SYMBOL);
         }
 
         // Maintain all existing properties, but change the namespace and name of the shape

@@ -200,7 +200,8 @@ public final class SymbolDependency extends TypedPropertiesBag
                 .dependencyType(dependencyType)
                 .packageName(packageName)
                 .version(version)
-                .properties(getProperties());
+                .properties(getProperties())
+                .typedProperties(getTypedProperties());
     }
 
     @Override

@@ -232,7 +232,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                         + type + "`.");
             }
             Symbol symbol = (Symbol) type;
-            Optional<Symbol> baseSymbolOptional = symbol.getProperty(SymbolProperties.BASE_SYMBOL, Symbol.class);
+            Optional<Symbol> baseSymbolOptional = symbol.getProperty(SymbolProperties.BASE_SYMBOL);
             if (baseSymbolOptional.isPresent()) {
                 return javaTypeFormatter.apply(baseSymbolOptional.get(), indent);
             }
