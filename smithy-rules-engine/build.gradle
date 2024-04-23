@@ -11,6 +11,7 @@ ext {
 }
 
 dependencies {
+    api project(":smithy-diff")
     api project(":smithy-model")
     api project(":smithy-utils")
 }
