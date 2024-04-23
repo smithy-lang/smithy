@@ -24,6 +24,5 @@ dependencies {
 tasks["sourcesJar"].dependsOn("smithyJarStaging")
 
 smithy {
-    format.set(false)
     smithyBuildConfigs.set(project.files())
 }
