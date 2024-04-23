@@ -8,7 +8,10 @@ package software.amazon.smithy.rulesengine.language;
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -17,6 +20,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
@@ -27,6 +31,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.validators.AuthSchemeValidator;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -57,10 +62,10 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
 
     private EndpointRuleSet(Builder builder) {
         super();
-        parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
+        parameters = SmithyBuilder.requiredState(PARAMETERS, builder.parameters);
         rules = builder.rules.copy();
         sourceLocation = SmithyBuilder.requiredState("source", builder.getSourceLocation());
-        version = SmithyBuilder.requiredState("version", builder.version);
+        version = SmithyBuilder.requiredState(VERSION, builder.version);
     }
 
     /**
@@ -311,6 +316,91 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
             EndpointRuleSet ruleSet = new EndpointRuleSet(this);
             ruleSet.typeCheck();
             return ruleSet;
+        }
+    }
+
+    /**
+     * {@link EndpointRuleSet} visitor that collects a map of JSON pointer paths to {@link Endpoint}s.
+     */
+    @SmithyInternalApi
+    public static final class EndpointPathCollector {
+        private static final String ENDPOINT = "endpoint";
+        private static final String TYPE = "type";
+        private final Map<String, Endpoint> visitedEndpoints = new HashMap();
+        private final ObjectNode endpointRuleSet;
+
+        private EndpointPathCollector(EndpointRuleSetTrait endpointRuleSetTrait) {
+            this.endpointRuleSet = endpointRuleSetTrait.getRuleSet().expectObjectNode();
+        }
+
+        /**
+         * Creates a collector from an {@link EndpointRuleSetTrait}.
+         *
+         * @param endpointRuleSetTrait EndpointRuleSet trait instance.
+         */
+        @SmithyInternalApi
+        public static EndpointPathCollector from(EndpointRuleSetTrait endpointRuleSetTrait) {
+            return new EndpointPathCollector(endpointRuleSetTrait);
+        }
+
+        /**
+         * Collects the mapped JSON pointer paths to {@link Endpoint}s.
+         *
+         * @return a map of JSON pointer paths to {@link Endpoint}s.
+         */
+        @SmithyInternalApi
+        public Map<String, Endpoint> collect() {
+            arrayNode(endpointRuleSet.expectArrayMember(RULES), "/" + RULES);
+            return visitedEndpoints;
+        }
+
+        private void objectNode(ObjectNode node, String parentPath) {
+            boolean isEndpointRuleObject = node
+                .getMember(TYPE)
+                .map(n -> n.asStringNode()
+                    .map(s -> s.getValue().equals(ENDPOINT))
+                    .orElse(false))
+                .orElse(false);
+            if (isEndpointRuleObject) {
+                Endpoint endpoint = Endpoint.fromNode(node.expectMember(ENDPOINT));
+                visitedEndpoints.put(parentPath + "/" + ENDPOINT, endpoint);
+                return;
+            }
+            for (Entry<StringNode, Node> member : node.getMembers().entrySet()) {
+                String key = member.getKey().getValue();
+                Node value = member.getValue();
+                switch (value.getType()) {
+                    case OBJECT: {
+                        objectNode(value.expectObjectNode(), parentPath + "/" + key);
+                        break;
+                    }
+                    case ARRAY: {
+                        arrayNode(value.expectArrayNode(), parentPath + "/" + key);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void arrayNode(ArrayNode node, String parentPath) {
+            List<Node> elements = node.getElements();
+            for (int i = 0; i < elements.size(); i++) {
+                Node element = elements.get(i);
+                switch (element.getType()) {
+                    case OBJECT: {
+                        objectNode(element.expectObjectNode(), parentPath + "/" + i);
+                        break;
+                    }
+                    case ARRAY: {
+                        arrayNode(element.expectArrayNode(), parentPath + "/" + i);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
