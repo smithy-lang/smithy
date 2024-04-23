@@ -6,16 +6,16 @@ use smithy.test#smokeTests
 
 @smokeTests([
     {
-        id: "specific_failure",
+        id: "specific_failure"
         expect: {
-            failure: {
-                errorId: SayHelloError
-            }
+            failure: { errorId: SayHelloError }
         }
     }
 ])
 operation SayHello {
-    errors: [SayHelloError]
+    errors: [
+        SayHelloError
+    ]
 }
 
 @error("server")

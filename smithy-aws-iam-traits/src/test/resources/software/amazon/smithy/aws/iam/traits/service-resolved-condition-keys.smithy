@@ -1,4 +1,5 @@
 $version: "2.0"
+
 namespace smithy.example
 
 @aws.api#service(sdkId: "My")
@@ -6,6 +7,4 @@ namespace smithy.example
     "smithy:ServiceResolveContextKey": { type: "String" }
 )
 @aws.iam#serviceResolvedConditionKeys(["smithy:ServiceResolveContextKey"])
-service MyService {
-    version: "2019-02-20",
-}
+service MyService { version: "2019-02-20" }

@@ -7,126 +7,126 @@ use aws.cloudformation#cfnResource
 
 @service(sdkId: "Some Thing", cloudFormationName: "SomeThing", arnNamespace: "something")
 service TestService {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [
-        FooResource,
-    ],
+        FooResource
+    ]
 }
 
 /// The Foo resource is cool.
 @externalDocumentation(
-    "Documentation Url": "https://docs.example.com",
-    "Source Url": "https://source.example.com",
-    "Main": "https://docs2.example.com",
-    "Code": "https://source2.example.com",
+    "Documentation Url": "https://docs.example.com"
+    "Source Url": "https://source.example.com"
+    Main: "https://docs2.example.com"
+    Code: "https://source2.example.com"
 )
 @cfnResource
 resource FooResource {
-    identifiers: {
-        fooId: FooId,
-    },
-    create: CreateFooOperation,
-    read: GetFooOperation,
-    update: UpdateFooOperation,
-    delete: DeleteFooOperation,
+    identifiers: { fooId: FooId }
+    create: CreateFooOperation
+    read: GetFooOperation
+    update: UpdateFooOperation
+    delete: DeleteFooOperation
     list: ListFoosOperation
 }
 
 @aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation CreateFooOperation {
-    input: CreateFooRequest,
-    output: CreateFooResponse,
+    input: CreateFooRequest
+    output: CreateFooResponse
 }
 
 structure CreateFooRequest {
-    fooValidCreateProperty: String,
+    fooValidCreateProperty: String
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
-    fooDeprecatedMutableProperty: String,
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooDeprecatedMutableProperty: String
+
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 structure CreateFooResponse {
-    fooId: FooId,
+    fooId: FooId
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
-    fooDeprecatedMutableProperty: String,
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooDeprecatedMutableProperty: String
+
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 @readonly
 operation GetFooOperation {
-    input: GetFooRequest,
-    output: GetFooResponse,
+    input: GetFooRequest
+    output: GetFooResponse
 }
 
 structure GetFooRequest {
     @required
-    fooId: FooId,
+    fooId: FooId
 }
 
 structure GetFooResponse {
-    fooId: FooId,
+    fooId: FooId
 
-    fooValidReadProperty: String,
+    fooValidReadProperty: String
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
-    fooDeprecatedMutableProperty: String,
+    fooDeprecatedMutableProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 operation UpdateFooOperation {
-    input: UpdateFooRequest,
-    output: UpdateFooResponse,
+    input: UpdateFooRequest
+    output: UpdateFooResponse
 }
 
 structure UpdateFooRequest {
     @required
-    fooId: FooId,
+    fooId: FooId
 
-    fooValidWriteProperty: String,
+    fooValidWriteProperty: String
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
-    fooDeprecatedMutableProperty: String,
+    fooDeprecatedMutableProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 structure UpdateFooResponse {
-    fooId: FooId,
+    fooId: FooId
 
-    fooValidReadProperty: String,
+    fooValidReadProperty: String
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
-    fooDeprecatedMutableProperty: String,
+    fooDeprecatedMutableProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 @idempotent
 operation DeleteFooOperation {
-    input: DeleteFooRequest,
-    output: DeleteFooResponse,
+    input: DeleteFooRequest
+    output: DeleteFooResponse
 }
 
 structure DeleteFooRequest {
     @required
-    fooId: FooId,
+    fooId: FooId
 }
 
 structure DeleteFooResponse {}
 
 @readonly
 operation ListFoosOperation {
-    input: ListFoosRequest,
-    output: ListFoosResult,
+    input: ListFoosRequest
+    output: ListFoosResult
 }
 
 structure ListFoosRequest {}
 
 structure ListFoosResult {
-    foos: FooSummaryList,
+    foos: FooSummaryList
 }
 
 list FooSummaryList {
@@ -134,13 +134,13 @@ list FooSummaryList {
 }
 
 structure FooSummary {
-    fooId: FooId,
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooId: FooId
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 string FooId
 
 structure ComplexProperty {
-    property: String,
-    another: String,
+    property: String
+    another: String
 }

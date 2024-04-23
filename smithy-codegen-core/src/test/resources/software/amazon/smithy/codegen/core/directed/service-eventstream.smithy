@@ -3,11 +3,13 @@ $version: "1.0"
 namespace smithy.example
 
 service Foo {
-    operations: [GetAndSendMovements]
+    operations: [
+        GetAndSendMovements
+    ]
 }
 
 operation GetAndSendMovements {
-    input: GetAndSendMovementsInput,
+    input: GetAndSendMovementsInput
     output: GetAndSendMovementsOutput
 }
 
@@ -23,7 +25,7 @@ structure GetAndSendMovementsOutput {
 
 @streaming
 union MovementEvents {
-    stop: Movement,
+    stop: Movement
     go: Movement
 }
 

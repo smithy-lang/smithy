@@ -5,32 +5,32 @@ namespace smithy.example
 use aws.cloudformation#cfnResource
 
 service AdditionalSchemasConflict {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [
-        AdditionalSchemasConflictResource,
-    ],
+        AdditionalSchemasConflictResource
+    ]
 }
 
-@cfnResource(additionalSchemas: [AdditionalSchemasConflictProperties])
+@cfnResource(
+    additionalSchemas: [AdditionalSchemasConflictProperties]
+)
 resource AdditionalSchemasConflictResource {
-    identifiers: {
-        fooId: String,
-    },
-    create: CreateAdditionalSchemasConflictResource,
+    identifiers: { fooId: String }
+    create: CreateAdditionalSchemasConflictResource
 }
 
 operation CreateAdditionalSchemasConflictResource {
-    input: CreateAdditionalSchemasConflictResourceRequest,
+    input: CreateAdditionalSchemasConflictResourceRequest
     output: CreateAdditionalSchemasConflictResourceResponse
 }
 
 @input
 structure CreateAdditionalSchemasConflictResourceRequest {
-    bar: String,
+    bar: String
 }
 
 structure AdditionalSchemasConflictProperties {
-    bar: Boolean,
+    bar: Boolean
 }
 
 @output

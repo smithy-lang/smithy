@@ -6,7 +6,7 @@ use smithy.test#smokeTests
 
 @smokeTests([
     {
-        id: "any_failure",
+        id: "any_failure"
         expect: {
             failure: {}
         }

@@ -7,22 +7,21 @@ namespace test.smithy.traitcodegen.enums
 // ========================
 // The following trait check that the plugin can generate traits from a
 // legacy string enum (i.e. a string with the @enum trait applied).
-
 @enum([
     {
-        name: "DIAMOND",
+        name: "DIAMOND"
         value: "diamond"
-    },
+    }
     {
-        name: "CLUB",
+        name: "CLUB"
         value: "club"
-    },
+    }
     {
-        name: "HEART",
+        name: "HEART"
         value: "heart"
-    },
+    }
     {
-        name: "SPADE",
+        name: "SPADE"
         value: "spade"
     }
 ])

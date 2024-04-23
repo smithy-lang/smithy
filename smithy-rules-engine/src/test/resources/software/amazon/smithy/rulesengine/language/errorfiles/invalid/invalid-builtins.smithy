@@ -7,70 +7,64 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
 @clientContextParams(
-    bar: {type: "string", documentation: "a client string parameter"}
+    bar: { type: "string", documentation: "a client string parameter" }
 )
 @endpointRuleSet({
-    version: "1.0",
+    version: "1.0"
     parameters: {
-        bar: {type: "string", documentation: "docs"},
-        endpoint: {type: "string", builtIn: "SDK::Endpointt", documentation: "docs"},
-    },
+        bar: { type: "string", documentation: "docs" }
+        endpoint: { type: "string", builtIn: "SDK::Endpointt", documentation: "docs" }
+    }
     rules: [
         {
-            "documentation": "Template the region into the URI when FIPS is enabled",
-            "conditions": [
+            documentation: "Template the region into the URI when FIPS is enabled"
+            conditions: [
                 {
-                    "fn": "isSet",
-                    "argv": [
+                    fn: "isSet"
+                    argv: [
                         {
-                            "ref": "bar"
+                            ref: "bar"
                         }
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://example.com"
-            },
-            "type": "endpoint"
-        },
+            ]
+            endpoint: { url: "https://example.com" }
+            type: "endpoint"
+        }
         {
-            "conditions": [],
-            "documentation": "error fallthrough",
-            "error": "endpoint error",
-            "type": "error"
+            conditions: []
+            documentation: "error fallthrough"
+            error: "endpoint error"
+            type: "error"
         }
     ]
 })
 @endpointTests({
-    "version": "1.0",
-    "testCases": [
+    version: "1.0"
+    testCases: [
         {
-            "params": {
-                "bar": "a b",
-            }
-            "operationInputs": [{
-                "operationName": "GetThing",
-                "builtInParams": {
-                    "SDK::Endpointt": "https://custom.example.com"
+            params: { bar: "a b" }
+            operationInputs: [
+                {
+                    operationName: "GetThing"
+                    builtInParams: { "SDK::Endpointt": "https://custom.example.com" }
                 }
-            }],
-            "expect": {
-                "endpoint": {
-                    "url": "https://example.com"
-                }
+            ]
+            expect: {
+                endpoint: { url: "https://example.com" }
             }
-        },
+        }
         {
-            "documentation": "a documentation string",
-            "expect": {
-                "error": "endpoint error"
-            }
+            documentation: "a documentation string"
+            expect: { error: "endpoint error" }
         }
     ]
 })
 service ExampleService {
-    version: "2022-01-01",
-    operations: [GetThing]
+    version: "2022-01-01"
+    operations: [
+        GetThing
+    ]
 }
 
 operation GetThing {

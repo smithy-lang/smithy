@@ -11,21 +11,17 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo1",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            type: true
-        },
-        vendorParamsShape: missingVendorParamsStructure,
-        vendorParams: {
-            integer: 1,
-        }
+        id: "foo1"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { type: true }
+        vendorParamsShape: missingVendorParamsStructure
+        vendorParams: { integer: 1 }
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 

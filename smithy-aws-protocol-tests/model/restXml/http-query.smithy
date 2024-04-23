@@ -1,7 +1,6 @@
 // This file defines test cases that test HTTP query string bindings.
 // See: https://smithy.io/2.0/spec/http-bindings.html#httpquery-trait and
 // https://smithy.io/2.0/spec/http-bindings.html#httpqueryparams-trait
-
 $version: "2.0"
 
 namespace aws.protocoltests.restxml
@@ -32,154 +31,88 @@ operation AllQueryStringTypes {
 
 apply AllQueryStringTypes @httpRequestTests([
     {
-        id: "AllQueryStringTypes",
-        documentation: "Serializes query string parameters with all supported types",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "String=Hello%20there",
-            "StringList=a",
-            "StringList=b",
-            "StringList=c",
-            "StringSet=a",
-            "StringSet=b",
-            "StringSet=c",
-            "Byte=1",
-            "Short=2",
-            "Integer=3",
-            "IntegerList=1",
-            "IntegerList=2",
-            "IntegerList=3",
-            "IntegerSet=1",
-            "IntegerSet=2",
-            "IntegerSet=3",
-            "Long=4",
-            "Float=1.1",
-            "Double=1.1",
-            "DoubleList=1.1",
-            "DoubleList=2.1",
-            "DoubleList=3.1",
-            "Boolean=true",
-            "BooleanList=true",
-            "BooleanList=false",
-            "BooleanList=true",
-            "Timestamp=1970-01-01T00%3A00%3A01Z",
-            "TimestampList=1970-01-01T00%3A00%3A01Z",
-            "TimestampList=1970-01-01T00%3A00%3A02Z",
-            "TimestampList=1970-01-01T00%3A00%3A03Z",
-            "Enum=Foo",
-            "EnumList=Foo",
-            "EnumList=Baz",
-            "EnumList=Bar",
-            "IntegerEnum=1",
-            "IntegerEnumList=1",
-            "IntegerEnumList=2",
-        ],
+        id: "AllQueryStringTypes"
+        documentation: "Serializes query string parameters with all supported types"
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["String=Hello%20there", "StringList=a", "StringList=b", "StringList=c", "StringSet=a", "StringSet=b", "StringSet=c", "Byte=1", "Short=2", "Integer=3", "IntegerList=1", "IntegerList=2", "IntegerList=3", "IntegerSet=1", "IntegerSet=2", "IntegerSet=3", "Long=4", "Float=1.1", "Double=1.1", "DoubleList=1.1", "DoubleList=2.1", "DoubleList=3.1", "Boolean=true", "BooleanList=true", "BooleanList=false", "BooleanList=true", "Timestamp=1970-01-01T00%3A00%3A01Z", "TimestampList=1970-01-01T00%3A00%3A01Z", "TimestampList=1970-01-01T00%3A00%3A02Z", "TimestampList=1970-01-01T00%3A00%3A03Z", "Enum=Foo", "EnumList=Foo", "EnumList=Baz", "EnumList=Bar", "IntegerEnum=1", "IntegerEnumList=1", "IntegerEnumList=2"]
         params: {
-            queryString: "Hello there",
-            queryStringList: ["a", "b", "c"],
-            queryStringSet: ["a", "b", "c"],
-            queryByte: 1,
-            queryShort: 2,
-            queryInteger: 3,
-            queryIntegerList: [1, 2, 3],
-            queryIntegerSet: [1, 2, 3],
-            queryLong: 4,
-            queryFloat: 1.1,
-            queryDouble: 1.1,
-            queryDoubleList: [1.1, 2.1, 3.1],
-            queryBoolean: true,
-            queryBooleanList: [true, false, true],
-            queryTimestamp: 1,
-            queryTimestampList: [1, 2, 3],
-            queryEnum: "Foo",
-            queryEnumList: ["Foo", "Baz", "Bar"],
-            queryIntegerEnum: 1,
-            queryIntegerEnumList: [1, 2],
+            queryString: "Hello there"
+            queryStringList: ["a", "b", "c"]
+            queryStringSet: ["a", "b", "c"]
+            queryByte: 1
+            queryShort: 2
+            queryInteger: 3
+            queryIntegerList: [1, 2, 3]
+            queryIntegerSet: [1, 2, 3]
+            queryLong: 4
+            queryFloat: 1.1
+            queryDouble: 1.1
+            queryDoubleList: [1.1, 2.1, 3.1]
+            queryBoolean: true
+            queryBooleanList: [true, false, true]
+            queryTimestamp: 1
+            queryTimestampList: [1, 2, 3]
+            queryEnum: "Foo"
+            queryEnumList: ["Foo", "Baz", "Bar"]
+            queryIntegerEnum: 1
+            queryIntegerEnumList: [1, 2]
         }
-    },
+    }
     {
-        id: "RestXmlQueryStringMap",
-        documentation: "Handles query string maps",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "QueryParamsStringKeyA=Foo",
-            "QueryParamsStringKeyB=Bar",
-        ],
+        id: "RestXmlQueryStringMap"
+        documentation: "Handles query string maps"
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["QueryParamsStringKeyA=Foo", "QueryParamsStringKeyB=Bar"]
         params: {
-            queryParamsMapOfStrings: {
-                "QueryParamsStringKeyA": "Foo",
-                "QueryParamsStringKeyB": "Bar",
-            },
+            queryParamsMapOfStrings: { QueryParamsStringKeyA: "Foo", QueryParamsStringKeyB: "Bar" }
         }
-    },
+    }
     {
-        id: "RestXmlQueryStringEscaping",
-        documentation: "Handles escaping all required characters in the query string.",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
-        ],
-        params: {
-            queryString: " %:/?#[]@!$&'()*+,;=😹",
-        }
-    },
+        id: "RestXmlQueryStringEscaping"
+        documentation: "Handles escaping all required characters in the query string."
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9"]
+        params: { queryString: " %:/?#[]@!$&'()*+,;=😹" }
+    }
     {
-        id: "RestXmlSupportsNaNFloatQueryValues",
-        documentation: "Supports handling NaN float query values.",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "Float=NaN",
-            "Double=NaN",
-        ],
-        params: {
-            queryFloat: "NaN",
-            queryDouble: "NaN",
-        }
-    },
+        id: "RestXmlSupportsNaNFloatQueryValues"
+        documentation: "Supports handling NaN float query values."
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["Float=NaN", "Double=NaN"]
+        params: { queryFloat: "NaN", queryDouble: "NaN" }
+    }
     {
-        id: "RestXmlSupportsInfinityFloatQueryValues",
-        documentation: "Supports handling Infinity float query values.",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "Float=Infinity",
-            "Double=Infinity",
-        ],
-        params: {
-            queryFloat: "Infinity",
-            queryDouble: "Infinity",
-        }
-    },
+        id: "RestXmlSupportsInfinityFloatQueryValues"
+        documentation: "Supports handling Infinity float query values."
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["Float=Infinity", "Double=Infinity"]
+        params: { queryFloat: "Infinity", queryDouble: "Infinity" }
+    }
     {
-        id: "RestXmlSupportsNegativeInfinityFloatQueryValues",
-        documentation: "Supports handling -Infinity float query values.",
-        protocol: restXml,
-        method: "GET",
-        uri: "/AllQueryStringTypesInput",
-        body: "",
-        queryParams: [
-            "Float=-Infinity",
-            "Double=-Infinity",
-        ],
-        params: {
-            queryFloat: "-Infinity",
-            queryDouble: "-Infinity",
-        }
-    },
+        id: "RestXmlSupportsNegativeInfinityFloatQueryValues"
+        documentation: "Supports handling -Infinity float query values."
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: ["Float=-Infinity", "Double=-Infinity"]
+        params: { queryFloat: "-Infinity", queryDouble: "-Infinity" }
+    }
     {
         id: "RestXmlZeroAndFalseQueryValues"
         documentation: "Query values of 0 and false are serialized"
@@ -187,81 +120,75 @@ apply AllQueryStringTypes @httpRequestTests([
         method: "GET"
         uri: "/AllQueryStringTypesInput"
         body: ""
-        queryParams: [
-            "Integer=0"
-            "Boolean=false"
-        ]
-        params: {
-            queryInteger: 0
-            queryBoolean: false
-        }
+        queryParams: ["Integer=0", "Boolean=false"]
+        params: { queryInteger: 0, queryBoolean: false }
     }
 ])
 
 @suppress(["HttpQueryParamsTrait"])
 structure AllQueryStringTypesInput {
     @httpQuery("String")
-    queryString: String,
+    queryString: String
 
     @httpQuery("StringList")
-    queryStringList: StringList,
+    queryStringList: StringList
 
     @httpQuery("StringSet")
-    queryStringSet: StringSet,
+    queryStringSet: StringSet
 
     @httpQuery("Byte")
-    queryByte: Byte,
+    queryByte: Byte
 
     @httpQuery("Short")
-    queryShort: Short,
+    queryShort: Short
 
     @httpQuery("Integer")
-    queryInteger: Integer,
+    queryInteger: Integer
 
     @httpQuery("IntegerList")
-    queryIntegerList: IntegerList,
+    queryIntegerList: IntegerList
 
     @httpQuery("IntegerSet")
-    queryIntegerSet: IntegerSet,
+    queryIntegerSet: IntegerSet
 
     @httpQuery("Long")
-    queryLong: Long,
+    queryLong: Long
 
     @httpQuery("Float")
-    queryFloat: Float,
+    queryFloat: Float
 
     @httpQuery("Double")
-    queryDouble: Double,
+    queryDouble: Double
 
     @httpQuery("DoubleList")
-    queryDoubleList: DoubleList,
+    queryDoubleList: DoubleList
 
     @httpQuery("Boolean")
-    queryBoolean: Boolean,
+    queryBoolean: Boolean
 
     @httpQuery("BooleanList")
-    queryBooleanList: BooleanList,
+    queryBooleanList: BooleanList
 
     @httpQuery("Timestamp")
-    queryTimestamp: Timestamp,
+    queryTimestamp: Timestamp
 
     @httpQuery("TimestampList")
-    queryTimestampList: TimestampList,
+    queryTimestampList: TimestampList
 
     @httpQuery("Enum")
-    queryEnum: FooEnum,
+    queryEnum: FooEnum
 
     @httpQuery("EnumList")
-    queryEnumList: FooEnumList,
+    queryEnumList: FooEnumList
 
     @httpQuery("IntegerEnum")
-    queryIntegerEnum: IntegerEnum,
+    queryIntegerEnum: IntegerEnum
 
     @httpQuery("IntegerEnumList")
-    queryIntegerEnumList: IntegerEnumList,
+    queryIntegerEnumList: IntegerEnumList
 
     @httpQueryParams
-    queryParamsMapOfStrings: StringMap,
+    queryParamsMapOfStrings: StringMap
 }
 
 /// This example uses a constant query string parameters and a label.
@@ -272,20 +199,15 @@ structure AllQueryStringTypesInput {
 @http(uri: "/ConstantQueryString/{hello}?foo=bar&hello", method: "GET")
 @httpRequestTests([
     {
-        id: "ConstantQueryString",
-        documentation: "Includes constant query string parameters",
-        protocol: restXml,
-        method: "GET",
-        uri: "/ConstantQueryString/hi",
-        queryParams: [
-            "foo=bar",
-            "hello",
-        ],
-        body: "",
-        params: {
-            hello: "hi"
-        }
-    },
+        id: "ConstantQueryString"
+        documentation: "Includes constant query string parameters"
+        protocol: restXml
+        method: "GET"
+        uri: "/ConstantQueryString/hi"
+        queryParams: ["foo=bar", "hello"]
+        body: ""
+        params: { hello: "hi" }
+    }
 ])
 operation ConstantQueryString {
     input: ConstantQueryStringInput
@@ -294,7 +216,7 @@ operation ConstantQueryString {
 structure ConstantQueryStringInput {
     @httpLabel
     @required
-    hello: String,
+    hello: String
 }
 
 /// This example uses fixed query string params and variable query string params.
@@ -308,46 +230,34 @@ operation ConstantAndVariableQueryString {
 
 apply ConstantAndVariableQueryString @httpRequestTests([
     {
-        id: "ConstantAndVariableQueryStringMissingOneValue",
-        documentation: "Mixes constant and variable query string parameters",
-        protocol: restXml,
-        method: "GET",
-        uri: "/ConstantAndVariableQueryString",
-        queryParams: [
-            "foo=bar",
-            "baz=bam",
-        ],
-        forbidQueryParams: ["maybeSet"],
-        body: "",
-        params: {
-            baz: "bam"
-        }
-    },
+        id: "ConstantAndVariableQueryStringMissingOneValue"
+        documentation: "Mixes constant and variable query string parameters"
+        protocol: restXml
+        method: "GET"
+        uri: "/ConstantAndVariableQueryString"
+        queryParams: ["foo=bar", "baz=bam"]
+        forbidQueryParams: ["maybeSet"]
+        body: ""
+        params: { baz: "bam" }
+    }
     {
-        id: "ConstantAndVariableQueryStringAllValues",
-        documentation: "Mixes constant and variable query string parameters",
-        protocol: restXml,
-        method: "GET",
-        uri: "/ConstantAndVariableQueryString",
-        queryParams: [
-            "foo=bar",
-            "baz=bam",
-            "maybeSet=yes"
-        ],
-        body: "",
-        params: {
-            baz: "bam",
-            maybeSet: "yes"
-        }
-    },
+        id: "ConstantAndVariableQueryStringAllValues"
+        documentation: "Mixes constant and variable query string parameters"
+        protocol: restXml
+        method: "GET"
+        uri: "/ConstantAndVariableQueryString"
+        queryParams: ["foo=bar", "baz=bam", "maybeSet=yes"]
+        body: ""
+        params: { baz: "bam", maybeSet: "yes" }
+    }
 ])
 
 structure ConstantAndVariableQueryStringInput {
     @httpQuery("baz")
-    baz: String,
+    baz: String
 
     @httpQuery("maybeSet")
-    maybeSet: String,
+    maybeSet: String
 }
 
 /// This example ensures that query string bound request parameters are
@@ -361,18 +271,14 @@ operation IgnoreQueryParamsInResponse {
 
 apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
-        id: "IgnoreQueryParamsInResponse",
-        documentation: "Query parameters must be ignored when serializing the output of an operation",
-        protocol: restXml,
-        code: 200,
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        body: "<IgnoreQueryParamsInResponseOutput><baz>bam</baz></IgnoreQueryParamsInResponseOutput>",
-        bodyMediaType: "application/xml",
-        params: {
-            baz: "bam"
-        }
+        id: "IgnoreQueryParamsInResponse"
+        documentation: "Query parameters must be ignored when serializing the output of an operation"
+        protocol: restXml
+        code: 200
+        headers: { "Content-Type": "application/xml" }
+        body: "<IgnoreQueryParamsInResponseOutput><baz>bam</baz></IgnoreQueryParamsInResponseOutput>"
+        bodyMediaType: "application/xml"
+        params: { baz: "bam" }
     }
 ])
 
@@ -391,39 +297,33 @@ operation OmitsNullSerializesEmptyString {
 
 apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
-        id: "RestXmlOmitsNullQuery",
-        documentation: "Omits null query values",
-        protocol: restXml,
-        method: "GET",
-        uri: "/OmitsNullSerializesEmptyString",
-        body: "",
-        params: {
-            nullValue: null,
-        },
-        appliesTo: "client",
-    },
+        id: "RestXmlOmitsNullQuery"
+        documentation: "Omits null query values"
+        protocol: restXml
+        method: "GET"
+        uri: "/OmitsNullSerializesEmptyString"
+        body: ""
+        params: { nullValue: null }
+        appliesTo: "client"
+    }
     {
-        id: "RestXmlSerializesEmptyString",
-        documentation: "Serializes empty query strings",
-        protocol: restXml,
-        method: "GET",
-        uri: "/OmitsNullSerializesEmptyString",
-        body: "",
-        queryParams: [
-            "Empty=",
-        ],
-        params: {
-            emptyString: "",
-        },
+        id: "RestXmlSerializesEmptyString"
+        documentation: "Serializes empty query strings"
+        protocol: restXml
+        method: "GET"
+        uri: "/OmitsNullSerializesEmptyString"
+        body: ""
+        queryParams: ["Empty="]
+        params: { emptyString: "" }
     }
 ])
 
 structure OmitsNullSerializesEmptyStringInput {
     @httpQuery("Null")
-    nullValue: String,
+    nullValue: String
 
     @httpQuery("Empty")
-    emptyString: String,
+    emptyString: String
 }
 
 /// Automatically adds idempotency tokens.
@@ -435,38 +335,32 @@ operation QueryIdempotencyTokenAutoFill {
 
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
-        id: "QueryIdempotencyTokenAutoFill",
-        documentation: "Automatically adds idempotency token when not set",
-        protocol: restXml,
-        method: "POST",
-        uri: "/QueryIdempotencyTokenAutoFill",
-        body: "",
-        queryParams: [
-            "token=00000000-0000-4000-8000-000000000000",
-        ],
-        appliesTo: "client",
-    },
+        id: "QueryIdempotencyTokenAutoFill"
+        documentation: "Automatically adds idempotency token when not set"
+        protocol: restXml
+        method: "POST"
+        uri: "/QueryIdempotencyTokenAutoFill"
+        body: ""
+        queryParams: ["token=00000000-0000-4000-8000-000000000000"]
+        appliesTo: "client"
+    }
     {
-        id: "QueryIdempotencyTokenAutoFillIsSet",
-        documentation: "Uses the given idempotency token as-is",
-        protocol: restXml,
-        method: "POST",
-        uri: "/QueryIdempotencyTokenAutoFill",
-        body: "",
-        queryParams: [
-            "token=00000000-0000-4000-8000-000000000000",
-        ],
-        params: {
-            token: "00000000-0000-4000-8000-000000000000"
-        },
-        appliesTo: "client",
+        id: "QueryIdempotencyTokenAutoFillIsSet"
+        documentation: "Uses the given idempotency token as-is"
+        protocol: restXml
+        method: "POST"
+        uri: "/QueryIdempotencyTokenAutoFill"
+        body: ""
+        queryParams: ["token=00000000-0000-4000-8000-000000000000"]
+        params: { token: "00000000-0000-4000-8000-000000000000" }
+        appliesTo: "client"
     }
 ])
 
 structure QueryIdempotencyTokenAutoFillInput {
     @httpQuery("token")
     @idempotencyToken
-    token: String,
+    token: String
 }
 
 // Clients must make named query members take precedence over unnamed members
@@ -478,51 +372,39 @@ operation QueryPrecedence {
 
 apply QueryPrecedence @httpRequestTests([
     {
-        id: "RestXmlQueryPrecedence",
-        documentation: "Prefer named query parameters when serializing",
-        protocol: restXml,
-        method: "POST",
-        uri: "/Precedence",
-        body: "",
-        queryParams: [
-            "bar=named",
-            "qux=alsoFromMap"
-        ],
+        id: "RestXmlQueryPrecedence"
+        documentation: "Prefer named query parameters when serializing"
+        protocol: restXml
+        method: "POST"
+        uri: "/Precedence"
+        body: ""
+        queryParams: ["bar=named", "qux=alsoFromMap"]
         params: {
-            foo: "named",
-            baz: {
-                bar: "fromMap",
-                qux: "alsoFromMap"
-            }
-        },
-        appliesTo: "client",
-    },
+            foo: "named"
+            baz: { bar: "fromMap", qux: "alsoFromMap" }
+        }
+        appliesTo: "client"
+    }
     {
-        id: "RestXmlServersPutAllQueryParamsInMap",
-        documentation: "Servers put all query params in map",
-        protocol: restXml,
-        method: "POST",
-        uri: "/Precedence",
-        body: "",
-        queryParams: [
-            "bar=named",
-            "qux=fromMap"
-        ],
+        id: "RestXmlServersPutAllQueryParamsInMap"
+        documentation: "Servers put all query params in map"
+        protocol: restXml
+        method: "POST"
+        uri: "/Precedence"
+        body: ""
+        queryParams: ["bar=named", "qux=fromMap"]
         params: {
-            foo: "named",
-            baz: {
-                bar: "named",
-                qux: "fromMap"
-            }
-        },
-        appliesTo: "server",
+            foo: "named"
+            baz: { bar: "named", qux: "fromMap" }
+        }
+        appliesTo: "server"
     }
 ])
 
 @suppress(["HttpQueryParamsTrait"])
 structure QueryPrecedenceInput {
     @httpQuery("bar")
-    foo: String,
+    foo: String
 
     @httpQueryParams
     baz: StringMap
@@ -536,44 +418,36 @@ operation QueryParamsAsStringListMap {
 
 apply QueryParamsAsStringListMap @httpRequestTests([
     {
-        id: "RestXmlQueryParamsStringListMap",
-        documentation: "Serialize query params from map of list strings",
-        protocol: restXml,
-        method: "POST",
-        uri: "/StringListMap",
-        body: "",
-        queryParams: [
-            "corge=named",
-            "baz=bar",
-            "baz=qux"
-        ],
+        id: "RestXmlQueryParamsStringListMap"
+        documentation: "Serialize query params from map of list strings"
+        protocol: restXml
+        method: "POST"
+        uri: "/StringListMap"
+        body: ""
+        queryParams: ["corge=named", "baz=bar", "baz=qux"]
         params: {
-            qux: "named",
+            qux: "named"
             foo: {
-                "baz": ["bar", "qux"]
+                baz: ["bar", "qux"]
             }
-        },
+        }
         appliesTo: "client"
-    },
+    }
     {
-        id: "RestXmlServersQueryParamsStringListMap",
-        documentation: "Servers put all query params in map",
-        protocol: restXml,
-        method: "POST",
-        uri: "/StringListMap",
-        body: "",
-        queryParams: [
-            "corge=named",
-            "baz=bar",
-            "baz=qux"
-        ],
+        id: "RestXmlServersQueryParamsStringListMap"
+        documentation: "Servers put all query params in map"
+        protocol: restXml
+        method: "POST"
+        uri: "/StringListMap"
+        body: ""
+        queryParams: ["corge=named", "baz=bar", "baz=qux"]
         params: {
-            qux: "named",
+            qux: "named"
             foo: {
-                "corge": ["named"],
-                "baz": ["bar", "qux"]
+                corge: ["named"]
+                baz: ["bar", "qux"]
             }
-        },
+        }
         appliesTo: "server"
     }
 ])
@@ -581,7 +455,7 @@ apply QueryParamsAsStringListMap @httpRequestTests([
 @suppress(["HttpQueryParamsTrait"])
 structure QueryParamsAsStringListMapInput {
     @httpQuery("corge")
-    qux: String,
+    qux: String
 
     @httpQueryParams
     foo: StringListMap

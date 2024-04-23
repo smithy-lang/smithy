@@ -2,25 +2,25 @@ $version: "1.0"
 
 namespace example
 
-use aws.endpoints#standardRegionalEndpoints
 use aws.endpoints#standardPartitionalEndpoints
+use aws.endpoints#standardRegionalEndpoints
 
 @standardRegionalEndpoints(
     regionSpecialCases: {
         "us-east-1": [
             {
-                endpoint: "https://myservice.{invalid}.{dnsSuffix}",
+                endpoint: "https://myservice.{invalid}.{dnsSuffix}"
             }
         ]
-    },
+    }
     partitionSpecialCases: {
-        "aws": [
+        aws: [
             {
-                endpoint: "{invalid}-fips.{region}.{badSuffix}",
+                endpoint: "{invalid}-fips.{region}.{badSuffix}"
                 fips: true
-            },
+            }
             {
-                endpoint: "https://{region}.   invalidurl   {dnsSuffix}",
+                endpoint: "https://{region}.   invalidurl   {dnsSuffix}"
                 dualStack: true
             }
         ]
@@ -29,11 +29,11 @@ use aws.endpoints#standardPartitionalEndpoints
 service Service1 {}
 
 @standardPartitionalEndpoints(
-    endpointPatternType: "service_dnsSuffix",
+    endpointPatternType: "service_dnsSuffix"
     partitionEndpointSpecialCases: {
-        "aws": [
+        aws: [
             {
-                endpoint: "myservice.{invalid}.{dnsSuffix}",
+                endpoint: "myservice.{invalid}.{dnsSuffix}"
                 region: "us-east-1"
             }
         ]

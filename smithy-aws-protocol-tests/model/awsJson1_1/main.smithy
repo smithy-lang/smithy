@@ -5,93 +5,88 @@ namespace aws.protocoltests.json
 use aws.api#service
 use aws.auth#sigv4
 use aws.protocols#awsJson1_1
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
 
 @service(
-    sdkId: "Json Protocol",
-    arnNamespace: "jsonprotocol",
-    cloudFormationName: "JsonProtocol",
-    cloudTrailEventSource: "jsonprotocol.amazonaws.com",
+    sdkId: "Json Protocol"
+    arnNamespace: "jsonprotocol"
+    cloudFormationName: "JsonProtocol"
+    cloudTrailEventSource: "jsonprotocol.amazonaws.com"
 )
 @sigv4(name: "jsonprotocol")
 @awsJson1_1
 @title("Sample Json 1.1 Protocol Service")
 service JsonProtocol {
-    version: "2018-01-01",
+    version: "2018-01-01"
     operations: [
-        EmptyOperation,
-        KitchenSinkOperation,
-        SimpleScalarProperties,
-        OperationWithOptionalInputOutput,
-        PutAndGetInlineDocuments,
-        JsonEnums,
-        NullOperation,
-        SparseNullsOperation,
-        GreetingWithErrors,
-        JsonUnions,
-
+        EmptyOperation
+        KitchenSinkOperation
+        SimpleScalarProperties
+        OperationWithOptionalInputOutput
+        PutAndGetInlineDocuments
+        JsonEnums
+        NullOperation
+        SparseNullsOperation
+        GreetingWithErrors
+        JsonUnions
         // @endpoint and @hostLabel trait tests
-        EndpointOperation,
-        EndpointWithHostLabelOperation,
-
+        EndpointOperation
+        EndpointWithHostLabelOperation
         // custom endpoints with paths
-        HostWithPathOperation,
-
+        HostWithPathOperation
         // client-only timestamp parsing tests
-        DatetimeOffsets,
+        DatetimeOffsets
         FractionalSeconds
-
         // requestCompression trait tests
         PutWithContentEncoding
-    ],
+    ]
 }
 
 structure EmptyStruct {}
 
 structure SimpleStruct {
-    Value: String,
+    Value: String
 }
 
 structure StructWithJsonName {
-    @jsonName("RenamedMember") // Even if this trait it present, it does not affect serialization for this protocol
-    Value: String,
+    @jsonName("RenamedMember")
+    // Even if this trait it present, it does not affect serialization for this protocol
+    Value: String
 }
 
 list ListOfListOfStrings {
-    member: ListOfStrings,
+    member: ListOfStrings
 }
 
 list ListOfMapsOfStrings {
-    member: MapOfStrings,
+    member: MapOfStrings
 }
 
 list ListOfStrings {
-    member: String,
+    member: String
 }
 
 list ListOfStructs {
-    member: SimpleStruct,
+    member: SimpleStruct
 }
 
 map MapOfListsOfStrings {
-    key: String,
-    value: ListOfStrings,
+    key: String
+    value: ListOfStrings
 }
 
 map MapOfMapOfStrings {
-    key: String,
-    value: MapOfStrings,
+    key: String
+    value: MapOfStrings
 }
 
 map MapOfStrings {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 map MapOfStructs {
-    key: String,
-    value: SimpleStruct,
+    key: String
+    value: SimpleStruct
 }
 
 @mediaType("application/json")

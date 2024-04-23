@@ -14,7 +14,7 @@ apply OperationWithRequiredMembers @httpResponseTests([
         protocol: awsJson1_0
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: "{}"
         params: {
             requiredString: ""
@@ -34,8 +34,7 @@ apply OperationWithRequiredMembers @httpResponseTests([
 ])
 
 operation OperationWithRequiredMembers {
-    output := with [RequiredMembersMixin] {
-    }
+    output := with [RequiredMembersMixin] {}
 }
 
 apply OperationWithRequiredMembersWithDefaults @httpResponseTests([
@@ -47,7 +46,7 @@ apply OperationWithRequiredMembersWithDefaults @httpResponseTests([
         protocol: awsJson1_0
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: "{}"
         params: {
             requiredString: "hi"
@@ -69,8 +68,7 @@ apply OperationWithRequiredMembersWithDefaults @httpResponseTests([
 ])
 
 operation OperationWithRequiredMembersWithDefaults {
-    output := with [RequiredMembersWithDefaultsMixin] {
-    }
+    output := with [RequiredMembersWithDefaultsMixin] {}
 }
 
 @mixin

@@ -2,12 +2,12 @@ namespace smithy.example
 
 @internal
 structure InternalStructure {
-    foo: String,
+    foo: String
 }
 
 structure ExternalStructure {
     @internal
-    internal: String,
+    internal: String
 
-    external: String,
+    external: String
 }

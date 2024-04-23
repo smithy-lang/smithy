@@ -5,5 +5,4 @@ namespace test.smithy.traitcodegen
 use test.smithy.traitcodegen.uniqueitems#StringSetTrait
 
 @StringSetTrait(["a", "b", "c", "d"])
-structure myStruct {
-}
+structure myStruct {}

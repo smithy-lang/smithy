@@ -2,22 +2,19 @@ $version: "2.0"
 
 namespace smithy.example
 
-use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnResource
 
 service TestService {
-    version: "2020-07-02",
-    resources: [Forecast]
+    version: "2020-07-02"
+    resources: [
+        Forecast
+    ]
 }
 
-@cfnResource()
+@cfnResource
 resource Forecast {
-    identifiers: {
-        forecastId: String
-    }
-    properties: {
-        chanceOfRain: Float
-    }
+    identifiers: { forecastId: String }
+    properties: { chanceOfRain: Float }
     read: GetForecast
     put: PutForecast
     create: CreateForecast
@@ -30,6 +27,7 @@ operation GetForecast {
         @required
         forecastId: String
     }
+
     output := {
         @nestedProperties
         forecastData: ForecastData
@@ -41,6 +39,7 @@ operation PutForecast {
     input := {
         @required
         forecastId: String
+
         @nestedProperties
         forecastData: ForecastData
     }
@@ -57,6 +56,7 @@ operation UpdateForecast {
     input := {
         @required
         forecastId: String
+
         @nestedProperties
         forecastData: ForecastData
     }

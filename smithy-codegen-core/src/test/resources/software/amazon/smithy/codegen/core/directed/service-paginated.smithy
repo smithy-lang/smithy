@@ -4,25 +4,28 @@ namespace smithy.example
 
 @paginated(inputToken: "nextToken", outputToken: "nextToken", items: "items", pageSize: "maxResults")
 service Foo {
-    operations: [ListA, ListB]
+    operations: [
+        ListA
+        ListB
+    ]
 }
 
 @readonly
 @paginated
 operation ListA {
-    input: ListAInput,
+    input: ListAInput
     output: ListAOutput
 }
 
 @input
 structure ListAInput {
-    maxResults: Integer,
+    maxResults: Integer
     nextToken: String
 }
 
 @output
 structure ListAOutput {
-    nextToken: String,
+    nextToken: String
     items: StringList
 }
 
@@ -33,18 +36,18 @@ list StringList {
 @readonly
 @paginated
 operation ListB {
-    input: ListBInput,
+    input: ListBInput
     output: ListBOutput
 }
 
 @input
 structure ListBInput {
-    maxResults: Integer,
+    maxResults: Integer
     nextToken: String
 }
 
 @output
 structure ListBOutput {
-    nextToken: String,
+    nextToken: String
     items: StringList
 }

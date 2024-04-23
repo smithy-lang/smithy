@@ -4,21 +4,22 @@ namespace smithy.example
 
 use aws.iam#iamAction
 
-@iamAction(name: "foo"
+@iamAction(
+    name: "foo"
     documentation: "docs"
     relativeDocumentation: "page.html#actions"
     requiredActions: ["iam:PassRole", "ec2:RunInstances"]
     resources: {
         required: {
-            "bar": {
+            bar: {
                 conditionKeys: ["foo:asdf"]
             }
-            "bap": {
+            bap: {
                 conditionKeys: ["foo:zxcv", "foo:hjkl"]
             }
         }
         optional: {
-            "baz": {}
+            baz: {}
         }
     }
     createsResources: ["kettle"]

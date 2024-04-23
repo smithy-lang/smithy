@@ -25,263 +25,205 @@ operation MalformedTimestampQueryEpoch {
 
 apply MalformedTimestampQueryDefault @httpMalformedRequestTests([
     {
-        id: "RestJsonQueryTimestampDefaultRejectsHttpDate",
+        id: "RestJsonQueryTimestampDefaultRejectsHttpDate"
         documentation: """
-        By default, IMF-fixdate timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            By default, IMF-fixdate timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryDefault",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryDefault"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["Tue%2C%2029%20Apr%202014%2018%3A30%3A38%20GMT",
-                       "Sun%2C%2002%20Jan%202000%2020%3A34%3A56.000%20GMT"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["Tue%2C%2029%20Apr%202014%2018%3A30%3A38%20GMT", "Sun%2C%2002%20Jan%202000%2020%3A34%3A56.000%20GMT"]
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampDefaultRejectsEpochSeconds",
+        id: "RestJsonQueryTimestampDefaultRejectsEpochSeconds"
         documentation: """
-        By default, epoch second timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            By default, epoch second timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryDefault",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryDefault"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["1515531081.1234", "1515531081"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["1515531081.1234", "1515531081"]
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampDefaultRejectsUTCOffsets",
+        id: "RestJsonQueryTimestampDefaultRejectsUTCOffsets"
         documentation: """
-        UTC offsets must be rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            UTC offsets must be rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryDefault",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryDefault"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        tags : ["timestamp"]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampDefaultRejectsDifferent8601Formats",
+        id: "RestJsonQueryTimestampDefaultRejectsDifferent8601Formats"
         documentation: """
-        By default, maybe-valid ISO-8601 date-times not conforming to RFC 3339
-        are rejected with a 400 SerializationException""",
-        protocol: restJson1,
+            By default, maybe-valid ISO-8601 date-times not conforming to RFC 3339
+            are rejected with a 400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryDefault",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryDefault"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["1996-12-19T16:39:57+00",
-                       "1996-12-19T16:39:57+00Z",
-                       "1996-12-19T16:39:57",
-                       "1996-12-19T163957",
-                       "19961219T163957Z",
-                       "19961219T163957",
-                       "19961219T16:39:57Z",
-                       "19961219T16:39:57",
-                       "1996-12-19T16:39Z",
-                       "1996-12-19T16:39",
-                       "1996-12-19T1639",
-                       "1996-12-19T16Z",
-                       "1996-12-19T16",
-                       "1996-12-19%2016:39:57Z",
-                       "2011-12-03T10:15:30+01:00[Europe/Paris]"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["1996-12-19T16:39:57+00", "1996-12-19T16:39:57+00Z", "1996-12-19T16:39:57", "1996-12-19T163957", "19961219T163957Z", "19961219T163957", "19961219T16:39:57Z", "19961219T16:39:57", "1996-12-19T16:39Z", "1996-12-19T16:39", "1996-12-19T1639", "1996-12-19T16Z", "1996-12-19T16", "1996-12-19%2016:39:57Z", "2011-12-03T10:15:30+01:00[Europe/Paris]"]
+        }
+        tags: ["timestamp"]
+    }
 ])
 
 apply MalformedTimestampQueryHttpDate @httpMalformedRequestTests([
     {
-        id: "RestJsonQueryTimestampHttpDateRejectsDateTime",
+        id: "RestJsonQueryTimestampHttpDateRejectsDateTime"
         documentation: """
-        When the format is http-date, RFC3339 timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            When the format is http-date, RFC3339 timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryHttpDate",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryHttpDate"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["1985-04-12T23%3A20%3A50.52Z",
-                       "1985-04-12T23%3A20%3A50Z",
-                       "1996-12-19T16%3A39%3A57-08%3A00"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["1985-04-12T23%3A20%3A50.52Z", "1985-04-12T23%3A20%3A50Z", "1996-12-19T16%3A39%3A57-08%3A00"]
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampHttpDateRejectsEpochSeconds",
+        id: "RestJsonQueryTimestampHttpDateRejectsEpochSeconds"
         documentation: """
-        When the format is http-date, epoch second timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            When the format is http-date, epoch second timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryHttpDate",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryHttpDate"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["1515531081.1234", "1515531081"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["1515531081.1234", "1515531081"]
+        }
+        tags: ["timestamp"]
+    }
 ])
 
 apply MalformedTimestampQueryEpoch @httpMalformedRequestTests([
     {
-        id: "RestJsonQueryTimestampEpochRejectsDateTime",
+        id: "RestJsonQueryTimestampEpochRejectsDateTime"
         documentation: """
-        When the format is epoch-seconds, RFC3339 timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            When the format is epoch-seconds, RFC3339 timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryEpoch",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryEpoch"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["1985-04-12T23%3A20%3A50.52Z",
-                       "1985-04-12T23%3A20%3A50Z",
-                       "1996-12-19T16%3A39%3A57-08%3A00"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["1985-04-12T23%3A20%3A50.52Z", "1985-04-12T23%3A20%3A50Z", "1996-12-19T16%3A39%3A57-08%3A00"]
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampEpochRejectsHttpDate",
+        id: "RestJsonQueryTimestampEpochRejectsHttpDate"
         documentation: """
-        When the format is epoch-seconds, IMF-fixdate timestamps are rejected with a
-        400 SerializationException""",
-        protocol: restJson1,
+            When the format is epoch-seconds, IMF-fixdate timestamps are rejected with a
+            400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryEpoch",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryEpoch"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["Tue%2C%2029%20Apr%202014%2018%3A30%3A38%20GMT",
-                       "Sun%2C%2002%20Jan%202000%2020%3A34%3A56.000%20GMT"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["Tue%2C%2029%20Apr%202014%2018%3A30%3A38%20GMT", "Sun%2C%2002%20Jan%202000%2020%3A34%3A56.000%20GMT"]
+        }
+        tags: ["timestamp"]
+    }
     {
-        id: "RestJsonQueryTimestampEpochRejectsMalformedValues",
+        id: "RestJsonQueryTimestampEpochRejectsMalformedValues"
         documentation: """
-        Invalid values for epoch seconds are rejected with a 400 SerializationException""",
-        protocol: restJson1,
+            Invalid values for epoch seconds are rejected with a 400 SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedTimestampQueryEpoch",
-            queryParams: [
-                "timestamp=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedTimestampQueryEpoch"
+            queryParams: ["timestamp=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["true", "1515531081ABC", "0x42", "1515531081.123.456",
-                       "Infinity", "-Infinity", "NaN"]
-        },
-        tags : ["timestamp"]
-    },
+            value: ["true", "1515531081ABC", "0x42", "1515531081.123.456", "Infinity", "-Infinity", "NaN"]
+        }
+        tags: ["timestamp"]
+    }
 ])
 
 structure MalformedTimestampQueryDefaultInput {
     @httpQuery("timestamp")
     @required
-    timestamp: Timestamp,
+    timestamp: Timestamp
 }
 
 structure MalformedTimestampQueryHttpDateInput {
     @httpQuery("timestamp")
     @required
     @timestampFormat("http-date")
-    timestamp: Timestamp,
+    timestamp: Timestamp
 }
 
 structure MalformedTimestampQueryEpochInput {
     @httpQuery("timestamp")
     @required
     @timestampFormat("epoch-seconds")
-    timestamp: Timestamp,
+    timestamp: Timestamp
 }
-

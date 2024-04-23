@@ -6,13 +6,13 @@ namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
 operation Foo {
-    input: Unit,
+    input: Unit
     output: FooOutput
 }
 
 @output
 structure FooOutput {
-  messages: EventStream
+    messages: EventStream
 }
 
 @streaming
@@ -21,11 +21,15 @@ union EventStream {
 }
 
 structure Event {
-  @eventHeader
-  foo: smithy.api#String, // Expected error
+    @eventHeader
+    foo: smithy.api#String
 
-  @eventHeader
-  bar: smithy.api#String, // Expected error
+    // Expected error
+    @eventHeader
+    bar: smithy.api#String
 
-  baz: smithy.api#String, // No error
+    // Expected error
+    baz: smithy.api#String
+
+    // No error
 }

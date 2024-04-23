@@ -8,10 +8,10 @@ use aws.protocols#restXml
 @awsJson1_1
 @restXml
 service MyService {
-    version: "1",
+    version: "1"
     operations: [
-        SayHello,
-    ],
+        SayHello
+    ]
     rename: {
         "smithy.example#BadGreeting": "ThisDoesNotWork"
         "smithy.example#ServerError": "ServerDown"
@@ -20,9 +20,12 @@ service MyService {
 }
 
 operation SayHello {
-    input: SayHelloInput,
-    output: SayHelloOutput,
-    errors: [BadGreeting, ServerError]
+    input: SayHelloInput
+    output: SayHelloOutput
+    errors: [
+        BadGreeting
+        ServerError
+    ]
 }
 
 @input

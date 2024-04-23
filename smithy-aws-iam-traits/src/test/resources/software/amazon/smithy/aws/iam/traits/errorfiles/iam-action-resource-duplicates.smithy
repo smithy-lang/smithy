@@ -7,18 +7,18 @@ use aws.iam#iamAction
 @iamAction(
     resources: {
         required: {
-            "bar": {
+            bar: {
                 conditionKeys: ["foo:asdf"]
             }
-            "bap": {
+            bap: {
                 conditionKeys: ["foo:zxcv"]
             }
         }
         optional: {
-            "baz": {
+            baz: {
                 conditionKeys: ["foo:qwer"]
             }
-            "bap": {
+            bap: {
                 conditionKeys: ["foo:zxcv"]
             }
         }

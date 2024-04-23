@@ -2,21 +2,25 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "example.weather"
     }
 ]
 
 namespace example.weather
 
-use aws.api#taggable
 use aws.api#tagEnabled
+use aws.api#taggable
 
 @tagEnabled(disableDefaultOperations: true)
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
-    operations: [GetCurrentTime]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        GetCurrentTime
+    ]
 }
 
 structure Tag {
@@ -36,22 +40,26 @@ operation TagCity {
     input := {
         @required
         cityId: CityId
+
         @length(max: 128)
         @property(name: "tagz")
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagCity {
     input := {
         @required
         cityId: CityId
+
         @required
         @notProperty
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForCity {
@@ -59,25 +67,29 @@ operation ListTagsForCity {
         @required
         cityId: CityId
     }
-    output := { 
+
+    output := {
         @length(max: 128)
         @property(name: "tagz")
         tags: TagList
     }
 }
 
-@taggable(property: "tagz", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
+@taggable(
+    property: "tagz"
+    apiConfig: { tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity }
+)
 resource City {
-    identifiers: { cityId: CityId },
-    properties: {
-        name: String
-        coordinates: CityCoordinates
-        tagz: TagList
-    }
+    identifiers: { cityId: CityId }
+    properties: { name: String, coordinates: CityCoordinates, tagz: TagList }
     create: CreateCity
-    read: GetCity,
+    read: GetCity
     update: UpdateCity
-    operations: [TagCity, UntagCity, ListTagsForCity],
+    operations: [
+        TagCity
+        UntagCity
+        ListTagsForCity
+    ]
 }
 
 operation CreateCity {
@@ -85,6 +97,7 @@ operation CreateCity {
         name: String
         coordinates: CityCoordinates
     }
+
     output := {
         @required
         cityId: CityId
@@ -98,16 +111,20 @@ operation UpdateCity {
     input := {
         @required
         cityId: CityId
+
         tagz: TagList
     }
+
     output := {}
 }
 
 @readonly
 operation GetCity {
-    input: GetCityInput,
-    output: GetCityOutput,
-    errors: [NoSuchResource]
+    input: GetCityInput
+    output: GetCityOutput
+    errors: [
+        NoSuchResource
+    ]
 }
 
 @input
@@ -123,19 +140,19 @@ structure GetCityOutput {
     // "required" is used on output to indicate if the service
     // will always provide a value for the member.
     @required
-    name: String,
+    name: String
 
     @required
-    coordinates: CityCoordinates,
+    coordinates: CityCoordinates
 }
 
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
 
 // "error" is a trait that is used to specialize
@@ -148,7 +165,7 @@ structure NoSuchResource {
 
 @readonly
 operation GetCurrentTime {
-    input: GetCurrentTimeInput,
+    input: GetCurrentTimeInput
     output: GetCurrentTimeOutput
 }
 

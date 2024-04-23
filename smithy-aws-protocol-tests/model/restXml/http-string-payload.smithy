@@ -8,25 +8,25 @@ use smithy.test#httpResponseTests
 @http(uri: "/EnumPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestXmlEnumPayloadRequest",
-        uri: "/EnumPayload",
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        method: "POST",
+        id: "RestXmlEnumPayloadRequest"
+        uri: "/EnumPayload"
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        method: "POST"
         protocol: "aws.protocols#restXml"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestXmlEnumPayloadResponse",
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        protocol: "aws.protocols#restXml",
+        id: "RestXmlEnumPayloadResponse"
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        protocol: "aws.protocols#restXml"
         code: 200
     }
 ])
 operation HttpEnumPayload {
-    input: EnumPayloadInput,
+    input: EnumPayloadInput
     output: EnumPayloadInput
 }
 
@@ -42,25 +42,25 @@ enum StringEnum {
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestXmlStringPayloadRequest",
-        uri: "/StringPayload",
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        method: "POST",
+        id: "RestXmlStringPayloadRequest"
+        uri: "/StringPayload"
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        method: "POST"
         protocol: "aws.protocols#restXml"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestXmlStringPayloadResponse",
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        protocol: "aws.protocols#restXml",
+        id: "RestXmlStringPayloadResponse"
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        protocol: "aws.protocols#restXml"
         code: 200
     }
 ])
 operation HttpStringPayload {
-    input: StringPayloadInput,
+    input: StringPayloadInput
     output: StringPayloadInput
 }
 

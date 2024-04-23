@@ -14,22 +14,19 @@ operation FractionalSeconds {
 
 apply FractionalSeconds @httpResponseTests([
     {
-        id: "AwsJson11DateTimeWithFractionalSeconds",
+        id: "AwsJson11DateTimeWithFractionalSeconds"
         documentation: """
-        Ensures that clients can correctly parse datetime timestamps with fractional seconds""",
-        protocol: awsJson1_1,
-        code: 200,
-        body:
-        """
-              {
-                  "datetime": "2000-01-02T20:34:56.123Z"
-              }
-        """,
+            Ensures that clients can correctly parse datetime timestamps with fractional seconds"""
+        protocol: awsJson1_1
+        code: 200
+        body: """
+                  {
+                      "datetime": "2000-01-02T20:34:56.123Z"
+                  }
+            """
         params: { datetime: 946845296.123 }
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/x-amz-json-1.1"
-        },
+        bodyMediaType: "application/json"
+        headers: { "Content-Type": "application/x-amz-json-1.1" }
         appliesTo: "client"
     }
 ])

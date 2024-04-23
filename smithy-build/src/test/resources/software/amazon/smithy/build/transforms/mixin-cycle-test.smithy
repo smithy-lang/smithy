@@ -2,8 +2,6 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.example1#trait1
-
 @trait
 @tags(["filter"])
 structure filteredTrait {}
@@ -18,7 +16,7 @@ structure resourceTrait {}
 // RESOURCES
 @filteredTrait
 @unfilteredTrait
-resource ResourceWithMixin with [ ResourceMixin ]  {}
+resource ResourceWithMixin with [ResourceMixin] {}
 
 @mixin
 @resourceTrait
@@ -27,11 +25,12 @@ resource ResourceMixin {}
 // OPERATIONS
 @filteredTrait
 @unfilteredTrait
-operation OperationWithMixin with [ OperationMixin ] {
+operation OperationWithMixin with [OperationMixin] {
     input := {
         @required
         @httpLabel
-        myInputField: String,
+        myInputField: String
+
         other: String
     }
 }
@@ -51,7 +50,7 @@ structure ThrottlingException {
 }
 
 @error("client")
-structure ValidationException{
+structure ValidationException {
     @required
     message: String
 }
@@ -59,7 +58,7 @@ structure ValidationException{
 // STRUCTURES
 @filteredTrait
 @unfilteredTrait
-structure StructureWithMixin with [ StructureMixin ] {
+structure StructureWithMixin with [StructureMixin] {
     data: String
 }
 
@@ -71,7 +70,7 @@ structure StructureMixin {
 // UNIONS
 @filteredTrait
 @unfilteredTrait
-union UnionWithMixin with [ UnionMixin ] {
+union UnionWithMixin with [UnionMixin] {
     data: String
 }
 
@@ -83,7 +82,7 @@ union UnionMixin {
 // MAPS
 @filteredTrait
 @unfilteredTrait
-map MapWithMixin with [MapMixin]{
+map MapWithMixin with [MapMixin] {
     key: String
     value: String
 }
@@ -98,7 +97,7 @@ map MapMixin {
 // LISTS
 @filteredTrait
 @unfilteredTrait
-list ListWithMixin with [ListMixin]{
+list ListWithMixin with [ListMixin] {
     member: String
 }
 
@@ -111,9 +110,8 @@ list ListMixin {
 // STRINGS
 @filteredTrait
 @unfilteredTrait
-string StringWithMixin with [ StringMixin ]
+string StringWithMixin with [StringMixin]
 
 @pattern("^$")
 @mixin
 string StringMixin
-

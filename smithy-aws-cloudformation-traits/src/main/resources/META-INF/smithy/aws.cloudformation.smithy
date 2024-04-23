@@ -6,9 +6,13 @@ namespace aws.cloudformation
 /// additional identifier for the resource.
 @unstable
 @trait(
-    selector: "structure > :test(member > string)",
-    conflicts: [cfnExcludeProperty],
-    breakingChanges: [{change: "remove"}]
+    selector: "structure > :test(member > string)"
+    conflicts: [cfnExcludeProperty]
+    breakingChanges: [
+        {
+            change: "remove"
+        }
+    ]
 )
 structure cfnAdditionalIdentifier {}
 
@@ -16,8 +20,12 @@ structure cfnAdditionalIdentifier {}
 /// to differ from a structure member name used in the model.
 @unstable
 @trait(
-    selector: "structure > member",
-    breakingChanges: [{change: "any"}]
+    selector: "structure > member"
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 string cfnName
 
@@ -25,13 +33,13 @@ string cfnName
 /// CloudFormation resource definitions.
 @unstable
 @trait(
-    selector: "structure > member",
-    conflicts: [
-        cfnAdditionalIdentifier,
-        cfnMutability,
-        cfnDefaultValue
-    ],
-    breakingChanges: [{change: "add"}]
+    selector: "structure > member"
+    conflicts: [cfnAdditionalIdentifier, cfnMutability, cfnDefaultValue]
+    breakingChanges: [
+        {
+            change: "add"
+        }
+    ]
 )
 structure cfnExcludeProperty {}
 
@@ -39,7 +47,7 @@ structure cfnExcludeProperty {}
 /// for the property of the CloudFormation resource.
 @unstable
 @trait(
-    selector: "resource > operation -[input, output]-> structure > member",
+    selector: "resource > operation -[input, output]-> structure > member"
     conflicts: [cfnExcludeProperty]
 )
 structure cfnDefaultValue {}
@@ -48,7 +56,7 @@ structure cfnDefaultValue {}
 /// when part of a CloudFormation resource.
 @unstable
 @trait(
-    selector: "structure > member",
+    selector: "structure > member"
     conflicts: [cfnExcludeProperty]
 )
 enum cfnMutability {
@@ -69,12 +77,10 @@ enum cfnMutability {
     /// member is also marked with the `@additionalIdentifier` trait.
     CREATE = "create"
 
-
     /// Indicates that the CloudFormation property generated from this
     /// member can be returned by a `read` or `list` request, but
     /// cannot be set by the user.
     READ = "read"
-
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified by the user, but cannot be returned by a
@@ -86,16 +92,20 @@ enum cfnMutability {
 /// Indicates that a Smithy resource is a CloudFormation resource.
 @unstable
 @trait(
-    selector: "resource",
-    breakingChanges: [{change: "presence"}]
+    selector: "resource"
+    breakingChanges: [
+        {
+            change: "presence"
+        }
+    ]
 )
 structure cfnResource {
     /// Provides a custom CloudFormation resource name.
-    name: String,
+    name: String
 
     /// A list of additional shape IDs of structures that will have their
     /// properties added to the CloudFormation resource.
-    additionalSchemas: StructureIdList,
+    additionalSchemas: StructureIdList
 }
 
 @private

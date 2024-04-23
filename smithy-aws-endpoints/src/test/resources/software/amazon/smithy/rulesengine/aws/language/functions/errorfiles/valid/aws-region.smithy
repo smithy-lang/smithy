@@ -6,82 +6,74 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
 @endpointRuleSet({
-    "parameters": {
-        "Region": {
-            "type": "string",
-            "builtIn": "AWS::Region",
-            "documentation": "The region to dispatch this request, eg. `us-east-1`."
-        }
-    },
-    "rules": [
+    parameters: {
+        Region: { type: "string", builtIn: "AWS::Region", documentation: "The region to dispatch this request, eg. `us-east-1`." }
+    }
+    rules: [
         {
-            "documentation": "Template the region into the URI when region is set",
-            "conditions": [
+            documentation: "Template the region into the URI when region is set"
+            conditions: [
                 {
-                    "fn": "isSet",
-                    "argv": [
+                    fn: "isSet"
+                    argv: [
                         {
-                            "ref": "Region"
+                            ref: "Region"
                         }
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://{Region}.amazonaws.com",
-                "properties": {
-                    "authSchemes": [
+            ]
+            endpoint: {
+                url: "https://{Region}.amazonaws.com"
+                properties: {
+                    authSchemes: [
                         {
-                            "name": "sigv4",
-                            "signingName": "serviceName",
-                            "signingRegion": "{Region}",
-                            "disableDoubleEncoding": false,
-                            "disableNormalizePath": false,
+                            name: "sigv4"
+                            signingName: "serviceName"
+                            signingRegion: "{Region}"
+                            disableDoubleEncoding: false
+                            disableNormalizePath: false
                         }
                     ]
                 }
-            },
-            "type": "endpoint"
-        },
-        {
-            "documentation": "fallback when region is unset",
-            "conditions": [],
-            "error": "Region must be set to resolve a valid endpoint",
-            "type": "error"
+            }
+            type: "endpoint"
         }
-    ],
-    "version": "1.3"
+        {
+            documentation: "fallback when region is unset"
+            conditions: []
+            error: "Region must be set to resolve a valid endpoint"
+            type: "error"
+        }
+    ]
+    version: "1.3"
 })
 @endpointTests(
-    version: "1.0",
+    version: "1.0"
     testCases: [
         {
-            "documentation": "basic region templating",
-            "params": {
-                "Region": "us-east-1"
-            },
-            "expect": {
-                "endpoint": {
-                    "url": "https://us-east-1.amazonaws.com",
-                    "properties": {
-                        "authSchemes": [
+            documentation: "basic region templating"
+            params: { Region: "us-east-1" }
+            expect: {
+                endpoint: {
+                    url: "https://us-east-1.amazonaws.com"
+                    properties: {
+                        authSchemes: [
                             {
-                                "name": "sigv4",
-                                "signingRegion": "us-east-1",
-                                "signingName": "serviceName"
-                                "disableDoubleEncoding": false,
-                                "disableNormalizePath": false,
+                                name: "sigv4"
+                                signingRegion: "us-east-1"
+                                signingName: "serviceName"
+                                disableDoubleEncoding: false
+                                disableNormalizePath: false
                             }
                         ]
                     }
                 }
             }
-        },
+        }
         {
-            "documentation": "test case where region is unset",
-            "params": {},
-            "expect": {
-                "error": "Region must be set to resolve a valid endpoint"
-            }
+            documentation: "test case where region is unset"
+            params: {}
+            expect: { error: "Region must be set to resolve a valid endpoint" }
         }
     ]
 )

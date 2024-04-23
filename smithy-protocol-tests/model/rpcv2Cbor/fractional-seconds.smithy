@@ -14,17 +14,14 @@ operation FractionalSeconds {
 
 apply FractionalSeconds @httpResponseTests([
     {
-        id: "RpcV2CborDateTimeWithFractionalSeconds",
-        documentation: "Ensures that clients can correctly parse timestamps with fractional seconds",
-        protocol: rpcv2Cbor,
-        code: 200,
-        body: "v2hkYXRldGltZcH7Qcw32zgPvnf/",
-        headers: {
-            "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
-        },
+        id: "RpcV2CborDateTimeWithFractionalSeconds"
+        documentation: "Ensures that clients can correctly parse timestamps with fractional seconds"
+        protocol: rpcv2Cbor
+        code: 200
+        body: "v2hkYXRldGltZcH7Qcw32zgPvnf/"
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
         params: { datetime: 946845296.123 }
-        bodyMediaType: "application/cbor",
+        bodyMediaType: "application/cbor"
         appliesTo: "client"
     }
 ])

@@ -2,9 +2,9 @@ $version: "2.0"
 
 namespace com.foo
 
-use smithy.test#smokeTests
 use aws.test#AwsVendorParams
 use aws.test#S3VendorParams
+use smithy.test#smokeTests
 
 @smokeTests([
     {

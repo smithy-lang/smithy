@@ -1,62 +1,61 @@
 namespace smithy.example
 
-use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnResource
 
 service TestService {
-    version: "2020-07-02",
-    resources: [RequiredOutput]
+    version: "2020-07-02"
+    resources: [
+        RequiredOutput
+    ]
 }
 
 @cfnResource
 resource RequiredOutput {
-    identifiers: {
-        fooId: String,
-    },
-    create: CreateFoo,
-    read: ReadFoo,
+    identifiers: { fooId: String }
+    create: CreateFoo
+    read: ReadFoo
 }
 
 operation CreateFoo {
-    input: CreateFooRequest,
-    output: CreateFooResponse,
+    input: CreateFooRequest
+    output: CreateFooResponse
 }
 
 structure CreateFooRequest {
     @required
-    tags: TagList,
+    tags: TagList
 }
 
 structure CreateFooResponse {
     @required
-    fooId: String,
+    fooId: String
 }
 
 @readonly
 operation ReadFoo {
-    input: ReadFooRequest,
-    output: ReadFooResponse,
+    input: ReadFooRequest
+    output: ReadFooResponse
 }
 
 structure ReadFooRequest {
     @required
-    fooId: String,
+    fooId: String
 }
 
 @output
 structure ReadFooResponse {
     @required
-    fooId: String,
+    fooId: String
 
     // This property should be included as required since is also part
     // of the request as @required
     @required
-    tags: TagList,
+    tags: TagList
 
     // This property should NOT be included as required since is only
     // part of an output structure.
     @required
-    lastUpdate: Timestamp,
+    lastUpdate: Timestamp
 }
 
 list TagList {

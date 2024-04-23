@@ -6,8 +6,10 @@ namespace smithy.example
     "smithy:ActionContextKey1": { type: "String" }
 )
 service MyService {
-    version: "2019-02-20",
-    operations: [Echo]
+    version: "2019-02-20"
+    operations: [
+        Echo
+    ]
 }
 
 operation Echo {

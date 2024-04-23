@@ -11,23 +11,21 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo3",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            time: 946845296
-        }
+        id: "foo3"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { time: 946845296 }
     }
 ])
 operation HasTime {
-    input: HasTimeInput,
+    input: HasTimeInput
     output: HasTimeOutput
 }
 
 @input
 structure HasTimeInput {
-    time: Timestamp,
+    time: Timestamp
 }
 
 @output

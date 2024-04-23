@@ -3,62 +3,63 @@ $version: "2.0"
 namespace ns.foo
 
 use aws.api#clientEndpointDiscovery
-use aws.api#clientDiscoveredEndpoint
 
-@clientEndpointDiscovery(
-    operation: DescribeEndpoints,
-    error: InvalidEndpointError,
-)
+@clientEndpointDiscovery(operation: DescribeEndpoints, error: InvalidEndpointError)
 service BazService {
-    version: "2021-06-29",
-    operations: [DescribeEndpoints, GetObjectWithEndpointError],
+    version: "2021-06-29"
+    operations: [
+        DescribeEndpoints
+        GetObjectWithEndpointError
+    ]
 }
 
 operation DescribeEndpoints {
-    input: DescribeEndpointsInput,
-    output: DescribeEndpointsOutput,
+    input: DescribeEndpointsInput
+    output: DescribeEndpointsOutput
 }
 
 @input
 structure DescribeEndpointsInput {
-    Operation: String,
-    Identifiers: Identifiers,
+    Operation: String
+    Identifiers: Identifiers
 }
 
 map Identifiers {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 @output
 structure DescribeEndpointsOutput {
-    Endpoints: Endpoints,
+    Endpoints: Endpoints
 }
 
 list Endpoints {
-    member: Endpoint,
+    member: Endpoint
 }
 
 structure Endpoint {
-    Address: String,
-    CachePeriodInMinutes: Long,
+    Address: String
+    CachePeriodInMinutes: Long
 }
 
 operation GetObjectWithEndpointError {
-    input: GetObjectWithEndpointErrorInput,
-    output: GetObjectWithEndpointErrorOutput,
-    errors: [InvalidEndpointError],
+    input: GetObjectWithEndpointErrorInput
+    output: GetObjectWithEndpointErrorOutput
+    errors: [
+        InvalidEndpointError
+    ]
 }
 
 @input
 structure GetObjectWithEndpointErrorInput {
     @required
-    Id: String,
+    Id: String
 }
 
 @output
 structure GetObjectWithEndpointErrorOutput {
-    Object: Blob,
+    Object: Blob
 }
 
 @error("client")

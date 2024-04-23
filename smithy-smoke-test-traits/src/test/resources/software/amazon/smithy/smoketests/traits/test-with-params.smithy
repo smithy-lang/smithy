@@ -6,10 +6,8 @@ use smithy.test#smokeTests
 
 @smokeTests([
     {
-        id: "say_hello",
-        params: {
-            foo: "bar"
-        }
+        id: "say_hello"
+        params: { foo: "bar" }
         expect: {
             success: {}
         }

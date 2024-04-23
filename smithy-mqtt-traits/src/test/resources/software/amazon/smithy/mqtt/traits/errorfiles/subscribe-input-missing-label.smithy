@@ -5,12 +5,12 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.mqtt#topicLabel
 use smithy.mqtt#subscribe
+use smithy.mqtt#topicLabel
 
 @subscribe("events/{foo}")
 operation Foo {
-    input: FooInput,
+    input: FooInput
     output: FooOutput
 }
 
@@ -18,14 +18,16 @@ operation Foo {
 structure FooInput {
     @required
     @topicLabel
-    foo: smithy.api#String,
+    foo: smithy.api#String
 
-    baz: smithy.api#String, // Error, missing topicLabel.
+    baz: smithy.api#String
+
+    // Error, missing topicLabel.
 }
 
 @output
 structure FooOutput {
-    messages: EventStream,
+    messages: EventStream
 }
 
 @streaming

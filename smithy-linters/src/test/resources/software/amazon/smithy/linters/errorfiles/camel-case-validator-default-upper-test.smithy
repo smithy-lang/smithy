@@ -1,27 +1,33 @@
 $version: "2.0"
 
 metadata validators = [
-        {name: "CamelCase",
-        id: "DefaultCamelCase"}
+    {
+        name: "CamelCase"
+        id: "DefaultCamelCase"
+    }
 ]
 
 namespace smithy.example
 
 service UpperService {
-    version: "2020-09-21",
-    operations: [UpperOperation],
+    version: "2020-09-21"
+    operations: [
+        UpperOperation
+    ]
 }
 
 operation UpperOperation {
-    input: UpperOperationRequest,
-    output: UpperOperationResponse,
-    errors: [],
+    input: UpperOperationRequest
+    output: UpperOperationResponse
+    errors: [
+
+    ]
 }
 
 structure UpperOperationRequest {
-    UpperCamel: MyString,
-    SecondUpperCamel: MyString,
-    ThirdUpperCamel: MyString,
+    UpperCamel: MyString
+    SecondUpperCamel: MyString
+    ThirdUpperCamel: MyString
     FourthUpperCamel: MyStructure
 }
 
@@ -30,20 +36,24 @@ structure UpperOperationResponse {
 }
 
 service LowerService {
-    version: "2020-09-21",
-    operations: [LowerOperation],
+    version: "2020-09-21"
+    operations: [
+        LowerOperation
+    ]
 }
 
 operation LowerOperation {
-    input: LowerOperationRequest,
-    output: LowerOperationResponse,
-    errors: [],
+    input: LowerOperationRequest
+    output: LowerOperationResponse
+    errors: [
+
+    ]
 }
 
 structure LowerOperationRequest {
-    lowerCamel: MyString,
-    secondLowerCamel: MyString,
-    thirdLowerCamel: MyString,
+    lowerCamel: MyString
+    secondLowerCamel: MyString
+    thirdLowerCamel: MyString
     fourthLowerCamel: MyStructure
 }
 

@@ -8,132 +8,119 @@ use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 
 @service(
-    sdkId: "API Gateway",
-    arnNamespace: "apigateway",
-    cloudFormationName: "ApiGateway",
-    cloudTrailEventSource: "apigateway.amazonaws.com",
+    sdkId: "API Gateway"
+    arnNamespace: "apigateway"
+    cloudFormationName: "ApiGateway"
+    cloudTrailEventSource: "apigateway.amazonaws.com"
     endpointPrefix: "apigateway"
 )
-@sigv4(
-    name: "apigateway",
-)
+@sigv4(name: "apigateway")
 @restJson1
 @title("Amazon API Gateway")
 service BackplaneControlService {
-    version: "2015-07-09",
+    version: "2015-07-09"
     operations: [
-        GetRestApis,
-    ],
+        GetRestApis
+    ]
 }
-
 
 @httpRequestTests([
     {
-        id: "ApiGatewayAccept",
-        documentation: "API Gateway requires that this Accept header is set on all requests.",
-        protocol: restJson1,
-        method: "GET",
-        uri: "/restapis",
-        headers: {
-            "Accept": "application/json",
-        },
-        body: "",
-        params: {},
+        id: "ApiGatewayAccept"
+        documentation: "API Gateway requires that this Accept header is set on all requests."
+        protocol: restJson1
+        method: "GET"
+        uri: "/restapis"
+        headers: { Accept: "application/json" }
+        body: ""
+        params: {}
     }
 ])
-@http(
-    method: "GET",
-    uri: "/restapis",
-    code: 200,
-)
-@paginated(
-    inputToken: "position",
-    outputToken: "position",
-    items: "items",
-    pageSize: "limit",
-)
+@http(method: "GET", uri: "/restapis", code: 200)
+@paginated(inputToken: "position", outputToken: "position", items: "items", pageSize: "limit")
 @readonly
 operation GetRestApis {
-    input: GetRestApisRequest,
-    output: RestApis,
+    input: GetRestApisRequest
+    output: RestApis
     errors: [
-        BadRequestException,
-        TooManyRequestsException,
-        UnauthorizedException,
-    ],
+        BadRequestException
+        TooManyRequestsException
+        UnauthorizedException
+    ]
 }
 
 @error("client")
 @httpError(400)
 structure BadRequestException {
-    message: String,
+    message: String
 }
 
 structure EndpointConfiguration {
-    types: ListOfEndpointType,
-    vpcEndpointIds: ListOfString,
+    types: ListOfEndpointType
+    vpcEndpointIds: ListOfString
 }
 
 structure GetRestApisRequest {
     @httpQuery("position")
-    position: String,
+    position: String
 
     @httpQuery("limit")
-    limit: NullableInteger,
+    limit: NullableInteger
 }
 
 structure RestApi {
-    id: String,
-    name: String,
-    description: String,
-    createdDate: Timestamp,
-    version: String,
-    warnings: ListOfString,
-    binaryMediaTypes: ListOfString,
-    minimumCompressionSize: NullableInteger,
-    apiKeySource: ApiKeySourceType,
-    endpointConfiguration: EndpointConfiguration,
-    policy: String,
-    tags: MapOfStringToString,
-    disableExecuteApiEndpoint: Boolean,
+    id: String
+    name: String
+    description: String
+    createdDate: Timestamp
+    version: String
+    warnings: ListOfString
+    binaryMediaTypes: ListOfString
+    minimumCompressionSize: NullableInteger
+    apiKeySource: ApiKeySourceType
+    endpointConfiguration: EndpointConfiguration
+    policy: String
+    tags: MapOfStringToString
+    disableExecuteApiEndpoint: Boolean
 }
 
 structure RestApis {
     @jsonName("item")
-    items: ListOfRestApi,
+    items: ListOfRestApi
 
-    position: String,
+    position: String
 }
 
 @error("client")
 @httpError(429)
 structure TooManyRequestsException {
     @httpHeader("Retry-After")
-    retryAfterSeconds: String,
-    message: String,
+    retryAfterSeconds: String
+
+    message: String
 }
 
 @error("client")
 @httpError(401)
 structure UnauthorizedException {
-    message: String,
+    message: String
 }
 
 list ListOfEndpointType {
-    member: EndpointType,
+    member: EndpointType
 }
 
 list ListOfString {
-    member: String,
+    member: String
 }
 
 list ListOfRestApi {
-    member: RestApi,
+    member: RestApi
 }
 
 map MapOfStringToString {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 enum ApiKeySourceType {

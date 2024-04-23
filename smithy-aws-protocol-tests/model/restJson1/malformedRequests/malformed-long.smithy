@@ -13,206 +13,169 @@ operation MalformedLong {
 
 apply MalformedLong @httpMalformedRequestTests([
     {
-        id: "RestJsonBodyLongUnderflowOverflow",
+        id: "RestJsonBodyLongUnderflowOverflow"
         documentation: """
-        Underflow or overflow should result in SerializationException""",
-        protocol: restJson1,
+            Underflow or overflow should result in SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
+            method: "POST"
+            uri: "/MalformedLong/1"
             body: """
-            { "longInBody" : $value:L }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
+                { "longInBody" : $value:L }"""
+            headers: { "content-type": "application/json" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["-184467440737095500000", "184467440737095500000", "123000000000000000000000" ]
-        },
+            value: ["-184467440737095500000", "184467440737095500000", "123000000000000000000000"]
+        }
         tags: ["underflow/overflow"]
-    },
+    }
     {
-        id: "RestJsonPathLongUnderflowOverflow",
+        id: "RestJsonPathLongUnderflowOverflow"
         documentation: """
-        Underflow or overflow should result in SerializationException""",
-        protocol: restJson1,
-        request: {
-            method: "POST",
-            uri: "/MalformedLong/$value:L"
-        },
+            Underflow or overflow should result in SerializationException"""
+        protocol: restJson1
+        request: { method: "POST", uri: "/MalformedLong/$value:L" }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["-184467440737095500000", "184467440737095500000", "123000000000000000000000" ]
-        },
+            value: ["-184467440737095500000", "184467440737095500000", "123000000000000000000000"]
+        }
         tags: ["underflow/overflow"]
-    },
+    }
     {
-        id: "RestJsonQueryLongUnderflowOverflow",
+        id: "RestJsonQueryLongUnderflowOverflow"
         documentation: """
-        Underflow or overflow should result in SerializationException""",
-        protocol: restJson1,
+            Underflow or overflow should result in SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
-            queryParams: [
-                "longInQuery=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedLong/1"
+            queryParams: ["longInQuery=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["-184467440737095500000", "184467440737095500000", "123000000000000000000000" ]
-        },
+            value: ["-184467440737095500000", "184467440737095500000", "123000000000000000000000"]
+        }
         tags: ["underflow/overflow"]
-    },
+    }
     {
-        id: "RestJsonHeaderLongUnderflowOverflow",
+        id: "RestJsonHeaderLongUnderflowOverflow"
         documentation: """
-        Underflow or overflow should result in SerializationException""",
-        protocol: restJson1,
+            Underflow or overflow should result in SerializationException"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
-            headers: {
-               "longInHeader" : "$value:L"
-            }
-        },
+            method: "POST"
+            uri: "/MalformedLong/1"
+            headers: { longInHeader: "$value:L" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
         testParameters: {
-            "value" : ["-184467440737095500000", "184467440737095500000", "123000000000000000000000" ]
-        },
+            value: ["-184467440737095500000", "184467440737095500000", "123000000000000000000000"]
+        }
         tags: ["underflow/overflow"]
-    },
+    }
     {
-        id: "RestJsonBodyLongMalformedValueRejected",
+        id: "RestJsonBodyLongMalformedValueRejected"
         documentation: """
-        Malformed values in the body should be rejected""",
-        protocol: restJson1,
+            Malformed values in the body should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
+            method: "POST"
+            uri: "/MalformedLong/1"
             body: """
-            { "longInBody" : $value:L }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
+                { "longInBody" : $value:L }"""
+            headers: { "content-type": "application/json" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["\"123\"", "true", "1.001", "2ABC", "0x42",
-                       "Infinity", "\"Infinity\"", "-Infinity", "\"-Infinity\"", "NaN", "\"NaN\""],
-            "tag" : ["string_coercion", "boolean_coercion", "float_truncation", "trailing_chars", "hex",
-                       "inf", "string_inf", "negative_inf", "string_negative_inf", "nan", "string_nan"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["\"123\"", "true", "1.001", "2ABC", "0x42", "Infinity", "\"Infinity\"", "-Infinity", "\"-Infinity\"", "NaN", "\"NaN\""]
+            tag: ["string_coercion", "boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "string_inf", "negative_inf", "string_negative_inf", "nan", "string_nan"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonPathLongMalformedValueRejected",
+        id: "RestJsonPathLongMalformedValueRejected"
         documentation: """
-        Malformed values in the path should be rejected""",
-        protocol: restJson1,
-        request: {
-            method: "POST",
-            uri: "/MalformedLong/$value:L"
-        },
+            Malformed values in the path should be rejected"""
+        protocol: restJson1
+        request: { method: "POST", uri: "/MalformedLong/$value:L" }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"],
-            "tag" : ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"]
+            tag: ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonQueryLongMalformedValueRejected",
+        id: "RestJsonQueryLongMalformedValueRejected"
         documentation: """
-        Malformed values in query parameters should be rejected""",
-        protocol: restJson1,
+            Malformed values in query parameters should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
-            queryParams: [
-                "longInQuery=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedLong/1"
+            queryParams: ["longInQuery=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"],
-            "tag" : ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"]
+            tag: ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonHeaderLongMalformedValueRejected",
+        id: "RestJsonHeaderLongMalformedValueRejected"
         documentation: """
-        Malformed values in headers should be rejected""",
-        protocol: restJson1,
+            Malformed values in headers should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedLong/1",
-            headers: {
-               "longInHeader" : "$value:L"
-            }
-        },
+            method: "POST"
+            uri: "/MalformedLong/1"
+            headers: { longInHeader: "$value:L" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"],
-            "tag" : ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "1.001", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"]
+            tag: ["boolean_coercion", "float_truncation", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
+        }
+        tags: ["$tag:L"]
+    }
 ])
 
 structure MalformedLongInput {
-    longInBody: Long,
+    longInBody: Long
 
     @httpLabel
     @required
-    longInPath: Long,
+    longInPath: Long
 
     @httpQuery("longInQuery")
-    longInQuery: Long,
+    longInQuery: Long
 
     @httpHeader("longInHeader")
     longInHeader: Long
 }
-

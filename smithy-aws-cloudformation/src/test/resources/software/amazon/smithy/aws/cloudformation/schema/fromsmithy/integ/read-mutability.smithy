@@ -4,22 +4,24 @@ use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnResource
 
 service TestService {
-    version: "2020-07-02",
-    resources: [Read]
+    version: "2020-07-02"
+    resources: [
+        Read
+    ]
 }
 
-@cfnResource(additionalSchemas: [FooProperties])
+@cfnResource(
+    additionalSchemas: [FooProperties]
+)
 resource Read {
-    identifiers: {
-        fooId: String,
-    },
-    read: GetFoo,
+    identifiers: { fooId: String }
+    read: GetFoo
 }
 
 @readonly
 operation GetFoo {
-    input: GetFooRequest,
-    output: GetFooResponse,
+    input: GetFooRequest
+    output: GetFooResponse
 }
 
 structure GetFooRequest {
@@ -29,10 +31,10 @@ structure GetFooRequest {
 
 structure GetFooResponse {
     @cfnMutability("read")
-    updatedAt: Timestamp,
+    updatedAt: Timestamp
 }
 
 structure FooProperties {
     @cfnMutability("read")
-    createdAt: Timestamp,
+    createdAt: Timestamp
 }

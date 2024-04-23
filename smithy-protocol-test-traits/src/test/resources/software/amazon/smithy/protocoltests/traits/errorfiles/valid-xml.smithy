@@ -11,30 +11,28 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo1",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            type: true
-        },
-        bodyMediaType: "application/xml",
+        id: "foo1"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { type: true }
+        bodyMediaType: "application/xml"
         body: """
-        <XmlNamespacesResponse xmlns="https://example.com/">
-            <nested>
-                <foo xmlns:baz="http://baz.com">Foo</foo>
-                <values xmlns="http://qux.com">
-                    <member xmlns="http://bux.com">Bar</member>
-                    <member xmlns="http://bux.com">Baz</member>
-                </values>
-            </nested>
-            <RequestId>requestid</RequestId>
-        </XmlNamespacesResponse>
-        """
+            <XmlNamespacesResponse xmlns="https://example.com/">
+                <nested>
+                    <foo xmlns:baz="http://baz.com">Foo</foo>
+                    <values xmlns="http://qux.com">
+                        <member xmlns="http://bux.com">Bar</member>
+                        <member xmlns="http://bux.com">Baz</member>
+                    </values>
+                </nested>
+                <RequestId>requestid</RequestId>
+            </XmlNamespacesResponse>
+            """
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 

@@ -16,7 +16,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "defaults": {
@@ -62,12 +62,11 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
             }"""
-        params: {
-        }
+        params: {}
     }
     {
         id: "AwsJson10ClientUsesExplicitlyProvidedMemberValuesOverDefaults"
@@ -78,13 +77,13 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         params: {
             defaults: {
                 defaultString: "bye"
                 defaultBoolean: true
                 defaultList: ["a"]
-                defaultDocumentMap: {name: "Jack"}
+                defaultDocumentMap: { name: "Jack" }
                 defaultDocumentString: "bye"
                 defaultDocumentBoolean: true
                 defaultDocumentList: ["b"]
@@ -97,7 +96,7 @@ apply OperationWithDefaults @httpRequestTests([
                 defaultLong: 200
                 defaultFloat: 2.0
                 defaultDouble: 2.0
-                defaultMap: {name: "Jack"}
+                defaultMap: { name: "Jack" }
                 defaultEnum: "BAR"
                 defaultIntEnum: 2
                 emptyString: "foo"
@@ -154,7 +153,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
             "defaults": {}
@@ -188,7 +187,7 @@ apply OperationWithDefaults @httpRequestTests([
                 zeroLong: 0
                 zeroFloat: 0.0
                 zeroDouble: 0.0
-            },
+            }
             topLevelDefault: "hi"
             otherTopLevelDefault: 0
         }
@@ -202,16 +201,13 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "topLevelDefault": "hi",
                 "otherTopLevelDefault": 0
             }"""
-        params: {
-            topLevelDefault: "hi"
-            otherTopLevelDefault: 0
-        }
+        params: { topLevelDefault: "hi", otherTopLevelDefault: 0 }
     }
     {
         id: "AwsJson10ClientIgnoresNonTopLevelDefaultsOnMembersWithClientOptional"
@@ -222,7 +218,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "clientOptionalDefaults": {}
@@ -242,7 +238,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: awsJson1_0
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: "{}"
         params: {
             defaultString: "hi"
@@ -282,7 +278,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: awsJson1_0
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "defaultString": "bye",
@@ -318,7 +314,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultString: "bye"
             defaultBoolean: false
             defaultList: ["a"]
-            defaultDocumentMap: {name: "Jack"}
+            defaultDocumentMap: { name: "Jack" }
             defaultDocumentString: "bye"
             defaultDocumentBoolean: false
             defaultDocumentList: ["b"]
@@ -331,7 +327,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultLong: 200
             defaultFloat: 2.0
             defaultDouble: 2.0
-            defaultMap: {name: "Jack"}
+            defaultMap: { name: "Jack" }
             defaultEnum: "BAR"
             defaultIntEnum: 2
             emptyString: "foo"
@@ -353,7 +349,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: awsJson1_0
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/x-amz-json-1.0"}
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "defaultString": "hi",
@@ -391,8 +387,11 @@ apply OperationWithDefaults @httpResponseTests([
 operation OperationWithDefaults {
     input := {
         defaults: Defaults
+
         clientOptionalDefaults: ClientOptionalDefaults
+
         topLevelDefault: String = "hi" // Client should ignore default values in input shape
+
         otherTopLevelDefault: Integer = 0
     }
 

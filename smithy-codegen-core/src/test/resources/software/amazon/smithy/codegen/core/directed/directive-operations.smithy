@@ -3,7 +3,10 @@ $version: "1.0"
 namespace smithy.example
 
 service Foo {
-    operations: [GetA, DeleteA]
+    operations: [
+        GetA
+        DeleteA
+    ]
 }
 
 @readonly

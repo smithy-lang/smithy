@@ -6,19 +6,17 @@ use smithy.waiters#waitable
 
 @waitable(
     MissingSuccessState: {
-        "documentation": "This waiter is missing a success state",
-        "acceptors": [
+        documentation: "This waiter is missing a success state"
+        acceptors: [
             {
-                "state": "failure",
-                "matcher": {
-                    "success": true
-                }
+                state: "failure"
+                matcher: { success: true }
             }
         ]
     }
 )
 operation A {
-    input: AInput,
+    input: AInput
     output: AOutput
 }
 

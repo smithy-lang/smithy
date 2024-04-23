@@ -19,20 +19,24 @@ operation TagResource {
     input := {
         @required
         arn: String
+
         @length(max: 128)
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagResource {
     input := {
         @required
         arn: String
+
         @required
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForResource {
@@ -40,6 +44,7 @@ operation ListTagsForResource {
         @required
         arn: String
     }
+
     output := {
         @length(max: 128)
         tags: TagList

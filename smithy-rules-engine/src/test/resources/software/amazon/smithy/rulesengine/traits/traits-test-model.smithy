@@ -9,123 +9,113 @@ use smithy.rules#endpointTests
 use smithy.rules#staticContextParams
 
 @clientContextParams(
-    stringFoo: {type: "string", documentation: "a client string parameter"},
-    boolFoo: {type: "boolean", documentation: "a client boolean parameter"}
+    stringFoo: { type: "string", documentation: "a client string parameter" }
+    boolFoo: { type: "boolean", documentation: "a client boolean parameter" }
 )
 @suppress(["RuleSetParameter.TestCase.Unused"])
 service ExampleService {
-    version: "2022-01-01",
-    operations: [GetThing, Ping]
+    version: "2022-01-01"
+    operations: [
+        GetThing
+        Ping
+    ]
 }
 
 apply ExampleService @endpointRuleSet({
-    version: "1.0",
+    version: "1.0"
     parameters: {
-        stringFoo: {type: "string", documentation: "docs"},
-        stringBar: {type: "string", documentation: "docs"},
-        stringBaz: {type: "string", documentation: "docs"},
-        endpoint: {type: "string", builtIn: "SDK::Endpoint", documentation: "docs"},
-        boolFoo: {type: "boolean", documentation: "docs"},
-        boolBar: {type: "boolean", documentation: "docs"},
-        boolBaz: {type: "string", documentation: "docs"}
-    },
+        stringFoo: { type: "string", documentation: "docs" }
+        stringBar: { type: "string", documentation: "docs" }
+        stringBaz: { type: "string", documentation: "docs" }
+        endpoint: { type: "string", builtIn: "SDK::Endpoint", documentation: "docs" }
+        boolFoo: { type: "boolean", documentation: "docs" }
+        boolBar: { type: "boolean", documentation: "docs" }
+        boolBaz: { type: "string", documentation: "docs" }
+    }
     rules: [
         {
-            "documentation": "Template the region into the URI when FIPS is enabled",
-            "conditions": [
+            documentation: "Template the region into the URI when FIPS is enabled"
+            conditions: [
                 {
-                    "fn": "isSet",
-                    "argv": [
+                    fn: "isSet"
+                    argv: [
                         {
-                            "ref": "boolFoo"
+                            ref: "boolFoo"
                         }
                     ]
-                },
+                }
                 {
-                    "fn": "booleanEquals",
-                    "argv": [
+                    fn: "booleanEquals"
+                    argv: [
                         {
-                            "ref": "boolFoo"
-                        },
+                            ref: "boolFoo"
+                        }
                         true
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://example.com",
-                "properties": {},
-                "headers": {
-                    "single": ["foo"],
-                    "multi": ["foo", "bar", "baz"]
+            ]
+            endpoint: {
+                url: "https://example.com"
+                properties: {}
+                headers: {
+                    single: ["foo"]
+                    multi: ["foo", "bar", "baz"]
                 }
-            },
-            "type": "endpoint"
-        },
+            }
+            type: "endpoint"
+        }
         {
-            "documentation": "error when boolFoo is false",
-            "conditions": [
+            documentation: "error when boolFoo is false"
+            conditions: [
                 {
-                    "fn": "isSet",
-                    "argv": [
+                    fn: "isSet"
+                    argv: [
                         {
-                            "ref": "boolFoo"
+                            ref: "boolFoo"
                         }
                     ]
-                },
+                }
                 {
-                    "fn": "booleanEquals",
-                    "argv": [
+                    fn: "booleanEquals"
+                    argv: [
                         {
-                            "ref": "boolFoo"
-                        },
+                            ref: "boolFoo"
+                        }
                         false
                     ]
                 }
-            ],
-            "error": "endpoint error",
-            "type": "error"
+            ]
+            error: "endpoint error"
+            type: "error"
         }
     ]
 })
 
 apply ExampleService @endpointTests({
-    "version": "1.0",
-    "testCases": [
+    version: "1.0"
+    testCases: [
         {
-            "documentation": "a documentation string",
-            "params": {
-                "stringFoo": "a b",
-                "boolFoo": false
-            },
-            "expect": {
-                "error": "endpoint error"
-            }
-        },
+            documentation: "a documentation string"
+            params: { stringFoo: "a b", boolFoo: false }
+            expect: { error: "endpoint error" }
+        }
         {
-            "params": {
-                "stringFoo": "c d",
-                "boolFoo": true
-            },
-            "operationInputs": [{
-                "operationName": "GetThing",
-                "clientParams": {
-                    "stringFoo": "client value"
-                },
-                "operationParams": {
-                    "buzz": "a buzz value",
-                    "fizz": "a required value"
-                },
-                "builtInParams": {
-                    "SDK::Endpoint": "https://custom.example.com"
+            params: { stringFoo: "c d", boolFoo: true }
+            operationInputs: [
+                {
+                    operationName: "GetThing"
+                    clientParams: { stringFoo: "client value" }
+                    operationParams: { buzz: "a buzz value", fizz: "a required value" }
+                    builtInParams: { "SDK::Endpoint": "https://custom.example.com" }
                 }
-            }],
-            "expect": {
-                "endpoint": {
-                    "url": "https://example.com",
-                    "properties": {},
-                    "headers": {
-                        "single": ["foo"],
-                        "multi": ["foo", "bar", "baz"]
+            ]
+            expect: {
+                endpoint: {
+                    url: "https://example.com"
+                    properties: {}
+                    headers: {
+                        single: ["foo"]
+                        multi: ["foo", "bar", "baz"]
                     }
                 }
             }
@@ -134,8 +124,8 @@ apply ExampleService @endpointTests({
 })
 
 @staticContextParams(
-    stringBar: {value: "some value"},
-    boolBar: {value: true}
+    stringBar: { value: "some value" }
+    boolBar: { value: true }
 )
 operation GetThing {
     input: GetThingInput
@@ -144,13 +134,13 @@ operation GetThing {
 @input
 structure GetThingInput {
     @required
-    fizz: String,
+    fizz: String
 
     @contextParam(name: "stringBaz")
-    buzz: String,
+    buzz: String
 
     @contextParam(name: "boolBaz")
-    fuzz: String,
+    fuzz: String
 }
 
 operation Ping {}

@@ -4,8 +4,10 @@ namespace smithy.example
 
 @aws.protocols#restJson1
 service HasMixin {
-    version: "2021-08-12",
-    operations: [Greeting]
+    version: "2021-08-12"
+    operations: [
+        Greeting
+    ]
 }
 
 @http(method: "GET", uri: "/")

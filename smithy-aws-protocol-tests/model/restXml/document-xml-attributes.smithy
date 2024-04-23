@@ -1,5 +1,4 @@
 // This file defines test cases that serialize XML attributes.
-
 $version: "2.0"
 $operationInputSuffix: "Request"
 $operationOutputSuffix: "Response"
@@ -20,76 +19,61 @@ operation XmlAttributes {
 
 apply XmlAttributes @httpRequestTests([
     {
-        id: "XmlAttributes",
-        documentation: "Serializes XML attributes on the synthesized document",
-        protocol: restXml,
-        method: "PUT",
-        uri: "/XmlAttributes",
+        id: "XmlAttributes"
+        documentation: "Serializes XML attributes on the synthesized document"
+        protocol: restXml
+        method: "PUT"
+        uri: "/XmlAttributes"
         body: """
-              <XmlAttributesRequest test="test">
-                  <foo>hi</foo>
-              </XmlAttributesRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            foo: "hi",
-            attr: "test"
-        }
-    },
+            <XmlAttributesRequest test="test">
+                <foo>hi</foo>
+            </XmlAttributesRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
+        params: { foo: "hi", attr: "test" }
+    }
     {
-        id: "XmlAttributesWithEscaping",
-        documentation: "Serializes XML attributes with escaped characters on the synthesized document",
-        protocol: restXml,
-        method: "PUT",
-        uri: "/XmlAttributes",
+        id: "XmlAttributesWithEscaping"
+        documentation: "Serializes XML attributes with escaped characters on the synthesized document"
+        protocol: restXml
+        method: "PUT"
+        uri: "/XmlAttributes"
         body: """
-              <XmlAttributesRequest test="&lt;test&amp;mock&gt;">
-                  <foo>hi</foo>
-              </XmlAttributesRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            foo: "hi",
-            attr: "<test&mock>"
-        }
-    },
+            <XmlAttributesRequest test="&lt;test&amp;mock&gt;">
+                <foo>hi</foo>
+            </XmlAttributesRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
+        params: { foo: "hi", attr: "<test&mock>" }
+    }
 ])
 
 apply XmlAttributes @httpResponseTests([
     {
-        id: "XmlAttributes",
-        documentation: "Serializes simple scalar properties",
-        protocol: restXml,
-        code: 200,
+        id: "XmlAttributes"
+        documentation: "Serializes simple scalar properties"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlAttributesResponse test="test">
-                  <foo>hi</foo>
-              </XmlAttributesResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            foo: "hi",
-            attr: "test"
-        }
+            <XmlAttributesResponse test="test">
+                <foo>hi</foo>
+            </XmlAttributesResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
+        params: { foo: "hi", attr: "test" }
     }
 ])
 
 @mixin
 structure XmlAttributesInputOutput {
-    foo: String,
+    foo: String
 
     @xmlAttribute
     @xmlName("test")
-    attr: String,
+    attr: String
 }
 
 /// This example serializes an XML attributes on a document targeted by httpPayload.
@@ -100,6 +84,7 @@ operation XmlAttributesOnPayload {
         @httpPayload
         payload: XmlAttributesPayloadRequest
     }
+
     output := {
         @httpPayload
         payload: XmlAttributesPayloadResponse
@@ -108,49 +93,39 @@ operation XmlAttributesOnPayload {
 
 apply XmlAttributesOnPayload @httpRequestTests([
     {
-        id: "XmlAttributesOnPayload",
-        documentation: "Serializes XML attributes on the synthesized document",
-        protocol: restXml,
-        method: "PUT",
-        uri: "/XmlAttributesOnPayload",
+        id: "XmlAttributesOnPayload"
+        documentation: "Serializes XML attributes on the synthesized document"
+        protocol: restXml
+        method: "PUT"
+        uri: "/XmlAttributesOnPayload"
         body: """
-              <XmlAttributesPayloadRequest test="test">
-                  <foo>hi</foo>
-              </XmlAttributesPayloadRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlAttributesPayloadRequest test="test">
+                <foo>hi</foo>
+            </XmlAttributesPayloadRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            payload: {
-                foo: "hi",
-                attr: "test"
-            }
+            payload: { foo: "hi", attr: "test" }
         }
     }
 ])
 
 apply XmlAttributesOnPayload @httpResponseTests([
     {
-        id: "XmlAttributesOnPayload",
-        documentation: "Serializes simple scalar properties",
-        protocol: restXml,
-        code: 200,
+        id: "XmlAttributesOnPayload"
+        documentation: "Serializes simple scalar properties"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlAttributesPayloadResponse test="test">
-                  <foo>hi</foo>
-              </XmlAttributesPayloadResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlAttributesPayloadResponse test="test">
+                <foo>hi</foo>
+            </XmlAttributesPayloadResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            payload: {
-                foo: "hi",
-                attr: "test"
-            }
+            payload: { foo: "hi", attr: "test" }
         }
     }
 ])

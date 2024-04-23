@@ -2,8 +2,8 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.test#httpResponseTests
 use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
 
 @trait
 @protocolDefinition
@@ -12,16 +12,14 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpResponseTests([
     {
-        id: "foo1",
-        protocol: testProtocol,
-        code: 200,
-        params: {
-            invalid: true
-        }
+        id: "foo1"
+        protocol: testProtocol
+        code: 200
+        params: { invalid: true }
     }
 ])
 operation SayGoodbye {
-    input: SayGoodbyeInput,
+    input: SayGoodbyeInput
     output: SayGoodbyeOutput
 }
 
@@ -33,33 +31,29 @@ structure SayGoodbyeOutput {}
 
 @httpResponseTests([
     {
-        id: "foo2",
-        protocol: testProtocol,
-        code: 200,
-        params: {
-            foo: "Hi"
-        }
+        id: "foo2"
+        protocol: testProtocol
+        code: 200
+        params: { foo: "Hi" }
     }
 ])
 @error("client")
 structure MyError {
-    foo: Integer,
+    foo: Integer
 }
 
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo3",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            badType: "hi"
-        }
+        id: "foo3"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { badType: "hi" }
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 

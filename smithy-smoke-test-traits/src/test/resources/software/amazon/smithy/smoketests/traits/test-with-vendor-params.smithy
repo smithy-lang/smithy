@@ -6,13 +6,11 @@ use smithy.test#smokeTests
 
 @smokeTests([
     {
-        id: "with_vendor_params",
+        id: "with_vendor_params"
         expect: {
             success: {}
-        },
-        vendorParams: {
-            foo: "Bar"
         }
+        vendorParams: { foo: "Bar" }
     }
 ])
 operation SayHello {}

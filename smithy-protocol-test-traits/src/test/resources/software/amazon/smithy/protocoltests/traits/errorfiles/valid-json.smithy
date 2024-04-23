@@ -11,24 +11,22 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo1",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            type: true
-        },
-        bodyMediaType: "application/json",
+        id: "foo1"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { type: true }
+        bodyMediaType: "application/json"
         body: """
-        {
-            "foo": true,
-            "bar": true
-        }
-        """
+            {
+                "foo": true,
+                "bar": true
+            }
+            """
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 

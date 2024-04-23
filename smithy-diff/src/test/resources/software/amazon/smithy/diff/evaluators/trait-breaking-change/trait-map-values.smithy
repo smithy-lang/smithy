@@ -2,9 +2,16 @@ $version: "1.0"
 
 namespace smithy.example
 
-@trait(breakingChanges: [{change: "update", path: "/value"}])
+@trait(
+    breakingChanges: [
+        {
+            change: "update"
+            path: "/value"
+        }
+    ]
+)
 map exampleTrait {
-    key: String,
+    key: String
     value: String
 }
 

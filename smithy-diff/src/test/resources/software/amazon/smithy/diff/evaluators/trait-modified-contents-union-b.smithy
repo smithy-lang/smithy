@@ -2,13 +2,19 @@ $version: "2.0"
 
 namespace smithy.example
 
-@aTrait(baz: {foo: "b"})
+@aTrait(
+    baz: { foo: "b" }
+)
 string Foo
 
-@aTrait(baz: {baz: "b"})
+@aTrait(
+    baz: { baz: "b" }
+)
 string Boo
 
-@aTrait(baz: {bar: "b"})
+@aTrait(
+    baz: { bar: "b" }
+)
 string Moo
 
 @trait
@@ -19,11 +25,11 @@ structure aTrait {
 
 union NestedUnion {
     @tags(["diff.error.update"])
-    foo: String,
+    foo: String
 
     @tags(["diff.error.update"])
-    baz: String,
+    baz: String
 
     // changing this value, if set, is fine.
-    bar: String,
+    bar: String
 }

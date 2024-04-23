@@ -4,8 +4,10 @@ namespace smithy.example
 
 @aws.protocols#restJson1
 service Greedy {
-  version: "2018-01-01",
-  operations: [GreedyOperation]
+    version: "2018-01-01"
+    operations: [
+        GreedyOperation
+    ]
 }
 
 @http(method: "GET", uri: "/{greedy+}")
@@ -16,5 +18,5 @@ operation GreedyOperation {
 structure GreedyOperationInput {
     @required
     @httpLabel
-    greedy: String,
+    greedy: String
 }

@@ -4,35 +4,37 @@ use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnResource
 
 service TestService {
-    version: "2020-07-02",
-    resources: [Full]
+    version: "2020-07-02"
+    resources: [
+        Full
+    ]
 }
 
-@cfnResource(additionalSchemas: [FooProperties])
+@cfnResource(
+    additionalSchemas: [FooProperties]
+)
 resource Full {
-    identifiers: {
-        fooId: String,
-    },
-    create: CreateFoo,
+    identifiers: { fooId: String }
+    create: CreateFoo
 }
 
 operation CreateFoo {
-    input: CreateFooRequest,
-    output: CreateFooResponse,
+    input: CreateFooRequest
+    output: CreateFooResponse
 }
 
 structure CreateFooRequest {
     @cfnMutability("full")
-    tags: TagList,
+    tags: TagList
 }
 
 structure CreateFooResponse {
-    fooId: String,
+    fooId: String
 }
 
 structure FooProperties {
     @cfnMutability("full")
-    barProperty: String,
+    barProperty: String
 }
 
 list TagList {

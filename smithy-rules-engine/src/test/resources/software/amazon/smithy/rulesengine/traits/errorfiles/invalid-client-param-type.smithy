@@ -5,11 +5,13 @@ namespace smithy.example
 use smithy.rules#clientContextParams
 
 @clientContextParams(
-    invalidParam: {type: "integer"},
+    invalidParam: { type: "integer" }
 )
 service ExampleService {
-    version: "2022-01-01",
-    operations: [GetThing]
+    version: "2022-01-01"
+    operations: [
+        GetThing
+    ]
 }
 
 @readonly

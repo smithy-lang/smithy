@@ -7,6 +7,4 @@ use aws.auth#sigv4
 
 @service(sdkId: "servicename")
 @sigv4(name: "signingname")
-service InvalidService {
-    version: "2020-07-02"
-}
+service InvalidService { version: "2020-07-02" }

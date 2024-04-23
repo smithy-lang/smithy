@@ -6,21 +6,21 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "errorType": "Nope"
-                }
+                state: "success"
+                matcher: { errorType: "Nope" }
             }
         ]
     }
 )
 operation A {
-    input: AInput,
-    output: AOutput,
-    errors: [OhNo],
+    input: AInput
+    output: AOutput
+    errors: [
+        OhNo
+    ]
 }
 
 @input
@@ -28,7 +28,7 @@ structure AInput {}
 
 @output
 structure AOutput {
-    foo: String,
+    foo: String
 }
 
 @error("client")

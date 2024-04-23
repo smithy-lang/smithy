@@ -1,24 +1,24 @@
 $version: "2.0"
 
-metadata validators = [{
-    name: "RepeatedShapeName",
-    configuration: {
-        exactMatch: true
+metadata validators = [
+    {
+        name: "RepeatedShapeName"
+        configuration: { exactMatch: true }
     }
-}]
+]
 
 namespace smithy.example
 
 structure RepeatingStructure {
-    repeatingStructure: String,
+    repeatingStructure: String
 
     // This is fine because it's not an exact match
-    repeatingStructureMember: String,
+    repeatingStructureMember: String
 }
 
 union RepeatingUnion {
-    repeatingUnion: String,
+    repeatingUnion: String
 
     // This is fine because it's not an exact match
-    repeatingUnionMember: String,
+    repeatingUnionMember: String
 }

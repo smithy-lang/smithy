@@ -6,8 +6,11 @@ use aws.protocols#restJson1
 
 @restJson1
 service RestService {
-    version: "1",
-    operations: [Ping, Ping2]
+    version: "1"
+    operations: [
+        Ping
+        Ping2
+    ]
 }
 
 @http(method: "POST", uri: "/ping")
@@ -19,6 +22,7 @@ operation Ping {
 @http(method: "POST", uri: "/ping2")
 operation Ping2 {
     input: Ping2Input
+
     // Implicit output: Unit
 }
 

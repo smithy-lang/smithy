@@ -13,35 +13,28 @@ operation MalformedBlob {
 
 apply MalformedBlob @httpMalformedRequestTests([
     {
-        id: "RestJsonBodyMalformedBlobInvalidBase64",
+        id: "RestJsonBodyMalformedBlobInvalidBase64"
         documentation: """
-        When a blob member is not properly base64 encoded, or not encoded at
-        all, the response should be a 400 SerializationException.""",
-        protocol: restJson1,
+            When a blob member is not properly base64 encoded, or not encoded at
+            all, the response should be a 400 SerializationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedBlob",
+            method: "POST"
+            uri: "/MalformedBlob"
             body: """
-            { "blob" : $value:L }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
-        response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters: {
-            value: ["blob", "\"xyz\"", "\"YmxvYg=\"", "[98, 108, 11, 98]",
-                    "[\"b\", \"l\",\"o\",\"b\"]", "981081198", "true", "[][]", "-_=="]
+                { "blob" : $value:L }"""
+            headers: { "content-type": "application/json" }
         }
-    },
+        response: {
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["blob", "\"xyz\"", "\"YmxvYg=\"", "[98, 108, 11, 98]", "[\"b\", \"l\",\"o\",\"b\"]", "981081198", "true", "[][]", "-_=="]
+        }
+    }
 ])
 
 structure MalformedBlobInput {
-    blob: Blob,
+    blob: Blob
 }
-
-

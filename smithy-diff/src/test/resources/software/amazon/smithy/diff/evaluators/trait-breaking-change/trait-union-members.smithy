@@ -2,7 +2,14 @@ $version: "1.0"
 
 namespace smithy.example
 
-@trait(breakingChanges: [{change: "update", path: "/foo"}])
+@trait(
+    breakingChanges: [
+        {
+            change: "update"
+            path: "/foo"
+        }
+    ]
+)
 union exampleTrait {
     foo: String
 }

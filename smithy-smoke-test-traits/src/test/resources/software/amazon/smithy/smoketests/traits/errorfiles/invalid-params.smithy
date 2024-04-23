@@ -6,10 +6,8 @@ use smithy.test#smokeTests
 
 @smokeTests([
     {
-        id: "say_hello",
-        params: {
-            "foo": "bar"
-        },
+        id: "say_hello"
+        params: { foo: "bar" }
         expect: {
             success: {}
         }
@@ -22,10 +20,8 @@ operation SayHello {
 
 @smokeTests([
     {
-        id: "say_hello_2",
-        params: {
-            foo: 1
-        },
+        id: "say_hello_2"
+        params: { foo: 1 }
         expect: {
             success: {}
         }
@@ -40,8 +36,8 @@ operation SayHello2 {
 
 @smokeTests([
     {
-        id: "say_hello_3",
-        params: {},
+        id: "say_hello_3"
+        params: {}
         expect: {
             success: {}
         }
@@ -52,5 +48,6 @@ operation SayHello3 {
         @required
         foo: String
     }
+
     output := {}
 }

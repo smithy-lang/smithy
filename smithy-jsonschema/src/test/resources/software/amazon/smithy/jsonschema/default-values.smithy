@@ -5,7 +5,7 @@ namespace smithy.example
 structure Foo {
     bar: Integer = 0
     baz: String = ""
-    bam: StringList = [],
+    bam: StringList = []
     bat: TestEnum = "FOO"
 }
 

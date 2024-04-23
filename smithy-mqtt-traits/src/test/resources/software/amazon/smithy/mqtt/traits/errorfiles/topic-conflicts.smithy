@@ -5,7 +5,7 @@ namespace smithy.example
 // Conflicts with B, C
 @smithy.mqtt#publish("a")
 operation A {
-    input: AInput,
+    input: AInput
     output: Unit
 }
 
@@ -14,7 +14,7 @@ structure AInput {}
 // Conflicts with A, C
 @smithy.mqtt#publish("a")
 operation B {
-    input: BInput,
+    input: BInput
     output: Unit
 }
 
@@ -23,12 +23,12 @@ structure BInput {}
 // Conflicts with A, B
 @smithy.mqtt#subscribe("a")
 operation C {
-    input: Unit,
+    input: Unit
     output: COutput
 }
 
 structure COutput {
-  messages: EmptyEventStream,
+    messages: EmptyEventStream
 }
 
 @streaming
@@ -38,11 +38,10 @@ union EmptyEventStream {
 
 structure EmptyEvent {}
 
-
 // D and E do not conflict since they use the same payload.
 @smithy.mqtt#publish("b")
 operation D {
-    input: DInput,
+    input: DInput
     output: Unit
 }
 
@@ -50,18 +49,18 @@ structure DInput {}
 
 @smithy.mqtt#publish("b")
 operation E {
-    input: DInput,
+    input: DInput
     output: Unit
 }
 
 @smithy.mqtt#subscribe("b")
 operation F {
-    input: Unit,
+    input: Unit
     output: FOutput
 }
 
 structure FOutput {
-    messages: DInputEventStream,
+    messages: DInputEventStream
 }
 
 @streaming
@@ -71,5 +70,5 @@ union DInputEventStream {
 
 structure DInputEvent {
     @eventPayload
-    payload: DInput,
+    payload: DInput
 }

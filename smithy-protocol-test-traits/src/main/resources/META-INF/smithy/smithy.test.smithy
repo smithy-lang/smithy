@@ -7,7 +7,7 @@ namespace smithy.test
 @trait(selector: "operation")
 @length(min: 1)
 list httpRequestTests {
-    member: HttpRequestTestCase,
+    member: HttpRequestTestCase
 }
 
 @private
@@ -19,40 +19,40 @@ structure HttpRequestTestCase {
     /// test cases can share the same ID.
     @required
     @pattern("^[A-Za-z_][A-Za-z0-9_]+$")
-    id: String,
+    id: String
 
     /// The name of the protocol to test.
     @required
     @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
-    protocol: String,
+    protocol: String
 
     /// The expected serialized HTTP request method.
     @required
     @length(min: 1)
-    method: String,
+    method: String
 
     /// The request-target of the HTTP request, not including
     /// the query string (for example, "/foo/bar").
     @required
     @length(min: 1)
-    uri: String,
+    uri: String
 
     /// The host / endpoint provided to the client, not including the path
     /// or scheme (for example, "example.com").
-    host: String,
+    host: String
 
     /// The host / endpoint that the client should send to, not including
     /// the path or scheme (for example, "prefix.example.com").
     ///
     /// This can differ from the host provided to the client if the `hostPrefix`
     /// member of the `endpoint` trait is set, for instance.
-    resolvedHost: String,
+    resolvedHost: String
 
     /// The optional authentication scheme shape ID to assume. It's
     /// possible that specific authentication schemes might influence
     /// the serialization logic of an HTTP request.
     @idRef(selector: "[trait|authDefinition]", failWhenMissing: true)
-    authScheme: String,
+    authScheme: String
 
     /// A list of the expected serialized query string parameters.
     ///
@@ -71,7 +71,7 @@ structure HttpRequestTestCase {
     /// in the request differs from the expected value.
     ///
     /// `queryParams` applies no constraints on additional query parameters.
-    queryParams: StringList,
+    queryParams: StringList
 
     /// A list of query string parameter names that must not appear in the
     /// serialized HTTP request.
@@ -79,7 +79,7 @@ structure HttpRequestTestCase {
     /// Each value MUST appear in the format in which it is sent over the
     /// wire; if a key needs to be percent-encoded, then it MUST appear
     /// percent-encoded in this list.
-    forbidQueryParams: StringList,
+    forbidQueryParams: StringList
 
     /// A list of query string parameter names that MUST appear in the
     /// serialized request URI, but no assertion is made on the value.
@@ -87,40 +87,40 @@ structure HttpRequestTestCase {
     /// Each value MUST appear in the format in which it is sent over the
     /// wire; if a key needs to be percent-encoded, then it MUST appear
     /// percent-encoded in this list.
-    requireQueryParams: StringList,
+    requireQueryParams: StringList
 
     /// Defines a map of expected HTTP headers.
     ///
     /// Headers that are not listed in this map are ignored unless they are
     /// explicitly forbidden through `forbidHeaders`.
-    headers: StringMap,
+    headers: StringMap
 
     /// A list of header field names that must not appear in the serialized
     /// HTTP request.
-    forbidHeaders: StringList,
+    forbidHeaders: StringList
 
     /// A list of header field names that must appear in the serialized
     /// HTTP message, but no assertion is made on the value.
     ///
     /// Headers listed in `headers` do not need to appear in this list.
-    requireHeaders: StringList,
+    requireHeaders: StringList
 
     /// The expected HTTP message body.
     ///
     /// If no request body is defined, then no assertions are made about
     /// the body of the message.
-    body: String,
+    body: String
 
     /// The media type of the `body`.
     ///
     /// This is used to help test runners to parse and validate the expected
     /// data against generated data.
-    bodyMediaType: String,
+    bodyMediaType: String
 
     /// Defines the input parameters used to generated the HTTP request.
     ///
     /// These parameters MUST be compatible with the input of the operation.
-    params: Document,
+    params: Document
 
     /// Defines vendor-specific parameters that are used to influence the
     /// request. For example, some vendors might utilize environment
@@ -129,37 +129,37 @@ structure HttpRequestTestCase {
     ///
     /// If a `vendorParamsShape` is set, these parameters MUST be compatible
     /// with that shape's definition.
-    vendorParams: Document,
+    vendorParams: Document
 
     /// A shape to be used to validate the `vendorParams` member contents.
     ///
     /// If set, the parameters in `vendorParams` MUST be compatible with this
     /// shape's definition.
     @idRef(failWhenMissing: true)
-    vendorParamsShape: String,
+    vendorParamsShape: String
 
     /// A description of the test and what is being asserted.
-    documentation: String,
+    documentation: String
 
     /// Applies a list of tags to the test.
-    tags: NonEmptyStringList,
+    tags: NonEmptyStringList
 
     /// Indicates that the test case is only to be implemented by "client" or
     /// "server" implementations. This property is useful for identifying and
     /// testing edge cases of clients and servers that are impossible or
     /// undesirable to test in *both* client and server implementations.
-    appliesTo: AppliesTo,
+    appliesTo: AppliesTo
 }
 
 @private
 map StringMap {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 @private
 list StringList {
-    member: String,
+    member: String
 }
 
 /// Define how an HTTP response is serialized given a specific protocol,
@@ -167,7 +167,7 @@ list StringList {
 @trait(selector: ":test(operation, structure[trait|error])")
 @length(min: 1)
 list httpResponseTests {
-    member: HttpResponseTestCase,
+    member: HttpResponseTestCase
 }
 
 @private
@@ -179,23 +179,23 @@ structure HttpResponseTestCase {
     /// test cases can share the same ID.
     @required
     @pattern("^[A-Za-z_][A-Za-z0-9_]+$")
-    id: String,
+    id: String
 
     /// The shape ID of the protocol to test.
     @required
     @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
-    protocol: String,
+    protocol: String
 
     /// Defines the HTTP response code.
     @required
     @range(min: 100, max: 599)
-    code: Integer,
+    code: Integer
 
     /// The optional authentication scheme shape ID to assume. It's possible
     /// that specific authentication schemes might influence the serialization
     /// logic of an HTTP response.
     @idRef(selector: "[trait|authDefinition]", failWhenMissing: true)
-    authScheme: String,
+    authScheme: String
 
     /// A map of expected HTTP headers. Each key represents a header field
     /// name and each value represents the expected header value. An HTTP
@@ -204,34 +204,34 @@ structure HttpResponseTestCase {
     /// value differs from the serialized response value.
     ///
     /// `headers` applies no constraints on additional headers.
-    headers: StringMap,
+    headers: StringMap
 
     /// A list of header field names that must not appear.
-    forbidHeaders: StringList,
+    forbidHeaders: StringList
 
     /// A list of header field names that must appear in the serialized
     /// HTTP message, but no assertion is made on the value.
     ///
     /// Headers listed in `headers` map do not need to appear in this list.
-    requireHeaders: StringList,
+    requireHeaders: StringList
 
     /// Defines the HTTP message body.
     ///
     /// If no response body is defined, then no assertions are made about
     /// the body of the message.
-    body: String,
+    body: String
 
     /// The media type of the `body`.
     ///
     /// This is used to help test runners to parse and validate the expected
     /// data against generated data. Binary media type formats require that
     /// the contents of `body` are base64 encoded.
-    bodyMediaType: String,
+    bodyMediaType: String
 
     /// Defines the output parameters deserialized from the HTTP response.
     ///
     /// These parameters MUST be compatible with the output of the operation.
-    params: Document,
+    params: Document
 
     /// Defines vendor-specific parameters that are used to influence the
     /// response. For example, some vendors might utilize environment
@@ -240,31 +240,31 @@ structure HttpResponseTestCase {
     ///
     /// If a `vendorParamsShape` is set, these parameters MUST be compatible
     /// with that shape's definition.
-    vendorParams: Document,
+    vendorParams: Document
 
     /// A shape to be used to validate the `vendorParams` member contents.
     ///
     /// If set, the parameters in `vendorParams` MUST be compatible with this
     /// shape's definition.
     @idRef(failWhenMissing: true)
-    vendorParamsShape: String,
+    vendorParamsShape: String
 
     /// A description of the test and what is being asserted.
-    documentation: String,
+    documentation: String
 
     /// Applies a list of tags to the test.
-    tags: NonEmptyStringList,
+    tags: NonEmptyStringList
 
     /// Indicates that the test case is only to be implemented by "client" or
     /// "server" implementations. This property is useful for identifying and
     /// testing edge cases of clients and servers that are impossible or
     /// undesirable to test in *both* client and server implementations.
-    appliesTo: AppliesTo,
+    appliesTo: AppliesTo
 }
 
 @private
 list NonEmptyStringList {
-    member: NonEmptyString,
+    member: NonEmptyString
 }
 
 @private
@@ -299,48 +299,47 @@ structure HttpMalformedRequestTestCase {
     /// test cases can share the same ID.
     @required
     @pattern("^[A-Za-z_][A-Za-z0-9_]+$")
-    id: String,
+    id: String
 
     /// The name of the protocol to test.
     @required
     @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
-    protocol: String,
+    protocol: String
 
     /// The malformed request to send.
     @required
-    request: HttpMalformedRequestDefinition,
+    request: HttpMalformedRequestDefinition
 
     /// The expected response.
     @required
-    response: HttpMalformedResponseDefinition,
+    response: HttpMalformedResponseDefinition
 
     /// A description of the test and what is being asserted.
-    documentation: String,
+    documentation: String
 
     /// Applies a list of tags to the test.
-    tags: NonEmptyStringList,
+    tags: NonEmptyStringList
 
     /// An optional set of test parameters for parameterized testing.
-    testParameters: HttpMalformedRequestTestParametersDefinition,
+    testParameters: HttpMalformedRequestTestParametersDefinition
 }
 
 @private
 structure HttpMalformedRequestDefinition {
-
     /// The HTTP request method.
     @required
     @length(min: 1)
-    method: String,
+    method: String
 
     /// The request-target of the HTTP request, not including
     /// the query string (for example, "/foo/bar").
     @required
     @length(min: 1)
-    uri: String,
+    uri: String
 
     /// The host / endpoint provided to the client, not including the path
     /// or scheme (for example, "example.com").
-    host: String,
+    host: String
 
     /// A list of the serialized query string parameters to include in the request.
     ///
@@ -352,37 +351,36 @@ structure HttpMalformedRequestDefinition {
     /// the value MUST appear in the format in which it is expected
     /// to be sent over the wire; if a key or value needs to be
     /// percent-encoded, then it MUST appear percent-encoded in this list.
-    queryParams: StringList,
+    queryParams: StringList
 
     /// Defines a map of HTTP headers to include in the request
-    headers: StringMap,
+    headers: StringMap
 
     /// The HTTP message body to include in the request
-    body: String,
+    body: String
 }
 
 @private
 structure HttpMalformedResponseDefinition {
-
     /// Defines a map of expected HTTP headers.
     ///
     /// Headers that are not listed in this map are ignored.
-    headers: StringMap,
+    headers: StringMap
 
     /// Defines the HTTP response code.
     @required
     @range(min: 100, max: 599)
-    code: Integer,
+    code: Integer
 
     /// The expected response body.
-    body: HttpMalformedResponseBodyDefinition,
+    body: HttpMalformedResponseBodyDefinition
 }
 
 @private
 structure HttpMalformedResponseBodyDefinition {
     /// The assertion to execute against the response body.
     @required
-    assertion: HttpMalformedResponseBodyAssertion,
+    assertion: HttpMalformedResponseBodyAssertion
 
     /// The media type of the response body.
     ///
@@ -396,7 +394,7 @@ structure HttpMalformedResponseBodyDefinition {
 union HttpMalformedResponseBodyAssertion {
     /// Defines the expected serialized response body, which will be matched
     /// exactly.
-    contents: String,
+    contents: String
 
     /// A regex to evaluate against the `message` field in the body. For
     /// responses that may have some variance from platform to platform,
@@ -406,6 +404,6 @@ union HttpMalformedResponseBodyAssertion {
 
 @private
 map HttpMalformedRequestTestParametersDefinition {
-    key: String,
+    key: String
     value: StringList
 }

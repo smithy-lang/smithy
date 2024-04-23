@@ -2,39 +2,46 @@ $version: "2.0"
 
 namespace example.weather
 
-use aws.cloudformation#cfnResource
-use aws.api#taggable
 use aws.api#tagEnabled
+use aws.api#taggable
+use aws.cloudformation#cfnResource
 
 /// Provides weather forecasts.
-@paginated(inputToken: "nextToken", outputToken: "nextToken",
-           pageSize: "pageSize")
+@paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
 @tagEnabled
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
-    operations: [GetCurrentTime]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        GetCurrentTime
+    ]
 }
 
 operation TagCity {
     input := {
         @required
         cityId: CityId
+
         @length(max: 128)
         tags: example.tagging#TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagCity {
     input := {
         @required
         cityId: CityId
+
         @required
         @notProperty
         tagKeys: example.tagging#TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForCity {
@@ -42,27 +49,33 @@ operation ListTagsForCity {
         @required
         cityId: CityId
     }
-    output := { 
+
+    output := {
         @length(max: 128)
         tags: example.tagging#TagList
     }
 }
 
 @cfnResource
-@taggable(property: "tags", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
+@taggable(
+    property: "tags"
+    apiConfig: { tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity }
+)
 resource City {
-    identifiers: { cityId: CityId },
-    properties: {
-        name: String
-        coordinates: CityCoordinates
-        tags: example.tagging#TagList
-    }
+    identifiers: { cityId: CityId }
+    properties: { name: String, coordinates: CityCoordinates, tags: example.tagging#TagList }
     create: CreateCity
-    read: GetCity,
+    read: GetCity
     update: UpdateCity
-    list: ListCities,
-    operations: [TagCity, UntagCity, ListTagsForCity],
-    resources: [Forecast],
+    list: ListCities
+    operations: [
+        TagCity
+        UntagCity
+        ListTagsForCity
+    ]
+    resources: [
+        Forecast
+    ]
 }
 
 operation CreateCity {
@@ -70,25 +83,30 @@ operation CreateCity {
         name: String
         coordinates: CityCoordinates
     }
+
     output := {
         @required
         cityId: CityId
     }
 }
+
 operation UpdateCity {
     input := {
         @required
         cityId: CityId
+
         name: String
+
         coordinates: CityCoordinates
     }
+
     output := {}
 }
 
 /// @cfnResource
 resource Forecast {
-    identifiers: { cityId: CityId },
-    read: GetForecast,
+    identifiers: { cityId: CityId }
+    read: GetForecast
 }
 
 @pattern("^[A-Za-z0-9 ]+$")
@@ -96,9 +114,11 @@ string CityId
 
 @readonly
 operation GetCity {
-    input: GetCityInput,
-    output: GetCityOutput,
-    errors: [NoSuchResource]
+    input: GetCityInput
+    output: GetCityOutput
+    errors: [
+        NoSuchResource
+    ]
 }
 
 @input
@@ -114,19 +134,19 @@ structure GetCityOutput {
     // "required" is used on output to indicate if the service
     // will always provide a value for the member.
     @required
-    name: String,
+    name: String
 
     @required
-    coordinates: CityCoordinates,
+    coordinates: CityCoordinates
 }
 
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
 
 // "error" is a trait that is used to specialize
@@ -142,22 +162,22 @@ structure NoSuchResource {
 @readonly
 @paginated(items: "items")
 operation ListCities {
-    input: ListCitiesInput,
+    input: ListCitiesInput
     output: ListCitiesOutput
 }
 
 @input
 structure ListCitiesInput {
-    nextToken: String,
+    nextToken: String
     pageSize: Integer
 }
 
 @output
 structure ListCitiesOutput {
-    nextToken: String,
+    nextToken: String
 
     @required
-    items: CitySummaries,
+    items: CitySummaries
 }
 
 // CitySummaries is a list of CitySummary structures.
@@ -166,18 +186,22 @@ list CitySummaries {
 }
 
 // CitySummary contains a reference to a City.
-@references([{resource: City}])
+@references([
+    {
+        resource: City
+    }
+])
 structure CitySummary {
     @required
-    cityId: CityId,
+    cityId: CityId
 
     @required
-    name: String,
+    name: String
 }
 
 @readonly
 operation GetCurrentTime {
-    input: GetCurrentTimeInput,
+    input: GetCurrentTimeInput
     output: GetCurrentTimeOutput
 }
 
@@ -192,7 +216,7 @@ structure GetCurrentTimeOutput {
 
 @readonly
 operation GetForecast {
-    input: GetForecastInput,
+    input: GetForecastInput
     output: GetForecastOutput
 }
 
@@ -201,11 +225,10 @@ operation GetForecast {
 @input
 structure GetForecastInput {
     @required
-    cityId: CityId,
+    cityId: CityId
 }
 
 @output
 structure GetForecastOutput {
     chanceOfRain: Float
 }
-

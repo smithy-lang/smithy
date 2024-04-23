@@ -6,28 +6,27 @@ use smithy.rules#contextParam
 use smithy.rules#endpointRuleSet
 
 @endpointRuleSet({
-    "version": "1.3",
-    "parameters": {
-        "ParameterBar": {
-            "type": "String",
-            "required": true,
-            "documentation": "docs"
-        }
-    },
-    "rules": [
+    version: "1.3"
+    parameters: {
+        ParameterBar: { type: "String", required: true, documentation: "docs" }
+    }
+    rules: [
         {
-            "conditions": [],
-            "documentation": "base rule",
-            "endpoint": {
-                "url": "https://{ParameterBar}.amazonaws.com",
-                "headers": {}
-            },
-            "type": "endpoint"
+            conditions: []
+            documentation: "base rule"
+            endpoint: {
+                url: "https://{ParameterBar}.amazonaws.com"
+                headers: {}
+            }
+            type: "endpoint"
         }
     ]
 })
 service FizzBuzz {
-    operations: [GetResource, GetAnotherResource]
+    operations: [
+        GetResource
+        GetAnotherResource
+    ]
 }
 
 operation GetResource {
@@ -49,4 +48,5 @@ structure GetAnotherResourceInput {
 }
 
 string ResourceId
+
 boolean ResourceIdBool

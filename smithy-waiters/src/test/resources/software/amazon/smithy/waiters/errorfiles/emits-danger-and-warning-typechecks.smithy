@@ -6,29 +6,31 @@ use smithy.waiters#waitable
 
 @waitable(
     Invalid1: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "`10`.foo", // can't select a field from a literal.
-                        "comparator": "booleanEquals",
-                        "expected": "true"
+                state: "success"
+                matcher: {
+                    output: {
+                        path: "`10`.foo"
+                        // can't select a field from a literal.
+                        comparator: "booleanEquals"
+                        expected: "true"
                     }
                 }
             }
         ]
-    },
+    }
     Invalid2: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "`true` < `false`", // can't compare these
-                        "comparator": "booleanEquals",
-                        "expected": "true"
+                state: "success"
+                matcher: {
+                    output: {
+                        path: "`true` < `false`"
+                        // can't compare these
+                        comparator: "booleanEquals"
+                        expected: "true"
                     }
                 }
             }
@@ -36,7 +38,7 @@ use smithy.waiters#waitable
     }
 )
 operation A {
-    input: AInput,
+    input: AInput
     output: AOutput
 }
 
@@ -45,5 +47,5 @@ structure AInput {}
 
 @output
 structure AOutput {
-    foo: String,
+    foo: String
 }

@@ -5,8 +5,10 @@ namespace smithy.example
 
 @aws.protocols#restJson1
 service EndpointService {
-  version: "2018-01-01",
-  operations: [EndpointOperation]
+    version: "2018-01-01"
+    operations: [
+        EndpointOperation
+    ]
 }
 
 @http(method: "GET", uri: "/")

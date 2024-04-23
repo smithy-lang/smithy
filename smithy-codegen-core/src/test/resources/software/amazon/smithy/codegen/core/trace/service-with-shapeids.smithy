@@ -3,24 +3,29 @@ $version: "2.0"
 namespace example.weather
 
 /// Provides weather forecasts.
-@paginated(inputToken: "nextToken", outputToken: "nextToken",
-           pageSize: "pageSize")
+@paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
 service Weather {
-    version: "2006-03-01",
-    resources: [City],
-    operations: [GetCurrentTime]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        GetCurrentTime
+    ]
 }
 
 resource City {
-    identifiers: { cityId: CityId },
-    read: GetCity,
-    list: ListCities,
-    resources: [Forecast],
+    identifiers: { cityId: CityId }
+    read: GetCity
+    list: ListCities
+    resources: [
+        Forecast
+    ]
 }
 
 resource Forecast {
-    identifiers: { cityId: CityId },
-    read: GetForecast,
+    identifiers: { cityId: CityId }
+    read: GetForecast
 }
 
 // "pattern" is a trait.
@@ -29,9 +34,11 @@ string CityId
 
 @readonly
 operation GetCity {
-    input: GetCityInput,
-    output: GetCityOutput,
-    errors: [NoSuchResource]
+    input: GetCityInput
+    output: GetCityOutput
+    errors: [
+        NoSuchResource
+    ]
 }
 
 structure GetCityInput {
@@ -45,19 +52,19 @@ structure GetCityOutput {
     // "required" is used on output to indicate if the service
     // will always provide a value for the member.
     @required
-    name: String,
+    name: String
 
     @required
-    coordinates: CityCoordinates,
+    coordinates: CityCoordinates
 }
 
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
 
 // "error" is a trait that is used to specialize
@@ -73,20 +80,20 @@ structure NoSuchResource {
 @readonly
 @paginated(items: "items")
 operation ListCities {
-    input: ListCitiesInput,
+    input: ListCitiesInput
     output: ListCitiesOutput
 }
 
 structure ListCitiesInput {
-    nextToken: String,
+    nextToken: String
     pageSize: Integer
 }
 
 structure ListCitiesOutput {
-    nextToken: String,
+    nextToken: String
 
     @required
-    items: CitySummaries,
+    items: CitySummaries
 }
 
 // CitySummaries is a list of CitySummary structures.
@@ -95,13 +102,17 @@ list CitySummaries {
 }
 
 // CitySummary contains a reference to a City.
-@references([{resource: City}])
+@references([
+    {
+        resource: City
+    }
+])
 structure CitySummary {
     @required
-    cityId: CityId,
+    cityId: CityId
 
     @required
-    name: String,
+    name: String
 }
 
 @readonly
@@ -116,7 +127,7 @@ structure GetCurrentTimeOutput {
 
 @readonly
 operation GetForecast {
-    input: GetForecastInput,
+    input: GetForecastInput
     output: GetForecastOutput
 }
 
@@ -124,7 +135,7 @@ operation GetForecast {
 // a Forecast doesn't have its own.
 structure GetForecastInput {
     @required
-    cityId: CityId,
+    cityId: CityId
 }
 
 structure GetForecastOutput {

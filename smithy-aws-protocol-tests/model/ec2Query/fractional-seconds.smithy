@@ -14,21 +14,19 @@ operation FractionalSeconds {
 
 apply FractionalSeconds @httpResponseTests([
     {
-        id: "Ec2QueryDateTimeWithFractionalSeconds",
+        id: "Ec2QueryDateTimeWithFractionalSeconds"
         documentation: """
-        Ensures that clients can correctly parse datetime timestamps with fractional seconds""",
-        protocol: ec2Query,
-        code: 200,
+            Ensures that clients can correctly parse datetime timestamps with fractional seconds"""
+        protocol: ec2Query
+        code: 200
         body: """
-              <FractionalSecondsResponse xmlns="https://example.com/">
-                  <datetime>2000-01-02T20:34:56.123Z</datetime>
-                  <RequestId>requestid</RequestId>
-              </FractionalSecondsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+            <FractionalSecondsResponse xmlns="https://example.com/">
+                <datetime>2000-01-02T20:34:56.123Z</datetime>
+                <RequestId>requestid</RequestId>
+            </FractionalSecondsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         params: { datetime: 946845296.123 }
     }
 ])

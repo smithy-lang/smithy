@@ -2,30 +2,28 @@ $version: "2.0"
 
 metadata validators = [
     {
-        name: "EmitEachSelector",
-        id: "Test",
-        severity: "WARNING",
-        configuration: {
-            selector: ":is([id=smithy.example#Foo], [id=smithy.example#Baz])"
-        }
+        name: "EmitEachSelector"
+        id: "Test"
+        severity: "WARNING"
+        configuration: { selector: ":is([id=smithy.example#Foo], [id=smithy.example#Baz])" }
     }
 ]
 
 metadata suppressions = [
     {
-        id: "Test",
+        id: "Test"
         namespace: "smithy.example"
-    },
+    }
     {
-        id: "Lorem",
+        id: "Lorem"
         namespace: "smithy.foo"
-    },
+    }
     {
-        id: "Test",
+        id: "Test"
         namespace: "smithy.example.nested"
-    },
+    }
     {
-        id: "Ipsum",
+        id: "Ipsum"
         namespace: "*"
     }
 ]

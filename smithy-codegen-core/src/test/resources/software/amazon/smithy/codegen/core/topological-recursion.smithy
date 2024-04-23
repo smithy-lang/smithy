@@ -3,8 +3,10 @@ $version: "2.0"
 namespace smithy.example
 
 service Example {
-    version: "1.0.0",
-    operations: [GetFoo]
+    version: "1.0.0"
+    operations: [
+        GetFoo
+    ]
 }
 
 operation GetFoo {
@@ -16,10 +18,10 @@ structure GetFooInput {
 }
 
 structure User {
-    recursiveUser: User,
-    recursiveList: UsersList,
-    recursiveMap: UsersMap,
-    notRecursive: NonRecursiveList,
+    recursiveUser: User
+    recursiveList: UsersList
+    recursiveMap: UsersMap
+    notRecursive: NonRecursiveList
 }
 
 list UsersList {
@@ -27,12 +29,12 @@ list UsersList {
 }
 
 map UsersMap {
-    key: MyString,
+    key: MyString
     value: User
 }
 
 list NonRecursiveList {
-    member: NonRecursive,
+    member: NonRecursive
 }
 
 structure NonRecursive {

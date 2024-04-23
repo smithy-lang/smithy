@@ -6,9 +6,7 @@ use aws.api#arnReference
 
 /// Specifies the source of the caller identifier that will be used to throttle
 /// API methods that require a key.
-@externalDocumentation(
-    "Developer Guide": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html"
-)
+@externalDocumentation("Developer Guide": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html")
 @internal
 @tags(["internal"])
 @trait(selector: "service")
@@ -35,9 +33,7 @@ map authorizers {
 @tags(["internal"])
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.apigateway#mockIntegration"
-    ]
+    conflicts: ["aws.apigateway#mockIntegration"]
 )
 structure integration {
     /// The type of integration with the specified backend.
@@ -109,9 +105,7 @@ structure integration {
 @tags(["internal"])
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.apigateway#integration"
-    ]
+    conflicts: ["aws.apigateway#integration"]
 )
 structure mockIntegration {
     /// Specifies how a request payload of unmapped content type is passed
@@ -141,11 +135,7 @@ string requestValidator
 @private
 structure AuthorizerDefinition {
     /// The Smithy authentication scheme used by the client (e.g, aws.v4).
-    @idRef(
-        selector: "[trait|authDefinition]"
-        failWhenMissing: true
-        errorMessage: "The scheme of an authorizer definition must reference an auth trait"
-    )
+    @idRef(selector: "[trait|authDefinition]", failWhenMissing: true, errorMessage: "The scheme of an authorizer definition must reference an auth trait")
     @required
     scheme: String
 
@@ -351,6 +341,7 @@ enum PassThroughBehavior {
 enum PayloadFormatVersion {
     /// Specifies 1.0 version of the format used by the authorizer
     V1_0 = "1.0"
+
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
 }

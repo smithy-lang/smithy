@@ -6,8 +6,10 @@ use aws.protocols#restJson1
 
 @restJson1
 service MyService {
-    version: "2020-07-02",
-    operations: [HasDefault]
+    version: "2020-07-02"
+    operations: [
+        HasDefault
+    ]
 }
 
 @http(method: "POST", uri: "/defaults")
@@ -20,7 +22,7 @@ operation HasDefault {
         foo: String = ""
         bar: StringList = []
         baz: DefaultEnum = "FOO"
-        withAlphaOnlyRef: Foo_Baz,
+        withAlphaOnlyRef: Foo_Baz
         anInt: Long
     }
 }

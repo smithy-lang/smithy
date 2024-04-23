@@ -5,49 +5,50 @@ use aws.protocols#restJson1
 
 @restJson1
 service MyService {
-    version: "2020-07-02",
-    operations: [ValidEnums,],
+    version: "2020-07-02"
+    operations: [
+        ValidEnums
+    ]
 }
 
 @httpChecksum(
-    requestAlgorithmMember: "requestAlgorithm",
-    requestValidationModeMember: "validationMode",
+    requestAlgorithmMember: "requestAlgorithm"
+    requestValidationModeMember: "validationMode"
     responseAlgorithms: ["CRC32C"]
 )
 @http(method: "GET", uri: "/unsupported")
 @readonly
 @suppress(["UnstableTrait"])
 operation ValidEnums {
-    input: ValidEnumsInput,
-    output: ValidEnumsOutput,
-
+    input: ValidEnumsInput
+    output: ValidEnumsOutput
 }
 
 structure ValidEnumsInput {
     @httpQuery("requestAlgorithm")
-    requestAlgorithm: RequestAlgorithm,
+    requestAlgorithm: RequestAlgorithm
 
     @httpQuery("validationMode")
-    validationMode: ValidationMode,
+    validationMode: ValidationMode
 }
 
 structure ValidEnumsOutput {}
 
 @enum([
     {
-        value: "CRC32C",
+        value: "CRC32C"
         name: "CRC32C"
-    },
+    }
     {
-        value: "CRC32",
+        value: "CRC32"
         name: "CRC32"
-    },
+    }
     {
-        value: "SHA1",
+        value: "SHA1"
         name: "SHA1"
-    },
+    }
     {
-        value: "SHA256",
+        value: "SHA256"
         name: "SHA256"
     }
 ])
@@ -55,7 +56,7 @@ string RequestAlgorithm
 
 @enum([
     {
-        value: "ENABLED",
+        value: "ENABLED"
         name: "ENABLED"
     }
 ])

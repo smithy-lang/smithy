@@ -5,8 +5,10 @@ namespace smithy.example
 @aws.auth#sigv4(name: "small")
 @aws.protocols#restJson1
 service Small {
-  version: "2018-01-01",
-  operations: [SmallOperation]
+    version: "2018-01-01"
+    operations: [
+        SmallOperation
+    ]
 }
 
 @http(method: "POST", uri: "/")

@@ -2,7 +2,7 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "example.weather"
     }
 ]
@@ -10,14 +10,21 @@ metadata suppressions = [
 namespace example.weather
 
 use aws.api#arn
-use aws.api#taggable
 use aws.api#tagEnabled
+use aws.api#taggable
 
 @tagEnabled
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
-    operations: [GetCurrentTime, TagResource, UntagResource, ListTagsForResource]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        GetCurrentTime
+        TagResource
+        UntagResource
+        ListTagsForResource
+    ]
 }
 
 structure Tag {
@@ -37,20 +44,24 @@ operation TagResource {
     input := {
         @required
         arn: String
+
         @length(max: 128)
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagResource {
     input := {
         @required
         arn: String
+
         @required
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForResource {
@@ -58,32 +69,27 @@ operation ListTagsForResource {
         @required
         arn: String
     }
+
     output := {
         @length(max: 128)
         tags: TagList
     }
 }
 
-@arn(
-    template: "city/{cityId}/forecast/{forecastId}"
-)
+@arn(template: "city/{cityId}/forecast/{forecastId}")
 resource Forecast {
-    identifiers: { 
-        cityId: CityId
-        forecastId: ForecastId
-    }
+    identifiers: { cityId: CityId, forecastId: ForecastId }
 }
 
 @taggable
 @arn(template: "city/{CityId}")
 resource City {
     identifiers: { cityId: CityId }
-    properties: {
-        name: String
-        coordinates: CityCoordinates
-    }
+    properties: { name: String, coordinates: CityCoordinates }
     read: GetCity
-    resources: [Forecast]
+    resources: [
+        Forecast
+    ]
 }
 
 @pattern("^[A-Za-z0-9 ]+$")
@@ -96,7 +102,9 @@ string CityId
 operation GetCity {
     input: GetCityInput
     output: GetCityOutput
-    errors: [NoSuchResource]
+    errors: [
+        NoSuchResource
+    ]
 }
 
 @input
@@ -112,7 +120,7 @@ structure GetCityOutput {
     // "required" is used on output to indicate if the service
     // will always provide a value for the member.
     @required
-    name: String,
+    name: String
 
     @required
     coordinates: CityCoordinates
@@ -121,10 +129,10 @@ structure GetCityOutput {
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
 
 // "error" is a trait that is used to specialize
@@ -149,4 +157,3 @@ structure GetCurrentTimeOutput {
     @required
     time: Timestamp
 }
-

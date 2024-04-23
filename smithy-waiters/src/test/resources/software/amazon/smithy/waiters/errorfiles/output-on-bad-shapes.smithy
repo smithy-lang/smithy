@@ -6,15 +6,11 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "foo == 'hey'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
+                state: "success"
+                matcher: {
+                    output: { path: "foo == 'hey'", comparator: "booleanEquals", expected: "true" }
                 }
             }
         ]

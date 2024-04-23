@@ -3,11 +3,13 @@ $version: "1.0"
 namespace smithy.example
 
 service Foo {
-    operations: [FooOperation]
+    operations: [
+        FooOperation
+    ]
 }
 
 operation FooOperation {
-    input: FooOperationInput,
+    input: FooOperationInput
     output: FooOperationOutput
 }
 
@@ -38,11 +40,11 @@ structure A {
 }
 
 structure RecursiveA {
-    a: A,
+    a: A
     b: RecursiveB
 }
 
 structure RecursiveB {
-    a: RecursiveA,
+    a: RecursiveA
     b: B
 }

@@ -17,7 +17,6 @@
 // they do not send a <Type> element in the error data.
 //
 // See: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html#api-error-response
-
 $version: "2.0"
 
 namespace aws.protocoltests.ec2
@@ -31,110 +30,100 @@ use smithy.test#httpResponseTests
 /// 2. An InvalidGreeting error.
 /// 3. A BadRequest error.
 operation GreetingWithErrors {
-    output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError]
+    output: GreetingWithErrorsOutput
+    errors: [
+        InvalidGreeting
+        ComplexError
+    ]
 }
 
 apply GreetingWithErrors @httpResponseTests([
     {
-        id: "Ec2GreetingWithErrors",
-        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: ec2Query,
-        code: 200,
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+        id: "Ec2GreetingWithErrors"
+        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response"
+        protocol: ec2Query
+        code: 200
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         body: """
-              <GreetingWithErrorsResponse xmlns="https://example.com/">
-                  <greeting>Hello</greeting>
-                  <RequestId>requestid</RequestId>
-              </GreetingWithErrorsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        params: {
-            greeting: "Hello"
-        }
+            <GreetingWithErrorsResponse xmlns="https://example.com/">
+                <greeting>Hello</greeting>
+                <RequestId>requestid</RequestId>
+            </GreetingWithErrorsResponse>
+            """
+        bodyMediaType: "application/xml"
+        params: { greeting: "Hello" }
     }
 ])
 
 structure GreetingWithErrorsOutput {
-    greeting: String,
+    greeting: String
 }
 
 /// This error is thrown when an invalid greeting value is provided.
 @error("client")
 structure InvalidGreeting {
-    Message: String,
+    Message: String
 }
 
 apply InvalidGreeting @httpResponseTests([
     {
-        id: "Ec2InvalidGreetingError",
-        documentation: "Parses simple XML errors",
-        protocol: ec2Query,
-        code: 400,
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+        id: "Ec2InvalidGreetingError"
+        documentation: "Parses simple XML errors"
+        protocol: ec2Query
+        code: 400
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         body: """
-              <Response>
-                  <Errors>
-                      <Error>
-                          <Code>InvalidGreeting</Code>
-                          <Message>Hi</Message>
-                      </Error>
-                  </Errors>
-                  <RequestId>foo-id</RequestId>
-              </Response>
-              """,
-        bodyMediaType: "application/xml",
-        params: {
-            Message: "Hi"
-        },
+            <Response>
+                <Errors>
+                    <Error>
+                        <Code>InvalidGreeting</Code>
+                        <Message>Hi</Message>
+                    </Error>
+                </Errors>
+                <RequestId>foo-id</RequestId>
+            </Response>
+            """
+        bodyMediaType: "application/xml"
+        params: { Message: "Hi" }
     }
 ])
 
 /// This error is thrown when a request is invalid.
 @error("client")
 structure ComplexError {
-    TopLevel: String,
-
-    Nested: ComplexNestedErrorData,
+    TopLevel: String
+    Nested: ComplexNestedErrorData
 }
 
 apply ComplexError @httpResponseTests([
     {
-        id: "Ec2ComplexError",
-        protocol: ec2Query,
+        id: "Ec2ComplexError"
+        protocol: ec2Query
         params: {
-            TopLevel: "Top level",
-            Nested: {
-                Foo: "bar"
-            }
-        },
-        code: 400,
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+            TopLevel: "Top level"
+            Nested: { Foo: "bar" }
+        }
+        code: 400
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         body: """
-              <Response>
-                  <Errors>
-                      <Error>
-                          <Code>ComplexError</Code>
-                          <Message>Hi</Message>
-                          <TopLevel>Top level</TopLevel>
-                          <Nested>
-                              <Foo>bar</Foo>
-                          </Nested>
-                      </Error>
-                  </Errors>
-                  <RequestId>foo-id</RequestId>
-              </Response>
-              """,
-        bodyMediaType: "application/xml",
+            <Response>
+                <Errors>
+                    <Error>
+                        <Code>ComplexError</Code>
+                        <Message>Hi</Message>
+                        <TopLevel>Top level</TopLevel>
+                        <Nested>
+                            <Foo>bar</Foo>
+                        </Nested>
+                    </Error>
+                </Errors>
+                <RequestId>foo-id</RequestId>
+            </Response>
+            """
+        bodyMediaType: "application/xml"
     }
 ])
 
 structure ComplexNestedErrorData {
-    Foo: String,
+    Foo: String
 }

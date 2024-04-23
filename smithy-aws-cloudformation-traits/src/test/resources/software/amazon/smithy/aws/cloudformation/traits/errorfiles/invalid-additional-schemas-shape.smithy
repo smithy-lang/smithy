@@ -5,21 +5,19 @@ namespace smithy.example
 use aws.cloudformation#cfnResource
 
 service InvalidAdditionalSchemasShape {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [
-        InvalidAdditionalSchemasShapeResource,
-    ],
+        InvalidAdditionalSchemasShapeResource
+    ]
 }
 
 @cfnResource(
-  additionalSchemas: [ListShape]
+    additionalSchemas: [ListShape]
 )
 resource InvalidAdditionalSchemasShapeResource {
-    identifiers: {
-        fooId: String,
-    },
-    create: CreateInvalidAdditionalSchemasShapeResource,
-    read: GetInvalidAdditionalSchemasShapeResource,
+    identifiers: { fooId: String }
+    create: CreateInvalidAdditionalSchemasShapeResource
+    read: GetInvalidAdditionalSchemasShapeResource
 }
 
 list ListShape {
@@ -27,13 +25,13 @@ list ListShape {
 }
 
 operation CreateInvalidAdditionalSchemasShapeResource {
-    input: CreateInvalidAdditionalSchemasShapeResourceRequest,
+    input: CreateInvalidAdditionalSchemasShapeResourceRequest
     output: CreateInvalidAdditionalSchemasShapeResourceResponse
 }
 
 @input
 structure CreateInvalidAdditionalSchemasShapeResourceRequest {
-    bar: String,
+    bar: String
 }
 
 @output
@@ -41,18 +39,17 @@ structure CreateInvalidAdditionalSchemasShapeResourceResponse {}
 
 @readonly
 operation GetInvalidAdditionalSchemasShapeResource {
-    input: GetInvalidAdditionalSchemasShapeResourceRequest,
-    output: GetInvalidAdditionalSchemasShapeResourceResponse,
+    input: GetInvalidAdditionalSchemasShapeResourceRequest
+    output: GetInvalidAdditionalSchemasShapeResourceResponse
 }
 
 @input
 structure GetInvalidAdditionalSchemasShapeResourceRequest {
     @required
-    fooId: String,
+    fooId: String
 }
 
 @output
 structure GetInvalidAdditionalSchemasShapeResourceResponse {
-    bar: String,
+    bar: String
 }
-

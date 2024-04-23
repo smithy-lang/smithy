@@ -21,23 +21,23 @@ integer SizedInteger2
 integer SizedInteger3
 
 list StringList {
-    member: String,
+    member: String
 }
 
 @length(min: 5, max: 1000)
 list SizedStringList {
-    member: String,
+    member: String
 }
 
 map StringListMap {
-    key: String,
-    value: StringList,
+    key: String
+    value: StringList
 }
 
 @length(min: 5, max: 1000)
 map SizedStringListMap {
-    key: String,
-    value: StringList,
+    key: String
+    value: StringList
 }
 
 union MyUnion {
@@ -49,8 +49,8 @@ structure MyStruct {
 }
 
 structure RecursiveStruct {
-    foo: StringList,
-    bar: RecursiveStructList,
+    foo: StringList
+    bar: RecursiveStructList
 }
 
 @length(min: 1, max: 1)

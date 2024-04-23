@@ -4,27 +4,29 @@ namespace smithy.example
 
 @aws.protocols#restJson1
 service PrefixHeaders {
-    version: "2018-01-01",
-    operations: [PrefixHeadersOperation]
+    version: "2018-01-01"
+    operations: [
+        PrefixHeadersOperation
+    ]
 }
 
 @http(method: "GET", uri: "/")
 operation PrefixHeadersOperation {
-    input: Input,
+    input: Input
     output: Output
 }
 
 structure Input {
     @httpPrefixHeaders("x-custom-")
-    metaData: Headers,
+    metaData: Headers
 }
 
 structure Output {
     @httpPrefixHeaders("x-custom-")
-    metaData: Headers,
+    metaData: Headers
 }
 
 map Headers {
-    key: String,
+    key: String
     value: String
 }

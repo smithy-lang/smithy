@@ -5,27 +5,24 @@ namespace smithy.example
 use smithy.rules#endpointTests
 
 service InvalidService {
-    version: "2022-01-01",
-    operations: [GetThing]
+    version: "2022-01-01"
+    operations: [
+        GetThing
+    ]
 }
 
 apply InvalidService @endpointTests({
-    "version": "1.0",
-    "testCases": [
+    version: "1.0"
+    testCases: [
         {
-            "params": {
-                "stringFoo": "c d",
-                "boolFoo": true
-            },
-            "operationInputs": [{
-                "operationName": "GetThing",
-                "operationParams": {
-                    "buzz": "a buzz value",
-                },
-            }],
-            "expect": {
-                "error": "failed to resolve"
-            }
+            params: { stringFoo: "c d", boolFoo: true }
+            operationInputs: [
+                {
+                    operationName: "GetThing"
+                    operationParams: { buzz: "a buzz value" }
+                }
+            ]
+            expect: { error: "failed to resolve" }
         }
     ]
 })
@@ -38,9 +35,9 @@ operation GetThing {
 @input
 structure GetThingInput {
     @required
-    fizz: String,
+    fizz: String
 
-    buzz: String,
+    buzz: String
 
-    fuzz: String,
+    fuzz: String
 }

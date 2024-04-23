@@ -7,11 +7,6 @@ use test.smithy.traitcodegen.structures#structureTrait
 @structureTrait(
     fieldA: "first"
     fieldB: false
-    fieldC: {
-        fieldN: "nested"
-        fieldQ: true
-        fieldZ: "A"
-    }
+    fieldC: { fieldN: "nested", fieldQ: true, fieldZ: "A" }
 )
-structure myStruct {
-}
+structure myStruct {}

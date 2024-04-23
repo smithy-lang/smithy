@@ -9,19 +9,15 @@ use aws.iam#iamResource
 @service(sdkId: "My")
 service MyService {
     version: "2020-07-02"
-    resources: [SuperResource]
+    resources: [
+        SuperResource
+    ]
 }
 
-@iamResource(
-    name: "super"
-    relativeDocumentation: "API-Super.html"
-    disableConditionKeyInheritance: false
-)
+@iamResource(name: "super", relativeDocumentation: "API-Super.html", disableConditionKeyInheritance: false)
 @arn(template: "super/{id1}")
 resource SuperResource {
-    identifiers: {
-        id1: String
-    }
+    identifiers: { id1: String }
     read: GetResource
 }
 

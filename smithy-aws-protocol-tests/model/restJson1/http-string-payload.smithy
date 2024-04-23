@@ -8,25 +8,25 @@ use smithy.test#httpResponseTests
 @http(uri: "/EnumPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestJsonEnumPayloadRequest",
-        uri: "/EnumPayload",
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        method: "POST",
+        id: "RestJsonEnumPayloadRequest"
+        uri: "/EnumPayload"
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        method: "POST"
         protocol: "aws.protocols#restJson1"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestJsonEnumPayloadResponse",
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        protocol: "aws.protocols#restJson1",
+        id: "RestJsonEnumPayloadResponse"
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        protocol: "aws.protocols#restJson1"
         code: 200
     }
 ])
 operation HttpEnumPayload {
-    input: EnumPayloadInput,
+    input: EnumPayloadInput
     output: EnumPayloadInput
 }
 
@@ -42,25 +42,25 @@ enum StringEnum {
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestJsonStringPayloadRequest",
-        uri: "/StringPayload",
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        method: "POST",
+        id: "RestJsonStringPayloadRequest"
+        uri: "/StringPayload"
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        method: "POST"
         protocol: "aws.protocols#restJson1"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestJsonStringPayloadResponse",
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        protocol: "aws.protocols#restJson1",
+        id: "RestJsonStringPayloadResponse"
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        protocol: "aws.protocols#restJson1"
         code: 200
     }
 ])
 operation HttpStringPayload {
-    input: StringPayloadInput,
+    input: StringPayloadInput
     output: StringPayloadInput
 }
 
@@ -68,4 +68,3 @@ structure StringPayloadInput {
     @httpPayload
     payload: String
 }
-

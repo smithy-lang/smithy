@@ -3,15 +3,20 @@ $version: "1.0"
 namespace smithy.example
 
 structure Foo {
-    nullableIntegerBoxedTarget: Integer,
-    nullableIntegerBoxedNonPreludeTarget: MyInteger,
+    nullableIntegerBoxedTarget: Integer
+
+    nullableIntegerBoxedNonPreludeTarget: MyInteger
+
     @required
-    nullableIntegerInV1BoxedTargetRequired: Integer,
-    nonNullableIntegerUnboxedTarget: MyPrimitiveInteger,
+    nullableIntegerInV1BoxedTargetRequired: Integer
+
+    nonNullableIntegerUnboxedTarget: MyPrimitiveInteger
+
     @box
-    nullableIntegerBoxedMember: MyPrimitiveInteger,
+    nullableIntegerBoxedMember: MyPrimitiveInteger
+
     @required
-    nonNullableIntegerUnboxedCustomTarget: MyPrimitiveInteger,
+    nonNullableIntegerUnboxedCustomTarget: MyPrimitiveInteger
 }
 
 @box

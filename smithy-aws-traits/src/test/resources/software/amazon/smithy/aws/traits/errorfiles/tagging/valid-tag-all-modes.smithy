@@ -2,21 +2,28 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "example.weather"
     }
 ]
 
 namespace example.weather
 
-use aws.api#taggable
 use aws.api#tagEnabled
+use aws.api#taggable
 
 @tagEnabled
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
-    operations: [GetCurrentTime, TagResource, UntagResource, ListTagsForResource]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        GetCurrentTime
+        TagResource
+        UntagResource
+        ListTagsForResource
+    ]
 }
 
 structure Tag {
@@ -36,20 +43,24 @@ operation TagResource {
     input := {
         @required
         arn: String
+
         @length(max: 128)
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagResource {
     input := {
         @required
         arn: String
+
         @required
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForResource {
@@ -57,6 +68,7 @@ operation ListTagsForResource {
         @required
         arn: String
     }
+
     output := {
         @length(max: 128)
         tags: TagList
@@ -67,21 +79,25 @@ operation TagCity {
     input := {
         @required
         cityId: CityId
+
         @length(max: 128)
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagCity {
     input := {
         @required
         cityId: CityId
+
         @required
         @notProperty
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForCity {
@@ -89,22 +105,26 @@ operation ListTagsForCity {
         @required
         cityId: CityId
     }
-    output := { 
+
+    output := {
         @length(max: 128)
         tags: TagList
     }
 }
 
-@taggable(property: "tags", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
+@taggable(
+    property: "tags"
+    apiConfig: { tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity }
+)
 resource City {
-    identifiers: { cityId: CityId },
-    properties: {
-        name: String
-        coordinates: CityCoordinates
-        tags: TagList
-    }
-    read: GetCity,
-    operations: [TagCity, UntagCity, ListTagsForCity],
+    identifiers: { cityId: CityId }
+    properties: { name: String, coordinates: CityCoordinates, tags: TagList }
+    read: GetCity
+    operations: [
+        TagCity
+        UntagCity
+        ListTagsForCity
+    ]
 }
 
 @pattern("^[A-Za-z0-9 ]+$")
@@ -112,9 +132,11 @@ string CityId
 
 @readonly
 operation GetCity {
-    input: GetCityInput,
-    output: GetCityOutput,
-    errors: [NoSuchResource]
+    input: GetCityInput
+    output: GetCityOutput
+    errors: [
+        NoSuchResource
+    ]
 }
 
 @input
@@ -130,19 +152,19 @@ structure GetCityOutput {
     // "required" is used on output to indicate if the service
     // will always provide a value for the member.
     @required
-    name: String,
+    name: String
 
     @required
-    coordinates: CityCoordinates,
+    coordinates: CityCoordinates
 }
 
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
 
 // "error" is a trait that is used to specialize
@@ -155,7 +177,7 @@ structure NoSuchResource {
 
 @readonly
 operation GetCurrentTime {
-    input: GetCurrentTimeInput,
+    input: GetCurrentTimeInput
     output: GetCurrentTimeOutput
 }
 
@@ -167,4 +189,3 @@ structure GetCurrentTimeOutput {
     @required
     time: Timestamp
 }
-

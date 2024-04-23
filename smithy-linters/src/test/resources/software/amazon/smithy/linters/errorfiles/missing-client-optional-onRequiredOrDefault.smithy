@@ -2,10 +2,8 @@ $version: "2"
 
 metadata validators = [
     {
-        name: "MissingClientOptionalTrait",
-        configuration: {
-            "onRequiredOrDefault": true
-        }
+        name: "MissingClientOptionalTrait"
+        configuration: { onRequiredOrDefault: true }
     }
 ]
 

@@ -11,15 +11,17 @@ use aws.protocols#restJson1
 @sigv4(name: "Example")
 @restJson1
 service Example {
-    version: "2020-09-11",
-    operations: [GetItem],
+    version: "2020-09-11"
+    operations: [
+        GetItem
+    ]
 }
 
 @http(uri: "/", method: "GET")
 @readonly
 operation GetItem {
-    input: GetItemRequest,
-    output: GetItemResponse,
+    input: GetItemRequest
+    output: GetItemResponse
 }
 
 structure GetItemRequest {}
@@ -30,7 +32,7 @@ structure GetItemResponse {
 }
 
 union ItemResponse {
-    Foo: Foo,
+    Foo: Foo
 }
 
 structure Foo {}

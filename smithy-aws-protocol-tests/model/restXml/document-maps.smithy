@@ -1,5 +1,4 @@
 // This file defines test cases that serialize maps in XML payloads.
-
 $version: "2.0"
 $operationInputSuffix: "Request"
 $operationOutputSuffix: "Response"
@@ -25,41 +24,35 @@ operation XmlMaps {
 
 apply XmlMaps @httpRequestTests([
     {
-        id: "XmlMaps",
-        documentation: "Tests for XML map serialization",
-        protocol: restXml,
-        method: "POST",
-        uri: "/XmlMaps",
+        id: "XmlMaps"
+        documentation: "Tests for XML map serialization"
+        protocol: restXml
+        method: "POST"
+        uri: "/XmlMaps"
         body: """
-              <XmlMapsRequest>
-                  <myMap>
-                      <entry>
-                          <key>foo</key>
-                          <value>
-                              <hi>there</hi>
-                          </value>
-                      </entry>
-                      <entry>
-                          <key>baz</key>
-                          <value>
-                              <hi>bye</hi>
-                          </value>
-                      </entry>
-                  </myMap>
-              </XmlMapsRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapsRequest>
+                <myMap>
+                    <entry>
+                        <key>foo</key>
+                        <value>
+                            <hi>there</hi>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>baz</key>
+                        <value>
+                            <hi>bye</hi>
+                        </value>
+                    </entry>
+                </myMap>
+            </XmlMapsRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {
-                foo: {
-                    hi: "there"
-                },
-                baz: {
-                    hi: "bye"
-                }
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -67,40 +60,34 @@ apply XmlMaps @httpRequestTests([
 
 apply XmlMaps @httpResponseTests([
     {
-        id: "XmlMaps",
-        documentation: "Tests for XML map serialization",
-        protocol: restXml,
-        code: 200,
+        id: "XmlMaps"
+        documentation: "Tests for XML map serialization"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlMapsResponse>
-                  <myMap>
-                      <entry>
-                          <key>foo</key>
-                          <value>
-                              <hi>there</hi>
-                          </value>
-                      </entry>
-                      <entry>
-                          <key>baz</key>
-                          <value>
-                              <hi>bye</hi>
-                          </value>
-                      </entry>
-                  </myMap>
-              </XmlMapsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapsResponse>
+                <myMap>
+                    <entry>
+                        <key>foo</key>
+                        <value>
+                            <hi>there</hi>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>baz</key>
+                        <value>
+                            <hi>bye</hi>
+                        </value>
+                    </entry>
+                </myMap>
+            </XmlMapsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {
-                foo: {
-                    hi: "there"
-                },
-                baz: {
-                    hi: "bye"
-                }
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -119,70 +106,64 @@ operation XmlEmptyMaps {
 
 apply XmlEmptyMaps @httpRequestTests([
     {
-        id: "XmlEmptyMaps",
-        documentation: "Serializes Empty XML maps",
-        protocol: restXml,
-        method: "POST",
-        uri: "/XmlEmptyMaps",
+        id: "XmlEmptyMaps"
+        documentation: "Serializes Empty XML maps"
+        protocol: restXml
+        method: "POST"
+        uri: "/XmlEmptyMaps"
         body: """
-              <XmlEmptyMapsRequest>
-                  <myMap></myMap>
-              </XmlEmptyMapsRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlEmptyMapsRequest>
+                <myMap></myMap>
+            </XmlEmptyMapsRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {}
-        },
+        }
         appliesTo: "client"
     }
 ])
 
 apply XmlEmptyMaps @httpResponseTests([
     {
-        id: "XmlEmptyMaps",
-        documentation: "Deserializes Empty XML maps",
-        protocol: restXml,
-        code: 200,
+        id: "XmlEmptyMaps"
+        documentation: "Deserializes Empty XML maps"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlEmptyMapsResponse>
-                  <myMap></myMap>
-              </XmlEmptyMapsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlEmptyMapsResponse>
+                <myMap></myMap>
+            </XmlEmptyMapsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {}
-        },
-        appliesTo: "client",
-    },
+        }
+        appliesTo: "client"
+    }
     {
-        id: "XmlEmptySelfClosedMaps",
-        documentation: "Deserializes Empty Self-closed XML maps",
-        protocol: restXml,
-        code: 200,
+        id: "XmlEmptySelfClosedMaps"
+        documentation: "Deserializes Empty Self-closed XML maps"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlEmptyMapsResponse>
-                  <myMap/>
-              </XmlEmptyMapsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlEmptyMapsResponse>
+                <myMap/>
+            </XmlEmptyMapsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {}
-        },
-        appliesTo: "client",
+        }
+        appliesTo: "client"
     }
 ])
 
 map XmlMapsInputOutputMap {
-    key: String,
+    key: String
     value: GreetingStruct
 }
 
@@ -199,41 +180,35 @@ operation XmlMapsXmlName {
 
 apply XmlMapsXmlName @httpRequestTests([
     {
-        id: "XmlMapsXmlName",
-        documentation: "Serializes XML maps that have xmlName on members",
-        protocol: restXml,
-        method: "POST",
-        uri: "/XmlMapsXmlName",
+        id: "XmlMapsXmlName"
+        documentation: "Serializes XML maps that have xmlName on members"
+        protocol: restXml
+        method: "POST"
+        uri: "/XmlMapsXmlName"
         body: """
-              <XmlMapsXmlNameRequest>
-                  <myMap>
-                      <entry>
-                          <Attribute>foo</Attribute>
-                          <Setting>
-                              <hi>there</hi>
-                          </Setting>
-                      </entry>
-                      <entry>
-                          <Attribute>baz</Attribute>
-                          <Setting>
-                              <hi>bye</hi>
-                          </Setting>
-                      </entry>
-                  </myMap>
-              </XmlMapsXmlNameRequest>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapsXmlNameRequest>
+                <myMap>
+                    <entry>
+                        <Attribute>foo</Attribute>
+                        <Setting>
+                            <hi>there</hi>
+                        </Setting>
+                    </entry>
+                    <entry>
+                        <Attribute>baz</Attribute>
+                        <Setting>
+                            <hi>bye</hi>
+                        </Setting>
+                    </entry>
+                </myMap>
+            </XmlMapsXmlNameRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {
-                foo: {
-                    hi: "there"
-                },
-                baz: {
-                    hi: "bye"
-                }
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -241,40 +216,34 @@ apply XmlMapsXmlName @httpRequestTests([
 
 apply XmlMapsXmlName @httpResponseTests([
     {
-        id: "XmlMapsXmlName",
-        documentation: "Serializes XML lists",
-        protocol: restXml,
-        code: 200,
+        id: "XmlMapsXmlName"
+        documentation: "Serializes XML lists"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlMapsXmlNameResponse>
-                  <myMap>
-                      <entry>
-                          <Attribute>foo</Attribute>
-                          <Setting>
-                              <hi>there</hi>
-                          </Setting>
-                      </entry>
-                      <entry>
-                          <Attribute>baz</Attribute>
-                          <Setting>
-                              <hi>bye</hi>
-                          </Setting>
-                      </entry>
-                  </myMap>
-              </XmlMapsXmlNameResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapsXmlNameResponse>
+                <myMap>
+                    <entry>
+                        <Attribute>foo</Attribute>
+                        <Setting>
+                            <hi>there</hi>
+                        </Setting>
+                    </entry>
+                    <entry>
+                        <Attribute>baz</Attribute>
+                        <Setting>
+                            <hi>bye</hi>
+                        </Setting>
+                    </entry>
+                </myMap>
+            </XmlMapsXmlNameResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             myMap: {
-                foo: {
-                    hi: "there"
-                },
-                baz: {
-                    hi: "bye"
-                }
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -282,7 +251,7 @@ apply XmlMapsXmlName @httpResponseTests([
 
 map XmlMapsXmlNameInputOutputMap {
     @xmlName("Attribute")
-    key: String,
+    key: String
 
     @xmlName("Setting")
     value: GreetingStruct
@@ -295,6 +264,7 @@ operation FlattenedXmlMap {
         @xmlFlattened
         myMap: FooEnumMap
     }
+
     output := {
         @xmlFlattened
         myMap: FooEnumMap
@@ -303,61 +273,51 @@ operation FlattenedXmlMap {
 
 apply FlattenedXmlMap @httpRequestTests([
     {
-        id: "FlattenedXmlMap",
-        documentation: "Serializes flattened XML maps in requests",
-        protocol: restXml,
-        method: "POST",
-        uri: "/FlattenedXmlMap",
+        id: "FlattenedXmlMap"
+        documentation: "Serializes flattened XML maps in requests"
+        protocol: restXml
+        method: "POST"
+        uri: "/FlattenedXmlMap"
         body: """
-              <FlattenedXmlMapRequest>
-                  <myMap>
-                      <key>foo</key>
-                      <value>Foo</value>
-                  </myMap>
-                  <myMap>
-                      <key>baz</key>
-                      <value>Baz</value>
-                  </myMap>
-              </FlattenedXmlMapRequest>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <FlattenedXmlMapRequest>
+                <myMap>
+                    <key>foo</key>
+                    <value>Foo</value>
+                </myMap>
+                <myMap>
+                    <key>baz</key>
+                    <value>Baz</value>
+                </myMap>
+            </FlattenedXmlMapRequest>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                foo: "Foo",
-                baz: "Baz"
-            }
+            myMap: { foo: "Foo", baz: "Baz" }
         }
     }
 ])
 
 apply FlattenedXmlMap @httpResponseTests([
     {
-        id: "FlattenedXmlMap",
-        documentation: "Serializes flattened XML maps in responses",
-        protocol: restXml,
-        code: 200,
+        id: "FlattenedXmlMap"
+        documentation: "Serializes flattened XML maps in responses"
+        protocol: restXml
+        code: 200
         body: """
-              <FlattenedXmlMapResponse>
-                  <myMap>
-                      <key>foo</key>
-                      <value>Foo</value>
-                  </myMap>
-                  <myMap>
-                      <key>baz</key>
-                      <value>Baz</value>
-                  </myMap>
-              </FlattenedXmlMapResponse>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <FlattenedXmlMapResponse>
+                <myMap>
+                    <key>foo</key>
+                    <value>Foo</value>
+                </myMap>
+                <myMap>
+                    <key>baz</key>
+                    <value>Baz</value>
+                </myMap>
+            </FlattenedXmlMapResponse>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                foo: "Foo",
-                baz: "Baz"
-            }
+            myMap: { foo: "Foo", baz: "Baz" }
         }
     }
 ])
@@ -368,8 +328,9 @@ operation FlattenedXmlMapWithXmlName {
     input := {
         @xmlFlattened
         @xmlName("KVP")
-        myMap: FlattenedXmlMapWithXmlNameInputOutputMap,
+        myMap: FlattenedXmlMapWithXmlNameInputOutputMap
     }
+
     output := {
         @xmlFlattened
         @xmlName("KVP")
@@ -379,71 +340,61 @@ operation FlattenedXmlMapWithXmlName {
 
 apply FlattenedXmlMapWithXmlName @httpRequestTests([
     {
-        id: "FlattenedXmlMapWithXmlName",
-        documentation: "Serializes flattened XML maps in requests that have xmlName on members",
-        protocol: restXml,
-        method: "POST",
-        uri: "/FlattenedXmlMapWithXmlName",
+        id: "FlattenedXmlMapWithXmlName"
+        documentation: "Serializes flattened XML maps in requests that have xmlName on members"
+        protocol: restXml
+        method: "POST"
+        uri: "/FlattenedXmlMapWithXmlName"
         body: """
-              <FlattenedXmlMapWithXmlNameRequest>
-                  <KVP>
-                      <K>a</K>
-                      <V>A</V>
-                  </KVP>
-                  <KVP>
-                      <K>b</K>
-                      <V>B</V>
-                  </KVP>
-              </FlattenedXmlMapWithXmlNameRequest>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <FlattenedXmlMapWithXmlNameRequest>
+                <KVP>
+                    <K>a</K>
+                    <V>A</V>
+                </KVP>
+                <KVP>
+                    <K>b</K>
+                    <V>B</V>
+                </KVP>
+            </FlattenedXmlMapWithXmlNameRequest>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                a: "A",
-                b: "B",
-            }
+            myMap: { a: "A", b: "B" }
         }
     }
 ])
 
 apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {
-        id: "FlattenedXmlMapWithXmlName",
-        documentation: "Serializes flattened XML maps in responses that have xmlName on members",
-        protocol: restXml,
-        code: 200,
+        id: "FlattenedXmlMapWithXmlName"
+        documentation: "Serializes flattened XML maps in responses that have xmlName on members"
+        protocol: restXml
+        code: 200
         body: """
-              <FlattenedXmlMapWithXmlNameResponse>
-                  <KVP>
-                      <K>a</K>
-                      <V>A</V>
-                  </KVP>
-                  <KVP>
-                      <K>b</K>
-                      <V>B</V>
-                  </KVP>
-              </FlattenedXmlMapWithXmlNameResponse>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <FlattenedXmlMapWithXmlNameResponse>
+                <KVP>
+                    <K>a</K>
+                    <V>A</V>
+                </KVP>
+                <KVP>
+                    <K>b</K>
+                    <V>B</V>
+                </KVP>
+            </FlattenedXmlMapWithXmlNameResponse>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                a: "A",
-                b: "B",
-            }
+            myMap: { a: "A", b: "B" }
         }
     }
 ])
 
 map FlattenedXmlMapWithXmlNameInputOutputMap {
     @xmlName("K")
-    key: String,
+    key: String
 
     @xmlName("V")
-    value: String,
+    value: String
 }
 
 /// Flattened maps with @xmlNamespace and @xmlName
@@ -454,30 +405,25 @@ operation FlattenedXmlMapWithXmlNamespace {
 
 apply FlattenedXmlMapWithXmlNamespace @httpResponseTests([
     {
-        id: "RestXmlFlattenedXmlMapWithXmlNamespace",
-        documentation: "Serializes flattened XML maps in responses that have xmlNamespace and xmlName on members",
-        protocol: restXml,
-        code: 200,
+        id: "RestXmlFlattenedXmlMapWithXmlNamespace"
+        documentation: "Serializes flattened XML maps in responses that have xmlNamespace and xmlName on members"
+        protocol: restXml
+        code: 200
         body: """
-              <FlattenedXmlMapWithXmlNamespaceOutput>
-                  <KVP xmlns="https://the-member.example.com">
-                      <K xmlns="https://the-key.example.com">a</K>
-                      <V xmlns="https://the-value.example.com">A</V>
-                  </KVP>
-                  <KVP xmlns="https://the-member.example.com">
-                      <K xmlns="https://the-key.example.com">b</K>
-                      <V xmlns="https://the-value.example.com">B</V>
-                  </KVP>
-              </FlattenedXmlMapWithXmlNamespaceOutput>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <FlattenedXmlMapWithXmlNamespaceOutput>
+                <KVP xmlns="https://the-member.example.com">
+                    <K xmlns="https://the-key.example.com">a</K>
+                    <V xmlns="https://the-value.example.com">A</V>
+                </KVP>
+                <KVP xmlns="https://the-member.example.com">
+                    <K xmlns="https://the-key.example.com">b</K>
+                    <V xmlns="https://the-value.example.com">B</V>
+                </KVP>
+            </FlattenedXmlMapWithXmlNamespaceOutput>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                a: "A",
-                b: "B",
-            }
+            myMap: { a: "A", b: "B" }
         }
     }
 ])
@@ -486,17 +432,17 @@ structure FlattenedXmlMapWithXmlNamespaceOutput {
     @xmlFlattened
     @xmlName("KVP")
     @xmlNamespace(uri: "https://the-member.example.com")
-    myMap: FlattenedXmlMapWithXmlNamespaceOutputMap,
+    myMap: FlattenedXmlMapWithXmlNamespaceOutputMap
 }
 
 map FlattenedXmlMapWithXmlNamespaceOutputMap {
     @xmlName("K")
     @xmlNamespace(uri: "https://the-key.example.com")
-    key: String,
+    key: String
 
     @xmlName("V")
     @xmlNamespace(uri: "https://the-value.example.com")
-    value: String,
+    value: String
 }
 
 @http(uri: "/NestedXmlMaps", method: "POST")
@@ -507,24 +453,24 @@ operation NestedXmlMaps {
 
 @mixin
 structure NestedXmlMapsInputOutput {
-    nestedMap: NestedMap,
+    nestedMap: NestedMap
 
     @xmlFlattened
-    flatNestedMap: NestedMap,
+    flatNestedMap: NestedMap
 }
 
 map NestedMap {
-    key: String,
-    value: FooEnumMap,
+    key: String
+    value: FooEnumMap
 }
 
 apply NestedXmlMaps @httpRequestTests([
     {
-        id: "NestedXmlMapRequest",
-        documentation: "Tests requests with nested maps.",
-        protocol: restXml,
-        method: "POST",
-        uri: "/NestedXmlMaps",
+        id: "NestedXmlMapRequest"
+        documentation: "Tests requests with nested maps."
+        protocol: restXml
+        method: "POST"
+        uri: "/NestedXmlMaps"
         body: """
             <NestedXmlMapsRequest>
                 <nestedMap>
@@ -538,27 +484,23 @@ apply NestedXmlMaps @httpRequestTests([
                         </value>
                     </entry>
                 </nestedMap>
-            </NestedXmlMapsRequest>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml",
-        },
+            </NestedXmlMapsRequest>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             nestedMap: {
-                foo: {
-                    bar: "Bar",
-                }
+                foo: { bar: "Bar" }
             }
         }
-    },
+    }
     {
-        id: "FlatNestedXmlMapRequest",
+        id: "FlatNestedXmlMapRequest"
         documentation: """
             Tests requests with nested flat maps. Since maps can only be
-            flattened when they're structure members, only the outer map is flat.""",
-        protocol: restXml,
-        method: "POST",
-        uri: "/NestedXmlMaps",
+            flattened when they're structure members, only the outer map is flat."""
+        protocol: restXml
+        method: "POST"
+        uri: "/NestedXmlMaps"
         body: """
             <NestedXmlMapsRequest>
                 <flatNestedMap>
@@ -570,27 +512,23 @@ apply NestedXmlMaps @httpRequestTests([
                         </entry>
                     </value>
                 </flatNestedMap>
-            </NestedXmlMapsRequest>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml",
-        },
+            </NestedXmlMapsRequest>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             flatNestedMap: {
-                foo: {
-                    bar: "Bar",
-                }
+                foo: { bar: "Bar" }
             }
         }
-    },
+    }
 ])
 
 apply NestedXmlMaps @httpResponseTests([
     {
-        id: "NestedXmlMapResponse",
-        documentation: "Tests responses with nested maps.",
-        protocol: restXml,
-        code: 200,
+        id: "NestedXmlMapResponse"
+        documentation: "Tests responses with nested maps."
+        protocol: restXml
+        code: 200
         body: """
             <NestedXmlMapsResponse>
                 <nestedMap>
@@ -604,26 +542,22 @@ apply NestedXmlMaps @httpResponseTests([
                         </value>
                     </entry>
                 </nestedMap>
-            </NestedXmlMapsResponse>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml",
-        },
+            </NestedXmlMapsResponse>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             nestedMap: {
-                foo: {
-                    bar: "Bar",
-                }
+                foo: { bar: "Bar" }
             }
         }
-    },
+    }
     {
-        id: "FlatNestedXmlMapResponse",
+        id: "FlatNestedXmlMapResponse"
         documentation: """
             Tests responses with nested flat maps. Since maps can only be
-            flattened when they're structure members, only the outer map is flat.""",
-        protocol: restXml,
-        code: 200,
+            flattened when they're structure members, only the outer map is flat."""
+        protocol: restXml
+        code: 200
         body: """
             <NestedXmlMapsResponse>
                 <flatNestedMap>
@@ -635,19 +569,15 @@ apply NestedXmlMaps @httpResponseTests([
                         </entry>
                     </value>
                 </flatNestedMap>
-            </NestedXmlMapsResponse>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml",
-        },
+            </NestedXmlMapsResponse>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             flatNestedMap: {
-                foo: {
-                    bar: "Bar",
-                }
+                foo: { bar: "Bar" }
             }
         }
-    },
+    }
 ])
 
 /// Nested Xml Maps with key/values with @xmlName
@@ -661,135 +591,115 @@ structure NestedXmlMapWithXmlNameInputOutput {
     nestedXmlMapWithXmlNameMap: NestedXmlMapWithXmlNameMap
 }
 
-map NestedXmlMapWithXmlNameMap{
+map NestedXmlMapWithXmlNameMap {
     @xmlName("OuterKey")
     key: String
-    
+
     value: NestedXmlMapWithXmlNameInnerMap
 }
 
-map NestedXmlMapWithXmlNameInnerMap{
+map NestedXmlMapWithXmlNameInnerMap {
     @xmlName("InnerKey")
     key: String
-    
+
     @xmlName("InnerValue")
     value: String
 }
 
 apply NestedXmlMapWithXmlName @httpRequestTests([
     {
-        id : "NestedXmlMapWithXmlNameSerializes",
-        documentation : "Serializes nested XML Maps in requests that have xmlName on members",
-        protocol: restXml,
-        method: "POST",
-        uri: "/NestedXmlMapWithXmlName",
+        id: "NestedXmlMapWithXmlNameSerializes"
+        documentation: "Serializes nested XML Maps in requests that have xmlName on members"
+        protocol: restXml
+        method: "POST"
+        uri: "/NestedXmlMapWithXmlName"
         body: """
-            <NestedXmlMapWithXmlNameRequest>
-                <nestedXmlMapWithXmlNameMap>
-                    <entry>
-                        <OuterKey>foo</OuterKey>
-                        <value>
-                            <entry>
-                                <InnerKey>bar</InnerKey>
-                                <InnerValue>Baz</InnerValue>
-                            </entry>
-                            <entry>
-                                <InnerKey>fizz</InnerKey>
-                                <InnerValue>Buzz</InnerValue>
-                            </entry>
-                        </value>
-                    </entry>
-                    <entry>
-                        <OuterKey>qux</OuterKey>
-                        <value>
-                            <entry>
-                                <InnerKey>foobar</InnerKey>
-                                <InnerValue>Bar</InnerValue>
-                            </entry>
-                            <entry>
-                                <InnerKey>fizzbuzz</InnerKey>
-                                <InnerValue>Buzz</InnerValue>
-                            </entry>
-                        </value>
-                    </entry>
-                </nestedXmlMapWithXmlNameMap>
-            </NestedXmlMapWithXmlNameRequest>
-        """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml",
-        },
+                <NestedXmlMapWithXmlNameRequest>
+                    <nestedXmlMapWithXmlNameMap>
+                        <entry>
+                            <OuterKey>foo</OuterKey>
+                            <value>
+                                <entry>
+                                    <InnerKey>bar</InnerKey>
+                                    <InnerValue>Baz</InnerValue>
+                                </entry>
+                                <entry>
+                                    <InnerKey>fizz</InnerKey>
+                                    <InnerValue>Buzz</InnerValue>
+                                </entry>
+                            </value>
+                        </entry>
+                        <entry>
+                            <OuterKey>qux</OuterKey>
+                            <value>
+                                <entry>
+                                    <InnerKey>foobar</InnerKey>
+                                    <InnerValue>Bar</InnerValue>
+                                </entry>
+                                <entry>
+                                    <InnerKey>fizzbuzz</InnerKey>
+                                    <InnerValue>Buzz</InnerValue>
+                                </entry>
+                            </value>
+                        </entry>
+                    </nestedXmlMapWithXmlNameMap>
+                </NestedXmlMapWithXmlNameRequest>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             nestedXmlMapWithXmlNameMap: {
-                foo: {
-                    bar: "Baz",
-                    fizz: "Buzz"
-                },
-                qux: {
-                    foobar: "Bar",
-                    fizzbuzz: "Buzz"
-                }
+                foo: { bar: "Baz", fizz: "Buzz" }
+                qux: { foobar: "Bar", fizzbuzz: "Buzz" }
             }
         }
     }
-
-
-
-
 ])
 
 apply NestedXmlMapWithXmlName @httpResponseTests([
     {
-        id: "NestedXmlMapWithXmlNameDeserializes",
-        documentation: "Serializes nested XML maps in responses that have xmlName on members",
-        protocol: restXml,
-        code: 200,
+        id: "NestedXmlMapWithXmlNameDeserializes"
+        documentation: "Serializes nested XML maps in responses that have xmlName on members"
+        protocol: restXml
+        code: 200
         body: """
-            <NestedXmlMapWithXmlNameResponse>
-                <nestedXmlMapWithXmlNameMap>
-                    <entry>
-                        <OuterKey>foo</OuterKey>
-                        <value>
-                            <entry>
-                                <InnerKey>bar</InnerKey>
-                                <InnerValue>Baz</InnerValue>
-                            </entry>
-                            <entry>
-                                <InnerKey>fizz</InnerKey>
-                                <InnerValue>Buzz</InnerValue>
-                            </entry>
-                        </value>
-                    </entry>
-                    <entry>
-                        <OuterKey>qux</OuterKey>
-                        <value>
-                            <entry>
-                                <InnerKey>foobar</InnerKey>
-                                <InnerValue>Bar</InnerValue>
-                            </entry>
-                            <entry>
-                                <InnerKey>fizzbuzz</InnerKey>
-                                <InnerValue>Buzz</InnerValue>
-                            </entry>
-                        </value>
-                    </entry>
-                </nestedXmlMapWithXmlNameMap>
-            </NestedXmlMapWithXmlNameResponse>
-        """
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        }
+                <NestedXmlMapWithXmlNameResponse>
+                    <nestedXmlMapWithXmlNameMap>
+                        <entry>
+                            <OuterKey>foo</OuterKey>
+                            <value>
+                                <entry>
+                                    <InnerKey>bar</InnerKey>
+                                    <InnerValue>Baz</InnerValue>
+                                </entry>
+                                <entry>
+                                    <InnerKey>fizz</InnerKey>
+                                    <InnerValue>Buzz</InnerValue>
+                                </entry>
+                            </value>
+                        </entry>
+                        <entry>
+                            <OuterKey>qux</OuterKey>
+                            <value>
+                                <entry>
+                                    <InnerKey>foobar</InnerKey>
+                                    <InnerValue>Bar</InnerValue>
+                                </entry>
+                                <entry>
+                                    <InnerKey>fizzbuzz</InnerKey>
+                                    <InnerValue>Buzz</InnerValue>
+                                </entry>
+                            </value>
+                        </entry>
+                    </nestedXmlMapWithXmlNameMap>
+                </NestedXmlMapWithXmlNameResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
             nestedXmlMapWithXmlNameMap: {
-                foo: {
-                    bar: "Baz",
-                    fizz: "Buzz"
-                },
-                qux: {
-                    foobar: "Bar",
-                    fizzbuzz: "Buzz"
-                }
+                foo: { bar: "Baz", fizz: "Buzz" }
+                qux: { foobar: "Bar", fizzbuzz: "Buzz" }
             }
         }
     }
@@ -804,65 +714,55 @@ operation XmlMapWithXmlNamespace {
 
 apply XmlMapWithXmlNamespace @httpRequestTests([
     {
-        id: "RestXmlXmlMapWithXmlNamespace",
-        documentation: "Serializes XML maps in requests that have xmlNamespace and xmlName on members",
-        protocol: restXml,
-        method: "POST",
-        uri: "/XmlMapWithXmlNamespace",
+        id: "RestXmlXmlMapWithXmlNamespace"
+        documentation: "Serializes XML maps in requests that have xmlNamespace and xmlName on members"
+        protocol: restXml
+        method: "POST"
+        uri: "/XmlMapWithXmlNamespace"
         body: """
-              <XmlMapWithXmlNamespaceRequest>
-                  <KVP xmlns="https://the-member.example.com">
-                      <entry>
-                          <K xmlns="https://the-key.example.com">a</K>
-                          <V xmlns="https://the-value.example.com">A</V>
-                      </entry>
-                      <entry>
-                          <K xmlns="https://the-key.example.com">b</K>
-                          <V xmlns="https://the-value.example.com">B</V>
-                      </entry>
-                  </KVP>
-              </XmlMapWithXmlNamespaceRequest>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapWithXmlNamespaceRequest>
+                <KVP xmlns="https://the-member.example.com">
+                    <entry>
+                        <K xmlns="https://the-key.example.com">a</K>
+                        <V xmlns="https://the-value.example.com">A</V>
+                    </entry>
+                    <entry>
+                        <K xmlns="https://the-key.example.com">b</K>
+                        <V xmlns="https://the-value.example.com">B</V>
+                    </entry>
+                </KVP>
+            </XmlMapWithXmlNamespaceRequest>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                a: "A",
-                b: "B",
-            }
+            myMap: { a: "A", b: "B" }
         }
     }
 ])
 
 apply XmlMapWithXmlNamespace @httpResponseTests([
     {
-        id: "RestXmlXmlMapWithXmlNamespace",
-        documentation: "Serializes XML maps in responses that have xmlNamespace and xmlName on members",
-        protocol: restXml,
-        code: 200,
+        id: "RestXmlXmlMapWithXmlNamespace"
+        documentation: "Serializes XML maps in responses that have xmlNamespace and xmlName on members"
+        protocol: restXml
+        code: 200
         body: """
-              <XmlMapWithXmlNamespaceResponse>
-                  <KVP xmlns="https://the-member.example.com">
-                      <entry>
-                          <K xmlns="https://the-key.example.com">a</K>
-                          <V xmlns="https://the-value.example.com">A</V>
-                      </entry>
-                      <entry>
-                          <K xmlns="https://the-key.example.com">b</K>
-                          <V xmlns="https://the-value.example.com">B</V>
-                      </entry>
-                  </KVP>
-              </XmlMapWithXmlNamespaceResponse>""",
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            <XmlMapWithXmlNamespaceResponse>
+                <KVP xmlns="https://the-member.example.com">
+                    <entry>
+                        <K xmlns="https://the-key.example.com">a</K>
+                        <V xmlns="https://the-value.example.com">A</V>
+                    </entry>
+                    <entry>
+                        <K xmlns="https://the-key.example.com">b</K>
+                        <V xmlns="https://the-value.example.com">B</V>
+                    </entry>
+                </KVP>
+            </XmlMapWithXmlNamespaceResponse>"""
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: {
-            myMap: {
-                a: "A",
-                b: "B",
-            }
+            myMap: { a: "A", b: "B" }
         }
     }
 ])
@@ -871,15 +771,15 @@ apply XmlMapWithXmlNamespace @httpResponseTests([
 structure XmlMapWithXmlNamespaceInputOutput {
     @xmlName("KVP")
     @xmlNamespace(uri: "https://the-member.example.com")
-    myMap: XmlMapWithXmlNamespaceInputOutputMap,
+    myMap: XmlMapWithXmlNamespaceInputOutputMap
 }
 
 map XmlMapWithXmlNamespaceInputOutputMap {
     @xmlName("K")
     @xmlNamespace(uri: "https://the-key.example.com")
-    key: String,
+    key: String
 
     @xmlName("V")
     @xmlNamespace(uri: "https://the-value.example.com")
-    value: String,
+    value: String
 }

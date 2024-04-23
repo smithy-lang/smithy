@@ -13,20 +13,25 @@ use smithy.test#smokeTests
 
 service SayStuff {
     version: "2023-10-11"
-    operations: [SayHello, SayHello2]
+    operations: [
+        SayHello
+        SayHello2
+    ]
 }
 
 @smokeTests([
     {
-        id: "say_hello", // Conflicts with self and SayHello2
-        params: {},
+        id: "say_hello"
+        // Conflicts with self and SayHello2
+        params: {}
         expect: {
             success: {}
         }
-    },
+    }
     {
-        id: "say_hello", // Conflicts with self and SayHello2
-        params: {},
+        id: "say_hello"
+        // Conflicts with self and SayHello2
+        params: {}
         expect: {
             success: {}
         }
@@ -39,13 +44,15 @@ operation SayHello {
 
 @smokeTests([
     {
-        id: "say_hello", // Conflicts with SayHello
+        id: "say_hello"
+        // Conflicts with SayHello
         expect: {
             success: {}
         }
-    },
+    }
     {
-        id: "not_say_hello", // No conflict
+        id: "not_say_hello"
+        // No conflict
         expect: {
             success: {}
         }
@@ -59,15 +66,17 @@ operation SayHello2 {
 // Not bound to service, shouldn't conflict with others that are.
 @smokeTests([
     {
-        id: "say_hello", // Conflicts with self
-        params: {},
+        id: "say_hello"
+        // Conflicts with self
+        params: {}
         expect: {
             success: {}
         }
-    },
+    }
     {
-        id: "say_hello", // Conflicts with self
-        params: {},
+        id: "say_hello"
+        // Conflicts with self
+        params: {}
         expect: {
             success: {}
         }
@@ -80,8 +89,9 @@ operation SayHello3 {
 
 @smokeTests([
     {
-        id: "say_hello", // No conflict
-        params: {},
+        id: "say_hello"
+        // No conflict
+        params: {}
         expect: {
             success: {}
         }
@@ -94,20 +104,23 @@ operation SayHello4 {
 
 service OtherSayStuff {
     version: "2023-10-11"
-    operations: [SayHello5]
+    operations: [
+        SayHello5
+    ]
 }
 
 // Shouldn't conflict between services
 @smokeTests([
     {
-        id: "say_hello", // No conflict
-        params: {},
+        id: "say_hello"
+        // No conflict
+        params: {}
         expect: {
             success: {}
         }
     }
 ])
 operation SayHello5 {
-   input := {}
-   output := {}
+    input := {}
+    output := {}
 }

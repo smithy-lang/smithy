@@ -4,19 +4,17 @@ namespace smithy.example
 
 use aws.protocols#httpChecksum
 
-@httpChecksum()
+@httpChecksum
 @suppress(["UnstableTrait"])
 operation NoBehavior {
-    input: NoBehaviorInput,
+    input: NoBehaviorInput
     output: Unit
 }
 
 @input
 structure NoBehaviorInput {}
 
-@httpChecksum(
-    requestChecksumRequired: true,
-)
+@httpChecksum(requestChecksumRequired: true)
 @suppress(["UnstableTrait"])
 operation NoInput {
     output: Unit
@@ -27,8 +25,8 @@ operation NoInput {
 )
 @suppress(["UnstableTrait"])
 operation NoModeForResponse {
-    input: NoModeForResponseInput,
-    output: NoModeForResponseOutput,
+    input: NoModeForResponseInput
+    output: NoModeForResponseOutput
 }
 
 @input
@@ -38,20 +36,20 @@ structure NoModeForResponseInput {}
 structure NoModeForResponseOutput {}
 
 @httpChecksum(
-    requestAlgorithmMember: "requestAlgorithm",
-    requestValidationModeMember: "validationMode",
+    requestAlgorithmMember: "requestAlgorithm"
+    requestValidationModeMember: "validationMode"
     responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation NoOutputForResponse {
-    input: NoOutputForResponseInput,
+    input: NoOutputForResponseInput
     output: Unit
 }
 
 @input
 structure NoOutputForResponseInput {
-    requestAlgorithm: ChecksumAlgorithm,
-    validationMode: ValidationMode,
+    requestAlgorithm: ChecksumAlgorithm
+    validationMode: ValidationMode
 }
 
 enum ChecksumAlgorithm {

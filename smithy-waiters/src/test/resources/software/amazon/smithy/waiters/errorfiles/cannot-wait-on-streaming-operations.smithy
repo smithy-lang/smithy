@@ -6,11 +6,11 @@ use smithy.waiters#waitable
 
 @waitable(
     Success: {
-        documentation: "A",
+        documentation: "A"
         acceptors: [
             {
-                state: "success",
-                matcher: {success: true}
+                state: "success"
+                matcher: { success: true }
             }
         ]
     }
@@ -21,7 +21,7 @@ operation StreamingInput {
 
 @input
 structure StreamingInputInput {
-    messages: Messages,
+    messages: Messages
 }
 
 @streaming
@@ -33,11 +33,11 @@ structure SuccessMessage {}
 
 @waitable(
     Success: {
-        documentation: "B",
+        documentation: "B"
         acceptors: [
             {
-                state: "success",
-                matcher: {success: true}
+                state: "success"
+                matcher: { success: true }
             }
         ]
     }
@@ -48,5 +48,5 @@ operation StreamingOutput {
 
 @output
 structure StreamingOutputOutput {
-    messages: Messages,
+    messages: Messages
 }

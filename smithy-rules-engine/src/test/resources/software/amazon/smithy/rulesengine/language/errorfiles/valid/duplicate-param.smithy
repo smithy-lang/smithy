@@ -7,32 +7,31 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#staticContextParams
 
 @endpointRuleSet({
-    "version": "1.3",
-    "parameters": {
-        "ParameterBar": {
-            "type": "String",
-            "required": true,
-            "documentation": "docs"
-        }
-    },
-    "rules": [
+    version: "1.3"
+    parameters: {
+        ParameterBar: { type: "String", required: true, documentation: "docs" }
+    }
+    rules: [
         {
-            "conditions": [],
-            "documentation": "base rule",
-            "endpoint": {
-                "url": "https://{ParameterBar}.amazonaws.com",
-                "headers": {}
-            },
-            "type": "endpoint"
+            conditions: []
+            documentation: "base rule"
+            endpoint: {
+                url: "https://{ParameterBar}.amazonaws.com"
+                headers: {}
+            }
+            type: "endpoint"
         }
     ]
 })
 service FizzBuzz {
-    operations: [GetResource, GetAnotherResource]
+    operations: [
+        GetResource
+        GetAnotherResource
+    ]
 }
 
 @staticContextParams(
-    "ParameterBar": {value: "bar"}
+    ParameterBar: { value: "bar" }
 )
 operation GetResource {
     input: GetResourceInput

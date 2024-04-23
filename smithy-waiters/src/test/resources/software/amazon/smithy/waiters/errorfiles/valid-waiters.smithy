@@ -6,121 +6,91 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "foo == 'hi'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
+                state: "success"
+                matcher: {
+                    output: { path: "foo == 'hi'", comparator: "booleanEquals", expected: "true" }
                 }
             }
         ]
-    },
+    }
     B: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "foo == 'hey'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
+                state: "success"
+                matcher: {
+                    output: { path: "foo == 'hey'", comparator: "booleanEquals", expected: "true" }
                 }
             }
         ]
-    },
+    }
     C: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "retry",
-                "matcher": {
-                    "output": {
-                        "path": "foo == 'bye'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
-                }
-            },
-            {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "!foo",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
-                }
-            },
-            {
-                "state": "failure",
-                "matcher": {
-                    "errorType": "OhNo"
+                state: "retry"
+                matcher: {
+                    output: { path: "foo == 'bye'", comparator: "booleanEquals", expected: "true" }
                 }
             }
+            {
+                state: "success"
+                matcher: {
+                    output: { path: "!foo", comparator: "booleanEquals", expected: "true" }
+                }
+            }
+            {
+                state: "failure"
+                matcher: { errorType: "OhNo" }
+            }
         ]
-    },
+    }
     D: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "errorType": OhNo
-                }
+                state: "success"
+                matcher: { errorType: OhNo }
             }
         ]
-    },
+    }
     E: {
-        "acceptors": [
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "output": {
-                        "path": "[foo]",
-                        "expected": "hi",
-                        "comparator": "allStringEquals"
-                    }
+                state: "success"
+                matcher: {
+                    output: { path: "[foo]", expected: "hi", comparator: "allStringEquals" }
                 }
-            },
+            }
             {
-                "state": "failure",
-                "matcher": {
-                    "output": {
-                        "path": "[foo]",
-                        "expected": "bye",
-                        "comparator": "anyStringEquals"
-                    }
+                state: "failure"
+                matcher: {
+                    output: { path: "[foo]", expected: "bye", comparator: "anyStringEquals" }
                 }
             }
         ]
-    },
+    }
     F: {
-        "deprecated": true,
-        "tags": ["A", "B"],
-        "acceptors": [
+        deprecated: true
+        tags: ["A", "B"]
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "success": true
-                }
-            },
+                state: "success"
+                matcher: { success: true }
+            }
             {
-                "state": "failure",
-                "matcher": {
-                    "success": false
-                }
+                state: "failure"
+                matcher: { success: false }
             }
         ]
     }
 )
 operation A {
-    input: AInput,
-    output: AOutput,
-    errors: [OhNo],
+    input: AInput
+    output: AOutput
+    errors: [
+        OhNo
+    ]
 }
 
 @input
@@ -128,7 +98,7 @@ structure AInput {}
 
 @output
 structure AOutput {
-    foo: String,
+    foo: String
 }
 
 @error("client")

@@ -8,44 +8,31 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#staticContextParams
 
 @endpointRuleSet({
-    "version": "1.3",
-    "parameters": {
-        "Region": {
-            "type": "string",
-            "documentation": "docs"
-        },
-        "ParameterFoo": {
-            "type": "string",
-            "documentation": "docs"
-        },
-        "ParameterBar": {
-            "type": "string",
-            "documentation": "docs"
-        },
-        "ExtraParameter": {
-            "type": "string",
-            "documentation": "docs"
-        },
-        "ExtraBuiltIn": {
-            "type": "string",
-            "documentation": "docs",
-            "builtIn": "SDK::Endpoint"
-        }
-    },
-    "rules": []
+    version: "1.3"
+    parameters: {
+        Region: { type: "string", documentation: "docs" }
+        ParameterFoo: { type: "string", documentation: "docs" }
+        ParameterBar: { type: "string", documentation: "docs" }
+        ExtraParameter: { type: "string", documentation: "docs" }
+        ExtraBuiltIn: { type: "string", documentation: "docs", builtIn: "SDK::Endpoint" }
+    }
+    rules: []
 })
 @clientContextParams(
-    Region: {type: "string", documentation: "docs"},
-    ExtraBuiltIn: {type: "string", documentation: "docs"}
+    Region: { type: "string", documentation: "docs" }
+    ExtraBuiltIn: { type: "string", documentation: "docs" }
 )
 service FizzBuzz {
-    operations: [GetResource, GetAnotherResource]
+    operations: [
+        GetResource
+        GetAnotherResource
+    ]
 }
 
 @staticContextParams(
-    "ParameterFoo": {value: true},
-    "ParamNotInRuleset": {value: "someValue"},
-    "InconsistentParamType": {value: true}
+    ParameterFoo: { value: true }
+    ParamNotInRuleset: { value: "someValue" }
+    InconsistentParamType: { value: true }
 )
 operation GetResource {
     input: GetResourceInput
@@ -57,9 +44,9 @@ structure GetResourceInput {
 }
 
 @staticContextParams(
-    "ParameterFoo": {value: false},
-    "ParamNotInRuleset": {value: "someOtherValue"},
-    "InconsistentParamType": {value: "someValue"}
+    ParameterFoo: { value: false }
+    ParamNotInRuleset: { value: "someOtherValue" }
+    InconsistentParamType: { value: "someValue" }
 )
 operation GetAnotherResource {
     input: GetAnotherResourceInput

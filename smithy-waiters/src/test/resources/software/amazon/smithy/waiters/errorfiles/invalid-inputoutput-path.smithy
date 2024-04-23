@@ -6,30 +6,27 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "inputOutput": {
-                        "path": "input.foop == output.bazz",
-                        "expected": "true",
-                        "comparator": "booleanEquals"
-                    }
+                state: "success"
+                matcher: {
+                    inputOutput: { path: "input.foop == output.bazz", expected: "true", comparator: "booleanEquals" }
                 }
             }
         ]
-    },
+    }
     B: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "inputOutput": {
-                        "path": "foo == baz", // needs top-level input or output
-                        "expected": "true",
-                        "comparator": "booleanEquals"
+                state: "success"
+                matcher: {
+                    inputOutput: {
+                        path: "foo == baz"
+                        // needs top-level input or output
+                        expected: "true"
+                        comparator: "booleanEquals"
                     }
                 }
             }
@@ -37,16 +34,16 @@ use smithy.waiters#waitable
     }
 )
 operation A {
-    input: AInput,
-    output: AOutput,
+    input: AInput
+    output: AOutput
 }
 
 @input
 structure AInput {
-    foo: String,
+    foo: String
 }
 
 @output
 structure AOutput {
-    baz: String,
+    baz: String
 }

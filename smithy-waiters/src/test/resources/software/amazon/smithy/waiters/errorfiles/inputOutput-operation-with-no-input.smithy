@@ -6,16 +6,12 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "documentation": "A",
-        "acceptors": [
+        documentation: "A"
+        acceptors: [
             {
-                "state": "success",
-                "matcher": {
-                    "inputOutput": {
-                        "path": "output.foo == 'hi'",
-                        "expected": "true",
-                        "comparator": "booleanEquals"
-                    }
+                state: "success"
+                matcher: {
+                    inputOutput: { path: "output.foo == 'hi'", expected: "true", comparator: "booleanEquals" }
                 }
             }
         ]
@@ -27,5 +23,5 @@ operation A {
 
 @output
 structure AOutput {
-    foo: String,
+    foo: String
 }

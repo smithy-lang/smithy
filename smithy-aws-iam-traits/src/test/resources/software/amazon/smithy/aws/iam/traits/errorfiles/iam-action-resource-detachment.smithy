@@ -5,17 +5,17 @@ namespace smithy.example
 use aws.iam#iamAction
 
 resource Monitor {
-    resources: [HealthEvent]
+    resources: [
+        HealthEvent
+    ]
 }
 
-resource HealthEvent {
-    read: GetHealthEvent
-}
+resource HealthEvent { read: GetHealthEvent }
 
 @iamAction(
     resources: {
         required: {
-            "HealthEvent": {}
+            HealthEvent: {}
         }
     }
 )

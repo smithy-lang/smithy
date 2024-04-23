@@ -2,20 +2,21 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "example.weather"
     }
 ]
 
 namespace example.weather
 
-use aws.api#taggable
 use aws.api#tagEnabled
 
 @tagEnabled
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
 }
 
 structure Tag {
@@ -28,12 +29,8 @@ list TagList {
 }
 
 resource City {
-    identifiers: { cityId: CityId },
-    properties: {
-        name: String
-        coordinates: CityCoordinates
-        tags: TagList
-    }
+    identifiers: { cityId: CityId }
+    properties: { name: String, coordinates: CityCoordinates, tags: TagList }
     create: CreateCity
 }
 
@@ -43,6 +40,7 @@ operation CreateCity {
         coordinates: CityCoordinates
         tags: TagList
     }
+
     output := {
         @required
         cityId: CityId
@@ -55,9 +53,8 @@ string CityId
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: Float,
+    latitude: Float
 
     @required
-    longitude: Float,
+    longitude: Float
 }
-

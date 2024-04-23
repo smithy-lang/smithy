@@ -1,23 +1,28 @@
 namespace example
+
 use aws.protocols#restJson1
 
 @restJson1
 service Example {
-    version: "2022-07-10",
-    operations: [FooBar]
+    version: "2022-07-10"
+    operations: [
+        FooBar
+    ]
 }
 
 @idempotent
 @http(method: "PUT", uri: "/test", code: 200)
 operation FooBar {
-    input: FooBarInput,
-    output: FooBarOutput,
-    errors: [FooBarError]
+    input: FooBarInput
+    output: FooBarOutput
+    errors: [
+        FooBarError
+    ]
 }
 
 @input
 structure FooBarInput {
-    foo: BoxedInteger,
+    foo: BoxedInteger
     file: FilePayload
 }
 
@@ -26,7 +31,7 @@ blob FilePayload
 
 @output
 structure FooBarOutput {
-    bar: BoxedInteger,
+    bar: BoxedInteger
     baz: MyMap
 }
 
@@ -39,14 +44,14 @@ structure FooBarError {
 integer BoxedInteger
 
 map MyMap {
-    key: MyEnum,
+    key: MyEnum
     value: String
 }
 
 @enum([
     {
         value: "FOO"
-    },
+    }
     {
         value: "BAR"
     }

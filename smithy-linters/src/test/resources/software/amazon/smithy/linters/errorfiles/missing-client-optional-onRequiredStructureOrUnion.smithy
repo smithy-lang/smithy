@@ -2,23 +2,21 @@ $version: "2"
 
 metadata validators = [
     {
-        name: "MissingClientOptionalTrait",
-        configuration: {
-            "onRequiredStructureOrUnion": true
-        }
+        name: "MissingClientOptionalTrait"
+        configuration: { onRequiredStructureOrUnion: true }
     }
 ]
 
 namespace smithy.example
 
 structure Foo {
-    bar: String = "",
+    bar: String = ""
 
     @required
-    baz: String,
+    baz: String
 
     @required
-    bam: Bam,
+    bam: Bam
 
     @required
     boo: Boo

@@ -16,7 +16,7 @@ structure BaseAwsVendorParams {
     /// A static endpoint to send the request to.
     uri: String
 
-    /// Whether to resolve a FIPS compliant endpoint or not.
+    // Whether to resolve a FIPS compliant endpoint or not.
     useFips: Boolean = false
 
     /// Whether to resolve a dualstack endpoint or not.
@@ -40,7 +40,7 @@ structure AwsVendorParams with [BaseAwsVendorParams] {}
 /// Vendor params for S3.
 @suppress(["UnreferencedShape"])
 structure S3VendorParams with [BaseAwsVendorParams] {
-    /// Whether to resolve an accelerate endpoint or not.
+    // Whether to resolve an accelerate endpoint or not.
     useAccelerate: Boolean = false
 
     /// Whether to use the global endpoint for us-east-1.

@@ -1,34 +1,40 @@
 $version: "2.0"
 
 metadata validators = [
-        {name: "MissingSensitiveTrait",
-        id: "DefaultMissingSensitiveTrait"}
+    {
+        name: "MissingSensitiveTrait"
+        id: "DefaultMissingSensitiveTrait"
+    }
 ]
 
 namespace smithy.example
 
 service FooService {
-    version: "2020-09-21",
-    operations: [FooOperation],
+    version: "2020-09-21"
+    operations: [
+        FooOperation
+    ]
 }
 
 operation FooOperation {
-    input: FooOperationRequest,
-    output: FooOperationResponse,
-    errors: [],
+    input: FooOperationRequest
+    output: FooOperationResponse
+    errors: [
+
+    ]
 }
 
 structure FooOperationRequest {
-    firstMember: CabAnkle,
-    secondMember: BillingAddress,
+    firstMember: CabAnkle
+    secondMember: BillingAddress
     thirdMember: SafeBillingAddress
 }
 
-structure FooOperationResponse {
-}
+structure FooOperationResponse {}
 
 structure CabAnkle {
-    myMember: MyString,
+    myMember: MyString
+
     // should get flagged
     myBirthday: MyString
 }
@@ -36,21 +42,26 @@ structure CabAnkle {
 // should get flagged
 structure BillingAddress {
     // should get flagged
-    bank: MyString,
-    data: MyString,
-    safeBank: MySensitiveString,
+    bank: MyString
+
+    data: MyString
+
+    safeBank: MySensitiveString
+
     // should get flagged
-    firstName: FirstName,
-    lastName: LastName,
+    firstName: FirstName
+
+    lastName: LastName
+
     someEnum: MyEnum
 }
 
 @sensitive
 structure SafeBillingAddress {
-    bank: MyString,
-    data: MyString,
-    safeBank: MySensitiveString,
-    firstName: MyString,
+    bank: MyString
+    data: MyString
+    safeBank: MySensitiveString
+    firstName: MyString
     lastName: MySensitiveString
 }
 

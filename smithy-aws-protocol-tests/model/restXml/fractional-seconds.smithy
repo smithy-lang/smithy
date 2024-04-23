@@ -15,20 +15,18 @@ operation FractionalSeconds {
 
 apply FractionalSeconds @httpResponseTests([
     {
-        id: "RestXmlDateTimeWithFractionalSeconds",
+        id: "RestXmlDateTimeWithFractionalSeconds"
         documentation: """
-        Ensures that clients can correctly parse datetime timestamps with fractional seconds""",
-        protocol: restXml,
-        code: 200,
+            Ensures that clients can correctly parse datetime timestamps with fractional seconds"""
+        protocol: restXml
+        code: 200
         body: """
             <FractionalSecondsOutput>
                 <datetime>2000-01-02T20:34:56.123Z</datetime>
             </FractionalSecondsOutput>
-            """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "application/xml" }
         params: { datetime: 946845296.123 }
     }
 ])

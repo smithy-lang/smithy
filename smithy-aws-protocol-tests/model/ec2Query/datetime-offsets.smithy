@@ -15,39 +15,35 @@ operation DatetimeOffsets {
 
 apply DatetimeOffsets @httpResponseTests([
     {
-        id: "Ec2QueryDateTimeWithNegativeOffset",
+        id: "Ec2QueryDateTimeWithNegativeOffset"
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
-        protocol: ec2Query,
-        code: 200,
+            Ensures that clients can correctly parse datetime (timestamps) with offsets"""
+        protocol: ec2Query
+        code: 200
         body: """
-              <DatetimeOffsetsResponse xmlns="https://example.com/">
-                  <datetime>2019-12-16T22:48:18-01:00</datetime>
-                  <RequestId>requestid</RequestId>
-              </DatetimeOffsetsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+            <DatetimeOffsetsResponse xmlns="https://example.com/">
+                <datetime>2019-12-16T22:48:18-01:00</datetime>
+                <RequestId>requestid</RequestId>
+            </DatetimeOffsetsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         params: { datetime: 1576540098 }
-    },
+    }
     {
-        id: "Ec2QueryDateTimeWithPositiveOffset",
+        id: "Ec2QueryDateTimeWithPositiveOffset"
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
-        protocol: ec2Query,
-        code: 200,
+            Ensures that clients can correctly parse datetime (timestamps) with offsets"""
+        protocol: ec2Query
+        code: 200
         body: """
-              <DatetimeOffsetsResponse xmlns="https://example.com/">
-                  <datetime>2019-12-17T00:48:18+01:00</datetime>
-                  <RequestId>requestid</RequestId>
-              </DatetimeOffsetsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+            <DatetimeOffsetsResponse xmlns="https://example.com/">
+                <datetime>2019-12-17T00:48:18+01:00</datetime>
+                <RequestId>requestid</RequestId>
+            </DatetimeOffsetsResponse>
+            """
+        bodyMediaType: "application/xml"
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         params: { datetime: 1576540098 }
     }
 ])

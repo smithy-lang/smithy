@@ -22,13 +22,12 @@
 // be used to identify the request that caused the failure.
 //
 // See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-api-responses.html#sqs-api-error-response-structure
-
 $version: "2.0"
 
 namespace aws.protocoltests.query
 
-use aws.protocols#awsQueryError
 use aws.protocols#awsQuery
+use aws.protocols#awsQueryError
 use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
@@ -37,143 +36,127 @@ use smithy.test#httpResponseTests
 /// 2. An InvalidGreeting error.
 /// 3. A BadRequest error.
 operation GreetingWithErrors {
-    output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError, CustomCodeError]
+    output: GreetingWithErrorsOutput
+    errors: [
+        InvalidGreeting
+        ComplexError
+        CustomCodeError
+    ]
 }
 
 apply GreetingWithErrors @httpResponseTests([
     {
-        id: "QueryGreetingWithErrors",
-        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: awsQuery,
-        code: 200,
-        headers: {
-            "Content-Type": "text/xml"
-        },
+        id: "QueryGreetingWithErrors"
+        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response"
+        protocol: awsQuery
+        code: 200
+        headers: { "Content-Type": "text/xml" }
         body: """
-              <GreetingWithErrorsResponse xmlns="https://example.com/">
-                  <GreetingWithErrorsResult>
-                      <greeting>Hello</greeting>
-                  </GreetingWithErrorsResult>
-              </GreetingWithErrorsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        params: {
-            greeting: "Hello"
-        }
+            <GreetingWithErrorsResponse xmlns="https://example.com/">
+                <GreetingWithErrorsResult>
+                    <greeting>Hello</greeting>
+                </GreetingWithErrorsResult>
+            </GreetingWithErrorsResponse>
+            """
+        bodyMediaType: "application/xml"
+        params: { greeting: "Hello" }
     }
 ])
 
 structure GreetingWithErrorsOutput {
-    greeting: String,
+    greeting: String
 }
 
 /// This error is thrown when an invalid greeting value is provided.
 @error("client")
 structure InvalidGreeting {
-    Message: String,
+    Message: String
 }
 
 apply InvalidGreeting @httpResponseTests([
     {
-        id: "QueryInvalidGreetingError",
-        documentation: "Parses simple XML errors",
-        protocol: awsQuery,
-        params: {
-            Message: "Hi"
-        },
-        code: 400,
-        headers: {
-            "Content-Type": "text/xml"
-        },
+        id: "QueryInvalidGreetingError"
+        documentation: "Parses simple XML errors"
+        protocol: awsQuery
+        params: { Message: "Hi" }
+        code: 400
+        headers: { "Content-Type": "text/xml" }
         body: """
-              <ErrorResponse>
-                 <Error>
-                    <Type>Sender</Type>
-                    <Code>InvalidGreeting</Code>
-                    <Message>Hi</Message>
-                 </Error>
-                 <RequestId>foo-id</RequestId>
-              </ErrorResponse>
-              """,
-        bodyMediaType: "application/xml",
+            <ErrorResponse>
+               <Error>
+                  <Type>Sender</Type>
+                  <Code>InvalidGreeting</Code>
+                  <Message>Hi</Message>
+               </Error>
+               <RequestId>foo-id</RequestId>
+            </ErrorResponse>
+            """
+        bodyMediaType: "application/xml"
     }
 ])
 
 /// This error is thrown when a request is invalid.
 @error("client")
 structure ComplexError {
-    TopLevel: String,
-
-    Nested: ComplexNestedErrorData,
+    TopLevel: String
+    Nested: ComplexNestedErrorData
 }
 
 apply ComplexError @httpResponseTests([
     {
-        id: "QueryComplexError",
-        protocol: awsQuery,
+        id: "QueryComplexError"
+        protocol: awsQuery
         params: {
-            TopLevel: "Top level",
-            Nested: {
-                Foo: "bar"
-            }
-        },
-        code: 400,
-        headers: {
-            "Content-Type": "text/xml"
-        },
+            TopLevel: "Top level"
+            Nested: { Foo: "bar" }
+        }
+        code: 400
+        headers: { "Content-Type": "text/xml" }
         body: """
-              <ErrorResponse>
-                 <Error>
-                    <Type>Sender</Type>
-                    <Code>ComplexError</Code>
-                    <TopLevel>Top level</TopLevel>
-                    <Nested>
-                        <Foo>bar</Foo>
-                    </Nested>
-                 </Error>
-                 <RequestId>foo-id</RequestId>
-              </ErrorResponse>
-              """,
-        bodyMediaType: "application/xml",
+            <ErrorResponse>
+               <Error>
+                  <Type>Sender</Type>
+                  <Code>ComplexError</Code>
+                  <TopLevel>Top level</TopLevel>
+                  <Nested>
+                      <Foo>bar</Foo>
+                  </Nested>
+               </Error>
+               <RequestId>foo-id</RequestId>
+            </ErrorResponse>
+            """
+        bodyMediaType: "application/xml"
     }
 ])
 
 structure ComplexNestedErrorData {
-    Foo: String,
+    Foo: String
 }
 
-@awsQueryError(
-    code: "Customized",
-    httpResponseCode: 402,
-)
+@awsQueryError(code: "Customized", httpResponseCode: 402)
 @error("client")
 structure CustomCodeError {
-    Message: String,
+    Message: String
 }
 
 apply CustomCodeError @httpResponseTests([
     {
-        id: "QueryCustomizedError",
-        documentation: "Parses customized XML errors",
-        protocol: awsQuery,
-        params: {
-            Message: "Hi"
-        },
-        code: 402,
-        headers: {
-            "Content-Type": "text/xml"
-        },
+        id: "QueryCustomizedError"
+        documentation: "Parses customized XML errors"
+        protocol: awsQuery
+        params: { Message: "Hi" }
+        code: 402
+        headers: { "Content-Type": "text/xml" }
         body: """
-              <ErrorResponse>
-                 <Error>
-                    <Type>Sender</Type>
-                    <Code>Customized</Code>
-                    <Message>Hi</Message>
-                 </Error>
-                 <RequestId>foo-id</RequestId>
-              </ErrorResponse>
-              """,
-        bodyMediaType: "application/xml",
+            <ErrorResponse>
+               <Error>
+                  <Type>Sender</Type>
+                  <Code>Customized</Code>
+                  <Message>Hi</Message>
+               </Error>
+               <RequestId>foo-id</RequestId>
+            </ErrorResponse>
+            """
+        bodyMediaType: "application/xml"
     }
 ])

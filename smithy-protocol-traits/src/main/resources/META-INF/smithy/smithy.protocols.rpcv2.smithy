@@ -9,16 +9,13 @@ use smithy.api#httpError
 
 /// An RPC-based protocol that serializes CBOR payloads.
 @trait(selector: "service")
-@protocolDefinition(traits: [
-    cors
-    endpoint
-    hostLabel
-    httpError
-])
+@protocolDefinition(
+    traits: [cors, endpoint, hostLabel, httpError]
+)
 @traitValidators(
     "rpcv2Cbor.NoDocuments": {
-         selector: "service ~> member :test(> document)"
-         message: "This protocol does not support document types"
+        selector: "service ~> member :test(> document)"
+        message: "This protocol does not support document types"
     }
 )
 structure rpcv2Cbor {

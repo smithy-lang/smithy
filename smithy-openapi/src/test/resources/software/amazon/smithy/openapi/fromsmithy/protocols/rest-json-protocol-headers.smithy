@@ -2,20 +2,20 @@ $version: "2.0"
 
 namespace smithy.example
 
-use aws.protocols#restJson1
-use aws.api#clientEndpointDiscovery
 use aws.api#clientDiscoveredEndpoint
+use aws.api#clientEndpointDiscovery
+use aws.protocols#restJson1
 
 @clientEndpointDiscovery(operation: DescribeEndpoints, error: EmptyError)
 @restJson1
 service Service {
-    version: "30-07-21",
+    version: "30-07-21"
     operations: [
-        NoInputOrOutput,
-        EmptyInputAndOutput,
-        OnlyErrorOutput,
-        HttpChecksumRequired,
-        DescribeEndpoints,
+        NoInputOrOutput
+        EmptyInputAndOutput
+        OnlyErrorOutput
+        HttpChecksumRequired
+        DescribeEndpoints
         HasDiscoveredEndpoint
     ]
 }
@@ -29,8 +29,8 @@ operation NoInputOrOutput {}
 // there being a modeled output.
 @http(method: "GET", uri: "/EmptyInputAndOutput")
 operation EmptyInputAndOutput {
-    input: EmptyStruct,
-    output: EmptyStruct,
+    input: EmptyStruct
+    output: EmptyStruct
 }
 
 structure EmptyStruct {}
@@ -38,7 +38,9 @@ structure EmptyStruct {}
 // Operations with errors will also have content headers in the response
 @http(method: "GET", uri: "/OnlyErrorOutput")
 operation OnlyErrorOutput {
-    errors: [EmptyError]
+    errors: [
+        EmptyError
+    ]
 }
 
 @error("client")
@@ -50,38 +52,39 @@ structure EmptyError {}
 @http(method: "GET", uri: "/HttpChecksumRequired")
 operation HttpChecksumRequired {}
 
-
 @http(method: "GET", uri: "/HasDiscoveredEndpoint")
 @clientDiscoveredEndpoint(required: true)
 operation HasDiscoveredEndpoint {
-    errors: [EmptyError]
+    errors: [
+        EmptyError
+    ]
 }
 
 @http(method: "POST", uri: "/DescribeEndpoints")
 operation DescribeEndpoints {
-    input: DescribeEndpointsInput,
-    output: DescribeEndpointsOutput,
+    input: DescribeEndpointsInput
+    output: DescribeEndpointsOutput
 }
 
 structure DescribeEndpointsInput {
-  Operation: String,
-  Identifiers: Identifiers,
+    Operation: String
+    Identifiers: Identifiers
 }
 
 map Identifiers {
-  key: String,
-  value: String
+    key: String
+    value: String
 }
 
 structure DescribeEndpointsOutput {
-  Endpoints: Endpoints,
+    Endpoints: Endpoints
 }
 
 list Endpoints {
-  member: Endpoint
+    member: Endpoint
 }
 
 structure Endpoint {
-  Address: String,
-  CachePeriodInMinutes: Long,
+    Address: String
+    CachePeriodInMinutes: Long
 }

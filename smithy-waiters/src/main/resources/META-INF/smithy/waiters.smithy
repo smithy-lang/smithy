@@ -7,8 +7,8 @@ namespace smithy.waiters
 @trait(selector: "operation :not(-[input, output]-> structure > member > union[trait|streaming])")
 @length(min: 1)
 map waitable {
-    key: WaiterName,
-    value: Waiter,
+    key: WaiterName
+    value: Waiter
 }
 
 @pattern("^[A-Z]+[A-Za-z0-9]*$")
@@ -18,32 +18,32 @@ string WaiterName
 @private
 structure Waiter {
     /// Documentation about the waiter. Can use CommonMark.
-    documentation: String,
+    documentation: String
 
     /// An ordered array of acceptors to check after executing an operation.
     @required
-    acceptors: Acceptors,
+    acceptors: Acceptors
 
     /// The minimum amount of time in seconds to delay between each retry.
     /// This value defaults to 2 if not specified. If specified, this value
     /// MUST be greater than or equal to 1 and less than or equal to
     /// `maxDelay`.
-    minDelay: WaiterDelay = 2,
+    minDelay: WaiterDelay = 2
 
     /// The maximum amount of time in seconds to delay between each retry.
     /// This value defaults to 120 if not specified (or, 2 minutes). If
     /// specified, this value MUST be greater than or equal to 1.
-    maxDelay: WaiterDelay = 120,
+    maxDelay: WaiterDelay = 120
 
     /// Indicates if the waiter is considered deprecated. A waiter SHOULD
     /// be marked as deprecated if it has been replaced by another waiter or
     /// if it is no longer needed (for example, if a resource changes from
     /// eventually consistent to strongly consistent).
-    deprecated: Boolean,
+    deprecated: Boolean
 
     /// A list of tags associated with the waiter that allow waiters to be
     /// categorized and grouped.
-    tags: NonEmptyStringList,
+    tags: NonEmptyStringList
 }
 
 @range(min: 1)
@@ -60,11 +60,11 @@ list Acceptors {
 structure Acceptor {
     /// The state the acceptor transitions to when matched.
     @required
-    state: AcceptorState,
+    state: AcceptorState
 
     /// The matcher used to test if the resource is in a given state.
     @required
-    matcher: Matcher,
+    matcher: Matcher
 }
 
 /// The transition state of a waiter.
@@ -89,7 +89,7 @@ enum AcceptorState {
 union Matcher {
     /// Matches on the successful output of an operation using a
     /// JMESPath expression.
-    output: PathMatcher,
+    output: PathMatcher
 
     /// Matches on both the input and output of an operation using a JMESPath
     /// expression. Input parameters are available through the top-level
@@ -97,18 +97,18 @@ union Matcher {
     /// `output` field. This matcher can only be used on operations that
     /// define both input and output. This matcher is checked only if an
     /// operation completes successfully.
-    inputOutput: PathMatcher,
+    inputOutput: PathMatcher
 
     /// Matches if an operation returns an error and the error matches
     /// the expected error type. If an absolute shape ID is provided, the
     /// error is matched exactly on the shape ID. A shape name can be
     /// provided to match an error in any namespace with the given name.
-    errorType: String,
+    errorType: String
 
     /// When set to `true`, matches when an operation returns a successful
     /// response. When set to `false`, matches when an operation fails with
     /// any error.
-    success: Boolean,
+    success: Boolean
 }
 
 /// Defines how to test the result of a JMESPath expression against
@@ -117,16 +117,16 @@ union Matcher {
 structure PathMatcher {
     /// A JMESPath expression applied to the input or output of an operation.
     @required
-    path: String,
+    path: String
 
     /// The expected return value of the expression.
     @required
-    expected: String,
+    expected: String
 
     /// The comparator used to compare the result of the expression with the
     /// expected value.
     @required
-    comparator: PathComparator,
+    comparator: PathComparator
 }
 
 /// Defines a comparison to perform in a PathMatcher.
@@ -147,7 +147,7 @@ enum PathComparator {
 
 @private
 list NonEmptyStringList {
-    member: NonEmptyString,
+    member: NonEmptyString
 }
 
 @private

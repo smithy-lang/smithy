@@ -2,19 +2,27 @@ $version: "1.0"
 
 namespace smithy.example
 
-@aTrait(foo: ["a", "b", "c"])
+@aTrait(
+    foo: ["a", "b", "c"]
+)
 string Foo
 
 @aTrait
 string Baz
 
-@aTrait(foo: ["1", "2", "3"])
+@aTrait(
+    foo: ["1", "2", "3"]
+)
 string Bar
 
-@aTrait(foo: ["1", "2", "3"])
+@aTrait(
+    foo: ["1", "2", "3"]
+)
 string Bam
 
-@aTrait(foo: ["1", "2", "3"])
+@aTrait(
+    foo: ["1", "2", "3"]
+)
 string Qux
 
 @trait
@@ -22,11 +30,11 @@ string Qux
 structure aTrait {
     // Can't remove this value, but you can add it or change it.
     @tags(["diff.error.remove"])
-    foo: ATraitSet,
+    foo: ATraitSet
 }
 
 set ATraitSet {
     // Cannot remove or update a set value at a given index.
     @tags(["diff.danger.const"])
-    member: String,
+    member: String
 }

@@ -8,8 +8,10 @@ namespace smithy.example
 )
 @aws.iam#serviceResolvedConditionKeys(["smithy:invalidkey"])
 service MyService {
-    version: "2019-02-20",
-    operations: [Echo]
+    version: "2019-02-20"
+    operations: [
+        Echo
+    ]
 }
 
 operation Echo {}

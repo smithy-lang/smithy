@@ -7,7 +7,6 @@ namespace test.smithy.traitcodegen.names
 // ===================
 // The following traits check that non-java-style names are
 // correctly changed into a useable Java-compatible name
-
 /// Snake cased
 @trait
 structure snake_case_structure {

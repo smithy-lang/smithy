@@ -1,119 +1,126 @@
 namespace smithy.example
 
 use aws.cloudformation#cfnAdditionalIdentifier
-use aws.cloudformation#cfnResource
 use aws.cloudformation#cfnExcludeProperty
 use aws.cloudformation#cfnMutability
+use aws.cloudformation#cfnResource
 
 service TestService {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [
-        Foo,
-    ],
+        Foo
+    ]
 }
 
 /// Definition of Example::TestService::Foo Resource Type
-@cfnResource(additionalSchemas: [FooProperties])
+@cfnResource(
+    additionalSchemas: [FooProperties]
+)
 resource Foo {
-    identifiers: {
-        fooId: String,
-    },
-    create: CreateFoo,
-    read: GetFoo,
-    update: UpdateFoo,
+    identifiers: { fooId: String }
+    create: CreateFoo
+    read: GetFoo
+    update: UpdateFoo
 }
 
 @http(method: "POST", uri: "/foos", code: 200)
 operation CreateFoo {
-    input: CreateFooRequest,
-    output: CreateFooResponse,
+    input: CreateFooRequest
+    output: CreateFooResponse
 }
 
 structure CreateFooRequest {
     @cfnMutability("full")
-    tags: TagList,
+    tags: TagList
 
     @cfnMutability("write")
-    secret: String,
+    secret: String
 
-    fooAlias: String,
+    fooAlias: String
 
-    mutableProperty: ComplexProperty,
-    createProperty: ComplexProperty,
-    writeProperty: ComplexProperty,
-    createWriteProperty: ArbitraryMap,
+    mutableProperty: ComplexProperty
+
+    createProperty: ComplexProperty
+
+    writeProperty: ComplexProperty
+
+    createWriteProperty: ArbitraryMap
 }
 
 structure CreateFooResponse {
-    fooId: String,
+    fooId: String
 }
 
 @readonly
 @http(method: "GET", uri: "/foos/{fooId}", code: 200)
 operation GetFoo {
-    input: GetFooRequest,
-    output: GetFooResponse,
+    input: GetFooRequest
+    output: GetFooResponse
 }
 
 structure GetFooRequest {
     @httpLabel
     @required
-    fooId: String,
+    fooId: String
 
     @httpQuery("fooAlias")
     @cfnAdditionalIdentifier
-    fooAlias: String,
+    fooAlias: String
 }
 
 structure GetFooResponse {
-    fooId: String,
+    fooId: String
 
     @httpResponseCode
     @cfnExcludeProperty
-    responseCode: Integer,
+    responseCode: Integer
 
     @cfnMutability("read")
-    updatedAt: Timestamp,
+    updatedAt: Timestamp
 
-    mutableProperty: ComplexProperty,
-    createProperty: ComplexProperty,
-    readProperty: ComplexProperty,
+    mutableProperty: ComplexProperty
+
+    createProperty: ComplexProperty
+
+    readProperty: ComplexProperty
 }
 
 @idempotent
 @http(method: "PUT", uri: "/foos/{fooId}", code: 200)
 operation UpdateFoo {
-    input: UpdateFooRequest,
+    input: UpdateFooRequest
 }
 
 structure UpdateFooRequest {
     @httpLabel
     @required
-    fooId: String,
+    fooId: String
 
-    fooAlias: String,
-    writeProperty: ComplexProperty,
-    mutableProperty: ComplexProperty,
+    fooAlias: String
+
+    writeProperty: ComplexProperty
+
+    mutableProperty: ComplexProperty
 }
 
 structure FooProperties {
-    addedProperty: String,
+    addedProperty: String
 
     @cfnMutability("full")
-    barProperty: String,
+    barProperty: String
 
     @cfnMutability("create-and-read")
-    immutableSetting: Boolean,
+    immutableSetting: Boolean
 
     @cfnMutability("read")
-    createdAt: Timestamp,
+    createdAt: Timestamp
 
     @cfnMutability("write")
-    password: String,
+    password: String
 }
 
 structure ComplexProperty {
-    anotherProperty: String,
+    anotherProperty: String
 }
 
 list TagList {
@@ -121,6 +128,6 @@ list TagList {
 }
 
 map ArbitraryMap {
-    key: String,
+    key: String
     value: String
 }

@@ -13,113 +13,95 @@ operation MalformedDouble {
 
 apply MalformedDouble @httpMalformedRequestTests([
     {
-        id: "RestJsonBodyDoubleMalformedValueRejected",
+        id: "RestJsonBodyDoubleMalformedValueRejected"
         documentation: """
-        Malformed values in the body should be rejected""",
-        protocol: restJson1,
+            Malformed values in the body should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedDouble/1",
+            method: "POST"
+            uri: "/MalformedDouble/1"
             body: """
-            { "doubleInBody" : $value:L }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
+                { "doubleInBody" : $value:L }"""
+            headers: { "content-type": "application/json" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["\"123\"", "true", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"],
-            "tag" : ["string_coercion", "boolean_coercion", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["\"123\"", "true", "2ABC", "0x42", "Infinity", "-Infinity", "NaN"]
+            tag: ["string_coercion", "boolean_coercion", "trailing_chars", "hex", "inf", "negative_inf", "nan"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonPathDoubleMalformedValueRejected",
+        id: "RestJsonPathDoubleMalformedValueRejected"
         documentation: """
-        Malformed values in the path should be rejected""",
-        protocol: restJson1,
-        request: {
-            method: "POST",
-            uri: "/MalformedDouble/$value:L"
-        },
+            Malformed values in the path should be rejected"""
+        protocol: restJson1
+        request: { method: "POST", uri: "/MalformedDouble/$value:L" }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "2ABC", "0x42"],
-            "tag" : ["boolean_coercion", "trailing_chars", "hex"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "2ABC", "0x42"]
+            tag: ["boolean_coercion", "trailing_chars", "hex"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonQueryDoubleMalformedValueRejected",
+        id: "RestJsonQueryDoubleMalformedValueRejected"
         documentation: """
-        Malformed values in query parameters should be rejected""",
-        protocol: restJson1,
+            Malformed values in query parameters should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedDouble/1",
-            queryParams: [
-                "doubleInQuery=$value:L"
-            ]
-        },
+            method: "POST"
+            uri: "/MalformedDouble/1"
+            queryParams: ["doubleInQuery=$value:L"]
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "2ABC", "0x42"],
-            "tag" : ["boolean_coercion", "trailing_chars", "hex"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "2ABC", "0x42"]
+            tag: ["boolean_coercion", "trailing_chars", "hex"]
+        }
+        tags: ["$tag:L"]
+    }
     {
-        id: "RestJsonHeaderDoubleMalformedValueRejected",
+        id: "RestJsonHeaderDoubleMalformedValueRejected"
         documentation: """
-        Malformed values in headers should be rejected""",
-        protocol: restJson1,
+            Malformed values in headers should be rejected"""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedDouble/1",
-            headers: {
-               "doubleInHeader" : "$value:L"
-            }
-        },
+            method: "POST"
+            uri: "/MalformedDouble/1"
+            headers: { doubleInHeader: "$value:L" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
-        },
-        testParameters : {
-            "value" : ["true", "2ABC", "0x42"],
-            "tag" : ["boolean_coercion", "trailing_chars", "hex"]
-        },
-        tags: [ "$tag:L" ]
-    },
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+        testParameters: {
+            value: ["true", "2ABC", "0x42"]
+            tag: ["boolean_coercion", "trailing_chars", "hex"]
+        }
+        tags: ["$tag:L"]
+    }
 ])
 
 structure MalformedDoubleInput {
-    doubleInBody: Double,
+    doubleInBody: Double
 
     @httpLabel
     @required
-    doubleInPath: Double,
+    doubleInPath: Double
 
     @httpQuery("doubleInQuery")
-    doubleInQuery: Double,
+    doubleInQuery: Double
 
     @httpHeader("doubleInHeader")
     doubleInHeader: Double
 }
-

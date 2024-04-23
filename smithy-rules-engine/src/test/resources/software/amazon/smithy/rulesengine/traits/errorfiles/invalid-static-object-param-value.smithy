@@ -4,5 +4,9 @@ namespace smithy.example
 
 use smithy.rules#staticContextParams
 
-@staticContextParams(objectParam: {value: {key: "value"}})
+@staticContextParams(
+    objectParam: {
+        value: { key: "value" }
+    }
+)
 operation OperationObject {}

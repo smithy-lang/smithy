@@ -5,12 +5,7 @@ namespace aws.protocols
 /// An RPC-based protocol that sends JSON payloads. This protocol does not use
 /// HTTP binding traits.
 @protocolDefinition(
-    traits: [
-        timestampFormat
-        cors
-        endpoint
-        hostLabel
-    ]
+    traits: [timestampFormat, cors, endpoint, hostLabel]
 )
 @trait(selector: "service")
 structure awsJson1_0 with [HttpConfiguration] {}
@@ -18,21 +13,16 @@ structure awsJson1_0 with [HttpConfiguration] {}
 /// An RPC-based protocol that sends JSON payloads. This protocol does not use
 /// HTTP binding traits.
 @protocolDefinition(
-    traits: [
-        timestampFormat
-        cors
-        endpoint
-        hostLabel
-    ]
+    traits: [timestampFormat, cors, endpoint, hostLabel]
 )
-@trait(
-    selector: "service"
-)
+@trait(selector: "service")
 structure awsJson1_1 with [HttpConfiguration] {}
 
 /// Contains HTTP protocol configuration for HTTP-based protocols.
 @private
-@mixin(localTraits: [private])
+@mixin(
+    localTraits: [private]
+)
 structure HttpConfiguration {
     /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
@@ -73,8 +63,12 @@ structure awsQuery {}
 /// Provides the value in the 'Code' distinguishing field and HTTP response
 /// code for an operation error.
 @trait(
-    selector: "structure [trait|error]",
-    breakingChanges: [{change: "any"}]
+    selector: "structure [trait|error]"
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 structure awsQueryError {
     /// The value used to distinguish this error shape during serialization.

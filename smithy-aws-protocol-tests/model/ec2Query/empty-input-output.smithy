@@ -1,6 +1,5 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
-
 $version: "2.0"
 
 namespace aws.protocoltests.ec2
@@ -19,34 +18,30 @@ operation NoInputAndOutput {
 
 apply NoInputAndOutput @httpRequestTests([
     {
-        id: "Ec2QueryNoInputAndOutput",
-        documentation: "No input serializes no payload",
-        protocol: ec2Query,
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "Action=NoInputAndOutput&Version=2020-01-08",
+        id: "Ec2QueryNoInputAndOutput"
+        documentation: "No input serializes no payload"
+        protocol: ec2Query
+        method: "POST"
+        uri: "/"
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        body: "Action=NoInputAndOutput&Version=2020-01-08"
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
 
 apply NoInputAndOutput @httpResponseTests([
     {
-        id: "Ec2QueryNoInputAndOutput",
-        documentation: "Empty output",
-        protocol: ec2Query,
-        code: 200,
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+        id: "Ec2QueryNoInputAndOutput"
+        documentation: "Empty output"
+        protocol: ec2Query
+        code: 200
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         body: """
-              <NoInputAndOutputResponse xmlns="https://example.com/">
-                  <RequestId>requestid</RequestId>
-              </NoInputAndOutputResponse>
-              """,
-        bodyMediaType: "application/xml",
+            <NoInputAndOutputResponse xmlns="https://example.com/">
+                <RequestId>requestid</RequestId>
+            </NoInputAndOutputResponse>
+            """
+        bodyMediaType: "application/xml"
     }
 ])
 
@@ -57,42 +52,39 @@ structure NoInputAndOutputOutput {}
 ///
 /// While this should be rare, code generators must support this.
 operation EmptyInputAndEmptyOutput {
-    input: EmptyInputAndEmptyOutputInput,
+    input: EmptyInputAndEmptyOutputInput
     output: EmptyInputAndEmptyOutputOutput
 }
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
-        id: "Ec2QueryEmptyInputAndEmptyOutput",
-        documentation: "Empty input serializes no extra query params",
-        protocol: ec2Query,
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08",
+        id: "Ec2QueryEmptyInputAndEmptyOutput"
+        documentation: "Empty input serializes no extra query params"
+        protocol: ec2Query
+        method: "POST"
+        uri: "/"
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08"
         bodyMediaType: "application/x-www-form-urlencoded"
-    },
+    }
 ])
 
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
-        id: "Ec2QueryEmptyInputAndEmptyOutput",
-        documentation: "Empty output",
-        protocol: ec2Query,
-        code: 200,
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8"
-        },
+        id: "Ec2QueryEmptyInputAndEmptyOutput"
+        documentation: "Empty output"
+        protocol: ec2Query
+        code: 200
+        headers: { "Content-Type": "text/xml;charset=UTF-8" }
         body: """
-              <EmptyInputAndEmptyOutputResponse xmlns="https://example.com/">
-                  <RequestId>requestid</RequestId>
-              </EmptyInputAndEmptyOutputResponse>
-              """,
-        bodyMediaType: "application/xml",
-    },
+            <EmptyInputAndEmptyOutputResponse xmlns="https://example.com/">
+                <RequestId>requestid</RequestId>
+            </EmptyInputAndEmptyOutputResponse>
+            """
+        bodyMediaType: "application/xml"
+    }
 ])
 
 structure EmptyInputAndEmptyOutputInput {}
+
 structure EmptyInputAndEmptyOutputOutput {}

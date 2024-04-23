@@ -15,17 +15,14 @@ namespace smithy.example
 @bigDecimalExt(0.1234567890123456789)
 @timestampExt("2023-02-27T13:01:57Z")
 @documentExt({
-    "a": "b",
-    "c": ["d"]
+    a: "b"
+    c: ["d"]
 })
 @enumExt("first")
 @intEnumExt(3)
 @listExt(["a", "b", "c"])
-@mapExt("a": 15, "b": 18)
-@structureExt(
-    stringMember: "first field"
-    integerMember: 17
-)
+@mapExt(a: 15, b: 18)
+@structureExt(stringMember: "first field", integerMember: 17)
 @unionExt(string: "string variant")
 structure Input {
     name: String
@@ -39,5 +36,7 @@ operation Operation {
 
 @aws.protocols#restJson1
 service Service {
-    operations: [Operation]
+    operations: [
+        Operation
+    ]
 }

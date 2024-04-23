@@ -6,14 +6,14 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        documentation: "A",
+        documentation: "A"
         acceptors: [
             {
-                state: "success",
+                state: "success"
                 matcher: {
                     inputOutput: {
-                        path: "(input.Status == 'failed') && (output.Status == 'failed')",
-                        expected: "true",
+                        path: "(input.Status == 'failed') && (output.Status == 'failed')"
+                        expected: "true"
                         comparator: "booleanEquals"
                     }
                 }
@@ -22,7 +22,7 @@ use smithy.waiters#waitable
     }
 )
 operation WaitersTest {
-    input: WaitersTestInputOutput,
+    input: WaitersTestInputOutput
     output: WaitersTestInputOutput
 }
 

@@ -5,13 +5,13 @@ namespace smithy.example
 string MyString
 
 structure Foo {
-    foo: MyString,
-    bar: Bar,
+    foo: MyString
+    bar: Bar
 }
 
 structure Bar {
-    baz: Integer,
-    bam: BamList,
+    baz: Integer
+    bam: BamList
 }
 
 list BamList {
@@ -19,10 +19,10 @@ list BamList {
 }
 
 structure Recursive {
-    a: RecursiveList,
-    b: Recursive,
+    a: RecursiveList
+    b: Recursive
 }
 
 list RecursiveList {
-    member: Recursive,
+    member: Recursive
 }

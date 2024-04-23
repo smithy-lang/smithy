@@ -23,7 +23,6 @@
 //
 // EC2 errors have an additional level of nesting. See xml-errors.smithy
 // for details.
-
 $version: "2.0"
 
 namespace aws.protocoltests.ec2
@@ -31,10 +30,7 @@ namespace aws.protocoltests.ec2
 use aws.api#service
 use aws.auth#sigv4
 use aws.protocols#ec2Query
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
 
-/// An EC2 query service that sends query requests and XML responses.
 @service(sdkId: "EC2 Protocol")
 @suppress(["SigV4Traits"])
 @sigv4(name: "ec2query")
@@ -42,51 +38,42 @@ use smithy.test#httpResponseTests
 @xmlNamespace(uri: "https://example.com/")
 @title("Sample Ec2 Protocol Service")
 service AwsEc2 {
-    version: "2020-01-08",
+    version: "2020-01-08"
     operations: [
         // Basic input and output tests
-        NoInputAndOutput,
-        EmptyInputAndEmptyOutput,
-
+        NoInputAndOutput
+        EmptyInputAndEmptyOutput
         // Input tests
-        SimpleInputParams,
-        QueryTimestamps,
-        NestedStructures,
-        QueryLists,
-        QueryIdempotencyTokenAutoFill,
-
+        SimpleInputParams
+        QueryTimestamps
+        NestedStructures
+        QueryLists
+        QueryIdempotencyTokenAutoFill
         // Output tests
-        XmlEmptyBlobs,
-
+        XmlEmptyBlobs
         // Output XML list tests
-        XmlLists,
-        XmlEmptyLists,
-
+        XmlLists
+        XmlEmptyLists
         // Output XML structure tests
-        SimpleScalarXmlProperties,
-        XmlBlobs,
-        XmlTimestamps,
-        XmlEnums,
-        XmlIntEnums,
-        RecursiveXmlShapes,
-        RecursiveXmlShapes,
-        IgnoresWrappingXmlName,
-        XmlNamespaces,
-
+        SimpleScalarXmlProperties
+        XmlBlobs
+        XmlTimestamps
+        XmlEnums
+        XmlIntEnums
+        RecursiveXmlShapes
+        RecursiveXmlShapes
+        IgnoresWrappingXmlName
+        XmlNamespaces
         // Output error tests
-        GreetingWithErrors,
-
+        GreetingWithErrors
         // @endpoint and @hostLabel trait tests
-        EndpointOperation,
-        EndpointWithHostLabelOperation,
-
+        EndpointOperation
+        EndpointWithHostLabelOperation
         // custom endpoints with paths
-        HostWithPathOperation,
-
+        HostWithPathOperation
         // client-only timestamp parsing tests
-        DatetimeOffsets,
-        FractionalSeconds,
-
+        DatetimeOffsets
+        FractionalSeconds
         // requestCompression trait tests
         PutWithContentEncoding
     ]

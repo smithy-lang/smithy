@@ -4,17 +4,17 @@ namespace smithy.example
 
 @aTrait(
     // a: "a",
-    b: "a",
-    c: "a",
-    d: "a",
+    b: "a"
+    c: "a"
+    d: "a"
     // e: "a",
-    f: "a",
-    g: "a",
-    h: "a",
+    f: "a"
+    g: "a"
+    h: "a"
     // i: "a",
-    j: "a",
-    k: "a",
-    l: "a",
+    j: "a"
+    k: "a"
+    l: "a"
 )
 string Foo
 
@@ -22,41 +22,41 @@ string Foo
 @tags(["diff.contents"])
 structure aTrait {
     @tags(["diff.error.add"])
-    a: String,
+    a: String
 
     @tags(["diff.error.remove"])
-    b: String,
+    b: String
 
     @tags(["diff.error.update"])
-    c: String,
+    c: String
 
     @tags(["diff.error.const"])
-    d: String,
+    d: String
 
     @tags(["diff.danger.add"])
-    e: String,
+    e: String
 
     @tags(["diff.danger.remove"])
-    f: String,
+    f: String
 
     @tags(["diff.danger.update"])
-    g: String,
+    g: String
 
     @tags(["diff.danger.const"])
-    h: String,
+    h: String
 
     @tags(["diff.warning.add"])
-    i: String,
+    i: String
 
     @tags(["diff.warning.remove"])
-    j: String,
+    j: String
 
     @tags(["diff.warning.update"])
-    k: String,
+    k: String
 
     @tags(["diff.warning.const"])
-    l: String,
+    l: String
 
     @tags(["diff.contents"])
-    m: String,
+    m: String
 }

@@ -2,12 +2,10 @@ $version: "2.0"
 
 metadata validators = [
     {
-        name: "EmitEachSelector",
-        id: "Test",
-        severity: "WARNING",
-        configuration: {
-            selector: ":not([id='smithy.example#NoMatches'])"
-        }
+        name: "EmitEachSelector"
+        id: "Test"
+        severity: "WARNING"
+        configuration: { selector: ":not([id='smithy.example#NoMatches'])" }
     }
 ]
 

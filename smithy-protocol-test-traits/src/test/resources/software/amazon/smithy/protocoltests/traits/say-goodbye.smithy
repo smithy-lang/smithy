@@ -11,14 +11,11 @@ structure exampleProtocol {}
 @http(method: "POST", uri: "/")
 @httpResponseTests([
     {
-        id: "say_goodbye",
-        protocol: exampleProtocol,
-        params: {farewell: "Bye"},
-        code: 200,
-        headers: {
-            "X-Farewell": "Bye",
-            "Content-Length": "0"
-        }
+        id: "say_goodbye"
+        protocol: exampleProtocol
+        params: { farewell: "Bye" }
+        code: 200
+        headers: { "X-Farewell": "Bye", "Content-Length": "0" }
     }
 ])
 operation SayGoodbye {
@@ -27,5 +24,5 @@ operation SayGoodbye {
 
 structure SayGoodbyeOutput {
     @httpHeader("X-Farewell")
-    farewell: String,
+    farewell: String
 }

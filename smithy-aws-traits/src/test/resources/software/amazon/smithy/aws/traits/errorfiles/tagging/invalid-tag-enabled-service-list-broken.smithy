@@ -2,21 +2,27 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "example.weather"
     }
 ]
 
 namespace example.weather
 
-use aws.api#taggable
 use aws.api#tagEnabled
+use aws.api#taggable
 
 @tagEnabled
 service Weather {
-    version: "2006-03-01",
-    resources: [City]
-    operations: [TagResource, UntagResource, ListTagsForResource]
+    version: "2006-03-01"
+    resources: [
+        City
+    ]
+    operations: [
+        TagResource
+        UntagResource
+        ListTagsForResource
+    ]
 }
 
 structure Tag {
@@ -37,20 +43,24 @@ operation TagResource {
     input := {
         @required
         arn: String
+
         @length(max: 128)
         tags: TagList
     }
-    output := { }
+
+    output := {}
 }
 
 operation UntagResource {
     input := {
         @required
         arn: String
+
         @required
         tagKeys: TagKeys
     }
-    output := { }
+
+    output := {}
 }
 
 operation ListTagsForResource {
@@ -70,9 +80,8 @@ structure ListTagsForResourceOutput {
 
 @taggable
 resource City {
-    identifiers: { cityId: CityId },
+    identifiers: { cityId: CityId }
 }
 
 @pattern("^[A-Za-z0-9 ]+$")
 string CityId
-

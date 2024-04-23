@@ -11,41 +11,39 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpMalformedRequestTests([
     {
-        id: "definesRegexButNotMediaType",
-        documentation: "Testing...",
-        protocol: testProtocol,
+        id: "definesRegexButNotMediaType"
+        documentation: "Testing..."
+        protocol: testProtocol
         request: {
-            body: "Hi",
-            headers: {"X-Foo": "baz"},
-            host: "example.com",
-            method: "POST",
-            uri: "/",
+            body: "Hi"
+            headers: { "X-Foo": "baz" }
+            host: "example.com"
+            method: "POST"
+            uri: "/"
             queryParams: ["foo=baz"]
-        },
+        }
         response: {
-            code: 400,
-            headers: {"X-Foo": "baz"},
+            code: 400
+            headers: { "X-Foo": "baz" }
             body: {
-                assertion: {
-                    messageRegex: "Invalid JSON: .*"
-                }
+                assertion: { messageRegex: "Invalid JSON: .*" }
             }
-        },
+        }
         tags: ["foo", "bar"]
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 
 @input
 structure SayHelloInput {
     @httpPayload
-    body: String,
+    body: String
 
     @httpHeader("X-OmitMe")
-    header: String,
+    header: String
 }
 
 @output

@@ -7,103 +7,78 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
 @clientContextParams(
-    bar: {type: "string", documentation: "a client string parameter"}
-    baz: {type: "string", documentation: "another client string parameter"}
+    bar: { type: "string", documentation: "a client string parameter" }
+    baz: { type: "string", documentation: "another client string parameter" }
 )
 @endpointRuleSet({
-    version: "1.0",
+    version: "1.0"
     parameters: {
-        bar: {
-            type: "string",
-            documentation: "docs"
-        }
-        baz: {
-            type: "string",
-            documentation: "docs"
-            required: true
-            default: "baz"
-        },
-        endpoint: {
-            type: "string",
-            builtIn: "SDK::Endpoint",
-            required: true,
-            default: "asdf"
-            documentation: "docs"
-        },
-    },
+        bar: { type: "string", documentation: "docs" }
+        baz: { type: "string", documentation: "docs", required: true, default: "baz" }
+        endpoint: { type: "string", builtIn: "SDK::Endpoint", required: true, default: "asdf", documentation: "docs" }
+    }
     rules: [
         {
-            "documentation": "Template the region into the URI when FIPS is enabled",
-            "conditions": [
+            documentation: "Template the region into the URI when FIPS is enabled"
+            conditions: [
                 {
-                    "fn": "isSet",
-                    "argv": [
+                    fn: "isSet"
+                    argv: [
                         {
-                            "ref": "bar"
+                            ref: "bar"
                         }
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://example.com/{baz}"
-            },
-            "type": "endpoint"
-        },
+            ]
+            endpoint: { url: "https://example.com/{baz}" }
+            type: "endpoint"
+        }
         {
-            "conditions": [],
-            "documentation": "error fallthrough",
-            "error": "endpoint error",
-            "type": "error"
+            conditions: []
+            documentation: "error fallthrough"
+            error: "endpoint error"
+            type: "error"
         }
     ]
 })
 @endpointTests({
-    "version": "1.0",
-    "testCases": [
+    version: "1.0"
+    testCases: [
         {
-            "params": {
-                "bar": "a b",
-            }
-            "operationInputs": [{
-                "operationName": "GetThing",
-                "builtInParams": {
-                    "SDK::Endpoint": "https://custom.example.com"
+            params: { bar: "a b" }
+            operationInputs: [
+                {
+                    operationName: "GetThing"
+                    builtInParams: { "SDK::Endpoint": "https://custom.example.com" }
                 }
-            }],
-            "expect": {
-                "endpoint": {
-                    "url": "https://example.com/baz"
-                }
+            ]
+            expect: {
+                endpoint: { url: "https://example.com/baz" }
             }
-        },
+        }
         {
-            "params": {
-                "bar": "a b",
-                "baz": "BIG"
-            }
-            "operationInputs": [{
-                "operationName": "GetThing",
-                "builtInParams": {
-                    "SDK::Endpoint": "https://custom.example.com"
+            params: { bar: "a b", baz: "BIG" }
+            operationInputs: [
+                {
+                    operationName: "GetThing"
+                    builtInParams: { "SDK::Endpoint": "https://custom.example.com" }
                 }
-            }],
-            "expect": {
-                "endpoint": {
-                    "url": "https://example.com/BIG"
-                }
+            ]
+            expect: {
+                endpoint: { url: "https://example.com/BIG" }
             }
-        },
+        }
         {
-            "documentation": "a documentation string",
-            "expect": {
-                "error": "endpoint error"
-            }
+            documentation: "a documentation string"
+            expect: { error: "endpoint error" }
         }
     ]
 })
 service FizzBuzz {
-    version: "2022-01-01",
-    operations: [GetThing]
+    version: "2022-01-01"
+    operations: [
+        GetThing
+    ]
 }
 
 operation GetThing {

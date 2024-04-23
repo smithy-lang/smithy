@@ -5,14 +5,16 @@ namespace smithy.example
 
 @smithy.mqtt#subscribe("event1")
 operation Foo {
-    input: Unit,
-    output: FooOutput,
-    errors: [Error]
+    input: Unit
+    output: FooOutput
+    errors: [
+        Error
+    ]
 }
 
 @output
 structure FooOutput {
-    messages: EventStream,
+    messages: EventStream
 }
 
 @streaming
@@ -25,12 +27,13 @@ structure Event {}
 @error("client")
 structure Error {}
 
-
 @smithy.mqtt#publish("event2")
 operation Baz {
-    input: BazInput,
-    output: Unit,
-    errors: [Error]
+    input: BazInput
+    output: Unit
+    errors: [
+        Error
+    ]
 }
 
 @input

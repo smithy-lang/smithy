@@ -4,5 +4,7 @@ namespace smithy.example
 
 use smithy.rules#staticContextParams
 
-@staticContextParams(nullParam: {value: null})
+@staticContextParams(
+    nullParam: { value: null }
+)
 operation OperationNull {}

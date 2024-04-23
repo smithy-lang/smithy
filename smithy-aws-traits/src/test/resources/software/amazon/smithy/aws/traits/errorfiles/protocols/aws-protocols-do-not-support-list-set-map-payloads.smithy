@@ -12,30 +12,32 @@ use smithy.api#httpPayload
 
 @restJson1
 service InvalidExample {
-    version: "2020-12-29",
+    version: "2020-12-29"
     operations: [
-        InvalidBindingOperation,
+        InvalidBindingOperation
         InvalidSimpleBindingOperation
-    ],
+    ]
 }
 
 @http(method: "POST", uri: "/invalid-payload")
 operation InvalidBindingOperation {
-    input: InvalidBindingOperationInput,
-    output: InvalidBindingOperationOutput,
-    errors: [InvalidBindingError],
+    input: InvalidBindingOperationInput
+    output: InvalidBindingOperationOutput
+    errors: [
+        InvalidBindingError
+    ]
 }
 
 @input
 structure InvalidBindingOperationInput {
     @httpPayload
-    listBinding: StringList,
+    listBinding: StringList
 }
 
 @output
 structure InvalidBindingOperationOutput {
     @httpPayload
-    mapBinding: StringMap,
+    mapBinding: StringMap
 }
 
 @error("client")
@@ -46,21 +48,23 @@ structure InvalidBindingError {
 
 @http(method: "POST", uri: "/invalid-simple-payload")
 operation InvalidSimpleBindingOperation {
-    input: InvalidSimpleBindingOperationInput,
-    output: InvalidSimpleBindingOperationOutput,
-    errors: [InvalidSimpleBindingError],
+    input: InvalidSimpleBindingOperationInput
+    output: InvalidSimpleBindingOperationOutput
+    errors: [
+        InvalidSimpleBindingError
+    ]
 }
 
 @input
 structure InvalidSimpleBindingOperationInput {
     @httpPayload
-    booleanBinding: Boolean,
+    booleanBinding: Boolean
 }
 
 @output
 structure InvalidSimpleBindingOperationOutput {
     @httpPayload
-    integerBinding: Integer,
+    integerBinding: Integer
 }
 
 @error("client")
@@ -78,6 +82,6 @@ set StringSet {
 }
 
 map StringMap {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }

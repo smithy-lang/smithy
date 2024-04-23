@@ -1,4 +1,5 @@
 $version: "2.0"
+
 namespace smithy.example
 
 @aws.iam#actionName("overridingActionName")
@@ -9,7 +10,7 @@ operation GetResource2 {
 }
 
 structure GetResource2Input {
-    id1: String,
+    id1: String
 
     @required
     id2: String

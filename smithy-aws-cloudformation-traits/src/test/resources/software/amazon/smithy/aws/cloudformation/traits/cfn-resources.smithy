@@ -6,29 +6,27 @@ use aws.cloudformation#cfnResource
 
 @cfnResource
 resource FooResource {
-    identifiers: {
-        fooId: FooId
-    }
+    identifiers: { fooId: FooId }
 }
 
 @cfnResource(
-    name: "CustomResource",
+    name: "CustomResource"
     additionalSchemas: [ExtraBarRequest]
 )
 resource BarResource {
-    identifiers: {
-        barId: BarId
-    },
-    operations: [ExtraBarOperation],
+    identifiers: { barId: BarId }
+    operations: [
+        ExtraBarOperation
+    ]
 }
 
 operation ExtraBarOperation {
-    input: ExtraBarRequest,
+    input: ExtraBarRequest
 }
 
 structure ExtraBarRequest {
     @required
-    barId: BarId,
+    barId: BarId
 }
 
 string FooId

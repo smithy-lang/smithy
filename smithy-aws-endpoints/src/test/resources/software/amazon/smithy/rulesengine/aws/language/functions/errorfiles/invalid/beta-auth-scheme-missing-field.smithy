@@ -6,34 +6,30 @@ use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 
 @endpointRuleSet({
-  "version": "1.3",
-  "parameters": {
-    "Region": {
-      "required": true,
-      "type": "String",
-      "documentation": "docs"
+    version: "1.3"
+    parameters: {
+        Region: { required: true, type: "String", documentation: "docs" }
     }
-  },
-  "rules": [
-    {
-      "conditions": [],
-      "documentation": "base rule",
-      "endpoint": {
-        "url": "https://{Region}.amazonaws.com",
-        "properties": {
-          "authSchemes": [
-            {
-              "name": "beta-test"
+    rules: [
+        {
+            conditions: []
+            documentation: "base rule"
+            endpoint: {
+                url: "https://{Region}.amazonaws.com"
+                properties: {
+                    authSchemes: [
+                        {
+                            name: "beta-test"
+                        }
+                    ]
+                }
+                headers: {}
             }
-          ]
-        },
-        "headers": {}
-      },
-      "type": "endpoint"
-    }
-  ]
+            type: "endpoint"
+        }
+    ]
 })
 @clientContextParams(
-  Region: {type: "string", documentation: "docs"}
+    Region: { type: "string", documentation: "docs" }
 )
 service FizzBuzz {}

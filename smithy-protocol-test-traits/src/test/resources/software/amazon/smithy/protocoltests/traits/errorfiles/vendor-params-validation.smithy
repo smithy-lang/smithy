@@ -2,8 +2,8 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.test#httpResponseTests
 use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
 
 @trait
 @protocolDefinition
@@ -12,25 +12,23 @@ structure testProtocol {}
 @http(method: "POST", uri: "/")
 @httpResponseTests([
     {
-        id: "foo1",
-        protocol: testProtocol,
-        code: 200,
-        params: {},
-        vendorParamsShape: emptyVendorParamsStructure,
-    },
+        id: "foo1"
+        protocol: testProtocol
+        code: 200
+        params: {}
+        vendorParamsShape: emptyVendorParamsStructure
+    }
     {
-        id: "foo2",
-        protocol: testProtocol,
-        code: 200,
-        params: {},
-        vendorParamsShape: emptyVendorParamsStructure,
-        vendorParams: {
-            additional: true,
-        }
+        id: "foo2"
+        protocol: testProtocol
+        code: 200
+        params: {}
+        vendorParamsShape: emptyVendorParamsStructure
+        vendorParams: { additional: true }
     }
 ])
 operation SayGoodbye {
-    input: SayGoodbyeInput,
+    input: SayGoodbyeInput
     output: SayGoodbyeOutput
 }
 
@@ -42,56 +40,42 @@ structure SayGoodbyeOutput {}
 
 @httpResponseTests([
     {
-        id: "foo3",
-        protocol: testProtocol,
-        code: 200,
-        params: {
-            foo: 1
-        },
-        vendorParamsShape: simpleVendorParamsStructure,
-        vendorParams: {
-            integer: 1,
-            float: "Hi"
-        }
+        id: "foo3"
+        protocol: testProtocol
+        code: 200
+        params: { foo: 1 }
+        vendorParamsShape: simpleVendorParamsStructure
+        vendorParams: { integer: 1, float: "Hi" }
     }
 ])
 @error("client")
 structure MyError {
-    foo: Integer,
+    foo: Integer
 }
 
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
-        id: "foo5",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            type: true
-        },
-        vendorParamsShape: simpleVendorParamsStructure,
-        vendorParams: {
-            float: 1.2
-        }
-    },
+        id: "foo5"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { type: true }
+        vendorParamsShape: simpleVendorParamsStructure
+        vendorParams: { float: 1.2 }
+    }
     {
-        id: "foo6",
-        protocol: testProtocol,
-        method: "POST",
-        uri: "/",
-        params: {
-            type: true
-        },
-        vendorParamsShape: simpleVendorParamsStructure,
-        vendorParams: {
-            integer: 1,
-            boolean: "Hi"
-        }
+        id: "foo6"
+        protocol: testProtocol
+        method: "POST"
+        uri: "/"
+        params: { type: true }
+        vendorParamsShape: simpleVendorParamsStructure
+        vendorParams: { integer: 1, boolean: "Hi" }
     }
 ])
 operation SayHello {
-    input: SayHelloInput,
+    input: SayHelloInput
     output: SayHelloOutput
 }
 
@@ -107,9 +91,9 @@ structure emptyVendorParamsStructure {}
 
 structure simpleVendorParamsStructure {
     @required
-    integer: Integer,
+    integer: Integer
 
-    boolean: Boolean,
+    boolean: Boolean
 
-    float: Float,
+    float: Float
 }

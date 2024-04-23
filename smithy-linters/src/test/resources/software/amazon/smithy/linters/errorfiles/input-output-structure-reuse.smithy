@@ -1,13 +1,15 @@
 $version: "2.0"
 
 metadata validators = [
-    {name: "InputOutputStructureReuse"}
+    {
+        name: "InputOutputStructureReuse"
+    }
 ]
 
 namespace smithy.example
 
 operation GetFoo {
-    input: GetFooInput,
+    input: GetFooInput
     output: GetFooOutput
 }
 
@@ -16,7 +18,7 @@ structure GetFooInput {}
 structure GetFooOutput {}
 
 operation GetBaz {
-    input: GetBazInput,
+    input: GetBazInput
     output: GetBazOutput
 }
 
