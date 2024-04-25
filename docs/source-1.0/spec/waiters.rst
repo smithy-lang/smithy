@@ -190,12 +190,12 @@ exponential backoff with jitter through the following algorithm:
     delay = random(minDelay, delay)
 
     if remainingTime - delay <= minDelay:
-        delay = remainingTime - minDelay
+        delay = remainingTime
 
 If the computed ``delay`` subtracted from ``remainingTime`` is less than
-or equal to ``minDelay``, then set ``delay`` to ``remainingTime`` minus
-``minDelay`` and perform one last retry. This prevents a waiter from waiting
-needlessly only to exceed ``maxWaitTime`` before issuing a final request.
+or equal to ``minDelay``, then set ``delay`` to ``remainingTime`` and
+perform one last retry. This prevents a waiter from waiting needlessly
+only to exceed ``maxWaitTime`` before issuing a final request.
 
 Using the default ``minDelay`` of 2, the default ``maxDelay`` of 120, a caller
 provided ``maxWaitTime`` of 300 (5 minutes), and assuming that requests
