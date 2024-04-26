@@ -355,7 +355,7 @@
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">MacOS</label><div class="tab-content docutils container">
 <div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Homebrew</label><div class="tab-content docutils container">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Homebrew (Recommended)</label><div class="tab-content docutils container">
 <p>You can get the CLI via Homebrew by first tapping the official
 <a class="reference external" href="https://github.com/smithy-lang/homebrew-tap">Smithy Homebrew Tap</a>, and then installing the <code class="docutils literal notranslate"><span class="pre">smithy-cli</span></code> formula.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
@@ -373,8 +373,9 @@ your installation.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>smithy-install/smithy<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-darwin-x86_64.tar.gz<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>tar<span class="w"> </span>xvzf<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.tar.gz<span class="w"> </span>-C<span class="w"> </span>smithy-install/smithy
+<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-darwin-x86_64.zip<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.zip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>unzip<span class="w"> </span>-qo<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.zip<span class="w"> </span>-d<span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mv<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64/*<span class="w"> </span>smithy-install/smithy
 </pre></div>
 </div>
 </div>
@@ -421,8 +422,9 @@ performing the installation (under <code class="docutils literal notranslate"><s
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>smithy-install/smithy<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-darwin-aarch64.tar.gz<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>tar<span class="w"> </span>xvzf<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.tar.gz<span class="w"> </span>-C<span class="w"> </span>smithy-install/smithy
+<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-darwin-aarch64.zip<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.zip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>unzip<span class="w"> </span>-qo<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.zip<span class="w"> </span>-d<span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mv<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64/*<span class="w"> </span>smithy-install/smithy
 </pre></div>
 </div>
 </div>
@@ -473,8 +475,9 @@ performing the installation (under <code class="docutils literal notranslate"><s
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>smithy-install/smithy<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-linux-x86_64.tar.gz<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>tar<span class="w"> </span>xvzf<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.tar.gz<span class="w"> </span>-C<span class="w"> </span>smithy-install/smithy
+<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-linux-x86_64.zip<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.zip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>unzip<span class="w"> </span>-qo<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.zip<span class="w"> </span>-d<span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mv<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64/*<span class="w"> </span>smithy-install/smithy
 </pre></div>
 </div>
 </div>
@@ -521,8 +524,9 @@ performing the installation (under <code class="docutils literal notranslate"><s
 <div class="literal-block-wrapper docutils container" id="id11">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id11" title="Permalink to this code">#</a></div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>smithy-install/smithy<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-linux-aarch64.tar.gz<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>tar<span class="w"> </span>xvzf<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.tar.gz<span class="w"> </span>-C<span class="w"> </span>smithy-install/smithy
+<span class="w">    </span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-linux-aarch64.zip<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.zip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>unzip<span class="w"> </span>-qo<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.zip<span class="w"> </span>-d<span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mv<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64/*<span class="w"> </span>smithy-install/smithy
 </pre></div>
 </div>
 </div>
@@ -567,14 +571,27 @@ performing the installation (under <code class="docutils literal notranslate"><s
 </div>
 <input class="tab-input" id="tab-set--3-input--3" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--3">Windows</label><div class="tab-content docutils container">
 <div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Manual (x64)</label><div class="tab-content docutils container">
-<p>First, retrieve the latest smithy installation from the
-<a class="reference external" href="https://github.com/smithy-lang/smithy/releases">Smithy GitHub releases</a>.</p>
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Scoop (Recommended)</label><div class="tab-content docutils container">
+<p>You can get the CLI via Scoop by first adding the official
+<a class="reference external" href="https://github.com/smithy-lang/scoop-bucket">Smithy Scoop Bucket</a>, and then installing from the <code class="docutils literal notranslate"><span class="pre">smithy-cli</span></code> manifest.</p>
 <div class="literal-block-wrapper docutils container" id="id14">
 <div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">scoop</span> <span class="n">bucket</span> <span class="n">add</span> <span class="n">smithy-lang</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">scoop-bucket</span><span class="p">;</span> <span class="p">`</span>
+    <span class="n">scoop</span> <span class="n">install</span> <span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy-cli</span>
+</pre></div>
+</div>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation.</p>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Manual (x64)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/smithy-lang/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id15" title="Permalink to this code">#</a></div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-Item</span> <span class="n">-Type</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span> <span class="n">-Force</span><span class="p">;</span> <span class="p">`</span>
-    <span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">47</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="p">`</span>
-                      <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+    <span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">48</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span> <span class="p">`</span>
+                      <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span>
 </pre></div>
 </div>
 </div>
@@ -583,7 +600,7 @@ performing the installation (under <code class="docutils literal notranslate"><s
 <p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
 on how to verify downloaded artifacts.</p>
 </div>
-<p>Now, untar the installation in the newly created directory and run
+<p>Now, unzip the installation in the newly created directory and run
 the installer (<code class="docutils literal notranslate"><span class="pre">install.bat</span></code>).</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -593,10 +610,11 @@ CLI into the default location (<code class="docutils literal notranslate"><span 
 Alternatively, you may specify your own path, which can mitigate
 permissions issues when not running as administrator.</p>
 </div>
-<div class="literal-block-wrapper docutils container" id="id15">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id15" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">-xf</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="n">-C</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">;</span>
-     <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">\</span><span class="n">install</span>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id16" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Expand-Archive</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span> <span class="n">-DestinationPath</span> <span class="n">smithy-install</span><span class="p">\;</span> <span class="p">`</span>
+    <span class="nb">Move-Item</span> <span class="n">-Path</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">\*</span> <span class="n">-Destination</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">;</span> <span class="p">`</span>
+    <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">\</span><span class="n">install</span>
 </pre></div>
 </div>
 </div>
@@ -604,8 +622,8 @@ permissions issues when not running as administrator.</p>
 <p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
 your installation. You may also delete all the files downloaded for
 performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install\</span></code>):</p>
-<div class="literal-block-wrapper docutils container" id="id16">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id16" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id17" title="Permalink to this code">#</a></div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">rm </span><span class="n">-r</span> <span class="n">-force</span> <span class="n">smithy-install</span><span class="p">\</span>
 </pre></div>
 </div>
@@ -631,75 +649,75 @@ and a sha256-checksum utility (<code class="docutils literal notranslate"><span 
 We'll be using these to perform the verification.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This is only applicable to manual installations - Homebrew verifies
+<p class="last">This is only applicable to manual installations - Homebrew and Scoop verify
 checksums before install.</p>
 </div>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--7-input--1" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--1">MacOS</label><div class="tab-content docutils container">
 <p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
-file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the zip file (which you already
 downloaded) from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases">Smithy GitHub releases</a>.</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--1">Manual (x86)</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id17">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id17" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-darwin-x86_64.tar.gz.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-darwin-x86_64.tar.gz.#1&#39;</span>
-</pre></div>
-</div>
-</div>
-<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id18" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-darwin-x86_64.tar.gz.sha256<span class="o">)</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-darwin-x86_64.zip.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-darwin-x86_64.zip.#1&#39;</span>
 </pre></div>
 </div>
 </div>
-<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.47.0">release</a>, and import
-it into your key-chain.</p>
+<p>Verify the checksum of the zip file using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id19">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id19" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-darwin-x86_64.zip.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.48.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id20" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>gpg<span class="w"> </span>--import<span class="w"> </span>smithy-install/smithy.asc
 </pre></div>
 </div>
 </div>
 <p>Finally, after importing the key, verify the signature of the
-tarball with gpg.</p>
-<div class="literal-block-wrapper docutils container" id="id20">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id20" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.tar.gz.asc<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.tar.gz
+zip file with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id21" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.zip.asc<span class="w"> </span>smithy-install/smithy-cli-darwin-x86_64.zip
 </pre></div>
 </div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--2">Manual (ARM)</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id21">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id21" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-darwin-aarch64.tar.gz.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-darwin-aarch64.tar.gz.#1&#39;</span>
-</pre></div>
-</div>
-</div>
-<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id22">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id22" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-darwin-aarch64.tar.gz.sha256<span class="o">)</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-darwin-aarch64.zip.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-darwin-aarch64.zip.#1&#39;</span>
 </pre></div>
 </div>
 </div>
-<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.47.0">release</a>, and import
-it into your key-chain.</p>
+<p>Verify the checksum of the zip file using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id23">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id23" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-darwin-aarch64.zip.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.48.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id24" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>gpg<span class="w"> </span>--import<span class="w"> </span>smithy-install/smithy.asc
 </pre></div>
 </div>
 </div>
 <p>Finally, after importing the key, verify the signature of the
-tarball with gpg.</p>
-<div class="literal-block-wrapper docutils container" id="id24">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id24" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.tar.gz.asc<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.tar.gz
+zip file with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id25" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.zip.asc<span class="w"> </span>smithy-install/smithy-cli-darwin-aarch64.zip
 </pre></div>
 </div>
 </div>
@@ -708,69 +726,69 @@ tarball with gpg.</p>
 </div>
 <input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--2">Linux</label><div class="tab-content docutils container">
 <p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
-file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the zip file (which you already
 downloaded) from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases">Smithy GitHub releases</a>.</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--1">Manual (x86)</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id25">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id25" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-linux-x86_64.tar.gz.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-linux-x86_64.tar.gz.#1&#39;</span>
-</pre></div>
-</div>
-</div>
-<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id26">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id26" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-linux-x86_64.tar.gz.sha256<span class="o">)</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-linux-x86_64.zip.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-linux-x86_64.zip.#1&#39;</span>
 </pre></div>
 </div>
 </div>
-<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.47.0">release</a>, and import
-it into your key-chain.</p>
+<p>Verify the checksum of the zip file using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id27">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id27" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-linux-x86_64.zip.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.48.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id28" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>gpg<span class="w"> </span>--import<span class="w"> </span>smithy-install/smithy.asc
 </pre></div>
 </div>
 </div>
 <p>Finally, after importing the key, verify the signature of the
-tarball with gpg.</p>
-<div class="literal-block-wrapper docutils container" id="id28">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id28" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.tar.gz.asc<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.tar.gz
+zip file with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id29" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.zip.asc<span class="w"> </span>smithy-install/smithy-cli-linux-x86_64.zip
 </pre></div>
 </div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--2">Manual (ARM)</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id29">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id29" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy-cli-linux-aarch64.tar.gz.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-linux-aarch64.tar.gz.#1&#39;</span>
-</pre></div>
-</div>
-</div>
-<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id30">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id30" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-linux-aarch64.tar.gz.sha256<span class="o">)</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span><span class="s1">&#39;https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy-cli-linux-aarch64.zip.{asc,sha256}&#39;</span><span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;smithy-install/smithy-cli-linux-aarch64.zip.#1&#39;</span>
 </pre></div>
 </div>
 </div>
-<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.47.0">release</a>, and import
-it into your key-chain.</p>
+<p>Verify the checksum of the zip file using the <cite>sha256sum</cite> utility.</p>
 <div class="literal-block-wrapper docutils container" id="id31">
 <div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id31" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.47.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>smithy-install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>smithy-cli-linux-aarch64.zip.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.48.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id32" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/smithy-lang/smithy/releases/download/1.48.0/smithy.asc<span class="w"> </span>-o<span class="w"> </span>smithy-install/smithy.asc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>gpg<span class="w"> </span>--import<span class="w"> </span>smithy-install/smithy.asc
 </pre></div>
 </div>
 </div>
 <p>Finally, after importing the key, verify the signature of the
-tarball with gpg.</p>
-<div class="literal-block-wrapper docutils container" id="id32">
-<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id32" title="Permalink to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.tar.gz.asc<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.tar.gz
+zip file with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id33">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id33" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>gpg<span class="w"> </span>--verify<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.zip.asc<span class="w"> </span>smithy-install/smithy-cli-linux-aarch64.zip
 </pre></div>
 </div>
 </div>
@@ -779,50 +797,51 @@ tarball with gpg.</p>
 </div>
 <input class="tab-input" id="tab-set--7-input--3" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--3">Windows</label><div class="tab-content docutils container">
 <p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
-file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the zip file (which you already
 downloaded) from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases">Smithy GitHub releases</a>.</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--1">Manual (x64)</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id33">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id33" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">47</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span> <span class="p">`</span>
-    <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span><span class="p">;</span>
-<span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">47</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span> <span class="p">`</span>
-    <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span>
+<div class="literal-block-wrapper docutils container" id="id34">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id34" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">48</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">asc</span> <span class="p">`</span>
+    <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">asc</span>
+<span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">48</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">sha256</span> <span class="p">`</span>
+    <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">sha256</span>
 </pre></div>
 </div>
 </div>
-<p>Compute the actual checksum of the tarball using <code class="docutils literal notranslate"><span class="pre">certutil</span></code>.</p>
-<div class="literal-block-wrapper docutils container" id="id34">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id34" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">certutil</span> <span class="n">-hashfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="n">SHA256</span>
+<p>Compute the actual checksum of the zip file using <code class="docutils literal notranslate"><span class="pre">certutil</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id35">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id35" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">certutil</span> <span class="n">-hashfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span> <span class="n">SHA256</span>
 </pre></div>
 </div>
 </div>
 <p>Now, print out the expected checksum from the file that you
 downloaded (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>).</p>
-<div class="literal-block-wrapper docutils container" id="id35">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id35" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">cat </span><span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span>
+<div class="literal-block-wrapper docutils container" id="id36">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id36" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">cat </span><span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">sha256</span>
 </pre></div>
 </div>
 </div>
 <p>Verify that the output from the two commands matches. There may be a
 file-path appended to the latter command output - you
 may safely ignore that.</p>
-<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.47.0">release</a>, and import it into your key-chain.</p>
-<div class="literal-block-wrapper docutils container" id="id36">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id36" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">47</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span> <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span><span class="p">;</span>
-<span class="n">gpg</span> <span class="p">-</span><span class="n">-import</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/smithy-lang/smithy/releases/download/1.48.0">release</a>, and import it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id37">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id37" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">smithy-lang</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">48</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span> <span class="p">`</span>
+    <span class="n">-OutFile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span><span class="p">;</span> <span class="p">`</span>
+    <span class="n">gpg</span> <span class="p">-</span><span class="n">-import</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span>
 </pre></div>
 </div>
 </div>
 <p>Finally, after importing the key, verify the signature of the
-tarball with gpg.</p>
-<div class="literal-block-wrapper docutils container" id="id37">
-<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id37" title="Permalink to this code">#</a></div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">gpg</span> <span class="p">-</span><span class="n">-verify</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+zip file with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id38">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id38" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">gpg</span> <span class="p">-</span><span class="n">-verify</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span><span class="p">.</span><span class="n">asc</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">zip</span>
 </pre></div>
 </div>
 </div>

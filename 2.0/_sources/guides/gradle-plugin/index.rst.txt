@@ -10,7 +10,7 @@ build artifacts from Smithy models, and generate JARs for Smithy models and mode
 
 .. toctree::
     :maxdepth: 1
-    :caption: Migrate to version 0.8.0+
+    :caption: Migrate to version 0.10.0+
 
     gradle-migration-guide
 

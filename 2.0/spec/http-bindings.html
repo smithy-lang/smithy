@@ -735,8 +735,17 @@ is not &quot;requiredValue&quot;.</td>
 <span id="id2"></span><h4><span class="section-number">14.1.2.4. </span>Greedy labels<a class="headerlink" href="#greedy-labels" title="Permalink to this heading">#</a></h4>
 <p>A <em class="dfn">greedy label</em> is a label suffixed with the <code class="docutils literal notranslate"><span class="pre">+</span></code> qualifier that can be
 used to match more than one path segment. At most, one greedy label may exist
-in any path pattern, and if present, it MUST be the last label in the pattern.
+in any path pattern, and if present, it SHOULD be the last label in the pattern.
 Greedy labels MUST be bound to a string shape.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Servers implementing <a class="reference internal" href="#specificity-routing"><span class="std std-ref">Specificity Routing</span></a> MAY support more than one greedy label and
+not require it to be the last label in the pattern. The validation
+events are therefore emitted as <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> and can
+suppressed. Most servers don't support having more than one greedy
+label. Make sure that your server supports it and test that works
+as expected before suppressing those events.</p>
+</div>
 <p>Given a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label+}</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -827,10 +836,9 @@ contain a segment to match <code class="docutils literal notranslate"><span clas
 </div>
 <div class="section" id="pattern-validation-and-conflict-avoidance">
 <h4><span class="section-number">14.1.2.5. </span>Pattern Validation and Conflict Avoidance<a class="headerlink" href="#pattern-validation-and-conflict-avoidance" title="Permalink to this heading">#</a></h4>
-<p>Smithy validates the patterns within a service against each other to ensure
-that no two patterns conflict with each other for the same HTTP method. To
-prevent ambiguity when matching requests for different operations, the
-following rules are in place:</p>
+<p>Smithy validates the patterns within a service against each other to
+ensure that no two patterns conflict with each other for the same HTTP
+method. The following rules are in place:</p>
 <ol class="arabic simple">
 <li>All labels MUST be delimited by '/' characters.<ul>
 <li><code class="docutils literal notranslate"><span class="pre">/{foo}/{bar}</span></code> is legal</li>
@@ -841,12 +849,12 @@ following rules are in place:</p>
 </li>
 <li>At most, one greedy label MAY exist per pattern.<ul>
 <li><code class="docutils literal notranslate"><span class="pre">/{foo}/{bar+}</span></code> is legal</li>
-<li><code class="docutils literal notranslate"><span class="pre">/{foo+}/{bar+}</span></code> is illegal</li>
+<li><code class="docutils literal notranslate"><span class="pre">/{foo+}/bar/{baz+}</span></code> is illegal</li>
 </ul>
 </li>
-<li>If present, a greedy pattern MUST be the last label in a pattern.<ul>
+<li>If present, a greedy pattern SHOULD be the last label in a pattern.<ul>
 <li><code class="docutils literal notranslate"><span class="pre">/{foo}/{bar+}</span></code> is legal</li>
-<li><code class="docutils literal notranslate"><span class="pre">/{foo+}/{bar}</span></code> is illegal</li>
+<li><code class="docutils literal notranslate"><span class="pre">/{foo+}/bar/{baz}</span></code> is illegal</li>
 </ul>
 </li>
 <li>Patterns MUST NOT be equivalent if they share a host.<ul>
@@ -855,32 +863,154 @@ following rules are in place:</p>
 constraint traits on the label members.</li>
 </ul>
 </li>
-<li>A label and a literal SHOULD NOT both occupy the same segment in patterns
-which are equivalent to that point if they share a host.<ul>
-<li><code class="docutils literal notranslate"><span class="pre">/foo/bar/{baz}</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/baz/bam</span></code> can coexist.</li>
-<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> cannot coexist unless pattern
-traits prevent <code class="docutils literal notranslate"><span class="pre">{baz}</span></code> from evaluating to <code class="docutils literal notranslate"><span class="pre">bar</span></code> because the label
-occupies the same segment of another pattern with the same prefix.</li>
-</ul>
-</li>
-<li>A query string literal with no value and a query string literal with an
-empty value are considered equivalent. For example, <code class="docutils literal notranslate"><span class="pre">/foo?baz</span></code> and
-<code class="docutils literal notranslate"><span class="pre">/foo?baz=</span></code> are considered the same route.</li>
-<li>Patterns MAY conflict if the operations use different hosts. Different hosts
-can be configured using the <a class="reference internal" href="endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a>'s <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property.<ul>
-<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> can coexist if one operation has no
-endpoint trait and the other specifies <code class="docutils literal notranslate"><span class="pre">foo.</span></code> as the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> can coexist if one operation specifies
-<code class="docutils literal notranslate"><span class="pre">foo.</span></code> as the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> and the other specifies <code class="docutils literal notranslate"><span class="pre">bar.</span></code> as the
-<code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>.</li>
-</ul>
-</li>
+<li>A label and a literal MAY both occupy the same segment in patterns
+that are equivalent to that point if they share a host. Server
+implementations MUST route ambiguous requests to the operation with
+the most specific URI path (see <a class="reference internal" href="#specificity-routing"><span class="std std-ref">Specificity Routing</span></a>.)</li>
 </ol>
+</div>
+<div class="section" id="specificity-routing">
+<span id="id3"></span><h4><span class="section-number">14.1.2.6. </span>Specificity Routing<a class="headerlink" href="#specificity-routing" title="Permalink to this heading">#</a></h4>
+<p>Specificity routing allows Smithy compliant servers to support
+ambiguous URI patterns and resolve requests at runtime. The algorithm
+chooses the <em>best-ranked</em> match using the specificity of the path and
+literal query parameters when present. The core of the algorithm can
+be loosely defined as “a path with a non-label segment is considered
+more specific than one with a label segment in the same
+position. Similarly a segment with a non-greedy label is considered
+more specific than a segment with a greedy label segment in the same
+position.”</p>
+<p>The following algorithm is used to compare two paths</p>
+<p>Given two ambiguous URI patterns <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code> with segments <code class="docutils literal notranslate"><span class="pre">[A0,</span>
+<span class="pre">…,</span> <span class="pre">An]</span></code> and <code class="docutils literal notranslate"><span class="pre">[B0,</span> <span class="pre">…,</span> <span class="pre">Bm]</span></code> with query string literals <code class="docutils literal notranslate"><span class="pre">[AQ0,</span> <span class="pre">…,</span>
+<span class="pre">AQp]</span></code> and <code class="docutils literal notranslate"><span class="pre">[BQ0,</span> <span class="pre">…,</span> <span class="pre">BQq]</span></code> (with both <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> possibly zero,
+i.e., without query string literals), the following steps are taken to
+compare them, for each index <code class="docutils literal notranslate"><span class="pre">x</span></code> from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">min(n,</span> <span class="pre">m)</span></code></p>
+<ol class="arabic simple">
+<li>If <code class="docutils literal notranslate"><span class="pre">A[x]</span></code> and <code class="docutils literal notranslate"><span class="pre">B[x]</span></code> are both literals then continue (the
+literal values have to be equal otherwise the patterns are not
+ambiguous)</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">A[x]</span></code> is a literal and <code class="docutils literal notranslate"><span class="pre">B[x]</span></code> is a label then <code class="docutils literal notranslate"><span class="pre">A</span></code> is more
+specific than <code class="docutils literal notranslate"><span class="pre">B</span></code>,</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">A[x]</span></code> is a non-greedy label and <code class="docutils literal notranslate"><span class="pre">B[x]</span></code> is a greedy label
+then <code class="docutils literal notranslate"><span class="pre">A</span></code> is more specific than <code class="docutils literal notranslate"><span class="pre">B</span></code></li>
+<li>If <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&gt;</span> <span class="pre">m</span></code> then <code class="docutils literal notranslate"><span class="pre">A</span></code> is more specific than <code class="docutils literal notranslate"><span class="pre">B</span></code></li>
+<li>if <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">q</span></code> then <code class="docutils literal notranslate"><span class="pre">A</span></code> is more specific than <code class="docutils literal notranslate"><span class="pre">B</span></code></li>
+</ol>
+<p><strong>Routing Example 1</strong></p>
+<p>Given a service with the following URI patterns for the same method</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">/abc/bcd/{xyz}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">/abc/{xyz}/cde</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">/{xyz}/bcd/cde</span></code></li>
+</ol>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="30%" />
+<col width="10%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Request URI</th>
+<th class="head">Pattern Matched</th>
+<th class="head">Reason</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">/abc/bcd/cde</span></code></td>
+<td>Pattern 1</td>
+<td>Ambiguous with patterns 2 and 3. The literal <code class="docutils literal notranslate"><span class="pre">bcd</span></code> is more
+specific than the label <code class="docutils literal notranslate"><span class="pre">{xyz}</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">/abc/foo/cde</span></code></td>
+<td>Pattern 2</td>
+<td>Ambiguous with pattern 3. The literal segment <code class="docutils literal notranslate"><span class="pre">abc</span></code> is more
+specific than the label <code class="docutils literal notranslate"><span class="pre">{xyz}</span></code>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">/foo/bcd/cde</span></code></td>
+<td>Pattern 3</td>
+<td>Non-ambiguous.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Routing Example 2</strong></p>
+<p>Given a service with the following URI patterns for the same method</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">/abc/bcd/{xyz}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">/abc/{xyz}/cde</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">/{xyz}/bcd/cde?def=efg</span></code></li>
+</ol>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="30%" />
+<col width="10%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Request URI</th>
+<th class="head">Pattern Matched</th>
+<th class="head">Reason</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">/abc/bcd/cde?def=efg</span></code></td>
+<td>Pattern 1</td>
+<td>Ambiguous with numbers 2 and 3. The literal segment <code class="docutils literal notranslate"><span class="pre">abc</span></code> is
+more specific than the label <code class="docutils literal notranslate"><span class="pre">{xyz}</span></code>. Notice that path
+specificity wins over query string literals</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">/abc/foo/cde?def=efg</span></code></td>
+<td>Pattern 2</td>
+<td>Ambiguous with pattern 3. The literal segment <code class="docutils literal notranslate"><span class="pre">abc</span></code> is more
+specific than the label <code class="docutils literal notranslate"><span class="pre">{xyz}</span></code>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">/foo/bcd/cde?def=efg</span></code></td>
+<td>Pattern 3</td>
+<td>Non-ambiguous.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Routing Example 3</strong></p>
+<p>Given a service with the following URI patterns for the same method</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">/abc/{xyz+}/bcd</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">/abc/{xyz+}</span></code></li>
+</ol>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="30%" />
+<col width="10%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Request URI</th>
+<th class="head">Pattern Matched</th>
+<th class="head">Reason</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">/abc/foo/bar/bcd</span></code></td>
+<td>Pattern 1</td>
+<td>Ambiguous with numbers 2. The literal segment <code class="docutils literal notranslate"><span class="pre">bcd</span></code> is
+more specific than a non-segment.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">/abc/foo/bar/baz</span></code></td>
+<td>Pattern 2</td>
+<td>Non-ambiguous.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
 <div class="section" id="httperror-trait">
-<span id="smithy-api-httperror-trait"></span><span id="id3"></span><h2><span class="section-number">14.2. </span><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait<a class="headerlink" href="#httperror-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httperror-trait"></span><span id="id4"></span><h2><span class="section-number">14.2. </span><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait<a class="headerlink" href="#httperror-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an HTTP response code for an operation error.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure[trait|error]
@@ -911,7 +1041,7 @@ HTTP status code of the <a class="reference internal" href="type-refinement-trai
 </div>
 </div>
 <div class="section" id="httpheader-trait">
-<span id="smithy-api-httpheader-trait"></span><span id="id4"></span><h2><span class="section-number">14.3. </span><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait<a class="headerlink" href="#httpheader-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpheader-trait"></span><span id="id5"></span><h2><span class="section-number">14.3. </span><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait<a class="headerlink" href="#httpheader-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to an HTTP header.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(boolean, number, string, timestamp,
@@ -1033,7 +1163,7 @@ need to be modeled.</td>
 </div>
 </div>
 <div class="section" id="httplabel-trait">
-<span id="smithy-api-httplabel-trait"></span><span id="id5"></span><h2><span class="section-number">14.4. </span><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait<a class="headerlink" href="#httplabel-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httplabel-trait"></span><span id="id6"></span><h2><span class="section-number">14.4. </span><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait<a class="headerlink" href="#httplabel-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds an operation input structure member to an
 <a class="reference internal" href="#http-uri-label"><span class="std std-ref">HTTP label</span></a> so that it is used as part of an
@@ -1116,7 +1246,7 @@ is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httppayload-trait">
-<span id="smithy-api-httppayload-trait"></span><span id="id6"></span><h2><span class="section-number">14.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait<a class="headerlink" href="#httppayload-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httppayload-trait"></span><span id="id7"></span><h2><span class="section-number">14.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait<a class="headerlink" href="#httppayload-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a single structure member to the body of an HTTP message.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
@@ -1192,7 +1322,7 @@ in any other context and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpprefixheaders-trait">
-<span id="smithy-api-httpprefixheaders-trait"></span><span id="id7"></span><h2><span class="section-number">14.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait<a class="headerlink" href="#httpprefixheaders-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpprefixheaders-trait"></span><span id="id8"></span><h2><span class="section-number">14.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait<a class="headerlink" href="#httpprefixheaders-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1263,7 +1393,7 @@ meaning in any other context and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpquery-trait">
-<span id="smithy-api-httpquery-trait"></span><span id="id8"></span><h2><span class="section-number">14.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait<a class="headerlink" href="#httpquery-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpquery-trait"></span><span id="id9"></span><h2><span class="section-number">14.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait<a class="headerlink" href="#httpquery-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1305,8 +1435,8 @@ request:</p>
 }
 </pre></div>
 </div>
-<div class="section" id="id9">
-<h3><span class="section-number">14.7.1. </span>Serialization rules<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h3>
+<div class="section" id="id10">
+<h3><span class="section-number">14.7.1. </span>Serialization rules<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li>&quot;&amp;&quot; is used to separate query string parameter key-value pairs.</li>
 <li>&quot;=&quot; is used to separate query string parameter names from values.</li>
@@ -1357,7 +1487,7 @@ path.</p>
 </div>
 </div>
 <div class="section" id="httpqueryparams-trait">
-<span id="smithy-api-httpqueryparams-trait"></span><span id="id10"></span><h2><span class="section-number">14.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpqueryparams-trait"></span><span id="id11"></span><h2><span class="section-number">14.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to query string parameters.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1395,8 +1525,8 @@ target input map as query string parameters in an HTTP request:</p>
 }
 </pre></div>
 </div>
-<div class="section" id="id11">
-<h3><span class="section-number">14.8.1. </span>Serialization rules<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h3>
+<div class="section" id="id12">
+<h3><span class="section-number">14.8.1. </span>Serialization rules<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
 <p>See the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> serialization rules that define how the keys and values of the
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
@@ -1489,7 +1619,7 @@ is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpresponsecode-trait">
-<span id="smithy-api-httpresponsecode-trait"></span><span id="id12"></span><h2><span class="section-number">14.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait<a class="headerlink" href="#httpresponsecode-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpresponsecode-trait"></span><span id="id13"></span><h2><span class="section-number">14.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait<a class="headerlink" href="#httpresponsecode-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to the HTTP response status code so that an
 HTTP response status code can be set dynamically at runtime to something
@@ -1521,7 +1651,7 @@ and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="cors-trait">
-<span id="smithy-api-cors-trait"></span><span id="id13"></span><h2><span class="section-number">14.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-cors-trait"></span><span id="id14"></span><h2><span class="section-number">14.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines how a service supports cross-origin resource sharing</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
@@ -1585,7 +1715,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
-<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id14"></span><h2><span class="section-number">14.11. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait<a class="headerlink" href="#httpchecksumrequired-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id15"></span><h2><span class="section-number">14.11. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait<a class="headerlink" href="#httpchecksumrequired-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation requires a checksum in its HTTP request. By
 default, the checksum used for a service is a MD5 checksum passed in the
@@ -1783,6 +1913,7 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 <li><a class="reference internal" href="#query-string-literals">14.1.2.3. Query string literals</a></li>
 <li><a class="reference internal" href="#greedy-labels">14.1.2.4. Greedy labels</a></li>
 <li><a class="reference internal" href="#pattern-validation-and-conflict-avoidance">14.1.2.5. Pattern Validation and Conflict Avoidance</a></li>
+<li><a class="reference internal" href="#specificity-routing">14.1.2.6. Specificity Routing</a></li>
 </ul>
 </li>
 </ul>
@@ -1814,12 +1945,12 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 </ul>
 </li>
 <li><a class="reference internal" href="#httpquery-trait">14.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a><ul>
-<li><a class="reference internal" href="#id9">14.7.1. Serialization rules</a></li>
+<li><a class="reference internal" href="#id10">14.7.1. Serialization rules</a></li>
 <li><a class="reference internal" href="#httpquery-is-only-used-on-top-level-input">14.7.2. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> is only used on top-level input</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpqueryparams-trait">14.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a><ul>
-<li><a class="reference internal" href="#id11">14.8.1. Serialization rules</a></li>
+<li><a class="reference internal" href="#id12">14.8.1. Serialization rules</a></li>
 <li><a class="reference internal" href="#httpqueryparams-is-only-used-on-top-level-input">14.8.2. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> is only used on top-level input</a></li>
 </ul>
 </li>
