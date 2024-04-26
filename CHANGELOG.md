@@ -1,5 +1,52 @@
 # Smithy Changelog
 
+## 1.48.0 (2024-04-24)
+
+### Features
+
+* Updated HTTP binding validation to allow for specificity routing.
+  ([#2220](https://github.com/smithy-lang/smithy/pull/2220))
+* Added support for the `deprecated` trait in OpenAPI conversion.
+  ([#2221](https://github.com/smithy-lang/smithy/pull/2221),
+  [#2222](https://github.com/smithy-lang/smithy/pull/2222))
+* Added protocol tests for nested XML maps with XML names.
+  ([#2236](https://github.com/smithy-lang/smithy/pull/2236))
+* Added diff validation for services that migrate from sigv4 to sigv4a.
+  ([#2245](https://github.com/smithy-lang/smithy/pull/2245))
+* Emit a `NOTE` validation event on ignored duplicate shapes.
+  ([#2247](https://github.com/smithy-lang/smithy/pull/2247))
+* Added strongly typed properties for `TypedPropertiesBag`.
+  ([#2248](https://github.com/smithy-lang/smithy/pull/2248))
+* Updated trait code generation to use strongly typed property bags.
+  ([#2254](https://github.com/smithy-lang/smithy/pull/2254))
+* Added a Smithy Diff test runner.
+  ([#2250](https://github.com/smithy-lang/smithy/pull/2250))
+* Added captializing formatter for use in trait code generation and normalized
+  symbol references to reduce false positive duplicates.
+  ([#2255](https://github.com/smithy-lang/smithy/pull/2255))
+
+### Bug Fixes
+
+* Removed incorrect `Content-Type` from no-body XML payload protocol test.
+  ([#2218](https://github.com/smithy-lang/smithy/pull/2218))
+* Fixed header expectations in RPCv2 protocol tests.
+  ([#2246](https://github.com/smithy-lang/smithy/pull/2246))
+* Fixed `ModifiedTrait` validation for traits with breaking change rules.
+  ([#2249](https://github.com/smithy-lang/smithy/pull/2249))
+
+### Documentation
+
+* Fixed Gradle plugin version in documentation.
+  ([#2226](https://github.com/smithy-lang/smithy/pull/2226))
+* Updated the Gradle migration guide caption.
+  ([#2227](https://github.com/smithy-lang/smithy/pull/2227))
+* Updated installation instructions for the Smithy CLI.
+  ([#2229](https://github.com/smithy-lang/smithy/pull/2229))
+* Added missing commas in JSON AST docs.
+  ([#2230](https://github.com/smithy-lang/smithy/pull/2230))
+* Fixed incorrect reference to the `traitValidators` trait in the protocol
+  definition trait. ([#2241](https://github.com/smithy-lang/smithy/pull/2241/))
+
 ## 1.47.0 (2024-03-28)
 
 ### Features
