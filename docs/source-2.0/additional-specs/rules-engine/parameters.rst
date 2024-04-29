@@ -94,8 +94,8 @@ value must be selected and provided to the implementation. The following is the
 order of the most specific to least specific value locations:
 
 #. `smithy.rules#staticContextParams trait`_
-#. `smithy.rules#operationContextParams trait`_
 #. `smithy.rules#contextParam trait`_
+#. `smithy.rules#operationContextParams trait`_
 #. `smithy.rules#clientContextParams trait`_
 #. Built-in bindings
 #. Built-in binding default values
@@ -306,10 +306,15 @@ operation input using a JMESPath expression:
 `paths` specified in :ref:`OperationContextParams <smithy.rules#operationContextParams-trait>` are limited
 to a subset of JMESPath:
 
-* `Identifiers`_ - the most basic expression and can be used to extract a single element from a JSON document. The return value for an identifier is the value associated with the identifier. If the identifier does not exist in the JSON document, than a null value is returned.
-* `Sub Expressions`_ - a combination of two expressions separated by the `.` char.    Example:  `grandparent.parent.child`
-* `Wildcard Expressions`_ - Creates a projection over the values in an array or map.  Remaining expressions are evaluated against each returned element.
-* `Keys function`_ - return a list of the keys in a map.  This is the only supported function but is required for binding to key values.
+* `Identifiers`_ - the most basic expression and can be used to extract a single element from a JSON document.
+  The return value for an identifier is the value associated with the identifier. If the identifier does not
+  exist in the JSON document, than a null value is returned.
+* `Sub Expressions`_ - a combination of two expressions separated by the ``.`` char.
+  Example:  ``grandparent.parent.child``
+* `Wildcard Expressions`_ - Creates a projection over the values in an array or map.
+  Remaining expressions are evaluated against each returned element.
+* `Keys function`_ - return a list of the keys in a map.  This is the only supported function but is required
+  for binding to key values.
 
 
 .. smithy-trait:: smithy.rules#contextParam
