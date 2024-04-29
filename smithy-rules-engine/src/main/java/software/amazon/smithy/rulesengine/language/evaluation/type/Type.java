@@ -45,6 +45,9 @@ public interface Type {
         if (parameterType == ParameterType.BOOLEAN) {
             return booleanType();
         }
+        if (parameterType == ParameterType.STRING_ARRAY) {
+            return arrayType(optionalType(stringType()));
+        }
         throw new IllegalArgumentException("Unexpected parameter type: " + parameterType);
     }
 

@@ -10,6 +10,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
+import software.amazon.smithy.rulesengine.language.evaluation.type.ArrayType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.BooleanType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.StringType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -28,7 +29,12 @@ public enum ParameterType {
     /**
      * A "boolean" parameter type.
      */
-    BOOLEAN;
+    BOOLEAN,
+
+    /**
+     * An array (list) of strings parameter type.
+     */
+    STRING_ARRAY;
 
     /**
      * Creates a {@link ParameterType} of a specific type from the given Node information.
@@ -44,6 +50,9 @@ public enum ParameterType {
         }
         if (value.equalsIgnoreCase("Boolean")) {
             return BOOLEAN;
+        }
+        if (value.equalsIgnoreCase("StringArray")) {
+            return STRING_ARRAY;
         }
         throw new RuleError(new SourceException(
                 String.format("Unexpected parameter type `%s`. Expected `String` or `Boolean`.", value), node));
@@ -63,6 +72,17 @@ public enum ParameterType {
         if (node.isBooleanNode()) {
             return BOOLEAN;
         }
+        if (node.isArrayNode()) {
+            // confirm all elements are Strings
+            node.expectArrayNode().getElements().forEach(memberNode -> {
+                if (!memberNode.isStringNode()) {
+                    throw new RuleError(new SourceException(
+                            String.format("Unexpected array member parameter type `%s`. Expected a string.",
+                                    memberNode.getType()), memberNode));
+                }
+            });
+            return STRING_ARRAY;
+        }
         throw new RuleError(new SourceException(
                 String.format("Unexpected parameter type `%s`. Expected a string or boolean.", node.getType()), node));
     }
@@ -81,8 +101,14 @@ public enum ParameterType {
         if (type instanceof BooleanType) {
             return BOOLEAN;
         }
+        if (type instanceof ArrayType) {
+            ArrayType arrayType = (ArrayType) type;
+            if (arrayType.getMember().isA(Type.stringType()) || arrayType.getMember().isA(Type.emptyType())) {
+                return STRING_ARRAY;
+            }
+        }
         throw new RuntimeException(
-                String.format("Unexpected parameter type `%s`. Expected a string or boolean.", type));
+                String.format("Unexpected parameter type `%s`. Expected a string, boolean, or array<string>.", type));
     }
 
     /**
@@ -99,12 +125,24 @@ public enum ParameterType {
         if (type == ShapeType.BOOLEAN) {
             return BOOLEAN;
         }
+        if (type == ShapeType.LIST) {
+            return STRING_ARRAY;
+        }
         throw new RuntimeException(
-                String.format("Unexpected parameter type `%s`. Expected string or boolean.", type));
+                String.format("Unexpected parameter type `%s`. Expected string or boolean or list.", type));
     }
 
     @Override
     public String toString() {
-        return this == STRING ? "String" : "Boolean";
+        switch (this) {
+            case STRING:
+                return "String";
+            case BOOLEAN:
+                return "Boolean";
+            case STRING_ARRAY:
+                return "StringArray";
+            default:
+                return "Unknown Type";
+        }
     }
 }
