@@ -78,7 +78,7 @@ structure StaticContextParamDefinition {
 @unstable
 @private
 structure OperationContextParamDefinition {
-    /// a JMESPath expression to select the input element to bind to.
+    /// a JMESPath expression to select element(s) from the operation input to bind to.
     @required
     path: String
 }
