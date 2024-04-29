@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.traitcodegen.integrations.core;
 
+import java.util.List;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -12,9 +13,13 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenContext;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
+import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -64,6 +69,13 @@ public final class CoreIntegration implements TraitCodegenIntegration {
                 return symbolProvider.toMemberName(shape);
             }
         };
+    }
+
+    @Override
+    public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
+            TraitCodegenContext codegenContext
+    ) {
+        return ListUtils.of(new JavadocFormatterInterceptor());
     }
 
     private Symbol getTraitSymbol(TraitCodegenSettings settings, Shape shape, Symbol baseSymbol) {

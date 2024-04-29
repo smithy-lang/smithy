@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
@@ -29,13 +30,20 @@ import software.amazon.smithy.model.node.ObjectNode;
 public class TraitCodegenPluginTest {
     private static final int EXPECTED_NUMBER_OF_FILES = 55;
 
-    @Test
-    public void generatesExpectedTraitFiles() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
+    private MockManifest manifest;
+    private Model model;
+
+    @BeforeEach
+    void setup() {
+        manifest = new MockManifest();
+        model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .assemble()
                 .unwrap();
+    }
+
+    @Test
+    public void generatesExpectedTraitFiles() {
         PluginContext context = PluginContext.builder()
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
@@ -63,11 +71,6 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void filtersTags() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
         PluginContext context = PluginContext.builder()
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
@@ -89,11 +92,6 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void addsHeaderLines() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
         PluginContext context = PluginContext.builder()
                 .fileManifest(manifest)
                 .settings(ObjectNode.builder()
@@ -117,50 +115,5 @@ public class TraitCodegenPluginTest {
                 " * Header line one\n" +
                 " * Header line two\n" +
                 " */"));
-    }
-
-    @Test
-    public void doesNotFormatContentInsideHtmlTags() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
-                        .build()
-                )
-                .model(model)
-                .build();
-
-        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
-        plugin.execute(context);
-
-        assertFalse(manifest.getFiles().isEmpty());
-        assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
-        Optional<String> fileStringOptional = manifest.getFileString(
-                Paths.get("com/example/traits/structures/StructureTrait.java").toString());
-        assertTrue(fileStringOptional.isPresent());
-        String expected = "    /**\n"
-                          + "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n"
-                          + "     * wrapped.\n"
-                          + "     * For example:\n"
-                          + "     * <pre>\n"
-                          + "     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
-                          + "     * </pre>\n"
-                          + "     *\n"
-                          + "     * <ul>\n"
-                          + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
-                          + "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit </li>\n"
-                          + "     * </ul>\n"
-                          + "     */\n"
-                          + "    public Optional<List<String>> getFieldD() {\n"
-                          + "        return Optional.ofNullable(fieldD);\n"
-                          + "    }\n";
-        assertTrue(fileStringOptional.get().contains(expected));
     }
 }

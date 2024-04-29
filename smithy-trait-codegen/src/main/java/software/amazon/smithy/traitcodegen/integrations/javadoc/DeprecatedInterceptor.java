@@ -16,15 +16,15 @@ import software.amazon.smithy.utils.CodeInterceptor;
  *
  * <p>If the {@code DeprecatedTrait} contains a {@code since} field, then "As of " note will be added
  * to the generated tag.
+ * <p>Note: This interceptor should be run after {@link SinceInterceptor} and {@link ExternalDocumentationInterceptor}
+ * to ensure proper tag ordering.
  */
-final class DeprecatedNoteInterceptor implements CodeInterceptor.Appender<JavaDocSection, TraitCodegenWriter> {
+final class DeprecatedInterceptor implements CodeInterceptor.Appender<JavaDocSection, TraitCodegenWriter> {
     @Override
     public void append(TraitCodegenWriter writer, JavaDocSection section) {
         DeprecatedTrait trait = section.shape().expectTrait(DeprecatedTrait.class);
         writer.putContext("since", trait.getSince());
-        // Add spacing
-        writer.writeDocStringContents("");
-        writer.writeDocStringContents("@deprecated ${?since}As of ${since:L}. ${/since}$L", trait.getMessage());
+        writer.write("@deprecated ${?since}As of ${since:L}. ${/since}$L", trait.getMessage());
     }
 
     @Override

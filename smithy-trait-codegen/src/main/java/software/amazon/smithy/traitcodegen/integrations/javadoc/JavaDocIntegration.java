@@ -33,14 +33,12 @@ public final class JavaDocIntegration implements TraitCodegenIntegration  {
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
             TraitCodegenContext codegenContext) {
         return ListUtils.of(
-                new DeprecatedAnnotationClassInterceptor(),
-                new DeprecatedNoteInterceptor(),
-                new UnstableAnnotationClassInterceptor(),
-                new ClassJavaDocInterceptor(),
-                new ExternalDocsInterceptor(),
-                new BuilderClassSectionDocsInterceptor(),
-                new GetterJavaDocInterceptor(),
-                new EnumVariantJavaDocInterceptor()
+                new SmithyGeneratedInterceptor(),
+                new JavadocInjectorInterceptor(),
+                new ExternalDocumentationInterceptor(),
+                new SinceInterceptor(),
+                new DeprecatedInterceptor(),
+                new DocumentationTraitInterceptor()
         );
     }
 }
