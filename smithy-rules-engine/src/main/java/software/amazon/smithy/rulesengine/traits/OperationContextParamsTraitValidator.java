@@ -15,10 +15,28 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.LinterResult;
+import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
+import software.amazon.smithy.jmespath.ast.CurrentExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
+import software.amazon.smithy.jmespath.ast.FieldExpression;
+import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
+import software.amazon.smithy.jmespath.ast.FlattenExpression;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.IndexExpression;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
+import software.amazon.smithy.jmespath.ast.NotExpression;
+import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
+import software.amazon.smithy.jmespath.ast.OrExpression;
+import software.amazon.smithy.jmespath.ast.ProjectionExpression;
+import software.amazon.smithy.jmespath.ast.SliceExpression;
+import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -48,6 +66,7 @@ import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -81,6 +100,23 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
                                         String.join(", ",
                                                 linterResult.getProblems().stream()
                                                         .map(p -> "'" + p.toString() + "'")
+                                                        .collect(Collectors.toList()))
+                                )));
+                    }
+
+                    List<String> unsupportedExpressions = path.accept(new UnsupportedJmesPathVisitor());
+                    if (!unsupportedExpressions.isEmpty()) {
+                        events.add(error(operationShape,
+                                String.format("The operation `%s` is marked with `%s` which contains a "
+                                                + "key `%s` with a JMESPath path `%s` with "
+                                                + "unsupported expressions: %s.",
+                                        operationShape.getId(),
+                                        OperationContextParamsTrait.ID.toString(),
+                                        entry.getKey(),
+                                        entry.getValue().getPath(),
+                                        String.join(", ",
+                                                unsupportedExpressions.stream()
+                                                        .map(e -> "'" + e + "'")
                                                         .collect(Collectors.toList()))
                                 )));
                     }
@@ -308,6 +344,109 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
             }
 
             return i;
+        }
+    }
+
+    private static final class UnsupportedJmesPathVisitor implements ExpressionVisitor<List<String>> {
+
+        @Override
+        public List<String> visitComparator(ComparatorExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitCurrentNode(CurrentExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitExpressionType(ExpressionTypeExpression expression) {
+            return expression.getExpression().accept(this);
+        }
+
+        @Override
+        public List<String> visitFlatten(FlattenExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitFunction(FunctionExpression expression) {
+            if (expression.getName().equals("keys")) {
+                return Collections.emptyList();
+            } else {
+                return ListUtils.of(expression.toString());
+            }
+        }
+
+        @Override
+        public List<String> visitField(FieldExpression expression) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> visitIndex(IndexExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitLiteral(LiteralExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitMultiSelectHash(MultiSelectHashExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitAnd(AndExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitOr(OrExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitNot(NotExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitProjection(ProjectionExpression expression) {
+            return null;
+        }
+
+        @Override
+        public List<String> visitFilterProjection(FilterProjectionExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitObjectProjection(ObjectProjectionExpression expression) {
+            List<String> unsupported = new ArrayList<>();
+            unsupported.addAll(expression.getLeft().accept(this));
+            unsupported.addAll(expression.getRight().accept(this));
+            return Collections.unmodifiableList(unsupported);
+        }
+
+        @Override
+        public List<String> visitSlice(SliceExpression expression) {
+            return ListUtils.of(expression.toString());
+        }
+
+        @Override
+        public List<String> visitSubexpression(Subexpression expression) {
+            List<String> unsupported = new ArrayList<>();
+            unsupported.addAll(expression.getLeft().accept(this));
+            unsupported.addAll(expression.getRight().accept(this));
+            return Collections.unmodifiableList(unsupported);
         }
     }
 }
