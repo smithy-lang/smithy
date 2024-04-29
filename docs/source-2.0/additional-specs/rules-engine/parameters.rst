@@ -23,9 +23,9 @@ This following is the :rfc:`ABNF <5234>` grammar for rule set parameter names:
 .. productionlist:: smithy
     identifier = ALPHA *(ALPHA / DIGIT)
 
-Parameters declare their respective type using the ``type`` key. There are two
-supported rule set parameter types: ``string`` and ``boolean``. The following
-table provides the description of these types, and their Smithy compatible
+Parameters declare their respective type using the ``type`` key. There are three
+supported rule set parameter types: ``string``, ``boolean``, and ``stringArray```.
+The following table provides the description of these types, and their Smithy compatible
 types whose values can be bound to these parameters. Rule set parameters are
 always considered nullable and have no default value associated with them.
 
@@ -42,6 +42,9 @@ always considered nullable and have no default value associated with them.
     * - ``boolean``
       - ``boolean``
       - Boolean value type.
+    * - ``stringArray``
+      - ``List``
+      - A list with ``String`` members.
 
 
 .. _rules-engine-parameters-implementation:
