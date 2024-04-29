@@ -41,6 +41,18 @@ map staticContextParams {
     value: StaticContextParamDefinition
 }
 
+/// Binds one or more named rule-set parameters to elements contained in the operation's input structure.
+/// The type of the shapes targeted by the trait MUST match the parameter types defined in the rule-set.
+@unstable
+@trait(selector: "operation")
+map operationContextParams {
+    /// The rule-set parameter name.
+    key: String,
+
+    /// The static parameter definition.
+    value: OperationContextParamDefinition
+}
+
 /// Defines one or more named rule-set parameters to be generated as configurable client parameters.
 /// The type specified for the client parameter MUST match the parameter type defined in the rule-set.
 @unstable
@@ -60,6 +72,15 @@ structure StaticContextParamDefinition {
     /// The value to set the associated rule-set parameter to.
     @required
     value: Document
+}
+
+/// An operation context parameter definition.
+@unstable
+@private
+structure OperationContextParamDefinition {
+    /// a JMESPath expression to select the input element to bind to.
+    @required
+    path: String
 }
 
 /// A client context parameter definition.

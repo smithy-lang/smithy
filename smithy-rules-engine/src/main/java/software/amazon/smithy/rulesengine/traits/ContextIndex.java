@@ -57,6 +57,17 @@ public final class ContextIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets the operation context parameter names and their {@link OperationContextParamDefinition} for the given
+     * operation.
+     *
+     * @param operation The operation shape.
+     * @return The mapping of context parameter names to the JMESPath expression to bind to input elements.
+     */
+    public Optional<OperationContextParamsTrait> getOperationContextParams(Shape operation) {
+        return operation.getTrait(OperationContextParamsTrait.class);
+    }
+
+    /**
      * Gets the mapping of {@link MemberShape} to {@link ContextParamTrait} for the operation.
      *
      * @param operation The operation shape.

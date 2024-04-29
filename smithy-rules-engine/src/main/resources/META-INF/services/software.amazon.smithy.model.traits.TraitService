@@ -1,5 +1,6 @@
 software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait$Provider
 software.amazon.smithy.rulesengine.traits.ContextParamTrait$Provider
 software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait$Provider
+software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait$Provider
 software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait$Provider
 software.amazon.smithy.rulesengine.traits.EndpointTestsTrait$Provider
