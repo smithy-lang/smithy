@@ -2,8 +2,16 @@ $version: "2.0"
 
 namespace test.smithy.traitcodegen.structures
 
+/// structureTrait docs
+@externalDocumentation(
+    "External docs": "https://external.docs/structureTrait"
+)
 @trait
 structure structureTrait {
+
+    @externalDocumentation(
+        "External docs": "https://external.docs/structureTrait#fieldA"
+    )
     @required
     @pattern("^[^#+]+$")
     fieldA: String

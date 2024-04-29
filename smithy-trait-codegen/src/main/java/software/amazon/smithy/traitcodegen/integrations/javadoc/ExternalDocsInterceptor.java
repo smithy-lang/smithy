@@ -23,7 +23,7 @@ final class ExternalDocsInterceptor implements CodeInterceptor.Appender<JavaDocS
         // Add a space to make it easier to read
         writer.writeDocStringContents("");
         for (Map.Entry<String, String> entry : trait.getUrls().entrySet()) {
-            writer.writeDocStringContents("@see <a href=$S>$L</a>", entry.getKey(), entry.getValue());
+            writer.writeDocStringContents("@see <a href=$S>$L</a>", entry.getValue(), entry.getKey());
         }
     }
 

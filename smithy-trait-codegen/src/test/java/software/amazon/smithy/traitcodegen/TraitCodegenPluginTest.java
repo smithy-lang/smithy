@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
@@ -31,24 +30,7 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void generatesExpectedTraitFiles() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line One"))
-                        .build()
-                )
-                .model(model)
-                .build();
-
-        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
-        plugin.execute(context);
+        MockManifest manifest = runTraitCodegen(Collections.singletonList("Header line One"), Collections.emptyList());
 
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
@@ -63,25 +45,7 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void filtersTags() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line One"))
-                        .withMember("excludeTags", ArrayNode.fromStrings("filterOut"))
-                        .build()
-                )
-                .model(model)
-                .build();
-
-        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
-        plugin.execute(context);
+        MockManifest manifest = runTraitCodegen(Collections.singletonList("Header line One"), Collections.singletonList("filterOut"));
 
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES - 1, manifest.getFiles().size());
@@ -89,24 +53,7 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void addsHeaderLines() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
-                        .build()
-                )
-                .model(model)
-                .build();
-
-        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
-        plugin.execute(context);
+        MockManifest manifest = runTraitCodegen(Arrays.asList("Header line one", "Header line two"), Collections.emptyList());
 
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
@@ -121,24 +68,7 @@ public class TraitCodegenPluginTest {
 
     @Test
     public void doesNotFormatContentInsideHtmlTags() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line one", "Header line two"))
-                        .build()
-                )
-                .model(model)
-                .build();
-
-        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
-        plugin.execute(context);
+        MockManifest manifest = runTraitCodegen(Collections.singletonList("Header line One"), Collections.emptyList());
 
         assertFalse(manifest.getFiles().isEmpty());
         assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
@@ -163,4 +93,43 @@ public class TraitCodegenPluginTest {
                           + "    }\n";
         assertTrue(fileStringOptional.get().contains(expected));
     }
+
+    @Test
+    public void rendersExternalDocumentation() {
+        MockManifest manifest = runTraitCodegen(Collections.emptyList(), Collections.emptyList());
+
+        assertFalse(manifest.getFiles().isEmpty());
+        assertEquals(EXPECTED_NUMBER_OF_FILES, manifest.getFiles().size());
+        Optional<String> fileStringOptional = manifest.getFileString(
+                Paths.get("com/example/traits/structures/StructureTrait.java").toString());
+        assertTrue(fileStringOptional.isPresent());
+        String expectedStructureExternalDocs = "<a href=\"https://external.docs/structureTrait\">External docs</a>";
+        assertTrue(fileStringOptional.get().contains(expectedStructureExternalDocs));
+//        String expectedFieldExternalDocs = "<a href=\"https://external.docs/structureTrait#fieldA\">External docs</a>";
+//        assertTrue(fileStringOptional.get().contains(expectedFieldExternalDocs));
+    }
+
+    private MockManifest runTraitCodegen(List<String> headers, List<String> filters) {
+        MockManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .settings(ObjectNode.builder()
+                        .withMember("package", "com.example.traits")
+                        .withMember("namespace", "test.smithy.traitcodegen")
+                        .withMember("header", ArrayNode.fromStrings(headers))
+                        .withMember("excludeTags", ArrayNode.fromStrings(filters))
+                        .build()
+                )
+                .model(model)
+                .build();
+
+        SmithyBuildPlugin plugin = new TraitCodegenPlugin();
+        plugin.execute(context);
+        return manifest;
+    }
+
 }
