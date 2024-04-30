@@ -1,0 +1,7 @@
+[WARNING] example#Bar: This shape applies a trait that is unstable: smithy.rules#operationContextParams | UnstableTrait.smithy.rules#operationContextParams
+[ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `invalidJmesPath` with an unparseable JMESPath path `...`: Syntax error at line 1 column 1: Expected ['@', 'A-Z|a-z|_', '`', '*', '{', '[', '[]', '&', '!', '[?', '('], but found '.'. | OperationContextParamsTrait
+[ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a path `failsLint` with an invalid JMESPath path `listOfObjects.notAKey`: 'Object field 'notAKey' extraction performed on array'. | OperationContextParamsTrait
+[ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `unsupportedFunction` with a JMESPath path `length(listOfObjects)` with unsupported expressions: '`length` function'. | OperationContextParamsTrait
+[ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `unsupportedExpression` with a JMESPath path `listOfObjects[1]` with unsupported expressions: 'index'. | OperationContextParamsTrait
+
+

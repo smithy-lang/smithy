@@ -92,14 +92,14 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
                     if (!linterResult.getProblems().isEmpty()) {
                         events.add(error(operationShape,
                                 String.format("The operation `%s` is marked with `%s` which contains a "
-                                                + "key `%s` with an invalid JMESPath path `%s`: %s.",
+                                                + "path `%s` with an invalid JMESPath path `%s`: %s.",
                                         operationShape.getId(),
                                         OperationContextParamsTrait.ID.toString(),
                                         entry.getKey(),
                                         entry.getValue().getPath(),
                                         String.join(", ",
                                                 linterResult.getProblems().stream()
-                                                        .map(p -> "'" + p.toString() + "'")
+                                                        .map(p -> "'" + p.message + "'")
                                                         .collect(Collectors.toList()))
                                 )));
                     }
@@ -351,12 +351,12 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitComparator(ComparatorExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("comparator");
         }
 
         @Override
         public List<String> visitCurrentNode(CurrentExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("current node");
         }
 
         @Override
@@ -366,15 +366,18 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitFlatten(FlattenExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("flatten");
         }
 
         @Override
         public List<String> visitFunction(FunctionExpression expression) {
             if (expression.getName().equals("keys")) {
-                return Collections.emptyList();
+                return expression.getArguments().stream()
+                        .map(e -> e.accept(this))
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
             } else {
-                return ListUtils.of(expression.toString());
+                return ListUtils.of("`" + expression.getName() + "` function");
             }
         }
 
@@ -385,47 +388,47 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitIndex(IndexExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("index");
         }
 
         @Override
         public List<String> visitLiteral(LiteralExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("literal");
         }
 
         @Override
         public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("multiselect list");
         }
 
         @Override
         public List<String> visitMultiSelectHash(MultiSelectHashExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("multiselect hash");
         }
 
         @Override
         public List<String> visitAnd(AndExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("and");
         }
 
         @Override
         public List<String> visitOr(OrExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("or");
         }
 
         @Override
         public List<String> visitNot(NotExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("not");
         }
 
         @Override
         public List<String> visitProjection(ProjectionExpression expression) {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
         public List<String> visitFilterProjection(FilterProjectionExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("filter projection");
         }
 
         @Override
@@ -438,7 +441,7 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitSlice(SliceExpression expression) {
-            return ListUtils.of(expression.toString());
+            return ListUtils.of("slice");
         }
 
         @Override
