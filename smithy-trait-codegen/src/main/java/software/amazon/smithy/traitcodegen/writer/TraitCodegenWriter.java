@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
@@ -74,11 +75,14 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         addImport(symbol, symbol.getName());
     }
 
-    public void openDocstring() {
-        pushState().writeWithNoFormatting("/**");
-    }
+    /**
+     * Writes the provided text in the format of a Java doc string.
+     *
+     * @param contents text to format as a doc string.
+     */
+    public void writeDocString(String contents) {
+        writeWithNoFormatting("/**");
 
-    public void writeDocStringContents(String contents) {
         // Split out any HTML-tag wrapped sections as we do not want to wrap
         // any customer documentation with tags
         Matcher matcher = PATTERN.matcher(contents);
@@ -86,28 +90,26 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         writeInlineWithNoFormatting(" * ");
         while (matcher.find()) {
             // write all contents up to the match.
-            writeInlineWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos, matcher.start())
-                            .replace("\n", "\n * "), MAX_LINE_LENGTH - 8,
-                    getNewline() + " * ", false));
+            writeDocStringLine(contents.substring(lastMatchPos, matcher.start()));
+
             // write match contents
             writeInlineWithNoFormatting(contents.substring(matcher.start(), matcher.end()).replace("\n", "\n * "));
             lastMatchPos = matcher.end();
         }
+
         // Write out all remaining contents
-        writeWithNoFormatting(StringUtils.wrap(contents.substring(lastMatchPos).replace("\n", "\n * "),
-                MAX_LINE_LENGTH - 8,
-                getNewline() + " * ",
-                false));
+        writeDocStringLine(contents.substring(lastMatchPos));
+        writeWithNoFormatting("\n */");
     }
 
-    public void writeDocStringContents(String contents, Object... args) {
-        writeInlineWithNoFormatting(" * ");
-        write(StringUtils.wrap(contents.replace("\n", "\n * "), MAX_LINE_LENGTH - 8,
-                getNewline() + " * ", false), args);
-    }
-
-    public void closeDocstring() {
-        writeWithNoFormatting(" */").popState();
+    private void writeDocStringLine(String string) {
+        for (Scanner it = new Scanner(string); it.hasNextLine();) {
+            String s = it.nextLine();
+            writeInlineWithNoFormatting(StringUtils.wrap(s, MAX_LINE_LENGTH, getNewline() + " * ", false));
+            if (it.hasNextLine()) {
+                writeInlineWithNoFormatting(getNewline() + " * ");
+            }
+        }
     }
 
     @Override

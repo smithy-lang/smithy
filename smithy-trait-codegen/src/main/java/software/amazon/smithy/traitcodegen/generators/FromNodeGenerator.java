@@ -172,15 +172,11 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     }
 
     private void writeFromNodeJavaDoc() {
-        // Add docstring for method
-        writer.openDocstring();
-        writer.writeDocStringContents("Creates a {@link $T} from a {@link Node}.", symbol);
-        writer.writeDocStringContents("");
-        writer.writeDocStringContents("@param node Node to create the $T from.", symbol);
-        writer.writeDocStringContents("@return Returns the created $T.", symbol);
-        writer.writeDocStringContents("@throws $T if the given Node is invalid.",
-                ExpectationNotMetException.class);
-        writer.closeDocstring();
+        writer.writeDocString(writer.format("Creates a {@link $1T} from a {@link Node}.\n\n"
+                    + "@param node Node to create the $1T from.\n"
+                    + "@return Returns the created $1T.\n"
+                    + "@throws $2T if the given Node is invalid.\n",
+                symbol, ExpectationNotMetException.class));
     }
 
     /**

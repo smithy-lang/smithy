@@ -159,11 +159,9 @@ final class GetterGenerator implements Runnable {
         }
 
         private void generateEnumValueGetterDocstring(Symbol symbol) {
-            writer.openDocstring();
-            writer.writeDocStringContents("Gets the {@code $1T} value as a {@code $1B} enum.", symbol);
-            writer.writeDocStringContents("");
-            writer.writeDocStringContents("@return Returns the {@code $B} enum.", symbol);
-            writer.closeDocstring();
+            writer.writeDocString(writer.format("Gets the {@code $1T} value as a {@code $1B} enum.\n\n"
+                    + "@return Returns the {@code $1B} enum.",
+                    symbol));
         }
 
         private void generateValuesGetter(Shape shape) {

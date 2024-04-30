@@ -22,7 +22,6 @@ import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
-import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -61,7 +60,7 @@ final class BuilderGenerator implements Runnable {
     }
 
     private void writeBuilderClass() {
-        writer.pushState(new BuilderClassSection(symbol));
+        writer.writeDocString(writer.format("Builder for {@link $T}.", symbol));
         writer.writeInline("public static final class Builder $C", (Runnable) this::writeBuilderInterface);
         writer.indent();
         baseShape.accept(new BuilderPropertyGenerator());
@@ -72,7 +71,6 @@ final class BuilderGenerator implements Runnable {
         writer.openBlock("public $T build() {", "}", symbol,
                 () -> writer.write("return new $C;", (Runnable) this::writeBuilderReturn));
         writer.dedent().write("}");
-        writer.popState();
         writer.newLine();
     }
 
@@ -99,10 +97,7 @@ final class BuilderGenerator implements Runnable {
 
 
     private void writeToBuilderMethod() {
-        writer.openDocstring();
-        writer.writeDocStringContents("Creates a builder used to build a {@link $T}.", symbol);
-        writer.closeDocstring();
-        writer.override();
+        writer.writeDocString(writer.format("Creates a builder used to build a {@link $T}.", symbol));
         writer.openBlock("public $T<$T> toBuilder() {", "}",
                 SmithyBuilder.class, symbol, () -> {
             writer.writeInlineWithNoFormatting("return builder()");

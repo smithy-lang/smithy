@@ -129,14 +129,10 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
     }
 
     private void writeFromMethod(Symbol enumSymbol, TraitCodegenWriter writer) {
-        writer.openDocstring();
-        writer.writeDocStringContents("Create a {@code $B} from a value in a model.", enumSymbol);
-        writer.writeDocStringContents("");
-        writer.writeDocStringContents("<p> Any unknown value is returned as {@code UNKNOWN}.");
-        writer.writeDocStringContents("");
-        writer.writeDocStringContents("@param value Value to create enum from.");
-        writer.writeDocStringContents("@return Returns the {@link $B} enum value.", enumSymbol);
-        writer.closeDocstring();
+        writer.writeDocString(writer.format("Create a {@code $1B} from a value in a model.\n\n"
+                + "<p>Any unknown value is returned as {@code UNKNOWN}.\n"
+                + "@param value Value to create enum from.\n"
+                + "@return Returns the {@link $1B} enum value.", enumSymbol));
         writer.openBlock("public static $B from($T value) {", "}",
                 enumSymbol, getValueType(), () -> {
                     writer.write("$T.requireNonNull(value, \"Enum value should not be null.\");", Objects.class);
