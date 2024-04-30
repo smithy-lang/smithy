@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * section is instead populated by other {@code CodeInterceptors} that trigger off of specific traits.
  * Note: This interceptor will also add any relevant documentation annotations to classes, getters, or enum variants.
  */
-public class JavadocInjectorInterceptor implements CodeInterceptor.Prepender<CodeSection, TraitCodegenWriter> {
+public class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<CodeSection, TraitCodegenWriter> {
     @Override
     public Class<CodeSection> sectionType() {
         return CodeSection.class;

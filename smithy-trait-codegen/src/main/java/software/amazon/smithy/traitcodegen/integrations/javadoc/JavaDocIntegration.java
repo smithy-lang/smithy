@@ -34,7 +34,7 @@ public final class JavaDocIntegration implements TraitCodegenIntegration  {
             TraitCodegenContext codegenContext) {
         return ListUtils.of(
                 new SmithyGeneratedInterceptor(),
-                new JavadocInjectorInterceptor(),
+                new JavaDocInjectorInterceptor(),
                 new ExternalDocumentationInterceptor(),
                 new SinceInterceptor(),
                 new DeprecatedInterceptor(),
