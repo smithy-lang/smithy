@@ -1,3 +1,4 @@
 [WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
 [WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
 [WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[WARNING] example#GetThing: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait.smithy.rules#staticContextParams

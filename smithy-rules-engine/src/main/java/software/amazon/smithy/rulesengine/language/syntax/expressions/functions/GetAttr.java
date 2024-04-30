@@ -105,7 +105,9 @@ public final class GetAttr extends LibraryFunction {
                         throw new InvalidRulesException("Invalid path component: slice index must be >= 0",
                                 sourceLocation);
                     }
-                    result.add(Part.Key.of(component.substring(0, slicePartIndex)));
+                    if (slicePartIndex > 0) {
+                        result.add(Part.Key.of(component.substring(0, slicePartIndex)));
+                    }
                     result.add(new Part.Index(slice));
                 } catch (NumberFormatException ex) {
                     throw new InvalidRulesException(String.format("%s could not be parsed as a number", slicePart),

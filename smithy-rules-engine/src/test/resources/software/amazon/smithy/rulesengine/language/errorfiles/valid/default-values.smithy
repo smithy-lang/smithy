@@ -5,6 +5,7 @@ namespace example
 use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
+use smithy.rules#staticContextParams
 
 @clientContextParams(
     bar: {type: "string", documentation: "a client string parameter"}
@@ -30,10 +31,16 @@ use smithy.rules#endpointTests
             default: "asdf"
             documentation: "docs"
         },
+        stringArrayParam: {
+            type: "stringArray",
+            required: true,
+            default: ["a", "b", "c"],
+            documentation: "docs"
+        }
     },
     rules: [
         {
-            "documentation": "Template the region into the URI when FIPS is enabled",
+            "documentation": "Template baz into URI when bar is set",
             "conditions": [
                 {
                     "fn": "isSet",
@@ -46,6 +53,33 @@ use smithy.rules#endpointTests
             ],
             "endpoint": {
                 "url": "https://example.com/{baz}"
+            },
+            "type": "endpoint"
+        },
+        {
+            "documentation": "Template first array value into URI",
+            "conditions": [
+                {
+                    "fn": "getAttr",
+                    "argv": [
+                        {
+                            "ref": "stringArrayParam"
+                        },
+                        "[0]"
+                    ],
+                    "assign": "arrayValue"
+                },
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "arrayValue"
+                        }
+                    ]
+                }
+            ],
+            "endpoint": {
+                "url": "https://example.com/{arrayValue}"
             },
             "type": "endpoint"
         },
@@ -94,6 +128,19 @@ use smithy.rules#endpointTests
             }
         },
         {
+            "documentation": "Default array values used"
+            "params": {
+            }
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com/a"
+                }
+            }
+        },
+        {
+            "params": {
+                "stringArrayParam": []
+            }
             "documentation": "a documentation string",
             "expect": {
                 "error": "endpoint error"
@@ -106,6 +153,9 @@ service FizzBuzz {
     operations: [GetThing]
 }
 
+@staticContextParams(
+    "stringArrayParam": {value: []}
+)
 operation GetThing {
     input := {}
 }

@@ -54,9 +54,7 @@ public final class ArrayValue extends Value {
             return Type.arrayType(Type.emptyType());
         } else {
             Type first = values.get(0).getType();
-            boolean hasEmpties = false;
             if (first.isA(Type.emptyType())) {
-                hasEmpties = true;
                 first = null;
             }
             for (Value value : values) {
@@ -71,10 +69,7 @@ public final class ArrayValue extends Value {
                 // all empties
                 return Type.arrayType(Type.emptyType());
             }
-            if (hasEmpties) {
-                return Type.arrayType(Type.optionalType(first));
-            }
-            return Type.arrayType(first);
+            return Type.arrayType(Type.optionalType(first));
         }
     }
 

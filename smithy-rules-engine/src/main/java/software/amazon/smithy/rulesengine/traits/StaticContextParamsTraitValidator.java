@@ -31,7 +31,7 @@ public final class StaticContextParamsTraitValidator extends AbstractValidator {
                     .orElse(Collections.emptyMap());
             for (Map.Entry<String, StaticContextParamDefinition> entry : definitionMap.entrySet()) {
                 Node node = entry.getValue().getValue();
-                if (node.isStringNode() || node.isBooleanNode()) {
+                if (supportedType(node)) {
                     continue;
                 }
                 events.add(error(operationShape,
@@ -44,5 +44,18 @@ public final class StaticContextParamsTraitValidator extends AbstractValidator {
             }
         }
         return events;
+    }
+
+    private static boolean supportedType(Node node) {
+        if (node.isStringNode() || node.isBooleanNode()) {
+            return true;
+        }
+
+        if (node.isArrayNode()) {
+            // all elements must be strings
+            return node.expectArrayNode().getElements().stream().allMatch( e -> e.isStringNode());
+        }
+
+        return false;
     }
 }

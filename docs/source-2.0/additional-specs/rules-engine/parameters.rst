@@ -221,13 +221,13 @@ The ``staticContextParam`` structure has the following properties:
     * - value
       - ``document``
       - **Required**. The static value to be set for the parameter. The type
-        of the value MUST be either a ``string`` or ``boolean``.
+        of the value MUST be either a ``string``, ``boolean`` or a list of ``string``.
 
 Each parameter is identified using it’s name as specified in the rule set. The
 type of a ``staticContextParam`` MUST be compatible with the parameter type
 specified in the rule set.
 
-The following example specifies two parameters to statically set for an
+The following example specifies three parameters to statically set for an
 operation:
 
 .. code-block:: smithy
@@ -238,6 +238,9 @@ operation:
         }
         previewEndpoint: {
             value: true
+        },
+        supportedPrefixes: {
+            value: ["host", "id", "resourceId"]
         }
     )
     operation GetThing {}
