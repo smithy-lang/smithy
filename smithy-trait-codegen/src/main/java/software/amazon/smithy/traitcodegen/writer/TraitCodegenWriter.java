@@ -90,21 +90,19 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         writeInlineWithNoFormatting(" * ");
         while (matcher.find()) {
             // write all contents up to the match.
-            writeDocstringLine(contents.substring(lastMatchPos, matcher.start()));
+            writeDocStringLine(contents.substring(lastMatchPos, matcher.start()));
 
             // write match contents
-            writeInlineWithNoFormatting(
-                    contents.substring(matcher.start(), matcher.end()).replace("\n", "\n * ")
-            );
+            writeInlineWithNoFormatting(contents.substring(matcher.start(), matcher.end()).replace("\n", "\n * "));
             lastMatchPos = matcher.end();
         }
 
         // Write out all remaining contents
-        writeDocstringLine(contents.substring(lastMatchPos));
+        writeDocStringLine(contents.substring(lastMatchPos));
         writeWithNoFormatting("\n */");
     }
 
-    private void writeDocstringLine(String string) {
+    private void writeDocStringLine(String string) {
         for (Scanner it = new Scanner(string); it.hasNextLine();) {
             String s = it.nextLine();
             writeInlineWithNoFormatting(StringUtils.wrap(s, MAX_LINE_LENGTH, getNewline() + " * ", false));
