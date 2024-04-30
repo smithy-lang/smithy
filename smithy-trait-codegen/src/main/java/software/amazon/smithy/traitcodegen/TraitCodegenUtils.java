@@ -10,6 +10,7 @@ import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.CaseUtils;
@@ -133,5 +134,18 @@ public final class TraitCodegenUtils {
                     + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + ".");
         }
         return shapeNamespace.replace(rootSmithyNamespace, packageNamespace);
+    }
+
+    /**
+     * Determines if a given member represents a nullable type.
+     *
+     * @see <a href="https://smithy.io/2.0/spec/aggregate-types.html#structure-member-optionality">structure member optionality</a>
+     *
+     * @param shape member to check for nullability
+     *
+     * @return if the shape is a nullable type
+     */
+    public static boolean isNullableMember(MemberShape shape) {
+        return !shape.isRequired() && !shape.hasNonNullDefault();
     }
 }

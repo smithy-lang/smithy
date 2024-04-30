@@ -269,11 +269,11 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
         @Override
         public Void structureShape(StructureShape shape) {
             for (MemberShape member : shape.members()) {
-                if (member.isRequired()) {
+                if (TraitCodegenUtils.isNullableMember(member)) {
+                    writer.write("this.$L = $L;", symbolProvider.toMemberName(member), getBuilderValue(member));
+                } else {
                     writer.write("this.$1L = $2T.requiredState($1S, $3L);",
                             symbolProvider.toMemberName(member), SmithyBuilder.class, getBuilderValue(member));
-                } else {
-                    writer.write("this.$L = $L;", symbolProvider.toMemberName(member), getBuilderValue(member));
                 }
             }
             return null;
@@ -300,13 +300,17 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
         }
 
         private String getBuilderValue(MemberShape member) {
+            String memberName = symbolProvider.toMemberName(member);
+
             // If the member requires a builderRef we need to copy that builder ref value rather than use it directly.
             if (symbolProvider.toSymbol(member).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER).isPresent()) {
-                return writer.format("builder.$1L.hasValue() ? builder.$1L.copy() : null",
-                        symbolProvider.toMemberName(member));
-            } else {
-                return writer.format("builder.$L", symbolProvider.toMemberName(member));
+                if (TraitCodegenUtils.isNullableMember(member)) {
+                    return writer.format("builder.$1L.hasValue() ? builder.$1L.copy() : null", memberName);
+                } else {
+                    return writer.format("builder.$1L.copy()", memberName);
+                }
             }
+            return writer.format("builder.$L", memberName);
         }
 
         private void writeValuesInitializer() {

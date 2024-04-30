@@ -139,14 +139,14 @@ final class ToNodeGenerator implements Runnable {
                 writer.writeInline(".sourceLocation(getSourceLocation())");
             }
             for (MemberShape mem : shape.members()) {
-                if (mem.isRequired()) {
-                    writer.write(".withMember($S, $C)",
-                            mem.getMemberName(),
-                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
-                } else {
+                if (TraitCodegenUtils.isNullableMember(mem)) {
                     writer.write(".withOptionalMember($S, get$U().map(m -> $C))",
                             mem.getMemberName(), symbolProvider.toMemberName(mem),
                             (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m")));
+                } else {
+                    writer.write(".withMember($S, $C)",
+                            mem.getMemberName(),
+                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
                 }
             }
             writer.writeWithNoFormatting(".build();");
