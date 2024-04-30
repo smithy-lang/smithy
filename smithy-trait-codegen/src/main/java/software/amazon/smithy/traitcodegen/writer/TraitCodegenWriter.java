@@ -107,14 +107,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private void writeDocstringLine(String string) {
         for (Scanner it = new Scanner(string); it.hasNextLine();) {
             String s = it.nextLine();
-            writeInlineWithNoFormatting(
-                    StringUtils.wrap(
-                            s,
-                            MAX_LINE_LENGTH,
-                            getNewline() + " * ",
-                            false
-                    )
-            );
+            writeInlineWithNoFormatting(StringUtils.wrap(s, MAX_LINE_LENGTH, getNewline() + " * ", false));
             if (it.hasNextLine()) {
                 writeInlineWithNoFormatting(getNewline() + " * ");
             }

@@ -130,7 +130,7 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     private void writeFromMethod(Symbol enumSymbol, TraitCodegenWriter writer) {
         writer.writeDocString(writer.format("Create a {@code $1B} from a value in a model.\n\n"
-                + "<p> Any unknown value is returned as {@code UNKNOWN}.\n"
+                + "<p>Any unknown value is returned as {@code UNKNOWN}.\n"
                 + "@param value Value to create enum from.\n"
                 + "@return Returns the {@link $1B} enum value.", enumSymbol));
         writer.openBlock("public static $B from($T value) {", "}",
