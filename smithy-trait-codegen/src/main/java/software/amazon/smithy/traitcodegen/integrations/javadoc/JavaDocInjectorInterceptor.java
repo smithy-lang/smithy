@@ -6,8 +6,6 @@
 package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.DeprecatedTrait;
-import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
@@ -15,7 +13,6 @@ import software.amazon.smithy.traitcodegen.sections.JavaDocSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Adds a javadoc section to classes, getters, and enum variants.
@@ -24,7 +21,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * section is instead populated by other {@code CodeInterceptors} that trigger off of specific traits.
  * Note: This interceptor will also add any relevant documentation annotations to classes, getters, or enum variants.
  */
-public class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<CodeSection, TraitCodegenWriter> {
+final class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<CodeSection, TraitCodegenWriter> {
     @Override
     public Class<CodeSection> sectionType() {
         return CodeSection.class;
@@ -51,13 +48,5 @@ public class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<Cod
         }
 
         writer.injectSection(new JavaDocSection(shape));
-
-        if (shape.hasTrait(UnstableTrait.class)) {
-            writer.write("@$T", SmithyUnstableApi.class);
-        }
-
-        if (shape.hasTrait(DeprecatedTrait.class)) {
-            writer.write("@$T", Deprecated.class);
-        }
     }
 }

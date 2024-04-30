@@ -23,22 +23,13 @@ structure DocumentationWrapping {
 }
 
 @trait
-structure HasSmithyGeneratedClass {
-    nested: HasSmithyGeneratedNested
-}
-
-structure HasSmithyGeneratedNested {
-    field: String
-}
-
-@trait
-@deprecated
+@deprecated(message: "A message", since: "yesterday")
 structure DeprecatedStructure {
-    @deprecated
+    @deprecated(message: "A message", since: "yesterday")
     deprecatedMember: String,
 
     /// Has docs in addition to deprecated
-    @deprecated
+    @deprecated(message: "A message", since: "yesterday")
     deprecatedWithDocs: String
 }
 
@@ -80,7 +71,7 @@ structure Rollup {
 enum EnumVariantsTest {
     /// Just a documented variant
     @unstable
-    @deprecated
+    @deprecated(message: "Really. Dont use this.")
     @externalDocumentation(Example: "https://example.com")
     @since("4.5")
     A,

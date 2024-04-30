@@ -23,8 +23,11 @@ final class DeprecatedInterceptor implements CodeInterceptor.Appender<JavaDocSec
     @Override
     public void append(TraitCodegenWriter writer, JavaDocSection section) {
         DeprecatedTrait trait = section.shape().expectTrait(DeprecatedTrait.class);
-        writer.putContext("since", trait.getSince());
-        writer.write("@deprecated ${?since}As of ${since:L}. ${/since}$L", trait.getMessage());
+        // Only add the deprecated java doc tag if message or since message exist.
+        if (trait.getSince().isPresent() || trait.getMessage().isPresent()) {
+            writer.putContext("since", trait.getSince());
+            writer.write("@deprecated ${?since}As of ${since:L}. ${/since}$L", trait.getMessage());
+        }
     }
 
     @Override

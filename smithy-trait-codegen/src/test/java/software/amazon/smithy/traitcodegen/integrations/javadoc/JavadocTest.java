@@ -91,19 +91,10 @@ public class JavadocTest {
     }
 
     @Test
-    void hasSmithyGeneratedAnnotationEvenIfNoDocstring() {
-        String fileContents = getFileContentsFromShapeName("HasSmithyGeneratedClass", true);
-        String fileContentsNested = getFileContentsFromShapeName("HasSmithyGeneratedNested", false);
-
-        assertTrue(fileContents.contains("@SmithyGenerated"));
-        assertTrue(fileContentsNested.contains("@SmithyGenerated"));
-    }
-
-    @Test
     void deprecatedAnnotationAndNoteOnClass() {
         String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
         String expected = "/**\n" +
-                " * @deprecated\n" +
+                " * @deprecated As of yesterday. A message\n" +
                 " */\n" +
                 "@Deprecated\n" +
                 "@SmithyGenerated\n" +
@@ -115,7 +106,7 @@ public class JavadocTest {
     void deprecatedAnnotationAndNoteOnMember() {
         String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
         String expected = "    /**\n" +
-                "     * @deprecated\n" +
+                "     * @deprecated As of yesterday. A message\n" +
                 "     */\n" +
                 "    @Deprecated\n" +
                 "    public Optional<String> getDeprecatedMember() {";
@@ -128,7 +119,7 @@ public class JavadocTest {
         String expected = "    /**\n" +
                 "     * Has docs in addition to deprecated\n" +
                 "     *\n" +
-                "     * @deprecated\n" +
+                "     * @deprecated As of yesterday. A message\n" +
                 "     */\n" +
                 "    @Deprecated\n" +
                 "    public Optional<String> getDeprecatedWithDocs() {";
@@ -220,7 +211,7 @@ public class JavadocTest {
                 "         *\n" +
                 "         * @see <a href=\"https://example.com\">Example</a>\n" +
                 "         * @since 4.5\n" +
-                "         * @deprecated\n" +
+                "         * @deprecated Really. Dont use this.\n" +
                 "         */\n" +
                 "        @SmithyUnstableApi\n" +
                 "        @Deprecated\n" +

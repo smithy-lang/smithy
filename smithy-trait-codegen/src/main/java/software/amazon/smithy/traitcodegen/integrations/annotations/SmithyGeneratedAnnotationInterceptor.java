@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.integrations.javadoc;
+package software.amazon.smithy.traitcodegen.integrations.annotations;
 
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -13,7 +13,8 @@ import software.amazon.smithy.utils.SmithyGenerated;
 /**
  * Adds the {@link software.amazon.smithy.utils.SmithyGenerated} annotation to all generated classes.
  */
-public class SmithyGeneratedInterceptor implements CodeInterceptor.Prepender<ClassSection, TraitCodegenWriter> {
+final class SmithyGeneratedAnnotationInterceptor
+        implements CodeInterceptor.Prepender<ClassSection, TraitCodegenWriter> {
     @Override
     public Class<ClassSection> sectionType() {
         return ClassSection.class;
