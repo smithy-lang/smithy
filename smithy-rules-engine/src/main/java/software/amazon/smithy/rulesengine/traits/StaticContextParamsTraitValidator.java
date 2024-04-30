@@ -53,7 +53,7 @@ public final class StaticContextParamsTraitValidator extends AbstractValidator {
 
         if (node.isArrayNode()) {
             // all elements must be strings
-            return node.expectArrayNode().getElements().stream().allMatch( e -> e.isStringNode());
+            return node.expectArrayNode().getElements().stream().allMatch(e -> e.isStringNode());
         }
 
         return false;
