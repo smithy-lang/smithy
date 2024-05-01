@@ -23,8 +23,8 @@ This following is the :rfc:`ABNF <5234>` grammar for rule set parameter names:
 .. productionlist:: smithy
     identifier = ALPHA *(ALPHA / DIGIT)
 
-Parameters declare their respective type using the ``type`` key. There are three
-supported rule set parameter types: ``string``, ``boolean``, and ``stringArray``.
+Parameters declare their respective type using the ``type`` key. The following
+parameter types are supported: ``string``, ``boolean``, and ``stringArray``.
 The following table provides the description of these types, and their Smithy compatible
 types whose values can be bound to these parameters. Rule set parameters are
 always considered nullable and have no default value associated with them.
@@ -221,7 +221,8 @@ The ``staticContextParam`` structure has the following properties:
     * - value
       - ``document``
       - **Required**. The static value to be set for the parameter. The type
-        of the value MUST be either a ``string``, ``boolean`` or a list of ``string``.
+        of the value MUST be either a ``string``, ``boolean`` or a
+        json array of ``string``.
 
 Each parameter is identified using it’s name as specified in the rule set. The
 type of a ``staticContextParam`` MUST be compatible with the parameter type

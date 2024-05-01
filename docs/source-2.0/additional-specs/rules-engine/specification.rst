@@ -97,7 +97,7 @@ A parameter object contains the following properties:
       - Specifies a named built-in value that is sourced and provided to the
         endpoint provider by a caller.
     * - default
-      - ``string``, ``boolean`` or a list of ``string``.
+      - ``string``, ``boolean`` or a json array of ``string``.
       - Specifies the default value for the parameter if not set. Parameters
         with defaults MUST also be marked as ``required``. The type of the
         provided default MUST match ``type``.
