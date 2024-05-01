@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import com.example.traits.StringTrait;
+import com.example.traits.defaults.StructDefaultsTrait;
 import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
 import com.example.traits.enums.IntEnumTrait;
@@ -210,7 +211,34 @@ public class LoadsFromModelTest {
                                 SetMember.builder().a("second").b(2).c("more").build()))),
                 // Strings
                 Arguments.of("string-trait.smithy", StringTrait.class,
-                        MapUtils.of("getValue","Testing String Trait"))
+                        MapUtils.of("getValue","Testing String Trait")),
+                // Defaults
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultList", ListUtils.of())),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultMap", MapUtils.of())),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultBoolean", true)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultString", "default")),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultByte", (byte) 1)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultShort", (short) 1)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultInt", 1)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultLong", 1L)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultFloat", 2.2F)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultDouble", 1.1)),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultBigInt", new BigInteger("100"))),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultBigDecimal", new BigDecimal("100.01"))),
+                Arguments.of("defaults/defaults.smithy", StructDefaultsTrait.class,
+                        MapUtils.of("getDefaultTimestamp", Instant.parse("1985-04-12T23:20:50.52Z")))
         );
     }
 

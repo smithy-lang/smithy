@@ -5,20 +5,41 @@
 
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
@@ -172,6 +193,13 @@ final class BuilderGenerator implements Runnable {
                         symbolProvider.toSymbol(shape),
                         symbolProvider.toMemberName(shape),
                         builderRefOptional.orElseThrow(RuntimeException::new));
+                return;
+            }
+
+            if (shape.hasNonNullDefault()) {
+                writer.write("private $B $L = $C;", symbolProvider.toSymbol(shape),
+                        symbolProvider.toMemberName(shape),
+                        new DefaultInitializerGenerator(writer, model, symbolProvider, shape));
             } else {
                 writer.write("private $B $L;", symbolProvider.toSymbol(shape),
                         symbolProvider.toMemberName(shape));
@@ -303,6 +331,163 @@ final class BuilderGenerator implements Runnable {
         @Override
         public Void memberShape(MemberShape shape) {
             return model.expectShape(shape.getTarget()).accept(this);
+        }
+    }
+
+    /**
+     * Adds default values to builder properties.
+     */
+    private static final class DefaultInitializerGenerator extends ShapeVisitor.DataShapeVisitor<Void> implements
+            Runnable {
+        private final TraitCodegenWriter writer;
+        private final Model model;
+        private final SymbolProvider symbolProvider;
+        private final MemberShape member;
+        private Node defaultValue;
+
+        DefaultInitializerGenerator(
+                TraitCodegenWriter writer,
+                Model model,
+                SymbolProvider symbolProvider, MemberShape member
+        ) {
+            this.writer = writer;
+            this.model = model;
+            this.symbolProvider = symbolProvider;
+            this.member = member;
+        }
+
+        @Override
+        public void run() {
+            if (member.hasNonNullDefault()) {
+                this.defaultValue = member.expectTrait(DefaultTrait.class).toNode();
+                member.accept(this);
+            }
+        }
+
+        @Override
+        public Void blobShape(BlobShape blobShape) {
+            throw new UnsupportedOperationException("Blob default value cannot be set.");
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape booleanShape) {
+            writer.write("$L", defaultValue.expectBooleanNode().getValue());
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape listShape) {
+            throw new UnsupportedOperationException("List default values are not set with DefaultGenerator.");
+        }
+
+        @Override
+        public Void mapShape(MapShape mapShape) {
+            throw new UnsupportedOperationException("Map default values are not set with DefaultGenerator.");
+        }
+
+        @Override
+        public Void byteShape(ByteShape byteShape) {
+            // Bytes duplicate the integer toString method
+            writer.write("$L", defaultValue.expectNumberNode().getValue().intValue());
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shortShape) {
+            // Shorts duplicate the int toString method
+            writer.write("$L", defaultValue.expectNumberNode().getValue().intValue());
+            return null;
+        }
+
+        @Override
+        public Void integerShape(IntegerShape integerShape) {
+            writer.write("$L", defaultValue.expectNumberNode().getValue().intValue());
+            return null;
+        }
+
+        @Override
+        public Void longShape(LongShape longShape) {
+            writer.write("$LL", defaultValue.expectNumberNode().getValue().longValue());
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape floatShape) {
+            writer.write("$Lf", defaultValue.expectNumberNode().getValue().floatValue());
+            return null;
+        }
+
+        @Override
+        public Void documentShape(DocumentShape documentShape) {
+            throw new UnsupportedOperationException("Document shape defaults cannot be set.");
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape doubleShape) {
+            writer.write("$L", defaultValue.expectNumberNode().getValue().doubleValue());
+            return null;
+        }
+
+        @Override
+        public Void bigIntegerShape(BigIntegerShape bigIntegerShape) {
+            writer.write("$T.valueOf($L)", BigInteger.class, defaultValue.expectNumberNode().getValue().intValue());
+            return null;
+        }
+
+        @Override
+        public Void bigDecimalShape(BigDecimalShape bigDecimalShape) {
+            writer.write("$T.valueOf($L)", BigDecimal.class, defaultValue.expectNumberNode().getValue().doubleValue());
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape stringShape) {
+            writer.write("$S", defaultValue.expectStringNode().getValue());
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape structureShape) {
+            throw new UnsupportedOperationException("Structure shape defaults cannot be set.");
+        }
+
+        @Override
+        public Void unionShape(UnionShape unionShape) {
+            throw new UnsupportedOperationException("Union shape defaults cannot be set.");
+
+        }
+
+        @Override
+        public Void memberShape(MemberShape memberShape) {
+            return model.expectShape(memberShape.getTarget()).accept(this);
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape timestampShape) {
+            if (member.hasTrait(TimestampFormatTrait.class)) {
+                switch (member.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.writeInline(
+                                "$T.ofEpochSecond($LL)",
+                                Instant.class,
+                                defaultValue.expectNumberNode().getValue().longValue()
+                        );
+                        return null;
+                    case HTTP_DATE:
+                        writer.writeInline(
+                                "$T.from($T.RFC_1123_DATE_TIME.parse($S))",
+                                Instant.class,
+                                DateTimeFormatter.class,
+                                defaultValue.expectStringNode().getValue()
+                        );
+                        return null;
+                    default:
+                        // Fall through on default
+                        break;
+                }
+            }
+            writer.write("$T.parse($S)", Instant.class, defaultValue.expectStringNode().getValue());
+            return null;
         }
     }
 }

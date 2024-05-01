@@ -3,6 +3,7 @@ package software.amazon.smithy.traitcodegen.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.traits.StringTrait;
+import com.example.traits.defaults.StructDefaultsTrait;
 import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
 import com.example.traits.enums.IntEnumTrait;
@@ -136,7 +137,9 @@ public class CreatesTraitTest {
                         SetMember.builder().a("second").b(2).c("more").build().toNode()
                 )),
                 // Strings
-                Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils."))
+                Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
+                // Defaults
+                Arguments.of(StructDefaultsTrait.ID, Node.objectNode())
         );
     }
 

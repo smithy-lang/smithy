@@ -190,7 +190,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         private MemberGenerator(MemberShape member) {
             this.fieldName = member.getMemberName();
             this.memberName = symbolProvider.toMemberName(member);
-            this.memberPrefix = member.isRequired() ? ".expect" : ".get";
+            this.memberPrefix = (member.isRequired() && !member.hasNonNullDefault()) ? ".expect" : ".get";
         }
 
         @Override

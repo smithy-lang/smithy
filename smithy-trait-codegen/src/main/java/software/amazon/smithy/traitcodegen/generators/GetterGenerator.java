@@ -116,14 +116,7 @@ final class GetterGenerator implements Runnable {
                 // If the member is required or the type does not require an optional wrapper (such as a list or map)
                 // then do not wrap return in an Optional
                 writer.pushState(new GetterSection(member));
-                if (member.isRequired()) {
-                    writer.openBlock("public $T get$U() {", "}",
-                            symbolProvider.toSymbol(member),
-                            symbolProvider.toMemberName(member),
-                            () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
-                    writer.popState();
-                    writer.newLine();
-                } else {
+                if (TraitCodegenUtils.isNullableMember(member)) {
                     writer.openBlock("public $T<$T> get$U() {", "}",
                             Optional.class, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member),
                             () -> writer.write("return $T.ofNullable($L);",
@@ -140,6 +133,12 @@ final class GetterGenerator implements Runnable {
                                 symbolProvider.toMemberName(member),
                                 () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
                     }
+                } else {
+                    writer.openBlock("public $T get$U() {", "}",
+                            symbolProvider.toSymbol(member),
+                            symbolProvider.toMemberName(member),
+                            () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
+                    writer.popState();
                 }
                 writer.newLine();
             }

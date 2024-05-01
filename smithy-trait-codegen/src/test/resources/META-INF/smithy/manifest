@@ -41,4 +41,5 @@ uniqueitems/number-set-trait.smithy
 uniqueitems/string-set-trait.smithy
 uniqueitems/struct-set-trait.smithy
 filtered-by-tag.smithy
+defaults/defaults.smithy
 
