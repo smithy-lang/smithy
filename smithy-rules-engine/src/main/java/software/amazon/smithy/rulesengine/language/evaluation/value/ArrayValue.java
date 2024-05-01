@@ -54,22 +54,12 @@ public final class ArrayValue extends Value {
             return Type.arrayType(Type.emptyType());
         } else {
             Type first = values.get(0).getType();
-            if (first.isA(Type.emptyType())) {
-                first = null;
-            }
             for (Value value : values) {
-                if (first == null && !value.getType().isA(Type.emptyType())) {
-                    first = value.getType();
-                } else if (!value.getType().isA(Type.emptyType()) && !value.getType().isA(first)) {
-                    throw new SourceException("An array cannot contain different types. Expected: "
-                            + first + " found: " + value.getType(), this);
+                if (!value.getType().isA(first)) {
+                    throw new SourceException("An array cannot contain different types", this);
                 }
             }
-            if (first == null) {
-                // all empties
-                return Type.arrayType(Type.emptyType());
-            }
-            return Type.arrayType(Type.optionalType(first));
+            return Type.arrayType(first);
         }
     }
 

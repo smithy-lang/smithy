@@ -125,11 +125,8 @@ public enum ParameterType {
         if (type == ShapeType.BOOLEAN) {
             return BOOLEAN;
         }
-        if (type == ShapeType.LIST) {
-            return STRING_ARRAY;
-        }
         throw new RuntimeException(
-                String.format("Unexpected parameter type `%s`. Expected string or boolean or list.", type));
+                String.format("Unexpected parameter type `%s`. Expected string or boolean.", type));
     }
 
     @Override

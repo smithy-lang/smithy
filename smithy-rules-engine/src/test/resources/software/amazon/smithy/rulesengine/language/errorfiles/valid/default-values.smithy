@@ -68,14 +68,6 @@ use smithy.rules#staticContextParams
                         "[0]"
                     ],
                     "assign": "arrayValue"
-                },
-                {
-                    "fn": "isSet",
-                    "argv": [
-                        {
-                            "ref": "arrayValue"
-                        }
-                    ]
                 }
             ],
             "endpoint": {
