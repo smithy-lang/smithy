@@ -42,14 +42,16 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "Ec2EmptyQueryLists",
-        documentation: "Serializes empty query lists",
+        // Empty lists are NOT serialized for the EC2 query protocol, which differs from the AWS query protocol.
+        // See "EmptyQueryLists" for the AWS query protocol equivalent test case.
+        documentation: "Does not serialize empty query lists.",
         protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "Action=QueryLists&Version=2020-01-08&ListArg=",
+        body: "Action=QueryLists&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: []
