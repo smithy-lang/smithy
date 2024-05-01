@@ -97,10 +97,9 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
                                         OperationContextParamsTrait.ID.toString(),
                                         entry.getKey(),
                                         entry.getValue().getPath(),
-                                        String.join(", ",
-                                                linterResult.getProblems().stream()
-                                                        .map(p -> "'" + p.message + "'")
-                                                        .collect(Collectors.toList()))
+                                        linterResult.getProblems().stream()
+                                                .map(p -> "'" + p.message + "'")
+                                                .collect(Collectors.joining(", "))
                                 )));
                     }
 
@@ -114,10 +113,9 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
                                         OperationContextParamsTrait.ID.toString(),
                                         entry.getKey(),
                                         entry.getValue().getPath(),
-                                        String.join(", ",
-                                                unsupportedExpressions.stream()
-                                                        .map(e -> "'" + e + "'")
-                                                        .collect(Collectors.toList()))
+                                        unsupportedExpressions.stream()
+                                                .map(e -> "'" + e + "'")
+                                                .collect(Collectors.joining(", "))
                                 )));
                     }
                 } catch (JmespathException e) {

@@ -296,11 +296,11 @@ operation input using a JMESPath expression:
     }
 
     list ObjectIdentifierList {
-      member: ObjectIdentifier
+        member: ObjectIdentifier
     }
 
     structure ObjectIdentifier {
-      Key: String
+        Key: String
     }
 
 `paths` specified in :ref:`OperationContextParams <smithy.rules#operationContextParams-trait>` are limited
