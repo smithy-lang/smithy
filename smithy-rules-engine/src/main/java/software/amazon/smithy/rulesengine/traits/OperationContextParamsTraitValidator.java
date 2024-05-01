@@ -140,6 +140,118 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
                 : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
     }
 
+    private static final class UnsupportedJmesPathVisitor implements ExpressionVisitor<List<String>> {
+
+        @Override
+        public List<String> visitComparator(ComparatorExpression expression) {
+            return ListUtils.of("comparator");
+        }
+
+        @Override
+        public List<String> visitCurrentNode(CurrentExpression expression) {
+            return ListUtils.of("current node");
+        }
+
+        @Override
+        public List<String> visitExpressionType(ExpressionTypeExpression expression) {
+            return expression.getExpression().accept(this);
+        }
+
+        @Override
+        public List<String> visitFlatten(FlattenExpression expression) {
+            return ListUtils.of("flatten");
+        }
+
+        @Override
+        public List<String> visitFunction(FunctionExpression expression) {
+            if (expression.getName().equals("keys")) {
+                return expression.getArguments().stream()
+                        .map(e -> e.accept(this))
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
+            } else {
+                return ListUtils.of("`" + expression.getName() + "` function");
+            }
+        }
+
+        @Override
+        public List<String> visitField(FieldExpression expression) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> visitIndex(IndexExpression expression) {
+            return ListUtils.of("index");
+        }
+
+        @Override
+        public List<String> visitLiteral(LiteralExpression expression) {
+            return ListUtils.of("literal");
+        }
+
+        @Override
+        public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
+            return ListUtils.of("multiselect list");
+        }
+
+        @Override
+        public List<String> visitMultiSelectHash(MultiSelectHashExpression expression) {
+            return ListUtils.of("multiselect hash");
+        }
+
+        @Override
+        public List<String> visitAnd(AndExpression expression) {
+            return ListUtils.of("and");
+        }
+
+        @Override
+        public List<String> visitOr(OrExpression expression) {
+            return ListUtils.of("or");
+        }
+
+        @Override
+        public List<String> visitNot(NotExpression expression) {
+            return ListUtils.of("not");
+        }
+
+        @Override
+        public List<String> visitProjection(ProjectionExpression expression) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> visitFilterProjection(FilterProjectionExpression expression) {
+            return ListUtils.of("filter projection");
+        }
+
+        @Override
+        public List<String> visitObjectProjection(ObjectProjectionExpression expression) {
+            List<String> unsupported = new ArrayList<>();
+            unsupported.addAll(expression.getLeft().accept(this));
+            unsupported.addAll(expression.getRight().accept(this));
+            return Collections.unmodifiableList(unsupported);
+        }
+
+        @Override
+        public List<String> visitSlice(SliceExpression expression) {
+            return ListUtils.of("slice");
+        }
+
+        @Override
+        public List<String> visitSubexpression(Subexpression expression) {
+            List<String> unsupported = new ArrayList<>();
+            unsupported.addAll(expression.getLeft().accept(this));
+            unsupported.addAll(expression.getRight().accept(this));
+            return Collections.unmodifiableList(unsupported);
+        }
+    }
+
+    /**
+     * This class is duplicated from
+     * smithy-waiters/src/main/java/software/amazon/smithy/waiters/ModelRuntimeTypeGenerator.java
+     *
+     * It is duplicated here to avoid taking a dependency on smithy-waiters.
+     */
     private static final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
         private final Model model;
@@ -342,112 +454,6 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
             }
 
             return i;
-        }
-    }
-
-    private static final class UnsupportedJmesPathVisitor implements ExpressionVisitor<List<String>> {
-
-        @Override
-        public List<String> visitComparator(ComparatorExpression expression) {
-            return ListUtils.of("comparator");
-        }
-
-        @Override
-        public List<String> visitCurrentNode(CurrentExpression expression) {
-            return ListUtils.of("current node");
-        }
-
-        @Override
-        public List<String> visitExpressionType(ExpressionTypeExpression expression) {
-            return expression.getExpression().accept(this);
-        }
-
-        @Override
-        public List<String> visitFlatten(FlattenExpression expression) {
-            return ListUtils.of("flatten");
-        }
-
-        @Override
-        public List<String> visitFunction(FunctionExpression expression) {
-            if (expression.getName().equals("keys")) {
-                return expression.getArguments().stream()
-                        .map(e -> e.accept(this))
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
-            } else {
-                return ListUtils.of("`" + expression.getName() + "` function");
-            }
-        }
-
-        @Override
-        public List<String> visitField(FieldExpression expression) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> visitIndex(IndexExpression expression) {
-            return ListUtils.of("index");
-        }
-
-        @Override
-        public List<String> visitLiteral(LiteralExpression expression) {
-            return ListUtils.of("literal");
-        }
-
-        @Override
-        public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
-            return ListUtils.of("multiselect list");
-        }
-
-        @Override
-        public List<String> visitMultiSelectHash(MultiSelectHashExpression expression) {
-            return ListUtils.of("multiselect hash");
-        }
-
-        @Override
-        public List<String> visitAnd(AndExpression expression) {
-            return ListUtils.of("and");
-        }
-
-        @Override
-        public List<String> visitOr(OrExpression expression) {
-            return ListUtils.of("or");
-        }
-
-        @Override
-        public List<String> visitNot(NotExpression expression) {
-            return ListUtils.of("not");
-        }
-
-        @Override
-        public List<String> visitProjection(ProjectionExpression expression) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> visitFilterProjection(FilterProjectionExpression expression) {
-            return ListUtils.of("filter projection");
-        }
-
-        @Override
-        public List<String> visitObjectProjection(ObjectProjectionExpression expression) {
-            List<String> unsupported = new ArrayList<>();
-            unsupported.addAll(expression.getLeft().accept(this));
-            unsupported.addAll(expression.getRight().accept(this));
-            return Collections.unmodifiableList(unsupported);
-        }
-
-        @Override
-        public List<String> visitSlice(SliceExpression expression) {
-            return ListUtils.of("slice");
-        }
-
-        @Override
-        public List<String> visitSubexpression(Subexpression expression) {
-            List<String> unsupported = new ArrayList<>();
-            unsupported.addAll(expression.getLeft().accept(this));
-            unsupported.addAll(expression.getRight().accept(this));
-            return Collections.unmodifiableList(unsupported);
         }
     }
 }
