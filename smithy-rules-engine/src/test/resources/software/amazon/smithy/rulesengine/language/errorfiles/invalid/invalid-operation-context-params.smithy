@@ -10,7 +10,9 @@ service FizzBuzz {
 
 @operationContextParams(
     invalidJmesPath: {path: "..." },
-    failsLint: {path: "listOfObjects.notAKey"},
+    arrayAsObject: {path: "listOfObjects.notAKey"},
+    incorrectKey: {path: "nested.bar"},
+    projectionOnScalar: {path: "nested.foo[*]"},
     unsupportedFunction: {path: "length(listOfObjects)"},
     unsupportedExpression: {path: "listOfObjects[1]"}
 )
@@ -19,7 +21,7 @@ operation Bar {
 }
 
 structure BarInput {
-    resourceId: ResourceId,
+    nested: Nested,
     listOfObjects: ListOfObjects
 }
 
@@ -31,5 +33,8 @@ structure ObjectMember {
     key: Key,
 }
 
+structure Nested {
+    foo: String,
+}
+
 string Key
-string ResourceId

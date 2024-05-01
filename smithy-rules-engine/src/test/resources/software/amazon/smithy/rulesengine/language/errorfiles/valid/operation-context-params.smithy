@@ -11,7 +11,8 @@ service FizzBuzz {
 @operationContextParams(
     toplLevelMember: {path: "resourceId" },
     projection: {path: "listOfObjects[*].key"},
-    subExpression: {path: "nestedObject.key"},
+    subExpression: {path: "nested.nested.bar"},
+    recursive: {path: "nested.nested.recursiveMember.foo"}
     keysFunction: {path: "keys(map)"}
 )
 operation Bar {
@@ -19,8 +20,8 @@ operation Bar {
 }
 
 structure BarInput {
-    resourceId: ResourceId,
-    nestedObject: ObjectMember,
+    resourceId: String,
+    nested: Nested1,
     listOfObjects: ListOfObjects,
     map: Map
 }
@@ -30,13 +31,21 @@ list ListOfObjects {
 }
 
 structure ObjectMember {
-    key: Key,
+    key: String,
 }
 
 map Map {
-    key: Key,
-    value: ResourceId
+    key: String,
+    value: String
 }
 
-string Key
-string ResourceId
+structure Nested1 {
+    foo: String,
+    nested: Nested2
+}
+
+structure Nested2 {
+    bar: String,
+    recursiveMember: Nested1
+}
+
