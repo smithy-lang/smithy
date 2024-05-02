@@ -423,13 +423,13 @@ Shape types are grouped into three categories:
 
         * - Type
           - Description
-        * - :ref:`list`
+        * - :ref:`list <list>`
           - Ordered collection of homogeneous values
-        * - :ref:`map`
+        * - :ref:`map <map>`
           - Map data structure that maps string keys to homogeneous values
-        * - :ref:`structure`
+        * - :ref:`structure <structure>`
           - Fixed set of named heterogeneous members
-        * - :ref:`union`
+        * - :ref:`union <union>`
           - Tagged union data structure that can take on one of several
             different, but fixed, types
 :ref:`Service types <service-types>`
