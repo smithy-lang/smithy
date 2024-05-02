@@ -25,6 +25,10 @@ use smithy.rules#staticContextParams
         "ExtraParameter": {
             "type": "string",
             "documentation": "docs"
+        },
+        "StringArrayParameter": {
+            "type": "stringArray",
+            documentation: "docs"
         }
     },
     "rules": []
@@ -38,7 +42,8 @@ service FizzBuzz {
 
 @staticContextParams(
   "ParameterFoo": {value: "foo"},
-  "ExtraParameter": {value: "someValue"}
+  "ExtraParameter": {value: "someValue"},
+  "StringArrayParameter": {value: ["a", "b", "c"]}
 )
 operation GetResource {
  input: GetResourceInput

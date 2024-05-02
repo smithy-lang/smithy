@@ -23,9 +23,9 @@ This following is the :rfc:`ABNF <5234>` grammar for rule set parameter names:
 .. productionlist:: smithy
     identifier = ALPHA *(ALPHA / DIGIT)
 
-Parameters declare their respective type using the ``type`` key. There are two
-supported rule set parameter types: ``string`` and ``boolean``. The following
-table provides the description of these types, and their Smithy compatible
+Parameters declare their respective type using the ``type`` key. The following
+parameter types are supported: ``string``, ``boolean``, and ``stringArray``.
+The following table provides the description of these types, and their Smithy compatible
 types whose values can be bound to these parameters. Rule set parameters are
 always considered nullable and have no default value associated with them.
 
@@ -42,6 +42,9 @@ always considered nullable and have no default value associated with them.
     * - ``boolean``
       - ``boolean``
       - Boolean value type.
+    * - ``stringArray``
+      - ``list``
+      - A list with ``string`` members.
 
 
 .. _rules-engine-parameters-implementation:
@@ -219,13 +222,14 @@ The ``staticContextParam`` structure has the following properties:
     * - value
       - ``document``
       - **Required**. The static value to be set for the parameter. The type
-        of the value MUST be either a ``string`` or ``boolean``.
+        of the value MUST be either a ``string``, ``boolean`` or an
+        array of ``string``.
 
 Each parameter is identified using it’s name as specified in the rule set. The
 type of a ``staticContextParam`` MUST be compatible with the parameter type
 specified in the rule set.
 
-The following example specifies two parameters to statically set for an
+The following example specifies three parameters to statically set for an
 operation:
 
 .. code-block:: smithy
@@ -236,6 +240,9 @@ operation:
         }
         previewEndpoint: {
             value: true
+        },
+        supportedPrefixes: {
+            value: ["host", "id", "resourceId"]
         }
     )
     operation GetThing {}

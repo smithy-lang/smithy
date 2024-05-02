@@ -55,7 +55,7 @@ public final class ArrayValue extends Value {
         } else {
             Type first = values.get(0).getType();
             for (Value value : values) {
-                if (value.getType() != first) {
+                if (!value.getType().isA(first)) {
                     throw new SourceException("An array cannot contain different types", this);
                 }
             }
