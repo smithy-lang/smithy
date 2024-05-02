@@ -45,17 +45,18 @@ public enum ParameterType {
      */
     public static ParameterType fromNode(StringNode node) throws RuleError {
         String value = node.getValue();
-        if (value.equalsIgnoreCase("String")) {
+        if (value.equalsIgnoreCase("string")) {
             return STRING;
         }
-        if (value.equalsIgnoreCase("Boolean")) {
+        if (value.equalsIgnoreCase("boolean")) {
             return BOOLEAN;
         }
-        if (value.equalsIgnoreCase("StringArray")) {
+        if (value.equalsIgnoreCase("stringArray")) {
             return STRING_ARRAY;
         }
         throw new RuleError(new SourceException(
-                String.format("Unexpected parameter type `%s`. Expected `String` or `Boolean`.", value), node));
+                String.format("Unexpected parameter type `%s`. Expected `string`, `boolean`, or `stringArray`.",
+                        value), node));
     }
 
     /**
@@ -133,11 +134,11 @@ public enum ParameterType {
     public String toString() {
         switch (this) {
             case STRING:
-                return "String";
+                return "string";
             case BOOLEAN:
-                return "Boolean";
+                return "boolean";
             case STRING_ARRAY:
-                return "StringArray";
+                return "stringArray";
             default:
                 return "Unknown Type";
         }

@@ -2,7 +2,7 @@
 // while parsing the parameter `RegionName`
 //   at invalid-rules/invalid-param-type.json5:10
 // while parsing the parameter type
-// Unexpected parameter type `notastring`. Expected `String` or `Boolean`.
+// Unexpected parameter type `notastring`. Expected `string`, `boolean`, or `stringArray`.
 //   at invalid-rules/invalid-param-type.json5:11
 {
   "version": "1.2",

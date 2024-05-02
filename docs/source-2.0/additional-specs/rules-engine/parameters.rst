@@ -43,8 +43,8 @@ always considered nullable and have no default value associated with them.
       - ``boolean``
       - Boolean value type.
     * - ``stringArray``
-      - ``List``
-      - A list with ``String`` members.
+      - ``list``
+      - A list with ``string`` members.
 
 
 .. _rules-engine-parameters-implementation:
@@ -221,8 +221,8 @@ The ``staticContextParam`` structure has the following properties:
     * - value
       - ``document``
       - **Required**. The static value to be set for the parameter. The type
-        of the value MUST be either a ``string``, ``boolean`` or a
-        json array of ``string``.
+        of the value MUST be either a ``string``, ``boolean`` or an
+        array of ``string``.
 
 Each parameter is identified using it’s name as specified in the rule set. The
 type of a ``staticContextParam`` MUST be compatible with the parameter type

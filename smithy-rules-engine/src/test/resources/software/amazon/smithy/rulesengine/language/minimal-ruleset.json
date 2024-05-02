@@ -4,7 +4,7 @@
     "Region": {
       "builtIn": "AWS::Region",
       "required": true,
-      "type": "String"
+      "type": "string"
     }
   },
   "rules": [
