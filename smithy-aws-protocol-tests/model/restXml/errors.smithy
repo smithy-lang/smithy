@@ -103,7 +103,7 @@ apply ComplexError @httpResponseTests([
                 Foo: "bar"
             }
         },
-        code: 400,
+        code: 403,
         headers: {
             "Content-Type": "application/xml",
             "X-Header": "Header",
