@@ -51,7 +51,7 @@ public enum ParameterType {
         if (value.equalsIgnoreCase("boolean")) {
             return BOOLEAN;
         }
-        if (value.equalsIgnoreCase("stringArray")) {
+        if (value.equals("stringArray")) {
             return STRING_ARRAY;
         }
         throw new RuleError(new SourceException(
@@ -132,11 +132,12 @@ public enum ParameterType {
 
     @Override
     public String toString() {
+        // Inconsistent casing on string/boolean to preserve backwards compatibility in serialization
         switch (this) {
             case STRING:
-                return "string";
+                return "String";
             case BOOLEAN:
-                return "boolean";
+                return "Boolean";
             case STRING_ARRAY:
                 return "stringArray";
             default:
