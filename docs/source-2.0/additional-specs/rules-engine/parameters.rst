@@ -95,6 +95,7 @@ order of the most specific to least specific value locations:
 
 #. `smithy.rules#staticContextParams trait`_
 #. `smithy.rules#contextParam trait`_
+#. `smithy.rules#operationContextParams trait`_
 #. `smithy.rules#clientContextParams trait`_
 #. Built-in bindings
 #. Built-in binding default values
@@ -240,6 +241,82 @@ operation:
     operation GetThing {}
 
 
+.. smithy-trait:: smithy.rules#operationContextParams
+.. _smithy.rules#operationContextParams-trait:
+
+``smithy.rules#operationContextParams`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Defines one or more rule set parameters that MUST be bound to values
+    specified in the operation input.
+Trait selector
+    ``operation``
+Value type
+    ``map`` of ``string`` containing a rule set parameter name to a
+    ``operationContextParam`` structure.
+
+The ``operationContextParam`` structure has the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 23 67
+
+    * - Property
+      - Type
+      - Description
+    * - path
+      - ``string``
+      - **Required**. A JMESPath expression to select element(s) from the operation input to bind to.
+
+Each parameter is identified using it’s name as specified in the rule set. The
+type of a ``operationContextParam`` MUST be compatible with the parameter type
+specified in the rule set.
+
+The following example specifies a parameter bound to an array of object keys in the
+operation input using a JMESPath expression:
+
+.. code-block:: smithy
+
+    @operationContextParams(
+        ObjectKeys: {
+            path: "Delete.Objects[*].Key"
+        }
+    )
+    operation DeleteObjects {
+        input: DeleteObjectsRequest
+    }
+
+    structure DeleteObjectsRequest {
+        Delete: Delete
+    }
+
+    structure Delete {
+        Objects: ObjectIdentifierList
+    }
+
+    list ObjectIdentifierList {
+        member: ObjectIdentifier
+    }
+
+    structure ObjectIdentifier {
+        Key: String
+    }
+
+`paths` specified in :ref:`OperationContextParams <smithy.rules#operationContextParams-trait>` are limited
+to a subset of JMESPath:
+
+* `Identifiers`_ - the most basic expression and can be used to extract a single element from a JSON document.
+  The return value for an identifier is the value associated with the identifier. If the identifier does not
+  exist in the JSON document, than a null value is returned.
+* `Sub Expressions`_ - a combination of two expressions separated by the ``.`` char.
+  Example:  ``grandparent.parent.child``
+* `Wildcard Expressions`_ - Creates a projection over the values in an array or map.
+  Remaining expressions are evaluated against each returned element.
+* `Keys function`_ - return a list of the keys in a map.  This is the only supported function but is required
+  for binding to key values.
+
+
 .. smithy-trait:: smithy.rules#contextParam
 .. _smithy.rules#contextParam-trait:
 
@@ -343,3 +420,7 @@ The rules engine is highly extensible through
 
 .. _Javadocs: https://smithy.io/javadoc/__smithy_version__/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
+.. _Identifiers: https://jmespath.org/specification.html#identifiers
+.. _Sub expressions: https://jmespath.org/specification.html#subexpressions
+.. _Wildcard expressions: https://jmespath.org/specification.html#wildcard-expressions
+.. _Keys function: https://jmespath.org/specification.html#keys
