@@ -21,14 +21,24 @@ operation ListFoo {
     }
     output:= with [Paginated] {
         status: Status
-        items: StringList
+        items: FooList
         instruction: Instruction
         facecard: FaceCard
     }
 }
 
-list StringList {
-    member: String
+structure FooStructure {
+    id: String
+    tags: StringMap
+}
+
+map StringMap {
+    key: String
+    value: String
+}
+
+list FooList {
+    member: FooStructure
 }
 
 @enum([

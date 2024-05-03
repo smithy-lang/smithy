@@ -100,6 +100,16 @@ public class CodegenDirectorTest {
         }
 
         @Override
+        public void generateList(GenerateListDirective<TestContext, TestSettings> directive) {
+            generatedShapes.add(directive.shape().getId());
+        }
+
+        @Override
+        public void generateMap(GenerateMapDirective<TestContext, TestSettings> directive) {
+            generatedShapes.add(directive.shape().getId());
+        }
+
+        @Override
         public void generateEnumShape(GenerateEnumDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
             GenerateEnumDirective.EnumType type = directive.getEnumType();
@@ -187,6 +197,9 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#TheFoo"),
                 ShapeId.from("smithy.example#ListFooInput"),
                 ShapeId.from("smithy.example#ListFooOutput"),
+                ShapeId.from("smithy.example#FooStructure"),
+                ShapeId.from("smithy.example#FooList"),
+                ShapeId.from("smithy.example#StringMap"),
                 ShapeId.from("smithy.example#Status"),
                 ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),
@@ -229,6 +242,9 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#TheFoo"),
                 ShapeId.from("smithy.example#ListFooInput"),
                 ShapeId.from("smithy.example#ListFooOutput"),
+                ShapeId.from("smithy.example#FooStructure"),
+                ShapeId.from("smithy.example#FooList"),
+                ShapeId.from("smithy.example#StringMap"),
                 ShapeId.from("smithy.example#Status"),
                 ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),

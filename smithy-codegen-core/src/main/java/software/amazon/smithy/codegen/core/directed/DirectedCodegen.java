@@ -100,6 +100,20 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?, I>, S, I extends
     void generateUnion(GenerateUnionDirective<C, S> directive);
 
     /**
+     * Generates any code needed for a list shape.
+     *
+     * @param directive Directive to perform.
+     */
+    default void generateList(GenerateListDirective<C, S> directive) {}
+
+    /**
+     * Generates any code needed for a map shape.
+     *
+     * @param directive Directive to perform.
+     */
+    default void generateMap(GenerateMapDirective<C, S> directive) {}
+
+    /**
      * Generates the code needed for an enum shape, whether it's a string shape
      * marked with the enum trait, or a proper enum shape introduced in Smithy
      * IDL 2.0.
