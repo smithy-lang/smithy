@@ -39,6 +39,8 @@ import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -553,6 +555,20 @@ public final class CodegenDirector<
         public Void unionShape(UnionShape shape) {
             LOGGER.finest(() -> "Generating union " + shape.getId());
             directedCodegen.generateUnion(new GenerateUnionDirective<>(context, serviceShape, shape));
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            LOGGER.finest(() -> "Generating list " + shape.getId());
+            directedCodegen.generateList(new GenerateListDirective<>(context, serviceShape, shape));
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            LOGGER.finest(() -> "Generating map " + shape.getId());
+            directedCodegen.generateMap(new GenerateMapDirective<>(context, serviceShape, shape));
             return null;
         }
 
