@@ -47,6 +47,7 @@ public class ChangedEnumTraitTest {
                 .addTrait(EnumTrait.builder()
                         .addEnum(EnumDefinition.builder().value("foo").build())
                         .addEnum(EnumDefinition.builder().value("baz").build())
+                        .addEnum(EnumDefinition.builder().value("bar").build())
                         .sourceLocation(source)
                         .build())
                 .build();
@@ -54,9 +55,14 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(0).getSeverity(), equalTo(Severity.NOTE));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(0).getSourceLocation(), equalTo(source));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.2").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended").stream()
+                .allMatch(e -> e.getSeverity() == Severity.NOTE), equalTo(true));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended").stream()
+                .allMatch(e -> source.equals(e.getSourceLocation())), equalTo(true));
     }
 
     @Test
@@ -86,9 +92,9 @@ public class ChangedEnumTraitTest {
                 equalTo(Severity.ERROR));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").get(0).getSourceLocation(),
                 equalTo(source));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(1).getSeverity(),
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.1").get(0).getSeverity(),
                 equalTo(Severity.NOTE));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(1).getSourceLocation(),
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.1").get(0).getSourceLocation(),
                 equalTo(source));
     }
 
@@ -115,10 +121,10 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.1").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(0).getSourceLocation(),
                 equalTo(source));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended").stream()
                 .allMatch(e -> e.getSeverity() == Severity.NOTE), equalTo(true));
     }
 
@@ -455,16 +461,15 @@ public class ChangedEnumTraitTest {
 
         List<ValidationEvent> changeEvents = TestHelper.findEvents(allEvents, "ChangedEnumTrait");
         assertThat(changeEvents.size(), equalTo(2));
-        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed.1").get(0).getSourceLocation(),
-                equalTo(beforeSource));
 
-        ValidationEvent removedEvent = changeEvents.get(0);
+        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        ValidationEvent removedEvent = TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed.1").get(0);
         assertThat(removedEvent.getSeverity(), equalTo(Severity.ERROR));
         assertThat(removedEvent.getMessage(), stringContainsInOrder("Enum value `old2` was removed"));
         assertThat(removedEvent.getSourceLocation(), equalTo(beforeSource));
 
-        ValidationEvent appendedEvent = changeEvents.get(1);
+        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Appended.2").size(), equalTo(1));
+        ValidationEvent appendedEvent = TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Appended.2").get(0);
         assertThat(appendedEvent.getSeverity(), equalTo(Severity.NOTE));
         assertThat(appendedEvent.getMessage(), stringContainsInOrder("Enum value `new1` was appended"));
         assertThat(appendedEvent.getSourceLocation(), equalTo(afterSource));
@@ -512,7 +517,7 @@ public class ChangedEnumTraitTest {
                 equalTo(afterSource));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(0, 3).stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(3, 4).stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.2").stream()
                 .allMatch(e -> e.getSeverity() == Severity.NOTE), equalTo(true));
     }
 
@@ -553,7 +558,7 @@ public class ChangedEnumTraitTest {
                 equalTo(source));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(1, 2).stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Appended.2").stream()
                 .allMatch(e -> e.getSeverity() == Severity.NOTE), equalTo(true));
     }
 }
