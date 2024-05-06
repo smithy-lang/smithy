@@ -32,9 +32,10 @@ structure Foo {
     )
     /// 16 (change)
     @since("1.x")
-    /// 17 (TODO: change)
+    /// 17 (change)
     bar: String
-    /// 18 (change)
+
+    /// 18 (TODO: handle this case somehow)
 }
 
 /// 19 (change)

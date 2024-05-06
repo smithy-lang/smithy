@@ -23,19 +23,19 @@ use smithy.api#String
 
 /// 12 (keep)
 @deprecated
-/// 13 (change)
+// 13 (change)
 structure Foo {
     /// 14 (keep)
     @length(
         // 15 (change)
         min: 1
     )
-    /// 16 (change)
+    // 16 (change)
     @since("1.x")
-    /// 17 (TODO: change)
+    // 17 (change)
     bar: String
 
-    // 18 (change)
+    /// 18 (TODO: handle this case somehow)
 }
 
 // 19 (change)
