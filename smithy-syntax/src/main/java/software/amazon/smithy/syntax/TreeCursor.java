@@ -318,6 +318,19 @@ public final class TreeCursor implements FromSourceLocation {
         }
     }
 
+    /**
+     * @return All siblings after this cursor, in order.
+     */
+    public List<TreeCursor> remainingSiblings() {
+        List<TreeCursor> remaining = new ArrayList<>();
+        TreeCursor nextSibling = getNextSibling();
+        while (nextSibling != null) {
+            remaining.add(nextSibling);
+            nextSibling = nextSibling.getNextSibling();
+        }
+        return remaining;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
