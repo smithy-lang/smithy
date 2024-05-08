@@ -82,6 +82,16 @@ final class FixBadDocComments implements Function<TokenTree, TokenTree> {
                     updateNestedChildren(br);
                 }
             }
+            // Fix any trailing doc comments in shape bodies
+            for (TreeCursor members : shapeStatements.findChildrenByType(TreeType.SHAPE_MEMBERS)) {
+                TreeCursor closeBrace = members.getLastChild();
+                if (closeBrace != null) {
+                    TreeCursor possibleTrailingWs = closeBrace.getPreviousSibling();
+                    if (possibleTrailingWs != null && possibleTrailingWs.getTree().getType() == TreeType.WS) {
+                        updateDirectChildren(possibleTrailingWs);
+                    }
+                }
+            }
         }
 
         return tree;
