@@ -67,6 +67,11 @@ final class FixBadDocComments implements Function<TokenTree, TokenTree> {
             updateNestedChildren(cursor);
         }
 
+        // Doc comments should not appear in TRAIT_STATEMENTS.
+        for (TreeCursor cursor : shapeSection.findChildrenByType(TreeType.TRAIT_STATEMENTS)) {
+            updateNestedChildren(cursor);
+        }
+
         // Fix doc comments that come before apply statements.
         TreeCursor shapeStatements = shapeSection.getFirstChild(TreeType.SHAPE_STATEMENTS);
         if (shapeStatements != null) {
@@ -77,11 +82,15 @@ final class FixBadDocComments implements Function<TokenTree, TokenTree> {
                     updateNestedChildren(br);
                 }
             }
-
-            // Remove trailing doc comments in member bodies.
+            // Fix any trailing doc comments in shape bodies
             for (TreeCursor members : shapeStatements.findChildrenByType(TreeType.SHAPE_MEMBERS)) {
-                TreeCursor ws = members.getLastChild(TreeType.WS);
-                updateDirectChildren(ws);
+                TreeCursor closeBrace = members.getLastChild();
+                if (closeBrace != null) {
+                    TreeCursor possibleTrailingWs = closeBrace.getPreviousSibling();
+                    if (possibleTrailingWs != null && possibleTrailingWs.getTree().getType() == TreeType.WS) {
+                        updateDirectChildren(possibleTrailingWs);
+                    }
+                }
             }
         }
 

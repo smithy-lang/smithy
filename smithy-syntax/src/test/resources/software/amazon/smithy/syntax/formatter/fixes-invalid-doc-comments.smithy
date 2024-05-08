@@ -32,9 +32,14 @@ structure Foo {
     )
     /// 16 (change)
     @since("1.x")
-    /// 17 (TODO: change)
+    /// 17 (change)
     bar: String
-    /// 18 (change)
+
+    /// 17a (keep)
+    @length(min: 1)
+    baz: String = ""
+
+    /// 18 (TODO: Fix trailing comment after VALUE_ASSIGNMENT)
 }
 
 /// 19 (change)
@@ -45,4 +50,10 @@ list Baz {
     member: Integer
 }
 
-/// 21 (change)
+structure Foo2 {
+    foo2: String
+
+    /// 21 (change)
+}
+
+/// 22 (change)

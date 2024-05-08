@@ -1,7 +1,6 @@
 package software.amazon.smithy.syntax;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,7 +53,7 @@ public class ParseAndFormatTest {
         String formatted = Formatter.format(tree, 120);
         String expected = IoUtils.readUtf8File(formattedFile);
 
-        assertThat(formatted, equalTo(expected));
+        assertEquals(expected, formatted);
     }
 
     public static List<Path> tests() throws Exception {
