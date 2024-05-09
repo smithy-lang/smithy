@@ -38,7 +38,37 @@ final class BracketFormatter {
             Function<TreeCursor, Doc> visitor,
             Function<TreeCursor, Stream<TreeCursor>> mapper
     ) {
-        return new Extractor(visitor, mapper);
+        return extractor(visitor, mapper, TreeCursor::children);
+    }
+
+    static Function<TreeCursor, Stream<Doc>> extractor(
+            Function<TreeCursor, Doc> visitor,
+            Function<TreeCursor, Stream<TreeCursor>> mapper,
+            Function<TreeCursor, Stream<TreeCursor>> childrenSupplier
+    ) {
+        return (cursor) -> childrenSupplier.apply(cursor)
+                .flatMap(c -> {
+                    TreeType type = c.getTree().getType();
+                    return type == TreeType.WS || type == TreeType.COMMENT ? Stream.of(c) : mapper.apply(c);
+                })
+                .flatMap(c -> {
+                    // If the child extracts WS, then filter it down to just comments.
+                    return c.getTree().getType() == TreeType.WS
+                            ? c.getChildrenByType(TreeType.COMMENT).stream()
+                            : Stream.of(c);
+                })
+                .map(visitor)
+                .filter(doc -> doc != Doc.empty());
+    }
+
+    static Function<TreeCursor, Stream<TreeCursor>> byTypeMapper(TreeType childType) {
+        return child -> child.getTree().getType() == childType
+                ? Stream.of(child)
+                : Stream.empty();
+    }
+
+    static Function<TreeCursor, Stream<TreeCursor>> siblingChildrenSupplier() {
+        return cursor -> cursor.remainingSiblings().stream();
     }
 
     // Brackets children of childType between open and closed brackets. If the children can fit together
@@ -47,9 +77,7 @@ final class BracketFormatter {
             TreeType childType,
             Function<TreeCursor, Doc> visitor
     ) {
-        return extractor(visitor, child -> child.getTree().getType() == childType
-                                           ? Stream.of(child)
-                                           : Stream.empty());
+        return extractor(visitor, byTypeMapper(childType));
     }
 
     BracketFormatter open(Doc open) {
@@ -137,37 +165,5 @@ final class BracketFormatter {
             lineDoc = Doc.empty();
         }
         return lineDoc;
-    }
-
-    private static final class Extractor implements Function<TreeCursor, Stream<Doc>> {
-        private final Function<TreeCursor, Stream<TreeCursor>> mapper;
-        private final Function<TreeCursor, Doc> visitor;
-
-        private Extractor(
-                Function<TreeCursor, Doc> visitor,
-                Function<TreeCursor, Stream<TreeCursor>> mapper
-        ) {
-            this.visitor = visitor;
-            this.mapper = mapper;
-        }
-
-        @Override
-        public Stream<Doc> apply(TreeCursor cursor) {
-            SmithyBuilder.requiredState("childExtractor", mapper);
-            SmithyBuilder.requiredState("visitor", visitor);
-            return cursor.children()
-                    .flatMap(c -> {
-                        TreeType type = c.getTree().getType();
-                        return type == TreeType.WS || type == TreeType.COMMENT ? Stream.of(c) : mapper.apply(c);
-                    })
-                    .flatMap(c -> {
-                        // If the child extracts WS, then filter it down to just comments.
-                        return c.getTree().getType() == TreeType.WS
-                               ? c.getChildrenByType(TreeType.COMMENT).stream()
-                               : Stream.of(c);
-                    })
-                    .map(visitor)
-                    .filter(doc -> doc != Doc.empty());
-        }
     }
 }

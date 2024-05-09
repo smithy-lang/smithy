@@ -263,15 +263,29 @@ final class FormatVisitor {
             }
 
             case OPERATION_ERRORS: {
-                return skippedComments(cursor, false)
-                        .append(Doc.text("errors: "))
+                // Pull out any comments that come after 'errors' but before the opening '[' so they
+                // can be placed before 'errors: ['
+                Doc comments = Doc.empty();
+                TreeCursor child = cursor.getFirstChild(); // 'errors'
+                if (child.getNextSibling().getTree().getType() == TreeType.WS) {
+                    comments = comments.append(skippedComments(child.getNextSibling(), false));
+                    child = child.getNextSibling(); // skip ws
+                }
+                child = child.getNextSibling(); // ':'
+                if (child.getNextSibling().getTree().getType() == TreeType.WS) {
+                    comments = comments.append(skippedComments(child.getNextSibling(), false));
+                    child = child.getNextSibling();
+                }
+                return comments.append(Doc.text("errors: ")
                         .append(new BracketFormatter()
                                         .open(Formatter.LBRACKET)
                                         .close(Formatter.RBRACKET)
-                                        .extractChildren(cursor, BracketFormatter.extractByType(TreeType.SHAPE_ID,
-                                                                                                this::visit))
+                                        .extractChildren(child, BracketFormatter.extractor(
+                                                this::visit,
+                                                BracketFormatter.byTypeMapper(TreeType.SHAPE_ID),
+                                                BracketFormatter.siblingChildrenSupplier()))
                                         .forceLineBreaks() // always put each error on separate lines.
-                                        .write());
+                                        .write()));
             }
 
             case MIXINS: {
