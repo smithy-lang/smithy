@@ -6,7 +6,7 @@
 
 * Added list and map shapes to directed codegen. ([#2273](https://github.com/smithy-lang/smithy/pull/2273))
 * Added support for defaults on trait member values in trait-codegen. ([#2267](https://github.com/smithy-lang/smithy/pull/2267))
-* Added support string-arrays for as parameters in rules-engine. ([#2266](https://github.com/smithy-lang/smithy/pull/2266))
+* Added support for string-arrays for as parameters in rules-engine. ([#2266](https://github.com/smithy-lang/smithy/pull/2266))
 * Added new trait (`@operationContextParams`) for binding array parameters to nested operation inputs in the rules-engine. ([#2264](https://github.com/smithy-lang/smithy/pull/2264))
 
 ### Bug Fixes
@@ -15,7 +15,7 @@
 * Fixed bug in the formatter where certain documentation comments were being converted to line-comments. ([#2277](https://github.com/smithy-lang/smithy/pull/2277))
 * Fixed incorrect status code in restXml response protocol test. ([#2272](https://github.com/smithy-lang/smithy/pull/2272))
 * Fixed ec2query protocol test for empty list serialization. ([#2269](https://github.com/smithy-lang/smithy/pull/2269))
-* Refactored the Javadoc integration in trait codegen to correctly support documentation in members and enum variants. ([#2265](https://github.com/smithy-lang/smithy/pull/2265)) 
+* Fixed Javadoc integration for documentation in members and enum variants in trait-codegen. ([#2265](https://github.com/smithy-lang/smithy/pull/2265)) 
 * Fixed timing issue in the delay calculation for waiter retries. ([#2259](https://github.com/smithy-lang/smithy/pull/2259))
 
 ### Documentation
