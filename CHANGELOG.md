@@ -11,6 +11,7 @@
 
 ### Bug Fixes
 
+* Fixed bug in formatter where comments in operation errors were not being handled correctly. ([#2283](https://github.com/smithy-lang/smithy/pull/2283))
 * Fixed bug in the formatter where certain documentation comments were being converted to line-comments. ([#2277](https://github.com/smithy-lang/smithy/pull/2277))
 * Fixed incorrect status code in restXml response protocol test. ([#2272](https://github.com/smithy-lang/smithy/pull/2272))
 * Fixed ec2query protocol test for empty list serialization. ([#2269](https://github.com/smithy-lang/smithy/pull/2269))
