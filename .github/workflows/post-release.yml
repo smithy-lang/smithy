@@ -24,6 +24,7 @@ jobs:
       with:
         workflow: autoupdate
         repo: smithy-lang/homebrew-tap
+        ref: 'main'
         inputs: '{ "version": "${{ env.version }}" }'
         # Required when using the `repo` option
         token: "${{ secrets.PR_TOKEN }}"
