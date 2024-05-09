@@ -298,8 +298,8 @@ headers for responses:
       - Required
       - The value of ``rpc-v2-cbor``.
     * - ``Content-Type``
-      - Required with request bodies
-      - The value of ``application/cbor``. For event streaming requests, this
+      - Required with response bodies
+      - The value of ``application/cbor``. For event streaming responses, this
         is ``application/vnd.amazon.eventstream``.
     * - ``Content-Length``
       - Conditional

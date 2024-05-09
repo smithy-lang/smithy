@@ -507,13 +507,13 @@ waiter has exceeded <code class="docutils literal notranslate"><span class="pre"
 <span class="n">delay</span> <span class="o">=</span> <span class="n">random</span><span class="p">(</span><span class="n">minDelay</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">delay</span> <span class="o">&lt;=</span> <span class="n">minDelay</span><span class="p">:</span>
-    <span class="n">delay</span> <span class="o">=</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">minDelay</span>
+    <span class="n">delay</span> <span class="o">=</span> <span class="n">remainingTime</span>
 </pre></div>
 </div>
 <p>If the computed <code class="docutils literal notranslate"><span class="pre">delay</span></code> subtracted from <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> is less than
-or equal to <code class="docutils literal notranslate"><span class="pre">minDelay</span></code>, then set <code class="docutils literal notranslate"><span class="pre">delay</span></code> to <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> minus
-<code class="docutils literal notranslate"><span class="pre">minDelay</span></code> and perform one last retry. This prevents a waiter from waiting
-needlessly only to exceed <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> before issuing a final request.</p>
+or equal to <code class="docutils literal notranslate"><span class="pre">minDelay</span></code>, then set <code class="docutils literal notranslate"><span class="pre">delay</span></code> to <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> and
+perform one last retry. This prevents a waiter from waiting needlessly
+only to exceed <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> before issuing a final request.</p>
 <p>Using the default <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> of 2, the default <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> of 120, a caller
 provided <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> of 300 (5 minutes), and assuming that requests
 complete in 0 seconds (for example purposes only), delays might be computed as
@@ -595,8 +595,8 @@ follows:</p>
 <td>4</td>
 </tr>
 <tr class="row-even"><td>13 (last attempt)</td>
-<td>2</td>
-<td>298</td>
+<td>4</td>
+<td>300</td>
 <td>N/A</td>
 </tr>
 </tbody>

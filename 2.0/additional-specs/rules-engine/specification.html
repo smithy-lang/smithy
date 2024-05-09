@@ -434,7 +434,7 @@ on the scenario.</p>
 <tbody valign="top">
 <tr class="row-even"><td>type</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. MUST be one of <code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">boolean</span></code>.</td>
+<td><strong>Required</strong>. MUST be one of <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, or <code class="docutils literal notranslate"><span class="pre">stringArray</span></code>.</td>
 </tr>
 <tr class="row-odd"><td>builtIn</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -442,7 +442,7 @@ on the scenario.</p>
 endpoint provider by a caller.</td>
 </tr>
 <tr class="row-even"><td>default</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code> or an array of <code class="docutils literal notranslate"><span class="pre">string</span></code>.</td>
 <td>Specifies the default value for the parameter if not set. Parameters
 with defaults MUST also be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code>. The type of the
 provided default MUST match <code class="docutils literal notranslate"><span class="pre">type</span></code>.</td>
@@ -686,7 +686,7 @@ MUST return an error.</li>
 <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration objects. No validators are provided by default.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.48.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.49.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 </div>

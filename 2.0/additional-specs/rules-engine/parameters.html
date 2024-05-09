@@ -360,9 +360,9 @@ parameter with the name <code class="docutils literal notranslate"><span class="
 <p>This following is the <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5234.html"><strong>ABNF</strong></a> grammar for rule set parameter names:</p>
 <pre class="productionlist highlight">
 </pre>
-<p>Parameters declare their respective type using the <code class="docutils literal notranslate"><span class="pre">type</span></code> key. There are two
-supported rule set parameter types: <code class="docutils literal notranslate"><span class="pre">string</span></code> and <code class="docutils literal notranslate"><span class="pre">boolean</span></code>. The following
-table provides the description of these types, and their Smithy compatible
+<p>Parameters declare their respective type using the <code class="docutils literal notranslate"><span class="pre">type</span></code> key. The following
+parameter types are supported: <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, and <code class="docutils literal notranslate"><span class="pre">stringArray</span></code>.
+The following table provides the description of these types, and their Smithy compatible
 types whose values can be bound to these parameters. Rule set parameters are
 always considered nullable and have no default value associated with them.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -386,6 +386,10 @@ always considered nullable and have no default value associated with them.</p>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
 <td>Boolean value type.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">stringArray</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
+<td>A list with <code class="docutils literal notranslate"><span class="pre">string</span></code> members.</td>
 </tr>
 </tbody>
 </table>
@@ -425,7 +429,8 @@ value must be selected and provided to the implementation. The following is the
 order of the most specific to least specific value locations:</p>
 <ol class="arabic simple">
 <li><a class="reference internal" href="#id3">smithy.rules#staticContextParams trait</a></li>
-<li><a class="reference internal" href="#id4">smithy.rules#contextParam trait</a></li>
+<li><a class="reference internal" href="#id5">smithy.rules#contextParam trait</a></li>
+<li><a class="reference internal" href="#id4">smithy.rules#operationContextParams trait</a></li>
 <li><a class="reference internal" href="#id2">smithy.rules#clientContextParams trait</a></li>
 <li>Built-in bindings</li>
 <li>Built-in binding default values</li>
@@ -543,7 +548,8 @@ values.</dd>
 <tr class="row-even"><td>value</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
 <td><strong>Required</strong>. The static value to be set for the parameter. The type
-of the value MUST be either a <code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">boolean</span></code>.</td>
+of the value MUST be either a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code> or an
+array of <code class="docutils literal notranslate"><span class="pre">string</span></code>.</td>
 </tr>
 </tbody>
 </table>
@@ -551,7 +557,7 @@ of the value MUST be either a <code class="docutils literal notranslate"><span c
 <p>Each parameter is identified using it’s name as specified in the rule set. The
 type of a <code class="docutils literal notranslate"><span class="pre">staticContextParam</span></code> MUST be compatible with the parameter type
 specified in the rule set.</p>
-<p>The following example specifies two parameters to statically set for an
+<p>The following example specifies three parameters to statically set for an
 operation:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@staticContextParams</span>(
 <span class="w">    </span><span class="py">linkId</span><span class="p">:</span><span class="w"> </span>{
@@ -559,14 +565,93 @@ operation:</p>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">previewEndpoint</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">supportedPrefixes</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;host&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;resourceId&quot;</span>]
 <span class="w">    </span>}
 )
 <span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
+<div class="section" id="smithy-rules-operationcontextparams-trait">
+<span id="smithy-rules-operationcontextparams-trait"></span><span id="id4"></span><h5><code class="docutils literal notranslate"><span class="pre">smithy.rules#operationContextParams</span></code> trait<a class="headerlink" href="#smithy-rules-operationcontextparams-trait" title="Permalink to this heading">#</a></h5>
+<dl class="docutils">
+<dt>Summary</dt><dd>Defines one or more rule set parameters that MUST be bound to values
+specified in the operation input.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> containing a rule set parameter name to a
+<code class="docutils literal notranslate"><span class="pre">operationContextParam</span></code> structure.</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">operationContextParam</span></code> structure has the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="23%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>path</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A JMESPath expression to select element(s) from the operation input to bind to.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each parameter is identified using it’s name as specified in the rule set. The
+type of a <code class="docutils literal notranslate"><span class="pre">operationContextParam</span></code> MUST be compatible with the parameter type
+specified in the rule set.</p>
+<p>The following example specifies a parameter bound to an array of object keys in the
+operation input using a JMESPath expression:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@operationContextParams</span>(
+<span class="w">    </span><span class="py">ObjectKeys</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Delete.Objects[*].Key&quot;</span>
+<span class="w">    </span>}
+)
+<span class="kd">operation </span><span class="nc">DeleteObjects</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteObjectsRequest</span>
+}
+
+<span class="kd">structure </span><span class="nc">DeleteObjectsRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">Delete</span><span class="p">:</span><span class="w"> </span><span class="vc">Delete</span>
+}
+
+<span class="kd">structure </span><span class="nc">Delete</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">Objects</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectIdentifierList</span>
+}
+
+<span class="kd">list </span><span class="nc">ObjectIdentifierList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectIdentifier</span>
+}
+
+<span class="kd">structure </span><span class="nc">ObjectIdentifier</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">Key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p><cite>paths</cite> specified in <a class="reference internal" href="#smithy-rules-operationcontextparams-trait"><span class="std std-ref">OperationContextParams</span></a> are limited
+to a subset of JMESPath:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://jmespath.org/specification.html#identifiers">Identifiers</a> - the most basic expression and can be used to extract a single element from a JSON document.
+The return value for an identifier is the value associated with the identifier. If the identifier does not
+exist in the JSON document, than a null value is returned.</li>
+<li><a class="reference external" href="https://jmespath.org/specification.html#subexpressions">Sub Expressions</a> - a combination of two expressions separated by the <code class="docutils literal notranslate"><span class="pre">.</span></code> char.
+Example:  <code class="docutils literal notranslate"><span class="pre">grandparent.parent.child</span></code></li>
+<li><a class="reference external" href="https://jmespath.org/specification.html#wildcard-expressions">Wildcard Expressions</a> - Creates a projection over the values in an array or map.
+Remaining expressions are evaluated against each returned element.</li>
+<li><a class="reference external" href="https://jmespath.org/specification.html#keys">Keys function</a> - return a list of the keys in a map.  This is the only supported function but is required
+for binding to key values.</li>
+</ul>
+</div>
 <div class="section" id="smithy-rules-contextparam-trait">
-<span id="smithy-rules-contextparam-trait"></span><span id="id4"></span><h5><code class="docutils literal notranslate"><span class="pre">smithy.rules#contextParam</span></code> trait<a class="headerlink" href="#smithy-rules-contextparam-trait" title="Permalink to this heading">#</a></h5>
+<span id="smithy-rules-contextparam-trait"></span><span id="id5"></span><h5><code class="docutils literal notranslate"><span class="pre">smithy.rules#contextParam</span></code> trait<a class="headerlink" href="#smithy-rules-contextparam-trait" title="Permalink to this heading">#</a></h5>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a top-level operation input structure member to a rule set parameter.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></dd>
@@ -651,7 +736,7 @@ two colon <code class="docutils literal notranslate"><span class="pre">:</span><
 add the <a class="reference internal" href="../../aws/rules-engine/built-ins.html#rules-engine-aws-built-ins"><span class="std std-ref">AWS rules engine built-ins</span></a>.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.48.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.49.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 </div>
@@ -727,6 +812,7 @@ add the <a class="reference internal" href="../../aws/rules-engine/built-ins.htm
 <li><a class="reference internal" href="#rules-engine-parameter-traits">Rules engine parameter traits</a><ul>
 <li><a class="reference internal" href="#smithy-rules-clientcontextparams-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#clientContextParams</span></code> trait</a></li>
 <li><a class="reference internal" href="#smithy-rules-staticcontextparams-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#staticContextParams</span></code> trait</a></li>
+<li><a class="reference internal" href="#smithy-rules-operationcontextparams-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#operationContextParams</span></code> trait</a></li>
 <li><a class="reference internal" href="#smithy-rules-contextparam-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#contextParam</span></code> trait</a></li>
 </ul>
 </li>

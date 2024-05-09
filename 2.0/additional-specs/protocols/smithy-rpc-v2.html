@@ -354,7 +354,7 @@ protocol is used to expose services that serialize RPC payloads as CBOR.</p>
 responses with CBOR payloads.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.48.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.49.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.protocols#rpcv2Cbor</span></code> is a structure that supports the following
 members:</p>
@@ -655,8 +655,8 @@ headers for responses:</p>
 <td>The value of <code class="docutils literal notranslate"><span class="pre">rpc-v2-cbor</span></code>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Content-Type</span></code></td>
-<td>Required with request bodies</td>
-<td>The value of <code class="docutils literal notranslate"><span class="pre">application/cbor</span></code>. For event streaming requests, this
+<td>Required with response bodies</td>
+<td>The value of <code class="docutils literal notranslate"><span class="pre">application/cbor</span></code>. For event streaming responses, this
 is <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
