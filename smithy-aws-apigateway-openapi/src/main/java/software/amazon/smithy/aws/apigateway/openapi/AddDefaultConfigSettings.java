@@ -43,7 +43,7 @@ final class AddDefaultConfigSettings implements ApiGatewayMapper {
     public void updateDefaultSettings(Model model, OpenApiConfig openApiConfig) {
         ApiGatewayConfig config = openApiConfig.getExtensions(ApiGatewayConfig.class);
         if (config.getApiGatewayDefaults() == null) {
-            LOGGER.warning(String.format("`apiGatewayDefaults` configuration not set for opeanapi plugin. Assuming %s.",
+            LOGGER.warning(String.format("`apiGatewayDefaults` configuration not set for openapi plugin. Assuming %s.",
                     DEFAULT_VERSION));
             config.setApiGatewayDefaults(DEFAULT_VERSION);
         }
