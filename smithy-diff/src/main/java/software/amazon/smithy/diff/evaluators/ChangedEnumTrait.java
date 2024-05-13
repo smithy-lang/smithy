@@ -43,6 +43,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     private static final String ORDER_CHANGED = ".OrderChanged.";
     private static final String NAME_CHANGED = ".NameChanged.";
     private static final String REMOVED = ".Removed.";
+    private static final String APPENDED = ".Appended.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -135,8 +136,14 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                     if (newTrait.isSynthetic()) {
                         appendedSource = change.getNewShape().getSourceLocation();
                     }
-                    events.add(note(change.getNewShape(), appendedSource, String.format(
-                            "Enum value `%s` was appended", definition.getValue())));
+                    events.add(
+                            ValidationEvent.builder()
+                                    .severity(Severity.NOTE)
+                                    .message(String.format("Enum value `%s` was appended", definition.getValue()))
+                                    .shape(change.getNewShape())
+                                    .sourceLocation(appendedSource)
+                                    .id(getEventId() + APPENDED + newPosition)
+                                    .build());
                 }
             }
 
