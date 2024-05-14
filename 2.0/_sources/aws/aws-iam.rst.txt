@@ -545,6 +545,10 @@ The following example defines two service-specific condition keys:
 
     namespace smithy.example
 
+    use aws.api#service
+    use aws.iam#defineConditionKeys
+    use aws.iam#serviceResolvedConditionKeys
+
     @defineConditionKeys(
         "myservice:ActionContextKey1": { type: "String" },
         "myservice:ActionContextKey2": { type: "String" }
@@ -583,6 +587,11 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
 
     namespace smithy.example
 
+    use aws.api#service
+    use aws.iam#conditionKeys
+    use aws.iam#defineConditionKeys
+    use aws.iam#conditionKeyValue
+
     @defineConditionKeys(
         "myservice:ActionContextKey1": { type: "String" }
     )
@@ -595,7 +604,7 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
     @conditionKeys(["myservice:ActionContextKey1"])
     operation OperationA {
         input := {
-            @conditionKeyValue("ActionContextKey1")
+            @conditionKeyValue("myservice:ActionContextKey1")
             key: String
         }
         output := {

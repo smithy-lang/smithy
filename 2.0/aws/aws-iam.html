@@ -847,6 +847,10 @@ included with the <code class="docutils literal notranslate"><span class="pre">s
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#serviceResolvedConditionKeys</span>
+
 <span class="nt">@defineConditionKeys</span>(
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}<span class="p">,</span>
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey2&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
@@ -876,6 +880,11 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#conditionKeyValue</span>
+
 <span class="nt">@defineConditionKeys</span>(
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
 )
@@ -888,7 +897,7 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 <span class="nt">@conditionKeys</span>([<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>])
 <span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
-<span class="w">        </span><span class="nt">@conditionKeyValue</span>(<span class="s2">&quot;ActionContextKey1&quot;</span>)
+<span class="w">        </span><span class="nt">@conditionKeyValue</span>(<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>)
 <span class="w">        </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
