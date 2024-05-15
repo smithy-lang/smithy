@@ -19,12 +19,12 @@ apply OperationWithNestedStructure @httpRequestTests([
         headers: {"Content-Type": "application/json"}
         body: """
             {
-                "top_level": {
+                "topLevel": {
                     "dialog": {
                         "language": "en",
                         "greeting": "hi"
                     },
-                    "dialog_list": [
+                    "dialogList": [
                         {
                             "greeting": "hi"
                         },
@@ -42,7 +42,7 @@ apply OperationWithNestedStructure @httpRequestTests([
                             }
                         }
                     ],
-                    "dialog_map": {
+                    "dialogMap": {
                         "emptyDialog": {
                             "greeting": "hi"
                         },
@@ -98,6 +98,97 @@ apply OperationWithNestedStructure @httpRequestTests([
             }
         }
     }
+    {
+        id: "RestJsonServerPopulatesNestedDefaultsWhenMissingInRequestBody"
+        documentation: "Server populates nested default values when missing in request body."
+        appliesTo: "server"
+        tags: ["defaults"]
+        protocol: restJson1
+        method: "POST"
+        bodyMediaType: "application/json"
+        uri: "/OperationWithNestedStructure"
+        headers: {"Content-Type": "application/json"}
+        body: """
+            {
+                "topLevel": {
+                    "dialog": {
+                        "language": "en"
+                    },
+                    "dialogList": [
+                        {
+                        },
+                        {
+                            "farewell": {}
+                        },
+                        {
+                            "language": "it",
+                            "greeting": "ciao",
+                            "farewell": {
+                                "phrase": "arrivederci"
+                            }
+                        }
+                    ],
+                    "dialogMap": {
+                        "emptyDialog": {
+                        },
+                        "partialEmptyDialog": {
+                            "language": "en",
+                            "farewell": {}
+                        },
+                        "nonEmptyDialog": {
+                            "greeting": "konnichiwa",
+                            "farewell": {
+                                "phrase": "sayonara"
+                            }
+                        }
+                    }
+                }
+            }"""
+        params: {
+            "topLevel": {
+                "dialog": {
+                    "language": "en"
+                    "greeting": "hi",
+                }
+                "dialogList": [
+                    {
+                        "greeting": "hi",
+                    },
+                    {
+                        "greeting": "hi",
+                        "farewell": {
+                            "phrase": "bye",
+                        }
+                    },
+                    {
+                        "language": "it",
+                        "greeting": "ciao",
+                        "farewell": {
+                            "phrase": "arrivederci"
+                        }
+                    }
+                ],
+                "dialogMap": {
+                    "emptyDialog": {
+                        "greeting": "hi",
+                    },
+                    "partialEmptyDialog": {
+                        "language": "en",
+                        "greeting": "hi",
+                        "farewell": {
+                            "phrase": "bye",
+                        }
+                    },
+                    "nonEmptyDialog": {
+                        "greeting": "konnichiwa",
+                        "farewell": {
+                            "phrase": "sayonara"
+                        }
+                    }
+                }
+            }
+        }
+    }
 ])
 
 apply OperationWithNestedStructure @httpResponseTests([
@@ -115,7 +206,7 @@ apply OperationWithNestedStructure @httpResponseTests([
                 "dialog": {
                     "language": "en"
                 },
-                "dialog_list": [
+                "dialogList": [
                     {
                     },
                     {
@@ -129,7 +220,7 @@ apply OperationWithNestedStructure @httpResponseTests([
                         }
                     }
                 ],
-                "dialog_map": {
+                "dialogMap": {
                     "emptyDialog": {
                     },
                     "partialEmptyDialog": {
@@ -177,6 +268,92 @@ apply OperationWithNestedStructure @httpResponseTests([
                     "farewell": {
                         "phrase": "bye",
                     }
+                },
+                "nonEmptyDialog": {
+                    "greeting": "konnichiwa",
+                    "farewell": {
+                        "phrase": "sayonara"
+                    }
+                }
+            }
+        }
+    }
+    {
+        id: "RestJsonServerPopulatesNestedDefaultValuesWhenMissingInInResponseParams"
+        documentation: "Server populates nested default values when missing in response params."
+        appliesTo: "server"
+        tags: ["defaults"]
+        protocol: restJson1
+        code: 200
+        bodyMediaType: "application/json"
+        headers: {"Content-Type": "application/json"}
+        body: """
+            {
+                "dialog": {
+                    "language": "en",
+                    "greeting": "hi"
+                },
+                "dialogList": [
+                    {
+                        "greeting": "hi"
+                    },
+                    {
+                        "greeting": "hi",
+                        "farewell": {
+                            "phrase": "bye"
+                        }
+                    },
+                    {
+                        "language": "it",
+                        "greeting": "ciao",
+                        "farewell": {
+                            "phrase": "arrivederci"
+                        }
+                    }
+                ],
+                "dialogMap": {
+                    "emptyDialog": {
+                        "greeting": "hi"
+                    },
+                    "partialEmptyDialog": {
+                        "language": "en",
+                        "greeting": "hi",
+                        "farewell": {
+                            "phrase": "bye"
+                        }
+                    },
+                    "nonEmptyDialog": {
+                        "greeting": "konnichiwa",
+                        "farewell": {
+                            "phrase": "sayonara"
+                        }
+                    }
+                }
+            }"""
+        params: {
+            "dialog": {
+                "language": "en"
+            },
+            "dialogList": [
+                {
+                },
+                {
+                    "farewell": {}
+                },
+                {
+                    "language": "it",
+                    "greeting": "ciao",
+                    "farewell": {
+                        "phrase": "arrivederci"
+                    }
+                }
+            ],
+            "dialogMap": {
+                "emptyDialog": {
+                },
+                "partialEmptyDialog": {
+                    "language": "en",
+                    "farewell": {}
                 },
                 "nonEmptyDialog": {
                     "greeting": "konnichiwa",
