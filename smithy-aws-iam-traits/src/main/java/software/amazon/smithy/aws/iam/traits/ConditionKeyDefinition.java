@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -29,17 +30,20 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     private static final String DOCUMENTATION = "documentation";
     private static final String EXTERNAL_DOCUMENTATION = "externalDocumentation";
     private static final String RELATIVE_DOCUMENTATION = "relativeDocumentation";
-
+    private static final String REQUIRED = "required";
     private final String type;
     private final String documentation;
     private final String externalDocumentation;
     private final String relativeDocumentation;
+
+    private final boolean required;
 
     private ConditionKeyDefinition(Builder builder) {
         type = SmithyBuilder.requiredState(TYPE, builder.type);
         documentation = builder.documentation;
         externalDocumentation = builder.externalDocumentation;
         relativeDocumentation = builder.relativeDocumentation;
+        required = builder.required;
     }
 
     public static Builder builder() {
@@ -56,6 +60,8 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
                 .ifPresent(builder::externalDocumentation);
         objectNode.getStringMember(RELATIVE_DOCUMENTATION).map(StringNode::getValue)
                 .ifPresent(builder::relativeDocumentation);
+        objectNode.getBooleanMember(REQUIRED).map(BooleanNode::getValue)
+                .ifPresent(builder::required);
 
         return builder.build();
     }
@@ -91,13 +97,24 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         return Optional.ofNullable(relativeDocumentation);
     }
 
+    /**
+     * Whether a service resolved condition key is required. Not applicable to request resolved condition keys,
+     * as the native @required trait must be used.
+     *
+     * @return If the service resolved condition key is required.
+     **/
+    public boolean isRequired() {
+        return required;
+    }
+
     @Override
     public SmithyBuilder<ConditionKeyDefinition> toBuilder() {
         return builder()
                 .documentation(documentation)
                 .externalDocumentation(externalDocumentation)
                 .relativeDocumentation(relativeDocumentation)
-                .type(type);
+                .type(type)
+                .required(required);
     }
 
     @Override
@@ -107,6 +124,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
                 .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
                 .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
+                .withMember(REQUIRED, isRequired())
                 .build();
     }
 
@@ -122,7 +140,8 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         return Objects.equals(type, that.type)
                && Objects.equals(documentation, that.documentation)
                && Objects.equals(externalDocumentation, that.externalDocumentation)
-               && Objects.equals(relativeDocumentation, that.relativeDocumentation);
+               && Objects.equals(relativeDocumentation, that.relativeDocumentation)
+               && Objects.equals(required, that.required);
     }
 
     @Override
@@ -135,6 +154,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         private String documentation;
         private String externalDocumentation;
         private String relativeDocumentation;
+        private boolean required;
 
         @Override
         public ConditionKeyDefinition build() {
@@ -158,6 +178,11 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
 
         public Builder relativeDocumentation(String relativeDocumentation) {
             this.relativeDocumentation = relativeDocumentation;
+            return this;
+        }
+
+        public Builder required(boolean required) {
+            this.required = required;
             return this;
         }
     }

@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Use the @required trait on the field directly. The required property is only for Service Resolved Condition Keys. | DefineConditionKeysTrait
