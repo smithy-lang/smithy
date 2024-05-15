@@ -436,7 +436,7 @@ Each condition key structure supports the following members:
       - ``boolean``
       - Defines whether a service resolved condition key is required. Not 
         applicable to request resolved condition keys, as the native 
-        :ref:`required-trait` trait must be used on the field directly.
+        :ref:`required-trait` trait MUST be used on the member directly.
 
 .. code-block:: smithy
 

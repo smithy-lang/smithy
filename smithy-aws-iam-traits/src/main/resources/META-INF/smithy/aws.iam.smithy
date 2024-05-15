@@ -120,8 +120,8 @@ structure ConditionKeyDefinition {
     /// within a set of IAM-related documentation.
     relativeDocumentation: String
 
-    // Whether a service resolved condition key is required.
-    // Not applicable to request resolved condition keys, as the native @required trait must be used
+    /// Whether a service resolved condition key is required.
+    /// Request resolved condition keys MUST use the @required trait.
     required: Boolean
 }
 

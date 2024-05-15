@@ -5,64 +5,53 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
-import java.util.Collection;
+import static java.lang.String.format;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.traits.StringListTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Checks properties of the defineConditionKeys IAM trait
  * 1. @required only for service resolved condition keys. ERROR if used for request resolved condition keys.
  */
 public final class DefineConditionKeysTraitValidator extends AbstractValidator {
-
     @Override
     public List<ValidationEvent> validate(Model model) {
-        class Record {
-            final Shape shape;
-            final Entry<String, ConditionKeyDefinition> details;
-
-            Record(Shape shape, Set<Entry<String, ConditionKeyDefinition>> details) {
-                this.shape = shape;
-                this.details = details.iterator().next();
+        List<ValidationEvent> events = new ArrayList<>();
+        ConditionKeysIndex conditionKeysIndex = ConditionKeysIndex.of(model);
+        for (ServiceShape serviceShape : model.getServiceShapes()) {
+            for (Map.Entry<String, ConditionKeyDefinition> conditionKeyEntry
+                    : conditionKeysIndex.getDefinedConditionKeys(serviceShape).entrySet()
+            ) {
+                // Get all the service resolved condition keys.
+                List<String> serviceResolvedKeys = serviceShape.getTrait(ServiceResolvedConditionKeysTrait.class)
+                        .map(StringListTrait::getValues)
+                        .orElse(ListUtils.of());
+                // We want to emit an event for definitions that state being required...
+                if (conditionKeyEntry.getValue().isRequired()
+                        // and are not configured to be service resolved.
+                        && !serviceResolvedKeys.contains(conditionKeyEntry.getKey())
+                ) {
+                    FromSourceLocation sourceLocation = serviceShape.getTrait(DefineConditionKeysTrait.class)
+                            .map(Trait::getSourceLocation)
+                            .orElse(serviceShape.getSourceLocation());
+                    events.add(error(serviceShape, sourceLocation, format("The `%s` condition key is defined as "
+                            + "required but is resolved from the request. This property is only valid for condition "
+                            + "keys resolved by the service, it MUST also be specified in the "
+                            + "`@serviceResolvedConditionKeys` trait or use the `@required` trait instead.",
+                            conditionKeyEntry.getKey())));
+                }
             }
         }
-
-        Set<Shape> defineConditionKeys = model.getShapesWithTrait(DefineConditionKeysTrait.class);
-        Set<Shape> serviceResolvedConditionKeys = model.getShapesWithTrait(ServiceResolvedConditionKeysTrait.class);
-
-        // get all the service resolved condition keys
-        Set<String> serviceResolvedKeynames = serviceResolvedConditionKeys.stream().map(shape -> {
-            ServiceResolvedConditionKeysTrait trait = shape.expectTrait(ServiceResolvedConditionKeysTrait.class);
-            return trait.getValues();
-        }).flatMap(Collection::stream).collect(Collectors.toSet());
-
-        // get all the defined condition keys that are required
-        Set<Record> requiredConditionKeyRecords = defineConditionKeys.stream().map(shape -> {
-            DefineConditionKeysTrait trait = shape.expectTrait(DefineConditionKeysTrait.class);
-            return new Record(shape, trait.getConditionKeys().entrySet());
-        }).filter(record -> record.details.getValue().isRequired()).collect(Collectors.toSet());
-
-        // get all the defined condition keys are required though not defined as service resolved condition keys
-        Set<Record> incorretRequestResolved = requiredConditionKeyRecords.stream().filter(record ->
-                !serviceResolvedKeynames.contains(record.details.getKey())).collect(Collectors.toSet());
-
-
-        /**
-         * All these are request resolved condition keys,
-         * though specified required as a property instead of a smithy trait
-         */
-        return incorretRequestResolved.stream().map(
-                record ->
-                        error(record.shape,
-                                "Use the @required trait on the field directly. "
-                                        + "The required property is only for Service Resolved Condition Keys."
-                        )).collect(Collectors.toList());
+        return events;
     }
 }

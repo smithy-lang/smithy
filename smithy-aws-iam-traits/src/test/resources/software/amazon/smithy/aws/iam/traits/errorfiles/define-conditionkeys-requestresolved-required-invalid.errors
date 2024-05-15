@@ -1,1 +1,1 @@
-[ERROR] smithy.example#MyService: Use the @required trait on the field directly. The required property is only for Service Resolved Condition Keys. | DefineConditionKeysTrait
+[ERROR] smithy.example#MyService: The `myservice:Bar` condition key is defined as required but is resolved from the request. This property is only valid for condition keys resolved by the service, it MUST also be specified in the `@serviceResolvedConditionKeys` trait or use the `@required` trait instead. | DefineConditionKeysTrait

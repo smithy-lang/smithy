@@ -4,6 +4,7 @@ namespace smithy.example
 
 use aws.api#service
 use aws.iam#defineConditionKeys
+use aws.iam#serviceResolvedConditionKeys
 
 @service(sdkId: "My Value", arnNamespace: "myservice")
 @defineConditionKeys(
@@ -25,6 +26,7 @@ use aws.iam#defineConditionKeys
         required: false
     }
 )
+@serviceResolvedConditionKeys(["myservice:Baz"])
 service MyService {
     version: "2017-02-11"
 }
