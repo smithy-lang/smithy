@@ -22,7 +22,8 @@ service RpcV2Protocol {
         GreetingWithErrors,
         FractionalSeconds,
         OperationWithDefaults,
-        SparseNullsOperation
+        SparseNullsOperation,
+        Float16
     ]
 }
 
