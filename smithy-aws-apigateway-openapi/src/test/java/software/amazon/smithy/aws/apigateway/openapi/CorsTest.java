@@ -112,4 +112,20 @@ public class CorsTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void mapMultipleMimeTypesInRequestTemplates() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-with-multi-mime-types.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-multi-mime-types.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

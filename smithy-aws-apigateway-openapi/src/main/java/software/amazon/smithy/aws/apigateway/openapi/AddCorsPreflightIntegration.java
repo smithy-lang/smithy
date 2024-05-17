@@ -31,6 +31,7 @@ import software.amazon.smithy.aws.apigateway.traits.MockIntegrationTrait;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.CorsTrait;
@@ -45,6 +46,7 @@ import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.ResponseObject;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Adds CORS-preflight OPTIONS requests using mock API Gateway integrations.
@@ -70,6 +72,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     private static final Logger LOGGER = Logger.getLogger(AddCorsPreflightIntegration.class.getName());
     private static final String API_GATEWAY_DEFAULT_ACCEPT_VALUE = "application/json";
     private static final String INTEGRATION_EXTENSION = "x-amazon-apigateway-integration";
+    private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
     private static final String PREFLIGHT_SUCCESS = "{\"statusCode\":200}";
 
     @Override
@@ -228,6 +231,22 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
                 .passThroughBehavior("when_no_match")
                 .putResponse("default", responseBuilder.build())
                 .putRequestTemplate(API_GATEWAY_DEFAULT_ACCEPT_VALUE, PREFLIGHT_SUCCESS);
+
+        // Adds request template for every unique Content-Type supported by all path operations.
+        // This ensures that for Content-Type(s) other than 'application/json', the entire request payload
+        // is not sent to APIGW mock integration as stipulated by 'when_no_match' passthroughBehavior.
+        // APIGW throws an error if the mock integration request does not follow a set contract,
+        // example {"statusCode":200}.
+        for (OperationObject operation : pathItem.getOperations().values()) {
+            ObjectNode extensionNode = operation.getExtension(INTEGRATION_EXTENSION)
+                    .flatMap(Node::asObjectNode)
+                    .orElse(ObjectNode.EMPTY);
+            Set<String> mimeTypes = extensionNode.getObjectMember(REQUEST_TEMPLATES_KEY)
+                    .map(ObjectNode::getStringMap)
+                    .map(Map::keySet)
+                    .orElse(SetUtils.of());
+            mimeTypes.forEach(mimeType -> integration.putRequestTemplate(mimeType, PREFLIGHT_SUCCESS));
+        }
 
         // Add a request template for every mime-type of every response.
         for (OperationObject operation : pathItem.getOperations().values()) {
