@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Beer: Conflicting IAM resource names in an entire service closure is not allowed. This IAM resource name conflicts with other resource in the service `smithy.example#MyService`. | IamResourceTraitConflictingName
