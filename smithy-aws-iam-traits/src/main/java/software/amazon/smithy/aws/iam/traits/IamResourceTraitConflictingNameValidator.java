@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.aws.traits.ArnTrait;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -49,14 +48,14 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
         for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
             String resourceName = resource.getId().getName();
             IamResourceTrait iamResourceTrait;
-            if (resource.hasTrait(IamResourceTrait.class) && resource.getTrait(IamResourceTrait.class).isPresent()
-                    && resource.getTrait(IamResourceTrait.class).get().getName().isPresent()) {
+            if (resource.hasTrait(IamResourceTrait.class)
+                    && resource.expectTrait(IamResourceTrait.class).getName().isPresent()) {
                 resourceName = resource.getTrait(IamResourceTrait.class).get().getName().get();
             }
             if (container.contains(resourceName)) {
                 events.add(error(resource, String.format(
                         "Conflicting IAM resource names in an entire service closure is not allowed. "
-                                + "This IAM resource name name conflicts with other resource in the service `%s`.",
+                                + "This IAM resource name conflicts with other resource in the service `%s`.",
                         service.getId())));
 
             }
