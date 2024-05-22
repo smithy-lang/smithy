@@ -691,29 +691,6 @@ onErrorStatusConflict (``String``)
             }
         }
 
-.. _generate-openapi-setting-syncCorsPreflightIntegration:
-
-syncCorsPreflightIntegration (``boolean``)
-    Set to true to sync CORS preflight integration request templates with all combinations
-    of content-types from other methods within the same path resource.
-
-    .. code-block:: json
-        :caption: smithy-build.json
-
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "syncCorsPreflightIntegration": true
-                }
-            }
-        }
-
-    With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
-    will be set to ``never``.
-
-
 ----------------------------------
 JSON schema configuration settings
 ----------------------------------
@@ -1573,6 +1550,29 @@ additionalAllowedCorsHeaders (``[string]``)
             }
         }
 
+
+.. _generate-openapi-apigateway-setting-syncCorsPreflightIntegration:
+
+syncCorsPreflightIntegration (``boolean``)
+    Set to true to sync CORS preflight integration request templates with all possible content-types
+    from other methods within the same path resource.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "syncCorsPreflightIntegration": true
+                }
+            }
+        }
+
+    With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
+    will be set to ``never``.
+
 Binary types
 ============
 
@@ -1671,6 +1671,10 @@ additions during the OpenAPI conversion:
 * Adds static CORS response headers to API Gateway "gateway" responses.  These are added only when
   no gateway responses are defined in the OpenAPI model.
 
+.. note::
+    If :ref:`syncCorsPreflightIntegration <generate-openapi-apigateway-setting-syncCorsPreflightIntegration>` is
+    set to ``true``, the CORS preflight `integration's passthroughBehavior`_ will be set to ``never`` and the integration's
+    request templates will be synced with all possible content-types from other methods within the same path resource.
 
 .. _authorizers:
 
