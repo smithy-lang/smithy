@@ -710,8 +710,8 @@ syncCorsPreflightIntegration (``boolean``)
             }
         }
 
-    With this enabled, the ``passthroughBehavior`` for the CORS preflight integration
-    will be set to "never".
+    With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
+    will be set to ``never``.
 
 
 ----------------------------------
@@ -2060,4 +2060,5 @@ The conversion process is highly extensible through
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
+.. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
