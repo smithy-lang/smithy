@@ -691,6 +691,29 @@ onErrorStatusConflict (``String``)
             }
         }
 
+.. _generate-openapi-setting-syncCorsPreflightIntegration:
+
+syncCorsPreflightIntegration (``boolean``)
+    Set to true to sync CORS preflight integration request templates with all combinations
+    of content-types from other methods within the same path resource.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "syncCorsPreflightIntegration": true
+                }
+            }
+        }
+
+    With this enabled, the ``passthroughBehavior`` for the CORS preflight integration
+    will be set to "never".
+
+
 ----------------------------------
 JSON schema configuration settings
 ----------------------------------

@@ -90,10 +90,7 @@
         "x-amazon-apigateway-integration": {
           "contentHandling": "CONVERT_TO_TEXT",
           "requestTemplates": {
-            "application/xml": "{\"statusCode\":200}",
-            "application/x-www-form-urlencoded": "{\"statusCode\":200}",
-            "application/json": "{\"statusCode\":200}",
-            "text/plain": "{\"statusCode\":200}"
+            "application/json": "{\"statusCode\":200}"
           },
           "responses": {
             "default": {

@@ -98,7 +98,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         LOGGER.fine(() -> "Adding CORS-preflight OPTIONS request and API Gateway integration for " + path);
         Map<CorsHeader, String> headers = deduceCorsHeaders(context, path, pathItem, corsTrait);
         return pathItem.toBuilder()
-                .options(createPreflightOperation(path, pathItem, headers))
+                .options(createPreflightOperation(context, path, pathItem, headers))
                 .build();
     }
 
@@ -173,7 +173,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     }
 
     private static OperationObject createPreflightOperation(
-            String path, PathItem pathItem, Map<CorsHeader, String> headers) {
+            Context<? extends Trait> context, String path, PathItem pathItem, Map<CorsHeader, String> headers) {
         return OperationObject.builder()
                 .tags(ListUtils.of("CORS"))
                 .security(Collections.emptyList())
@@ -181,7 +181,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
                 .operationId(createOperationId(path))
                 .putResponse("200", createPreflightResponse(headers))
                 .parameters(findPathParameters(pathItem))
-                .putExtension(INTEGRATION_EXTENSION, createPreflightIntegration(headers, pathItem))
+                .putExtension(INTEGRATION_EXTENSION, createPreflightIntegration(context, headers, pathItem))
                 .build();
     }
 
@@ -217,7 +217,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         return builder.build();
     }
 
-    private static ObjectNode createPreflightIntegration(Map<CorsHeader, String> headers, PathItem pathItem) {
+    private static ObjectNode createPreflightIntegration(
+            Context<? extends Trait> context, Map<CorsHeader, String> headers, PathItem pathItem) {
         IntegrationResponse.Builder responseBuilder = IntegrationResponse.builder().statusCode("200");
 
         // Add each CORS header to the mock integration response.
@@ -225,27 +226,30 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             responseBuilder.putResponseParameter("method.response.header." + e.getKey(), "'" + e.getValue() + "'");
         }
 
+        boolean isPreflightSynced = Boolean.TRUE.equals(context.getConfig().getSyncCorsPreflightIntegration());
         MockIntegrationTrait.Builder integration = MockIntegrationTrait.builder()
                 // See https://forums.aws.amazon.com/thread.jspa?threadID=256140
                 .contentHandling("CONVERT_TO_TEXT")
-                .passThroughBehavior("when_no_match")
+                .passThroughBehavior(isPreflightSynced ? "never" : "when_no_match")
                 .putResponse("default", responseBuilder.build())
                 .putRequestTemplate(API_GATEWAY_DEFAULT_ACCEPT_VALUE, PREFLIGHT_SUCCESS);
 
-        // Adds request template for every unique Content-Type supported by all path operations.
-        // This ensures that for Content-Type(s) other than 'application/json', the entire request payload
-        // is not sent to APIGW mock integration as stipulated by 'when_no_match' passthroughBehavior.
-        // APIGW throws an error if the mock integration request does not follow a set contract,
-        // example {"statusCode":200}.
-        for (OperationObject operation : pathItem.getOperations().values()) {
-            ObjectNode extensionNode = operation.getExtension(INTEGRATION_EXTENSION)
-                    .flatMap(Node::asObjectNode)
-                    .orElse(ObjectNode.EMPTY);
-            Set<String> mimeTypes = extensionNode.getObjectMember(REQUEST_TEMPLATES_KEY)
-                    .map(ObjectNode::getStringMap)
-                    .map(Map::keySet)
-                    .orElse(SetUtils.of());
-            mimeTypes.forEach(mimeType -> integration.putRequestTemplate(mimeType, PREFLIGHT_SUCCESS));
+        if (isPreflightSynced) {
+            // Adds request template for every unique Content-Type supported by all path operations.
+            // This ensures that for Content-Type(s) other than 'application/json', the entire request payload
+            // is not sent to APIGW mock integration as stipulated by 'when_no_match' passthroughBehavior.
+            // APIGW throws an error if the mock integration request does not follow a set contract,
+            // example {"statusCode":200}.
+            for (OperationObject operation : pathItem.getOperations().values()) {
+                ObjectNode extensionNode = operation.getExtension(INTEGRATION_EXTENSION)
+                        .flatMap(Node::asObjectNode)
+                        .orElse(ObjectNode.EMPTY);
+                Set<String> mimeTypes = extensionNode.getObjectMember(REQUEST_TEMPLATES_KEY)
+                        .map(ObjectNode::getStringMap)
+                        .map(Map::keySet)
+                        .orElse(SetUtils.of());
+                mimeTypes.forEach(mimeType -> integration.putRequestTemplate(mimeType, PREFLIGHT_SUCCESS));
+            }
         }
 
         // Add a request template for every mime-type of every response.
