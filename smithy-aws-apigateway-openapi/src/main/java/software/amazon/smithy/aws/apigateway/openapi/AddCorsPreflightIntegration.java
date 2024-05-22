@@ -230,6 +230,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         MockIntegrationTrait.Builder integration = MockIntegrationTrait.builder()
                 // See https://forums.aws.amazon.com/thread.jspa?threadID=256140
                 .contentHandling("CONVERT_TO_TEXT")
+                // Passthrough behavior "never" will fail the request with unsupported content type more appropriately.
+                // https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
                 .passThroughBehavior(isPreflightSynced ? "never" : "when_no_match")
                 .putResponse("default", responseBuilder.build())
                 .putRequestTemplate(API_GATEWAY_DEFAULT_ACCEPT_VALUE, PREFLIGHT_SUCCESS);
@@ -243,7 +245,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             for (OperationObject operation : pathItem.getOperations().values()) {
                 ObjectNode extensionNode = operation.getExtension(INTEGRATION_EXTENSION)
                         .flatMap(Node::asObjectNode)
-                        .orElse(ObjectNode.EMPTY);
+                        .orElse(Node.objectNode());
                 Set<String> mimeTypes = extensionNode.getObjectMember(REQUEST_TEMPLATES_KEY)
                         .map(ObjectNode::getStringMap)
                         .map(Map::keySet)

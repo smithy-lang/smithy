@@ -43,7 +43,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Represents an object node.
  */
 public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode> {
-    public static final ObjectNode EMPTY = new ObjectNode(MapUtils.of(), SourceLocation.none(), false);
+    static final ObjectNode EMPTY = new ObjectNode(MapUtils.of(), SourceLocation.none(), false);
     private static final Logger LOGGER = Logger.getLogger(ObjectNode.class.getName());
 
     private final Map<StringNode, Node> nodeMap;
