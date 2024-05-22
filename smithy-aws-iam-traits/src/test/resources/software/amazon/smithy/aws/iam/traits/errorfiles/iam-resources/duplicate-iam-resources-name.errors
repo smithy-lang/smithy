@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Multiple IAM resources defined with the same IAM resource name is not allowed in a service closure, but found multiple resources named `Beer` in the service `smithy.example#MyService`: [`smithy.example#BadIamResourceName1`, `smithy.example#BadIamResourceName2`, `smithy.example#Beer`] | IamResourceTraitConflictingName
