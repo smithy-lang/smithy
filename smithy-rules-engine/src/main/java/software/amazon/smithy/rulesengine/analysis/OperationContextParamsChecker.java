@@ -1,5 +1,19 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package software.amazon.smithy.rulesengine.analysis;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
@@ -34,17 +48,11 @@ import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.traits.OperationContextParamDefinition;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Supplier;
-
 public final class OperationContextParamsChecker {
+
+    private OperationContextParamsChecker() {
+
+    }
 
     public static LinterResult lint(
             OperationContextParamDefinition paramDefinition, OperationShape operationShape, Model model) {
@@ -56,7 +64,7 @@ public final class OperationContextParamsChecker {
     public static Optional<ParameterType> inferParameterType(
             OperationContextParamDefinition paramDefinition, OperationShape operationShape, Model model) {
         RuntimeType runtimeType = lint(paramDefinition, operationShape, model).getReturnType();
-        switch(runtimeType) {
+        switch (runtimeType) {
             case BOOLEAN:
                 return Optional.of(ParameterType.BOOLEAN);
             case STRING:

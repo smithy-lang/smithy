@@ -5,6 +5,13 @@
 
 package software.amazon.smithy.rulesengine.validators;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -34,14 +41,6 @@ import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Validator for rule-set parameters.
@@ -115,7 +114,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             if (operationShape.hasTrait(OperationContextParamsTrait.ID)) {
                 OperationContextParamsTrait trait = operationShape.expectTrait(OperationContextParamsTrait.class);
                 trait.getParameters().forEach((name, p) -> {
-                    Optional<ParameterType> maybeType = OperationContextParamsChecker.inferParameterType(p, operationShape, model);
+                    Optional<ParameterType> maybeType = OperationContextParamsChecker
+                            .inferParameterType(p, operationShape, model);
                     maybeType.ifPresent(parameterType -> {
                         if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
                             errors.add(parameterError(operationShape, trait,
