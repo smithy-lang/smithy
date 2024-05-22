@@ -5,6 +5,8 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
+import static software.amazon.smithy.model.validation.ValidationUtils.tickedList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +46,8 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
                 .filter(entry -> entry.getValue().size() > 1)
                 .map(entry -> error(service, String.format(
                         "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
-                                + "closure, but found multiple resources named `%s` in the service `%s`: `%s`",
-                        entry.getKey(), service.getId(), entry.getValue())))
+                                + "closure, but found multiple resources named `%s` in the service `%s`: %s",
+                        entry.getKey(), service.getId(), tickedList(entry.getValue()))))
                 .forEach(events::add);
         return events;
     }
