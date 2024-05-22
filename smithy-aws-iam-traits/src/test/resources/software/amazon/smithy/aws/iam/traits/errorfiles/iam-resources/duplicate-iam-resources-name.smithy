@@ -8,25 +8,21 @@ use aws.api#arn
 service MyService {
     version: "2019-02-20",
     resources: [
-        BadIamResourceName,
+        BadIamResourceName1,
+        BadIamResourceName2,
         Beer,
         ShouldNotThrowAnErrorFirst,
         ShouldNotThrowAnErrorSecond
     ]
 }
 
-@aws.iam#iamResource(name: "Beer")
-resource BadIamResourceName {
-    identifiers: {
-        id: String
-    }
-}
+resource Beer {}
 
-resource Beer {
-    identifiers: {
-        beerId: String
-    }
-}
+@aws.iam#iamResource(name: "Beer")
+resource BadIamResourceName1 {}
+
+@aws.iam#iamResource(name: "Beer")
+resource BadIamResourceName2 {}
 
 @aws.iam#iamResource(name: "shouldNotThrowErrorSecond")
 resource ShouldNotThrowAnErrorFirst {

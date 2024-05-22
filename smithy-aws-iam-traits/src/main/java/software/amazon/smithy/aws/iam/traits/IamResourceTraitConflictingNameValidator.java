@@ -1,16 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.aws.iam.traits;
@@ -24,6 +14,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -44,23 +35,18 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
 
     private List<ValidationEvent> validateService(TopDownIndex topDownIndex, ServiceShape service) {
         List<ValidationEvent> events = new ArrayList<>();
-        Map<String, ResourceShape> container = new HashMap<>();
+        Map<String, List<ShapeId>> resourceMap = new HashMap<>();
         for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
-            String resourceName = resource.getId().getName();
-            IamResourceTrait iamResourceTrait;
-            if (resource.hasTrait(IamResourceTrait.class)
-                    && resource.expectTrait(IamResourceTrait.class).getName().isPresent()) {
-                resourceName = resource.getTrait(IamResourceTrait.class).get().getName().get();
-            }
-            if (container.containsKey(resourceName)) {
-                events.add(error(resource, String.format(
-                        "Conflicting IAM resource names in an entire service closure is not allowed. "
-                                + "This IAM resource name `%s` conflicts with other resource `%s` in the service `%s`.",
-                        resourceName, container.get(resourceName), service.getId())));
-
-            }
-            container.put(resourceName, resource);
+            String resourceName = IamResourceTrait.resolveResourceName(resource);
+            resourceMap.computeIfAbsent(resourceName, k -> new ArrayList<>()).add(resource.getId());
         }
+        resourceMap.entrySet().stream()
+                .filter(entry -> entry.getValue().size() > 1)
+                .map(entry -> error(service, String.format(
+                        "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
+                                + "closure, but found multiple resources named `%s` in the service `%s`: `%s`",
+                        entry.getKey(), service.getId(), entry.getValue())))
+                .forEach(events::add);
         return events;
     }
 }
