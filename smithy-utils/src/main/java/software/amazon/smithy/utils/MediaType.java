@@ -26,7 +26,7 @@ import java.util.Set;
 
 /**
  * Implements a simple media type parser based on the Content-Type grammar defined in
- * <a href="https://tools.ietf.org/html/rfc7231#section-3.1.1.1">RFC 7231</a>.
+ * <a href="https://tools.ietf.org/html/rfc9110#section-8.3">RFC 9110</a>.
  *
  * <p>The type, subtype, and parameter names are all canonicalized to
  * lowercase strings.
@@ -198,7 +198,7 @@ public final class MediaType {
         }
 
         private void parse() {
-            // From: https://tools.ietf.org/html/rfc7231#section-3.1.1.1
+            // From: https://tools.ietf.org/html/rfc9110#section-8.3.1
             // The type, subtype, and parameter name tokens are case-insensitive.
             //     media-type = type "/" subtype *( OWS ";" OWS parameter )
             //     type       = token.
