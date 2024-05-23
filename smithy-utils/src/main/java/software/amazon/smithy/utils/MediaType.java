@@ -154,7 +154,7 @@ public final class MediaType {
     }
 
     private static final class Parser extends SimpleParser {
-        // See https://tools.ietf.org/html/rfc7230#section-3.2.6
+        // See https://tools.ietf.org/html/rfc9110#section-5.6.2
         // token          = 1*tchar
         // tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*"
         //                / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
@@ -240,7 +240,7 @@ public final class MediaType {
             return sliceFrom(start);
         }
 
-        // See https://tools.ietf.org/html/rfc7230#section-3.2.6
+        // See https://tools.ietf.org/html/rfc9110#section-5.6.4
         // quoted-string  = DQUOTE *( qdtext / quoted-pair ) DQUOTE
         // qdtext         = HTAB / SP /%x21 / %x23-5B / %x5D-7E / obs-text
         // obs-text       = %x80-FF

@@ -238,7 +238,7 @@ headers for requests:
         is ``application/vnd.amazon.eventstream``.
     * - ``Content-Length``
       - Conditional
-      - The standard ``Content-Length`` header defined by :rfc:`7230#section-3.3.2`.
+      - The standard ``Content-Length`` header defined by :rfc:`9110#section-8.6`.
         For event streaming requests, this MUST NOT be set.
     * - ``Accept``
       - Conditional
@@ -303,7 +303,7 @@ headers for responses:
         is ``application/vnd.amazon.eventstream``.
     * - ``Content-Length``
       - Conditional
-      - The standard ``Content-Length`` header defined by :rfc:`7230#section-3.3.2`.
+      - The standard ``Content-Length`` header defined by :rfc:`9110#section-8.6`.
         For event streaming requests, this SHOULD NOT be set.
 
 

@@ -14,7 +14,7 @@ and error structures are considered when serializing HTTP messages.
 
 .. important::
 
-    Violating :rfc:`HTTP specifications <7230>` or relying on poorly-supported
+    Violating :rfc:`HTTP specifications <9110>` or relying on poorly-supported
     HTTP functionality when defining HTTP bindings will limit interoperability
     and likely lead to undefined behavior across Smithy implementations. For
     example, avoid defining GET/DELETE requests with payloads, defining
@@ -107,9 +107,8 @@ method
 The ``method`` property defines the HTTP method of the operation (e.g., "GET",
 "PUT", "POST", "DELETE", "PATCH", etc). Smithy will use this value literally
 and will perform no validation on the method. The ``method`` value SHOULD
-match the ``operation`` production rule of :rfc:`7230#appendix-B`. This
-property does not influence the safety or idempotency characteristics of an
-operation.
+match one of the definitions found in :rfc:`9110#section-9.3`. This property
+does not influence the safety or idempotency characteristics of an operation.
 
 
 .. _http-uri:
@@ -118,7 +117,7 @@ uri
 ---
 
 The ``uri`` property defines the *request-target* of the operation in
-*origin-form* as defined in :rfc:`7230#section-5.3.1`. The URI is a simple
+*origin-form* as defined in :rfc:`9112#section-3.2.1`. The URI is a simple
 pattern that Smithy uses to match HTTP requests to operations and to bind
 components of the request URI to fields in the operations's input structure.
 :dfn:`Patterns` consist of literal characters that MUST be matched in the
@@ -634,9 +633,8 @@ Trait selector
     ``structure`` member that targets a list of these types.
 Value type
     ``string`` value defining a valid HTTP header field name according to
-    :rfc:`section 3.2 of RFC7230 <7230#section-3.2>`. The value MUST NOT be
-    empty and MUST be case-insensitively unique across all other members of
-    the structure.
+    :rfc:`9110#section-5.1`. The value MUST NOT be empty and MUST be
+    case-insensitively unique across all other members of the structure.
 Conflicts with
    :ref:`httpLabel-trait`,
    :ref:`httpQuery-trait`,
@@ -1089,7 +1087,7 @@ is simply ignored.
 .. note::
 
     While there is no limit placed on the length of an
-    :rfc:`HTTP request line <7230#section-3.1.1>`, many HTTP client and server
+    :rfc:`HTTP request line <9112#section-3>`, many HTTP client and server
     implementations enforce limits in practice. Carefully consider the maximum
     allowed length of each member that is bound to an HTTP query string or
     path.
