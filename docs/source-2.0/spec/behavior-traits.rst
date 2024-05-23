@@ -6,7 +6,7 @@ Idempotency
 ===========
 
 Operations marked with the :ref:`readonly-trait` or :ref:`idempotent-trait`
-are considered idempotent as defined in :rfc:`7231#section-4.2.2`. Operations
+are considered idempotent as defined in :rfc:`9110#section-9.2.2`. Operations
 that contain a top-level input member marked with the :ref:`idempotencytoken-trait`
 that are provided a token for the member are also considered idempotent. All
 other operations SHOULD be considered unsafe to retry unless the response to

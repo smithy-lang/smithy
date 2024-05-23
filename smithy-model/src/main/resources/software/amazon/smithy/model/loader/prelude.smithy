@@ -1123,7 +1123,7 @@ enum timestampFormat {
     EPOCH_SECONDS = "epoch-seconds"
 
     /// An HTTP date as defined by the IMF-fixdate production in
-    /// RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
+    /// RFC 9110#section-5.6.7 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
     HTTP_DATE = "http-date"
 }
 

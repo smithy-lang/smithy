@@ -246,9 +246,9 @@ public class NodeValidationVisitorTest {
 
                 // http-date
                 {"ns.foo#HttpDate", "\"Tue, 29 Apr 2014 18:30:38 GMT\"", null},
-                {"ns.foo#HttpDate", "\"Tuesday, 29 April 2014 18:30:38 GMT\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: Tuesday, 29 April 2014 18:30:38 GMT"}},
-                {"ns.foo#HttpDate", "\"Tue, 29 Apr 2014 18:30:38 PST\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: Tue, 29 Apr 2014 18:30:38 PST"}},
-                {"ns.foo#HttpDate", "11", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
+                {"ns.foo#HttpDate", "\"Tuesday, 29 April 2014 18:30:38 GMT\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: Tuesday, 29 April 2014 18:30:38 GMT"}},
+                {"ns.foo#HttpDate", "\"Tue, 29 Apr 2014 18:30:38 PST\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: Tue, 29 Apr 2014 18:30:38 PST"}},
+                {"ns.foo#HttpDate", "11", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: number"}},
 
                 // date-time
                 {"ns.foo#DateTime", "\"1985-04-12T23:20:50.52Z\"", null},
@@ -267,8 +267,8 @@ public class NodeValidationVisitorTest {
                         "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `ns.foo#TimestampList$member`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
                 }},
                 {"ns.foo#TimestampList", "[123]", new String[] {"0: Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
-                {"ns.foo#Structure4", "{\"httpDate\": 1234}", new String[] {"httpDate: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
-                {"ns.foo#Structure4", "{\"httpDateTarget\": 1234}", new String[] {"httpDateTarget: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
+                {"ns.foo#Structure4", "{\"httpDate\": 1234}", new String[] {"httpDate: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: number"}},
+                {"ns.foo#Structure4", "{\"httpDateTarget\": 1234}", new String[] {"httpDateTarget: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: number"}},
 
                 // timestamp member with no format.
                 {"ns.foo#TimestampListNoFormatTrait", "[123]", null},

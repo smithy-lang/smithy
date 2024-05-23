@@ -656,7 +656,7 @@ Conflicts with
 * ``string`` values with a :ref:`mediaType-trait` are always base64 encoded.
 * ``timestamp`` values are serialized using the ``http-date``
   format by default, as defined in the ``IMF-fixdate`` production of
-  :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
+  :rfc:`9110#section-5.6.7`. The :ref:`timestampFormat-trait` MAY be used
   to use a custom serialization format.
 
 .. note::
