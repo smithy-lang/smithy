@@ -50,7 +50,7 @@ The |quoted shape name| protocol uses the following headers:
     * - ``Content-Length``
       - true
       - The standard ``Content-Length`` header defined by
-        :rfc:`7230#section-3.3.2`.
+        :rfc:`9110#section-8.6`.
     * - ``X-Amz-Target``
       - true for requests
       - The value of this header is the :token:`shape name <smithy:Identifier>` of the
