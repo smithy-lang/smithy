@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: The `myservice:Bar` condition key is defined as required but is resolved from the request. This property is only valid for condition keys resolved by the service, it MUST also be specified in the `@serviceResolvedConditionKeys` trait or use the `@required` trait instead. | DefineConditionKeysTrait
