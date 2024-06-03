@@ -1550,6 +1550,29 @@ additionalAllowedCorsHeaders (``[string]``)
             }
         }
 
+
+.. _generate-openapi-apigateway-setting-syncCorsPreflightIntegration:
+
+syncCorsPreflightIntegration (``boolean``)
+    Set to true to sync CORS preflight integration request templates with all possible content-types
+    from other methods within the same path resource.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "syncCorsPreflightIntegration": true
+                }
+            }
+        }
+
+    With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
+    will be set to ``never``.
+
 Binary types
 ============
 
@@ -1648,6 +1671,10 @@ additions during the OpenAPI conversion:
 * Adds static CORS response headers to API Gateway "gateway" responses.  These are added only when
   no gateway responses are defined in the OpenAPI model.
 
+.. note::
+    If :ref:`syncCorsPreflightIntegration <generate-openapi-apigateway-setting-syncCorsPreflightIntegration>` is
+    set to ``true``, the CORS preflight `integration's passthroughBehavior`_ will be set to ``never`` and the integration's
+    request templates will be synced with all possible content-types from other methods within the same path resource.
 
 .. _authorizers:
 
@@ -2037,4 +2064,5 @@ The conversion process is highly extensible through
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
+.. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/

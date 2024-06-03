@@ -309,7 +309,7 @@ Smithy defines the following built-in timestamp formats:
         values that contain offsets gracefully by normalizing them to UTC.
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
-        :rfc:`7231#section-7.1.1.1` (for example,
+        :rfc:`9110#section-5.6.7` (for example,
         ``Tue, 29 Apr 2014 18:30:38 GMT``). A deserializer that encounters an
         ``http-date`` timestamp with fractional precision SHOULD fail to
         deserialize the value (for example, an HTTP server SHOULD return a 400

@@ -35,7 +35,7 @@ import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Validates that `http` traits applied to operation shapes use the most
- * semantically appropriate HTTP method according to RFC 7231.
+ * semantically appropriate HTTP method according to RFC 9110.
  */
 public final class HttpMethodSemanticsValidator extends AbstractValidator {
     /**

@@ -112,4 +112,37 @@ public class CorsTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void withPreflightIntegrationSync() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        config.setSyncCorsPreflightIntegration(true);
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-preflight-sync.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void withoutPreflightIntegrationSync() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-without-preflight-sync.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

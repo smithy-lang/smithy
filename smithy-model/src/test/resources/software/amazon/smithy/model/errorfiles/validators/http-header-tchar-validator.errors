@@ -1,1 +1,1 @@
-[DANGER] ns.foo#SayHelloInput$myHeader: `Not valid!` is not a valid HTTP header field name according to section 3.2 of RFC 7230 | HttpHeaderTrait
+[DANGER] ns.foo#SayHelloInput$myHeader: `Not valid!` is not a valid HTTP header field name according to section 5.6.2 of RFC 9110 | HttpHeaderTrait

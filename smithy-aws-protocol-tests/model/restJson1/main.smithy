@@ -155,5 +155,9 @@ service RestJson {
 
         // Content-Type header tests
         ContentTypeParameters,
+
+        // defaults
+        OperationWithDefaults
+        OperationWithNestedStructure
     ]
 }

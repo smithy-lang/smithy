@@ -101,6 +101,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
     private boolean disableIntegerFormat = false;
+    private boolean syncCorsPreflightIntegration = false;
     private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
@@ -352,6 +353,21 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setDisableIntegerFormat(boolean disableIntegerFormat) {
         this.disableIntegerFormat = disableIntegerFormat;
+    }
+
+
+    public boolean getSyncCorsPreflightIntegration() {
+        return this.syncCorsPreflightIntegration;
+    }
+
+    /**
+     * Set true to sync CORS preflight integration request templates with the other
+     * methods of the same path resource and set passthroughBehavior to "never".
+     *
+     * @param syncCorsPreflightIntegration True to match CORS preflight integration.
+     */
+    public void setSyncCorsPreflightIntegration(boolean syncCorsPreflightIntegration) {
+        this.syncCorsPreflightIntegration = syncCorsPreflightIntegration;
     }
 
 

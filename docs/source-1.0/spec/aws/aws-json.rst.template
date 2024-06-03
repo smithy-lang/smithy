@@ -50,7 +50,7 @@ The |quoted shape name| protocol uses the following headers:
     * - ``Content-Length``
       - true
       - The standard ``Content-Length`` header defined by
-        `RFC 7230 Section 3.3.2`_.
+        :rfc:`9110#section-8.6`.
     * - ``X-Amz-Target``
       - true for requests
       - The value of this header is the :token:`shape name <smithy:Identifier>` of the
@@ -207,5 +207,3 @@ These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
 
 *TODO: Add event stream handling specifications.*
-
-.. _`RFC 7230 Section 3.3.2`: https://tools.ietf.org/html/rfc7230#section-3.3.2

@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyService",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/mock": {
+      "get": {
+        "operationId": "MockGet",
+        "responses": {
+          "200": {
+            "description": "MockGet 200 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockGetResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}",
+            "application/x-www-form-urlencoded": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "{\"extendedRequestId\": \"$context.extendedRequestId\"}"
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'"
+              }
+            }
+          },
+          "type": "mock",
+          "passthroughBehavior": "never"
+        }
+      },
+      "options": {
+        "description": "Handles CORS-preflight requests",
+        "operationId": "CorsMock",
+        "responses": {
+          "200": {
+            "description": "Canned response for CORS-preflight requests",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "tags": [
+          "CORS"
+        ],
+        "x-amazon-apigateway-integration": {
+          "contentHandling": "CONVERT_TO_TEXT",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\":200}"
+          },
+          "responses": {
+            "default": {
+              "responseParameters": {
+                "method.response.header.Access-Control-Max-Age": "'86400'",
+                "method.response.header.Access-Control-Allow-Headers": "'Amz-Sdk-Invocation-Id,Amz-Sdk-Request,Authorization,Date,Host,X-Amz-Content-Sha256,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Amz-User-Agent,X-Amzn-Trace-Id,X-Service-Input-Metadata'",
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,PUT'"
+              },
+              "statusCode": "200"
+            }
+          },
+          "type": "mock",
+          "passthroughBehavior": "when_no_match"
+        }
+      },
+      "put": {
+        "operationId": "MockPut",
+        "responses": {
+          "201": {
+            "description": "MockPut 201 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockPutResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "requestTemplates": {
+            "text/plain": "{\"statusCode\": 200}",
+            "application/xml": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "{\"extendedRequestId\": \"$context.extendedRequestId\"}"
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'"
+              }
+            }
+          },
+          "type": "mock",
+          "passthroughBehavior": "never"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MockGetResponseContent": {
+        "type": "object",
+        "properties": {
+          "extendedRequestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "extendedRequestId"
+        ]
+      },
+      "MockPutResponseContent": {
+        "type": "object",
+        "properties": {
+          "extendedRequestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "extendedRequestId"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "aws.auth.sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
+      }
+    }
+  },
+  "security": [
+    {
+      "aws.auth.sigv4": [ ]
+    }
+  ],
+  "x-amazon-apigateway-gateway-responses": {
+    "DEFAULT_4XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+        "gatewayresponse.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+      }
+    },
+    "DEFAULT_5XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+        "gatewayresponse.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+      }
+    }
+  }
+}

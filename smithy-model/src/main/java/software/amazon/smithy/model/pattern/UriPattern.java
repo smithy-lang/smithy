@@ -55,12 +55,12 @@ public final class UriPattern extends SmithyPattern {
      * Parse a URI pattern string into a UriPattern.
      *
      * <p>The provided value must match the origin-form request-target
-     * grammar production in RFC 7230, section 5.3.1.
+     * grammar production in RFC 9112, section 3.2.1.
      *
      * @param uri URI pattern to parse.
      * @return Returns the parsed URI pattern.
      * @throws InvalidUriPatternException for invalid URI patterns.
-     * @see <a href="https://tools.ietf.org/html/rfc7230#section-5.3.1">RFC 7230 Section 5.3.1</a>
+     * @see <a href="https://tools.ietf.org/html/rfc9112#section-3.2.1">RFC 9112 Section 3.2.1</a>
      */
     public static UriPattern parse(String uri) {
         if (uri.endsWith("?")) {
