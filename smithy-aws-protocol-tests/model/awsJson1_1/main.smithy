@@ -44,6 +44,9 @@ service JsonProtocol {
 
         // requestCompression trait tests
         PutWithContentEncoding
+
+        // Content-Type header tests
+        ContentTypeParameters,
     ],
 }
 

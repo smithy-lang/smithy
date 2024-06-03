@@ -151,7 +151,10 @@ service RestJson {
         FractionalSeconds,
 
         // requestCompression trait tests
-        PutWithContentEncoding
+        PutWithContentEncoding,
+
+        // Content-Type header tests
+        ContentTypeParameters,
 
         // defaults
         OperationWithDefaults
