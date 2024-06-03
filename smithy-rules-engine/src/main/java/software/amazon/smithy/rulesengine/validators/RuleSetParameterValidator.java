@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
@@ -22,6 +23,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.rulesengine.analysis.OperationContextParamsChecker;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -34,6 +36,7 @@ import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -80,7 +83,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
         if (serviceShape.hasTrait(ClientContextParamsTrait.class)) {
             ClientContextParamsTrait trait = serviceShape.expectTrait(ClientContextParamsTrait.class);
-            for (Map.Entry<String, ClientContextParamDefinition> entry : trait.getParameters().entrySet())  {
+            for (Map.Entry<String, ClientContextParamDefinition> entry : trait.getParameters().entrySet()) {
                 endpointParams.put(entry.getKey(), Parameter.builder()
                         .name(entry.getKey())
                         .type(ParameterType.fromShapeType(entry.getValue().getType()))
@@ -106,6 +109,26 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                                 .build());
                     }
                 }
+            }
+
+            if (operationShape.hasTrait(OperationContextParamsTrait.ID)) {
+                OperationContextParamsTrait trait = operationShape.expectTrait(OperationContextParamsTrait.class);
+                trait.getParameters().forEach((name, p) -> {
+                    Optional<ParameterType> maybeType = OperationContextParamsChecker
+                            .inferParameterType(p, operationShape, model);
+                    maybeType.ifPresent(parameterType -> {
+                        if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
+                            errors.add(parameterError(operationShape, trait,
+                                    "OperationContextParams.InconsistentType",
+                                    String.format("Inconsistent type for `%s` parameter", name)));
+                        } else {
+                            endpointParams.put(name, Parameter.builder()
+                                    .name(name)
+                                    .type(parameterType)
+                                    .build());
+                        }
+                    });
+                });
             }
 
             StructureShape input = model.expectShape(operationShape.getInputShape(), StructureShape.class);
@@ -200,7 +223,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             // All test parameter types from corresponding ruleset parameters must match in all test cases.
             if (!testSuiteHasParam) {
                 errors.add(danger(serviceShape, parameter,
-                                String.format("Parameter `%s` is never used in an `EndpointTests` test case", name))
+                        String.format("Parameter `%s` is never used in an `EndpointTests` test case", name))
                         .toBuilder()
                         .id(getName() + ".TestCase.Unused").build());
             } else {
@@ -208,7 +231,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     if (testParam.getType() != parameter.getType()) {
                         errors.add(parameterError(serviceShape, testParam, "TestCase.TypeMismatch",
                                 String.format("Type mismatch for parameter `%s`, `%s` expected",
-                                testParam.getName().toString(), parameter.getType())));
+                                        testParam.getName().toString(), parameter.getType())));
                     }
                 }
             }
@@ -302,11 +325,11 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     private Parameter buildParameter(String name, Node node) {
         Value value = Value.fromNode(node);
         return Parameter.builder()
-                       .sourceLocation(value)
-                       .name(name)
-                       .value(value)
-                       .type(ParameterType.fromType(value.getType()))
-                       .build();
+                .sourceLocation(value)
+                .name(name)
+                .value(value)
+                .type(ParameterType.fromType(value.getType()))
+                .build();
     }
 
     private List<Parameter> merge(List<Parameter> previousList, List<Parameter> newList) {

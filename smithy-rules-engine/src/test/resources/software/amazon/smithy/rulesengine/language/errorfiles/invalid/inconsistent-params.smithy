@@ -5,6 +5,7 @@ namespace example
 use smithy.rules#clientContextParams
 use smithy.rules#contextParam
 use smithy.rules#endpointRuleSet
+use smithy.rules#operationContextParams
 use smithy.rules#staticContextParams
 
 @endpointRuleSet({
@@ -30,6 +31,10 @@ use smithy.rules#staticContextParams
             "type": "string",
             "documentation": "docs",
             "builtIn": "SDK::Endpoint"
+        },
+        "StringArrayParam": {
+            "type": "stringArray",
+            "documentation": "docs"
         }
     },
     "rules": []
@@ -47,6 +52,10 @@ service FizzBuzz {
     "ParamNotInRuleset": {value: "someValue"},
     "InconsistentParamType": {value: true}
 )
+@operationContextParams(
+    "StringArrayParam": {path: "ResourceId"},
+    "InconsistentOperactionContextParam": {path: "ResourceId"}
+)
 operation GetResource {
     input: GetResourceInput
 }
@@ -61,13 +70,21 @@ structure GetResourceInput {
     "ParamNotInRuleset": {value: "someOtherValue"},
     "InconsistentParamType": {value: "someValue"}
 )
+@operationContextParams(
+    "InconsistentOperactionContextParam": {path: "ListOfStrings[*]"}
+)
 operation GetAnotherResource {
     input: GetAnotherResourceInput
 }
 
 structure GetAnotherResourceInput {
     @contextParam(name: "AnotherParameterBar")
-    ResourceId: ResourceId
+    ResourceId: ResourceId,
+    ListOfStrings: ListOfStrings
+}
+
+list ListOfStrings {
+    member: String
 }
 
 string ResourceId

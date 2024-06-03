@@ -1,0 +1,102 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "example.smithy#MyService": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "example.smithy#MockPut"
+                },
+                {
+                    "target": "example.smithy#MockGet"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": {},
+                "aws.auth#sigv4": {
+                    "name": "myservice"
+                },
+                "smithy.api#cors": {
+                    "origin": "https://www.example.com",
+                    "maxAge": 86400,
+                    "additionalAllowedHeaders": [
+                        "X-Service-Input-Metadata"
+                    ],
+                    "additionalExposedHeaders": [
+                        "X-Service-Output-Metadata"
+                    ]
+                }
+            }
+        },
+        "example.smithy#MockGet": {
+            "type": "operation",
+            "output": {
+                "target": "example.smithy#MockOutput"
+            },
+            "traits": {
+                "aws.apigateway#mockIntegration": {
+                    "passThroughBehavior": "never",
+                    "requestTemplates": {
+                        "application/json": "{\"statusCode\": 200}",
+                        "application/x-www-form-urlencoded": "{\"statusCode\": 200}"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseTemplates": {
+                                "application/json": "{\"extendedRequestId\": \"$context.extendedRequestId\"}"
+                            }
+                        }
+                    }
+                },
+                "smithy.api#http": {
+                    "code": 200,
+                    "method": "GET",
+                    "uri": "/mock"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "example.smithy#MockPut": {
+            "type": "operation",
+            "output": {
+                "target": "example.smithy#MockOutput"
+            },
+            "traits": {
+                "aws.apigateway#mockIntegration": {
+                    "passThroughBehavior": "never",
+                    "requestTemplates": {
+                        "text/plain": "{\"statusCode\": 200}",
+                        "application/xml": "{\"statusCode\": 200}"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseTemplates": {
+                                "application/json": "{\"extendedRequestId\": \"$context.extendedRequestId\"}"
+                            }
+                        }
+                    }
+                },
+                "smithy.api#http": {
+                    "code": 201,
+                    "method": "PUT",
+                    "uri": "/mock"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "example.smithy#MockOutput": {
+            "type": "structure",
+            "members": {
+                "extendedRequestId": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        }
+    }
+}

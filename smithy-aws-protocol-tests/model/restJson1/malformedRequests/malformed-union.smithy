@@ -79,6 +79,28 @@ apply MalformedUnion @httpMalformedRequestTests([
         }
     },
     {
+        id: "RestJsonMalformedUnionEmptyObjectNoFieldsSet",
+        documentation: """
+            When the union is an empty object, it has no fields set, so the
+            response should be a 400 SerializationException.""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedUnion",
+            body: """
+                { "union" : {  } }""",
+            headers: {
+                "content-type": "application/json"
+            }
+        },
+        response: {
+            code: 400,
+            headers: {
+                "x-amzn-errortype": "SerializationException"
+            }
+        }
+    },
+    {
         id: "RestJsonMalformedUnionValueIsArray",
         documentation: """
             When the union value is actually an array, the response should be a 400

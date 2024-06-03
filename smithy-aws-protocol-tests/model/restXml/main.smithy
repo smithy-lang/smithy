@@ -105,6 +105,9 @@ service RestXml {
         FractionalSeconds,
 
         // requestCompression trait tests
-        PutWithContentEncoding
+        PutWithContentEncoding,
+
+        // Content-Type header tests
+        ContentTypeParameters,
     ]
 }

@@ -26,7 +26,7 @@ import java.util.Set;
 
 /**
  * Implements a simple media type parser based on the Content-Type grammar defined in
- * <a href="https://tools.ietf.org/html/rfc7231#section-3.1.1.1">RFC 7231</a>.
+ * <a href="https://tools.ietf.org/html/rfc9110#section-8.3">RFC 9110</a>.
  *
  * <p>The type, subtype, and parameter names are all canonicalized to
  * lowercase strings.
@@ -154,7 +154,7 @@ public final class MediaType {
     }
 
     private static final class Parser extends SimpleParser {
-        // See https://tools.ietf.org/html/rfc7230#section-3.2.6
+        // See https://tools.ietf.org/html/rfc9110#section-5.6.2
         // token          = 1*tchar
         // tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*"
         //                / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
@@ -198,7 +198,7 @@ public final class MediaType {
         }
 
         private void parse() {
-            // From: https://tools.ietf.org/html/rfc7231#section-3.1.1.1
+            // From: https://tools.ietf.org/html/rfc9110#section-8.3.1
             // The type, subtype, and parameter name tokens are case-insensitive.
             //     media-type = type "/" subtype *( OWS ";" OWS parameter )
             //     type       = token.
@@ -240,7 +240,7 @@ public final class MediaType {
             return sliceFrom(start);
         }
 
-        // See https://tools.ietf.org/html/rfc7230#section-3.2.6
+        // See https://tools.ietf.org/html/rfc9110#section-5.6.4
         // quoted-string  = DQUOTE *( qdtext / quoted-pair ) DQUOTE
         // qdtext         = HTAB / SP /%x21 / %x23-5B / %x5D-7E / obs-text
         // obs-text       = %x80-FF

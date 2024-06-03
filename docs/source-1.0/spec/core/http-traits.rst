@@ -14,8 +14,8 @@ and error structures are considered when serializing HTTP messages.
 
 .. important::
 
-    Violating `HTTP specifications`_ or relying on poorly-supported HTTP
-    functionality when defining HTTP bindings will limit interoperability
+    Violating :rfc:`HTTP specifications <9110>` or relying on poorly-supported
+    HTTP functionality when defining HTTP bindings will limit interoperability
     and likely lead to undefined behavior across Smithy implementations. For
     example, avoid defining GET/DELETE requests with payloads, defining
     response payloads for operations with a 204/205 status, etc.
@@ -106,9 +106,8 @@ method
 The ``method`` property defines the HTTP method of the operation (e.g., "GET",
 "PUT", "POST", "DELETE", "PATCH", etc). Smithy will use this value literally
 and will perform no validation on the method. The ``method`` value SHOULD
-match the ``operation`` production rule of :rfc:`7230#appendix-B`. This
-property does not influence the safety or idempotency characteristics of an
-operation.
+match one of the definitions found in :rfc:`9110#section-9.3`. This property
+does not influence the safety or idempotency characteristics of an operation.
 
 
 .. _http-uri:
@@ -117,7 +116,7 @@ uri
 ---
 
 The ``uri`` property defines the *request-target* of the operation in
-*origin-form* as defined in :rfc:`7230#section-5.3.1`. The URI is a simple
+*origin-form* as defined in :rfc:`9112#section-3.2.1`. The URI is a simple
 pattern that Smithy uses to match HTTP requests to operations and to bind
 components of the request URI to fields in the operations's input structure.
 :dfn:`Patterns` consist of literal characters that MUST be matched in the
@@ -525,9 +524,8 @@ Trait selector
     ``structure`` member that targets a list of these types.
 Value type
     ``string`` value defining a valid HTTP header field name according to
-    :rfc:`section 3.2 of RFC7230 <7230#section-3.2>`. The value MUST NOT be
-    empty and MUST be case-insensitively unique across all other members of
-    the structure.
+    :rfc:`9110#section-5.1`. The value MUST NOT be empty and MUST be
+    case-insensitively unique across all other members of the structure.
 Conflicts with
    :ref:`httpLabel-trait`,
    :ref:`httpQuery-trait`,
@@ -546,7 +544,7 @@ Conflicts with
 * ``string`` values with a :ref:`mediaType-trait` are always base64 encoded.
 * ``timestamp`` values are serialized using the ``http-date``
   format by default, as defined in the ``IMF-fixdate`` production of
-  :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
+  :rfc:`9110#section-5.6.7`. The :ref:`timestampFormat-trait` MAY be used
   to use a custom serialization format.
 
 .. rubric:: Do not put too much data in HTTP headers
@@ -954,10 +952,10 @@ the body of the response.
 
 .. rubric:: Do not put too much data in the query string
 
-While there is no limit placed on the length of an `HTTP request line`_,
-many HTTP client and server implementations enforce limits in practice.
-Carefully consider the maximum allowed length of each member that is bound to
-an HTTP query string or path.
+While there is no limit placed on the length of an
+:rfc:`HTTP request line <9112#section-3>`, many HTTP client and server
+implementations enforce limits in practice. Carefully consider the maximum
+allowed length of each member that is bound to an HTTP query string or path.
 
 
 .. smithy-trait:: smithy.api#httpQueryParams
@@ -1335,5 +1333,3 @@ marked with the ``httpPayload`` trait:
 
 
 .. _percent-encoded: https://tools.ietf.org/html/rfc3986#section-2.1
-.. _HTTP request line: https://tools.ietf.org/html/rfc7230.html#section-3.1.1
-.. _HTTP specifications: https://datatracker.ietf.org/doc/html/rfc7230

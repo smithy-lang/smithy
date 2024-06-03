@@ -126,7 +126,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private String createInvalidHttpDateMessage(String dateValue) {
         return String.format(
                 "Invalid value provided for %s formatted timestamp. Expected a string value that "
-                + "matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: %s",
+                + "matches the IMF-fixdate production of RFC 9110 section-5.6.7. Found: %s",
                 TimestampFormatTrait.HTTP_DATE, dateValue);
     }
 

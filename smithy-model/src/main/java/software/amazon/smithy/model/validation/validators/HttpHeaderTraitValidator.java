@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class HttpHeaderTraitValidator extends AbstractValidator {
 
-    /** Gather the allowed characters for HTTP headers (tchar from RFC 7230). **/
+    /** Gather the allowed characters for HTTP headers (tchar from RFC 9110 section 5.6.2). **/
     private static final Set<Character> TCHAR = SetUtils.of(
             // "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
             '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~',
@@ -101,7 +101,7 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
         for (int i = 0; i < header.length(); i++) {
             if (!TCHAR.contains(header.charAt(i))) {
                 return Optional.of(danger(member, trait, String.format(
-                        "`%s` is not a valid HTTP header field name according to section 3.2 of RFC 7230", header)));
+                        "`%s` is not a valid HTTP header field name according to section 5.6.2 of RFC 9110", header)));
             }
         }
 

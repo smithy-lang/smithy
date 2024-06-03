@@ -35,6 +35,9 @@ service JsonRpc10 {
         // requestCompression trait tests
         PutWithContentEncoding,
 
+        // Content-Type header tests
+        ContentTypeParameters,
+
         OperationWithDefaults,
         OperationWithRequiredMembers,
         OperationWithNestedStructure
