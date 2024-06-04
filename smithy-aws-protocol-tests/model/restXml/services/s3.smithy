@@ -356,9 +356,6 @@ operation DeleteObjectTagging {
         host: "s3.us-west-2.amazonaws.com",
         resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
         body: "",
-        queryParams: [
-            "tagging"
-        ],
         params: {
             Bucket: "mybucket",
             Key: "../key.txt"
@@ -382,13 +379,10 @@ operation DeleteObjectTagging {
         """,
         protocol: restXml,
         method: "GET",
-        uri: "foo/../key.txt",
+        uri: "/foo/../key.txt",
         host: "s3.us-west-2.amazonaws.com",
         resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
         body: "",
-        queryParams: [
-            "tagging"
-        ],
         params: {
             Bucket: "mybucket",
             Key: "foo/../key.txt"
