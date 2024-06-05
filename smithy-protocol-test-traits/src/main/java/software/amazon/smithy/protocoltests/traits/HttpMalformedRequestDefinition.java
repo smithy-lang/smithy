@@ -38,6 +38,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBuilder<HttpMalformedRequestDefinition> {
 
     private static final String BODY = "body";
+    private static final String BODY_MEDIA_TYPE = "bodyMediaType";
     private static final String HEADERS = "headers";
     private static final String HOST = "host";
     private static final String METHOD = "method";
@@ -45,6 +46,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
     private static final String URI = "uri";
 
     private final String body;
+    private final String bodyMediaType;
     private final Map<String, String> headers;
     private final String host;
     private final String method;
@@ -53,6 +55,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
     private HttpMalformedRequestDefinition(Builder builder) {
         body = builder.body;
+        bodyMediaType = builder.bodyMediaType;
         host = builder.host;
         headers = MapUtils.copyOf(builder.headers);
         method = SmithyBuilder.requiredState(METHOD, builder.method);
@@ -62,6 +65,10 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
     public Optional<String> getBody() {
         return Optional.ofNullable(body);
+    }
+
+    public Optional<String> getBodyMediaType() {
+        return Optional.ofNullable(bodyMediaType);
     }
 
     public Map<String, String> getHeaders() {
@@ -93,6 +100,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
         HttpMalformedRequestDefinition.Builder builder = builder();
         ObjectNode o = node.expectObjectNode();
         o.getStringMember(BODY).map(StringNode::getValue).ifPresent(builder::body);
+        o.getStringMember(BODY_MEDIA_TYPE).map(StringNode::getValue).ifPresent(builder::bodyMediaType);
         o.getObjectMember(HEADERS).ifPresent(headers -> {
             headers.getStringMap().forEach((k, v) -> {
                 builder.putHeader(k, v.expectStringNode().getValue());
@@ -111,6 +119,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
     public Node toNode() {
         return Node.objectNodeBuilder()
                 .withOptionalMember(BODY, getBody().map(Node::from))
+                .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from))
                 .withOptionalMember(HEADERS,
                         headers.isEmpty() ? Optional.empty() : Optional.of(ObjectNode.fromStringMap(getHeaders())))
                 .withOptionalMember(HOST, getHost().map(StringNode::from))
@@ -128,6 +137,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
                 .method(getMethod())
                 .queryParams(getQueryParams());
         getBody().ifPresent(builder::body);
+        getBodyMediaType().ifPresent(builder::bodyMediaType);
         getHost().ifPresent(builder::host);
         getUri().ifPresent(builder::uri);
         return builder;
@@ -143,6 +153,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
     public static final class Builder implements SmithyBuilder<HttpMalformedRequestDefinition> {
 
         private String body;
+        private String bodyMediaType;
         private String host;
         private final Map<String, String> headers = new HashMap<>();
         private String method;
@@ -153,6 +164,11 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
         public Builder body(String body) {
             this.body = body;
+            return this;
+        }
+
+        public Builder bodyMediaType(String bodyMediaType) {
+            this.bodyMediaType = bodyMediaType;
             return this;
         }
 

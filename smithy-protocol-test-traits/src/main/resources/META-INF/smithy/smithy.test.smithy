@@ -359,6 +359,12 @@ structure HttpMalformedRequestDefinition {
 
     /// The HTTP message body to include in the request
     body: String,
+
+    /// The media type of the `body`.
+    ///
+    /// This is used to help test runners to parse and validate the expected
+    /// data against generated data.
+    bodyMediaType: String
 }
 
 @private
