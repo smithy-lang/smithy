@@ -18,10 +18,14 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
@@ -75,7 +79,11 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             } else if (isErrorDefined) {
                 ExamplesTrait.ErrorExample errorExample = example.getError().get();
                 Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
-                if (errorShape.isPresent() && shape.getErrors().contains(errorExample.getShapeId())) {
+                if (errorShape.isPresent() && (
+                        // The error is directly bound to the operation.
+                        shape.getErrors().contains(errorExample.getShapeId())
+                        // The error is bound to all services that contain the operation.
+                        || servicesContainError(model, shape, errorExample.getShapeId()))) {
                     NodeValidationVisitor validator = createVisitor(
                             "error", errorExample.getContent(), model, shape, example);
                     events.addAll(errorShape.get().accept(validator));
@@ -88,6 +96,30 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    private boolean servicesContainError(Model model, OperationShape shape, ShapeId errorId) {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+
+        Set<ServiceShape> services = model.getServiceShapes();
+        if (services.isEmpty()) {
+            return false;
+        }
+
+        for (ServiceShape service : services) {
+            // Skip if the service doesn't have the operation.
+            if (!topDownIndex.getContainedOperations(service).contains(shape)) {
+                continue;
+            }
+
+            // We've already checked if the operation contains the error,
+            // so a service having no errors means we've failed.
+            if (service.getErrors().isEmpty() || !service.getErrors().contains(errorId)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private NodeValidationVisitor createVisitor(
