@@ -420,7 +420,7 @@ A tree rule object contains the following properties:
       - Description
     * - type
       - ``string``
-      - **Required**. MUST be ``endpoint``.
+      - **Required**. MUST be ``tree``.
     * - conditions
       - An ``array`` of `Condition object`_
       - **Required**. Zero or more conditions used to determine whether the
