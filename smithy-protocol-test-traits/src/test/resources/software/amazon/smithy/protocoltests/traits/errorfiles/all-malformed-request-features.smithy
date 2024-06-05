@@ -101,6 +101,25 @@ structure testProtocol {}
             "bar" : ["d", "e", "f"]
         }
     }
+    {
+        id: "noResponseBodyAssertionWithMediaType"
+        documentation: "Testing..."
+        protocol: testProtocol
+        request: {
+            body: "Zm9vCg=="
+            bodyMediaType: "application/cbor"
+            headers: {"X-Foo": "baz"}
+            host: "example.com"
+            method: "POST"
+            uri: "/"
+            queryParams: ["foo=baz"]
+        },
+        response: {
+            code: 400
+            headers: {"X-Foo": "baz"}
+        },
+        tags: ["foo", "bar"]
+    },
 ])
 operation SayHello {
     input: SayHelloInput,
