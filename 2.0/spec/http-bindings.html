@@ -353,7 +353,7 @@ label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">Violating <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html"><strong>HTTP specifications</strong></a> or relying on poorly-supported
+<p class="last">Violating <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html"><strong>HTTP specifications</strong></a> or relying on poorly-supported
 HTTP functionality when defining HTTP bindings will limit interoperability
 and likely lead to undefined behavior across Smithy implementations. For
 example, avoid defining GET/DELETE requests with payloads, defining
@@ -444,14 +444,13 @@ the body of the response.</td>
 <p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> property defines the HTTP method of the operation (e.g., &quot;GET&quot;,
 &quot;PUT&quot;, &quot;POST&quot;, &quot;DELETE&quot;, &quot;PATCH&quot;, etc). Smithy will use this value literally
 and will perform no validation on the method. The <code class="docutils literal notranslate"><span class="pre">method</span></code> value SHOULD
-match the <code class="docutils literal notranslate"><span class="pre">operation</span></code> production rule of <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#appendix-B"><strong>RFC 7230#appendix-B</strong></a>. This
-property does not influence the safety or idempotency characteristics of an
-operation.</p>
+match one of the definitions found in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html#section-9.3"><strong>RFC 9110#section-9.3</strong></a>. This property
+does not influence the safety or idempotency characteristics of an operation.</p>
 </div>
 <div class="section" id="uri">
 <span id="http-uri"></span><h3><span class="section-number">14.1.2. </span>uri<a class="headerlink" href="#uri" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">uri</span></code> property defines the <em>request-target</em> of the operation in
-<em>origin-form</em> as defined in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#section-5.3.1"><strong>RFC 7230#section-5.3.1</strong></a>. The URI is a simple
+<em>origin-form</em> as defined in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9112.html#section-3.2.1"><strong>RFC 9112#section-3.2.1</strong></a>. The URI is a simple
 pattern that Smithy uses to match HTTP requests to operations and to bind
 components of the request URI to fields in the operations's input structure.
 <em class="dfn">Patterns</em> consist of literal characters that MUST be matched in the
@@ -1053,9 +1052,8 @@ target a <code class="docutils literal notranslate"><span class="pre">boolean</s
 <code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list of these types.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining a valid HTTP header field name according to
-<span class="target" id="index-3"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#section-3.2"><strong>section 3.2 of RFC7230</strong></a>. The value MUST NOT be
-empty and MUST be case-insensitively unique across all other members of
-the structure.</dd>
+<span class="target" id="index-3"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html#section-5.1"><strong>RFC 9110#section-5.1</strong></a>. The value MUST NOT be empty and MUST be
+case-insensitively unique across all other members of the structure.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
@@ -1074,7 +1072,7 @@ own line.</li>
 <li><code class="docutils literal notranslate"><span class="pre">string</span></code> values with a <a class="reference internal" href="protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> are always base64 encoded.</li>
 <li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized using the <code class="docutils literal notranslate"><span class="pre">http-date</span></code>
 format by default, as defined in the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production of
-<span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a>. The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used
+<span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html#section-5.6.7"><strong>RFC 9110#section-5.6.7</strong></a>. The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used
 to use a custom serialization format.</li>
 </ul>
 <div class="admonition note">
@@ -1479,7 +1477,7 @@ is simply ignored.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">While there is no limit placed on the length of an
-<span class="target" id="index-11"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#section-3.1.1"><strong>HTTP request line</strong></a>, many HTTP client and server
+<span class="target" id="index-11"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9112.html#section-3"><strong>HTTP request line</strong></a>, many HTTP client and server
 implementations enforce limits in practice. Carefully consider the maximum
 allowed length of each member that is bound to an HTTP query string or
 path.</p>

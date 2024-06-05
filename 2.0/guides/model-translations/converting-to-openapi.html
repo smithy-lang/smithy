@@ -1884,6 +1884,27 @@ headers will be omitted.</p>
 </div>
 </dd>
 </dl>
+<dl class="docutils" id="generate-openapi-apigateway-setting-synccorspreflightintegration">
+<dt>syncCorsPreflightIntegration (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to sync CORS preflight integration request templates with all possible content-types
+from other methods within the same path resource.</p>
+<div class="literal-block-wrapper docutils container" id="id53">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id53" title="Permalink to this code">#</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;syncCorsPreflightIntegration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>With this enabled, the <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html">integration's passthroughBehavior</a> for CORS preflight integration
+will be set to <code class="docutils literal notranslate"><span class="pre">never</span></code>.</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="binary-types">
 <h3>Binary types<a class="headerlink" href="#binary-types" title="Permalink to this heading">#</a></h3>
@@ -1965,6 +1986,12 @@ additions during the OpenAPI conversion:</p>
 <li>Adds static CORS response headers to API Gateway &quot;gateway&quot; responses.  These are added only when
 no gateway responses are defined in the OpenAPI model.</li>
 </ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If <a class="reference internal" href="#generate-openapi-apigateway-setting-synccorspreflightintegration"><span class="std std-ref">syncCorsPreflightIntegration</span></a> is
+set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the CORS preflight <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html">integration's passthroughBehavior</a> will be set to <code class="docutils literal notranslate"><span class="pre">never</span></code> and the integration's
+request templates will be synced with all possible content-types from other methods within the same path resource.</p>
+</div>
 </div>
 <div class="section" id="authorizers">
 <span id="id1"></span><h3>Authorizers<a class="headerlink" href="#authorizers" title="Permalink to this heading">#</a></h3>
@@ -2264,8 +2291,8 @@ to perform the conversion.</p>
 shows how to install <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-openapi</span></code> through Gradle:</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--1">Kotlin</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id53">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id53" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id54">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id54" title="Permalink to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.49.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
@@ -2274,8 +2301,8 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--2">Groovy</label><div class="tab-content docutils container">
-<div class="literal-block-wrapper docutils container" id="id54">
-<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id54" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id55">
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id55" title="Permalink to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-openapi:1.49.0&#39;</span>
 <span class="o">}</span>

@@ -2020,7 +2020,7 @@ The following example defines the ``PutForecast`` operation.
 .. rubric:: Put semantics
 
 The semantics of a ``put`` lifecycle operation are similar to the semantics
-of a HTTP PUT method as described in :rfc:`section 4.3.4 of [RFC7231] <7231#section-4.3.4>`:
+of a HTTP PUT method as described in :rfc:`section 4.3.4 of [RFC9110] <9110#section-9.3.4>`:
 
   The PUT method requests that the state of the target resource be
   created or replaced ...

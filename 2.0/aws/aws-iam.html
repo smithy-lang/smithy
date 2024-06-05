@@ -753,6 +753,12 @@ for more information.</td>
 <td>A relative URL path that defines more information about the condition key
 within a set of IAM-related documentation.</td>
 </tr>
+<tr class="row-even"><td>required</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Defines whether a service resolved condition key is required. Not
+applicable to request resolved condition keys, as the native
+<a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> trait MUST be used on the member directly.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -769,7 +775,14 @@ within a set of IAM-related documentation.</td>
 <span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
 <span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span>
 <span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span>
-<span class="w">    </span>})
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;myservice:Baz&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Baz string&quot;</span>
+<span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://baz.com&quot;</span>
+<span class="w">        </span><span class="py">required</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span>}
+)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]

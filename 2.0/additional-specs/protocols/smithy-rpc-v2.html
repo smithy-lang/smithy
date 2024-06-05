@@ -559,10 +559,10 @@ for security reasons.</p>
 <p>Buffered RPC requests for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol SHOULD include a
 <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header. Event streaming requests MUST NOT specify a content
 length (instead using <code class="docutils literal notranslate"><span class="pre">Transfer-Encoding:</span> <span class="pre">chunked</span></code> on HTTP/1.1).</p>
-<p>Event streaming requests for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol MUST include an
-<code class="docutils literal notranslate"><span class="pre">Accept</span></code> header set to the value <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.
-Other forms of content streaming MAY be added in the future, utilizing
-different values for <code class="docutils literal notranslate"><span class="pre">Accept</span></code>.</p>
+<p>Requests with event stream responses for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol MUST
+include an <code class="docutils literal notranslate"><span class="pre">Accept</span></code> header set to the value
+<code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>. Other forms of content streaming MAY be
+added in the future, utilizing different values for <code class="docutils literal notranslate"><span class="pre">Accept</span></code>.</p>
 <p>In summary, the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol defines behavior for the following
 headers for requests:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -590,12 +590,13 @@ is <code class="docutils literal notranslate"><span class="pre">application/vnd.
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
 <td>Conditional</td>
-<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#section-3.3.2"><strong>RFC 7230#section-3.3.2</strong></a>.
+<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html#section-8.6"><strong>RFC 9110#section-8.6</strong></a>.
 For event streaming requests, this MUST NOT be set.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Accept</span></code></td>
 <td>Conditional</td>
-<td>For event streaming requests, to the value <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</td>
+<td>For requests with event streaming responses, this is
+<code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</td>
 </tr>
 </tbody>
 </table>
@@ -661,7 +662,7 @@ is <code class="docutils literal notranslate"><span class="pre">application/vnd.
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
 <td>Conditional</td>
-<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7230.html#section-3.3.2"><strong>RFC 7230#section-3.3.2</strong></a>.
+<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9110.html#section-8.6"><strong>RFC 9110#section-8.6</strong></a>.
 For event streaming requests, this SHOULD NOT be set.</td>
 </tr>
 </tbody>
