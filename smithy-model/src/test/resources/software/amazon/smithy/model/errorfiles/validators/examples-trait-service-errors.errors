@@ -1,0 +1,3 @@
+[ERROR] ns.foo#WithError: Error parameters provided for operation without the `ns.foo#ServiceError` error: `Testing 2` | ExamplesTrait
+[ERROR] ns.foo#WithoutError: Error parameters provided for operation without the `ns.foo#OperationError` error: `Testing 3` | ExamplesTrait
+[ERROR] ns.foo#WithoutError: Error parameters provided for operation without the `ns.foo#ServiceError` error: `Testing 4` | ExamplesTrait
