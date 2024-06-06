@@ -55,9 +55,6 @@ apply MalformedContentTypeWithBody @httpMalformedRequestTests([
         },
         tags: [ "content-type" ]
     }
-])
-
-apply MalformedContentTypeWithBody @httpMalformedRequestTests([
     {
         id: "RestJsonWithBodyExpectsApplicationJsonContentTypeNoHeaders",
         documentation: """
