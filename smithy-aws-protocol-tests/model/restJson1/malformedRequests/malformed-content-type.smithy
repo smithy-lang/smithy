@@ -36,7 +36,7 @@ apply MalformedContentTypeWithBody @httpMalformedRequestTests([
     {
         id: "RestJsonWithBodyExpectsApplicationJsonContentType",
         documentation: """
-        When there is modeled input, they content type must be application/json""",
+        When there is modeled input, the content type must be application/json""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -46,6 +46,27 @@ apply MalformedContentTypeWithBody @httpMalformedRequestTests([
                 // this should be application/json
                 "content-type": "application/hal+json"
             }
+        },
+        response: {
+            code: 415,
+            headers: {
+                "x-amzn-errortype": "UnsupportedMediaTypeException"
+            }
+        },
+        tags: [ "content-type" ]
+    }
+])
+
+apply MalformedContentTypeWithBody @httpMalformedRequestTests([
+    {
+        id: "RestJsonWithBodyExpectsApplicationJsonContentTypeNoHeaders",
+        documentation: """
+        When there is modeled input, the content type must be application/json""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedContentTypeWithBody",
+            body: "{}",
         },
         response: {
             code: 415,
