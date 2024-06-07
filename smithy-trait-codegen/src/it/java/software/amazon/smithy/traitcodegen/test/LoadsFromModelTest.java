@@ -16,10 +16,12 @@ import com.example.traits.idref.IdRefStringTrait;
 import com.example.traits.idref.IdRefStructTrait;
 import com.example.traits.idref.IdRefStructWithNestedIdsTrait;
 import com.example.traits.idref.NestedIdRefHolder;
+import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
+import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
 import com.example.traits.mixins.ListMemberWithMixin;
@@ -115,6 +117,10 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValues", ListUtils.of(
                                 ListMember.builder().a("first").b(1).c("other").build(),
                                 ListMember.builder().a("second").b(2).c("more").build()))),
+                Arguments.of("lists/document-list-trait.smithy", DocumentListTrait.class,
+                        MapUtils.of("getValues", ListUtils.of(
+                            ObjectNode.builder().withMember("a", "a").build(),
+                            ObjectNode.builder().withMember("b", "b").withMember("c", "c").build()))),
                 // Maps
                 Arguments.of("maps/string-string-map-trait.smithy", StringStringMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of("a", "stuff",
@@ -123,6 +129,11 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValues", MapUtils.of(
                                 "one", MapValue.builder().a("foo").b(2).build(),
                                 "two", MapValue.builder().a("bar").b(4).build()))),
+                Arguments.of("maps/string-to-document-map-trait.smithy", StringDocumentMapTrait.class,
+                        MapUtils.of("getValues", MapUtils.of(
+                                "a", ObjectNode.builder().withMember("a", "a").build(),
+                                "b", ObjectNode.builder().withMember("b", "b").withMember("c", "c").build()
+                        ))),
                 // Mixins
                 Arguments.of("mixins/struct-with-mixin-member.smithy", StructureListWithMixinMemberTrait.class,
                         MapUtils.of("getValues", ListUtils.of(

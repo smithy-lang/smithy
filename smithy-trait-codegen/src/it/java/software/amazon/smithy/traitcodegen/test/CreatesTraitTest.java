@@ -9,11 +9,13 @@ import com.example.traits.documents.StructWithNestedDocumentTrait;
 import com.example.traits.enums.IntEnumTrait;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
+import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StringListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
+import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
 import com.example.traits.mixins.StructWithMixinTrait;
@@ -81,6 +83,10 @@ public class CreatesTraitTest {
                         ListMember.builder().a("first").b(1).c("other").build().toNode(),
                         ListMember.builder().a("second").b(2).c("more").build().toNode()
                 )),
+                Arguments.of(DocumentListTrait.ID, ArrayNode.fromNodes(
+                        ObjectNode.builder().withMember("a", "b").build(),
+                        ObjectNode.builder().withMember("c", "d").withMember("e", "f").build()
+                )),
                 // Maps
                 Arguments.of(StringStringMapTrait.ID, StringStringMapTrait.builder()
                         .putValues("a", "first").putValues("b", "other").build().toNode()
@@ -88,6 +94,11 @@ public class CreatesTraitTest {
                 Arguments.of(StringToStructMapTrait.ID, StringToStructMapTrait.builder()
                         .putValues("one", MapValue.builder().a("foo").b(2).build())
                         .putValues("two", MapValue.builder().a("bar").b(4).build())
+                        .build().toNode()
+                ),
+                Arguments.of(StringDocumentMapTrait.ID, StringDocumentMapTrait.builder()
+                        .putValues("a", ObjectNode.builder().withMember("a", "a").build())
+                        .putValues("b", ObjectNode.builder().withMember("b", "b").build())
                         .build().toNode()
                 ),
                 // Mixins
