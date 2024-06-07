@@ -6,10 +6,13 @@ namespace test.smithy.traitcodegen.timestamps
 structure structWithNestedTimestamps {
     @required
     baseTime: basicTimestamp
+
     @required
     dateTime: dateTimeTimestamp
+
     @required
     httpDate: httpDateTimestamp
+
     @required
     epochSeconds: epochSecondsTimestamp
 }

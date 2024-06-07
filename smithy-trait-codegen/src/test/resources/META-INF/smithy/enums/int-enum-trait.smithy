@@ -10,4 +10,3 @@ intEnum IntEnum {
     /// Negative response
     NO = 2
 }
-
