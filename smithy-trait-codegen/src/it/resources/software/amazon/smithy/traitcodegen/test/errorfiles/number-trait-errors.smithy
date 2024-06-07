@@ -9,5 +9,3 @@ namespace test.smithy.traitcodegen.numbers
 @ShortTrait("bad")
 @DoubleTrait("bad")
 structure structWithInvalidStringInput {}
-
-

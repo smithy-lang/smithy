@@ -10,7 +10,8 @@ use test.smithy.traitcodegen.mixins#structureListWithMixinMember
         b: 1
         c: "other"
         d: "mixed-in"
-    } {
+    }
+    {
         a: "second"
         b: 2
         c: "more"

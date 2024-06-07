@@ -4,9 +4,7 @@ namespace test.smithy.traitcodegen.uniqueitems
 
 // Doesnt have unique items. Expect failure
 @NumberSetTrait([1, 1, 3, 4])
-structure repeatedNumberValues {
-}
+structure repeatedNumberValues {}
 
 @StringSetTrait(["a", "a", "b"])
-structure repeatedStringValues {
-}
+structure repeatedStringValues {}
