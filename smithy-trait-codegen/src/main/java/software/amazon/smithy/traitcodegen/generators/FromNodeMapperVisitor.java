@@ -112,7 +112,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void documentShape(DocumentShape shape) {
-        writer.write("$L.expectObjectNode()", varName);
+        writer.writeWithNoFormatting(varName);
         return null;
     }
 

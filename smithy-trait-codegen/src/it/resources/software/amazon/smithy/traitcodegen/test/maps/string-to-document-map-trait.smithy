@@ -8,8 +8,10 @@ use test.smithy.traitcodegen.maps#StringDocumentMap
     a: { a : "a" }
     b: {
         b : "b"
-        c : "c"
+        c : 1
     }
+    c: "stuff"
+    d: 1
 )
 structure myStruct {
 }

@@ -119,8 +119,9 @@ public class LoadsFromModelTest {
                                 ListMember.builder().a("second").b(2).c("more").build()))),
                 Arguments.of("lists/document-list-trait.smithy", DocumentListTrait.class,
                         MapUtils.of("getValues", ListUtils.of(
-                            ObjectNode.builder().withMember("a", "a").build(),
-                            ObjectNode.builder().withMember("b", "b").withMember("c", "c").build()))),
+                            ObjectNode.builder().withMember("a", "a").build().toNode(),
+                            ObjectNode.builder().withMember("b", "b").withMember("c", 1).build().toNode(),
+                            Node.from("string")))),
                 // Maps
                 Arguments.of("maps/string-string-map-trait.smithy", StringStringMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of("a", "stuff",
@@ -131,8 +132,10 @@ public class LoadsFromModelTest {
                                 "two", MapValue.builder().a("bar").b(4).build()))),
                 Arguments.of("maps/string-to-document-map-trait.smithy", StringDocumentMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of(
-                                "a", ObjectNode.builder().withMember("a", "a").build(),
-                                "b", ObjectNode.builder().withMember("b", "b").withMember("c", "c").build()
+                                "a", ObjectNode.builder().withMember("a", "a").build().toNode(),
+                                "b", ObjectNode.builder().withMember("b", "b").withMember("c", 1).build().toNode(),
+                                "c", Node.from("stuff"),
+                                "d", Node.from(1)
                         ))),
                 // Mixins
                 Arguments.of("mixins/struct-with-mixin-member.smithy", StructureListWithMixinMemberTrait.class,

@@ -6,11 +6,12 @@ use test.smithy.traitcodegen.lists#DocumentListTrait
 
 
 @DocumentListTrait([
-    { a : "a"},
+    { a : "a"}
     {
         b : "b"
-        c : "c"
+        c : 1
     }
+    "string"
 ])
 structure myStruct {
 }

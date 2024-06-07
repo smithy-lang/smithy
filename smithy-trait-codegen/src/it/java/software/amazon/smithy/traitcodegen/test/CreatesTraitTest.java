@@ -97,8 +97,10 @@ public class CreatesTraitTest {
                         .build().toNode()
                 ),
                 Arguments.of(StringDocumentMapTrait.ID, StringDocumentMapTrait.builder()
-                        .putValues("a", ObjectNode.builder().withMember("a", "a").build())
-                        .putValues("b", ObjectNode.builder().withMember("b", "b").build())
+                        .putValues("a", ObjectNode.builder().withMember("a", "a").build().toNode())
+                        .putValues("b", ObjectNode.builder().withMember("b", "b").build().toNode())
+                        .putValues("string", Node.from("stuff"))
+                        .putValues("number", Node.from(1))
                         .build().toNode()
                 ),
                 // Mixins
