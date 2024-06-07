@@ -5,5 +5,4 @@ namespace test.smithy.traitcodegen
 use test.smithy.traitcodegen.enums#StringEnum
 
 @StringEnum("yes")
-structure myStruct {
-}
+structure myStruct {}

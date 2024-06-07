@@ -13,8 +13,10 @@ ignored.smithy
 lists/number-list-trait.smithy
 lists/string-list-trait.smithy
 lists/struct-list-trait.smithy
+lists/document-list-trait.smithy
 maps/string-string-map-trait.smithy
 maps/string-to-struct-map-trait.smithy
+maps/string-to-document-map-trait.smithy
 mixins/struct-with-mixin-member.smithy
 mixins/struct-with-only-mixin-member.smithy
 names/snake-case-structure.smithy

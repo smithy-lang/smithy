@@ -60,6 +60,7 @@ structure NestedA {
 enum NestedB {
     /// An A!
     A
+
     /// A B!
     B
 }
@@ -68,6 +69,7 @@ enum NestedB {
 intEnum NestedC {
     /// An A!
     A = 1
+
     /// A B!
     B = 2
 }

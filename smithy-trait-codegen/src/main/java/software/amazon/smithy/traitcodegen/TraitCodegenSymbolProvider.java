@@ -15,7 +15,7 @@ import java.util.Set;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -166,7 +166,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol documentShape(DocumentShape shape) {
-        return TraitCodegenUtils.fromClass(ObjectNode.class);
+        return TraitCodegenUtils.fromClass(Node.class);
     }
 
     @Override

@@ -9,11 +9,11 @@ use test.smithy.traitcodegen.lists#StructureListTrait
         a: "first"
         b: 1
         c: "other"
-    } {
+    }
+    {
         a: "second"
         b: 2
         c: "more"
     }
 ])
-structure myStruct {
-}
+structure myStruct {}

@@ -4,9 +4,5 @@ namespace test.smithy.traitcodegen
 
 use test.smithy.traitcodegen.documents#DocumentTrait
 
-@DocumentTrait({
-    metadata: "woo"
-    more: "yay"
-})
-structure myStruct {
-}
+@DocumentTrait({ metadata: "woo", more: "yay" })
+structure myStruct {}
