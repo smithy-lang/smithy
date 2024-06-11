@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -49,7 +50,7 @@ public class SmithyIdlModelSerializerTest {
         }
 
         String serializedString = serialized.entrySet().iterator().next().getValue();
-        Assertions.assertEquals(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"), serializedString);
+        assertEquals(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"), serializedString);
     }
 
     @Test
@@ -259,7 +260,7 @@ public class SmithyIdlModelSerializerTest {
         String expectedOutput = IoUtils.readUtf8Resource(getClass(), "idl-serialization/enum-mixin-output.smithy")
                 .replaceAll("\\R", "\n");
         String serializedString = serialized.entrySet().iterator().next().getValue();
-        Assertions.assertEquals(expectedOutput, serializedString);
+        assertEquals(expectedOutput, serializedString);
     }
 
     @Test
@@ -305,5 +306,22 @@ public class SmithyIdlModelSerializerTest {
             String expected = IoUtils.readUtf8Url(resources.get(path)).replace("\r\n", "\n");
             assertThat(actual, equalTo(expected));
         }
+    }
+
+    @Test
+    public void coercesInlineIO() {
+        Model before = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/coerced-io/before.smithy"))
+                .assemble().unwrap();
+
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
+                .coerceInlineIo(true)
+                .build()
+                .serialize(before);
+        String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
+
+        String expected = IoUtils.readUtf8Url(getClass().getResource("idl-serialization/coerced-io/after.smithy"))
+                .replace("\r\n", "\n");
+        assertEquals(expected, modelResult);
     }
 }
