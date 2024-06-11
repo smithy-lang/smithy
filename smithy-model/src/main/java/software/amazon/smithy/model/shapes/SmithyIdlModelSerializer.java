@@ -34,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -74,6 +75,7 @@ public final class SmithyIdlModelSerializer {
     private final String inlineInputSuffix;
     private final String inlineOutputSuffix;
     private final boolean inferInlineIoSuffixes;
+    private final boolean shouldCoerceInlineIo;
 
     /**
      * Trait serialization features.
@@ -114,15 +116,21 @@ public final class SmithyIdlModelSerializer {
         traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
         basePath = builder.basePath;
         if (basePath != null) {
-            Function<Shape, Path> shapePlacer = builder.shapePlacer;
-            this.shapePlacer = shape -> this.basePath.resolve(shapePlacer.apply(shape));
+            Function<Shape, Path> placer = builder.shapePlacer;
+            shapePlacer = shape -> basePath.resolve(placer.apply(shape));
         } else {
-            this.shapePlacer = builder.shapePlacer;
+            shapePlacer = builder.shapePlacer;
         }
-        this.componentOrder = builder.componentOrder;
-        this.inlineInputSuffix = builder.inlineInputSuffix;
-        this.inlineOutputSuffix = builder.inlineOutputSuffix;
-        this.inferInlineIoSuffixes = builder.inferInlineIoSuffixes;
+        componentOrder = builder.componentOrder;
+        inlineInputSuffix = builder.inlineInputSuffix;
+        inlineOutputSuffix = builder.inlineOutputSuffix;
+        shouldCoerceInlineIo = builder.shouldCoerceInlineIo;
+        // Force inferring suffixes on if coercion is on.
+        if (shouldCoerceInlineIo) {
+            inferInlineIoSuffixes = true;
+        } else {
+            inferInlineIoSuffixes = builder.inferInlineIoSuffixes;
+        }
     }
 
     /**
@@ -193,6 +201,7 @@ public final class SmithyIdlModelSerializer {
             String inputSuffix,
             String outputSuffix
     ) {
+        OperationIndex operationIndex = OperationIndex.of(fullModel);
         Set<ShapeId> inlineableShapes = new HashSet<>();
         for (Shape shape : shapes) {
             if (!shape.isOperationShape()) {
@@ -201,20 +210,32 @@ public final class SmithyIdlModelSerializer {
             OperationShape operation = shape.asOperationShape().get();
             if (!operation.getInputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape inputShape = fullModel.expectShape(operation.getInputShape());
-                if (shapes.contains(inputShape) && inputShape.hasTrait(InputTrait.ID)
+                if (shapes.contains(inputShape) && shouldInlineInputShape(operationIndex, inputShape)
                         && inputShape.getId().getName().equals(operation.getId().getName() + inputSuffix)) {
                     inlineableShapes.add(operation.getInputShape());
                 }
             }
             if (!operation.getOutputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape outputShape = fullModel.expectShape(operation.getOutputShape());
-                if (shapes.contains(outputShape) && outputShape.hasTrait(OutputTrait.ID)
+                if (shapes.contains(outputShape) && shouldInlineOutputShape(operationIndex, outputShape)
                         && outputShape.getId().getName().equals(operation.getId().getName() + outputSuffix)) {
                     inlineableShapes.add(operation.getOutputShape());
                 }
             }
         }
         return inlineableShapes;
+    }
+
+    private boolean shouldInlineInputShape(OperationIndex operationIndex, Shape target) {
+        // Only allow coercion if the shape is only used as one input.
+        return target.hasTrait(InputTrait.ID)
+                || (shouldCoerceInlineIo && operationIndex.getInputBindings(target).size() == 1);
+    }
+
+    private boolean shouldInlineOutputShape(OperationIndex operationIndex, Shape target) {
+        // Only allow coercion if the shape is only used as one output.
+        return target.hasTrait(OutputTrait.ID)
+                || (shouldCoerceInlineIo && operationIndex.getOutputBindings(target).size() == 1);
     }
 
     private Pair<String, String> determineInlineSuffixes(Model fullModel, Collection<Shape> shapes) {
@@ -330,6 +351,7 @@ public final class SmithyIdlModelSerializer {
         private String inlineInputSuffix = DEFAULT_INLINE_INPUT_SUFFIX;
         private String inlineOutputSuffix = DEFAULT_INLINE_OUTPUT_SUFFIX;
         private boolean inferInlineIoSuffixes = false;
+        private boolean shouldCoerceInlineIo = false;
 
         public Builder() {}
 
@@ -457,11 +479,30 @@ public final class SmithyIdlModelSerializer {
          * <p>The suffixes set by {@link #inlineInputSuffix(String)} and {@link #inlineOutputSuffix(String)}
          * will be the default values.
          *
-         * @param shouldinferInlineIoSuffixes Whether inline IO suffixes should be inferred for each file.
+         * @param shouldInferInlineIoSuffixes Whether inline IO suffixes should be inferred for each file.
          * @return Returns the builder.
          */
-        public Builder inferInlineIoSuffixes(boolean shouldinferInlineIoSuffixes) {
-            this.inferInlineIoSuffixes = shouldinferInlineIoSuffixes;
+        public Builder inferInlineIoSuffixes(boolean shouldInferInlineIoSuffixes) {
+            this.inferInlineIoSuffixes = shouldInferInlineIoSuffixes;
+            return this;
+        }
+
+        /**
+         * Determines whether inline IO should be coerced for shapes operation input
+         * and output that does not have the {@code @input} or {@code @output} trait,
+         * respectively.
+         *
+         * <p>If true, this will determine any shared IO suffixes for each file. Only the
+         * shapes present within each file will impact what that file's suffixes will be.
+         *
+         * <p>The suffixes set by {@link #inlineInputSuffix(String)} and {@link #inlineOutputSuffix(String)}
+         * will be the default values.
+         *
+         * @param shouldCoerceInlineIo Whether inline IO should be coerced for each file.
+         * @return Returns the builder.
+         */
+        public Builder coerceInlineIo(boolean shouldCoerceInlineIo) {
+            this.shouldCoerceInlineIo = shouldCoerceInlineIo;
             return this;
         }
 
@@ -833,7 +874,7 @@ public final class SmithyIdlModelSerializer {
         }
 
         private boolean hasOnlyDefaultTrait(Shape shape, ShapeId defaultTrait) {
-            return shape.getAllTraits().size() == 1 && shape.hasTrait(defaultTrait);
+            return shape.getAllTraits().isEmpty() || (shape.getAllTraits().size() == 1 && shape.hasTrait(defaultTrait));
         }
     }
 
