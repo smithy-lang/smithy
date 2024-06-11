@@ -10,6 +10,7 @@ use smithy.test#httpResponseTests
     {
         id: "RestXmlEnumPayloadRequest",
         uri: "/EnumPayload",
+        headers: { "Content-Type": "text/plain" },
         body: "enumvalue",
         params: { payload: "enumvalue" },
         method: "POST",
@@ -19,6 +20,7 @@ use smithy.test#httpResponseTests
 @httpResponseTests([
     {
         id: "RestXmlEnumPayloadResponse",
+        headers: { "Content-Type": "text/plain" },
         body: "enumvalue",
         params: { payload: "enumvalue" },
         protocol: "aws.protocols#restXml",
@@ -44,6 +46,7 @@ enum StringEnum {
     {
         id: "RestXmlStringPayloadRequest",
         uri: "/StringPayload",
+        headers: { "Content-Type": "text/plain" },
         body: "rawstring",
         params: { payload: "rawstring" },
         method: "POST",
@@ -53,6 +56,7 @@ enum StringEnum {
 @httpResponseTests([
     {
         id: "RestXmlStringPayloadResponse",
+        headers: { "Content-Type": "text/plain" },
         body: "rawstring",
         params: { payload: "rawstring" },
         protocol: "aws.protocols#restXml",
