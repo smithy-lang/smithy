@@ -171,8 +171,7 @@ apply RpcV2CborDenseMaps @httpResponseTests([
         params: {
             "denseSetMap": {
                 "x": [],
-                "y": ["a", "b"],
-                "z": null
+                "y": ["a", "b"]
             }
         }
     }
