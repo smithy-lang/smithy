@@ -62,6 +62,7 @@ service RestJson {
         HttpEnumPayload,
         HttpStringPayload,
         HttpPayloadWithUnion,
+        HttpPayloadTraitOnString,
 
         // @httpResponseCode tests
         HttpResponseCode,
