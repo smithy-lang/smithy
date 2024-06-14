@@ -48,6 +48,22 @@ public class WriterDelegatorTest {
     }
 
     @Test
+    public void createsFilesForSymbolWriters() {
+        MockManifest mockManifest = new MockManifest();
+        SymbolProvider provider = (shape) -> null;
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
+                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+        Symbol symbol =  Symbol.builder()
+                .namespace("com.foo", ".")
+                .name("Baz")
+                .definitionFile("com/foo/Baz.bam")
+                .build();
+        delegator.useSymbolWriter(symbol, writer -> { });
+
+        assertThat(delegator.getWriters(), hasKey(Paths.get("com/foo/Baz.bam").toString()));
+    }
+
+    @Test
     public void aggregatesDependencies() {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;

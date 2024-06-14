@@ -176,6 +176,35 @@ public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer
     }
 
     /**
+     * Gets or creates a writer for a {@link Symbol}.
+     *
+     * <p>Any dependencies (i.e., {@link SymbolDependency}) required by the
+     * {@code Symbol} are automatically registered with the writer.
+     *
+     * <p>Any imports required to declare the {@code Symbol} in code (i.e.,
+     * {@link SymbolReference.ContextOption#DECLARE}) are automatically
+     * registered with the writer.
+     *
+     * <p>If a writer already exists, a newline is automatically appended to
+     * the writer (either a newline or whatever value was set on
+     * {@link #setAutomaticSeparator}).
+     *
+     * @param symbol Symbol to create the writer for.
+     * @param writerConsumer Consumer that is expected to write to the {@code SymbolWriter}.
+     */
+    public final void useSymbolWriter(Symbol symbol, Consumer<W> writerConsumer) {
+        W writer = checkoutWriter(symbol.getDefinitionFile(), symbol.getNamespace());
+
+        // Add any needed DECLARE symbols.
+        writer.addImportReferences(symbol, SymbolReference.ContextOption.DECLARE);
+        symbol.getDependencies().forEach(writer::addDependency);
+
+        writer.pushState();
+        writerConsumer.accept(writer);
+        writer.popState();
+    }
+
+    /**
      * Gets or creates a writer for a {@link Shape} by converting the {@link Shape}
      * to a {@code Symbol}.
      *
@@ -197,16 +226,7 @@ public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer
      */
     public void useShapeWriter(Shape shape, Consumer<W> writerConsumer) {
         // Checkout/create the appropriate writer for the shape.
-        Symbol symbol = symbolProvider.toSymbol(shape);
-        W writer = checkoutWriter(symbol.getDefinitionFile(), symbol.getNamespace());
-
-        // Add any needed DECLARE symbols.
-        writer.addImportReferences(symbol, SymbolReference.ContextOption.DECLARE);
-        symbol.getDependencies().forEach(writer::addDependency);
-
-        writer.pushState();
-        writerConsumer.accept(writer);
-        writer.popState();
+        useSymbolWriter(symbolProvider.toSymbol(shape), writerConsumer);
     }
 
     /**
