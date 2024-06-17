@@ -22,7 +22,7 @@ apply FractionalSeconds @httpResponseTests([
         body: """
               <FractionalSecondsResponse xmlns="https://example.com/">
                   <datetime>2000-01-02T20:34:56.123Z</datetime>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </FractionalSecondsResponse>
               """,
         bodyMediaType: "application/xml",
