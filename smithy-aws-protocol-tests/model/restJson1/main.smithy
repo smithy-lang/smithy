@@ -146,6 +146,7 @@ service RestJson {
         TestPayloadStructure,
         TestPayloadBlob,
         TestNoPayload,
+        TestNoInputNoPayload,
 
         // client-only timestamp parsing tests
         DatetimeOffsets,

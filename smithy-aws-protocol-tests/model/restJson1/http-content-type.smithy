@@ -284,3 +284,31 @@ structure TestNoPayloadInputOutput {
     @httpHeader("X-Amz-Test-Id")
     testId: String,
 }
+
+/// This example operation has no input and serializes a request without an HTTP body.
+///
+/// These tests are to ensure we do not attach a body or related headers
+/// (Content-Length, Content-Type) to operations that semantically
+/// cannot produce an HTTP body.
+///
+@readonly
+@http(uri: "/no_input_no_payload", method: "GET")
+operation TestNoInputNoPayload {
+    output: TestNoPayloadInputOutput
+}
+
+apply TestNoInputNoPayload @httpRequestTests([
+    {
+        id: "RestJsonHttpWithNoInput",
+        documentation: "Serializes a GET request for an operation with no input, and therefore no modeled body",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/no_input_no_payload",
+        body: "",
+        forbidHeaders: [
+            "Content-Length",
+            "Content-Type"
+        ],
+        params: {}
+    }
+])
