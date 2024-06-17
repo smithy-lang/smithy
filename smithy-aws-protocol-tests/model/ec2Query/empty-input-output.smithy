@@ -43,7 +43,7 @@ apply NoInputAndOutput @httpResponseTests([
         },
         body: """
               <NoInputAndOutputResponse xmlns="https://example.com/">
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </NoInputAndOutputResponse>
               """,
         bodyMediaType: "application/xml",
@@ -87,7 +87,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
         },
         body: """
               <EmptyInputAndEmptyOutputResponse xmlns="https://example.com/">
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </EmptyInputAndEmptyOutputResponse>
               """,
         bodyMediaType: "application/xml",

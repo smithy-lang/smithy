@@ -98,7 +98,7 @@ apply XmlLists @httpResponseTests([
                           <other>4</other>
                       </item>
                   </myStructureList>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlListsResponse>
               """,
         bodyMediaType: "application/xml",

@@ -43,7 +43,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
                   <longValue>4</longValue>
                   <floatValue>5.5</floatValue>
                   <DoubleDribble>6.5</DoubleDribble>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </SimpleScalarXmlPropertiesResponse>
               """,
         bodyMediaType: "application/xml",
@@ -157,7 +157,7 @@ apply XmlBlobs @httpResponseTests([
         body: """
               <XmlBlobsResponse xmlns="https://example.com/">
                   <data>dmFsdWU=</data>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlBlobsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -185,7 +185,7 @@ apply XmlEmptyBlobs @httpResponseTests([
         body: """
               <XmlEmptyBlobsResponse xmlns="https://example.com/">
                   <data></data>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -205,7 +205,7 @@ apply XmlEmptyBlobs @httpResponseTests([
         body: """
               <XmlEmptyBlobsResponse xmlns="https://example.com/">
                   <data/>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -239,7 +239,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <normal>2014-04-29T18:30:38Z</normal>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -258,7 +258,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <dateTime>2014-04-29T18:30:38Z</dateTime>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -277,7 +277,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -296,7 +296,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <epochSeconds>1398796238</epochSeconds>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -315,7 +315,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -334,7 +334,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <httpDate>Tue, 29 Apr 2014 18:30:38 GMT</httpDate>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -353,7 +353,7 @@ apply XmlTimestamps @httpResponseTests([
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
                   <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -419,7 +419,7 @@ apply XmlEnums @httpResponseTests([
                           <value>0</value>
                       </entry>
                   </fooEnumMap>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlEnumsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -483,7 +483,7 @@ apply XmlIntEnums @httpResponseTests([
                           <value>2</value>
                       </entry>
                   </intEnumMap>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlIntEnumsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -538,7 +538,7 @@ apply RecursiveXmlShapes @httpResponseTests([
                           </recursiveMember>
                       </nested>
                   </nested>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </RecursiveXmlShapesResponse>
               """,
         bodyMediaType: "application/xml",
@@ -596,7 +596,7 @@ apply XmlNamespaces @httpResponseTests([
                           <member xmlns="http://bux.com">Baz</member>
                       </values>
                   </nested>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </XmlNamespacesResponse>
               """,
         bodyMediaType: "application/xml",
@@ -653,7 +653,7 @@ apply IgnoresWrappingXmlName @httpResponseTests([
         body: """
               <IgnoresWrappingXmlNameResponse xmlns="https://example.com/">
                   <foo>bar</foo>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </IgnoresWrappingXmlNameResponse>
               """,
         bodyMediaType: "application/xml",

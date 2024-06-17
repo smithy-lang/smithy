@@ -47,7 +47,7 @@ apply GreetingWithErrors @httpResponseTests([
         body: """
               <GreetingWithErrorsResponse xmlns="https://example.com/">
                   <greeting>Hello</greeting>
-                  <RequestId>requestid</RequestId>
+                  <requestId>requestid</requestId>
               </GreetingWithErrorsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -84,7 +84,7 @@ apply InvalidGreeting @httpResponseTests([
                           <Message>Hi</Message>
                       </Error>
                   </Errors>
-                  <RequestId>foo-id</RequestId>
+                  <RequestID>foo-id</RequestID>
               </Response>
               """,
         bodyMediaType: "application/xml",
@@ -128,7 +128,7 @@ apply ComplexError @httpResponseTests([
                           </Nested>
                       </Error>
                   </Errors>
-                  <RequestId>foo-id</RequestId>
+                  <RequestID>foo-id</RequestID>
               </Response>
               """,
         bodyMediaType: "application/xml",

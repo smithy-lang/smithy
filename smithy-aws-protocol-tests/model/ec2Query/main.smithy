@@ -18,7 +18,7 @@
 //
 // 1. Unlike aws.query, there's no result wrapper.
 // 2. EC2 does not utilize output maps.
-// 3. RequestId is a child of the root node. It's not nested in some
+// 3. requestId is a child of the root node. It's not nested in some
 //    ResponseMetadata element like aws.query.
 //
 // EC2 errors have an additional level of nesting. See xml-errors.smithy
