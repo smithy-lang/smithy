@@ -20,7 +20,7 @@ import java.nio.file.Paths
 plugins {
     id "application"
     id "org.beryx.runtime" version "1.12.7"
-    id "org.jreleaser" version "1.11.0"
+    id "org.jreleaser" version "1.12.0" apply false
 }
 
 description = "This module implements the Smithy command line interface."
@@ -254,100 +254,104 @@ task integ(type: Test) {
 tasks["integ"].dependsOn("runtime")
 
 // ------ Setup Jreleaser -------
-tasks["assembleDist"].dependsOn("runtimeZip")
-tasks.assembleDist.doFirst {
-    // This is a workaround for a weird behavior.
-    // https://github.com/jreleaser/jreleaser/issues/1292
-    mkdir "$buildDir/jreleaser"
-}
-
-jreleaser {
-    gitRootSearch = true
-
-    project {
-        website = 'https://smithy.io'
-        authors = ['Smithy']
-        vendor = "Smithy"
-        license = 'Apache-2.0'
-        description = "Smithy CLI - A CLI for building, validating, querying, and iterating on Smithy models"
-        copyright = "2019"
+if (project.hasProperty("release.cli")) {
+    apply plugin: 'org.jreleaser'
+    tasks["assembleDist"].doFirst {
+        // This is a workaround for a weird behavior.
+        // https://github.com/jreleaser/jreleaser/issues/1292
+        mkdir "$buildDir/jreleaser"
     }
+    tasks["assembleDist"].dependsOn("runtimeZip")
 
-    checksum {
-        individual = true
-        files = false
-    }
+    jreleaser {
+        gitRootSearch = true
+        dryrun = false
 
-    release {
-        github {
-            overwrite = true
-            tagName = '{{projectVersion}}'
-            changelog {
-                // For now, we won't have a changelog added to the release. In the future, we could create a changelog-snippet
-                // from the real changelog as part of a command hook prior to the release step
-                enabled = false
-            }
-            commitAuthor {
-                name = "smithy-automation"
-                email = "github-smithy-automation@amazon.com"
+        project {
+            website = 'https://smithy.io'
+            authors = ['Smithy']
+            vendor = "Smithy"
+            license = 'Apache-2.0'
+            description = "Smithy CLI - A CLI for building, validating, querying, and iterating on Smithy models"
+            copyright = "2019"
+        }
+
+        checksum {
+            individual = true
+            files = false
+        }
+
+        release {
+            github {
+                overwrite = true
+                tagName = '{{projectVersion}}'
+                changelog {
+                    // For now, we won't have a changelog added to the release. In the future, we could create a changelog-snippet
+                    // from the real changelog as part of a command hook prior to the release step
+                    enabled = false
+                }
+                commitAuthor {
+                    name = "smithy-automation"
+                    email = "github-smithy-automation@amazon.com"
+                }
             }
         }
-    }
 
-    files {
-        active = "ALWAYS"
-        artifact {
-            // We'll include the VERSION file in the release artifacts so that the version can be easily
-            // retrieving by hitting the GitHub `releases/latest` url 
-            path = "../VERSION"
-            extraProperties.put('skipSigning', true)
-        }
-    }
-
-    platform {
-        // These replacements are for the names of files that are released, *not* for names within this build config
-        replacements = [
-            'osx': 'darwin',
-            'aarch_64': 'aarch64',
-            'windows_x86_64': 'windows_x64'
-        ]
-    }
-
-    distributions {
-        smithy {
-            distributionType = 'JLINK'
-            stereotype = 'CLI'
-
+        files {
+            active = "ALWAYS"
             artifact {
-                path = "build/image/smithy-cli-linux-x86_64.zip"
-                platform = "linux-x86_64"
-            }
-
-            artifact {
-                path = "build/image/smithy-cli-linux-aarch64.zip"
-                platform = "linux-aarch_64"
-            }
-
-            artifact {
-                path = "build/image/smithy-cli-darwin-x86_64.zip"
-                platform = "osx-x86_64"
-            }
-
-            artifact {
-                path = "build/image/smithy-cli-darwin-aarch64.zip"
-                platform = "osx-aarch_64"
-            }
-
-            artifact {
-                path = "build/image/smithy-cli-windows-x64.zip"
-                platform = "windows-x86_64"
+                // We'll include the VERSION file in the release artifacts so that the version can be easily
+                // retrieving by hitting the GitHub `releases/latest` url
+                path = "../VERSION"
+                extraProperties.put('skipSigning', true)
             }
         }
-    }
 
-    signing {
-        active = "RELEASE"
-        armored = true
-        verify = true
+        platform {
+            // These replacements are for the names of files that are released, *not* for names within this build config
+            replacements = [
+                    'osx': 'darwin',
+                    'aarch_64': 'aarch64',
+                    'windows_x86_64': 'windows_x64'
+            ]
+        }
+
+        distributions {
+            smithy {
+                distributionType = 'JLINK'
+                stereotype = 'CLI'
+
+                artifact {
+                    path = "build/image/smithy-cli-linux-x86_64.zip"
+                    platform = "linux-x86_64"
+                }
+
+                artifact {
+                    path = "build/image/smithy-cli-linux-aarch64.zip"
+                    platform = "linux-aarch_64"
+                }
+
+                artifact {
+                    path = "build/image/smithy-cli-darwin-x86_64.zip"
+                    platform = "osx-x86_64"
+                }
+
+                artifact {
+                    path = "build/image/smithy-cli-darwin-aarch64.zip"
+                    platform = "osx-aarch_64"
+                }
+
+                artifact {
+                    path = "build/image/smithy-cli-windows-x64.zip"
+                    platform = "windows-x86_64"
+                }
+            }
+        }
+
+        signing {
+            active = "RELEASE"
+            armored = true
+            verify = true
+        }
     }
 }
