@@ -12,6 +12,7 @@ use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#GreetingList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#NestedStringList
+use aws.protocoltests.shared#SparseShortList
 use aws.protocoltests.shared#StringList
 use aws.protocoltests.shared#SparseStringList
 use aws.protocoltests.shared#StringSet
@@ -334,12 +335,17 @@ structure StructureListMember {
                     "sparseStringList": [
                         null,
                         "hi"
+                    ],
+                    "sparseShortList": [
+                        null,
+                        2
                     ]
                 }"""
         bodyMediaType: "application/json"
         headers: {"Content-Type": "application/json"}
         params: {
-            sparseStringList: [null, "hi"]
+            sparseStringList: [null, "hi"],
+            sparseShortList: [null, 2]
         }
     }
 ])
@@ -354,12 +360,17 @@ structure StructureListMember {
                     "sparseStringList": [
                         null,
                         "hi"
+                    ],
+                    "sparseShortList": [
+                        null,
+                        2
                     ]
                 }"""
         bodyMediaType: "application/json"
         headers: {"Content-Type": "application/json"}
         params: {
-            sparseStringList: [null, "hi"]
+            sparseStringList: [null, "hi"],
+            sparseShortList: [null, 2]
         }
     }
 ])
@@ -372,4 +383,5 @@ operation SparseJsonLists {
 
 structure SparseJsonListsInputOutput {
     sparseStringList: SparseStringList
+    sparseShortList: SparseShortList
 }
