@@ -1,5 +1,42 @@
 # Smithy Changelog
 
+## 1.50.0 (2024-06-18)
+
+### Features
+
+* Added a `required` property to IAM trait condition key definitions. ([#2288](https://github.com/smithy-lang/smithy/pull/2288))
+* Added `syncCorsPreflightIntegration` configuration option to APIGateway conversion, which updates CORS preflight templates with all possible content types. ([#2290](https://github.com/smithy-lang/smithy/pull/2290))
+* Added validator for duplicate names in the `iamResource` trait. ([#2293](https://github.com/smithy-lang/smithy/pull/2293))
+* Added `operationContextParams` support to `RulesetParameterValidator`. ([#2295](https://github.com/smithy-lang/smithy/pull/2295))
+* Enabled the application of example traits to service-level errors. ([#2307](https://github.com/smithy-lang/smithy/pull/2307))
+* Added IDL serializer option to coerce inline IO. ([#2316](https://github.com/smithy-lang/smithy/pull/2316))
+* Added a function to writer delegators to check out writers with a symbol. ([#2328](https://github.com/smithy-lang/smithy/pull/2328))
+* Added defaults tests for restJson1. ([#2280](https://github.com/smithy-lang/smithy/pull/2280))
+* Added float16 upcast tests for RPCv2 CBOR. ([#2291](https://github.com/smithy-lang/smithy/pull/2291))
+* Added protocol tests for content-type parameters. ([#2296](https://github.com/smithy-lang/smithy/pull/2296))
+* Added protocol tests asserting servers reject empty unions. ([#2300](https://github.com/smithy-lang/smithy/pull/2300))
+* Added protocol tests for malformed media types. ([#2309](https://github.com/smithy-lang/smithy/pull/2309))
+* Added protocol tests for missing content types. ([#2310](https://github.com/smithy-lang/smithy/pull/2310))
+* Added several content-type and HTTP payload protocol tests. ([#2314](https://github.com/smithy-lang/smithy/pull/2314), [#2315](https://github.com/smithy-lang/smithy/pull/2315), [#2322](https://github.com/smithy-lang/smithy/pull/2322), [#2331](https://github.com/smithy-lang/smithy/pull/2331))
+
+### Bug Fixes
+
+* Fixed formatter to correctly convert invalid doc comments. ([#2277](https://github.com/smithy-lang/smithy/pull/2277))
+* Added missing node mapper for document types. ([#2313](https://github.com/smithy-lang/smithy/pull/2313))
+* Fixed issues with S3 dot segment tests. ([#2304](https://github.com/smithy-lang/smithy/pull/2304))
+* Fixed several issues in RPCv2 CBOR protocol tests. ([#2319](https://github.com/smithy-lang/smithy/pull/2319), [#2320](https://github.com/smithy-lang/smithy/pull/2320))
+* Updated protocol tests to use floating point values representable exactly in IEEE representation. ([#2321](https://github.com/smithy-lang/smithy/pull/2321))
+* Fixed EC2 request ID casing. ([#2329](https://github.com/smithy-lang/smithy/pull/2329))
+
+### Documentation
+
+* Fixed typos in RPCv2 CBOR spec. ([#2278](https://github.com/smithy-lang/smithy/pull/2278))
+* Fixed typo in AddDefaultConfigSettings. ([#2285](https://github.com/smithy-lang/smithy/pull/2285))
+* Fixed errors in IAM trait docs. ([#2287](https://github.com/smithy-lang/smithy/pull/2287))
+* Clarified RPCv2 response event stream behavior. ([#2297](https://github.com/smithy-lang/smithy/pull/2297))
+* Replaced references to outdated RFCs with references to their replacements. ([#2298](https://github.com/smithy-lang/smithy/pull/2298))
+* Clarified `httpResponseCode` value range. ([#2308](https://github.com/smithy-lang/smithy/pull/2308))
+
 ## 1.49.0 (2024-05-08)
 
 ### Features
