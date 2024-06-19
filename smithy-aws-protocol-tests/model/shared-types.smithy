@@ -59,6 +59,11 @@ list ShortList {
     member: Short,
 }
 
+@sparse
+list SparseShortList {
+    member: Short
+}
+
 list IntegerList {
     member: Integer,
 }
