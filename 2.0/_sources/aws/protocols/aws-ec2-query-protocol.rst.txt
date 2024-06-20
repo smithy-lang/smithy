@@ -317,7 +317,7 @@ Operation error serialization
 
 Error responses in the ``ec2Query`` protocol are wrapped within an XML root
 node named ``Response``. Inside this, there is an ``Errors`` tag containing
-the actual error, and a ``RequestId`` tag holding the request ID. Nested inside
+the actual error, and a ``RequestID`` tag holding the request ID. Nested inside
 of the ``Errors`` tag is an ``Error`` tag which contains the serialized error
 structure members.
 
@@ -336,12 +336,12 @@ serialized in the response.
                 <AnotherSetting>setting</AnotherSetting>
             </Error>
         </Errors>
-        <RequestId>foo-id</RequestId>
+        <RequestID>foo-id</RequestID>
     </Response>
 
 * ``Code``: The :token:`shape name <smithy:Identifier>` of the error's
   :ref:`shape-id`.
-* ``RequestId``: Contains a unique identifier for the associated request.
+* ``RequestID``: Contains a unique identifier for the associated request.
 
 In the above example, ``Message``, and ``AnotherSetting`` are additional,
 hypothetical members of the serialized error structure.

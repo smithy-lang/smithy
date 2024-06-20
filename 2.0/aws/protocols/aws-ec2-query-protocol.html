@@ -878,7 +878,7 @@ including examples and behaviors when using multiple XML traits.</p>
 <span id="ec2query-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this heading">#</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol are wrapped within an XML root
 node named <code class="docutils literal notranslate"><span class="pre">Response</span></code>. Inside this, there is an <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag containing
-the actual error, and a <code class="docutils literal notranslate"><span class="pre">RequestId</span></code> tag holding the request ID. Nested inside
+the actual error, and a <code class="docutils literal notranslate"><span class="pre">RequestID</span></code> tag holding the request ID. Nested inside
 of the <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag is an <code class="docutils literal notranslate"><span class="pre">Error</span></code> tag which contains the serialized error
 structure members.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
@@ -893,14 +893,14 @@ serialized in the response.</p>
 <span class="w">            </span><span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
 <span class="w">        </span><span class="nt">&lt;/Error&gt;</span>
 <span class="w">    </span><span class="nt">&lt;/Errors&gt;</span>
-<span class="w">    </span><span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;RequestID&gt;</span>foo-id<span class="nt">&lt;/RequestID&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </pre></div>
 </div>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
+<li><code class="docutils literal notranslate"><span class="pre">RequestID</span></code>: Contains a unique identifier for the associated request.</li>
 </ul>
 <p>In the above example, <code class="docutils literal notranslate"><span class="pre">Message</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnotherSetting</span></code> are additional,
 hypothetical members of the serialized error structure.</p>

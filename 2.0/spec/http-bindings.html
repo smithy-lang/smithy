@@ -1638,8 +1638,9 @@ trait applied.</p>
 <h3><span class="section-number">14.9.1. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> use cases<a class="headerlink" href="#httpresponsecode-use-cases" title="Permalink to this heading">#</a></h3>
 <p>Marking an output <code class="docutils literal notranslate"><span class="pre">structure</span></code> member with this trait can be used to provide
 different response codes for an operation, like a 200 or 201 for a PUT
-operation. If this member isn't provided, server implementations MUST default
-to the <cite>code</cite> set by the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</p>
+operation. The value for this member SHOULD be between 200 and 299, inclusive.
+If this member isn't provided, server implementations MUST default to the
+<cite>code</cite> set by the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</p>
 </div>
 <div class="section" id="httpresponsecode-is-only-used-on-top-level-output">
 <h3><span class="section-number">14.9.2. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is only used on top-level output<a class="headerlink" href="#httpresponsecode-is-only-used-on-top-level-output" title="Permalink to this heading">#</a></h3>
