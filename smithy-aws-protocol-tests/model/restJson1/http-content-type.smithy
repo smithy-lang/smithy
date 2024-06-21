@@ -196,7 +196,9 @@ apply TestPayloadBlob @httpRequestTests([
         headers: {
             "Content-Type": "application/octet-stream"
         },
-        params: {}
+        params: {
+            contentType: "application/octet-stream"
+        }
     }
 ])
 

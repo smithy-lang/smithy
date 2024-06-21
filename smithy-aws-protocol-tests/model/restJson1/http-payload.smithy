@@ -52,10 +52,12 @@ apply HttpPayloadTraits @httpRequestTests([
         body: "",
         bodyMediaType: "application/octet-stream",
         headers: {
-            "X-Foo": "Foo"
+            "X-Foo": "Foo",
+            "Content-Type": "application/octet-stream"
         },
         params: {
-            foo: "Foo"
+            foo: "Foo",
+            contentType: "application/octet-stream"
         }
     },
     {
