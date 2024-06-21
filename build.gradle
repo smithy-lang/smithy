@@ -281,14 +281,12 @@ if (project.hasProperty("release.main")) {
     jreleaser {
         dryrun = false
 
-        // Used for creating a tagged release, uploading files and generating changelog.
-        // In the future we can set this up to push release tags to GitHub, but for now it's
-        // set up to do nothing.
-        // https://jreleaser.org/guide/latest/reference/release/index.html
+        // Used for creating and pushing the version tag, but this configuration ensures that
+        // an actual GitHub release isn't created (since the CLI release does that)
         release {
-            generic {
-                enabled = true
+            github {
                 skipRelease = true
+                tagName = '{{projectVersion}}'
             }
         }
 
