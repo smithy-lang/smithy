@@ -193,9 +193,7 @@ apply TestPayloadBlob @httpRequestTests([
         uri: "/blob_payload",
         body: "",
         bodyMediaType: "application/octet-stream",
-        headers: {
-            "Content-Type": "application/octet-stream"
-        },
+        headers: {},
         params: {}
     }
 ])
