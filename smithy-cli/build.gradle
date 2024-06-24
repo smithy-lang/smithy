@@ -285,6 +285,8 @@ if (project.hasProperty("release.cli")) {
             github {
                 overwrite = true
                 tagName = '{{projectVersion}}'
+                skipTag = true
+                releaseName = 'Smithy CLI v{{{projectVersion}}}'
                 changelog {
                     // For now, we won't have a changelog added to the release. In the future, we could create a changelog-snippet
                     // from the real changelog as part of a command hook prior to the release step
