@@ -312,6 +312,76 @@ public class NodeValidationVisitorTest {
     }
 
     @Test
+    public void flexibleTimestampValidatorSupportsHttpDate() {
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(Node.from("Tue, 29 Apr 2014 18:30:38 GMT"))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.FORMAT_FLEXIBLE)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Timestamp"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void flexibleTimestampValidatorSupportsDateTime() {
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(Node.from("1985-04-12T23:20:50.52Z"))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.FORMAT_FLEXIBLE)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Timestamp"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void flexibleTimestampValidatorSupportsEpochSeconds() {
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(Node.from(1234))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.FORMAT_FLEXIBLE)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Timestamp"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void flexibleTimestampValidatorRejectsInvalidStrings() {
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(Node.from("foo"))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.FORMAT_FLEXIBLE)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Timestamp"))
+                .accept(visitor);
+
+        assertThat(events, not(empty()));
+    }
+
+    @Test
+    public void flexibleTimestampValidatorRejectsInvalidNodeTypes() {
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(Node.from(true))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.FORMAT_FLEXIBLE)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Timestamp"))
+                .accept(visitor);
+
+        assertThat(events, not(empty()));
+    }
+
+    @Test
     public void doesNotAllowNullByDefault() {
         NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
