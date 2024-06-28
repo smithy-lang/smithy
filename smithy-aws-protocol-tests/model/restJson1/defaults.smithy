@@ -323,7 +323,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultDocumentBoolean: false
             defaultDocumentList: ["b"]
             defaultNullDocument: "notNull"
-            defaultTimestamp: 1
+            defaultTimestamp: 2
             defaultBlob: "hi"
             defaultByte: 2
             defaultShort: 2
