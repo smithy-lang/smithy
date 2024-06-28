@@ -291,20 +291,41 @@ structure TestNoPayloadInputOutput {
 ///
 @readonly
 @http(uri: "/no_input_no_payload", method: "GET")
-operation TestNoInputNoPayload {
+operation TestGetNoInputNoPayload {
     output: TestNoPayloadInputOutput
 }
 
-apply TestNoInputNoPayload @httpRequestTests([
+@readonly
+@http(uri: "/no_input_no_payload", method: "POST")
+operation TestPostNoInputNoPayload {
+    output: TestNoPayloadInputOutput
+}
+
+apply TestGetNoInputNoPayload @httpRequestTests([
     {
-        id: "RestJsonHttpWithNoInput",
+        id: "RestJsonHttpGetWithNoInput",
         documentation: "Serializes a GET request for an operation with no input, and therefore no modeled body",
         protocol: restJson1,
         method: "GET",
         uri: "/no_input_no_payload",
         body: "",
         forbidHeaders: [
-            "Content-Length",
+            "Content-Type",
+            "Content-Length"
+        ],
+        params: {}
+    }
+])
+
+apply TestPostNoInputNoPayload @httpRequestTests([
+    {
+        id: "RestJsonHttpPostWithNoInput",
+        documentation: "Serializes a POST request for an operation with no input, and therefore no modeled body",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/no_input_no_payload",
+        body: "",
+        forbidHeaders: [
             "Content-Type"
         ],
         params: {}
