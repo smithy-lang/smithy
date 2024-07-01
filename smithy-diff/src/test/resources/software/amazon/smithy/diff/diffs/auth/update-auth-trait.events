@@ -1,0 +1,60 @@
+[DANGER] ns.foo#Service1: Changed trait `smithy.api#auth` from 
+```
+[
+    "smithy.api#httpBearerAuth",
+    "smithy.api#httpBasicAuth"
+]
+```
+ to 
+```
+[
+    "smithy.api#httpBasicAuth",
+    "smithy.api#httpBearerAuth"
+]
+```
+; Since the `@auth` trait is priority ordered, updating the order of the authentication schemes may break authentication for clients. If the target shape is a service, all contained operations will inherit the changed `@auth` trait unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Update.smithy.api#auth
+-----
+[DANGER] ns.foo#Service2: Changed trait `smithy.api#auth` from 
+```
+[
+    "smithy.api#httpBearerAuth"
+]
+```
+ to 
+```
+[
+    "smithy.api#httpBearerAuth",
+    "smithy.api#httpBasicAuth"
+]
+```
+; Since the `@auth` trait is priority ordered, updating the order of the authentication schemes may break authentication for clients. If the target shape is a service, all contained operations will inherit the changed `@auth` trait unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Update.smithy.api#auth
+-----
+[DANGER] ns.foo#Service3: Changed trait `smithy.api#auth` from 
+```
+[
+    "smithy.api#httpBearerAuth",
+    "smithy.api#httpBasicAuth"
+]
+```
+ to 
+```
+[
+    "smithy.api#httpBearerAuth"
+]
+```
+; Since the `@auth` trait is priority ordered, updating the order of the authentication schemes may break authentication for clients. If the target shape is a service, all contained operations will inherit the changed `@auth` trait unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Update.smithy.api#auth
+-----
+[DANGER] ns.foo#Service4: Changed trait `smithy.api#auth` from 
+```
+[
+    "smithy.api#httpBearerAuth"
+]
+```
+ to 
+```
+[
+    "smithy.api#httpBasicAuth",
+    "smithy.api#httpBearerAuth"
+]
+```
+; Since the `@auth` trait is priority ordered, updating the order of the authentication schemes may break authentication for clients. If the target shape is a service, all contained operations will inherit the changed `@auth` trait unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Update.smithy.api#auth

@@ -1,0 +1,8 @@
+[DANGER] ns.foo#Service1: Added trait `smithy.api#auth` with value 
+```
+[
+    "smithy.api#httpBearerAuth",
+    "smithy.api#httpBasicAuth"
+]
+```
+; Adding the `@auth` trait will explicitly define the order of the authentication scheme traits for the target shape. If the target shape is a service, all contained operations will inherit the same `@auth` trait unless a contained operation has its own `@auth` trait applied. | TraitBreakingChange.Add.smithy.api#auth
