@@ -34,7 +34,19 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
     FORMAT {
         @Override
         public void apply(Shape shape, Node value, Context context, Emitter emitter) {
-            new TimestampFormatPlugin().apply(shape, value, context, emitter);
+            new TimestampFormatPlugin(false).apply(shape, value, context, emitter);
+        }
+    },
+
+    /**
+     * Validates timestamps by requiring that the value uses matches the
+     * resolved timestamp format. If there is no resolved timestamp format,
+     * validates that the timestamp matches one of the supported formats.
+     */
+    FORMAT_FLEXIBLE {
+        @Override
+        public void apply(Shape shape, Node value, Context context, Emitter emitter) {
+            new TimestampFormatPlugin(true).apply(shape, value, context, emitter);
         }
     },
 
