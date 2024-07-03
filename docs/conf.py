@@ -33,14 +33,13 @@ html_theme_options = {
         "admonition-title-font-size": "100%",
         "color-brand-primary": "#C44536",
         "color-brand-content": "#00808b",
-        "color-announcement-background": "#711818de",
-        "color-announcement-text": "#fff"
+        "color-announcement-background": "#f8f8f8",
+        "color-announcement-text": "#383838"
     },
     "dark_css_variables": {
         "color-brand-primary": "#ed9d13",
         "color-brand-content": "#58d3ff",
-        "color-announcement-background": "#711818de",
-        "color-announcement-text": "#fff"
+        "color-announcement-background": "##1a1c1e;",
     },
     "footer_icons": [
         {
