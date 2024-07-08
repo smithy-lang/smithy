@@ -11,7 +11,7 @@ specifications.
 Introduction
 ------------
 
-OpenAPI is a standard for describing RESTful APIs. While Smithy has it's own
+OpenAPI is a standard for describing RESTful APIs. While Smithy has its own
 interface definition language that's completely independent of OpenAPI,
 there are use cases for authoring API models in Smithy and converting
 them to OpenAPI using both ad-hoc and automated workflows. For example,
