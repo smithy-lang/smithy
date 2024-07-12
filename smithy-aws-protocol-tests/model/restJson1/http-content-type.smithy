@@ -228,7 +228,7 @@ structure TestPayloadBlobInputOutput {
     data: Blob
 }
 
-/// This example operation serializes a request without an HTTP body.
+/// This example GET operation serializes a request without a modeled HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Length, Content-Type) to operations that semantically
@@ -278,7 +278,7 @@ apply TestGetNoPayload @httpRequestTests([
     }
 ])
 
-/// This example operation serializes a request without an HTTP body for POST.
+/// This example POST operation serializes a request without a modeled HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Type) to a POST operation with no modeled payload.
@@ -330,21 +330,15 @@ structure TestNoPayloadInputOutput {
     testId: String,
 }
 
-/// This example operation has no input and serializes a request without an HTTP body.
+/// This example GET operation has no input and serializes a request without a modeled HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
-/// (Content-, Content-Type) to operations that semantically
+/// (Content-Length, Content-Type) to operations that semantically
 /// cannot produce an HTTP body.
 ///
 @readonly
 @http(uri: "/no_input_no_payload", method: "GET")
 operation TestGetNoInputNoPayload {
-    output: TestNoPayloadInputOutput
-}
-
-@readonly
-@http(uri: "/no_input_no_payload", method: "POST")
-operation TestPostNoInputNoPayload {
     output: TestNoPayloadInputOutput
 }
 
@@ -363,6 +357,17 @@ apply TestGetNoInputNoPayload @httpRequestTests([
         params: {}
     }
 ])
+
+/// This example POST operation has no input and serializes a request without a modeled HTTP body.
+///
+/// These tests are to ensure we do not attach a body or related headers
+/// (Content-Type) to a POST operation with no modeled input.
+///
+@readonly
+@http(uri: "/no_input_no_payload", method: "POST")
+operation TestPostNoInputNoPayload {
+    output: TestNoPayloadInputOutput
+}
 
 apply TestPostNoInputNoPayload @httpRequestTests([
     {
