@@ -236,14 +236,14 @@ structure TestPayloadBlobInputOutput {
 ///
 @readonly
 @http(uri: "/no_payload", method: "GET")
-operation TestNoPayload {
+operation TestGetNoPayload {
     input: TestNoPayloadInputOutput,
     output: TestNoPayloadInputOutput
 }
 
-apply TestNoPayload @httpRequestTests([
+apply TestGetNoPayload @httpRequestTests([
     {
-        id: "RestJsonHttpWithNoModeledBody",
+        id: "RestJsonHttpGetWithNoModeledBody",
         documentation: "Serializes a GET request with no modeled body",
         protocol: restJson1,
         method: "GET",
@@ -257,9 +257,9 @@ apply TestNoPayload @httpRequestTests([
     }
 ])
 
-apply TestNoPayload @httpRequestTests([
+apply TestGetNoPayload @httpRequestTests([
     {
-        id: "RestJsonHttpWithHeaderMemberNoModeledBody",
+        id: "RestJsonHttpGetWithHeaderMemberNoModeledBody",
         documentation: "Serializes a GET request with header member but no modeled body",
         protocol: restJson1,
         method: "GET",
@@ -278,6 +278,53 @@ apply TestNoPayload @httpRequestTests([
     }
 ])
 
+/// This example operation serializes a request without an HTTP body for POST.
+///
+/// These tests are to ensure we do not attach a body or related headers
+/// (Content-Type) to a POST operation with no modeled payload.
+///
+@readonly
+@http(uri: "/no_payload", method: "POST")
+operation TestPostNoPayload {
+    input: TestNoPayloadInputOutput,
+    output: TestNoPayloadInputOutput
+}
+
+apply TestPostNoPayload @httpRequestTests([
+    {
+        id: "RestJsonHttpPostWithNoModeledBody",
+        documentation: "Serializes a POST request with no modeled body",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/no_payload",
+        body: "",
+        forbidHeaders: [
+            "Content-Type"
+        ],
+        params: {}
+    }
+])
+
+apply TestPostNoPayload @httpRequestTests([
+    {
+        id: "RestJsonHttpWithPostHeaderMemberNoModeledBody",
+        documentation: "Serializes a POST request with header member but no modeled body",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/no_payload",
+        body: "",
+        headers: {
+            "X-Amz-Test-Id": "t-12345"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
+        params: {
+            testId: "t-12345"
+        }
+    }
+])
+
 structure TestNoPayloadInputOutput {
     @httpHeader("X-Amz-Test-Id")
     testId: String,
@@ -286,7 +333,7 @@ structure TestNoPayloadInputOutput {
 /// This example operation has no input and serializes a request without an HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
-/// (Content-Length, Content-Type) to operations that semantically
+/// (Content-, Content-Type) to operations that semantically
 /// cannot produce an HTTP body.
 ///
 @readonly
