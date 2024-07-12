@@ -330,7 +330,7 @@ structure TestNoPayloadInputOutput {
     testId: String,
 }
 
-/// This example GET operation has no input and serializes a request without a modeled HTTP body.
+/// This example GET operation has no input and serializes a request without a HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Length, Content-Type) to operations that semantically
@@ -358,7 +358,7 @@ apply TestGetNoInputNoPayload @httpRequestTests([
     }
 ])
 
-/// This example POST operation has no input and serializes a request without a modeled HTTP body.
+/// This example POST operation has no input and serializes a request without a HTTP body.
 ///
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Type) to a POST operation with no modeled input.
