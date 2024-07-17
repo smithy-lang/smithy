@@ -34,6 +34,8 @@ dependencies {
 
 tasks["sourcesJar"].dependsOn("smithyJarStaging")
 
+sourceSets.main.java.srcDirs += ['model']
+
 smithy {
     format.set(false)
     smithyBuildConfigs.set(project.files())
