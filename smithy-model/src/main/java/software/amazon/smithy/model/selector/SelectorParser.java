@@ -262,6 +262,13 @@ final class SelectorParser extends SimpleParser {
                             input().toString(), functionPosition, line(), column());
                 }
                 return new TopDownSelector(selectors);
+            case "recursive":
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :recursive function requires a single selector argument",
+                            input().toString(), functionPosition, line(), column());
+                }
+                return new RecursiveSelector(selectors.get(0));
             case "each":
                 LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + input());
                 return IsSelector.of(selectors);
