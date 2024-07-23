@@ -51,7 +51,7 @@ public enum ParameterType {
         if (value.equalsIgnoreCase("boolean")) {
             return BOOLEAN;
         }
-        if (value.equals("stringArray")) {
+        if (value.equalsIgnoreCase("stringArray")) {
             return STRING_ARRAY;
         }
         throw new RuleError(new SourceException(
