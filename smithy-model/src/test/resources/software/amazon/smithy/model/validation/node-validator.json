@@ -28,6 +28,23 @@
                 }
             }
         },
+        "ns.foo#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "V1": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                },
+                "V2": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 2
+                    }
+                }
+            }
+        },
         "ns.foo#Long": {
             "type": "long",
             "traits": {

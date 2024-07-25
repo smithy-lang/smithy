@@ -132,6 +132,13 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Integer", "9", new String[] {"Value provided for `ns.foo#Integer` must be greater than or equal to 10, but found 9"}},
                 {"ns.foo#Integer", "10.2", new String[] {"integer shapes must not have floating point values, but found `10.2` provided for `ns.foo#Integer`"}},
 
+                // intEnum
+                {"ns.foo#IntEnum", "1", null},
+                {"ns.foo#IntEnum", "2", null},
+                {"ns.foo#IntEnum", "3", new String[] {"Integer value provided for `ns.foo#IntEnum` must be one of the following values: `1`, `2`, but found 3"}},
+                {"ns.foo#IntEnum", "true", new String[] {"Expected number value for intEnum shape, `ns.foo#IntEnum`; found boolean value, `true`"}},
+                {"ns.foo#IntEnum", "1.1", new String[] {"intEnum shapes must not have floating point values, but found `1.1` provided for `ns.foo#IntEnum`"}},
+
                 // long
                 {"ns.foo#Long", "10", null},
                 {"ns.foo#Long", "true", new String[] {"Expected number value for long shape, `ns.foo#Long`; found boolean value, `true`"}},
