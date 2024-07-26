@@ -1,0 +1,4 @@
+[WARNING] io.smithy.example#StructureOne$stringMember: The `idempotencyToken` trait applied to this member is ignored in some contexts: {member target: [io.smithy.example#StructureTwo$structureOne]} | IdempotencyTokenIgnored
+[WARNING] io.smithy.example#StructureThree$stringMember: The `idempotencyToken` trait applied to this mixed in member is ignored in some contexts: {output: [io.smithy.example#OperationFour]} | IdempotencyTokenIgnored
+
+
