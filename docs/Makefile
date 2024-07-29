@@ -4,9 +4,10 @@ SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = Smithy
 SHELL         := /bin/bash
 
-install:
+install: requirements.txt
 	python3 -m venv build/venv
 	source build/venv/bin/activate && pip3 install -r requirements.txt . && pip3 install -e .
+	touch install
 
 clean:
 	-rm -rf build/*
@@ -27,5 +28,8 @@ merge-versions:
 
 openhtml:
 	open "build/html/index.html"
+
+dev: install
+	@source build/venv/bin/activate && sphinx-autobuild "source-2.0" "build/2.0" $(SPHINXOPTS) $(O)
 
 .PHONY: Makefile clean

@@ -10,3 +10,4 @@ Sphinx-Substitution-Extensions==2022.2.16
 sphinx-tabs>=3.4.4
 
 sphinx_copybutton==0.5.0
+sphinx-autobuild>=2024.4.16
