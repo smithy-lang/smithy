@@ -64,11 +64,9 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
         // Store relationships so we can emit one event per ignored binding.
         Map<RelationshipType, List<ShapeId>> ignoredRelationships = new TreeMap<>();
         List<Relationship> relationships = reverse.getNeighbors(containerShape);
-        int checkedRelationshipCount = relationships.size();
         for (Relationship relationship : relationships) {
             // Skip members of the container.
             if (relationship.getRelationshipType() == RelationshipType.MEMBER_CONTAINER) {
-                checkedRelationshipCount--;
                 continue;
             }
             if (relationship.getRelationshipType() != RelationshipType.INPUT) {
