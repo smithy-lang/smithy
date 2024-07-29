@@ -22,6 +22,7 @@ software.amazon.smithy.model.validation.validators.HttpResponseCodeSemanticsVali
 software.amazon.smithy.model.validation.validators.HttpUriGreedyLabelValidator
 software.amazon.smithy.model.validation.validators.HttpUriConflictValidator
 software.amazon.smithy.model.validation.validators.HttpUriFormatValidator
+software.amazon.smithy.model.validation.validators.IdempotencyTokenIgnoredValidator
 software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator

@@ -1,0 +1,3 @@
+[WARNING] io.smithy.example#StructureOne$stringMember: The `idempotencyToken` trait only has an effect when applied to a top-level operation input member, but it was applied and ignored in the following contexts: {member target: [io.smithy.example#StructureTwo$structureOne]} | IdempotencyTokenIgnored
+[WARNING] io.smithy.example#StructureThree$stringMember: The `idempotencyToken` trait only has an effect when applied to a top-level operation input member, but it was applied and ignored in the following contexts: {output: [io.smithy.example#OperationFour]} | IdempotencyTokenIgnored
+
