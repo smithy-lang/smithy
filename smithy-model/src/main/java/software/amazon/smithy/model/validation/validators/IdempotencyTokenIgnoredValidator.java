@@ -34,7 +34,7 @@ import software.amazon.smithy.utils.ListUtils;
 /**
  * Emits warnings when a structure member has an idempotency token trait that will be ignored.
  */
-public class IdempotencyTokenIgnoredValidator extends AbstractValidator {
+public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
