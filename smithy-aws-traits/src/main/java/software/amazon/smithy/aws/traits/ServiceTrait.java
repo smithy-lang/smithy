@@ -105,7 +105,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
      * <p>If not set, this value defaults to the name of the service shape
      * converted to lowercase. This value is combined with resources contained
      * within the service to form ARNs for resources. Only resources that
-     * explicitly define the 'aws.api#arnTemplate' trait are assigned ARNs,
+     * explicitly define the 'aws.api#arn' trait are assigned ARNs,
      * and their relative ARNs are combined with the service's arnNamespace to
      * form an ARN.
      *
