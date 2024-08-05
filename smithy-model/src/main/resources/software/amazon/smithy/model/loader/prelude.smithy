@@ -552,7 +552,6 @@ structure xmlNamespace {
     prefix: NonEmptyString
 }
 
-@private
 @length(min: 1)
 string NonEmptyString
 
