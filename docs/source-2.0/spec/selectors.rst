@@ -1471,6 +1471,36 @@ Implementations MAY choose to evaluate ``:root`` expressions eagerly or
 lazily, though they MUST evaluate ``:root`` expressions no more than once.
 
 
+``:recursive``
+--------------
+
+The ``:recursive`` function applies a selector to the current shape, and for
+every shape yielded that has yet to be yielded, applies the selector to that
+shape. This happens recursively until all matching shapes have been traversed.
+Shapes that match the selector are yielded by the function up until the point
+that a downstream selector tells the recursive selector to stop.
+
+The following example finds all shapes that have a specific mixin:
+
+.. code-block:: none
+
+    :recursive(-[mixin]->) [id=smithy.example#Foo]
+
+The following selector finds shapes that are contained within the resource
+hierarchy of a specific resource.
+
+.. code-block:: none
+
+    resource :test(:recursive(<-[resource]-) [id=smithy.example#Baz])
+
+The following selector finds all shapes that directly or transitively target
+a specific shape, essentially the inverse of ``~>``.
+
+.. code-block:: none
+
+    [id=smithy.example#MyShape] :recursive(<)
+
+
 ``:topdown``
 ------------
 
