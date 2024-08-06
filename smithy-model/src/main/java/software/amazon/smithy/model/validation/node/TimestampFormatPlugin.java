@@ -36,6 +36,12 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final DateTimeFormatter DATE_TIME_Z = DateTimeFormatter.ISO_INSTANT;
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
 
+    private final boolean flexibleDefault;
+
+    TimestampFormatPlugin(boolean flexibleDefault) {
+        this.flexibleDefault = flexibleDefault;
+    }
+
     @Override
     public void apply(Shape shape, Node value, Context context, Emitter emitter) {
         if (shape instanceof TimestampShape) {
@@ -81,17 +87,48 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
 
     private void defaultValidation(Shape shape, Node value, Emitter emitter) {
         // If no timestampFormat trait is present, then the shape is validated by checking
-        // that the value is either a number or a string that matches the date-time format.
-        if (!value.isNumberNode()) {
-            if (value.isStringNode()) {
-                validateDatetime(shape, value, emitter);
-            } else {
-                emitter.accept(value, "Invalid " + value.getType() + " value provided for timestamp, `"
-                                      + shape.getId() + "`. Expected a number that contains epoch seconds with "
-                                      + "optional millisecond precision, or a string that contains an RFC 3339 "
-                                      + "formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")");
+        // that the value is matches one of the supported timestamp formats according to
+        // the node type. A number node is valid in either case.
+        if (value.isNumberNode()) {
+            return;
+        }
+
+        if (flexibleDefault) {
+            validateFlexibleDefault(shape, value, emitter);
+        } else {
+            validateInflexibleDefault(shape, value, emitter);
+        }
+    }
+
+    private void validateInflexibleDefault(Shape shape, Node value, Emitter emitter) {
+        // Validate that if the timestamp node is a string, it must be in the date-time format.
+        if (value.isStringNode()) {
+            validateDatetime(shape, value, emitter);
+        } else {
+            emitter.accept(value, "Invalid " + value.getType() + " value provided for timestamp, `"
+                    + shape.getId() + "`. Expected a number that contains epoch seconds with "
+                    + "optional millisecond precision, or a string that contains an RFC 3339 "
+                    + "formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")");
+        }
+    }
+
+    private void validateFlexibleDefault(Shape shape, Node value, Emitter emitter) {
+        // Validate that if the timestamp is a string, it must be in either the date-time format
+        // or the http-date format.
+        if (value.isStringNode()) {
+            String timetstamp = value.asStringNode().get().getValue();
+            if (isValidDatetime(timetstamp) || isValidHttpDate(timetstamp)) {
+                return;
             }
         }
+
+        emitter.accept(value, "Invalid " + value.getType() + " value provided for timestamp, `"
+                + shape.getId() + "`. Expected a number that contains epoch seconds with "
+                + "optional millisecond precision, a string that contains an RFC 3339 "
+                + "formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\"), or a string "
+                + " that contains an RFC 9110 section 5.6.7 formatted timestamp (e.g., "
+                + " \"Tue, 29 Apr 2014 18:30:38 GMT\")");
+
     }
 
     private void validateDatetime(Shape shape, Node value, Emitter emitter) {
@@ -102,14 +139,18 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
 
         String timestamp = value.expectStringNode().getValue();
-        // Newer versions of Java support parsing instants that have an offset.
-        // See: https://bugs.openjdk.java.net/browse/JDK-8166138
-        // However, Smithy doesn't allow offsets for timestamp shapes.
-        if (!(timestamp.endsWith("Z") && isValidFormat(timestamp, DATE_TIME_Z))) {
+        if (!isValidDatetime(timestamp)) {
             emitter.accept(value, "Invalid string value, `" + timestamp + "`, provided for timestamp, `"
                                   + shape.getId() + "`. Expected an RFC 3339 formatted timestamp (e.g., "
                                   + "\"1985-04-12T23:20:50.52Z\")");
         }
+    }
+
+    private boolean isValidDatetime(String timestamp) {
+        // Newer versions of Java support parsing instants that have an offset.
+        // See: https://bugs.openjdk.java.net/browse/JDK-8166138
+        // However, Smithy doesn't allow offsets for timestamp shapes.
+        return timestamp.endsWith("Z") && isValidFormat(timestamp, DATE_TIME_Z);
     }
 
     private void validateHttpDate(Node value, Emitter emitter) {
@@ -117,10 +158,14 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
             emitter.accept(value, Severity.ERROR, createInvalidHttpDateMessage(value.getType().toString()));
         } else {
             String dateValue = value.asStringNode().get().getValue();
-            if (!isValidFormat(dateValue, HTTP_DATE) || !dateValue.endsWith("GMT")) {
+            if (!isValidHttpDate(dateValue)) {
                 emitter.accept(value, Severity.ERROR, createInvalidHttpDateMessage(dateValue));
             }
         }
+    }
+
+    private boolean isValidHttpDate(String timestamp) {
+        return isValidFormat(timestamp, HTTP_DATE) && timestamp.endsWith("GMT");
     }
 
     private String createInvalidHttpDateMessage(String dateValue) {
