@@ -147,6 +147,7 @@ Read more
     spec/index
     trait-index
     guides/index
+    tutorials/index
     Additional specs <additional-specs/index>
     aws/index
     ts-ssdk/index
