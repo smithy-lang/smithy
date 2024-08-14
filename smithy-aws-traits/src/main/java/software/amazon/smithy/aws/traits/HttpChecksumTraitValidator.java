@@ -74,7 +74,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                 trait.isRequestChecksumRequired() || trait.getRequestAlgorithmMember().isPresent();
 
         // Response checksum behavior is defined when either the `requestValidationModeMember`
-        // property or `responseAlgorithms` property are modeled.
+        // property or `responseAlgorithms` property are modeled. Actually both are needed, but this check helps do
+        // deeper validation later.
         boolean isResponseChecksumConfiguration =
                 !trait.getResponseAlgorithms().isEmpty() || trait.getRequestValidationModeMember().isPresent();
 
@@ -222,19 +223,24 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        // Check for header binding conflicts with the output shape.
-        model.getShape(operation.getOutputShape()).flatMap(Shape::asStructureShape).ifPresent(outputShape -> {
-            events.addAll(validateHeaderConflicts(operation, outputShape));
-        });
-
         // Validate requestValidationModeMember is set properly for response behavior.
         if (!trait.getRequestValidationModeMember().isPresent()) {
             events.add(error(operation, trait, "The `httpChecksum` trait must model the"
                     + " `requestValidationModeMember` property to support response checksum behavior."));
-            return events;
         } else {
             validateValidationModeMember(model, trait, operation, input).map(events::add);
         }
+
+        // Validate responseAlgorithms is not empty.
+        if (trait.getResponseAlgorithms().isEmpty()) {
+            events.add(error(operation, trait, "The `httpChecksum` trait must model the"
+                    + " `responseAlgorithms` property to support response checksum behavior."));
+        }
+
+        // Check for header binding conflicts with the output shape.
+        model.getShape(operation.getOutputShape()).flatMap(Shape::asStructureShape).ifPresent(outputShape -> {
+            events.addAll(validateHeaderConflicts(operation, outputShape));
+        });
 
         // Check for header binding conflicts with each error shape.
         if (!operation.getErrors().isEmpty()) {

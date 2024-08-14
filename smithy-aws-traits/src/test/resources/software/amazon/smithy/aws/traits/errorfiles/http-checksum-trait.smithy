@@ -38,6 +38,24 @@ structure NoModeForResponseInput {}
 structure NoModeForResponseOutput {}
 
 @httpChecksum(
+    requestValidationModeMember: "validationMode"
+)
+@suppress(["UnstableTrait"])
+operation NoResponseAlgorithms {
+    input: NoResponseAlgorithmsInput,
+    output: NoResponseAlgorithmsOutput,
+}
+
+@input
+structure NoResponseAlgorithmsInput {
+    validationMode: ValidationMode
+}
+
+@output
+structure NoResponseAlgorithmsOutput {}
+
+
+@httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
     responseAlgorithms: ["CRC32C"]
