@@ -958,7 +958,8 @@ The ``httpChecksum`` trait is a structure that contains the following members:
 The ``httpChecksum`` trait MUST define at least one of the request checksumming
 behavior, by setting the ``requestAlgorithmMember`` or
 ``requestChecksumRequired`` property, or the response checksumming behavior, by
-setting the ``requestValidationModeMember`` property.
+setting the ``requestValidationModeMember`` and ``responseAlgorithms``
+properties.
 
 The following is an example of the ``httpChecksum`` trait that defines required
 request checksum behavior with support for the "CRC32C", "CRC32", "SHA1", and
