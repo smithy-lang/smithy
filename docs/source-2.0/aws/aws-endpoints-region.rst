@@ -209,13 +209,13 @@ in the given partition. A PartitionSpecialCase object contains the following pro
       - Description
     * - endpoint
       - ``string``
-      - **Required**. The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`
+      - **Required**. The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`.
     * - dualStack
       - ``boolean``
-      - When ``true`` the special case will apply to dualstack endpoint variants.
+      - When ``true``, the special case will apply to dualstack endpoint variants.
     * - fips
       - ``boolean``
-      - When ``true`` the special case will apply to fips endpoint variants.
+      - When ``true``, the special case will apply to fips endpoint variants.
 
 
 ``RegionSpecialCase`` object
@@ -235,10 +235,10 @@ A ``RegionSpecialCase`` object contains the following properties:
       - **Required**. The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`.
     * - dualStack
       - ``boolean``
-      - When ``true`` the special case will apply to dualstack endpoint variants.
+      - When ``true``, the special case will apply to dualstack endpoint variants.
     * - fips
       - ``boolean``
-      - When ``true`` the special case will apply to fips endpoint variants.
+      - When ``true``, the special case will apply to fips endpoint variants.
     * - signingRegion
       - ``string``
       - Overrides the signingRegion used for this region.
@@ -340,10 +340,10 @@ A ``PartitionEndpointSpecialCase`` object contains the following properties:
       - Override the ``defaultGlobalRegion`` used in this partition.
     * - dualStack
       - ``boolean``
-      - When ``true`` the special case will apply to dualstack endpoint variants.
+      - When ``true``, the special case will apply to dualstack endpoint variants.
     * - fips
       - ``boolean``
-      - When ``true`` the special case will apply to fips endpoint variants.
+      - When ``true``, the special case will apply to fips endpoint variants.
 
 .. smithy-trait:: aws.endpoints#dualStackOnlyEndpoints
 .. _aws.endpoints#dualStackOnlyEndpoints-trait:

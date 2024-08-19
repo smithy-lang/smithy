@@ -7,7 +7,7 @@ namespace aws.endpoints
 /// The targeted trait must only be applied to service shapes,
 /// must be a structure, and must have the `trait` trait.
 @trait(
-    selector: "structure[trait|trait]",
+    selector: "structure[trait|trait]"
     breakingChanges: [{change: "presence"}]
 )
 structure endpointsModifier { }
@@ -15,22 +15,25 @@ structure endpointsModifier { }
 /// Marks that a services endpoints should be resolved using
 /// standard regional endpoint patterns.
 @trait(
-    selector: "service",
-    conflicts: [standardPartitionalEndpoints],
+    selector: "service"
+    conflicts: [standardPartitionalEndpoints]
     breakingChanges: [{change: "remove"}]
 )
 @endpointsModifier
 @unstable
 structure standardRegionalEndpoints {
-    /// A list of partition special cases - endpoints for a partition that do not follow the standard patterns.
-    partitionSpecialCases: PartitionSpecialCaseMap,
-    /// A list of regional special cases - endpoints for a region that do not follow the standard patterns.
+    /// A map of partition to partition special cases -
+    /// endpoints for a partition that do not follow the standard patterns.
+    partitionSpecialCases: PartitionSpecialCaseMap
+
+    /// A map of region to regional special cases -
+    /// endpoints for a region that do not follow the standard patterns.
     regionSpecialCases: RegionSpecialCaseMap
 }
 
 @private
 map PartitionSpecialCaseMap {
-    key: String,
+    key: String
     value: PartitionSpecialCaseList
 }
 
@@ -39,18 +42,23 @@ list PartitionSpecialCaseList {
     member: PartitionSpecialCase
 }
 
+/// Defines the endpoint pattern to apply for all regional endpoints in the given partition.
 @private
 structure PartitionSpecialCase {
+    /// The special-cased endpoint pattern.
     @required
-    endpoint: String,
+    endpoint: String
 
-    dualStack: Boolean,
+    /// When true, the special case will apply to dualstack endpoint variants.
+    dualStack: Boolean
+
+    /// When true, the special case will apply to fips endpoint variants.
     fips: Boolean
 }
 
 @private
 map RegionSpecialCaseMap {
-    key: String,
+    key: String
     value: RegionSpecialCaseList
 }
 
@@ -59,21 +67,28 @@ list RegionSpecialCaseList {
     member: RegionSpecialCase
 }
 
+/// Defines the endpoint pattern to apply for a region.
 @private
 structure RegionSpecialCase {
+    /// The special-cased endpoint pattern.
     @required
-    endpoint: String,
+    endpoint: String
 
-    dualStack: Boolean,
-    fips: Boolean,
+    /// When true, the special case will apply to dualstack endpoint variants.
+    dualStack: Boolean
+
+    /// When true, the special case will apply to fips endpoint variants.
+    fips: Boolean
+
+    /// Overrides the signingRegion used for this region.
     signingRegion: String
 }
 
 /// Marks that a services is non-regionalized and has
 /// a single endpoint in each partition.
 @trait(
-    selector: "service",
-    conflicts: [standardRegionalEndpoints],
+    selector: "service"
+    conflicts: [standardRegionalEndpoints]
     breakingChanges: [{change: "any"}]
 )
 @endpointsModifier
@@ -81,11 +96,12 @@ structure RegionSpecialCase {
 structure standardPartitionalEndpoints {
     /// The pattern type to use for the partition endpoint.
     @required
-    endpointPatternType: PartitionEndpointPattern,
+    endpointPatternType: PartitionEndpointPattern
 
-    /// A list of partition endpoint special cases - partitions that do not follow the services standard patterns
-    /// or are located in a region other than the partition's defaultGlobalRegion.
-    partitionEndpointSpecialCases: PartitionEndpointSpecialCaseMap,
+    /// A map of partition to a list of partition endpoint special cases -
+    /// partitions that do not follow the services standard patterns or are
+    /// located in a region other than the partition's defaultGlobalRegion.
+    partitionEndpointSpecialCases: PartitionEndpointSpecialCaseMap
 }
 
 @private
@@ -96,7 +112,7 @@ enum PartitionEndpointPattern {
 
 @private
 map PartitionEndpointSpecialCaseMap {
-    key: String,
+    key: String
     value: PartitionEndpointSpecialCaseList
 }
 
@@ -105,17 +121,25 @@ list PartitionEndpointSpecialCaseList {
     member: PartitionEndpointSpecialCase
 }
 
+/// Defines the endpoint pattern to apply for a partitional endpoint.
 @private
 structure PartitionEndpointSpecialCase {
-    endpoint: String,
-    region: String,
-    dualStack: Boolean,
-    fips: Boolean,
+    /// The special-cased endpoint pattern.
+    endpoint: String
+
+    /// The region to override the defaultGlobalRegion used in this partition.
+    region: String
+
+    /// When true, the special case will apply to dualstack endpoint variants.
+    dualStack: Boolean
+
+    /// When true, the special case will apply to fips endpoint variants.
+    fips: Boolean
 }
 
 /// Marks that a services has only dualStack endpoints.
 @trait(
-    selector: "service",
+    selector: "service"
     breakingChanges: [{change: "any"}]
 )
 @endpointsModifier
@@ -124,7 +148,7 @@ structure dualStackOnlyEndpoints { }
 
 /// Marks that a services has hand written endpoint rules.
 @trait(
-    selector: "service",
+    selector: "service"
     breakingChanges: [{change: "any"}]
 )
 @endpointsModifier
