@@ -769,6 +769,8 @@ final class FormatVisitor {
                 case "collectionOperations":
                 case "errors":
                     return formatNodeObjectKvp(c, FormatVisitor.this::visit, hardLineList);
+                case "identifiers":
+                case "properties":
                 case "rename":
                     return formatNodeObjectKvp(c, FormatVisitor.this::visit, hardLineObject);
                 default:
