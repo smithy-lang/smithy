@@ -10,7 +10,7 @@ install: requirements.txt
 	touch install
 
 clean:
-	-rm -rf build/*
+	-rm -rf build/* install
 
 html1:
 	@source build/venv/bin/activate && $(SPHINXBUILD) -M html "source-1.0" "build/1.0" $(SPHINXOPTS) -W --keep-going -n $(O)
