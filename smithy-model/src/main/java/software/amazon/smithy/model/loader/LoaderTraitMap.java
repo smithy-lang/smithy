@@ -83,10 +83,19 @@ final class LoaderTraitMap {
                     for (LoadOperation.DefineShape shape : rootShapes) {
                         if (shape.hasMember(memberName)) {
                             foundMember = true;
-                            shape.memberBuilders().get(memberName).getAllTraits();
                             applyTraitsToShape(shape.memberBuilders().get(memberName), created);
+                        } else {
+                            // If we didn't have the member and the member is from a mixin,
+                            // we need to update ApplyMixin shape modifiers to apply the trait
+                            // in case we have the target's container already in the shapeMap.
+                            for (ShapeModifier modifier : shape.modifiers()) {
+                                if (modifier instanceof ApplyMixin) {
+                                    ((ApplyMixin) modifier).putPotentiallyIntroducedTrait(target, created);
+                                }
+                            }
                         }
                     }
+
                     // If the member wasn't found, then it might be a mixin member that is synthesized later.
                     if (!foundMember) {
                         unclaimed.computeIfAbsent(target.withMember(memberName), id -> new LinkedHashMap<>())
