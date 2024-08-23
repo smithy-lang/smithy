@@ -1416,4 +1416,21 @@ public class ModelAssemblerTest {
                 ShapeId.from("com.foo#Bar")
         ));
     }
+
+    @Test
+    public void handlesSameModelWhenBuiltAndImported() throws Exception {
+        Path modelUri = Paths.get(getClass().getResource("mixin-and-apply-model.smithy").toURI());
+        Model sourceModel = Model.assembler()
+                .addImport(modelUri)
+                .assemble()
+                .unwrap();
+        Model combinedModel = Model.assembler()
+                .addModel(sourceModel)
+                .addImport(modelUri)
+                .assemble()
+                .unwrap();
+
+        assertTrue(combinedModel.expectShape(ShapeId.from("smithy.example#MachineData$machineId"), MemberShape.class)
+                .hasTrait(RequiredTrait.ID));
+    }
 }

@@ -17,6 +17,8 @@ package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +39,7 @@ import software.amazon.smithy.model.validation.Validator;
 final class ApplyMixin implements ShapeModifier {
     private final ShapeId mixin;
     private List<ValidationEvent> events;
+    private Map<ShapeId, Map<ShapeId, Trait>> potentiallyIntroducedTraits;
 
     ApplyMixin(ShapeId mixin) {
         this.mixin = mixin;
@@ -80,8 +83,11 @@ final class ApplyMixin implements ShapeModifier {
 
         for (MemberShape member : mixinShape.members()) {
             ShapeId targetId = builder.getId().withMember(member.getMemberName());
-            // Claim traits from the trait map that were applied to synthesized shapes.
-            Map<ShapeId, Trait> introducedTraits = unclaimedTraits.apply(targetId);
+            // Claim traits from the trait maps that were applied to synthesized shapes.
+            Map<ShapeId, Trait> introducedTraits = new LinkedHashMap<>(unclaimedTraits.apply(targetId));
+            if (potentiallyIntroducedTraits != null && potentiallyIntroducedTraits.containsKey(targetId)) {
+                introducedTraits.putAll(potentiallyIntroducedTraits.get(targetId));
+            }
             String memberName = member.getMemberName();
             MemberShape introducedMember = null;
             Optional<MemberShape> previouslyAdded = builder.getMember(memberName);
@@ -144,5 +150,15 @@ final class ApplyMixin implements ShapeModifier {
     @Override
     public List<ValidationEvent> getEvents() {
         return events == null ? Collections.emptyList() : events;
+    }
+
+    void putPotentiallyIntroducedTrait(ShapeId target, Trait trait) {
+        if (potentiallyIntroducedTraits == null) {
+            potentiallyIntroducedTraits = new HashMap<>();
+        }
+
+        Map<ShapeId, Trait> shapeUnclaimedTraits = potentiallyIntroducedTraits.computeIfAbsent(target,
+                id -> new LinkedHashMap<>());
+        shapeUnclaimedTraits.put(trait.toShapeId(), trait);
     }
 }
