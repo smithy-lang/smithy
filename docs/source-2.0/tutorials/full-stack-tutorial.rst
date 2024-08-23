@@ -4,22 +4,25 @@ Full Stack Application
 
 Overview
 ========
-In this tutorial, imagine we own a coffee shop. We would like to create a website for our customers to place an order online, and be able to grab their coffee on the go. This application should show the available coffees, and allow the customer to order a coffee.
+In this tutorial, imagine we own a coffee shop. We would like to create a website for our customers to place an 
+order online, and be able to grab their coffee on the go. This application should show the available coffees, and
+allow the customer to order a coffee.
 
-To build this application, we will walk you through using Smithy to define a model for the coffee service, generate code for a client and a server, and implement a front-end and back-end for the service. 
+To build this application, we will walk you through using Smithy to define a model for the coffee service, generate
+code for a client and a server, and implement a front-end and back-end for the service. 
 
 .. tip:: 
     This tutorial does not assume you are an expert in Smithy, but you may find it helpful to work through the
     :doc:`../quickstart` before beginning this tutorial.
 
-Setting Up the Project
+Setting up the project
 ======================
 This application will consist of a 4 major components:
 
-1. The model
-2. The server
-3. The client
-4. The web application
+1. A model, which defines the service
+2. A server, which handles requests for coffee 
+3. A client, which is generated from the model
+4. A web application, which uses the client to make requests to the server
 
 --------------
 Pre-requisites
@@ -41,22 +44,40 @@ command to set up the initial project:
 
     smithy init -t full-stack-application
 
-After running this command, you should have the project in the ``full-stack-application`` directory. You will find a ``README`` containing important information about the project, like how it is laid out and how to build or run it. In this tutorial, we will show you which commands to run and when.
+After running this command, you should have the project in the ``full-stack-application`` directory.
+The directory tree should look like:
+
+.. code-block:: sh
+    :caption: ``/bin/sh``
+
+    full-stack-application
+    ├── Makefile
+    ├── README.md
+    ├── app
+    │   ├── ...
+    ├── client
+    │   ├── ...
+    ├── server
+    │   ├── ...
+    └── smithy
+        ├── ...
+
+The ``README.md`` file contains important information about the project, like its directory structure and how to build or
+run it. However, for this tutorial, we will show you which commands to run, when to run them, and the expected outputs.
 
 .. TODO: Provide the skeleton template or a git patch?
 
-Modeling Our Service
+Modeling the service
 ====================
 With the basic framework for the project established, let's walk through how to model our coffee service.
-
-As discussed above, the coffee service should:
+The service should provide a few capabilities:
 
 * provide a menu of coffees
 * provide the ability to order a coffee
 * provide the ability to check the status of an order
 
 ------------------
-Adding a Service
+Adding the service
 ------------------
 The service shape is the entry-point of our API, and is where we define the operations our service exposes to a
 consumer. First and foremost, let's define the initial service shape without any operations:
@@ -79,13 +100,16 @@ consumer. First and foremost, let's define the initial service shape without any
     }
 
 We apply the ``@restJson1`` protocol trait to the service to indicate the service supports the
-:doc:`../aws/protocols/aws-restjson1-protocol`. Protocols define the rules and conventions for how data is serialized and deserialized when communicating between client and server. Protocols are a highly complex topic, so they will not be discussed any further in this tutorial.
+:doc:`../aws/protocols/aws-restjson1-protocol`. Protocols define the rules and conventions for serializing and
+de-serializing data when communicating between client and server. Protocols are a highly complex topic, so we will not
+discuss them further in this tutorial.
 
 -------------
-Modeling Data
+Modeling data
 -------------
 Let's create basic representations of our data in Smithy. We will further refine our data model using
-:ref:`traits <traits>`. Open the file titled ``coffee.smithy``. We will use it to write our definitions of coffee-related structures:
+:ref:`traits <traits>`. Open the file titled ``coffee.smithy``. We will use it to write our definitions
+of coffee-related structures:
 
 .. _full-stack-tutorial-operations:
 
@@ -119,7 +143,7 @@ Let's create basic representations of our data in Smithy. We will further refine
     }
 
 -------------------
-Modeling Operations
+Modeling operations
 -------------------
 With the shapes defined above, let's create an operation on our service for returning a menu to the consumer:
 
@@ -143,10 +167,9 @@ With the shapes defined above, let's create an operation on our service for retu
         }
     }
 
-The operation is named ``GetMenu``. It does not define an input, and models its output as a structure with a single
-member, ``items``, which contains ``CoffeeItems`` (a shape we defined :ref:`above <full-stack-tutorial-operations>`). With the ``restJson1`` protocol, a potential response would be serialized like so:
-
-.. TODO: Add info on http trait?
+We have named the operation ``GetMenu``. It does not define an input, and models its output as a structure with a single
+member, ``items``, which contains ``CoffeeItems``, a shape we defined :ref:`above <full-stack-tutorial-operations>`.
+With the ``restJson1`` protocol, the serialized response might look like the below:
 
 .. code-block:: json
     :caption: ``GetMenuResponse (json)``
@@ -161,14 +184,14 @@ member, ``items``, which contains ``CoffeeItems`` (a shape we defined :ref:`abov
     }
 
 -------------------
-Representing Orders
+Representing orders
 -------------------
 At this point, we still need to model the ordering functionality of our service. Let's create a new file,
 ``order.smithy``, which will hold definitions related to ordering. First, let's consider the following when
 modeling an order:
 
 1. an order needs a unique identifier
-2. an order needs to have a status (such as "in-progress" or "completed"), and
+2. an order needs to have a status, such as "in-progress" or "completed"
 3. an order needs to hold the coffee information (``CoffeeType``)
 
 With these requirements in mind, let's create the underlying data model:
@@ -192,8 +215,9 @@ With these requirements in mind, let's create the underlying data model:
     }
 
 A universally unique identifier (or `"UUID" <https://en.wikipedia.org/wiki/Universally_unique_identifier>`_) should be
-more than sufficient for our service. The order status is ``IN_PROGRESS`` (when the order is submitted) or
-``COMPLETED`` (when the order is ready). The information about what kind of coffee was ordered will be represented by the ``CoffeeType`` shape we defined earlier.
+more than sufficient for our service. The order status is ``IN_PROGRESS`` (after submitting the order) or
+``COMPLETED`` (when the order is ready). We will represent the coffee order information with the ``CoffeeType`` shape
+we defined earlier.
 
 Let's compose these shapes together to create our representation of an order:
 
@@ -211,7 +235,7 @@ We're making great progress. However, if we think about an order and its `potent
 (`creating, reading, updating, deleting <https://en.wikipedia.org/wiki/Create,_read,_update_and_delete>`_ an order),
 there is tight relationship between the "state" of an order and its operations. Creating an order "begins" its
 lifecycle, while deleting an order would "end" it. In Smithy, we encapsulate the relationship between an entity
-and its operations with :ref:`resources <resource>`. Instead of the structure above, let's define an order "resource":
+and its operations with :ref:`resources <resource>`. Instead of the above structure, let's define an order "resource":
 
 .. code-block:: smithy
     :caption: ``order.smithy``
@@ -225,8 +249,8 @@ and its operations with :ref:`resources <resource>`. Instead of the structure ab
         create: CreateOrder  // <--- we will create this next!
     }
 
-With a resource, we attach an identifier, which uniquely identifies an instance of the resource. Properties are
-used for representing the state of an instance. In our case, we will only define a subset of the
+With a resource, we attach an identifier, which uniquely identifies an instance of the resource. We use properties to
+represent the state of an instance. In this case, we will only define a subset of the
 :ref:`lifecycle operations <lifecycle-operations>` to keep it simple (``create`` and ``read``). Let's define those now:
 
 .. code-block:: smithy
@@ -285,8 +309,7 @@ output shapes of an operation for a resource.
 
 When we define an operation which may return an explicit error, we should model it using the
 :ref:`error trait <error-trait>`. Additionally, to refine our error, we will add the
-:ref:`httpError trait <httpError-trait>` to set a specific HTTP response status code is set when the error
-is returned:
+:ref:`httpError trait <httpError-trait>` to set a specific HTTP response status code when the service returns the error:
 
 .. code-block:: smithy
     :caption: ``order.smithy``
@@ -312,14 +335,19 @@ Now that we have defined an order resource and its operations, we need to attach
         ]
     }
 
-Finally, you might be wondering why we didn't model our coffee or menu as a resource. For our service, we are not exposing any functionality related to the *lifecycle* of these entities. However, let's describe a hypothetical example.
-We decide a coffee has properties like origin, roast, and tasting notes. Also, we choose to expose operations for adding, updating, and removing coffees. In this case, coffee would be a prime candidate for modeling as a resource.
+Finally, you might be wondering why we did not model our coffee or menu as a resource. For our service, we are not
+exposing any functionality related to the *lifecycle* of these entities. However, let's describe a hypothetical
+example. We decide a coffee has properties like origin, roast, and tasting notes. Also, we choose to expose operations
+for adding, updating, and removing coffees. In this case, coffee would be a prime candidate for modeling as a resource.
 
-Building the Model
+Building the model
 ==================
 The model for our coffee service is complete. Before we build the model, let's take a moment and learn how we configure
 a build. The :ref:`smithy-build.json configuration file <smithy-build-json>` is how we instruct Smithy to build the
-model. A :ref:`projection <projections>` is a version of a model based on a set of :ref:`transformations <transforms>` and :ref:`plugins <plugins>`. For our model, we won't configure any explicit projections, since Smithy will always build the ``source`` projection. The ``source`` projection is the model as it is defined, and includes the artifacts of plugins applied at the root. To build the model, run:
+model. A :ref:`projection <projections>` is a version of a model based on a set of :ref:`transformations <transforms>`
+and :ref:`plugins <plugins>`. For our model, we will not configure any explicit projections, since Smithy will always
+build the ``source`` projection. The ``source`` projection does not have any transformations applied, and its output
+includes the artifacts of plugins applied at the root. To build the model, run:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
@@ -327,15 +355,15 @@ model. A :ref:`projection <projections>` is a version of a model based on a set 
     smithy build model/
 
 Building the model will render artifacts under the ``build/smithy`` directory. Under it, The ``source`` directory
-corresponds to the build artifacts of the ``source`` projection. With the current configuration, Smithy will produce the
-model in its :ref:`JSON AST representation <json-ast>`, and a ``sources`` directory which contains the model files used
-in the build. Additional artifacts are produced by configuring plugins, and
+corresponds to the output (or "build artifacts") of the ``source`` projection. With the current configuration, Smithy
+will produce the model in its :ref:`JSON AST representation <json-ast>`, and a ``sources`` directory which contains the
+model files used in the build. Additional artifacts are produced by configuring plugins, and
 :doc:`code-generators <../guides/using-code-generation/index>` are prime examples of this.
 
-Generating the Server SDK
+Generating the server SDK
 =========================
 The server SDK is a code-generated component which provides built-in serialization, request-handling, and
-scaffolding (or "stubs") for our service as it is modeled. It facilitates the implementation of the service by
+scaffolding (or "stubs") for our service. It facilitates the implementation of the service by
 providing these things, and allowing the implementer to focus on the business logic. Let's generate the server SDK
 for our service by adding the following build configuration:
 
@@ -378,10 +406,9 @@ The will should fail for the following reason:
             [com.example#CreateOrder, com.example#GetMenu, com.example#GetOrder]
 
 
-The server SDK validates inputs by default, and enforces each operation has the ``smithy.framework#ValidationException`` attached to it. We will fix this issue by attaching the error
+The server SDK validates inputs by default, and enforces each operation has
+the ``smithy.framework#ValidationException`` attached to it. We will fix this issue by attaching the error
 to our service, meaning all operations in the service may return it. Let's do this now:
-
-.. TODO: does this need a better explanation?
 
 .. code-block:: smithy
     :caption: ``main.smithy``
@@ -399,11 +426,10 @@ to our service, meaning all operations in the service may return it. Let's do th
 
 
 After fixing this and running the build, the TypeScript code-generator plugin will have created a new
-artifact under ``build/smithy/source/typescript-ssdk-codegen``. This artifact contains the generated server SDK (SSDK), which we will use in our back-end.
+artifact under ``build/smithy/source/typescript-ssdk-codegen``. This artifact contains the generated
+server SDK (SSDK), which we will use in our back-end.
 
-.. TODO: Not sure if we should, but a brief look at the generated code might be good?
-
-Implementing the Server
+Implementing the server
 =======================
 For this tutorial, we have included a ``Makefile``, which simplifies the process of building and running the
 application. To use it, make sure to run ``make`` from the root of the application directory (where the ``Makefile``
@@ -417,7 +443,7 @@ lives). Let's try it now:
 This command will run the code-generation for the server SDK, and then build the server implementation (which uses
 the server SDK). The server package is simple, and contains only two files under ``src/``:
 
-* ``index.ts``: entry-point of the backend application, where our server is initialized
+* ``index.ts``: entry-point of the backend application, and where we initialize our service
 * ``CoffeeShop.ts``: implementation of a `CoffeeShopService` from the generated server SDK
 
 The ``ssdk/`` directory is a link to our generated server SDK, which is an output of the smithy build. This is where
@@ -427,7 +453,7 @@ the server imports the generated code from. Let's take a look at the core of the
     :caption: ``CoffeeShop.ts``
 
     // An implementation of the service from the SSDK
-    export class CoffeeShop implements CoffeeShopService<Context> {
+    export class CoffeeShop implements CoffeeShopService<{}> {
         ...
 
         CreateOrder = async (input: CreateOrderServerInput): Promise<CreateOrderServerOutput> => {
@@ -448,11 +474,12 @@ the server imports the generated code from. Let's take a look at the core of the
         ...
     }
 
-These three methods are how we implement the business logic of the service, and are exposed by the
+These three methods are how we implement the core business logic of the service. They are exposed by the
 ``CoffeeShopService`` interface exported by the server SDK. This file already contains some of the underlying logic
 for how our implementation will run: there is an orders queue, an orders map, and a order-handling procedure
 (``handleOrders``). We will use these to implement the operations for our service. Let's start with the simplest
-operation, ``GetMenu``:
+operation, ``GetMenu``. We will modify the operation to return a menu containing one coffee item for
+each type of coffee:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -488,8 +515,8 @@ operation, ``GetMenu``:
             }
         }
 
-For our menu, we have added a distinct item for each of our coffee enumerations (``CoffeeType``), as well as a
-description. With our menu complete, let's implement order submission, ``CreateOrder``:
+For our menu, we have added a distinct item and description for each of our coffee enumerations (``CoffeeType``).
+With our menu complete, let's implement order submission, ``CreateOrder``:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -513,9 +540,10 @@ description. With our menu complete, let's implement order submission, ``CreateO
             }
         }
 
-For ordering, we will maintain an ``orders`` map to simulate a database where historical order information is stored,
-and an orders queue to keep track of in-flight orders. The ``handleOrders`` method will process in-flight orders
-and update this queue. Once an order is submitted, it should be able to be retrieved, so let's implement ``GetOrder``:
+For ordering, we will maintain an order map to simulate a database that stores historical order information,
+and an order queue to keep track of in-flight orders. The ``handleOrders`` method processes in-flight orders
+and updates this queue. After submitting an order, ``GetOrder`` can retrieve its information.
+Let's implement ``GetOrder``:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -536,8 +564,7 @@ and update this queue. Once an order is submitted, it should be able to be retri
                 })
             }
         }
-.. TODO: above snippet may need to be updated
-.. TODO: add instruction on using the dev* targets
+.. TODO: above snippet may need to be updated, verify errors
 
 With these operations implemented, our server is fully implemented. Let's build and run it:
 
@@ -554,17 +581,18 @@ This command will build and run the server. You should see the following output:
     Started server on port 3001...
     handling orders...
 
-With the server running, let's test it by sending it requests. Open a new terminal and send a request to the ``/menu`` route using ``cURL``:
+With the server running, let's test it by sending it requests. Open a new terminal and send a request to the ``/menu``
+route using ``cURL``:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
 
     curl localhost:3001/menu
 
-You should see the output of the ``GetMenu`` operation we implemented. You may stop the server by terminating it
-in the terminal where it is running with ``CTRL + C``. With the server implemented, we will move on to the client.
+You should see the output of the ``GetMenu`` operation we implemented. You may stop the server with ``CTRL + C`` in the
+terminal where it is running. With the server implemented, we will move on to the client.
 
-Generating the Client
+Generating the client
 =====================
 
 To run the code-generation for a client, we will add another plugin to the ``smithy-build.json`` configuration file:
@@ -590,11 +618,11 @@ Run the build:
 
     smithy build model/
 
-Similar to the server SDK, the TypeScript client artifacts will be written to the
+Similar to the server SDK, Smithy will generate the TypeScript client artifacts under the
 ``build/smithy/source/typescript-client-codegen`` directory. We will use this client to make calls to our backend
 service.
 
-Using the Client
+Using the client
 ================
 Like with the server, there is a make target for generating and building the TypeScript client. Let's try it now:
 
@@ -603,8 +631,8 @@ Like with the server, there is a make target for generating and building the Typ
 
     make build-client
 
-This command will code-generate the client with Smithy, and then build the generated TypeScript package. The client
-will be then be linked in the project root under ``client/sdk``. To use the client ad-hoc, run the following command:
+This command will code-generate the client with Smithy, and then build the generated TypeScript package. The command
+will link the client in the project root under ``client/sdk``. To use the client ad-hoc, run the following command:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
@@ -612,14 +640,15 @@ will be then be linked in the project root under ``client/sdk``. To use the clie
     make repl-client
 
 This command launches a TypeScript `REPL <https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop>`_ with
-the generated client installed. Before we use the generated client, we must run the server. Without the server running, the client will not be able to connect. In another terminal, launch the server with the following command:
+the generated client installed. Before we use the generated client, we must run the server. Without the server running,
+the client will not be able to connect. In another terminal, launch the server with the following command:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
 
     make run-server
 
-With the server running, we will instantiate and use the client. In the terminal running the REPL, insert and run the
+With the server running, we will instantiate and use the client. In the terminal running the REPL, run the
 following:
 
 .. code-block:: TypeScript
@@ -674,31 +703,32 @@ Once you execute the command, you should see your order information:
       status: 'COMPLETED' // <--- the order status, which should be 'COMPLETED'
     }
 
-You may terminate the REPL and the server (with ``CTRL + C`` in the respective terminals). We have
+You may stop the REPL and the server with ``CTRL + C`` in the respective terminals. We have
 tested each operation we implemented in the server using the generated client, and verified both the client
 and server communicate with each other.
 
-Running the Application
+Running the application
 =======================
-Since we know how to generate and use the client and server, let's put it all together to use with a browser-based web application. The web application exists under the ``app/`` directory, and is built using the ``build-app`` make target. The application will run when using the ``run-app`` target. Since this application uses the generated client to make requests, the server must be ran alongside the app. For convenience, you may run both
-the web-application and the server in the same terminal:
+Since we know how to generate and use the client and server, let's put it all together to use with a browser-based
+web application. The web application exists under the ``app/`` directory. To build the application, use the
+``build-app`` make target. The application will run when using the ``run-app`` target. Since this application uses the
+generated client to make requests, the server must be ran alongside the app. For convenience, you may run both the web
+application and the server in the same terminal:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
 
     make run
 
-While running the application in this way is convenient, it will intertwine the output of the web-app and server. If
-you would like to keep them separate, you should run the other targets (`run-server` and `run-app`). Using the method
-of your choice, launch the server and the application.
-
-.. TODO: Add snippets for how we are calling the service with the client
+While running the application in this way is convenient, it will intertwine the output of the application and server.
+If you would like to keep them separate, you should run the other targets (`run-server` and `run-app`).
+Using the method of your choice, launch the server and the application.
 
 While this application is incredibly simple, it shows how to integrate a smithy-generated client with an
 application running in the browser.
 .. TODO: maybe another sentence on takeaways
 
-Making a Change (Optional)
+Making a change (optional)
 ==========================
 Now, say we would like to add a new coffee to our menu. The new menu item should have the following details:
 
@@ -714,7 +744,8 @@ Now, say we would like to add a new coffee to our menu. The new menu item should
    <details>
        <summary>Solution</summary>
 
-To add a new coffee, we will first make a change to our model. We need to add a new value for the ``CoffeeType`` enum:
+To add a new coffee, we will first make a change to our model. We need to add a new value for the ``CoffeeType``
+enumeration:
 
 .. code-block:: smithy
     :caption: ``coffee.smithy``
@@ -729,7 +760,9 @@ To add a new coffee, we will first make a change to our model. We need to add a 
     }
 
 Next, we need to update the server code to add a new item to the menu. First, we should build the model and run the
-code-generation for the server SDK, so the new types are generated. Run ``make build-ssdk``. After re-generating the server SDK, we will make the change to our implementation of ``GetMenu``. We will use the new enum value and format the description from above to add a new item:
+code-generation for the server SDK to generate the new value. Run ``make build-ssdk``. After re-generating the
+server SDK, we will make the change to our implementation of ``GetMenu``. We will use the new value and the
+description above to add a new item to the menu:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -756,9 +789,12 @@ the new menu item in the web application, and should be able to order it.
 
    </details>
 
-Wrapping Up
+Wrapping up
 ===========
-In this tutorial, you used Smithy to build a full-stack application for a simple coffee shop. You wrote a Smithy model for a service based on a list of requirements. Afterwards, you configured builds using the ``smithy-build.json`` configuration, which you set up to code-generate a TypeScript server SDK and a TypeScript client. You implemented the service using the generated server SDK, and then made requests to it using the generated client. Finally, you used
+In this tutorial, you used Smithy to build a full-stack application for a simple coffee shop. You wrote a Smithy model
+for a service based on a list of requirements. Afterwards, you configured builds using the ``smithy-build.json``
+configuration, which you set up to code-generate a TypeScript server SDK and a TypeScript client. You implemented the
+service using the generated server SDK, and then made requests to it using the generated client. Finally, you used
 the client in a web application to make requests from within the browser to our service.
 
 .. TOOO: what else?
@@ -766,8 +802,8 @@ the client in a web application to make requests from within the browser to our 
 ---------
 What now?
 ---------
-We covered several topics in this tutorial, there is still so much to learn! Please check out the
-following resources:
+We covered several topics in this tutorial, but there is still so much to learn. For other examples of smithy projects,
+please see the following repositories:
 
 * `awesome-smithy <https://github.com/smithy-lang/awesome-smithy>`_: A list of projects based in the smithy ecosystem
 * `smithy-examples <https://github.com/smithy-lang/smithy-examples>`_: A repository of example smithy projects
