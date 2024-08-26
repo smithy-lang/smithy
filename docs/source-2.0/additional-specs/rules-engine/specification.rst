@@ -317,7 +317,8 @@ additional properties. Each configuration object MUST have a unique value for it
 the list of configuration objects within a given ``authSchemes`` property.
 
 If an ``authSchemes`` property is present on an `Endpoint object`_, clients
-SHOULD modify the signing properties of the resolved and modeled authentication scheme via the following process:
+SHOULD modify the signing properties of the resolved and modeled authentication
+scheme via the following process:
 
 #. Iterate through configuration objects in the ``authSchemes`` property.
 #. If the ``name`` property in a configuration object matches the resolved
