@@ -127,13 +127,7 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>The Smithy team at AWS is hiring software engineers.</strong>
-<br>Interested? Check out our job postings <a href="https://www.amazon.jobs/en/search?base_query=Smithy">here</a>.
- 
-  </aside>
-</div>
+
 
 <div class="page">
   <header class="mobile-header">
@@ -1223,7 +1217,8 @@ the following supported values: &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA
 <p>The <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait MUST define at least one of the request checksumming
 behavior, by setting the <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> or
 <code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> property, or the response checksumming behavior, by
-setting the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property.</p>
+setting the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> and <code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code>
+properties.</p>
 <p>The following is an example of the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait that defines required
 request checksum behavior with support for the &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;, and
 &quot;SHA256&quot; algorithms <em>and</em> response checksum behavior with support for the

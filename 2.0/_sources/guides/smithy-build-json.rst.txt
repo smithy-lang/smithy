@@ -124,6 +124,13 @@ The following is an example ``smithy-build.json`` configuration:
         }
     }
 
+.. note::
+
+    The ``smithy-build.json`` file supports comments using ``//`` syntax. Any
+    content between two consecutive ``/`` characters and a new line (``\n``) or
+    the end of the file is considered a comment and ignored when parsing.
+
+
 .. _plugin-id:
 
 Plugin ID and artifact names
