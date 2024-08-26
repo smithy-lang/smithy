@@ -155,7 +155,7 @@ System.setProperty("SMITHY_BINARY", "${smithyBinary}")
 
 runtime {
     addOptions("--compress", "2", "--strip-debug", "--no-header-files", "--no-man-pages")
-    addModules("java.logging", "java.xml", "java.naming")
+    addModules("java.logging", "java.xml", "java.naming", "jdk.crypto.ec")
 
     launcher {
         // This script is a combination of the default startup script used by the badass runtime
