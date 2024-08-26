@@ -12,6 +12,3 @@ release = u'2.0'
 version = release
 
 html_theme_options['source_directory'] = "docs/source-2.0"
-html_theme_options['announcement'] = '''<strong>The Smithy team at AWS is hiring software engineers.</strong>
-<br>Interested? Check out our job postings <a href="https://www.amazon.jobs/en/search?base_query=Smithy">here</a>.
-'''
