@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -47,12 +48,8 @@ public class DocumentationMapperTest {
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("smithy.example#TestService"));
 
-        List<ResourceSchema> schemas = CfnConverter.create()
-                .config(config)
-                .convert(model);
-
-        assertEquals(1, schemas.size());
-        ResourceSchema schema = schemas.get(0);
+        ResourceSchema schema = getBarSchema(config);
+        assertNotNull(schema);
         assertTrue(schema.getDocumentationUrl().isPresent());
         assertEquals("https://docs.example.com", schema.getDocumentationUrl().get());
         assertTrue(schema.getSourceUrl().isPresent());
@@ -67,15 +64,20 @@ public class DocumentationMapperTest {
         config.setExternalDocs(ListUtils.of("main"));
         config.setSourceDocs(ListUtils.of("code"));
 
-        List<ResourceSchema> schemas = CfnConverter.create()
-                .config(config)
-                .convert(model);
-
-        assertEquals(1, schemas.size());
-        ResourceSchema schema = schemas.get(0);
+        ResourceSchema schema = getBarSchema(config);
+        assertNotNull(schema);
         assertTrue(schema.getDocumentationUrl().isPresent());
         assertEquals("https://docs2.example.com", schema.getDocumentationUrl().get());
         assertTrue(schema.getSourceUrl().isPresent());
         assertEquals("https://source2.example.com", schema.getSourceUrl().get());
+    }
+
+    private ResourceSchema getBarSchema(CfnConfig config) {
+        for (ResourceSchema schema : CfnConverter.create().config(config).convert(model)) {
+            if (schema.getTypeName().endsWith("FooResource")) {
+                return schema;
+            }
+        }
+        return null;
     }
 }
