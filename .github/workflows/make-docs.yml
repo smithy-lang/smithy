@@ -45,8 +45,8 @@ jobs:
     - name: Build Smithy docs
       run: |
         cd docs
-        pip3 install -r requirements.txt
         make clean
+        make install
         make html
         cp -R build/html/* $ARTIFACTS_DIR
         rm $ARTIFACTS_DIR/.buildinfo || true
