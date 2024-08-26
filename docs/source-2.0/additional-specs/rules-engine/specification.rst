@@ -322,7 +322,8 @@ SHOULD modify the signing properties of the resolved and modeled authentication 
 #. Iterate through configuration objects in the ``authSchemes`` property.
 #. If the ``name`` property in a configuration object matches the resolved authentication scheme, update the resolved authentication and signing properties  from the matching ``authSchemes`` properties.
 #. If the ``name`` does not match, ignore it and continue iterating.
-#. If the list has been fully iterated and no scheme has matched, do not modify the resolved authentication scheme and do not raise an error.
+#. If the list has been fully iterated and no scheme has matched, do not
+   modify the resolved authentication scheme and do not raise an error.
 
 .. _rules-engine-standard-library-adding-authscheme-validators:
 
