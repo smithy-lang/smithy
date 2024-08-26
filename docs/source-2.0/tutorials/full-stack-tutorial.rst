@@ -9,7 +9,7 @@ order online, and be able to grab their coffee on the go. This application shoul
 allow the customer to order a coffee.
 
 To build this application, we will walk you through using Smithy to define a model for the coffee service, generate
-code for a client and a server, and implement a front-end and back-end for the service. 
+code for the client and server, and implement the front-end and back-end for the service. 
 
 .. tip:: 
     This tutorial does not assume you are an expert in Smithy, but you may find it helpful to work through the
@@ -62,10 +62,21 @@ The directory tree should look like:
     └── smithy
         ├── ...
 
-The ``README.md`` file contains important information about the project, like its directory structure and how to build or
-run it. However, for this tutorial, we will show you which commands to run, when to run them, and the expected outputs.
+The ``README.md`` file contains important information about the project, like its directory structure and how to
+build or run it. However, for this tutorial, we will show you which commands to run, when to run them, and
+the expected outputs.
 
-.. TODO: Provide the skeleton template or a git patch?
+Please run the following command to set the project up, so you can follow this tutorial:
+
+.. code-block:: sh
+    :caption: ``/bin/sh``
+
+    make init
+
+.. hint:: If you get stuck and want to completely start over, run ``make reset && make init`` .
+
+    Also, the complete project code for this tutorial is available
+    `here <https://github.com/smithy-lang/smithy-examples/tree/main/tutorials/full-stack-application>`_.
 
 Modeling the service
 ====================
@@ -80,8 +91,11 @@ The service should provide a few capabilities:
 Adding the service
 ------------------
 The service shape is the entry-point of our API, and is where we define the operations our service exposes to a
-consumer. First and foremost, let's define the initial service shape without any operations:
+consumer. First and foremost, let's define the initial service shape without any operations. Open the main.smithy file
+and add the following:
 
+.. important:: For code blocks, the name of the current file is given in the top-left corner.
+    
 .. code-block:: smithy
     :caption: ``main.smithy``
 
@@ -145,7 +159,8 @@ of coffee-related structures:
 -------------------
 Modeling operations
 -------------------
-With the shapes defined above, let's create an operation on our service for returning a menu to the consumer:
+With the shapes defined above, let's create an operation for returning a menu to the consumer, and add it
+to the service:
 
 .. code-block:: smithy
     :caption: ``main.smithy`` 
@@ -394,7 +409,7 @@ Run the build:
 
     smithy build model/
 
-The will should fail for the following reason:
+The build will should fail for the following reason:
 
 .. code-block:: text
     :caption: ``failure message``
@@ -425,7 +440,7 @@ to our service, meaning all operations in the service may return it. Let's do th
     }
 
 
-After fixing this and running the build, the TypeScript code-generator plugin will have created a new
+After fixing this and running the build, the TypeScript code-generator plugin will create a new
 artifact under ``build/smithy/source/typescript-ssdk-codegen``. This artifact contains the generated
 server SDK (SSDK), which we will use in our back-end.
 
@@ -458,16 +473,19 @@ the server imports the generated code from. Let's take a look at the core of the
 
         CreateOrder = async (input: CreateOrderServerInput): Promise<CreateOrderServerOutput> => {
             console.log("received an order request...")
+            // TODO: Implement me!
             return;
         }
 
         GetMenu = async (input: GetMenuServerInput): Promise<GetMenuServerOutput> => {
             console.log("getting menu...")
+            // TODO: Implement me!
             return;
         }
 
         GetOrder = async (input: GetOrderServerInput): Promise<GetOrderServerOutput> => {
             console.log(`getting an order (${input.id})...`)
+            // TODO: Implement me!
             return;
         }
 
@@ -516,7 +534,9 @@ each type of coffee:
         }
 
 For our menu, we have added a distinct item and description for each of our coffee enumerations (``CoffeeType``).
-With our menu complete, let's implement order submission, ``CreateOrder``:
+For ordering, we will maintain an order map to simulate a database that stores historical order information,
+and an order queue to keep track of in-flight orders. The ``handleOrders`` method processes in-flight orders
+and updates this queue. Let's implement order submission, or ``CreateOrder``:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -540,10 +560,8 @@ With our menu complete, let's implement order submission, ``CreateOrder``:
             }
         }
 
-For ordering, we will maintain an order map to simulate a database that stores historical order information,
-and an order queue to keep track of in-flight orders. The ``handleOrders`` method processes in-flight orders
-and updates this queue. After submitting an order, ``GetOrder`` can retrieve its information.
-Let's implement ``GetOrder``:
+After submitting an order, we can retrieve its information from the order map. This information should be retrievable
+through the ``GetOrder`` operation. Let's implement it now:
 
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
@@ -581,21 +599,22 @@ This command will build and run the server. You should see the following output:
     Started server on port 3001...
     handling orders...
 
-With the server running, let's test it by sending it requests. Open a new terminal and send a request to the ``/menu``
-route using ``cURL``:
+With the server running, let's test it by sending it a request. Open a new terminal and send a request to the ``/menu``
+route using ``cURL``. This will send a request to the server, and the server should handle it with
+the ``GetMenu`` operation:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
 
     curl localhost:3001/menu
 
-You should see the output of the ``GetMenu`` operation we implemented. You may stop the server with ``CTRL + C`` in the
-terminal where it is running. With the server implemented, we will move on to the client.
+You should see the output of the ``GetMenu`` operation that we implemented above. You may stop the server with
+``CTRL + C`` in the terminal where it is running. With the server implemented, we will move on to the client.
 
 Generating the client
 =====================
 
-To run the code-generation for a client, we will add another plugin to the ``smithy-build.json`` configuration file:
+To run the code-generation for the client, we will add another plugin to the ``smithy-build.json`` configuration file:
 
 .. code-block:: json
     :caption: ``smithy-build.json``
@@ -703,17 +722,71 @@ Once you execute the command, you should see your order information:
       status: 'COMPLETED' // <--- the order status, which should be 'COMPLETED'
     }
 
-You may stop the REPL and the server with ``CTRL + C`` in the respective terminals. We have
+You may stop the REPL with ``CTRL + C`` in the terminal where it is running. We have
 tested each operation we implemented in the server using the generated client, and verified both the client
 and server communicate with each other.
 
+------------------
+In the application
+------------------
+Using the client in the application is not much different from what we just did.
+
+In the ``app/`` directory, there is a file, ``app/index.ts``, which contains code that instantiates and uses the
+client. First, we create the client, and then we create helper methods to use the client:
+
+.. code-block:: TypeScript
+    :caption: ``app/index.ts``
+
+    import { CoffeeItem, CoffeeShop, CoffeeType, OrderStatus } from "@com.example/coffee-service-client";
+
+    ...
+    // create a coffee service client singleton and getter
+    let client: CoffeeShop
+    export function getClient(): CoffeeShop {
+        return client || (client = new CoffeeShop({
+            endpoint: {
+                protocol: "http",
+                hostname: "localhost",
+                port: 3001,
+                path: "/"
+            }
+        }));
+    }
+
+    // coffee service client helpers ------
+    export async function getMenuItems(): Promise<CoffeeItem[]> {
+        let items: CoffeeItem[] = []
+        try {
+            const res = await getClient().getMenu();
+            items = res.items || []
+        } catch (err) {
+            console.log(err)
+        }
+        return items
+    }
+    ...
+
+We use these helper methods in our application to make requests to the server:
+
+.. code-block:: TypeScript
+    :caption: ``components/Menu.tsx``
+
+    ...
+    import MenuItem from "@/components/MenuItem";
+    import { CoffeeItem } from "@com.example/coffee-service-client";
+
+    const Menu = async () => {
+        let menuItems: CoffeeItem[] = await getMenuItems();
+    ...
+
+
 Running the application
 =======================
-Since we know how to generate and use the client and server, let's put it all together to use with a browser-based
-web application. The web application exists under the ``app/`` directory. To build the application, use the
-``build-app`` make target. The application will run when using the ``run-app`` target. Since this application uses the
-generated client to make requests, the server must be ran alongside the app. For convenience, you may run both the web
-application and the server in the same terminal:
+Since we know how to generate and use the client and server, let's put it all together to use with the web application.
+The application exists under the ``app/`` directory. To build the application, use the ``build-app`` make target.
+The application will run when using the ``run-app`` target. Since this application uses the generated client to make
+requests, the server must be ran alongside the app. For convenience, you may run both the web application and
+the server in the same terminal:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
@@ -721,16 +794,17 @@ application and the server in the same terminal:
     make run
 
 While running the application in this way is convenient, it will intertwine the output of the application and server.
-If you would like to keep them separate, you should run the other targets (`run-server` and `run-app`).
+If you would like to keep them separate, you should run the other targets (``run-server`` and ``run-app``).
 Using the method of your choice, launch the server and the application.
 
 While this application is incredibly simple, it shows how to integrate a smithy-generated client with an
 application running in the browser.
+
 .. TODO: maybe another sentence on takeaways
 
 Making a change (optional)
 ==========================
-Now, say we would like to add a new coffee to our menu. The new menu item should have the following details:
+We would like to add a new coffee to our menu. The new menu item should have the following details:
 
 * type: COLD_BREW
 * description: A high-extraction and chilled form of coffee that has been cold-pressed.
@@ -761,7 +835,7 @@ enumeration:
 
 Next, we need to update the server code to add a new item to the menu. First, we should build the model and run the
 code-generation for the server SDK to generate the new value. Run ``make build-ssdk``. After re-generating the
-server SDK, we will make the change to our implementation of ``GetMenu``. We will use the new value and the
+server SDK, we will make the change to the implementation of ``GetMenu``. We will use the new value and the
 description above to add a new item to the menu:
 
 .. code-block:: TypeScript
@@ -782,7 +856,7 @@ description above to add a new item to the menu:
             }
         }
 
-Finally, we will run the whole application to see our change (``make run``). After you run it, you should see
+Finally, we will run the whole application to see the changes (``make run``). After you run it, you should see
 the new menu item in the web application, and should be able to order it.
 
 .. raw:: html
@@ -794,8 +868,8 @@ Wrapping up
 In this tutorial, you used Smithy to build a full-stack application for a simple coffee shop. You wrote a Smithy model
 for a service based on a list of requirements. Afterwards, you configured builds using the ``smithy-build.json``
 configuration, which you set up to code-generate a TypeScript server SDK and a TypeScript client. You implemented the
-service using the generated server SDK, and then made requests to it using the generated client. Finally, you used
-the client in a web application to make requests from within the browser to our service.
+service using the generated server SDK, and made requests to it using the generated client. Finally, you used
+the client in the web application to make requests from within the browser to our service.
 
 .. TOOO: what else?
 
