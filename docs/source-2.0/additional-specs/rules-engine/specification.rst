@@ -305,16 +305,17 @@ booleans.
 Endpoint ``authSchemes`` list property
 --------------------------------------
 
-The ``authSchemes`` property of an endpoint is used to specify a
-list of authentication schemes and their configuration which are used to modify properties
-of the resolved and modeled authentication Scheme. Clients SHOULD resolve the authentication scheme
-following the service's :ref:`auth trait <auth-trait>` and SHOULD NOT use the endpoint's ``authSchemes`` property
-to determine which authentication scheme to use.
+The ``authSchemes`` property of an endpoint is used to specify a list of
+authentication schemes and their configuration. These are used to modify
+properties of the resolved and modeled authentication scheme. Clients SHOULD
+resolve the authentication scheme following the service's :ref:`auth trait
+<auth-trait>` and SHOULD NOT use the endpoint's ``authSchemes`` property to
+determine which authentication scheme to use.
 
-The property is a list of configuration
-objects that MUST contain at least a ``name`` property and MAY contain
-additional properties. Each configuration object MUST have a unique value for its ``name`` property within
-the list of configuration objects within a given ``authSchemes`` property.
+The property is a list of configuration objects that MUST contain at least a
+``name`` property and MAY contain additional properties. Each configuration
+object MUST have a unique value for its ``name`` property within the list of
+configuration objects within a given ``authSchemes`` property.
 
 If an ``authSchemes`` property is present on an `Endpoint object`_, clients
 SHOULD modify the signing properties of the resolved and modeled authentication
