@@ -297,29 +297,32 @@ booleans.
 
 .. note::
     To prevent ambiguity, the endpoint properties map MUST NOT contain
-    reference or function objects. Properties MAY contain :ref:`template string <rules-engine-endpoint-rule-set-template-string>`
+    reference or function objects. Properties MAY contain :ref:`template
+    string <rules-engine-endpoint-rule-set-template-string>`
 
 .. _rules-engine-endpoint-rule-set-endpoint-authschemes:
 
 Endpoint ``authSchemes`` list property
 --------------------------------------
 
-The ``authSchemes`` property of an endpoint is used to specify the priority
-ordered list of authentication schemes and their configuration supported by the
-endpoint. The property is a list of configuration objects that MUST contain at
-least a ``name`` property and MAY contain additional properties. Each
-configuration object MUST have a unique value for its ``name`` property within
+The ``authSchemes`` property of an endpoint is used to specify a
+list of authentication schemes and their configuration which are used to modify properties
+of the resolved and modeled authentication Scheme. Clients SHOULD resolve the authentication scheme
+following the service's :ref:`auth trait <auth-trait>` and SHOULD NOT use the endpoint's ``authSchemes`` property
+to determine which authentication scheme to use.
+
+The property is a list of configuration
+objects that MUST contain at least a ``name`` property and MAY contain
+additional properties. Each configuration object MUST have a unique value for its ``name`` property within
 the list of configuration objects within a given ``authSchemes`` property.
 
 If an ``authSchemes`` property is present on an `Endpoint object`_, clients
-MUST resolve an authentication scheme to use via the following process:
+SHOULD modify the signing properties of the resolved and modeled authentication scheme via the following process:
 
 #. Iterate through configuration objects in the ``authSchemes`` property.
-#. If the ``name`` property in a configuration object contains a supported
-   authentication scheme, resolve this scheme.
-#. If the ``name`` is unknown or unsupported, ignore it and continue iterating.
-#. If the list has been fully iterated and no scheme has been resolved, clients
-   MUST return an error.
+#. If the ``name`` property in a configuration object matches the resolved authentication scheme, update the resolved authentication and signing properties  from the matching ``authSchemes`` properties.
+#. If the ``name`` does not match, ignore it and continue iterating.
+#. If the list has been fully iterated and no scheme has matched, do not modify the resolved authentication scheme and do not raise an error.
 
 .. _rules-engine-standard-library-adding-authscheme-validators:
 
