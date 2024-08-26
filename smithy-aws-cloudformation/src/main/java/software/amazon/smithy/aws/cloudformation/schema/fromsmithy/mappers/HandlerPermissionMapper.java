@@ -67,10 +67,9 @@ public final class HandlerPermissionMapper implements CfnMapper {
                 .orElse(SetUtils.of());
         createPermissions.addAll(putPermissions);
         // Put operations without the noReplace trait are used for updates.
-        resource.getPut()
-                .map(model::expectShape)
-                .filter(shape -> !shape.hasTrait(NoReplaceTrait.class))
-                .ifPresent(shape -> updatePermissions.addAll(putPermissions));
+        if (!resource.hasTrait(NoReplaceTrait.class)) {
+            updatePermissions.addAll(putPermissions);
+        }
 
         // Set the create and update handlers, if they have permissions, now that they're complete.
         if (!createPermissions.isEmpty()) {
