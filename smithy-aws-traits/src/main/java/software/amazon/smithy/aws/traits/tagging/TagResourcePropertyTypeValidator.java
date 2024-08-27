@@ -36,14 +36,11 @@ public final class TagResourcePropertyTypeValidator extends AbstractValidator {
         for (ResourceShape resource : model.getResourceShapesWithTrait(TaggableTrait.class)) {
             TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
             Map<String, ShapeId> properties = resource.getProperties();
-            if (trait.getProperty().isPresent()) {
-                ShapeId propertyShapeId = properties.get(trait.getProperty().get());
-                if (propertyShapeId != null) {
-                    Shape propertyShape = model.expectShape(propertyShapeId);
-                    if (!TaggingShapeUtils.verifyTagsShape(model, propertyShape)) {
-                        events.add(error(resource, "Tag property must be a list shape targeting a member"
-                                + " containing a pair of strings, or a Map shape targeting a string member."));
-                    }
+            if (trait.getProperty().isPresent() && properties.containsKey(trait.getProperty().get())) {
+                Shape propertyShape = model.expectShape(properties.get(trait.getProperty().get()));
+                if (!TaggingShapeUtils.verifyTagsShape(model, propertyShape)) {
+                    events.add(error(resource, "Tag property must be a list shape targeting a member"
+                            + " containing a pair of strings, or a Map shape targeting a string member."));
                 }
             }
         }

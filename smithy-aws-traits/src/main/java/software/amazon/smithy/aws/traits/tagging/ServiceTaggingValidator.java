@@ -15,11 +15,15 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
+import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.LIST_TAGS_OPNAME;
+import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.TAG_RESOURCE_OPNAME;
+import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.UNTAG_RESOURCE_OPNAME;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -29,69 +33,58 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Validates service satisfies AWS tagging requirements.
  */
 public final class ServiceTaggingValidator extends AbstractValidator {
-    private static final String TAG_RESOURCE_OPNAME = "TagResource";
-    private static final String UNTAG_RESOURCE_OPNAME = "UntagResource";
-    private static final String LISTTAGS_OPNAME = "ListTagsForResource";
-
     @Override
     public List<ValidationEvent> validate(Model model) {
         AwsTagIndex awsTagIndex = AwsTagIndex.of(model);
         List<ValidationEvent> events = new LinkedList<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
-            events.addAll(validateService(model, service, awsTagIndex));
+            events.addAll(validateService(service, awsTagIndex));
         }
         return events;
     }
 
-    private List<ValidationEvent> validateService(Model model, ServiceShape service, AwsTagIndex awsTagIndex) {
+    private List<ValidationEvent> validateService(ServiceShape service, AwsTagIndex awsTagIndex) {
         List<ValidationEvent> events = new LinkedList<>();
-        SourceLocation tagEnabledTraitLoc = service.expectTrait(TagEnabledTrait.class).getSourceLocation();
+        TagEnabledTrait trait = service.expectTrait(TagEnabledTrait.class);
 
         Optional<ShapeId> tagResourceId = awsTagIndex.getTagResourceOperation(service.getId());
         if (tagResourceId.isPresent()) {
             if (!awsTagIndex.serviceHasValidTagResourceOperation(service.getId())) {
-                events.add(getMessageUnqualifedOperation(service, tagEnabledTraitLoc,
-                                                tagResourceId.get(), TAG_RESOURCE_OPNAME));
+                events.add(getInvalidOperationEvent(service, trait, tagResourceId.get(), TAG_RESOURCE_OPNAME));
             }
         } else {
-            events.add(getMessageMissingOperation(service, tagEnabledTraitLoc, TAG_RESOURCE_OPNAME));
+            events.add(getMissingOperationEvent(service, trait, TAG_RESOURCE_OPNAME));
         }
 
         Optional<ShapeId> untagResourceId = awsTagIndex.getUntagResourceOperation(service.getId());
         if (untagResourceId.isPresent()) {
             if (!awsTagIndex.serviceHasValidUntagResourceOperation(service.getId())) {
-                events.add(getMessageUnqualifedOperation(service, tagEnabledTraitLoc,
-                                                untagResourceId.get(), UNTAG_RESOURCE_OPNAME));
+                events.add(getInvalidOperationEvent(service, trait, untagResourceId.get(), UNTAG_RESOURCE_OPNAME));
             }
         } else {
-            events.add(getMessageMissingOperation(service, tagEnabledTraitLoc, UNTAG_RESOURCE_OPNAME));
+            events.add(getMissingOperationEvent(service, trait, UNTAG_RESOURCE_OPNAME));
         }
 
-        Optional<ShapeId> listTagResourceId = awsTagIndex.getListTagsForResourceOperation(service.getId());
-        if (listTagResourceId.isPresent()) {
+        Optional<ShapeId> listTagsId = awsTagIndex.getListTagsForResourceOperation(service.getId());
+        if (listTagsId.isPresent()) {
             if (!awsTagIndex.serviceHasValidListTagsForResourceOperation(service.getId())) {
-                events.add(getMessageUnqualifedOperation(service, tagEnabledTraitLoc,
-                                                listTagResourceId.get(), LISTTAGS_OPNAME));
+                events.add(getInvalidOperationEvent(service, trait, listTagsId.get(), LIST_TAGS_OPNAME));
             }
         } else {
-            events.add(getMessageMissingOperation(service, tagEnabledTraitLoc, LISTTAGS_OPNAME));
+            events.add(getMissingOperationEvent(service, trait, LIST_TAGS_OPNAME));
         }
 
         return events;
     }
 
-    private ValidationEvent getMessageMissingOperation(
-        ServiceShape service,
-        SourceLocation location,
-        String opName
-    ) {
+    private ValidationEvent getMissingOperationEvent(ServiceShape service, FromSourceLocation location, String opName) {
         return warning(service, location, "Service marked `aws.api#TagEnabled` is missing an operation named "
-                                            + "'" + opName + ".'");
+                + "'" + opName + ".'");
     }
 
-    private ValidationEvent getMessageUnqualifedOperation(
+    private ValidationEvent getInvalidOperationEvent(
         ServiceShape service,
-        SourceLocation location,
+        FromSourceLocation location,
         ShapeId opId,
         String opName
     ) {

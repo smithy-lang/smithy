@@ -32,9 +32,7 @@ public final class TagResourcePropertyNameValidator extends AbstractValidator {
 
         for (ResourceShape resource : model.getResourceShapesWithTrait(TaggableTrait.class)) {
             TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
-            if (trait.getProperty()
-                    .filter(property -> !TaggingShapeUtils.isTagDesiredName(property))
-                    .isPresent()) {
+            if (trait.getProperty().isPresent() && !TaggingShapeUtils.isTagDesiredName(trait.getProperty().get())) {
                 events.add(warning(resource, String.format("Suggested tag property name is '%s'.",
                     TaggingShapeUtils.getDesiredTagsPropertyName())));
             }

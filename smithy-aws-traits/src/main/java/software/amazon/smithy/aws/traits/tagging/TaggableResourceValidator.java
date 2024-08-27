@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import software.amazon.smithy.aws.traits.ArnTrait;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -44,11 +43,10 @@ public final class TaggableResourceValidator extends AbstractValidator {
         List<ValidationEvent> events = new LinkedList<>();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
-        PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
             for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
                 if (resource.hasTrait(TaggableTrait.class)) {
-                    events.addAll(validateResource(model, resource, service, tagIndex, propertyBindingIndex));
+                    events.addAll(validateResource(model, resource, service, tagIndex));
                 } else if (resource.hasTrait(ArnTrait.class) && tagIndex.serviceHasTagApis(service.getId())) {
                     // If a resource does not have the taggable trait, but has an ARN, and the service has tag
                     // operations, it is most likely a mistake.
@@ -63,14 +61,15 @@ public final class TaggableResourceValidator extends AbstractValidator {
             Model model,
             ResourceShape resource,
             ServiceShape service,
-            AwsTagIndex awsTagIndex,
-            PropertyBindingIndex propertyBindingIndex
+            AwsTagIndex awsTagIndex
     ) {
         List<ValidationEvent> events = new LinkedList<>();
         // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
-            Shape updateOperation = model.expectShape(resource.getUpdate().get());
-            events.add(danger(updateOperation, "Update resource lifecycle operation should not support updating tags"
+            Shape operation = resource.getUpdate().isPresent()
+                    ? model.expectShape(resource.getUpdate().get())
+                    : model.expectShape(resource.getPut().get());
+            events.add(danger(operation, "Update and put resource lifecycle operations should not support updating tags"
                     + " because it is a privileged operation that modifies access."));
         }
         // A valid taggable resource must support one of the following:
@@ -81,8 +80,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
         //    through the tag property, and must be resource instance operations
         //Caution: avoid short circuiting behavior.
         boolean isServiceWideTaggable = awsTagIndex.serviceHasTagApis(service.getId());
-        boolean isInstanceOpTaggable = isTaggableViaInstanceOperations(events, model, resource, service,
-                propertyBindingIndex);
+        boolean isInstanceOpTaggable = isTaggableViaInstanceOperations(model, resource);
 
         if (isServiceWideTaggable && !isInstanceOpTaggable && !resource.hasTrait(ArnTrait.class)) {
             events.add(error(resource, "Resource is taggable only via service-wide tag operations."
@@ -98,16 +96,10 @@ public final class TaggableResourceValidator extends AbstractValidator {
     }
 
     private Optional<OperationShape> resolveTagOperation(ShapeId tagApiId, Model model) {
-        return model.getShape(tagApiId).flatMap(shape -> shape.asOperationShape());
+        return model.getShape(tagApiId).flatMap(Shape::asOperationShape);
     }
 
-    private boolean isTaggableViaInstanceOperations(
-            List<ValidationEvent> events,
-            Model model,
-            ResourceShape resource,
-            ServiceShape service,
-            PropertyBindingIndex propertyBindingIndex
-    ) {
+    private boolean isTaggableViaInstanceOperations(Model model, ResourceShape resource) {
         TaggableTrait taggableTrait = resource.expectTrait(TaggableTrait.class);
         if (taggableTrait.getApiConfig().isPresent()) {
             TaggableApiConfig apiConfig = taggableTrait.getApiConfig().get();
@@ -117,20 +109,19 @@ public final class TaggableResourceValidator extends AbstractValidator {
 
             Optional<OperationShape> tagApi = resolveTagOperation(apiConfig.getTagApi(), model);
             if (tagApi.isPresent()) {
-                tagApiVerified = TaggingShapeUtils.isTagPropertyInInput(Optional.of(
-                        tagApi.get().getId()), model, resource, propertyBindingIndex)
-                        && verifyTagApi(tagApi.get(), model, service, resource);
+                tagApiVerified = TaggingShapeUtils.isTagPropertyInInput(
+                        Optional.of(tagApi.get().getId()), model, resource)
+                        && verifyTagApi(tagApi.get(), model);
             }
 
             Optional<OperationShape> untagApi = resolveTagOperation(apiConfig.getUntagApi(), model);
             if (untagApi.isPresent()) {
-                untagApiVerified = verifyUntagApi(untagApi.get(), model, service, resource);
+                untagApiVerified = verifyUntagApi(untagApi.get(), model);
             }
-
 
             Optional<OperationShape> listTagsApi = resolveTagOperation(apiConfig.getListTagsApi(), model);
             if (listTagsApi.isPresent()) {
-                listTagsApiVerified = verifyListTagsApi(listTagsApi.get(), model, service, resource);
+                listTagsApiVerified = verifyListTagsApi(listTagsApi.get(), model);
             }
 
             return tagApiVerified && untagApiVerified && listTagsApiVerified;
@@ -138,41 +129,26 @@ public final class TaggableResourceValidator extends AbstractValidator {
         return false;
     }
 
-    private boolean verifyListTagsApi(
-        OperationShape listTagsApi,
-        Model model,
-        ServiceShape service,
-        ResourceShape resource
-    ) {
+    private boolean verifyListTagsApi(OperationShape listTagsApi, Model model) {
         // Verify Tags map or list member but on the output.
         return exactlyOne(collectMemberTargetShapes(listTagsApi.getOutputShape(), model),
                 memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+                        && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
     }
 
-    private boolean verifyUntagApi(
-        OperationShape untagApi,
-        Model model,
-        ServiceShape service,
-        ResourceShape resource
-    ) {
-        // Tag API has a tags property on its input AND has exactly one member targetting a tag shape with an
+    private boolean verifyUntagApi(OperationShape untagApi, Model model) {
+        // Tag API has a tags property on its input AND has exactly one member targeting a tag shape with an
         // appropriate name.
         return exactlyOne(collectMemberTargetShapes(untagApi.getInputShape(), model),
                 memberEntry -> TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey().getMemberName())
-                && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue()));
+                        && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue()));
     }
 
-    private boolean verifyTagApi(
-        OperationShape tagApi,
-        Model model,
-        ServiceShape service,
-        ResourceShape resource
-    ) {
-        // Tag API has exactly one member targetting a tag list or map shape with an appropriate name.
+    private boolean verifyTagApi(OperationShape tagApi, Model model) {
+        // Tag API has exactly one member targeting a tag list or map shape with an appropriate name.
         return exactlyOne(collectMemberTargetShapes(tagApi.getInputShape(), model),
                 memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+                        && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
     }
 
     private boolean exactlyOne(
