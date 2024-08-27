@@ -44,7 +44,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -425,11 +424,10 @@ public final class CfnConverter {
                     ShapeId definition = resource.getProperties().get(trait.getProperty().get());
                     builder.addMember(tagPropertyName, definition);
                 } else {
-                    // Taggability must be through service-wide TagResource operation
-                    OperationShape tagResourceOp = model.expectShape(
-                        tagIndex.getTagResourceOperation(resource.getId()).get(), OperationShape.class);
-                    // A valid TagResource operation certainly has a single tags input member
-                    MemberShape member = AwsTagIndex.getTagsMember(model, tagResourceOp).get();
+                    // A valid TagResource operation certainly has a single tags input member.
+                    AwsTagIndex awsTagIndex = AwsTagIndex.of(model);
+                    Optional<ShapeId> tagOperation = tagIndex.getTagResourceOperation(resource.getId());
+                    MemberShape member = awsTagIndex.getTagsMember(tagOperation.get()).get();
                     member = member.toBuilder().id(builder.getId().withMember(tagPropertyName)).build();
                     builder.addMember(member);
                 }

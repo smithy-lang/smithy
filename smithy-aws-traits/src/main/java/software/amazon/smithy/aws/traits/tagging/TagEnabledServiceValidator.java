@@ -34,13 +34,12 @@ public final class TagEnabledServiceValidator extends AbstractValidator {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
-            events.addAll(validateService(model, service, tagIndex, topDownIndex));
+            events.addAll(validateService(service, tagIndex, topDownIndex));
         }
         return events;
     }
 
     private List<ValidationEvent> validateService(
-            Model model,
             ServiceShape service,
             AwsTagIndex tagIndex,
             TopDownIndex topDownIndex
