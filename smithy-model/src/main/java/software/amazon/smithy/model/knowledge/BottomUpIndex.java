@@ -15,47 +15,62 @@
 
 package software.amazon.smithy.model.knowledge;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
-import software.amazon.smithy.model.selector.PathFinder;
-import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Computes all of the parent shapes of resources and operations from the bottom-up.
  */
 public final class BottomUpIndex implements KnowledgeIndex {
-    private static final Selector SELECTOR = Selector.parse(":is(resource, operation)");
     private final Map<ShapeId, Map<ShapeId, List<EntityShape>>> parentBindings = new HashMap<>();
 
     public BottomUpIndex(Model model) {
-        PathFinder pathFinder = PathFinder.create(model);
-
+        NeighborProvider provider = NeighborProviderIndex.of(model).getProvider();
         for (ServiceShape service : model.getServiceShapes()) {
-            Map<ShapeId, List<EntityShape>> serviceBindings = new HashMap<>();
-            parentBindings.put(service.getId(), serviceBindings);
-            for (PathFinder.Path path : pathFinder.search(service, SELECTOR)) {
-                List<EntityShape> shapes = new ArrayList<>();
-                // Get all of the path elements other than the last one in reverse order.
-                for (int i = path.size() - 1; i >= 0; i--) {
-                    Relationship rel = path.get(i);
-                    // This should always be an EntityShape, but just in case new relationships are added...
-                    if (rel.getShape() instanceof EntityShape) {
-                        shapes.add((EntityShape) rel.getShape());
-                    }
-                }
-                // Add the end shape (a resource or operation) to the service bindings.
-                serviceBindings.put(path.getEndShape().getId(), shapes);
+            Map<ShapeId, List<EntityShape>> paths = new HashMap<>();
+            parentBindings.put(service.getId(), paths);
+
+            Deque<EntityShape> path = new ArrayDeque<>();
+            path.push(service);
+            collectPaths(paths, path, service, provider);
+        }
+    }
+
+    private void collectPaths(
+            Map<ShapeId, List<EntityShape>> paths,
+            Deque<EntityShape> path,
+            Shape current,
+            NeighborProvider neighborProvider
+    ) {
+        for (Relationship relationship : neighborProvider.getNeighbors(current)) {
+            Shape neighbor = relationship.expectNeighborShape();
+            if (!neighbor.isOperationShape() && !neighbor.isResourceShape()) {
+                continue;
+            }
+
+            // Note: The path does not include the neighbor shape
+            paths.put(neighbor.getId(), ListUtils.copyOf(path));
+
+            // Recurse through neighbors of an entity (resource) shape
+            if (neighbor instanceof EntityShape) {
+                path.push((EntityShape) neighbor);
+                collectPaths(paths, path, neighbor, neighborProvider);
+                path.pop();
             }
         }
     }
