@@ -35,7 +35,7 @@ To follow this tutorial, you will need to install a few tools:
 ------
 Set up
 ------
-Once you have these installed, the CLI has a useful command to easily bootstrap projects from
+Once you have the prerequisites installed, the Smithy CLI has a useful command to easily bootstrap projects from
 `the repository of example smithy projects <https://github.com/smithy-lang/smithy-examples>`_. Execute the following
 command to set up the initial project:
 
@@ -115,8 +115,7 @@ file and add the following:
 
 We apply the ``@restJson1`` protocol trait to the service to indicate the service supports the
 :doc:`../aws/protocols/aws-restjson1-protocol`. Protocols define the rules and conventions for serializing and
-de-serializing data when communicating between client and server. Protocols are a highly complex topic, so we will not
-discuss them further in this tutorial.
+de-serializing data when communicating between client and server.
 
 -------------
 Modeling data
@@ -201,8 +200,8 @@ With the ``restJson1`` protocol, the serialized response might look like the bel
 -------------------
 Representing orders
 -------------------
-At this point, we still need to model the ordering functionality of our service. Let's create a new file,
-``order.smithy``, which will hold definitions related to ordering. First, let's consider the following when
+At this point, we still need to model the ordering functionality of our service. Let's modify the
+``order.smithy`` file to hold definitions related to ordering. First, let's consider the following when
 modeling an order:
 
 1. an order needs a unique identifier
@@ -241,8 +240,8 @@ Let's compose these shapes together to create our representation of an order:
 
     /// An Order, which has an id, a status, and the type of coffee ordered
     structure Order {
-        id: Uuid,
-        coffeeType: CoffeeType,
+        id: Uuid
+        coffeeType: CoffeeType
         status: OrderStatus
     }
 
@@ -359,15 +358,16 @@ Building the model
 ==================
 The model for our coffee service is complete. Before we build the model, let's take a moment and learn how to configure
 the build. The :ref:`smithy-build.json configuration file <smithy-build-json>` is how we instruct Smithy to build the
-model. A :ref:`projection <projections>` is a version of a model based on a set of :ref:`transformations <transforms>`
-and :ref:`plugins <plugins>`. For our model, we will not configure any explicit projections, since Smithy will always
-build the ``source`` projection. The ``source`` projection does not have any transformations applied, and its output
-includes the artifacts of plugins applied at the root. To build the model, run:
+model. A :ref:`projection <projections>` is a version of a model based on a set of :ref:`transformations <transforms>`.
+Plugins can be applied to a projection to produce artifacts based on its "version" of the model.
+For our model, we will not configure any explicit projections, since Smithy always builds the ``source`` projection.
+The ``source`` projection does not have any transformations applied, and its output includes the artifacts of
+plugins applied at the root. To build the model, run:
 
 .. code-block:: sh
     :caption: ``/bin/sh``
 
-    smithy build model/
+    smithy build
 
 Building the model will render artifacts under the ``build/smithy`` directory. Under it, The ``source`` directory
 corresponds to the output (or "build artifacts") of the ``source`` projection. With the current configuration, Smithy
@@ -456,7 +456,8 @@ lives). Let's try it now:
     make build-server
 
 This command will run the code-generation for the server SDK, and then build the server implementation (which uses
-the server SDK). The server package is simple, and contains only two files under ``src/``:
+the server SDK). The server package is located under the ``server/`` directory, and contains
+only two files under ``src/``:
 
 * ``index.ts``: entry-point of the backend application, and where we initialize our service
 * ``CoffeeShop.ts``: implementation of a `CoffeeShopService` from the generated server SDK
