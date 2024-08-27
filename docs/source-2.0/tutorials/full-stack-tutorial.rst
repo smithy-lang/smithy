@@ -380,13 +380,14 @@ Generating the server SDK
 The server SDK is a code-generated component which provides built-in serialization, request-handling, and
 scaffolding (or "stubs") for our service. It facilitates the implementation of the service by
 providing these things, and allowing the implementer to focus on the business logic. Let's generate the server SDK
-for our service by adding the following build configuration:
+for our service by using the following build configuration:
 
 .. code-block:: json
     :caption: ``smithy-build.json``
 
     {
         "version": "1.0",
+        "sources": ["model/"],
         "maven": {
             "dependencies": [
                 "software.amazon.smithy:smithy-aws-traits:1.50.0",
@@ -472,19 +473,19 @@ the server imports the generated code from. Let's take a look at the core of the
     export class CoffeeShop implements CoffeeShopService<{}> {
         ...
 
-        CreateOrder = async (input: CreateOrderServerInput): Promise<CreateOrderServerOutput> => {
+        CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): CreateOrderServerOutput {
             console.log("received an order request...")
             // TODO: Implement me!
             return;
         }
 
-        GetMenu = async (input: GetMenuServerInput): Promise<GetMenuServerOutput> => {
+        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
             console.log("getting menu...")
             // TODO: Implement me!
             return;
         }
 
-        GetOrder = async (input: GetOrderServerInput): Promise<GetOrderServerOutput> => {
+        GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): GetOrderServerOutput {
             console.log(`getting an order (${input.id})...`)
             // TODO: Implement me!
             return;
@@ -503,7 +504,7 @@ each type of coffee:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetMenu = async (input: GetMenuServerInput): Promise<GetMenuServerOutput> => {
+        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
             console.log("getting menu...")
             return {
                 items: [
@@ -542,7 +543,7 @@ and updates this queue. Let's implement order submission, or ``CreateOrder``:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        CreateOrder = async (input: CreateOrderServerInput): Promise<CreateOrderServerOutput> => {
+        CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): CreateOrderServerOutput {
             console.log("received an order request...")
             const order = {
                 orderId: randomUUID(),
@@ -550,8 +551,8 @@ and updates this queue. Let's implement order submission, or ``CreateOrder``:
                 status: OrderStatus.IN_PROGRESS
             }
 
-            this.orders.set(order.orderId, order)
-            this.queue.push(order)
+            context.orders.set(order.orderId, order)
+            context.queue.push(order)
 
             console.log(`created order: ${JSON.stringify(order)}`)
             return {
@@ -567,10 +568,10 @@ through the ``GetOrder`` operation. Let's implement it now:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetOrder = async (input: GetOrderServerInput): Promise<GetOrderServerOutput> => {
+        GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): GetOrderServerOutput {
             console.log(`getting an order (${input.id})...`)
-            if (this.orders.has(input.id)) {
-                const order = this.orders.get(input.id)
+            if (context.orders.has(input.id)) {
+                const order = context.orders.get(input.id)
                 return {
                     id: order.orderId,
                     coffeeType: order.coffeeType,
@@ -579,7 +580,8 @@ through the ``GetOrder`` operation. Let's implement it now:
             } else {
                 console.log(`order (${input.id}) does not exist.`)
                 throw new OrderNotFound({
-                    message: `order ${input.id} not found.`
+                    message: `order ${input.id} not found.`,
+                    orderId: input.id
                 })
             }
         }
@@ -838,7 +840,7 @@ description above to add a new item to the menu:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetMenu = async (input: GetMenuServerInput): Promise<GetMenuServerOutput> => {
+        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
             console.log("getting menu...")
             return {
                 items: [
