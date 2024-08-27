@@ -38,7 +38,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBuilder<HttpChecksumTrait> {
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpChecksum");
     public static final String CHECKSUM_PREFIX = "x-amz-checksum-";
-    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("CRC32C", "CRC32", "SHA1", "SHA256");
+    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("CRC64NVME", "CRC32C", "CRC32",
+            "SHA1", "SHA256");
     public static final List<String> VALIDATION_MODES = ListUtils.of("ENABLED");
 
     public static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";

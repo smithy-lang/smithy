@@ -41,7 +41,7 @@ public class HttpChecksumTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
 
-        List<String> algorithms = new ArrayList<>(Arrays.asList("CRC32C", "CRC32", "SHA1", "SHA256"));
+        List<String> algorithms = new ArrayList<>(Arrays.asList("CRC64NVME", "CRC32C", "CRC32", "SHA1", "SHA256"));
         List<Node> responseAlgorithmNodes = new ArrayList<>();
         for (String algorithm: algorithms) {
             responseAlgorithmNodes.add(Node.from(algorithm));
@@ -62,7 +62,8 @@ public class HttpChecksumTraitTest {
         assertThat(checksumTrait.isRequestChecksumRequired(), is(true));
         assertThat(checksumTrait.getRequestAlgorithmMember().get(), equalTo("ChecksumAlgorithm"));
         assertThat(checksumTrait.getRequestValidationModeMember().get(), equalTo("ChecksumMode"));
-        assertThat(checksumTrait.getResponseAlgorithms(), containsInRelativeOrder("CRC32C", "CRC32", "SHA1", "SHA256"));
+        assertThat(checksumTrait.getResponseAlgorithms(), containsInRelativeOrder("CRC64NVME", "CRC32C", "CRC32",
+                "SHA1", "SHA256"));
 
         assertThat(node.expectBooleanMember("requestChecksumRequired"), equalTo(BooleanNode.from(true)));
         assertThat(node.expectStringMember("requestAlgorithmMember"), equalTo(Node.from("ChecksumAlgorithm")));
