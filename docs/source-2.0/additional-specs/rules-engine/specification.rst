@@ -329,7 +329,8 @@ scheme via the following process:
    properties from the matching ``authSchemes`` properties.
 #. If the ``name`` does not match, ignore it and continue iterating.
 #. If the list has been fully iterated and no scheme has matched, do not
-   modify the resolved authentication scheme and do not raise an error.
+   modify the resolved authentication scheme's properties
+   and do not raise an error.
 
 .. _rules-engine-standard-library-adding-authscheme-validators:
 
