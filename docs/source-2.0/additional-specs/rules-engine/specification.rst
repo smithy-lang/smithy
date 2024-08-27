@@ -310,7 +310,9 @@ authentication schemes and their configuration. These are used to modify
 properties of the resolved and modeled authentication scheme. Clients SHOULD
 resolve the authentication scheme following the service's :ref:`auth trait
 <auth-trait>` and SHOULD NOT use the endpoint's ``authSchemes`` property to
-determine which authentication scheme to use.
+determine which authentication scheme to use. Clients SHOULD use the
+endpoint's ``authSchemes`` property to modify signing properties of the
+resolved authentication scheme.
 
 The property is a list of configuration objects that MUST contain at least a
 ``name`` property and MAY contain additional properties. Each configuration
