@@ -4,7 +4,7 @@ Full Stack Application
 
 Overview
 ========
-In this tutorial, imagine we own a coffee shop. We would like to create a website for our customers to place an 
+For this tutorial, imagine we own a coffee shop. We would like to create a website for our customers to place an 
 order online, and be able to grab their coffee on the go. This application should show the available coffees, and
 allow the customer to order a coffee.
 
@@ -17,7 +17,7 @@ code for the client and server, and implement the front-end and back-end for the
 
 Setting up the project
 ======================
-This application will consist of a 4 major components:
+This application will consist of 4 major components:
 
 1. A model, which defines the service
 2. A server, which handles requests for coffee 
@@ -91,8 +91,8 @@ The service should provide a few capabilities:
 Adding the service
 ------------------
 The service shape is the entry-point of our API, and is where we define the operations our service exposes to a
-consumer. First and foremost, let's define the initial service shape without any operations. Open the main.smithy file
-and add the following:
+consumer. First and foremost, let's define the initial service shape without any operations. Open the ``main.smithy``
+file and add the following:
 
 .. important:: For code blocks, the name of the current file is given in the top-left corner.
     
@@ -357,8 +357,8 @@ for adding, updating, and removing coffees. In this case, coffee would be a prim
 
 Building the model
 ==================
-The model for our coffee service is complete. Before we build the model, let's take a moment and learn how we configure
-a build. The :ref:`smithy-build.json configuration file <smithy-build-json>` is how we instruct Smithy to build the
+The model for our coffee service is complete. Before we build the model, let's take a moment and learn how to configure
+the build. The :ref:`smithy-build.json configuration file <smithy-build-json>` is how we instruct Smithy to build the
 model. A :ref:`projection <projections>` is a version of a model based on a set of :ref:`transformations <transforms>`
 and :ref:`plugins <plugins>`. For our model, we will not configure any explicit projections, since Smithy will always
 build the ``source`` projection. The ``source`` projection does not have any transformations applied, and its output
@@ -494,7 +494,7 @@ the server imports the generated code from. Let's take a look at the core of the
 
 These three methods are how we implement the core business logic of the service. They are exposed by the
 ``CoffeeShopService`` interface exported by the server SDK. This file already contains some of the underlying logic
-for how our implementation will run: there is an orders queue, an orders map, and a order-handling procedure
+for how our implementation will run: there is an orders queue, an orders map, and an order-handling procedure
 (``handleOrders``). We will use these to implement the operations for our service. Let's start with the simplest
 operation, ``GetMenu``. We will modify the operation to return a menu containing one coffee item for
 each type of coffee:
@@ -527,7 +527,7 @@ each type of coffee:
                         type: CoffeeType.ESPRESSO,
                         description: "A highly concentrated form of coffee, brewed under high pressure.\n" +
                             "Syrupy, thick liquid in a small serving size.\n" +
-                            "Full bodied and intensly aromatic."
+                            "Full bodied and intensely aromatic."
                     }
                 ]
             }
@@ -582,7 +582,6 @@ through the ``GetOrder`` operation. Let's implement it now:
                 })
             }
         }
-.. TODO: above snippet may need to be updated, verify errors
 
 With these operations implemented, our server is fully implemented. Let's build and run it:
 
@@ -779,13 +778,12 @@ We use these helper methods in our application to make requests to the server:
         let menuItems: CoffeeItem[] = await getMenuItems();
     ...
 
-
 Running the application
 =======================
 Since we know how to generate and use the client and server, let's put it all together to use with the web application.
 The application exists under the ``app/`` directory. To build the application, use the ``build-app`` make target.
 The application will run when using the ``run-app`` target. Since this application uses the generated client to make
-requests, the server must be ran alongside the app. For convenience, you may run both the web application and
+requests, the server must be run alongside the app. For convenience, you may run both the web application and
 the server in the same terminal:
 
 .. code-block:: sh
@@ -797,10 +795,8 @@ While running the application in this way is convenient, it will intertwine the 
 If you would like to keep them separate, you should run the other targets (``run-server`` and ``run-app``).
 Using the method of your choice, launch the server and the application.
 
-While this application is incredibly simple, it shows how to integrate a smithy-generated client with an
+While this application is simple, it shows how to integrate a smithy-generated client with an
 application running in the browser.
-
-.. TODO: maybe another sentence on takeaways
 
 Making a change (optional)
 ==========================
@@ -866,12 +862,10 @@ the new menu item in the web application, and should be able to order it.
 Wrapping up
 ===========
 In this tutorial, you used Smithy to build a full-stack application for a simple coffee shop. You wrote a Smithy model
-for a service based on a list of requirements. Afterwards, you configured builds using the ``smithy-build.json``
-configuration, which you set up to code-generate a TypeScript server SDK and a TypeScript client. You implemented the
-service using the generated server SDK, and made requests to it using the generated client. Finally, you used
-the client in the web application to make requests from within the browser to our service.
-
-.. TOOO: what else?
+for a service based on a list of requirements. Afterward, you configured Smithy using the ``smithy-build.json``
+configuration, which you set up to code-generate a TypeScript server SDK and client. You implemented the
+service using the server SDK, and made requests to it using the client. Finally, you used the client in the web
+application to make requests from within the browser to our service.
 
 ---------
 What now?
