@@ -32,6 +32,8 @@ To follow this tutorial, you will need to install a few tools:
 * :doc:`Smithy CLI <../guides/smithy-cli/cli_installation>`
 * `Node.js (>= 16) <https://nodejs.org/en/download>`_ and `yarn <https://yarnpkg.com/getting-started/install>`_
 
+.. warning:: This project was made for Mac/Linux, it may not build correctly on Windows.
+
 ------
 Set up
 ------
