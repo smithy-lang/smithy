@@ -433,7 +433,7 @@ the ``smithy.framework#ValidationException`` attached to it. We will fix this is
 to our service, meaning all operations in the service may return it. Let's do this now:
 
 .. code-block:: smithy
-    :caption: ``main.smithy``
+    :caption: ``model/main.smithy``
 
     use aws.protocols#restJson1
     use smithy.framework#ValidationException
@@ -476,7 +476,7 @@ the server imports the generated code from. Let's take a look at the core of the
     :caption: ``CoffeeShop.ts``
 
     // An implementation of the service from the SSDK
-    export class CoffeeShop implements CoffeeShopService<{}> {
+    export class CoffeeShop implements CoffeeShopService<CoffeeShopContext> {
         ...
 
         async CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): Promise<CreateOrderServerOutput> {
