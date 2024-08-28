@@ -401,7 +401,7 @@ for our service by using the following build configuration:
         },
         "plugins": {
             "typescript-ssdk-codegen": {
-                "package" : "@com.example/coffee-service-server",
+                "package" : "@com.example/coffee-shop-server",
                 "packageVersion": "0.0.1"
             }
         }
@@ -629,12 +629,12 @@ To run the code-generation for the client, we will add another plugin to the ``s
         // ...
         "plugins": {
             "typescript-ssdk-codegen": {
-                "package" : "@com.example/coffee-service-server",
+                "package" : "@com.example/coffee-shop-server",
                 "packageVersion": "0.0.1"
             },
             // add the client codegen plugin
             "typescript-client-codegen": {
-                "package": "@com.example/coffee-service-client",
+                "package": "@com.example/coffee-shop-client",
                 "packageVersion": "0.0.1"
             }
         }
@@ -683,7 +683,7 @@ following:
 .. code-block:: TypeScript
     :caption: ``repl``
 
-    import { CoffeeShop } from '@com.example/coffee-service-client'
+    import { CoffeeShop } from '@com.example/coffee-shop-client'
 
     const client = new CoffeeShop({ endpoint: { protocol: 'http', hostname: 'localhost', port: 3001, path: '/' } })
 
@@ -695,7 +695,7 @@ Let's try submitting an order:
 .. code-block:: TypeScript
     :caption: ``repl``
 
-    import { CoffeeType } from '@com.example/coffee-service-client'
+    import { CoffeeType } from '@com.example/coffee-shop-client'
     
     await client.createOrder({ coffeeType: "DRIP" })
 
@@ -749,7 +749,7 @@ client. First, we create the client, and then we create helper methods to use th
 .. code-block:: TypeScript
     :caption: ``app/index.ts``
 
-    import { CoffeeItem, CoffeeShop, CoffeeType, OrderStatus } from "@com.example/coffee-service-client";
+    import { CoffeeItem, CoffeeShop, CoffeeType, OrderStatus } from "@com.example/coffee-shop-client";
 
     ...
     // create a coffee service client singleton and getter
@@ -785,7 +785,7 @@ We use these helper methods in our application to make requests to the server:
 
     ...
     import MenuItem from "@/components/MenuItem";
-    import { CoffeeItem } from "@com.example/coffee-service-client";
+    import { CoffeeItem } from "@com.example/coffee-shop-client";
 
     const Menu = async () => {
         let menuItems: CoffeeItem[] = await getMenuItems();
