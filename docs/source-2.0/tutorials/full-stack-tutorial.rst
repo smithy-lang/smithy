@@ -110,7 +110,7 @@ file and add the following:
     @title("Coffee Shop Service")
     @restJson1
     service CoffeeShop {
-        version: "2024-04-04"
+        version: "2024-08-23"
     }
 
 We apply the ``@restJson1`` protocol trait to the service to indicate the service supports the
@@ -166,7 +166,7 @@ to the service:
 
     ...
     service CoffeeShop {
-       version: "2024-04-04"
+       version: "2024-08-23"
        operations: [
             GetMenu
        ]
@@ -408,7 +408,7 @@ Run the build:
 .. code-block:: sh
     :caption: ``/bin/sh``
 
-    smithy build model/
+    smithy build
 
 The build will should fail for the following reason:
 
@@ -441,9 +441,9 @@ to our service, meaning all operations in the service may return it. Let's do th
     }
 
 
-After fixing this and running the build, the TypeScript code-generator plugin will create a new
-artifact under ``build/smithy/source/typescript-ssdk-codegen``. This artifact contains the generated
-server SDK (SSDK), which we will use in our back-end.
+After fixing this, run the build command again. The build should now succeed. The TypeScript code-generator
+plugin will create a new artifact under ``build/smithy/source/typescript-ssdk-codegen``. This artifact contains
+the generated server SDK (SSDK), which we will use in our back-end.
 
 Implementing the server
 =======================
@@ -473,19 +473,19 @@ the server imports the generated code from. Let's take a look at the core of the
     export class CoffeeShop implements CoffeeShopService<{}> {
         ...
 
-        CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): CreateOrderServerOutput {
+        async CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): Promise<CreateOrderServerOutput> {
             console.log("received an order request...")
             // TODO: Implement me!
             return;
         }
 
-        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
+        async GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): Promise<GetMenuServerOutput> {
             console.log("getting menu...")
             // TODO: Implement me!
             return;
         }
 
-        GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): GetOrderServerOutput {
+        async GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): Promise<GetOrderServerOutput> {
             console.log(`getting an order (${input.id})...`)
             // TODO: Implement me!
             return;
@@ -504,7 +504,7 @@ each type of coffee:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
+        async GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): Promise<GetMenuServerOutput> {
             console.log("getting menu...")
             return {
                 items: [
@@ -543,7 +543,7 @@ and updates this queue. Let's implement order submission, or ``CreateOrder``:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): CreateOrderServerOutput {
+        async CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): Promise<CreateOrderServerOutput> {
             console.log("received an order request...")
             const order = {
                 orderId: randomUUID(),
@@ -568,7 +568,7 @@ through the ``GetOrder`` operation. Let's implement it now:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): GetOrderServerOutput {
+        async GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): Promise<GetOrderServerOutput> {
             console.log(`getting an order (${input.id})...`)
             if (context.orders.has(input.id)) {
                 const order = context.orders.get(input.id)
@@ -624,7 +624,11 @@ To run the code-generation for the client, we will add another plugin to the ``s
     {
         // ...
         "plugins": {
-            // ...
+            "typescript-ssdk-codegen": {
+                "package" : "@com.example/coffee-service-server",
+                "packageVersion": "0.0.1"
+            },
+            // add the client codegen plugin
             "typescript-client-codegen": {
                 "package": "@com.example/coffee-service-client",
                 "packageVersion": "0.0.1"
@@ -637,7 +641,7 @@ Run the build:
 .. code-block:: sh
     :caption: ``/bin/sh``
 
-    smithy build model/
+    smithy build
 
 Similar to the server SDK, Smithy will generate the TypeScript client artifacts under the
 ``build/smithy/source/typescript-client-codegen`` directory. We will use this client to make calls to our backend
@@ -724,7 +728,7 @@ Once you execute the command, you should see your order information:
       status: 'COMPLETED' // <--- the order status, which should be 'COMPLETED'
     }
 
-You may stop the REPL with ``CTRL + C`` in the terminal where it is running. We have
+You may stop the REPL and server with ``CTRL + C`` in the respective terminals. We have
 tested each operation we implemented in the server using the generated client, and verified both the client
 and server communicate with each other.
 
@@ -789,6 +793,8 @@ The application will run when using the ``run-app`` target. Since this applicati
 requests, the server must be run alongside the app. For convenience, you may run both the web application and
 the server in the same terminal:
 
+.. important:: If you are already running the server, stop it before continuing past this point.
+
 .. code-block:: sh
     :caption: ``/bin/sh``
 
@@ -798,8 +804,10 @@ While running the application in this way is convenient, it will intertwine the 
 If you would like to keep them separate, you should run the other targets (``run-server`` and ``run-app``).
 Using the method of your choice, launch the server and the application.
 
+Launch your browser and open http://localhost:3000. You should see the coffee shop web application.
+Try ordering a coffee. When interacting with this application, you should see logs for both the client and server.
 While this application is simple, it shows how to integrate a smithy-generated client with an
-application running in the browser.
+application running in the browser. You may stop the application in the terminal and close the browser.
 
 Making a change (optional)
 ==========================
@@ -823,7 +831,7 @@ enumeration:
 .. code-block:: smithy
     :caption: ``coffee.smithy``
 
-    /// A enum describing the types of coffees available
+    /// An enum describing the types of coffees available
     enum CoffeeType {
         DRIP
         POUR_OVER
@@ -840,7 +848,7 @@ description above to add a new item to the menu:
 .. code-block:: TypeScript
     :caption: ``CoffeeShop.ts``
 
-        GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): GetMenuServerOutput {
+        async GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): Promise<GetMenuServerOutput> {
             console.log("getting menu...")
             return {
                 items: [
@@ -855,8 +863,19 @@ description above to add a new item to the menu:
             }
         }
 
-Finally, we will run the whole application to see the changes (``make run``). After you run it, you should see
-the new menu item in the web application, and should be able to order it.
+Now, make a similar change in the web application code to render a new image for the new type of coffee:
+
+.. code-block:: TypeScript
+    :caption: ``app/index.ts``
+
+        ...
+        case CoffeeType.COLD_BREW:
+            return "/cold-brew.png"
+        default:
+            ...
+
+Finally, we will run the whole application to see the changes (``make run``). After you run it and open
+http://localhost:3000 in your browser, you should see the new menu item in the web application.
 
 .. raw:: html
 
