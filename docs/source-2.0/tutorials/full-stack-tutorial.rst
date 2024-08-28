@@ -371,9 +371,9 @@ plugins applied at the root. To build the model, run:
 
     smithy build
 
-.. hint:: For ``smithy`` commands, you should be under the ``full-stack-application/smithy/`` directory.
+.. hint:: For ``smithy`` commands, you should be under the ``full-stack-application/smithy`` directory.
     
-    For ``make`` commands, you should be under the top-level directory (``full-stack-application/``)
+    For ``make`` commands, you should be under the top-level directory (``full-stack-application``)
 
 Building the model will render artifacts under the ``build/smithy`` directory. Under it, The ``source`` directory
 corresponds to the output (or "build artifacts") of the ``source`` projection. With the current configuration, Smithy
@@ -463,13 +463,13 @@ lives). Let's try it now:
     make build-server
 
 This command will run the code-generation for the server SDK, and then build the server implementation (which uses
-the server SDK). The server package is located under the ``server/`` directory, and contains
-only two files under ``src/``:
+the server SDK). The server package is located under the ``server`` directory, and contains
+only two files under ``src``:
 
 * ``index.ts``: entry-point of the backend application, and where we initialize our service
 * ``CoffeeShop.ts``: implementation of a `CoffeeShopService` from the generated server SDK
 
-The ``ssdk/`` directory is a link to our generated server SDK, which is an output of the smithy build. This is where
+The ``ssdk`` directory is a link to our generated server SDK, which is an output of the smithy build. This is where
 the server imports the generated code from. Let's take a look at the core of the coffee shop implementation:
 
 .. code-block:: TypeScript
@@ -745,7 +745,7 @@ In the application
 ------------------
 Using the client in the application is not much different from what we just did.
 
-In the ``app/`` directory, there is a file, ``app/index.ts``, which contains code that instantiates and uses the
+In the ``app`` directory, there is a file, ``app/index.ts``, which contains code that instantiates and uses the
 client. First, we create the client, and then we create helper methods to use the client:
 
 .. code-block:: TypeScript
@@ -796,7 +796,7 @@ We use these helper methods in our application to make requests to the server:
 Running the application
 =======================
 Since we know how to generate and use the client and server, let's put it all together to use with the web application.
-The application exists under the ``app/`` directory. To build the application, use the ``build-app`` make target.
+The application exists under the ``app`` directory. To build the application, use the ``build-app`` make target.
 The application will run when using the ``run-app`` target. Since this application uses the generated client to make
 requests, the server must be run alongside the app. For convenience, you may run both the web application and
 the server in the same terminal:
