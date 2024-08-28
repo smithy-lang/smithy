@@ -99,7 +99,7 @@ file and add the following:
 .. important:: For code blocks, the name of the current file is given in the top-left corner.
     
 .. code-block:: smithy
-    :caption: ``model/main.smithy``
+    :caption: ``smithy/model/main.smithy``
 
     $version: "2.0"
 
@@ -129,7 +129,7 @@ of coffee-related structures:
 .. _full-stack-tutorial-operations:
 
 .. code-block:: smithy
-    :caption: ``model/coffee.smithy``
+    :caption: ``smithy/model/coffee.smithy``
 
     $version: "2.0"
 
@@ -164,7 +164,7 @@ With the shapes defined above, let's create an operation for returning a menu to
 to the service:
 
 .. code-block:: smithy
-    :caption: ``model/main.smithy`` 
+    :caption: ``smithy/model/main.smithy`` 
 
     ...
     service CoffeeShop {
@@ -213,7 +213,7 @@ modeling an order:
 With these requirements in mind, let's create the underlying data model:
 
 .. code-block:: smithy
-    :caption: ``model/order.smithy``
+    :caption: ``smithy/model/order.smithy``
 
     $version: "2.0"
 
@@ -238,7 +238,7 @@ we defined earlier.
 Let's compose these shapes together to create our representation of an order:
 
 .. code-block:: smithy
-    :caption: ``model/order.smithy``
+    :caption: ``smithy/model/order.smithy``
 
     /// An Order, which has an id, a status, and the type of coffee ordered
     structure Order {
@@ -254,7 +254,7 @@ lifecycle, while deleting an order would "end" it. In Smithy, we encapsulate the
 and its operations with :ref:`resources <resource>`. Instead of the above structure, let's define an order "resource":
 
 .. code-block:: smithy
-    :caption: ``model/order.smithy``
+    :caption: ``smithy/model/order.smithy``
 
     /// An Order resource, which has a unique id and describes an order by the type of coffee
     /// and the order's status
@@ -270,7 +270,7 @@ represent the state of an instance. In this case, we will only define a subset o
 :ref:`lifecycle operations <lifecycle-operations>` to keep it simple (``create`` and ``read``). Let's define those now:
 
 .. code-block:: smithy
-    :caption: ``model/order.smithy``
+    :caption: ``smithy/model/order.smithy``
 
     /// Create an order
     @idempotent
@@ -328,7 +328,7 @@ When we define an operation which may return an explicit error, we should model 
 :ref:`httpError trait <httpError-trait>` to set a specific HTTP response status code when the service returns the error:
 
 .. code-block:: smithy
-    :caption: ``model/order.smithy``
+    :caption: ``smithy/model/order.smithy``
 
     /// An error indicating an order could not be found
     @httpError(404)
@@ -341,7 +341,7 @@ When we define an operation which may return an explicit error, we should model 
 Now that we have defined an order resource and its operations, we need to attach the resource to the service:
 
 .. code-block:: smithy
-    :caption: ``model/main.smithy``
+    :caption: ``smithy/model/main.smithy``
 
     ...
     service CoffeeShop {
@@ -389,7 +389,7 @@ providing these things, and allowing the implementer to focus on the business lo
 for our service by using the following build configuration:
 
 .. code-block:: json
-    :caption: ``smithy-build.json``
+    :caption: ``smithy/smithy-build.json``
 
     {
         "version": "1.0",
@@ -433,7 +433,7 @@ the ``smithy.framework#ValidationException`` attached to it. We will fix this is
 to our service, meaning all operations in the service may return it. Let's do this now:
 
 .. code-block:: smithy
-    :caption: ``model/main.smithy``
+    :caption: ``smithy/model/main.smithy``
 
     use aws.protocols#restJson1
     use smithy.framework#ValidationException
@@ -473,7 +473,7 @@ The ``ssdk/`` directory is a link to our generated server SDK, which is an outpu
 the server imports the generated code from. Let's take a look at the core of the coffee shop implementation:
 
 .. code-block:: TypeScript
-    :caption: ``CoffeeShop.ts``
+    :caption: ``server/src/CoffeeShop.ts``
 
     // An implementation of the service from the SSDK
     export class CoffeeShop implements CoffeeShopService<CoffeeShopContext> {
@@ -508,7 +508,7 @@ operation, ``GetMenu``. We will modify the operation to return a menu containing
 each type of coffee:
 
 .. code-block:: TypeScript
-    :caption: ``CoffeeShop.ts``
+    :caption: ``server/src/CoffeeShop.ts``
 
         async GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): Promise<GetMenuServerOutput> {
             console.log("getting menu...")
@@ -547,7 +547,7 @@ and an order queue to keep track of in-flight orders. The ``handleOrders`` metho
 and updates this queue. Let's implement order submission, or ``CreateOrder``:
 
 .. code-block:: TypeScript
-    :caption: ``CoffeeShop.ts``
+    :caption: ``server/src/CoffeeShop.ts``
 
         async CreateOrder(input: CreateOrderServerInput, context: CoffeeShopContext): Promise<CreateOrderServerOutput> {
             console.log("received an order request...")
@@ -572,7 +572,7 @@ After submitting an order, we can retrieve its information from the order map. T
 through the ``GetOrder`` operation. Let's implement it now:
 
 .. code-block:: TypeScript
-    :caption: ``CoffeeShop.ts``
+    :caption: ``server/src/CoffeeShop.ts``
 
         async GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): Promise<GetOrderServerOutput> {
             console.log(`getting an order (${input.id})...`)
@@ -625,7 +625,7 @@ Generating the client
 To run the code-generation for the client, we will add another plugin to the ``smithy-build.json`` configuration file:
 
 .. code-block:: json
-    :caption: ``smithy-build.json``
+    :caption: ``smithy/smithy-build.json``
 
     {
         // ...
@@ -749,7 +749,7 @@ In the ``app/`` directory, there is a file, ``app/index.ts``, which contains cod
 client. First, we create the client, and then we create helper methods to use the client:
 
 .. code-block:: TypeScript
-    :caption: ``app/index.ts``
+    :caption: ``app/app/index.ts``
 
     import { CoffeeItem, CoffeeShop, CoffeeType, OrderStatus } from "@com.example/coffee-shop-client";
 
@@ -783,7 +783,7 @@ client. First, we create the client, and then we create helper methods to use th
 We use these helper methods in our application to make requests to the server:
 
 .. code-block:: TypeScript
-    :caption: ``components/Menu.tsx``
+    :caption: ``app/components/Menu.tsx``
 
     ...
     import MenuItem from "@/components/MenuItem";
@@ -837,7 +837,7 @@ To add a new coffee, we will first make a change to our model. We need to add a 
 enumeration:
 
 .. code-block:: smithy
-    :caption: ``coffee.smithy``
+    :caption: ``smithy/model/coffee.smithy``
 
     /// An enum describing the types of coffees available
     enum CoffeeType {
@@ -854,7 +854,7 @@ server SDK, we will make the change to the implementation of ``GetMenu``. We wil
 description above to add a new item to the menu:
 
 .. code-block:: TypeScript
-    :caption: ``CoffeeShop.ts``
+    :caption: ``server/src/CoffeeShop.ts``
 
         async GetMenu(input: GetMenuServerInput, context: CoffeeShopContext): Promise<GetMenuServerOutput> {
             console.log("getting menu...")
@@ -874,7 +874,7 @@ description above to add a new item to the menu:
 Now, make a similar change in the web application code to render a new image for the new type of coffee:
 
 .. code-block:: TypeScript
-    :caption: ``app/index.ts``
+    :caption: ``app/app/index.ts``
 
         ...
         case CoffeeType.COLD_BREW:
