@@ -48,7 +48,7 @@ After running this command, you should have the project in the ``full-stack-appl
 The directory tree should look like:
 
 .. code-block:: sh
-    :caption: ``/bin/sh``
+    :caption: ``directory structure``
 
     full-stack-application
     ├── Makefile
@@ -73,7 +73,7 @@ Please run the following command to set the project up, so you can follow this t
 
     make init
 
-.. hint:: If you get stuck and want to completely start over, run ``make reset && make init`` .
+.. hint:: If you get stuck and want to completely start over, run ``make reset && make init``.
 
     Also, the complete project code for this tutorial is available
     `here <https://github.com/smithy-lang/smithy-examples/tree/main/tutorials/full-stack-application>`_.
@@ -97,7 +97,7 @@ file and add the following:
 .. important:: For code blocks, the name of the current file is given in the top-left corner.
     
 .. code-block:: smithy
-    :caption: ``main.smithy``
+    :caption: ``model/main.smithy``
 
     $version: "2.0"
 
@@ -127,7 +127,7 @@ of coffee-related structures:
 .. _full-stack-tutorial-operations:
 
 .. code-block:: smithy
-    :caption: ``coffee.smithy``
+    :caption: ``model/coffee.smithy``
 
     $version: "2.0"
 
@@ -162,7 +162,7 @@ With the shapes defined above, let's create an operation for returning a menu to
 to the service:
 
 .. code-block:: smithy
-    :caption: ``main.smithy`` 
+    :caption: ``model/main.smithy`` 
 
     ...
     service CoffeeShop {
@@ -211,7 +211,7 @@ modeling an order:
 With these requirements in mind, let's create the underlying data model:
 
 .. code-block:: smithy
-    :caption: ``order.smithy``
+    :caption: ``model/order.smithy``
 
     $version: "2.0"
 
@@ -236,7 +236,7 @@ we defined earlier.
 Let's compose these shapes together to create our representation of an order:
 
 .. code-block:: smithy
-    :caption: ``order.smithy``
+    :caption: ``model/order.smithy``
 
     /// An Order, which has an id, a status, and the type of coffee ordered
     structure Order {
@@ -252,7 +252,7 @@ lifecycle, while deleting an order would "end" it. In Smithy, we encapsulate the
 and its operations with :ref:`resources <resource>`. Instead of the above structure, let's define an order "resource":
 
 .. code-block:: smithy
-    :caption: ``order.smithy``
+    :caption: ``model/order.smithy``
 
     /// An Order resource, which has a unique id and describes an order by the type of coffee
     /// and the order's status
@@ -268,7 +268,7 @@ represent the state of an instance. In this case, we will only define a subset o
 :ref:`lifecycle operations <lifecycle-operations>` to keep it simple (``create`` and ``read``). Let's define those now:
 
 .. code-block:: smithy
-    :caption: ``order.smithy``
+    :caption: ``model/order.smithy``
 
     /// Create an order
     @idempotent
@@ -326,7 +326,7 @@ When we define an operation which may return an explicit error, we should model 
 :ref:`httpError trait <httpError-trait>` to set a specific HTTP response status code when the service returns the error:
 
 .. code-block:: smithy
-    :caption: ``order.smithy``
+    :caption: ``model/order.smithy``
 
     /// An error indicating an order could not be found
     @httpError(404)
@@ -339,7 +339,7 @@ When we define an operation which may return an explicit error, we should model 
 Now that we have defined an order resource and its operations, we need to attach the resource to the service:
 
 .. code-block:: smithy
-    :caption: ``main.smithy``
+    :caption: ``model/main.smithy``
 
     ...
     service CoffeeShop {
@@ -365,9 +365,13 @@ The ``source`` projection does not have any transformations applied, and its out
 plugins applied at the root. To build the model, run:
 
 .. code-block:: sh
-    :caption: ``/bin/sh``
+    :caption: ``/bin/sh - smithy/``
 
     smithy build
+
+.. hint:: For ``smithy`` commands, you should be under the ``full-stack-application/smithy/`` directory.
+    
+    For ``make`` commands, you should be under the top-level directory (``full-stack-application/``)
 
 Building the model will render artifacts under the ``build/smithy`` directory. Under it, The ``source`` directory
 corresponds to the output (or "build artifacts") of the ``source`` projection. With the current configuration, Smithy
@@ -406,7 +410,7 @@ for our service by using the following build configuration:
 Run the build:
 
 .. code-block:: sh
-    :caption: ``/bin/sh``
+    :caption: ``/bin/sh - smithy/``
 
     smithy build
 
@@ -639,7 +643,7 @@ To run the code-generation for the client, we will add another plugin to the ``s
 Run the build:
 
 .. code-block:: sh
-    :caption: ``/bin/sh``
+    :caption: ``/bin/sh - smithy/``
 
     smithy build
 
@@ -691,6 +695,8 @@ Let's try submitting an order:
 .. code-block:: TypeScript
     :caption: ``repl``
 
+    import { CoffeeType } from '@com.example/coffee-service-client'
+    
     await client.createOrder({ coffeeType: "DRIP" })
 
 After creating the order, you should get response like:
@@ -885,7 +891,7 @@ Wrapping up
 ===========
 In this tutorial, you used Smithy to build a full-stack application for a simple coffee shop. You wrote a Smithy model
 for a service based on a list of requirements. Afterward, you configured Smithy using the ``smithy-build.json``
-configuration, which you set up to code-generate a TypeScript server SDK and client. You implemented the
+configuration. You added plugins to code-generate a TypeScript server SDK and client. You implemented the
 service using the server SDK, and made requests to it using the client. Finally, you used the client in the web
 application to make requests from within the browser to our service.
 
