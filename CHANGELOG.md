@@ -1,5 +1,35 @@
 # Smithy Changelog
 
+## 1.51.0 (2024-09-03)
+
+### Features
+
+* Added the `:recursive` selector function to enable recursively traversing relationships. ([#2353](https://github.com/smithy-lang/smithy/pull/2353))
+* Added validation of `intEnum` shapes to the `NodeValidationVisitor`. ([#2357](https://github.com/smithy-lang/smithy/pull/2357))
+* Added various protocol tests. ([#2333](https://github.com/smithy-lang/smithy/pull/2333), [#2342](https://github.com/smithy-lang/smithy/pull/2342))
+* Added elliptic curve cryptography module to the Smithy CLI for communicating with certain package managers. ([#2379](https://github.com/smithy-lang/smithy/pull/2379)) 
+* Added a warning when the `@idempotencyToken` trait is applied where it would be ignored. ([#2358](https://github.com/smithy-lang/smithy/pull/2358))
+* Added validation for the `@httpChecksum` trait's `responseAlgorithms` property. ([#2371](https://github.com/smithy-lang/smithy/pull/2371))
+* Updated list of supported `@httpCheckum` algorithms. ([#2386](https://github.com/smithy-lang/smithy/pull/2386))
+* Improved the performance of the `BottomUpIndex`. ([#2367](https://github.com/smithy-lang/smithy/pull/2367))
+
+### Bug Fixes
+
+* Fixed formatting of `resource` shape `identifiers` and `properties` fields. ([#2377](https://github.com/smithy-lang/smithy/pull/2377))
+* Fixed issue that would cause shape conflicts when loading the same model twice that uses `apply` on a member from a
+  mixin. ([#2378](https://github.com/smithy-lang/smithy/pull/2378))
+* Fixed issue with generating CFN resource schema handler permissions for `@noReplace` resources. ([#2383](https://github.com/smithy-lang/smithy/pull/2383))
+* Fixed several classes of bugs in the `AwsTagIndex`. ([#2384](https://github.com/smithy-lang/smithy/pull/2384))
+* Fixed various issues with protocol tests. ([#2336](https://github.com/smithy-lang/smithy/pull/2336), [#2340](https://github.com/smithy-lang/smithy/pull/2340)
+  [#2341](https://github.com/smithy-lang/smithy/pull/2341))
+
+### Documentation
+
+* Added documentation to several places in the `smithy-aws-endpoints` trait definitions. ([#2374](https://github.com/smithy-lang/smithy/pull/2374))
+* Added note on `smithy-build.json` supporting `//` based comments. ([#2375](https://github.com/smithy-lang/smithy/pull/2375))
+* Clarified documentation for resolving auth schemes from endpoint rule sets. ([#2382](https://github.com/smithy-lang/smithy/pull/2382))
+* Fixed various documentation issues. ([#2346](https://github.com/smithy-lang/smithy/pull/2346), [#2363](https://github.com/smithy-lang/smithy/pull/2363))
+
 ## 1.50.0 (2024-06-18)
 
 ### Features
