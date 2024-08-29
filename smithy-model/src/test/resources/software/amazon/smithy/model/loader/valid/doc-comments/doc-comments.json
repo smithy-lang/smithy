@@ -30,6 +30,12 @@
                         "smithy.api#documentation": "Docs on another member!"
                     }
                 },
+                "boot": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "I'll only have this documentation."
+                    }
+                },
                 "bam": {
                     "target": "smithy.api#String"
                 }
