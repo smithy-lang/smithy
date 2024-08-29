@@ -6,7 +6,7 @@ Overview
 ========
 For this tutorial, imagine we own a coffee shop. We would like to create a website for our customers to place an 
 order online, and be able to grab their coffee on the go. This application should show the available coffees, and
-allow the customer to order a coffee.
+allow a customer to order a coffee.
 
 To build this application, we will walk you through using Smithy to define a model for the coffee service, generate
 code for the client and server, and implement the front-end and back-end for the service. 
@@ -19,10 +19,10 @@ Setting up the project
 ======================
 This application will consist of 4 major components:
 
-1. A model, which defines the service
-2. A server, which handles requests for coffee 
-3. A client, which is generated from the model
-4. A web application, which uses the client to make requests to the server
+1. A model, which defines the service.
+2. A server, which handles requests for coffee.
+3. A client, which is generated from the model.
+4. A web application, which uses the client to make requests to the server.
 
 --------------
 Pre-requisites
@@ -63,6 +63,7 @@ The directory tree should look like:
     │   ├── ...
     └── smithy
         ├── ...
+        ...
 
 The ``README.md`` file contains important information about the project, like its directory structure and how to
 build or run it. However, for this tutorial, we will show you which commands to run, when to run them, and
@@ -85,9 +86,9 @@ Modeling the service
 With the basic framework for the project established, let's walk through how to model our coffee service.
 The service should provide a few capabilities:
 
-* provide a menu of coffees
-* provide the ability to order a coffee
-* provide the ability to check the status of an order
+* Provide a menu of coffees.
+* Provide the ability to order a coffee.
+* Provide the ability to check the status of an order.
 
 ------------------
 Adding the service
@@ -160,7 +161,7 @@ of coffee-related structures:
 -------------------
 Modeling operations
 -------------------
-With the shapes defined above, let's create an operation for returning a menu to the consumer, and add it
+With the shapes defined above, let's create an operation for returning the menu to the consumer, and add it
 to the service:
 
 .. code-block:: smithy
@@ -206,9 +207,9 @@ At this point, we still need to model the ordering functionality of our service.
 ``order.smithy`` file to hold definitions related to ordering. First, let's consider the following when
 modeling an order:
 
-1. an order needs a unique identifier
-2. an order needs to have a status, such as "in-progress" or "completed"
-3. an order needs to hold the coffee information (``CoffeeType``)
+1. An order needs a unique identifier.
+2. An order needs to have a status, such as "in-progress" or "completed".
+3. An order needs to hold the coffee information (``CoffeeType``).
 
 With these requirements in mind, let's create the underlying data model:
 
@@ -231,7 +232,7 @@ With these requirements in mind, let's create the underlying data model:
     }
 
 A universally unique identifier (or `"UUID" <https://en.wikipedia.org/wiki/Universally_unique_identifier>`_) should be
-more than sufficient for our service. The order status is ``IN_PROGRESS`` (after submitting the order) or
+sufficient for our service. The order status is ``IN_PROGRESS`` (after submitting the order) or
 ``COMPLETED`` (when the order is ready). We will represent the coffee order information with the ``CoffeeType`` shape
 we defined earlier.
 
@@ -466,8 +467,8 @@ This command will run the code-generation for the server SDK, and then build the
 the server SDK). The server package is located under the ``server`` directory, and contains
 only two files under ``src``:
 
-* ``index.ts``: entry-point of the backend application, and where we initialize our service
-* ``CoffeeShop.ts``: implementation of a `CoffeeShopService` from the generated server SDK
+* ``index.ts``: entry-point of the backend application, and where we initialize our service.
+* ``CoffeeShop.ts``: implementation of a `CoffeeShopService` from the generated server SDK.
 
 The ``ssdk`` directory is a link to our generated server SDK, which is an output of the smithy build. This is where
 the server imports the generated code from. Let's take a look at the core of the coffee shop implementation:
