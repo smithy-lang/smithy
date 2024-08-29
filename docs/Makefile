@@ -7,9 +7,10 @@ SHELL         := /bin/bash
 install: requirements.txt
 	python3 -m venv build/venv
 	source build/venv/bin/activate && pip3 install -r requirements.txt . && pip3 install -e .
+	touch install
 
 clean:
-	-rm -rf build/*
+	-rm -rf build/* install
 
 html1:
 	@source build/venv/bin/activate && $(SPHINXBUILD) -M html "source-1.0" "build/1.0" $(SPHINXOPTS) -W --keep-going -n $(O)
