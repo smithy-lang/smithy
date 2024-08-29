@@ -69,7 +69,7 @@ final class IdlTraitParser {
      * @param loader IDL parser.
      * @return Return the parsed traits.
      */
-    static List<Result> parseDocsAndTraitsBeforeShape(IdlModelLoader loader) {
+    static List<Result> parseDocsAndTraitsBeforeShape(IdlModelLoader loader, boolean isParsingMember) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
         tokenizer.skipWs();
 
@@ -91,6 +91,12 @@ final class IdlTraitParser {
             traits.add(docComment);
         }
         tokenizer.skipWsAndDocs();
+        // If there's a doc comment between traits and their target member,
+        // clear them so they're not prepended to a doc comment on the next
+        // member shape.
+        if (isParsingMember) {
+            tokenizer.clearDocCommentLinesForBr();
+        }
 
         return traits;
     }

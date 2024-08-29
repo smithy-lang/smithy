@@ -448,7 +448,7 @@ final class IdlModelLoader {
             try {
                 tokenizer.skipWsAndDocs();
                 String docLines = tokenizer.removePendingDocCommentLines();
-                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this);
+                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this, false);
                 if (docLines != null) {
                     traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
                                                          new StringNode(docLines, possibleDocCommentLocation),
@@ -467,7 +467,7 @@ final class IdlModelLoader {
         while (tokenizer.hasNext()) {
             try {
                 boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this);
+                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this, false);
                 if (parseShapeDefinition(traits, hasDocComment)) {
                     parseShapeOrApply(traits);
                 }
@@ -672,7 +672,7 @@ final class IdlModelLoader {
 
         while (tokenizer.getCurrentToken() != IdlToken.EOF && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
             List<IdlTraitParser.Result> memberTraits = IdlTraitParser
-                    .parseDocsAndTraitsBeforeShape(this);
+                    .parseDocsAndTraitsBeforeShape(this, true);
             SourceLocation memberLocation = tokenizer.getCurrentTokenLocation();
             tokenizer.expect(IdlToken.IDENTIFIER);
             String memberName = internString(tokenizer.getCurrentTokenLexeme());
@@ -723,6 +723,9 @@ final class IdlModelLoader {
         Set<String> definedMembers = new HashSet<>();
 
         tokenizer.skipWsAndDocs();
+        // Clear out any doc comments between the shape type or
+        // identifier and the opening LBRACE token.
+        tokenizer.clearDocCommentLinesForBr();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
@@ -740,7 +743,7 @@ final class IdlModelLoader {
         ShapeId parent = operation.toShapeId();
 
         // Parse optional member traits.
-        List<IdlTraitParser.Result> memberTraits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this);
+        List<IdlTraitParser.Result> memberTraits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this, true);
         SourceLocation memberLocation = tokenizer.getCurrentTokenLocation();
 
         // Handle the case of a dangling documentation comment followed by "}".
@@ -988,7 +991,7 @@ final class IdlModelLoader {
     }
 
     private ShapeId parseInlineStructure(String name, IdlTraitParser.Result defaultTrait) {
-        List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this);
+        List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this, true);
         if (defaultTrait != null) {
             traits.add(defaultTrait);
         }

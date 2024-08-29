@@ -29,6 +29,9 @@ structure MyStructure {
     /// IMPORTANT: These docs are ignored since they come after traits!
     baz: String,
 
+    /// I'll only have this documentation.
+    boot: String
+
     // no docs.
     bam: String,
 }

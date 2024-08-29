@@ -149,7 +149,7 @@ final class IdlInternalTokenizer extends DefaultTokenizer {
         }
     }
 
-    private void clearDocCommentLinesForBr() {
+    void clearDocCommentLinesForBr() {
         if (!docCommentLines.isEmpty()) {
             validationEventListener.accept(LoaderUtils.emitBadDocComment(getCurrentTokenLocation(),
                                                                          removePendingDocCommentLines()));
