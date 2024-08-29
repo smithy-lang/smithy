@@ -136,7 +136,7 @@ of coffee-related structures:
 
     namespace com.example
 
-    /// A enum describing the types of coffees available
+    /// An enum describing the types of coffees available
     enum CoffeeType {
         DRIP
         POUR_OVER
@@ -417,7 +417,7 @@ Run the build:
 
     smithy build
 
-The build will should fail for the following reason:
+The build should fail for the following reason:
 
 .. code-block:: text
     :caption: ``failure message``
