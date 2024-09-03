@@ -16,6 +16,7 @@
 ### Bug Fixes
 
 * Fixed formatting of `resource` shape `identifiers` and `properties` fields. ([#2377](https://github.com/smithy-lang/smithy/pull/2377))
+* Fixed issue with parsing different types of documentation comments. ([#2390](https://github.com/smithy-lang/smithy/pull/2390))
 * Fixed issue that would cause shape conflicts when loading the same model twice that uses `apply` on a member from a
   mixin. ([#2378](https://github.com/smithy-lang/smithy/pull/2378))
 * Fixed issue with generating CFN resource schema handler permissions for `@noReplace` resources. ([#2383](https://github.com/smithy-lang/smithy/pull/2383))
@@ -25,6 +26,7 @@
 
 ### Documentation
 
+* Added full-stack application tutorial. ([#2362](https://github.com/smithy-lang/smithy/pull/2362))
 * Added documentation to several places in the `smithy-aws-endpoints` trait definitions. ([#2374](https://github.com/smithy-lang/smithy/pull/2374))
 * Added note on `smithy-build.json` supporting `//` based comments. ([#2375](https://github.com/smithy-lang/smithy/pull/2375))
 * Clarified documentation for resolving auth schemes from endpoint rule sets. ([#2382](https://github.com/smithy-lang/smithy/pull/2382))
