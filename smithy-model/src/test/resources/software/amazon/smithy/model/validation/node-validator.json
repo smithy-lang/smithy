@@ -159,6 +159,15 @@
                 "smithy.api#uniqueItems": {}
             }
         },
+        "ns.foo#SparseList": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            },
+            "traits": {
+                "smithy.api#sparse": {}
+            }
+        },
         "ns.foo#String": {
             "type": "string"
         },
@@ -184,6 +193,18 @@
                     "min": 1,
                     "max": 2
                 }
+            }
+        },
+        "ns.foo#SparseMap": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#KeyString"
+            },
+            "value": {
+                "target": "ns.foo#List"
+            },
+            "traits": {
+                "smithy.api#sparse": {}
             }
         },
         "ns.foo#Structure": {

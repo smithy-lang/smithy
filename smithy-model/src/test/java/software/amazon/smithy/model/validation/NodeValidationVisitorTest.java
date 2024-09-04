@@ -16,9 +16,14 @@
 package software.amazon.smithy.model.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +36,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 
@@ -340,6 +347,98 @@ public class NodeValidationVisitorTest {
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void nullRequiredStructureMember() {
+        ObjectNode structure = ObjectNode.builder()
+                .withMember("foo", Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(structure)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Structure"))
+                .accept(visitor);
+
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getMessage(), containsString(
+                "foo: Required member `foo` for structure ns.foo#Structure for cannot be null"));
+    }
+
+
+    @Test
+    public void nullNonSparseListMember() {
+        ArrayNode list = ArrayNode.builder()
+                .withValue(Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(list)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#List"))
+                .accept(visitor);
+
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getMessage(), containsString(
+                "0: Non-sparse list shape ns.foo#List cannot contain null values"));
+    }
+
+    @Test
+    public void nullSparseListMember() {
+        ArrayNode list = ArrayNode.builder()
+                .withValue(Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(list)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#SparseList"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void nullNonSparseMapValue() {
+        ObjectNode map = ObjectNode.builder()
+                .withMember("a", Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(map)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#Map"))
+                .accept(visitor);
+
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getMessage(), containsString(
+                "a: Non-sparse map shape ns.foo#Map cannot contain null values"));
+    }
+
+    @Test
+    public void nullSparseMapValue() {
+        ObjectNode map = ObjectNode.builder()
+                .withMember("a", Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(map)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#SparseMap"))
                 .accept(visitor);
 
         assertThat(events, empty());
