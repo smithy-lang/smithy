@@ -392,29 +392,28 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     public List<ValidationEvent> checkNullMember(MemberShape shape) {
-        List<ValidationEvent> events = new ArrayList<>();
-        if (!shape.asMemberShape().filter(nullableIndex::isMemberNullable).isPresent()) {
+        if (!nullableIndex.isMemberNullable(shape)) {
             switch (model.expectShape(shape.getContainer()).getType()) {
                 case LIST:
-                    events.add(event(
+                    return ListUtils.of(event(
                             String.format(
-                                    "Non-sparse list shape %s cannot contain null values", shape.getContainer())));
+                                    "Non-sparse list shape `%s` cannot contain null values", shape.getContainer())));
                     break;
                 case MAP:
-                    events.add(event(
+                    return ListUtils.of(event(
                             String.format(
-                                    "Non-sparse map shape %s cannot contain null values", shape.getContainer())));
+                                    "Non-sparse map shape `%s` cannot contain null values", shape.getContainer())));
                     break;
                 case STRUCTURE:
-                    events.add(event(
-                            String.format("Required member `%s` for structure %s for cannot be null",
+                    return ListUtils.of(event(
+                            String.format("Required structure member `%s` for `%s` cannot be null",
                                     shape.getMemberName(), shape.getContainer())));
                     break;
                 default:
                     break;
             }
         }
-        return events;
+        return ListUtils.of();
     }
 
     @Override
