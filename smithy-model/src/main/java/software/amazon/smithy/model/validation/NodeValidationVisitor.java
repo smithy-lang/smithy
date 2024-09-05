@@ -398,17 +398,14 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     return ListUtils.of(event(
                             String.format(
                                     "Non-sparse list shape `%s` cannot contain null values", shape.getContainer())));
-                    break;
                 case MAP:
                     return ListUtils.of(event(
                             String.format(
                                     "Non-sparse map shape `%s` cannot contain null values", shape.getContainer())));
-                    break;
                 case STRUCTURE:
                     return ListUtils.of(event(
                             String.format("Required structure member `%s` for `%s` cannot be null",
                                     shape.getMemberName(), shape.getContainer())));
-                    break;
                 default:
                     break;
             }
