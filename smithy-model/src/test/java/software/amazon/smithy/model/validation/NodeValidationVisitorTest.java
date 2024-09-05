@@ -368,7 +368,7 @@ public class NodeValidationVisitorTest {
 
         assertThat(events, hasSize(1));
         assertThat(events.get(0).getMessage(), containsString(
-                "foo: Required member `foo` for structure ns.foo#Structure for cannot be null"));
+                "foo: Required structure member `foo` for `ns.foo#Structure` cannot be null"));
     }
 
 
@@ -388,7 +388,7 @@ public class NodeValidationVisitorTest {
 
         assertThat(events, hasSize(1));
         assertThat(events.get(0).getMessage(), containsString(
-                "0: Non-sparse list shape ns.foo#List cannot contain null values"));
+                "0: Non-sparse list shape `ns.foo#List` cannot contain null values"));
     }
 
     @Test
@@ -424,7 +424,7 @@ public class NodeValidationVisitorTest {
 
         assertThat(events, hasSize(1));
         assertThat(events.get(0).getMessage(), containsString(
-                "a: Non-sparse map shape ns.foo#Map cannot contain null values"));
+                "a: Non-sparse map shape `ns.foo#Map` cannot contain null values"));
     }
 
     @Test

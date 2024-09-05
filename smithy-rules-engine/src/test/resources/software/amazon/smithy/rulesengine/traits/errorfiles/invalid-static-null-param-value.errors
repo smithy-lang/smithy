@@ -1,3 +1,3 @@
 [WARNING] smithy.example#OperationNull: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
 [ERROR] smithy.example#OperationNull: The operation `smithy.example#OperationNull` is marked with `smithy.rules#staticContextParams` which contains a key `nullParam` with an unsupported document type value `null`. | StaticContextParamsTrait
-[ERROR] smithy.example#OperationNull: Error validating trait `smithy.rules#staticContextParams`.nullParam.value: Required member `value` for structure smithy.rules#StaticContextParamDefinition for cannot be null | TraitValue
+[ERROR] smithy.example#OperationNull: Error validating trait `smithy.rules#staticContextParams`.nullParam.value: Required structure member `value` for `smithy.rules#StaticContextParamDefinition` cannot be null | TraitValue
