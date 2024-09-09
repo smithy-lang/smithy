@@ -378,6 +378,9 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
         List<ValidationEvent> events = applyPlugins(shape);
+        if (value.isNullNode()) {
+            events.addAll(checkNullMember(shape));
+        }
         model.getShape(shape.getTarget()).ifPresent(target -> {
             // We only need to keep track of a single referring member, so a stack of members or anything like that
             // isn't needed here.
@@ -386,6 +389,28 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
             validationContext.setReferringMember(null);
         });
         return events;
+    }
+
+    public List<ValidationEvent> checkNullMember(MemberShape shape) {
+        if (!nullableIndex.isMemberNullable(shape)) {
+            switch (model.expectShape(shape.getContainer()).getType()) {
+                case LIST:
+                    return ListUtils.of(event(
+                            String.format(
+                                    "Non-sparse list shape `%s` cannot contain null values", shape.getContainer())));
+                case MAP:
+                    return ListUtils.of(event(
+                            String.format(
+                                    "Non-sparse map shape `%s` cannot contain null values", shape.getContainer())));
+                case STRUCTURE:
+                    return ListUtils.of(event(
+                            String.format("Required structure member `%s` for `%s` cannot be null",
+                                    shape.getMemberName(), shape.getContainer())));
+                default:
+                    break;
+            }
+        }
+        return ListUtils.of();
     }
 
     @Override
