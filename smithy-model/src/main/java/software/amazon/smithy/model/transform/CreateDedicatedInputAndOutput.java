@@ -75,7 +75,7 @@ final class CreateDedicatedInputAndOutput {
                 boolean idChanged = !input.getId().equals(updatedInput.getId());
                 if (idChanged && isSingularReference(reverse, input, operation)) {
                     toRemove.add(input);
-                    LOGGER.info("Removing now unused input shape " + input.getId());
+                    LOGGER.fine("Removing now unused input shape " + input.getId());
                 }
             }
             if (outputChanged) {
@@ -87,7 +87,7 @@ final class CreateDedicatedInputAndOutput {
                 boolean idChanged = !output.getId().equals(updatedOutput.getId());
                 if (idChanged && isSingularReference(reverse, output, operation)) {
                     toRemove.add(output);
-                    LOGGER.info("Removing now unused output shape " + output.getId());
+                    LOGGER.fine("Removing now unused output shape " + output.getId());
                 }
             }
             updates.add(builder.build());
