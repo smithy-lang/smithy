@@ -953,7 +953,8 @@ The ``httpChecksum`` trait is a structure that contains the following members:
       - ``set<string>``
       - Defines the checksum algorithms clients SHOULD look for when validating
         checksums returned in the HTTP response. Each algorithm must be one of
-        the following supported values: "CRC32C", "CRC32", "SHA1", or "SHA256".
+        the following supported values: "CRC64NVME", "CRC32C", "CRC32", "SHA1",
+        or "SHA256".
 
 The ``httpChecksum`` trait MUST define at least one of the request checksumming
 behavior, by setting the ``requestAlgorithmMember`` or
