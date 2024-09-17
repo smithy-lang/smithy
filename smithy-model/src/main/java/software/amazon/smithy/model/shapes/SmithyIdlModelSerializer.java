@@ -243,8 +243,8 @@ public final class SmithyIdlModelSerializer {
             return Pair.of(inlineInputSuffix, inlineOutputSuffix);
         }
 
-        Set<String> inputSuffixes = new HashSet<>();
-        Set<String> outputSuffixes = new HashSet<>();
+        Map<String, Integer> inputSuffixes = new LinkedHashMap<>();
+        Map<String, Integer> outputSuffixes = new LinkedHashMap<>();
         for (Shape shape : shapes) {
             if (!shape.isOperationShape()) {
                 continue;
@@ -255,15 +255,28 @@ public final class SmithyIdlModelSerializer {
             StructureShape output = fullModel.expectShape(operation.getOutputShape(), StructureShape.class);
 
             if (shapes.contains(input) && input.getId().getName().startsWith(operation.getId().getName())) {
-                inputSuffixes.add(input.getId().getName().substring(operation.getId().getName().length()));
+                String inputSuffix = input.getId().getName().substring(operation.getId().getName().length());
+                int inputCount = inputSuffixes.getOrDefault(inputSuffix, 0);
+                inputSuffixes.put(inputSuffix, ++inputCount);
             }
 
             if (shapes.contains(output) && output.getId().getName().startsWith(operation.getId().getName())) {
-                outputSuffixes.add(output.getId().getName().substring(operation.getId().getName().length()));
+                String outputSuffix = output.getId().getName().substring(operation.getId().getName().length());
+                int outputCount = outputSuffixes.getOrDefault(outputSuffix, 0);
+                outputSuffixes.put(outputSuffix, ++outputCount);
             }
         }
-        String inputSuffix = inputSuffixes.size() == 1 ? inputSuffixes.iterator().next() : inlineInputSuffix;
-        String outputSuffix = outputSuffixes.size() == 1 ? outputSuffixes.iterator().next() : inlineOutputSuffix;
+
+        String inputSuffix = inputSuffixes.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(inlineInputSuffix);
+        String outputSuffix = outputSuffixes.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(inlineOutputSuffix);
         return Pair.of(inputSuffix, outputSuffix);
     }
 
