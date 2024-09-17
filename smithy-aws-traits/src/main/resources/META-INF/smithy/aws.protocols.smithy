@@ -123,7 +123,45 @@ structure ec2Query {}
 string ec2QueryName
 
 /// Indicates that an operation supports checksum validation.
-@trait(selector: "operation")
+@trait(
+    selector: "operation",
+    breakingChanges: [
+        {
+            change: "remove",
+            severity: "DANGER",
+            message: """
+                Removing the trait removes the ability for clients to do request or response checksums. The service \
+                MUST continue to support old clients by supporting the `httpChecksum` trait."""
+        },
+        {
+            change: "remove",
+            path: "/requestAlgorithmMember",
+            severity: "DANGER",
+            message: """
+                `requestAlgorithmMember` was removed, so newly generated clients will no longer be able to pick the \
+                request checksum algorithms The service MUST continue to support old clients by supporting \
+                `requestAlgorithmMember`."""
+        },
+        {
+            change: "remove",
+            path: "/requestValidationModeMember",
+            severity: "DANGER",
+            message: """
+                `requestValidationModeMember` was removed, so newly generated clients will no longer validate response \
+                checksums. The service MUST continue to support old clients by supporting \
+                `requestValidationModeMember`."""
+        },
+        {
+            change: "remove",
+            path: "/responseAlgorithms/member",
+            severity: "DANGER",
+            message: """
+                Members of `responseAlgorithms` were removed, so newly generated clients will no longer validate \
+                response checksums for the removed algorithms. The service MUST continue to support old clients by \
+                supporting removed compression algorithms."""
+        }
+    ]
+)
 @unstable
 structure httpChecksum {
     /// Defines a top-level operation input member that is used to configure
