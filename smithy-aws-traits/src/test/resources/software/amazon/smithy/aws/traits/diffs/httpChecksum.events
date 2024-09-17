@@ -1,0 +1,15 @@
+[DANGER] ns.foo#PutSomething: Removed trait `aws.protocols#httpChecksum`. Previous trait value: 
+```
+{
+    "requestChecksumRequired": true,
+    "requestAlgorithmMember": "checksumAlgorithm",
+    "requestValidationModeMember": "validationMode",
+    "responseAlgorithms": [
+        "CRC32C",
+        "CRC32",
+        "SHA1",
+        "SHA256"
+    ]
+}
+```
+; Removing the trait removes the ability for clients to do request or response checksums. The service MUST continue to support old clients by supporting the `httpChecksum` trait. | TraitBreakingChange.Remove
