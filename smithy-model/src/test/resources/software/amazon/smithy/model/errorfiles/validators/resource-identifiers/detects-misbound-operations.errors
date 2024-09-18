@@ -1,0 +1,1 @@
+[WARNING] smithy.example#GetFoo: The `smithy.example#GetFoo` operation is bound to the `smithy.example#FooService` service but has members that match identifiers of the following resource shapes: [`smithy.example#Foo`]. It may be more accurately bound to one of them than directly to the service. | ServiceBoundResourceOperation.smithy.example#FooService.GetFoo

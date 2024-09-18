@@ -40,6 +40,7 @@ software.amazon.smithy.model.validation.validators.ResourceIdentifierValidator
 software.amazon.smithy.model.validation.validators.ResourceLifecycleValidator
 software.amazon.smithy.model.validation.validators.ResourceOperationInputOutputValidator
 software.amazon.smithy.model.validation.validators.ServiceAuthDefinitionsValidator
+software.amazon.smithy.model.validation.validators.ServiceBoundResourceOperationValidator
 software.amazon.smithy.model.validation.validators.ServiceValidator
 software.amazon.smithy.model.validation.validators.SetValidator
 software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator
