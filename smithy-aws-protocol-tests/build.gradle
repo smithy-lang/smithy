@@ -38,5 +38,3 @@ smithy {
     format.set(false)
     smithyBuildConfigs.set(project.files())
 }
-
-sourceSets.main.java.srcDirs = ['model', 'src/main/smithy']
