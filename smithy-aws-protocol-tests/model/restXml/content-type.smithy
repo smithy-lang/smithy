@@ -10,6 +10,7 @@ use smithy.test#httpRequestTests
 
 /// The example tests how servers must support requests
 /// containing a `Content-Type` header with parameters.
+@idempotent
 @http(uri: "/ContentTypeParameters", method: "PUT")
 operation ContentTypeParameters {
     input: ContentTypeParametersInput,

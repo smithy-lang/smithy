@@ -71,6 +71,7 @@ enum StringEnum {
         code: 200
     }
 ])
+@suppress(["UnstableTrait"])
 @httpMalformedRequestTests([
     {
         id: "RestJsonStringPayloadNoContentType",
