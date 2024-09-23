@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
@@ -638,5 +639,38 @@ public class OpenApiConverterTest {
                 getClass().getResourceAsStream("model-with-mixins.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertsMemberDocumentation() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("documentation-test-members.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyDocs"));
+        config.setVersion(OpenApiVersion.VERSION_3_1_0);
+        config.setAddReferenceDescriptions(true);
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("documentation-test-members.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertingMemberDocsRequired3_1() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("documentation-test-members.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyDocs"));
+        config.setAddReferenceDescriptions(true);
+        OpenApiConverter converter = OpenApiConverter.create().config(config);
+
+        assertThrows(OpenApiException.class, () -> converter.convertToNode(model));
     }
 }

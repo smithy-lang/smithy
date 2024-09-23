@@ -114,6 +114,7 @@ public class JsonSchemaConfig {
     private boolean useIntegerType;
     private boolean disableDefaultValues = false;
     private boolean disableIntEnums = false;
+    private boolean addReferenceDescriptions = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
@@ -455,5 +456,27 @@ public class JsonSchemaConfig {
      */
     public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
         this.jsonSchemaVersion = Objects.requireNonNull(schemaVersion);
+    }
+
+    /**
+     * Whether to add the {@code description} property to Schema References
+     * when converting Smithy member shapes into JSON Schema with the value
+     * of the member's documentation.
+     *
+     * <p>Defaults to {@code false}.</p>
+     *
+     * @return Whether to add descriptions to Schema References.
+     */
+    public boolean getAddReferenceDescriptions() {
+        return addReferenceDescriptions;
+    }
+
+    /**
+     * Sets whether the {@code description} property should be added to Schema References.
+     *
+     * @param addReferenceDescriptions Whether to add descriptions to Schema References
+     */
+    public void setAddReferenceDescriptions(boolean addReferenceDescriptions) {
+        this.addReferenceDescriptions = addReferenceDescriptions;
     }
 }

@@ -1,0 +1,20 @@
+{
+    "definitions": {
+        "Foo": {
+            "type": "object",
+            "properties": {
+                "foo": {
+                    "type": "string",
+                    "description": "simple docs"
+                },
+                "bar": {
+                    "$ref": "#/definitions/Bar",
+                    "description": "structure docs"
+                }
+            }
+        },
+        "Bar": {
+            "type": "object"
+        }
+    }
+}

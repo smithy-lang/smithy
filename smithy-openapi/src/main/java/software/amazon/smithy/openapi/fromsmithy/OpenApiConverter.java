@@ -51,6 +51,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
+import software.amazon.smithy.openapi.OpenApiVersion;
 import software.amazon.smithy.openapi.model.ComponentsObject;
 import software.amazon.smithy.openapi.model.InfoObject;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -172,6 +173,12 @@ public final class OpenApiConverter {
 
         if (serviceShapeId == null) {
             throw new OpenApiException("openapi is missing required property, `service`");
+        }
+
+        if (config.getAddReferenceDescriptions() && config.getVersion() == OpenApiVersion.VERSION_3_0_2) {
+            throw new OpenApiException(
+                    "openapi property `addReferenceDescriptions` requires openapi version 3.1.0 or later.\n"
+                    + "Suggestion: Add `\"version\"`: \"3.1.0\" to your openapi config.");
         }
 
         // Find the service shape.
