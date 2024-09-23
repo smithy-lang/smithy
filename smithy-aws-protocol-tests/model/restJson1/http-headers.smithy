@@ -424,11 +424,15 @@ operation NullAndEmptyHeadersClient {
 apply NullAndEmptyHeadersClient @httpRequestTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
-        documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
+        documentation: "Do not send null values, but do send empty strings and empty lists over the wire in headers",
         protocol: restJson1,
         method: "GET",
         uri: "/NullAndEmptyHeadersClient",
-        forbidHeaders: ["X-A", "X-B", "X-C"],
+        forbidHeaders: ["X-A"],
+        headers: {
+            "X-B": ""
+            "X-C": ""
+        }
         body: "",
         params: {
             a: null,
