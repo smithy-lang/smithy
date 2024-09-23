@@ -283,7 +283,6 @@ apply TestGetNoPayload @httpRequestTests([
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Type) to a POST operation with no modeled payload.
 ///
-@readonly
 @http(uri: "/no_payload", method: "POST")
 operation TestPostNoPayload {
     input: TestNoPayloadInputOutput,
@@ -363,7 +362,6 @@ apply TestGetNoInputNoPayload @httpRequestTests([
 /// These tests are to ensure we do not attach a body or related headers
 /// (Content-Type) to a POST operation with no modeled input.
 ///
-@readonly
 @http(uri: "/no_input_no_payload", method: "POST")
 operation TestPostNoInputNoPayload {
     output: TestNoPayloadInputOutput
