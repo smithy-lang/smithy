@@ -83,23 +83,27 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
             }
             // Validate Operation effective auth schemes
             for (ServiceShape newServiceShape : newOperationServiceBindings) {
-                ServiceShape oldServiceShape = oldModel.expectShape(newServiceShape.getId(), ServiceShape.class);
-                OperationShape oldOperationShape = change.getOldShape();
-                List<ShapeId> oldAuthSchemes = oldServiceIndex
-                    .getEffectiveAuthSchemes(oldServiceShape, oldOperationShape)
-                    .keySet()
-                    .stream()
-                    .collect(Collectors.toList());
-                List<ShapeId> newAuthSchemes = newServiceIndex
-                    .getEffectiveAuthSchemes(newServiceShape, newOperationShape)
-                    .keySet()
-                    .stream()
-                    .collect(Collectors.toList());
-                validateMigration(
-                    newOperationShape,
-                    oldAuthSchemes,
-                    newAuthSchemes,
-                    events);
+                oldModel.getShape(newServiceShape.getId())
+                    .filter(ServiceShape.class::isInstance)
+                    .map(s -> (ServiceShape) s)
+                    .ifPresent(oldServiceShape -> {
+                        OperationShape oldOperationShape = change.getOldShape();
+                        List<ShapeId> oldAuthSchemes = oldServiceIndex
+                            .getEffectiveAuthSchemes(oldServiceShape, oldOperationShape)
+                            .keySet()
+                            .stream()
+                            .collect(Collectors.toList());
+                        List<ShapeId> newAuthSchemes = newServiceIndex
+                            .getEffectiveAuthSchemes(newServiceShape, newOperationShape)
+                            .keySet()
+                            .stream()
+                            .collect(Collectors.toList());
+                        validateMigration(
+                            newOperationShape,
+                            oldAuthSchemes,
+                            newAuthSchemes,
+                            events);
+                    });
             }
         }
 
