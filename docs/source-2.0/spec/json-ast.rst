@@ -414,8 +414,8 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - ``service``
     * - version
       - ``string``
-      - **Required**. Defines the version of the service. The version can be
-        provided in any format (e.g., ``2017-02-11``, ``2.0``, etc).
+      - Defines the version of the service. The version can be provided in any
+        format (e.g., ``2017-02-11``, ``2.0``, etc).
     * - :ref:`operations <service-operations>`
       - [:ref:`AST shape reference <ast-shape-reference>`]
       - Binds a list of operations to the service. Each reference MUST target
