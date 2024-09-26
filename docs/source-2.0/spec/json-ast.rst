@@ -491,7 +491,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - Description
     * - type
       - string
-      - ``service``
+      - ``resource``
     * - :ref:`identifiers <resource-identifiers>`
       - Map<String, :ref:`AST shape reference <ast-shape-reference>`>
       - Defines identifier names and shape IDs used to identify the resource.
