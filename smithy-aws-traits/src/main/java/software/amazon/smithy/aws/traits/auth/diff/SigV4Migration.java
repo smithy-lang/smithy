@@ -84,7 +84,7 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
             // Validate Operation effective auth schemes
             for (ServiceShape newServiceShape : newOperationServiceBindings) {
                 oldModel.getShape(newServiceShape.getId())
-                    .filter(ServiceShape.class::isInstance)
+                    .filter(Shape::isServiceShape)
                     .map(s -> (ServiceShape) s)
                     .ifPresent(oldServiceShape -> {
                         OperationShape oldOperationShape = change.getOldShape();
