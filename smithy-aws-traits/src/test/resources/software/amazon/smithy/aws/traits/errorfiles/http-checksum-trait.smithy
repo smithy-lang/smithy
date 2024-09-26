@@ -15,6 +15,18 @@ operation NoBehavior {
 structure NoBehaviorInput {}
 
 @httpChecksum(
+    requestChecksumRequired: false,
+)
+@suppress(["UnstableTrait"])
+operation NoBehaviorRequestChecksumRequiredFalse {
+    input: NoBehaviorRequestChecksumRequiredFalseInput,
+    output: Unit
+}
+
+@input
+structure NoBehaviorRequestChecksumRequiredFalseInput {}
+
+@httpChecksum(
     requestChecksumRequired: true,
 )
 @suppress(["UnstableTrait"])
