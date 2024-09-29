@@ -234,7 +234,7 @@ contents:
           "name": "weather-service",
           "scripts": {
             "generate": "cd smithy && gradle clean build",
-            "build": "yarn workspace @weather-service/client build",
+            "build": "yarn workspace @weather-service/client build"
           },
           "dependencies": {
             "@weather-service/client": "0.0.1"
