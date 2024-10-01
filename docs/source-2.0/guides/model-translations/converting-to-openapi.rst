@@ -1053,6 +1053,58 @@ disableIntEnums (``boolean``)
         }
 
 
+.. _generate-openapi-setting-addReferenceDescriptions:
+
+addReferenceDescriptions (``boolean``)
+    Set to ``true`` to add the ``description`` property to ``$ref`` members
+    with the value of the member's :ref:`documentation-trait` trait.
+
+    .. important::
+
+        This property is only supported when :ref:`version <generate-openapi-setting-version>`
+        is set to ``3.1.0``.
+
+    By default, ``$ref`` members will have no ``description``:
+
+    .. code-block:: smithy
+        :caption: example.smithy
+
+        structure Foo {
+            /// Member docs
+            bar: Bar
+        }
+
+    .. code-block:: json
+        :caption: Example.openapi.json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bar": {
+                        "$ref": "#/definitions/Bar"
+                    }
+                }
+            }
+        }
+
+    With this enabled, member docs will be added:
+
+    .. code-block:: json
+        :caption: Example.openapi.json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bar": {
+                        "$ref": "#/definitions/Bar",
+                        "description": "Member docs"
+                    }
+                }
+            }
+        }
+
 ----------------
 Security schemes
 ----------------
