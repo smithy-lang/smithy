@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -56,8 +57,14 @@ final class DeconflictingStrategy implements RefStrategy {
         this.delegate = delegate;
 
         // Pre-compute a map of all converted shape refs. Sort the shapes
-        // to make the result deterministic.
-        model.shapes().filter(shapePredicate.and(FunctionalUtils.not(this::isIgnoredShape))).sorted().forEach(shape -> {
+        // to make the result deterministic. Eliminate trait definitions
+        // ahead of that computation to eliminate potential conflicts with
+        // shapes that won't go into JSON Schema anyway.
+        Model scrubbedModel = ModelTransformer.create().scrubTraitDefinitions(model);
+        scrubbedModel.shapes()
+                .filter(shapePredicate.and(FunctionalUtils.not(this::isIgnoredShape)))
+                .sorted()
+                .forEach(shape -> {
             String pointer = delegate.toPointer(shape.getId());
             if (!reversePointers.containsKey(pointer)) {
                 pointers.put(shape.getId(), pointer);
