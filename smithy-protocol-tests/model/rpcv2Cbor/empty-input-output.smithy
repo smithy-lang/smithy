@@ -14,6 +14,7 @@ use smithy.test#httpResponseTests
         documentation: "Body is empty and no Content-Type header if no input",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor"
         },
         forbidHeaders: [
             "Content-Type",
@@ -108,7 +109,8 @@ operation NoInputOutput {}
         documentation: "When Input structure is empty we write CBOR equivalent of {}",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -127,6 +129,7 @@ operation NoInputOutput {}
         documentation: "When Input structure is empty the server should accept an empty body",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
+            "Accept": "application/cbor",
             "Content-Type": "application/cbor"
         },
         method: "POST",
@@ -192,7 +195,8 @@ operation EmptyInputOutput {
         documentation: "When input is empty we write CBOR equivalent of {}",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         forbidHeaders: [
             "X-Amz-Target"

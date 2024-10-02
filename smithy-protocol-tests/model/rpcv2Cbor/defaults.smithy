@@ -18,7 +18,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -40,7 +41,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -60,7 +62,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -105,7 +108,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -152,7 +156,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -174,7 +179,8 @@ apply OperationWithDefaults @httpRequestTests([
         uri: "/service/RpcV2Protocol/operation/OperationWithDefaults",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"

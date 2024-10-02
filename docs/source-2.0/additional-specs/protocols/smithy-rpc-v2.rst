@@ -214,10 +214,16 @@ Buffered RPC requests for the ``rpcv2Cbor`` protocol SHOULD include a
 ``Content-Length`` header. Event streaming requests MUST NOT specify a content
 length (instead using ``Transfer-Encoding: chunked`` on HTTP/1.1).
 
-Requests with event stream responses for the ``rpcv2Cbor`` protocol MUST
-include an ``Accept`` header set to the value
-``application/vnd.amazon.eventstream``. Other forms of content streaming MAY be
-added in the future, utilizing different values for ``Accept``.
+Requests for the ``rpcv2Cbor`` protocol MUST use the following behavior for
+setting an ``Accept`` header:
+
+* For requests with event streaming responses: the value of the ``Accept``
+    header MUST be ``application/vnd.amazon.eventstream``.
+* For requests with all other response types: the value of the ``Accept``
+    header MUST be ``application/cbor``.
+
+Other forms of content streaming MAY be added in the future, utilizing
+different values for ``Accept``.
 
 In summary, the ``rpcv2Cbor`` protocol defines behavior for the following
 headers for requests:
@@ -241,9 +247,9 @@ headers for requests:
       - The standard ``Content-Length`` header defined by :rfc:`9110#section-8.6`.
         For event streaming requests, this MUST NOT be set.
     * - ``Accept``
-      - Conditional
-      - For requests with event streaming responses, this is
-        ``application/vnd.amazon.eventstream``.
+      - Required
+      - The value of ``application/cbor``. For requests with event streaming
+        responses, this is ``application/vnd.amazon.eventstream``.
 
 
 ~~~~~~~~~

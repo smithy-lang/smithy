@@ -45,7 +45,8 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -116,7 +117,8 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -136,7 +138,8 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -155,7 +158,8 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -175,7 +179,8 @@ apply RpcV2CborLists @httpRequestTests([
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -343,7 +348,8 @@ structure StructureListMember {
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
@@ -364,7 +370,8 @@ structure StructureListMember {
         bodyMediaType: "application/cbor",
         headers: {
             "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
+            "Content-Type": "application/cbor",
+            "Accept": "application/cbor"
         },
         requireHeaders: [
             "Content-Length"
