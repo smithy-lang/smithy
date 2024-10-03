@@ -1,0 +1,55 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "MyDocs",
+        "version": "2018-01-01",
+        "description": "Service"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "description": "Operation",
+                "operationId": "MyDocsOperation",
+                "responses": {
+                    "200": {
+                        "description": "MyDocsOperation 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MyDocsOperationResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MyDocsOperationResponseContent": {
+                "type": "object",
+                "description": "Output",
+                "properties": {
+                    "foo": {
+                        "type": "string",
+                        "description": "foo member."
+                    },
+                    "nested": {
+                        "$ref": "#/components/schemas/Nested",
+                        "description": "nested member."
+                    }
+                }
+            },
+            "Nested": {
+                "type": "object",
+                "description": "Nested",
+                "properties": {
+                    "baz": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

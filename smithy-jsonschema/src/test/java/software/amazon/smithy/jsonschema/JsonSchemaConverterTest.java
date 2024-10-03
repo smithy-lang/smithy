@@ -887,4 +887,24 @@ public class JsonSchemaConverterTest {
         Schema memberSchema = document.getRootSchema().getProperties().get("member");
         assertThat(memberSchema.isDeprecated(), equalTo(false));
     }
+
+    @Test
+    public void canAddMemberDocumentation() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("member-documentation.smithy"))
+                .assemble()
+                .unwrap();
+
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setAddReferenceDescriptions(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("member-documentation.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
 }

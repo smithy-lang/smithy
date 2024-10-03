@@ -106,6 +106,11 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             if (member.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
                 refBuilder.deprecated(true);
             }
+
+            if (converter.getConfig().getAddReferenceDescriptions()) {
+                descriptionMessage(member).ifPresent(refBuilder::description);
+            }
+
             // Wrap the ref and default in an allOf if disableDefaultValues has been not been disabled on config.
             if (member.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
                 Schema def = Schema.builder().defaultValue(member.expectTrait(DefaultTrait.class).toNode()).build();
