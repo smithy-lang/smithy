@@ -75,7 +75,7 @@ choices were made and leave a record for future contributors.
 
 Example Smithy codegen design documents:
 
-- https://awslabs.github.io/smithy-rs/design/
+- https://smithy-lang.github.io/smithy-rs/design/
 - https://github.com/awslabs/smithy-kotlin/tree/main/docs/design
 - https://github.com/awslabs/aws-sdk-kotlin/tree/main/docs/design
 - https://github.com/awslabs/smithy-ruby/wiki
