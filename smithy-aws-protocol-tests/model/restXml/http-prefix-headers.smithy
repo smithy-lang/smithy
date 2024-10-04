@@ -41,7 +41,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     },
     {
         id: "HttpPrefixHeadersAreNotPresent",
-        documentation: "No prefix headers are serialized because the value is empty",
+        documentation: "No prefix headers are serialized because the value is not present",
         protocol: restXml,
         method: "GET",
         uri: "/HttpPrefixHeaders",
@@ -54,6 +54,23 @@ apply HttpPrefixHeaders @httpRequestTests([
             fooMap: {}
         },
         appliesTo: "client"
+    },
+    {
+        id: "HttpPrefixEmptyHeaders",
+        documentation: "Serialize prefix headers were the value is present but empty"
+        protocol: restXml,
+        method: "GET",
+        uri: "/HttpPrefixHeaders",
+        body: "",
+        params: {
+            fooMap: {
+                Abc: ""
+            }
+        },
+        headers: {
+            "X-Foo-Abc": ""
+        }
+        appliesTo: "client",
     },
 ])
 
