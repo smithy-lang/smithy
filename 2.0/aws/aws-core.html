@@ -1189,31 +1189,30 @@ validation.</dd>
 <tr class="row-even"><td>requestAlgorithmMember</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>Defines a top-level operation input member that is used to configure
-request checksum behavior. The input member MUST target a string shape
-marked with the <a class="reference internal" href="../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a>. Each value in the enum represents a
-supported checksum algorithm. Algorithms MUST be one of the following
-supported values: &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;, or &quot;SHA256&quot;.</td>
+request checksum behavior. The input member MUST target an <a class="reference internal" href="../spec/simple-types.html#enum"><span class="std std-ref">enum</span></a>
+shape. Each value in the enum represents a supported checksum
+algorithm. Algorithms MUST be one of the following supported values:
+&quot;CRC64NVME&quot;, &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;, or &quot;SHA256&quot;.</td>
 </tr>
 <tr class="row-odd"><td>requestChecksumRequired</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Indicates an operation requires a checksum in its HTTP request. By
-default, the checksum used for a service is an MD5 checksum passed
-in the Content-MD5 header. When the input member represented by the
-<code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property is set, the default behavior is
-disabled.</td>
+<td>Indicates an operation requires a checksum in its HTTP request. If the
+input member represented by``requestAlgorithmMember`` property is not
+set, the client uses its default algorithm.</td>
 </tr>
 <tr class="row-even"><td>requestValidationModeMember</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Defines a top-level operation input member used to opt-in to
-best-effort validation of a checksum returned in the HTTP response of
-the operation. The input member MUST target a string shape marked with
-the <a class="reference internal" href="../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> that contains the value &quot;ENABLED&quot;.</td>
+<td>Defines a top-level operation input member used to opt-in to validation
+of a checksum returned in the HTTP response of the operation. The input
+member MUST target an <a class="reference internal" href="../spec/simple-types.html#enum"><span class="std std-ref">enum</span></a> shape that contains the value
+&quot;ENABLED&quot;.</td>
 </tr>
 <tr class="row-odd"><td>responseAlgorithms</td>
 <td><code class="docutils literal notranslate"><span class="pre">set&lt;string&gt;</span></code></td>
 <td>Defines the checksum algorithms clients SHOULD look for when validating
 checksums returned in the HTTP response. Each algorithm must be one of
-the following supported values: &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;, or &quot;SHA256&quot;.</td>
+the following supported values: &quot;CRC64NVME&quot;, &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;,
+or &quot;SHA256&quot;.</td>
 </tr>
 </tbody>
 </table>
@@ -1277,16 +1276,36 @@ behavior, will fail validation.</p>
 </div>
 <div class="section" id="aws-protocols-httpchecksum-trait-behavior">
 <span id="id9"></span><h3>Client behavior<a class="headerlink" href="#aws-protocols-httpchecksum-trait-behavior" title="Permalink to this heading">#</a></h3>
+<div class="section" id="supported-checksum-algorithms">
+<h4>Supported checksum algorithms<a class="headerlink" href="#supported-checksum-algorithms" title="Permalink to this heading">#</a></h4>
+<dl class="docutils">
+<dt>The following checksum algorithms MUST be supported by clients.</dt><dd><ul class="simple">
+<li>CRC32</li>
+<li>SHA1</li>
+<li>SHA256</li>
+</ul>
+</dd>
+<dt>Additionally, the following checksum algorithms SHOULD be supported by clients.</dt><dd><ul class="simple">
+<li>CRC64NVME</li>
+<li>CRC32C</li>
+</ul>
+</dd>
+</dl>
+</div>
 <div class="section" id="http-request-checksums">
 <h4>HTTP request checksums<a class="headerlink" href="#http-request-checksums" title="Permalink to this heading">#</a></h4>
-<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait where
-<code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the client MUST include a
-checksum in the HTTP request.</p>
+<p>By default, when a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+trait, the client MUST include a checksum in the HTTP request, unless the
+client is configured to only include checksum when <code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code>
+is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
 <p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait where
 <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> is set, the client MUST look up the input member
 represented by <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property. The value of this member is
 the checksum algorithm that the client MUST use to compute the request payload
-checksum.</p>
+checksum. If the client does not support that algorithm, it MUST fail the
+request. If the user did not set a value for the input member represented by
+<code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code>, the client MUST use its default algorithm and
+implicitly set that value in <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code>.</p>
 <p>The computed checksum MUST be supplied at a resolved location as per the
 <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-location"><span class="std std-ref">resolving checksum location</span></a>
 section. If the resolved location is <code class="docutils literal notranslate"><span class="pre">header</span></code>, the client MUST put the
@@ -1295,28 +1314,31 @@ checksum into the HTTP request headers. If the resolved location is
 of the body. The header or trailer name to use with an algorithm is resolved as
 per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
 section.</p>
-<p>If no <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property is set, the client MUST compute an
-MD5 checksum of the request payload and place it in the <code class="docutils literal notranslate"><span class="pre">Content-MD5</span></code> header.</p>
+<p>If no <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property is set in the trait and
+<code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the client MUST compute an MD5
+checksum of the request payload and place it in the <code class="docutils literal notranslate"><span class="pre">Content-MD5</span></code> header.</p>
 <p>If the HTTP header corresponding to a checksum is set explicitly, the client
 MUST use the explicitly set header and skip computing the payload checksum.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">See <a class="reference internal" href="#aws-protocols-httpchecksum-trait-header-conflict-behavior"><span class="std std-ref">client behavior</span></a>
-for more details.</p>
-</div>
 </div>
 <div class="section" id="http-response-checksums">
 <h4>HTTP response checksums<a class="headerlink" href="#http-response-checksums" title="Permalink to this heading">#</a></h4>
+<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait, the
+client MUST look up the input member represented by the
+<code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property. If the user did not set a value for
+this member, by default the client MUST implicitly set it to <code class="docutils literal notranslate"><span class="pre">ENABLED</span></code>,
+unless the client is configured to opt-out of this default behavior.</p>
 <p>When a client receives a response for an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
 trait where the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property is set, the client
 MUST look up the input member represented by the property's value. If the input
-member is set to <code class="docutils literal notranslate"><span class="pre">ENABLED</span></code>, the client MUST perform best-effort validation of
-checksum values returned in the HTTP response.</p>
+member is set to <code class="docutils literal notranslate"><span class="pre">ENABLED</span></code>, the client MUST perform validation of checksum
+returned in the HTTP response.</p>
 <p>A client MUST use the list of supported algorithms modeled in the
-<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property to look up the checksum(s) for which validation
-MUST be performed. The client MUST look for the HTTP header in the response as
-per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
-section.</p>
+<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property and filter it for the algorithms supported by
+the client to look up the checksum(s) for which validation MUST be performed.
+The client MUST look for the HTTP header in the response as per the
+<a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
+section. From the available headers in the response, the client MUST pick only
+one checksum to validate.</p>
 <p>A client MUST raise an error if the response checksum to validate does not
 match computed checksum of the response payload for the same checksum algorithm.</p>
 <p>If a checksum is provided in a response that is not listed in the
@@ -1337,7 +1359,12 @@ property are set, the service MUST validate an HTTP request checksum.</p>
 <p>When a service receives a request where the <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> is set,
 the service MUST look up the input member represented by the checksum
 <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property. The value of this member is the checksum
-algorithm that the service MUST use to compute a checksum of the request payload.</p>
+algorithm that the service MUST use to compute a checksum of the request
+payload. If the value of this member is not set, the service MUST look for the
+HTTP headers in the request as per the
+<a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
+section. From the available headers in the request, the service MUST pick only
+one checksum to validate.</p>
 <p>The computed checksum MUST be validated against the checksum supplied at a
 resolved location as per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-location"><span class="std std-ref">resolving checksum location</span></a> section. The
 header or trailer name to use with an algorithm is resolved as per the
@@ -1349,7 +1376,7 @@ header.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait, services MUST always accept checksum
 values in HTTP headers. For operations with streaming payload input, services
 MUST additionally accept checksum values sent in the <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html">chunked trailer part</a> of
-the request body. Service MUST only send response checksums in HTTP headers.</p>
+the request body.</p>
 </div>
 <div class="section" id="id11">
 <h4>HTTP response checksums<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h4>
@@ -2177,6 +2204,7 @@ existing AWS services.</p>
 </li>
 <li><a class="reference internal" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul>
 <li><a class="reference internal" href="#aws-protocols-httpchecksum-trait-behavior">Client behavior</a><ul>
+<li><a class="reference internal" href="#supported-checksum-algorithms">Supported checksum algorithms</a></li>
 <li><a class="reference internal" href="#http-request-checksums">HTTP request checksums</a></li>
 <li><a class="reference internal" href="#http-response-checksums">HTTP response checksums</a></li>
 </ul>
