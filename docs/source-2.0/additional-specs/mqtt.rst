@@ -5,8 +5,10 @@ MQTT Protocol Bindings
 ======================
 
 This document defines traits that bind Smithy operations, inputs, and
-outputs to the `MQTT <https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html>`_
-messaging transport protocol. In addition to traits, it defines the
+outputs to the Message Queuing Telemetry Transport
+(`MQTT <https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html>`_),
+a messaging protocol that enables communication between devices and
+applications over the internet. In addition to traits, it defines the
 requirements, limitations, and expected client behavior when decorating
 Smithy models with MQTT metadata.
 
