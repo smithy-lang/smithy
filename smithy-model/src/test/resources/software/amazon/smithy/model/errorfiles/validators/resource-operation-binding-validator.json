@@ -83,7 +83,7 @@
         "ns.foo#InvalidResource": {
             "type": "resource",
             "identifiers": {
-                "foo": {
+                "bar": {
                     "target": "smithy.api#String"
                 }
             },
@@ -129,7 +129,7 @@
         "ns.foo#InvalidResourceOperation2Input": {
             "type": "structure",
             "members": {
-                "foo": {
+                "bar": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": {}
