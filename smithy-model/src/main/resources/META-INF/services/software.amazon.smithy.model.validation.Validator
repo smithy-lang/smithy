@@ -26,6 +26,7 @@ software.amazon.smithy.model.validation.validators.IdempotencyTokenIgnoredValida
 software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
+software.amazon.smithy.model.validation.validators.MemberShouldReferenceResourceValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator

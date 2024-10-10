@@ -1,0 +1,1 @@
+[WARNING] ns.foo#Operation1Input$fooId: This member appears to reference the following resources without being included in a `@references` trait: [`ns.foo#FooResource`] | MemberShouldReferenceResource
