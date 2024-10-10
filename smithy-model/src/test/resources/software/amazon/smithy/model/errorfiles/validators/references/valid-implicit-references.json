@@ -23,9 +23,6 @@
                         "resource": "ns.foo#MyResource"
                     },
                     {
-                        "resource": "ns.foo#MyResource"
-                    },
-                    {
                         "resource": "ns.foo#MyResource2"
                     }
                 ]
@@ -48,6 +45,9 @@
                 "smithy.api#references": [
                     {
                         "resource": "ns.foo#MyResource"
+                    },
+                    {
+                        "resource": "ns.foo#MyResource2"
                     }
                 ]
             }
