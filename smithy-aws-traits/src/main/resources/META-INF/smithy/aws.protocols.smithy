@@ -253,8 +253,12 @@ list ChecksumAlgorithmSet {
     member: ChecksumAlgorithm
 }
 
+// This enum should be in sync with the `HttpChecksumTrait` list.
 @private
 enum ChecksumAlgorithm {
+    /// CRC64NVME
+    CRC64NVME
+
     /// CRC32C
     CRC32C
 
