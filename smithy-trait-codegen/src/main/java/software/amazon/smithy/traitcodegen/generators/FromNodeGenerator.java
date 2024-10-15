@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
@@ -103,6 +104,34 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
     @Override
     public Void stringShape(StringShape shape) {
+        return null;
+    }
+
+    @Override
+    public Void enumShape(EnumShape shape) {
+        // Enum traits do not need this method, only nested enums.
+        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent())  {
+            return null;
+        }
+        writeFromNodeJavaDoc();
+        writer.openBlock("public static $T fromNode($T node) {", "}", symbol, Node.class, () -> {
+            writer.write("return from(node.expectStringNode().getValue());");
+        });
+        writer.newLine();
+        return null;
+    }
+
+    @Override
+    public Void intEnumShape(IntEnumShape shape) {
+        // Enum traits do not need this method, only nested enums.
+        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent())  {
+            return null;
+        }
+        writeFromNodeJavaDoc();
+        writer.openBlock("public static $T fromNode($T node) {", "}", symbol, Node.class, () -> {
+            writer.writeWithNoFormatting("return from(node.expectNumberNode().getValue().intValue());");
+        });
+        writer.newLine();
         return null;
     }
 
