@@ -28,7 +28,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 
 
 public class TraitCodegenPluginTest {
-    private static final int EXPECTED_NUMBER_OF_FILES = 58;
+    private static final int EXPECTED_NUMBER_OF_FILES = 60;
 
     private MockManifest manifest;
     private Model model;

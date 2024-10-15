@@ -272,14 +272,14 @@ final class BuilderGenerator implements Runnable {
 
             // Clear all
             writer.openBlock("public Builder clear$U() {", "}", memberName, () -> {
-                        writer.write("$L.get().clear();", memberName);
+                        writer.write("this.$L.get().clear();", memberName);
                         writer.writeWithNoFormatting("return this;");
                     }).newLine();
 
             // Set one
             writer.openBlock("public Builder add$U($T value) {", "}",
                     memberName, symbolProvider.toSymbol(shape.getMember()), () -> {
-                        writer.write("$L.get().add(value);", memberName);
+                        writer.write("this.$L.get().add(value);", memberName);
                         writer.write("return this;");
                     }).newLine();
 
@@ -287,7 +287,7 @@ final class BuilderGenerator implements Runnable {
             writer.openBlock("public Builder remove$U($T value) {", "}",
                     memberName, symbolProvider.toSymbol(shape.getMember()),
                     () -> {
-                        writer.write("$L.get().remove(value);", memberName);
+                        writer.write("this.$L.get().remove(value);", memberName);
                         writer.write("return this;");
                     }).newLine();
             return null;

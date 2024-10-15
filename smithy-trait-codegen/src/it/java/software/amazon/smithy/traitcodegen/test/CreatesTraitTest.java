@@ -6,6 +6,7 @@ import com.example.traits.StringTrait;
 import com.example.traits.defaults.StructDefaultsTrait;
 import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
+import com.example.traits.enums.EnumListMemberTrait;
 import com.example.traits.enums.IntEnumTrait;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
@@ -74,6 +75,9 @@ public class CreatesTraitTest {
                 Arguments.of(StringEnumTrait.ID, Node.from("no")),
                 Arguments.of(IntEnumTrait.ID, Node.from(2)),
                 Arguments.of(SuitTrait.ID, Node.from("clubs")),
+                Arguments.of(EnumListMemberTrait.ID, ObjectNode.objectNodeBuilder()
+                        .withMember("value", ArrayNode.fromStrings("some", "none", "some"))
+                        .build()),
                 // Lists
                 Arguments.of(NumberListTrait.ID, ArrayNode.fromNodes(
                         Node.from(1), Node.from(2), Node.from(3))

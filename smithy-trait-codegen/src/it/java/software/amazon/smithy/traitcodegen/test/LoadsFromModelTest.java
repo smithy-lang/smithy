@@ -7,7 +7,9 @@ import com.example.traits.StringTrait;
 import com.example.traits.defaults.StructDefaultsTrait;
 import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
+import com.example.traits.enums.EnumListMemberTrait;
 import com.example.traits.enums.IntEnumTrait;
+import com.example.traits.enums.SomeEnum;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
 import com.example.traits.idref.IdRefListTrait;
@@ -95,6 +97,8 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValue", 1, "getEnumValue", IntEnumTrait.IntEnum.YES)),
                 Arguments.of("enums/string-enum-compatibility.smithy", SuitTrait.class,
                         MapUtils.of("getEnumValue", SuitTrait.Suit.CLUB, "getValue", "club")),
+                Arguments.of("enums/enum-list-member-trait.smithy", EnumListMemberTrait.class,
+                    MapUtils.of("getValue", Optional.of(ListUtils.of(SomeEnum.SOME, SomeEnum.NONE, SomeEnum.SOME)))),
                 // Id Refs
                 Arguments.of("idref/idref-string.smithy", IdRefStringTrait.class,
                         MapUtils.of("getValue", TARGET_ONE)),
