@@ -1,5 +1,32 @@
 # Smithy Changelog
 
+## 1.52.0 (2024-10-15)
+
+### Features
+
+* Added validator for identifiers missing references (#2418)
+* Added checksum algorithm to model enum  (#2419)
+* Updated the httpChecksum trait spec (#2413)
+* Added `breakingChanges` to the `httpChecksum` trait (#2398)
+* Use the most common suffix for IDL inline IO (#2397)
+
+### Bug Fixes
+
+* Fixed trait codegen to properly support lists of enums (#2420)
+* Fixed API Gateway compatibility by requiring an Accept header for RPCv2 requests (#2417)
+* Changed prefix header tests to allow for empty headers (#2415)
+* Fixed open-API plugin to properly support effective documentation precedence (#2402)
+* Fixed a bug in the `SigV4` diff logic that assumed that the a service exists in the old operation (#2405)
+* Added `NodeValidationVisitor` checks for invalid nulls (#2393)
+
+### Documentation
+
+* Updated the `httpChecksum` trait spec to clarify the expected behavior and added the supported algorithms (#2413)
+* Fixed the `httpChecksum` algorithm list in spec (#2394)
+* Fixed a broken link to smithy-rs design document in Code Gen documentation. (#2416)
+* Fixed resource type typo in AST docs (#2410)
+* Fixed small typos in full stack tutorial (#2389)
+
 ## 1.51.0 (2024-09-03)
 
 ### Features
