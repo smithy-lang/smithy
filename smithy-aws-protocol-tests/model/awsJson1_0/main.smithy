@@ -41,5 +41,6 @@ service JsonRpc10 {
         OperationWithDefaults,
         OperationWithRequiredMembers,
         OperationWithNestedStructure
+        OperationWithRequiredMembersWithDefaults
     ]
 }
