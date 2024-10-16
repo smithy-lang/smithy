@@ -356,7 +356,7 @@ protocol is used to expose services that serialize RPC payloads as CBOR.</p>
 responses with CBOR payloads.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.51.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.52.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.protocols#rpcv2Cbor</span></code> is a structure that supports the following
 members:</p>
@@ -561,10 +561,20 @@ for security reasons.</p>
 <p>Buffered RPC requests for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol SHOULD include a
 <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header. Event streaming requests MUST NOT specify a content
 length (instead using <code class="docutils literal notranslate"><span class="pre">Transfer-Encoding:</span> <span class="pre">chunked</span></code> on HTTP/1.1).</p>
-<p>Requests with event stream responses for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol MUST
-include an <code class="docutils literal notranslate"><span class="pre">Accept</span></code> header set to the value
-<code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>. Other forms of content streaming MAY be
-added in the future, utilizing different values for <code class="docutils literal notranslate"><span class="pre">Accept</span></code>.</p>
+<p>Requests for the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol MUST use the following behavior for
+setting an <code class="docutils literal notranslate"><span class="pre">Accept</span></code> header:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>For requests with event streaming responses: the value of the <code class="docutils literal notranslate"><span class="pre">Accept</span></code></dt><dd>header MUST be <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>For requests with all other response types: the value of the <code class="docutils literal notranslate"><span class="pre">Accept</span></code></dt><dd>header MUST be <code class="docutils literal notranslate"><span class="pre">application/cbor</span></code>.</dd>
+</dl>
+</li>
+</ul>
+<p>Other forms of content streaming MAY be added in the future, utilizing
+different values for <code class="docutils literal notranslate"><span class="pre">Accept</span></code>.</p>
 <p>In summary, the <code class="docutils literal notranslate"><span class="pre">rpcv2Cbor</span></code> protocol defines behavior for the following
 headers for requests:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -596,9 +606,9 @@ is <code class="docutils literal notranslate"><span class="pre">application/vnd.
 For event streaming requests, this MUST NOT be set.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Accept</span></code></td>
-<td>Conditional</td>
-<td>For requests with event streaming responses, this is
-<code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</td>
+<td>Required</td>
+<td>The value of <code class="docutils literal notranslate"><span class="pre">application/cbor</span></code>. For requests with event streaming
+responses, this is <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</td>
 </tr>
 </tbody>
 </table>
