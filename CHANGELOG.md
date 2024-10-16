@@ -13,7 +13,7 @@
 ### Bug Fixes
 
 * Fixed trait codegen to properly support lists of enums (#2420)
-* Fixed API Gateway compatibility by requiring an Accept header for RPCv2 requests (#2417)
+* Update RPC v2 CBOR spec to require an Accept header for requests (#2417)
 * Changed prefix header tests to allow for empty headers (#2415)
 * Fixed open-API plugin to properly support effective documentation precedence (#2402)
 * Fixed a bug in the `SigV4` diff logic that assumed that the a service exists in the old operation (#2405)
