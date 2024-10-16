@@ -7,6 +7,21 @@
 
 $version: "2.0"
 
+metadata validators = [
+    {
+        name: "EmitEachSelector"
+        id: "UnboundTestOperation"
+        message: "This operation in the Smithy protocol tests is not bound to a service."
+        namespaces: [
+            // Overall protocol test suites.
+            "smithy.protocoltests.rpcv2Cbor"
+        ]
+        configuration: {
+            "selector": "operation :not(< service)"
+        }
+    }
+]
+
 namespace smithy.protocoltests.shared
 
 list StringList {

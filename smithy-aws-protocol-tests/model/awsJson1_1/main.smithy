@@ -26,6 +26,7 @@ service JsonProtocol {
         OperationWithOptionalInputOutput,
         PutAndGetInlineDocuments,
         JsonEnums,
+        JsonIntEnums
         NullOperation,
         SparseNullsOperation,
         GreetingWithErrors,

@@ -65,6 +65,8 @@ service RestJson {
 
         // @httpResponseCode tests
         HttpResponseCode,
+        ResponseCodeRequired
+        ResponseCodeHttpFallback
 
         // @streaming tests
         StreamingTraits,
@@ -133,6 +135,7 @@ service RestJson {
         MalformedTimestampBodyDateTime,
         MalformedTimestampBodyHttpDate,
         MalformedContentTypeWithoutBody,
+        MalformedContentTypeWithoutBodyEmptyInput
         MalformedContentTypeWithBody,
         MalformedContentTypeWithPayload,
         MalformedContentTypeWithGenericString,
