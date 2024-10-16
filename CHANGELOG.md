@@ -12,6 +12,7 @@
 
 ### Bug Fixes
 
+* Fixed the name of XML root nodes in the protocol tests ([#2423](https://github.com/smithy-lang/smithy/pull/2423))
 * Fixed trait codegen to properly support lists of enums ([#2420](https://github.com/smithy-lang/smithy/pull/2420))
 * Update RPC v2 CBOR spec to require an Accept header for requests ([#2417](https://github.com/smithy-lang/smithy/pull/2417))
 * Changed prefix header tests to allow for empty headers ([#2415](https://github.com/smithy-lang/smithy/pull/2415))
