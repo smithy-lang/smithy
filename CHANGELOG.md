@@ -6,7 +6,7 @@
 
 * Added validator for identifiers missing references (#2418)
 * Added checksum algorithm to model enum  (#2419)
-* Updated the httpChecksum trait spec (#2413)
+* Updated the `httpChecksum` trait spec (#2413)
 * Added `breakingChanges` to the `httpChecksum` trait (#2398)
 * Use the most common suffix for IDL inline IO (#2397)
 
