@@ -60,7 +60,7 @@ public final class ActionResource implements ToNode, ToSmithyBuilder<ActionResou
     }
 
     @Override
-    public SmithyBuilder<ActionResource> toBuilder() {
+    public Builder toBuilder() {
         return builder().conditionKeys(conditionKeys);
     }
 

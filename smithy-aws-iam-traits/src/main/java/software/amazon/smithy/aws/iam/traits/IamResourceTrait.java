@@ -23,7 +23,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -106,7 +105,7 @@ public final class IamResourceTrait extends AbstractTrait
     }
 
     @Override
-    public SmithyBuilder<IamResourceTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder().sourceLocation(getSourceLocation()).name(name);
     }
 
