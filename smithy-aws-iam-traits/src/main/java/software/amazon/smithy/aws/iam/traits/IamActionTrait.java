@@ -28,7 +28,6 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -191,7 +190,7 @@ public final class IamActionTrait extends AbstractTrait
     }
 
     @Override
-    public SmithyBuilder<IamActionTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder().sourceLocation(getSourceLocation()).name(name);
     }
 

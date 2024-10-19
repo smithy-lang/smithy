@@ -108,7 +108,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     }
 
     @Override
-    public SmithyBuilder<ConditionKeyDefinition> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .documentation(documentation)
                 .externalDocumentation(externalDocumentation)

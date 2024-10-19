@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -78,7 +77,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
      * Get a specific condition key by name.
      *
      * @param name Name of the condition key to get.
-     * @return Returns the optionall found condition key.
+     * @return Returns the optionally found condition key.
      */
     public Optional<ConditionKeyDefinition> getConditionKey(String name) {
         return Optional.ofNullable(conditionKeys.get(name));
@@ -86,11 +85,11 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
     @Override
     protected Node createNode() {
-        return conditionKeys.entrySet().stream()
-                .map(entry -> new AbstractMap.SimpleImmutableEntry<>(
-                        Node.from(entry.getKey()), entry.getValue().toNode()))
-                .collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))
-                .toBuilder().sourceLocation(getSourceLocation()).build();
+        ObjectNode.Builder builder = ObjectNode.builder().sourceLocation(getSourceLocation());
+        for (Map.Entry<String, ConditionKeyDefinition> entry : conditionKeys.entrySet()) {
+            builder.withMember(entry.getKey(), entry.getValue().toNode());
+        }
+        return builder.build();
     }
 
     @Override
