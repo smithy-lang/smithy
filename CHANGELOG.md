@@ -1,5 +1,13 @@
 # Smithy Changelog
 
+## 1.52.1 (2024-10-22)
+
+### Bug Fixes
+
+* Fixed several minor issues with IAM trait class implementations ([#2427](https://github.com/smithy-lang/smithy/pull/2427))
+* Fixed an issue where several protocol test operations were not bound to services ([#2426](https://github.com/smithy-lang/smithy/pull/2426))
+* Fixed the name of XML root nodes in the protocol tests ([#2423](https://github.com/smithy-lang/smithy/pull/2423))
+
 ## 1.52.0 (2024-10-16)
 
 ### Features
