@@ -11,6 +11,7 @@ metadata validators = [
     {
         name: "EmitEachSelector"
         id: "UnboundTestOperation"
+        severity: "WARNING"
         message: "This operation in the Smithy protocol tests is not bound to a service."
         namespaces: [
             // Overall protocol test suites.
