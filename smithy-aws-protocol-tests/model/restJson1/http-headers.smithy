@@ -412,7 +412,7 @@ structure InputAndOutputWithHeadersIO {
     headerIntegerEnumList: IntegerEnumList,
 }
 
-/// Null and empty headers are not sent over the wire.
+/// Null headers are not sent over the wire, empty headers are serialized to ""
 @readonly
 @http(uri: "/NullAndEmptyHeadersClient", method: "GET")
 @tags(["client-only"])
@@ -443,7 +443,7 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
     },
 ])
 
-/// Null and empty headers are not sent over the wire.
+/// Null headers are not sent over the wire, empty headers are serialized to ""
 @readonly
 @http(uri: "/NullAndEmptyHeadersServer", method: "GET")
 @tags(["server-only"])
@@ -455,10 +455,14 @@ operation NullAndEmptyHeadersServer {
 apply NullAndEmptyHeadersServer @httpResponseTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
-        documentation: "Do not send null or empty headers",
+        documentation: "Do not send null values, but do send empty strings and empty lists over the wire in headers",
         protocol: restJson1,
         code: 200,
-        forbidHeaders: ["X-A", "X-B", "X-C"],
+        forbidHeaders: ["X-A"],
+        headers: {
+            "X-B": ""
+            "X-C": ""
+        }
         params: {
             a: null,
             b: "",
