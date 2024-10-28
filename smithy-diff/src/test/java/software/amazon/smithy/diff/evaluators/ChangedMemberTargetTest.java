@@ -222,6 +222,26 @@ public class ChangedMemberTargetTest {
     }
 
     @Test
+    public void detectsAcceptableMapMemberChangesInNestedTargets() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-valid-nested2-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-valid-nested2-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined "
+                        + "backward compatible."));
+    }
+
+    @Test
     public void detectsInvalidListMemberChangesInNestedTargets() {
         Model modelA = Model.assembler()
                 .addImport(getClass().getResource("changed-member-target-invalid-nested1-a.smithy"))
@@ -263,5 +283,93 @@ public class ChangedMemberTargetTest {
                            + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
                            + "shapes are a list, but the old shape targeted `smithy.example#MyString` while "
                            + "the new shape targets `smithy.example#MyString2`."));
+    }
+
+    @Test
+    public void detectsInvalidMapKeyChangesInNestedTargets() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey1-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey1-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
+                        + "shapes are a map, but their key members have differing traits. The newly targeted "
+                        + "shape now has the following additional traits: [smithy.api#pattern]."));
+    }
+
+    @Test
+    public void detectsInvalidMapKeyTargetChange() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey2-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey2-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
+                        + "shapes are a map, but the old shape key targeted `smithy.example#MyString` while "
+                        + "the new shape targets `smithy.example#MyString2`."));
+    }
+
+    @Test
+    public void detectsInvalidMapValueChangesInNestedTargets() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue1-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue1-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
+                        + "shapes are a map, but their value members have differing traits. The newly targeted "
+                        + "shape now has the following additional traits: [smithy.api#pattern]."));
+    }
+
+    @Test
+    public void detectsInvalidMapValueTargetChange() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue2-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue2-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
+                        + "shapes are a map, but the old shape value targeted `smithy.example#MyString` while "
+                        + "the new shape targets `smithy.example#MyString2`."));
     }
 }
