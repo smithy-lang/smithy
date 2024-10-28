@@ -25,9 +25,11 @@ import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -99,7 +101,7 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
                                               oldShape.getType(), newShape.getType()));
         }
 
-        if (!(oldShape instanceof SimpleShape || oldShape instanceof CollectionShape)) {
+        if (!(oldShape instanceof SimpleShape || oldShape instanceof CollectionShape || oldShape instanceof MapShape)) {
             return ListUtils.of(String.format("The name of a %s is significant", oldShape.getType()));
         }
 
@@ -117,23 +119,40 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         }
 
         if (oldShape instanceof CollectionShape) {
-            MemberShape oldMember = ((CollectionShape) oldShape).getMember();
-            MemberShape newMember = ((CollectionShape) newShape).getMember();
-            if (!oldMember.getTarget().equals(newMember.getTarget())) {
-                results.add(String.format("Both the old and new shapes are a %s, but the old shape targeted "
-                                          + "`%s` while the new shape targets `%s`",
-                                          oldShape.getType(),
-                                          oldMember.getTarget(),
-                                          newMember.getTarget()));
-            } else if (!oldMember.getAllTraits().equals(newMember.getAllTraits())) {
-                results.add(String.format("Both the old and new shapes are a %s, but their members have "
-                                          + "differing traits. %s",
-                                          oldShape.getType(),
-                                          createTraitDiffMessage(oldMember, newMember)));
-            }
+            evaluateMember(oldShape.getType(), results,
+                    ((CollectionShape) oldShape).getMember(),
+                    ((CollectionShape) newShape).getMember());
+        } else if (oldShape instanceof MapShape) {
+            MapShape oldMapShape = (MapShape) oldShape;
+            MapShape newMapShape = (MapShape) newShape;
+            // Both the key and value need to be evaluated for maps.
+            evaluateMember(oldShape.getType(), results,
+                    oldMapShape.getKey(),
+                    newMapShape.getKey());
+            evaluateMember(oldShape.getType(), results,
+                    oldMapShape.getValue(),
+                    newMapShape.getValue());
         }
 
         return results;
+    }
+
+    private static void evaluateMember(
+            ShapeType oldShapeType,
+            List<String> results,
+            MemberShape oldMember,
+            MemberShape newMember
+    ) {
+        String memberSlug = oldShapeType == ShapeType.MAP ? oldMember.getMemberName() + " " : "";
+        if (!oldMember.getTarget().equals(newMember.getTarget())) {
+            results.add(String.format("Both the old and new shapes are a %s, but the old shape %stargeted "
+                            + "`%s` while the new shape targets `%s`",
+                    oldShapeType, memberSlug, oldMember.getTarget(), newMember.getTarget()));
+        } else if (!oldMember.getAllTraits().equals(newMember.getAllTraits())) {
+            results.add(String.format("Both the old and new shapes are a %s, but their %smembers have "
+                            + "differing traits. %s",
+                    oldShapeType, memberSlug, createTraitDiffMessage(oldMember, newMember)));
+        }
     }
 
     private static String createSimpleMessage(ChangedShape<MemberShape> change, Shape oldTarget, Shape newTarget) {
