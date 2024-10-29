@@ -17,6 +17,7 @@ package software.amazon.smithy.jsonschema;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -60,24 +61,30 @@ final class DeconflictingStrategy implements RefStrategy {
         // to make the result deterministic. Eliminate trait definitions
         // ahead of that computation to eliminate potential conflicts with
         // shapes that won't go into JSON Schema anyway.
-        Model scrubbedModel = ModelTransformer.create().scrubTraitDefinitions(model);
-        scrubbedModel.shapes()
-                .filter(shapePredicate.and(FunctionalUtils.not(this::isIgnoredShape)))
-                .sorted()
-                .forEach(shape -> {
+        Model scrubbedModel = null;
+        for (Shape shape : new TreeSet<>(model.toSet())) {
+            if (!shapePredicate.and(FunctionalUtils.not(this::isIgnoredShape)).test(shape)) {
+                continue;
+            }
+
             String pointer = delegate.toPointer(shape.getId());
             if (!reversePointers.containsKey(pointer)) {
                 pointers.put(shape.getId(), pointer);
                 reversePointers.put(pointer, shape.getId());
             } else {
-                String deconflictedPointer = deconflict(shape, pointer, reversePointers);
-                LOGGER.info(() -> String.format(
-                        "De-conflicted `%s` JSON schema pointer from `%s` to `%s`",
-                        shape.getId(), pointer, deconflictedPointer));
-                pointers.put(shape.getId(), deconflictedPointer);
-                reversePointers.put(deconflictedPointer, shape.getId());
+                if (scrubbedModel == null) {
+                    scrubbedModel = ModelTransformer.create().scrubTraitDefinitions(model);
+                }
+                if (scrubbedModel.getShape(reversePointers.get(pointer)).isPresent()) {
+                    String deconflictedPointer = deconflict(shape, pointer, reversePointers);
+                    LOGGER.info(() -> String.format(
+                            "De-conflicted `%s` JSON schema pointer from `%s` to `%s`",
+                            shape.getId(), pointer, deconflictedPointer));
+                    pointers.put(shape.getId(), deconflictedPointer);
+                    reversePointers.put(deconflictedPointer, shape.getId());
+                }
             }
-        });
+        }
     }
 
     // Some shapes aren't converted to JSON schema at all because they
