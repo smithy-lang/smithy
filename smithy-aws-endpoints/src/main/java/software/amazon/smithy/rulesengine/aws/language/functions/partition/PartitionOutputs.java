@@ -15,7 +15,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -142,7 +141,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     }
 
     @Override
-    public SmithyBuilder<PartitionOutputs> toBuilder() {
+    public Builder toBuilder() {
         return new Builder(getSourceLocation())
                 .name(name)
                 .dnsSuffix(dnsSuffix)

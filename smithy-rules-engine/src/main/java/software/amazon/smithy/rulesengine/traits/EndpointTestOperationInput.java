@@ -79,7 +79,7 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
     }
 
     @Override
-    public SmithyBuilder<EndpointTestOperationInput> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(sourceLocation)
                 .operationName(operationName)

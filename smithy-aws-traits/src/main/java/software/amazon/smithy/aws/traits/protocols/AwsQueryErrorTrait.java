@@ -74,7 +74,7 @@ public final class AwsQueryErrorTrait extends AbstractTrait implements ToSmithyB
     }
 
     @Override
-    public SmithyBuilder<AwsQueryErrorTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder().code(code).httpResponseCode(httpResponseCode).sourceLocation(getSourceLocation());
     }
 

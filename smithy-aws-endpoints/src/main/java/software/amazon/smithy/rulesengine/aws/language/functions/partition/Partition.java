@@ -16,7 +16,6 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -117,7 +116,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
     }
 
     @Override
-    public SmithyBuilder<Partition> toBuilder() {
+    public Builder toBuilder() {
         return new Builder(getSourceLocation())
                 .id(id)
                 .regionRegex(regionRegex)

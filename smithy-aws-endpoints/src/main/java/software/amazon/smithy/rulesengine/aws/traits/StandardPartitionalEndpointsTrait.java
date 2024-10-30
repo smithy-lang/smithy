@@ -17,7 +17,6 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -78,7 +77,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
     }
 
     @Override
-    public SmithyBuilder<StandardPartitionalEndpointsTrait> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
                 .partitionEndpointSpecialCases(partitionEndpointSpecialCases)
                 .endpointPatternType(endpointPatternType);

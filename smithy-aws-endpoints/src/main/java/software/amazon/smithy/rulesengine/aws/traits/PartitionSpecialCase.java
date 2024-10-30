@@ -72,7 +72,7 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
     }
 
     @Override
-    public SmithyBuilder<PartitionSpecialCase> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
             .dualStack(dualStack)
             .endpoint(endpoint)

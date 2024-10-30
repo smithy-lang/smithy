@@ -21,7 +21,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -101,7 +100,7 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
     }
 
     @Override
-    public SmithyBuilder<EnumValueTrait> toBuilder() {
+    public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
         builder.value = value;
         return builder;

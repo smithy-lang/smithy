@@ -86,7 +86,7 @@ public final class PartitionEndpointSpecialCase
     }
 
     @Override
-    public SmithyBuilder<PartitionEndpointSpecialCase> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
             .endpoint(endpoint)
             .region(region)

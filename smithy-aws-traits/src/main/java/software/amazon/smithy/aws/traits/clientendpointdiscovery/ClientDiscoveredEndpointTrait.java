@@ -20,7 +20,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -63,7 +62,7 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
     }
 
     @Override
-    public SmithyBuilder<ClientDiscoveredEndpointTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder().sourceLocation(getSourceLocation()).required(required);
     }
 
