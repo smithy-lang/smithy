@@ -73,7 +73,7 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
     }
 
     @Override
-    public SmithyBuilder<ArrayNode> toBuilder() {
+    public Builder toBuilder() {
         return new Builder().sourceLocation(getSourceLocation()).merge(this);
     }
 

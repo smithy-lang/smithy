@@ -69,7 +69,7 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
     }
 
     @Override
-    public SmithyBuilder<Waiter> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .documentation(getDocumentation().orElse(null))
                 .acceptors(getAcceptors())

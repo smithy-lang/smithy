@@ -24,7 +24,6 @@ import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitService;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -47,7 +46,7 @@ public final class WaitableTrait extends AbstractTrait implements ToSmithyBuilde
     }
 
     @Override
-    public SmithyBuilder<WaitableTrait> toBuilder() {
+    public Builder toBuilder() {
         return new Builder().sourceLocation(getSourceLocation()).replace(waiters);
     }
 

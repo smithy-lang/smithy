@@ -27,7 +27,6 @@ import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -66,7 +65,7 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     }
 
     @Override
-    public SmithyBuilder<HttpChecksumTrait> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
                 .sourceLocation(getSourceLocation())
                 .requestChecksumRequired(requestChecksumRequired)

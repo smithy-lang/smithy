@@ -310,7 +310,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         @Override
-        public SmithyBuilder<ErrorExample> toBuilder() {
+        public Builder toBuilder() {
             return builder().content(content).shapeId(shapeId);
         }
 

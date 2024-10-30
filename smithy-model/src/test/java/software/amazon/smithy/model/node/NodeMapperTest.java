@@ -1351,7 +1351,7 @@ public class NodeMapperTest {
         }
 
         @Override
-        public SmithyBuilder<SourceLocationBearerTrait> toBuilder() {
+        public Builder toBuilder() {
             return new Builder().sourceLocation(getSourceLocation());
         }
 

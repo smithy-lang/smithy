@@ -61,7 +61,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
     }
 
     @Override
-    public SmithyBuilder<Handler> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .permissions(permissions);
     }

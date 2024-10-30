@@ -62,7 +62,7 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
     }
 
     @Override
-    public SmithyBuilder<Property> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .insertionOrder(insertionOrder)
                 .dependencies(dependencies)

@@ -56,7 +56,7 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
     }
 
     @Override
-    public SmithyBuilder<ExpectedEndpoint> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(sourceLocation)
                 .url(url)

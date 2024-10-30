@@ -83,7 +83,7 @@ public final class RegionSpecialCase implements FromSourceLocation, ToNode, ToSm
     }
 
     @Override
-    public SmithyBuilder<RegionSpecialCase> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
             .dualStack(dualStack)
             .endpoint(endpoint)
