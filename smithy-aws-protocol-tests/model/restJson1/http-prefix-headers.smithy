@@ -28,15 +28,15 @@ apply HttpPrefixHeaders @httpRequestTests([
         uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
-            "X-Foo": "Foo",
-            "X-Foo-Abc": "Abc value",
-            "X-Foo-Def": "Def value",
+            "x-foo": "Foo",
+            "x-foo-abc": "Abc value",
+            "x-foo-def": "Def value",
         },
         params: {
             foo: "Foo",
             fooMap: {
-                Abc: "Abc value",
-                Def: "Def value",
+                abc: "Abc value",
+                def: "Def value",
             }
         }
     },
@@ -48,7 +48,7 @@ apply HttpPrefixHeaders @httpRequestTests([
         uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
-            "X-Foo": "Foo"
+            "x-foo": "Foo"
         },
         params: {
             foo: "Foo",
@@ -65,11 +65,11 @@ apply HttpPrefixHeaders @httpRequestTests([
         body: "",
         params: {
             fooMap: {
-                Abc: ""
+                abc: ""
             }
         },
         headers: {
-            "X-Foo-Abc": ""
+            "x-foo-abc": ""
         }
         appliesTo: "client",
     },
@@ -82,15 +82,15 @@ apply HttpPrefixHeaders @httpResponseTests([
         protocol: restJson1,
         code: 200,
         headers: {
-            "X-Foo": "Foo",
-            "X-Foo-Abc": "Abc value",
-            "X-Foo-Def": "Def value",
+            "x-foo": "Foo",
+            "x-foo-abc": "Abc value",
+            "x-foo-def": "Def value",
         },
         params: {
             foo: "Foo",
             fooMap: {
-                Abc: "Abc value",
-                Def: "Def value",
+                abc: "Abc value",
+                def: "Def value",
             }
         }
     },
@@ -98,19 +98,19 @@ apply HttpPrefixHeaders @httpResponseTests([
 
 @input
 structure HttpPrefixHeadersInput {
-    @httpHeader("X-Foo")
+    @httpHeader("x-foo")
     foo: String,
 
-    @httpPrefixHeaders("X-Foo-")
+    @httpPrefixHeaders("x-foo-")
     fooMap: StringMap,
 }
 
 @output
 structure HttpPrefixHeadersOutput {
-    @httpHeader("X-Foo")
+    @httpHeader("x-foo")
     foo: String,
 
-    @httpPrefixHeaders("X-Foo-")
+    @httpPrefixHeaders("x-foo-")
     fooMap: StringMap,
 }
 
@@ -129,13 +129,13 @@ apply HttpPrefixHeadersInResponse @httpResponseTests([
         protocol: restJson1,
         code: 200,
         headers: {
-            "X-Foo": "Foo",
-            "Hello": "Hello"
+            "x-foo": "Foo",
+            "hello": "Hello"
         },
         params: {
             prefixHeaders: {
-                "X-Foo": "Foo",
-                "Hello": "Hello"
+                "x-foo": "Foo",
+                "hello": "Hello"
             }
         }
     },
