@@ -27,15 +27,15 @@ apply HttpPrefixHeaders @httpRequestTests([
         uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
-            "X-Foo": "Foo",
-            "X-Foo-Abc": "Abc value",
-            "X-Foo-Def": "Def value",
+            "x-foo": "Foo",
+            "x-foo-abc": "Abc value",
+            "x-foo-def": "Def value",
         },
         params: {
             foo: "Foo",
             fooMap: {
-                Abc: "Abc value",
-                Def: "Def value",
+                abc: "Abc value",
+                def: "Def value",
             }
         }
     },
@@ -47,7 +47,7 @@ apply HttpPrefixHeaders @httpRequestTests([
         uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
-            "X-Foo": "Foo"
+            "x-foo": "Foo"
         },
         params: {
             foo: "Foo",
@@ -64,11 +64,11 @@ apply HttpPrefixHeaders @httpRequestTests([
         body: "",
         params: {
             fooMap: {
-                Abc: ""
+                abc: ""
             }
         },
         headers: {
-            "X-Foo-Abc": ""
+            "x-foo-abc": ""
         }
         appliesTo: "client",
     },
@@ -82,15 +82,15 @@ apply HttpPrefixHeaders @httpResponseTests([
         code: 200,
         body: "",
         headers: {
-            "X-Foo": "Foo",
-            "X-Foo-Abc": "Abc value",
-            "X-Foo-Def": "Def value",
+            "x-foo": "Foo",
+            "x-foo-abc": "Abc value",
+            "x-foo-def": "Def value",
         },
         params: {
             foo: "Foo",
             fooMap: {
-                Abc: "Abc value",
-                Def: "Def value",
+                abc: "Abc value",
+                def: "Def value",
             }
         }
     },
@@ -101,7 +101,7 @@ apply HttpPrefixHeaders @httpResponseTests([
         code: 200,
         body: "",
         headers: {
-            "X-Foo": "Foo"
+            "x-foo": "Foo"
         },
         params: {
             foo: "Foo",
@@ -111,10 +111,10 @@ apply HttpPrefixHeaders @httpResponseTests([
 ])
 
 structure HttpPrefixHeadersInputOutput {
-    @httpHeader("X-Foo")
+    @httpHeader("x-foo")
     foo: String,
 
-    @httpPrefixHeaders("X-Foo-")
+    @httpPrefixHeaders("x-foo-")
     fooMap: FooPrefixHeaders,
 }
 
