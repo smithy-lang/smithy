@@ -290,14 +290,25 @@ members:
       - Set to true to specify that the ARN does not contain an account ID.
         If not set, or if set to false, the resolved ARN will contain a
         placeholder for the customer account ID. This can only be set to
-        true if absolute is not set or is false.
+        true if ``absolute`` is not set or is false.
     * - absolute
       - ``boolean``
       - Set to true to indicate that the ARN template contains a fully-formed
         ARN that does not need to be merged with the service. This type of
         ARN MUST be used when the identifier of a resource is an ARN or is
         based on the ARN identifier of a parent resource.
+    * - resourceDelimiter
+      - ``string``
+      - Indicates which character is used to delimit sections of the resource
+        segment of an ARN. This can only be set if ``absolute`` is set to true.
+        Valid values are ``/`` (forward slash) and ``:`` (colon).
+    * - reusable
+      - ``boolean``
+      - Set to true to indicate that an ARN may be reused for different
+        instances of a resource.
 
+
+.. _aws.api#arn-trait_format-of-an-arn:
 
 Format of an ARN
 ================
@@ -354,6 +365,8 @@ Some example ARNs from various services include:
     arn:aws:s3:::my_corporate_bucket/exampleobject.png
 
 
+.. _aws.api#arn-trait_relative-arn-templates:
+
 Relative ARN templates
 ======================
 
@@ -390,6 +403,8 @@ at runtime. The label ``{myId}`` indicates that the value of the resource's
 identifier is to be inserted into the ARN template when resolving it at
 runtime.
 
+
+.. _aws.api#arn-trait_using-an-arn-as-a-resource-identifier:
 
 Using an ARN as a resource identifier
 =====================================

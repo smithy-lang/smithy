@@ -46,12 +46,15 @@ public class ArnTraitTest {
         assertThat(arnTrait.getTemplate(), equalTo("resourceName"));
         assertThat(arnTrait.isNoAccount(), is(false));
         assertThat(arnTrait.isNoRegion(), is(false));
+        assertThat(arnTrait.isAbsolute(), is(false));
         assertThat(arnTrait.getLabels(), empty());
+        assertThat(arnTrait.getResourceDelimiter().isPresent(), is(false));
+        assertThat(arnTrait.isReusable(), is(false));
     }
 
     @Test
-    public void canSetRegionAndServiceToNo() {
-        Node node = Node.parse("{\"noAccount\": true, \"noRegion\": true, \"absolute\": false, \"template\": \"foo\"}");
+    public void canSetOtherFields() {
+        Node node = Node.parse("{\"noAccount\": true, \"noRegion\": true, \"absolute\": false, \"template\": \"foo\", \"reusable\": true}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ArnTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
@@ -60,8 +63,24 @@ public class ArnTraitTest {
         assertThat(arnTrait.getTemplate(), equalTo("foo"));
         assertThat(arnTrait.isNoAccount(), is(true));
         assertThat(arnTrait.isNoRegion(), is(true));
+        assertThat(arnTrait.isAbsolute(), is(false));
         assertThat(arnTrait.toNode(), equalTo(node));
         assertThat(arnTrait.toBuilder().build(), equalTo(arnTrait));
+        assertThat(arnTrait.isReusable(), is(true));
+    }
+
+    @Test
+    public void canSetAbsoluteAndDelimiter() {
+        Node node = Node.parse("{\"absolute\": true, \"template\": \"foo\", \"resourceDelimiter\": \":\"}");
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Optional<Trait> trait = provider.createTrait(ArnTrait.ID, ShapeId.from("ns.foo#foo"), node);
+
+        assertTrue(trait.isPresent());
+        ArnTrait arnTrait = (ArnTrait) trait.get();
+        assertThat(arnTrait.getTemplate(), equalTo("foo"));
+        assertThat(arnTrait.toBuilder().build(), equalTo(arnTrait));
+        assertThat(arnTrait.isAbsolute(), is(true));
+        assertThat(arnTrait.getResourceDelimiter().get(), equalTo(ArnTrait.ResourceDelimiter.COLON));
     }
 
     @Test

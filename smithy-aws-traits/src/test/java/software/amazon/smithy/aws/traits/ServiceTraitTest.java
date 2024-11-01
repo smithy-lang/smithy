@@ -112,7 +112,7 @@ public class ServiceTraitTest {
     public void loadsFromModel() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("test-model.json"))
+                .addImport(getClass().getResource("test-model.smithy"))
                 .assemble()
                 .unwrap();
         ServiceShape service = result
