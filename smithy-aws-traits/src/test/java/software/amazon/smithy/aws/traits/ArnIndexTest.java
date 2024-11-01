@@ -34,7 +34,7 @@ public class ArnIndexTest {
     public static void beforeClass() {
         model = Model.assembler()
                 .discoverModels(ArnIndexTest.class.getClassLoader())
-                .addImport(ArnIndexTest.class.getResource("test-model.json"))
+                .addImport(ArnIndexTest.class.getResource("test-model.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -104,7 +104,7 @@ public class ArnIndexTest {
     public void findsEffectiveArns() {
         Model m = Model.assembler()
                 .discoverModels(ArnIndexTest.class.getClassLoader())
-                .addImport(ArnIndexTest.class.getResource("effective-arns.json"))
+                .addImport(ArnIndexTest.class.getResource("effective-arns.smithy"))
                 .assemble()
                 .unwrap();
         ArnIndex index = ArnIndex.of(m);

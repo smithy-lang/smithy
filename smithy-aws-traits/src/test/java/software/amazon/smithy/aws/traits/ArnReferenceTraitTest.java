@@ -76,7 +76,7 @@ public class ArnReferenceTraitTest {
     public void loadsFromModel() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("test-model.json"))
+                .addImport(getClass().getResource("test-model.smithy"))
                 .assemble()
                 .unwrap();
         Shape service = result.expectShape(ShapeId.from("ns.foo#AbsoluteResourceArn"));

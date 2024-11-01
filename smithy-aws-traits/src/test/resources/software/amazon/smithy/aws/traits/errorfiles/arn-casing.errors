@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Resource1: A `resourceDelimiter` can only be set for an `absolute` ARN. | ArnTrait
