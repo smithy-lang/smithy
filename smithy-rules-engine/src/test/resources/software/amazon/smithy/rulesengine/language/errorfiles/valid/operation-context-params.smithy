@@ -13,7 +13,8 @@ service FizzBuzz {
     projection: {path: "listOfObjects[*].key"},
     subExpression: {path: "nested.nested.bar"},
     recursive: {path: "nested.nested.recursiveMember.foo"}
-    keysFunction: {path: "keys(map)"}
+    keysFunction: {path: "keys(map)"},
+    multiSelectFlatten: {path: "listOfUnions[*].[nested.foo, object.key][]"}
 )
 operation Bar {
     input: BarInput
@@ -23,11 +24,21 @@ structure BarInput {
     resourceId: String,
     nested: Nested1,
     listOfObjects: ListOfObjects,
+    listOfUnions: ListOfUnions,
     map: Map
 }
 
 list ListOfObjects {
     member: ObjectMember
+}
+
+list ListOfUnions {
+    member: UnionMember
+}
+
+union UnionMember {
+    nested: Nested1,
+    object: ObjectMember
 }
 
 structure ObjectMember {

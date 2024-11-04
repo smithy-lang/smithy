@@ -113,7 +113,7 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitCurrentNode(CurrentExpression expression) {
-            return ListUtils.of("current node");
+            return Collections.emptyList();
         }
 
         @Override
@@ -123,7 +123,7 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitFlatten(FlattenExpression expression) {
-            return ListUtils.of("flatten");
+            return expression.getExpression().accept(this);
         }
 
         @Override
@@ -156,7 +156,9 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
-            return ListUtils.of("multiselect list");
+            List<String> unsupported = new ArrayList<>();
+            expression.getExpressions().forEach(e -> unsupported.addAll(e.accept(this)));
+            return Collections.unmodifiableList(unsupported);
         }
 
         @Override
@@ -181,7 +183,10 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
 
         @Override
         public List<String> visitProjection(ProjectionExpression expression) {
-            return Collections.emptyList();
+            List<String> unsupported = new ArrayList<>();
+            unsupported.addAll(expression.getLeft().accept(this));
+            unsupported.addAll(expression.getRight().accept(this));
+            return Collections.unmodifiableList(unsupported);
         }
 
         @Override
