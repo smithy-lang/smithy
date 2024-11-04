@@ -324,7 +324,7 @@ to a subset of JMESPath:
   against the JSON document.  A Multiselect list with ``N`` expressions will result in a list of
   length ``N``.
 * `Flatten Operator`_ - merge sublists in the current result into a single list. Subsequent operations are
-  projected onto the flattened list with the same semantics as a wildcard expression
+  projected onto the flattened list with the same semantics as a wildcard expression.
 * `Keys function`_ - return a list of the keys in a map.  This is the only supported function but is required
   for binding to key values.
 
