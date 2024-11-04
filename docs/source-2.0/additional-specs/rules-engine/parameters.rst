@@ -318,8 +318,13 @@ to a subset of JMESPath:
   exist in the JSON document, than a null value is returned.
 * `Sub Expressions`_ - a combination of two expressions separated by the ``.`` char.
   Example:  ``grandparent.parent.child``
-* `Wildcard Expressions`_ - Creates a projection over the values in an array or map.
+* `Wildcard Expressions`_ - creates a projection over the values in an array or map.
   Remaining expressions are evaluated against each returned element.
+* `MultiSelect List`_ - extract a subset of elements from a JSON document.  Each expression is evaluated
+  against the JSON document.  A Multiselect list with ``N`` expressions will result in a list of
+  length ``N``.
+* `Flatten Operator`_ - merge sublists in the current result into a single list. Subsequent operations are
+  projected onto the flattened list with the same semantics as a wildcard expression
 * `Keys function`_ - return a list of the keys in a map.  This is the only supported function but is required
   for binding to key values.
 
@@ -430,4 +435,6 @@ The rules engine is highly extensible through
 .. _Identifiers: https://jmespath.org/specification.html#identifiers
 .. _Sub expressions: https://jmespath.org/specification.html#subexpressions
 .. _Wildcard expressions: https://jmespath.org/specification.html#wildcard-expressions
+.. _MultiSelect List: https://jmespath.org/specification.html#multiselect-list
+.. _Flatten Operator: https://jmespath.org/specification.html#flatten-operator
 .. _Keys function: https://jmespath.org/specification.html#keys
