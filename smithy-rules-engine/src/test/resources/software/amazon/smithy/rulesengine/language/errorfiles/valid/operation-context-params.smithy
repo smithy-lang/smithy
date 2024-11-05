@@ -14,6 +14,7 @@ service FizzBuzz {
     subExpression: {path: "nested.nested.bar"},
     recursive: {path: "nested.nested.recursiveMember.foo"}
     keysFunction: {path: "keys(map)"},
+    multiSelect: {path: "nested.[foo, nested.bar, nested.recursiveMember.foo]"}
     multiSelectFlatten: {path: "listOfUnions[*].[nested.foo, object.key][]"}
 )
 operation Bar {
