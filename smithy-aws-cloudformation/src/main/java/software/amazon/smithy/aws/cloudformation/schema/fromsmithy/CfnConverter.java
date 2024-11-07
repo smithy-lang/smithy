@@ -311,7 +311,7 @@ public final class CfnConverter {
             Tagging.Builder tagBuilder = Tagging.builder()
                     .taggable(true)
                     .tagOnCreate(tagsIndex.isResourceTagOnCreate(resourceShape.getId()))
-                    .tagProperty(getTagsProperty(resourceShape))
+                    .tagProperty("/properties/" + getTagMemberName(resourceShape))
                     .cloudFormationSystemTags(!trait.getDisableSystemTags())
                     // Unless tag-on-create is supported, Smithy tagging means
                     .tagUpdatable(true);
@@ -396,7 +396,7 @@ public final class CfnConverter {
         return builder.build();
     }
 
-    private String getTagsProperty(ResourceShape resource) {
+    private String getTagMemberName(ResourceShape resource) {
         return resource.getTrait(TaggableTrait.class)
                 .flatMap(TaggableTrait::getProperty)
                 .map(property -> {
@@ -414,7 +414,7 @@ public final class CfnConverter {
         ResourceShape resource,
         CfnResource cfnResource
     ) {
-        String tagPropertyName = getTagsProperty(resource);
+        String tagMemberName = getTagMemberName(resource);
         if (resource.hasTrait(TaggableTrait.class)) {
             AwsTagIndex tagIndex = AwsTagIndex.of(model);
             TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
@@ -422,13 +422,13 @@ public final class CfnConverter {
                     .containsKey(trait.getProperty().get())) {
                 if (trait.getProperty().isPresent()) {
                     ShapeId definition = resource.getProperties().get(trait.getProperty().get());
-                    builder.addMember(tagPropertyName, definition);
+                    builder.addMember(tagMemberName, definition);
                 } else {
                     // A valid TagResource operation certainly has a single tags input member.
                     AwsTagIndex awsTagIndex = AwsTagIndex.of(model);
                     Optional<ShapeId> tagOperation = tagIndex.getTagResourceOperation(resource.getId());
                     MemberShape member = awsTagIndex.getTagsMember(tagOperation.get()).get();
-                    member = member.toBuilder().id(builder.getId().withMember(tagPropertyName)).build();
+                    member = member.toBuilder().id(builder.getId().withMember(tagMemberName)).build();
                     builder.addMember(member);
                 }
             }

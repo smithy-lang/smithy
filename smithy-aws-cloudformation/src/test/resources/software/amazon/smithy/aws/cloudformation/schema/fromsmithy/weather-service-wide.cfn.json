@@ -80,7 +80,7 @@
     },
     "tagging": {
         "tagOnCreate": false,
-        "tagProperty": "Tags",
+        "tagProperty": "/properties/Tags",
         "tagUpdatable": true,
         "cloudFormationSystemTags": true,
         "taggable": true
