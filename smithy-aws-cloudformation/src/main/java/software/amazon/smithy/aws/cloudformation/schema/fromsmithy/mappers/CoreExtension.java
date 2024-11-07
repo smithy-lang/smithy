@@ -34,6 +34,7 @@ public final class CoreExtension implements Smithy2CfnExtension {
                 new IdentifierMapper(),
                 new JsonAddMapper(),
                 new MutabilityMapper(),
-                new RequiredMapper());
+                new RequiredMapper(),
+                new TaggingMapper());
     }
 }

@@ -83,7 +83,12 @@
         "tagProperty": "/properties/Tags",
         "tagUpdatable": true,
         "cloudFormationSystemTags": true,
-        "taggable": true
+        "taggable": true,
+        "permissions": [
+            "weather:ListTagsForResource",
+            "weather:TagResource",
+            "weather:UntagResource"
+        ]
     },
     "additionalProperties": false
 }

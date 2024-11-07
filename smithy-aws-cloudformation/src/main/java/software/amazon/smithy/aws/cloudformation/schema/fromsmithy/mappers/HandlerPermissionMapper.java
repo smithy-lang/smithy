@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * @see <a href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers">handlers Docs</a>
  */
 @SmithyInternalApi
-public final class HandlerPermissionMapper implements CfnMapper {
+final class HandlerPermissionMapper implements CfnMapper {
     @Override
     public void before(Context context, ResourceSchema.Builder resourceSchema) {
         if (context.getConfig().getDisableHandlerPermissionGeneration()) {
@@ -97,7 +97,7 @@ public final class HandlerPermissionMapper implements CfnMapper {
                         .permissions(permissions).build()));
     }
 
-    private Set<String> getPermissionsEntriesForOperation(Model model, ServiceShape service, ShapeId operationId) {
+    static Set<String> getPermissionsEntriesForOperation(Model model, ServiceShape service, ShapeId operationId) {
         OperationShape operation = model.expectShape(operationId, OperationShape.class);
         Set<String> permissionsEntries = new TreeSet<>();
 
