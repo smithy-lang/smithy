@@ -20,8 +20,8 @@ import java.util.List;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -41,24 +41,30 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
     // * writeOnly
 
     private Property(Builder builder) {
+        Schema.Builder schemaBuilder;
+
+        if (builder.schema == null) {
+            schemaBuilder = Schema.builder();
+        } else {
+            schemaBuilder = builder.schema.toBuilder();
+        }
+
         this.insertionOrder = builder.insertionOrder;
-        this.dependencies = ListUtils.copyOf(builder.dependencies);
-        this.schema = builder.schema;
+        if (this.insertionOrder) {
+            schemaBuilder.putExtension("insertionOrder", Node.from(true));
+        }
+
+        this.dependencies = builder.dependencies;
+        if (!this.dependencies.isEmpty()) {
+            schemaBuilder.putExtension("dependencies", Node.fromStrings(this.dependencies));
+        }
+
+        this.schema = schemaBuilder.build();
     }
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder builder = schema.toNode().expectObjectNode().toBuilder();
-
-        // Only serialize these properties if set to non-defaults.
-        if (insertionOrder) {
-            builder.withMember("insertionOrder", Node.from(insertionOrder));
-        }
-        if (!dependencies.isEmpty()) {
-            builder.withMember("dependencies", Node.fromStrings(dependencies));
-        }
-
-        return builder.build();
+        return schema.toNode().expectObjectNode();
     }
 
     @Override
@@ -67,6 +73,22 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
                 .insertionOrder(insertionOrder)
                 .dependencies(dependencies)
                 .schema(schema);
+    }
+
+    public static Property fromNode(Node node) {
+        ObjectNode objectNode = node.expectObjectNode();
+        Builder builder = builder();
+
+        objectNode.getBooleanMember("insertionOrder", builder::insertionOrder);
+        objectNode.getArrayMember("dependencies", StringNode::getValue, builder::dependencies);
+
+        builder.schema(Schema.fromNode(objectNode));
+
+        return builder.build();
+    }
+
+    public static Property fromSchema(Schema schema) {
+        return builder().schema(schema).build();
     }
 
     public static Builder builder() {
