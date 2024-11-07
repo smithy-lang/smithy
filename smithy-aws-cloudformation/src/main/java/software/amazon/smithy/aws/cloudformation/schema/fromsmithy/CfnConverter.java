@@ -25,16 +25,14 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import software.amazon.smithy.aws.cloudformation.schema.CfnConfig;
 import software.amazon.smithy.aws.cloudformation.schema.CfnException;
+import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers.TaggingMapper;
 import software.amazon.smithy.aws.cloudformation.schema.model.Property;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
-import software.amazon.smithy.aws.cloudformation.schema.model.Tagging;
 import software.amazon.smithy.aws.cloudformation.traits.CfnNameTrait;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResource;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceIndex;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
-import software.amazon.smithy.aws.traits.tagging.AwsTagIndex;
-import software.amazon.smithy.aws.traits.tagging.TaggableTrait;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.PropertyNamingStrategy;
@@ -56,7 +54,6 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 public final class CfnConverter {
-    private static final String DEFAULT_TAGS_NAME = "Tags";
     private ClassLoader classLoader = CfnConverter.class.getClassLoader();
     private CfnConfig config = new CfnConfig();
     private final List<Smithy2CfnExtension> extensions = new ArrayList<>();
@@ -305,20 +302,6 @@ public final class CfnConverter {
             builder.addDefinition(definitionName, definition.getValue());
         }
 
-        if (resourceShape.hasTrait(TaggableTrait.class)) {
-            AwsTagIndex tagsIndex = AwsTagIndex.of(environment.context.getModel());
-            TaggableTrait trait = resourceShape.expectTrait(TaggableTrait.class);
-            Tagging.Builder tagBuilder = Tagging.builder()
-                    .taggable(true)
-                    .tagOnCreate(tagsIndex.isResourceTagOnCreate(resourceShape.getId()))
-                    .tagProperty("/properties/" + getTagMemberName(resourceShape))
-                    .cloudFormationSystemTags(!trait.getDisableSystemTags())
-                    // Unless tag-on-create is supported, Smithy tagging means
-                    .tagUpdatable(true);
-
-            builder.tagging(tagBuilder.build());
-        }
-
         // Apply all the mappers' after methods.
         ResourceSchema resourceSchema = builder.build();
         for (CfnMapper mapper : environment.mappers) {
@@ -391,47 +374,8 @@ public final class CfnConverter {
             }
         });
 
-        injectTagsIfNecessary(builder, model, resource, cfnResource);
+        TaggingMapper.injectTagsMember(config, model, resource, builder);
 
         return builder.build();
-    }
-
-    private String getTagMemberName(ResourceShape resource) {
-        return resource.getTrait(TaggableTrait.class)
-                .flatMap(TaggableTrait::getProperty)
-                .map(property -> {
-                    if (config.getDisableCapitalizedProperties()) {
-                        return property;
-                    }
-                    return StringUtils.capitalize(property);
-                })
-                .orElse(DEFAULT_TAGS_NAME);
-    }
-
-    private void injectTagsIfNecessary(
-        StructureShape.Builder builder,
-        Model model,
-        ResourceShape resource,
-        CfnResource cfnResource
-    ) {
-        String tagMemberName = getTagMemberName(resource);
-        if (resource.hasTrait(TaggableTrait.class)) {
-            AwsTagIndex tagIndex = AwsTagIndex.of(model);
-            TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
-            if (!trait.getProperty().isPresent() || !cfnResource.getProperties()
-                    .containsKey(trait.getProperty().get())) {
-                if (trait.getProperty().isPresent()) {
-                    ShapeId definition = resource.getProperties().get(trait.getProperty().get());
-                    builder.addMember(tagMemberName, definition);
-                } else {
-                    // A valid TagResource operation certainly has a single tags input member.
-                    AwsTagIndex awsTagIndex = AwsTagIndex.of(model);
-                    Optional<ShapeId> tagOperation = tagIndex.getTagResourceOperation(resource.getId());
-                    MemberShape member = awsTagIndex.getTagsMember(tagOperation.get()).get();
-                    member = member.toBuilder().id(builder.getId().withMember(tagMemberName)).build();
-                    builder.addMember(member);
-                }
-            }
-        }
     }
 }
