@@ -19,6 +19,11 @@ service Weather {
     operations: [GetCurrentTime]
 }
 
+service Weather2 {
+    version: "2006-03-01",
+    resources: [City]
+}
+
 structure Tag {
     key: String
     value: String

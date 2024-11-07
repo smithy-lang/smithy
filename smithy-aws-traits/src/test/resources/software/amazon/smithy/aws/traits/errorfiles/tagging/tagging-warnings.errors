@@ -3,3 +3,4 @@
 [WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTagging
 [WARNING] example.weather#City: Suggested tag property name is '[T|t]ags'. | TagResourcePropertyName
 [DANGER] example.weather#UpdateCity: Update and put resource lifecycle operations should not support updating tags because it is a privileged operation that modifies access. | TaggableResource
+[WARNING] example.weather#Weather2: Service has resources with `aws.api#taggable` applied but does not have the `aws.api#tagEnabled` trait. | TaggableResource

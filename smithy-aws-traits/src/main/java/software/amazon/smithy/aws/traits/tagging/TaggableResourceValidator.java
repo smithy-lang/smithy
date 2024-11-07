@@ -43,14 +43,23 @@ public final class TaggableResourceValidator extends AbstractValidator {
         List<ValidationEvent> events = new LinkedList<>();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
-        for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
+        for (ServiceShape service : model.getServiceShapes()) {
             for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
+                boolean resourceLikelyTaggable = false;
                 if (resource.hasTrait(TaggableTrait.class)) {
                     events.addAll(validateResource(model, resource, service, tagIndex));
-                } else if (resource.hasTrait(ArnTrait.class) && tagIndex.serviceHasTagApis(service.getId())) {
+                    resourceLikelyTaggable = true;
+                } else if (resource.hasTrait(ArnTrait.class) && tagIndex.serviceHasTagApis(service)) {
                     // If a resource does not have the taggable trait, but has an ARN, and the service has tag
                     // operations, it is most likely a mistake.
                     events.add(warning(resource, "Resource is likely missing `aws.api#taggable` trait."));
+                    resourceLikelyTaggable = true;
+                }
+
+                // It's possible the resource was marked as taggable but the service isn't tagEnabled.
+                if (resourceLikelyTaggable && !service.hasTrait(TagEnabledTrait.class)) {
+                    events.add(warning(service, "Service has resources with `aws.api#taggable` applied but does not "
+                            + "have the `aws.api#tagEnabled` trait."));
                 }
             }
         }
