@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides Smithy traits and validators for API Gateway."
+description = "This module provides Smithy traits and validators that are used by most AWS services."
 
 ext {
-    displayName = "Smithy :: AWS :: API Gateway Traits"
-    moduleName = "software.amazon.smithy.aws.apigateway.traits"
+    set("displayName", "Smithy :: AWS Core Traits")
+    set("moduleName", "software.amazon.smithy.aws.traits")
 }
 
 dependencies {
-    api project(":smithy-aws-traits")
+    api(project(":smithy-diff"))
+    api(project(":smithy-model"))
 }

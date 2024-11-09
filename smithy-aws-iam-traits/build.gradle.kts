@@ -13,9 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "A standalone JMESPath parser"
+description = "This module provides Smithy traits and validators for IAM."
 
 ext {
-    displayName = "Smithy :: JMESPath"
-    moduleName = "software.amazon.smithy.jmespath"
+    set("displayName", "Smithy :: AWS :: IAM Traits")
+    set("moduleName", "software.amazon.smithy.aws.iam.traits")
+}
+
+dependencies {
+    api(project(":smithy-aws-traits"))
 }

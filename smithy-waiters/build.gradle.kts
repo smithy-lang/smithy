@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,15 +13,14 @@
  * permissions and limitations under the License.
  */
 
-description = "This module detects differences between two Smithy models, identifying " +
-        "changes that are safe and changes that are backward incompatible."
+description = "Defines Smithy waiters."
 
 ext {
-    displayName = "Smithy :: Diff"
-    moduleName = "software.amazon.smithy.diff"
+    set("displayName", "Smithy :: Waiters")
+    set("moduleName", "software.amazon.smithy.waiters")
 }
 
 dependencies {
-    api project(":smithy-utils")
-    api project(":smithy-model")
+    api(project(":smithy-model"))
+    api(project(":smithy-jmespath"))
 }

@@ -13,9 +13,17 @@
  * permissions and limitations under the License.
  */
 
-description = "This module contains utility classes and interfaces for Smithy."
+description = "This module contains support for converting a Smithy model to OpenAPI."
 
 ext {
-    displayName = "Smithy :: Utilities"
-    moduleName = "software.amazon.smithy.utils"
+    set("displayName", "Smithy :: OpenAPI Conversion")
+    set("moduleName", "software.amazon.smithy.openapi")
+}
+
+dependencies {
+    api(project(":smithy-model"))
+    api(project(":smithy-build"))
+    api(project(":smithy-jsonschema"))
+    api(project(":smithy-aws-traits"))
+    api(project(":smithy-openapi-traits"))
 }

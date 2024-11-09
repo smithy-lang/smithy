@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,17 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module contains support for converting a Smithy model to OpenAPI."
+description = "Defines smoke test traits."
 
 ext {
-    displayName = "Smithy :: OpenAPI Conversion"
-    moduleName = "software.amazon.smithy.openapi"
+    set("displayName", "Smithy :: Smoke Test Traits")
+    set("moduleName", "software.amazon.smithy.smoketest.traits")
 }
 
 dependencies {
-    api project(":smithy-model")
-    api project(":smithy-build")
-    api project(":smithy-jsonschema")
-    api project(":smithy-aws-traits")
-    api project(":smithy-openapi-traits")
+    api(project(":smithy-model"))
 }

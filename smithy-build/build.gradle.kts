@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,13 +13,18 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides Smithy traits and validators for CloudFormation."
+description = "This module is a library used to validate Smithy models, create filtered " +
+        "projections of a model, and generate build artifacts."
 
 ext {
-    displayName = "Smithy :: AWS :: CloudFormation Traits"
-    moduleName = "software.amazon.smithy.aws.cloudformation.traits"
+    set("displayName", "Smithy :: Build")
+    set("moduleName", "software.amazon.smithy.build")
 }
 
 dependencies {
-    api project(":smithy-model")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
+
+    // Allows testing of annotation processor
+    testImplementation("com.google.testing.compile:compile-testing:0.21.0")
 }

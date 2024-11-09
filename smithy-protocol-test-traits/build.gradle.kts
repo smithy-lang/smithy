@@ -13,15 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides support for customizable linters declared in the " +
-        "metadata section of a Smithy model."
+description = "Defines protocol test traits."
 
 ext {
-    displayName = "Smithy :: Linters"
-    moduleName = "software.amazon.smithy.linters"
+    set("displayName", "Smithy :: Protocol Test Traits")
+    set("moduleName", "software.amazon.smithy.protocoltest.traits")
 }
 
 dependencies {
-    api project(":smithy-model")
-    api project(":smithy-utils")
+    api(project(":smithy-model"))
 }

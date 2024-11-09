@@ -13,13 +13,15 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines protocol test traits."
+description = "This module detects differences between two Smithy models, identifying " +
+        "changes that are safe and changes that are backward incompatible."
 
 ext {
-    displayName = "Smithy :: Protocol Test Traits"
-    moduleName = "software.amazon.smithy.protocoltest.traits"
+    set("displayName", "Smithy :: Diff")
+    set("moduleName", "software.amazon.smithy.diff")
 }
 
 dependencies {
-    api project(":smithy-model")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 }

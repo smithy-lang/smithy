@@ -1,5 +1,5 @@
 /*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines smoke test traits."
+description = "This module provides support for customizable linters declared in the " +
+        "metadata section of a Smithy model."
 
 ext {
-    displayName = "Smithy :: Smoke Test Traits"
-    moduleName = "software.amazon.smithy.smoketest.traits"
+    set("displayName", "Smithy :: Linters")
+    set("moduleName", "software.amazon.smithy.linters")
 }
 
 dependencies {
-    api project(":smithy-model")
+    api(project(":smithy-model"))
+    api(project(":smithy-utils"))
 }

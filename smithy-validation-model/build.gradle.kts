@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,14 +13,25 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines Smithy waiters."
+plugins {
+    id("software.amazon.smithy.gradle.smithy-jar")
+}
+
+description = "This module provides support for validation in Smithy server SDKs"
 
 ext {
-    displayName = "Smithy :: Waiters"
-    moduleName = "software.amazon.smithy.waiters"
+    set("displayName", "Smithy :: Validation Support")
+    set("moduleName", "software.amazon.smithy.validation.model")
 }
 
 dependencies {
-    api project(":smithy-model")
-    api project(":smithy-jmespath")
+    implementation(project(path = ":smithy-cli", configuration = "shadow"))
+}
+
+tasks.sourcesJar {
+    dependsOn("smithyJarStaging")
+}
+
+smithy {
+    smithyBuildConfigs.set(project.files())
 }

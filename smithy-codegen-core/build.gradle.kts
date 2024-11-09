@@ -13,25 +13,16 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides the core implementation of loading, validating, " +
-        "traversing, mutating, and serializing a Smithy model."
+description = "This module provides a code generation framework for generating clients, " +
+        "servers, documentation, and other artifacts for various languages from Smithy models."
 
 ext {
-    displayName = "Smithy :: Model"
-    moduleName = "software.amazon.smithy.model"
+    set("displayName", "Smithy :: Code Generation Framework")
+    set("moduleName", "software.amazon.smithy.codegen.core")
 }
-
-apply plugin: "me.champeau.jmh"
 
 dependencies {
-    api project(":smithy-utils")
-    jmh project(":smithy-utils")
-}
-
-jmh {
-    timeUnit = "us"
-}
-
-processJmhResources {
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
+    api(project(":smithy-build"))
 }

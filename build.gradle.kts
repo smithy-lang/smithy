@@ -13,28 +13,27 @@
  * permissions and limitations under the License.
  */
 
-import java.util.stream.Collectors
 import com.github.spotbugs.snom.Effort
+import org.jreleaser.model.Active
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    id "java-library"
-    id "maven-publish"
-    id "signing"
-    id "checkstyle"
-    id "jacoco"
-    id "com.github.spotbugs" version "6.0.8"
-    id "io.codearte.nexus-staging" version "0.30.0"
-    id "me.champeau.jmh" version "0.7.2"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.jreleaser" version "1.12.0" apply false
+    `java-library`
+    `maven-publish`
+    signing
+    checkstyle
+    jacoco
+    id("com.github.spotbugs") version "6.0.8"
+    id("io.codearte.nexus-staging") version "0.30.0"
+    id("me.champeau.jmh") version "0.7.2"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.jreleaser") version "1.12.0" apply false
 }
 
-ext {
-    // Load the Smithy version from VERSION.
-    libraryVersion = project.file("VERSION").getText('UTF-8').replace(System.lineSeparator(), "")
-}
+// Load the Smithy version from VERSION.
+val libraryVersion = project.file("VERSION").readText().trim()
 
-println "Smithy version: '${libraryVersion}'"
+println("Smithy version: '$libraryVersion'")
 
 allprojects {
     group = "software.amazon.smithy"
@@ -43,10 +42,10 @@ allprojects {
 
 // JReleaser publishes artifacts from a local staging repository, rather than maven local.
 // https://jreleaser.org/guide/latest/examples/maven/staging-artifacts.html#_gradle
-def stagingDirectory = rootProject.layout.buildDirectory.dir("staging")
+val stagingDirectory = rootProject.layout.buildDirectory.dir("staging")
 
 subprojects {
-    apply plugin: "java-library"
+    apply(plugin = "java-library")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -59,44 +58,40 @@ subprojects {
     }
 
     dependencies {
-        testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
-        testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
-        testImplementation "org.hamcrest:hamcrest:2.1"
-        testCompileOnly "org.apiguardian:apiguardian-api:1.1.2"
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+        testImplementation("org.hamcrest:hamcrest:2.1")
+        testCompileOnly("org.apiguardian:apiguardian-api:1.1.2")
     }
 
     // Reusable license copySpec for building JARs
-    def licenseSpec = copySpec {
-        from "${project.rootDir}/LICENSE"
-        from "${project.rootDir}/NOTICE"
+    val licenseSpec = copySpec {
+        from("${project.rootDir}/LICENSE")
+        from("${project.rootDir}/NOTICE")
     }
 
     // Set up tasks that build source and javadoc jars.
-    task sourcesJar(type: Jar) {
+    tasks.register<Jar>("sourcesJar") {
         metaInf.with(licenseSpec)
-        from {
-            sourceSets.main.allSource
-        }
-        archiveClassifier = "sources"
+        from(sourceSets.main.get().allSource)
+        archiveClassifier.set("sources")
     }
 
     // Build a javadoc JAR too.
-    task javadocJar(type: Jar) {
+    tasks.register<Jar>("javadocJar") {
         metaInf.with(licenseSpec)
-        from {
-            tasks.javadoc
-        }
-        archiveClassifier = "javadoc"
+        from(tasks.javadoc)
+        archiveClassifier.set("javadoc")
     }
 
     // Include an Automatic-Module-Name in all JARs.
-    afterEvaluate { Project project ->
+    afterEvaluate {
         tasks.jar {
             metaInf.with(licenseSpec)
-            inputs.property("moduleName", project.ext["moduleName"])
+            inputs.property("moduleName", project.extra.get("moduleName"))
             manifest {
-                attributes "Automatic-Module-Name": project.ext["moduleName"]
+                attributes("Automatic-Module-Name" to project.extra.get("moduleName"))
             }
         }
     }
@@ -106,29 +101,32 @@ subprojects {
 
     // ==== Tests ====
     // https://docs.gradle.org/current/samples/sample_java_multi_project_with_junit5_tests.html
-    test {
+    tasks.test {
         useJUnitPlatform()
     }
+
     // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
     // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/logging/TestLoggingContainer.html
     if (project.hasProperty("log-tests")) {
-        test {
+        tasks.test {
             testLogging {
-                events = ["passed", "skipped", "failed"]
-                exceptionFormat = "full"
+                events("passed", "skipped", "failed")
+                exceptionFormat = TestExceptionFormat.FULL
             }
         }
     }
 
     // ==== Maven ====
-    apply plugin: "maven-publish"
-    apply plugin: "signing"
-    apply plugin: "com.github.johnrengelman.shadow"
+    apply(plugin = "maven-publish")
+    apply(plugin = "signing")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     // This is a little hacky, but currently needed to build a shadowed CLI JAR and smithy-syntax JAR with the same
     // customizations as other JARs.
     if (project.name != "smithy-cli" && project.name != "smithy-syntax") {
-        tasks.shadowJar.enabled = false
+        tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+            isEnabled = false
+        }
     }
 
     publishing {
@@ -136,16 +134,16 @@ subprojects {
             // JReleaser's `publish` task publishes to all repositories, so only configure one.
             maven {
                 name = "localStaging"
-                url = stagingDirectory
+                url = uri(stagingDirectory)
             }
         }
 
         publications {
-            mavenJava(MavenPublication) { publication ->
-                if (tasks.shadowJar.enabled) {
-                    project.shadow.component(publication)
+            create<MavenPublication>("mavenJava") {
+                if (tasks.findByName("shadowJar")?.enabled == true) {
+                    project.shadow.component(this)
                 } else {
-                    publication.from(components["java"])
+                    from(components["java"])
                 }
 
                 // Ship the source and javadoc jars.
@@ -153,7 +151,7 @@ subprojects {
                 artifact(tasks["javadocJar"])
 
                 // Include extra information in the POMs.
-                project.afterEvaluate {
+                afterEvaluate {
                     pom {
                         name.set(project.ext["displayName"].toString())
                         description.set(project.description)
@@ -186,89 +184,93 @@ subprojects {
         if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
             signing {
                 useInMemoryPgpKeys(
-                        (String) project.property("signingKey"),
-                        (String) project.property("signingPassword"))
+                    project.property("signingKey").toString(),
+                    project.property("signingPassword").toString()
+                )
                 sign(publishing.publications["mavenJava"])
             }
         }
     }
 
-    task copyMavenMetadataForDevelopment(type: Copy) {
-        from('build/tmp/publishMavenJavaPublicationToMavenLocal') {
-            rename 'module-maven-metadata.xml', 'maven-metadata.xml'
+    tasks.register<Copy>("copyMavenMetadataForDevelopment") {
+        from("build/tmp/publishMavenJavaPublicationToMavenLocal") {
+            rename("module-maven-metadata.xml", "maven-metadata.xml")
         }
-
-        def wdir = System.getProperty("user.home") + '/.m2/repository/software/amazon/smithy/' + project.name
+        val wdir = "${System.getProperty("user.home")}/.m2/repository/software/amazon/smithy/${project.name}"
         into(wdir)
     }
 
-    publishToMavenLocal.finalizedBy(copyMavenMetadataForDevelopment)
+    tasks.publishToMavenLocal {
+        finalizedBy("copyMavenMetadataForDevelopment")
+    }
 
     // ==== CheckStyle ====
     // https://docs.gradle.org/current/userguide/checkstyle_plugin.html
-    apply plugin: "checkstyle"
-    tasks["checkstyleTest"].enabled = false
+    apply(plugin = "checkstyle")
+    tasks.named("checkstyleTest") {
+        enabled = false
+    }
 
     // ==== Code coverage ====
     // https://docs.gradle.org/current/userguide/jacoco_plugin.html
-    apply plugin: "jacoco"
+    apply(plugin = "jacoco")
+
     // report is always generated after tests run
-    test {
-        finalizedBy jacocoTestReport
+    tasks.test {
+        finalizedBy(tasks.jacocoTestReport)
     }
+
     // tests are required to run before generating the report
-    jacocoTestReport {
-        dependsOn test
-    }
-    jacocoTestReport {
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
         reports {
             xml.required.set(false)
             csv.required.set(false)
-            html.destination file("$buildDir/reports/jacoco")
+            html.outputLocation.set(file("$buildDir/reports/jacoco"))
         }
     }
 
     // ==== Spotbugs ====
     // https://plugins.gradle.org/plugin/com.github.spotbugs
-    apply plugin: "com.github.spotbugs"
+    apply(plugin = "com.github.spotbugs")
     // We don't need to lint tests.
-    tasks["spotbugsTest"].enabled = false
+    tasks.named("spotbugsTest") {
+        enabled = false
+    }
     // Configure the bug filter for spotbugs.
     spotbugs {
-        effort = Effort.MAX
-        excludeFilter = file("${project.rootDir}/config/spotbugs/filter.xml")
+        effort.set(Effort.MAX)
+        excludeFilter.set(file("${project.rootDir}/config/spotbugs/filter.xml"))
     }
 }
 
 // The root project doesn't produce a JAR.
-tasks["jar"].enabled = false
+tasks.named("jar") {
+    enabled = false
+}
 
 // ==== Javadoc ====
-project.afterEvaluate {
+afterEvaluate {
     tasks.javadoc {
         title = "Smithy API ${version}"
         setDestinationDir(file("${project.buildDir}/docs/javadoc/latest"))
         // Build a consolidated javadoc of all subprojects.
-        source(project.subprojects.stream().map({
-            project(it.path).sourceSets.main.allJava
-        }).collect(Collectors.toList()))
-        classpath = files(project.subprojects.stream()
-                .map({project(it.path).sourceSets.main.compileClasspath})
-                .collect(Collectors.toList()))
+        source(subprojects.map { project(it.path).sourceSets.main.get().allJava })
+        classpath = files(subprojects.map { project(it.path).sourceSets.main.get().compileClasspath })
     }
 }
 
 // Disable HTML doclint to work around heading tag sequence validation
 // inconsistencies between JDK15 and earlier Java versions.
 allprojects {
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:-html', '-quiet')
-        // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
-        // --no-module-directories does not exist in JDK 8 and is removed in 13
-        if (JavaVersion.current().isJava9()
-                || JavaVersion.current().isJava10()
-                || JavaVersion.current().isJava11()) {
-            options.addBooleanOption('-no-module-directories', true)
+    tasks.withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).apply {
+            addStringOption("Xdoclint:-html", "-quiet")
+            // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
+            // --no-module-directories does not exist in JDK 8 and is removed in 13
+            if (JavaVersion.current().run { isJava9 || isJava10 || isJava11 }) {
+                addBooleanOption("-no-module-directories", true)
+            }
         }
     }
 }
@@ -276,31 +278,31 @@ allprojects {
 // We're using JReleaser in the smithy-cli subproject, so we want to have a flag to control
 // which JReleaser configuration to use to prevent conflicts
 if (project.hasProperty("release.main")) {
-    apply plugin: 'org.jreleaser'
+    apply(plugin = "org.jreleaser")
 
-    jreleaser {
-        dryrun = false
+    extensions.configure<org.jreleaser.gradle.plugin.JReleaserExtension> {
+        dryrun.set(false)
 
         // Used for creating and pushing the version tag, but this configuration ensures that
         // an actual GitHub release isn't created (since the CLI release does that)
         release {
             github {
-                skipRelease = true
-                tagName = '{{projectVersion}}'
+                skipRelease.set(true)
+                tagName.set("{{projectVersion}}")
             }
         }
 
         // Used to announce a release to configured announcers.
         // https://jreleaser.org/guide/latest/reference/announce/index.html
         announce {
-            active = "NEVER"
+            active.set(Active.NEVER)
         }
 
         // Signing configuration.
         // https://jreleaser.org/guide/latest/reference/signing.html
         signing {
-            active = "ALWAYS"
-            armored = true
+            active.set(Active.ALWAYS)
+            armored.set(true)
         }
 
         // Configuration for deploying to Maven Central.
@@ -308,12 +310,12 @@ if (project.hasProperty("release.main")) {
         deploy {
             maven {
                 nexus2 {
-                    'maven-central' {
-                        active = "ALWAYS"
-                        url = "https://aws.oss.sonatype.org/service/local"
-                        snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
-                        closeRepository = true
-                        releaseRepository = true
+                    create("maven-central") {
+                        active.set(Active.ALWAYS)
+                        url.set("https://aws.oss.sonatype.org/service/local")
+                        snapshotUrl.set("https://aws.oss.sonatype.org/content/repositories/snapshots")
+                        closeRepository.set(true)
+                        releaseRepository.set(true)
                         stagingRepository(stagingDirectory.get().toString())
                     }
                 }

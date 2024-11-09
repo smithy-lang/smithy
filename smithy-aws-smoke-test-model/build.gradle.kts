@@ -6,10 +6,10 @@
 description = "Defines shapes used by AWS for modeling smoke tests"
 
 ext {
-    displayName = "Smithy :: AWS :: Smoke Test :: Model"
-    moduleName = "software.amazon.smithy.aws.smoketest.model"
+    set("displayName", "Smithy :: AWS :: Smoke Test :: Model")
+    set("moduleName", "software.amazon.smithy.aws.smoketest.model")
 }
 
 dependencies {
-    api project(":smithy-smoke-test-traits")
+    api(project(":smithy-smoke-test-traits"))
 }

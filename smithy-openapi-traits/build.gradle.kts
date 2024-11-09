@@ -6,10 +6,10 @@
 description = "This module provides Smithy traits that are used in converting a Smithy model to OpenAPI."
 
 ext {
-    displayName = "Smithy :: OpenAPI Traits"
-    moduleName = "software.amazon.smithy.openapi.traits"
+    set("displayName", "Smithy :: OpenAPI Traits")
+    set("moduleName", "software.amazon.smithy.openapi.traits")
 }
 
 dependencies {
-    api project(":smithy-model")
+    api(project(":smithy-model"))
 }

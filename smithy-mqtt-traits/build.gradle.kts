@@ -13,14 +13,14 @@
  * permissions and limitations under the License.
  */
 
-description = "This module contains support for converting a Smithy model to JSON Schema."
+description = "This module provides the implementation of MQTT binding traits for Smithy."
 
 ext {
-    displayName = "Smithy :: JSON Schema Conversion"
-    moduleName = "software.amazon.smithy.jsonschema"
+    set("displayName", "Smithy :: MQTT Traits")
+    set("moduleName", "software.amazon.smithy.mqtt.traits")
 }
 
 dependencies {
-    api project(":smithy-utils")
-    api project(":smithy-model")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 }
