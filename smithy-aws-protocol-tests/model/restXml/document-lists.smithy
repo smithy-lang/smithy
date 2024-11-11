@@ -352,8 +352,10 @@ structure XmlListsInputOutput {
     @xmlName("renamed")
     renamedListMembers: RenamedListMembers,
 
+    @suppress(["XmlFlattenedTrait"])
     @xmlFlattened
     // The xmlname on the targeted list is ignored, and the member name is used.
+    // The validation that flags this is suppressed so we can test this behavior.
     flattenedList: RenamedListMembers,
 
     @xmlName("customName")
@@ -376,7 +378,10 @@ structure XmlListsInputOutput {
     @xmlName("myStructureList")
     structureList: StructureList,
 
+    @suppress(["XmlFlattenedTrait"])
     @xmlFlattened
+    // The xmlname on the targeted list is ignored, and the member name is used.
+    // The validation that flags this is suppressed so we can test this behavior.
     flattenedStructureList: StructureList
 }
 

@@ -7,7 +7,6 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -31,21 +30,25 @@ public final class XmlFlattenedTraitValidator extends AbstractValidator {
                 continue;
             }
 
-            model.getShape(member.getTarget())
-                    .flatMap(Shape::asListShape)
-                    .flatMap(listShape -> validateMemberTargetingList(member, listShape))
-                    .ifPresent(events::add);
+            Shape target = model.expectShape(member.getTarget());
+            if (target instanceof ListShape) {
+                ListShape targetList = (ListShape) target;
+                validateMemberTargetingList(member, targetList, events);
+            }
         }
         return events;
     }
 
-    private Optional<ValidationEvent> validateMemberTargetingList(MemberShape member, ListShape targetList) {
-        return targetList.getMember().getTrait(XmlNameTrait.class)
-                .filter(xmlName -> !member.getMemberName().equals(xmlName.getValue()))
-                .map(xmlName -> warning(member, String.format(
+    private void validateMemberTargetingList(MemberShape member, ListShape targetList, List<ValidationEvent> events) {
+        if (targetList.getMember().hasTrait(XmlNameTrait.class)) {
+            XmlNameTrait xmlName = targetList.getMember().expectTrait(XmlNameTrait.class);
+            if (!member.getMemberName().equals(xmlName.getValue())) {
+                events.add(warning(member, String.format(
                         "Member is `@xmlFlattened`, so `@xmlName` of target's member (`%s`) has no effect."
                         + " The flattened list elements will have the name of this member - `%s`. If this"
                         + " is unintended, you can add `@xmlName(\"%s\")` to this member.",
                         targetList.getMember().getId(), member.getMemberName(), xmlName.getValue())));
+            }
+        }
     }
 }

@@ -1,15 +1,5 @@
 $version: "2.0"
 
-metadata suppressions = [
-    {
-        id: "XmlFlattenedTrait"
-        namespace: "aws.protocoltests.restxml"
-        reason: """
-            Some tests are for asserting the correct behavior in the case that
-            xmlFlattened is wrong and trips this validator."""
-    }
-]
-
 namespace aws.protocoltests.restxml
 
 use aws.api#service
