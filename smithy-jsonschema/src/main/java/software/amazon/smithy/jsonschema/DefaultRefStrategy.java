@@ -148,6 +148,17 @@ final class DefaultRefStrategy implements RefStrategy {
             return true;
         }
 
+        // Maps are not inlined by default, but can be if configured.
+        // Maps are usually not a generated type in programming languages,
+        // but JSON schema represents them as "object" types which code
+        // generators may not distinguish from converted structures.
+        //
+        // Some code generators, however, will treat inline "object" types
+        // as maps and referenced ones as structures.
+        if (shape.isMapShape() && config.getUseInlineMaps()) {
+            return true;
+        }
+
         // Strings with the enum trait are never inlined. This helps to ensure
         // that the name of an enum string can be round-tripped from
         // Smithy -> JSON Schema -> Smithy, helps OpenAPI code generators to

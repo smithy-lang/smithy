@@ -574,6 +574,32 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void supportsInlineMapPropertyNames() {
+        ShapeId shapeId = ShapeId.from("smithy.api#String");
+        StringShape string = StringShape.builder().id(shapeId).build();
+        MapShape map = MapShape.builder().id("a.b#Map").key(shapeId).value(shapeId).build();
+        StructureShape container = StructureShape.builder().id("a.b#Container").addMember("map", map.getId()).build();
+        Model model = Model.builder().addShapes(container, map, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUseInlineMaps(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(container);
+        Schema schema = document.getRootSchema();
+
+        assertThat(schema.getProperties().containsKey("map"), equalTo(true));
+        Schema mapMember = schema.getProperties().get("map");
+        assertThat(mapMember.getRef().isPresent(), equalTo(false));
+        assertThat(mapMember.getType().get(), equalTo("object"));
+        assertTrue(mapMember.getPropertyNames().isPresent());
+        assertThat(mapMember.getPropertyNames().get().getType().get(), equalTo("string"));
+        assertTrue(mapMember.getAdditionalProperties().isPresent());
+        assertThat(mapMember.getAdditionalProperties().get().getType().get(), equalTo("string"));
+    }
+
+    @Test
     public void supportsMapPatternProperties() {
         ShapeId shapeId = ShapeId.from("smithy.api#String");
         StringShape string = StringShape.builder().id(shapeId).build();
@@ -594,6 +620,35 @@ public class JsonSchemaConverterTest {
         assertThat(schema.getPatternProperties().size(), equalTo(1));
         assertTrue(schema.getPatternProperties().containsKey(pattern));
         assertThat(schema.getPatternProperties().get(pattern).getType().get(), equalTo("string"));
+    }
+
+    @Test
+    public void supportsInlineMapPatternProperties() {
+        ShapeId shapeId = ShapeId.from("smithy.api#String");
+        StringShape string = StringShape.builder().id(shapeId).build();
+        String pattern = "[a-z]{1,16}";
+        StringShape key = StringShape.builder().id("a.b#Key")
+                .addTrait(new PatternTrait(pattern)).build();
+        MapShape map = MapShape.builder().id("a.b#Map").key(key.getId()).value(shapeId).build();
+        StructureShape container = StructureShape.builder().id("a.b#Container").addMember("map", map.getId()).build();
+        Model model = Model.builder().addShapes(container, map, key, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUseInlineMaps(true);
+        config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(container);
+        Schema schema = document.getRootSchema();
+
+        assertThat(schema.getProperties().containsKey("map"), equalTo(true));
+        Schema mapMember = schema.getProperties().get("map");
+        assertThat(mapMember.getRef().isPresent(), equalTo(false));
+        assertThat(mapMember.getType().get(), equalTo("object"));
+        assertThat(mapMember.getPatternProperties().size(), equalTo(1));
+        assertTrue(mapMember.getPatternProperties().containsKey(pattern));
+        assertThat(mapMember.getPatternProperties().get(pattern).getType().get(), equalTo("string"));
     }
 
     @Test
