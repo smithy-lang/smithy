@@ -115,6 +115,7 @@ public class JsonSchemaConfig {
     private boolean disableDefaultValues = false;
     private boolean disableIntEnums = false;
     private boolean addReferenceDescriptions = false;
+    private boolean useInlineMaps = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
@@ -478,5 +479,27 @@ public class JsonSchemaConfig {
      */
     public void setAddReferenceDescriptions(boolean addReferenceDescriptions) {
         this.addReferenceDescriptions = addReferenceDescriptions;
+    }
+
+    /**
+     * Whether to inline map shapes when creating JSON Schema object types
+     * from them.
+     *
+     * <p>Defaults to {@code false}.</p>
+     *
+     * @return Whether to inline map shapes in the resulting schema
+     */
+    public boolean getUseInlineMaps() {
+        return useInlineMaps;
+    }
+
+    /**
+     * Sets whether to inline map shapes when creating JSON schema object types
+     * from them.
+     *
+     * @param useInlineMaps Whether to inline map shapes in the resulting schema.
+     */
+    public void setUseInlineMaps(boolean useInlineMaps) {
+        this.useInlineMaps = useInlineMaps;
     }
 }
