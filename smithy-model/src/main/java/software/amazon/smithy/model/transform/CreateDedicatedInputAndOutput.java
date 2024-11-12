@@ -147,7 +147,7 @@ final class CreateDedicatedInputAndOutput {
             return struct;
         }
 
-        LOGGER.info(() -> "Renaming " + struct.getId() + " to " + expectedName);
+        LOGGER.fine(() -> "Renaming " + struct.getId() + " to " + expectedName);
         ShapeId newId = createSyntheticShapeId(model, operation, suffix);
 
         return struct.toBuilder()
@@ -229,7 +229,7 @@ final class CreateDedicatedInputAndOutput {
     private static ShapeId resolveConflict(ShapeId id, String suffix) {
         // Say GetFooRequest exists. This then returns GetFooOperationRequest.
         String updatedName = id.getName().replace(suffix, "Operation" + suffix);
-        LOGGER.info(() -> "Deconflicting synthetic ID from " + id + " to use name " + updatedName);
+        LOGGER.fine(() -> "Deconflicting synthetic ID from " + id + " to use name " + updatedName);
         return ShapeId.fromParts(id.getNamespace(), updatedName);
     }
 }
