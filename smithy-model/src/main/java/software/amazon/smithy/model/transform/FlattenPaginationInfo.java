@@ -28,7 +28,6 @@ final class FlattenPaginationInfo {
     }
 
     public Model transform(ModelTransformer transformer, Model model) {
-
         Optional<PaginatedTrait> serviceLevelPagination = service.getTrait(PaginatedTrait.class);
         if (!serviceLevelPagination.isPresent()) {
             return model;
@@ -37,19 +36,16 @@ final class FlattenPaginationInfo {
 
         // Merge service-level information into each operation's pagination trait.
         Set<Shape> updatedShapes = new HashSet<>();
-        for (OperationShape operationShape : model.getOperationShapes()) {
-            Optional<PaginationInfo> infoOptional = paginatedIndex.getPaginationInfo(service, operationShape);
-            if (!infoOptional.isPresent()) {
-                continue;
-            }
+        for (OperationShape operationShape : model.getOperationShapesWithTrait(PaginatedTrait.class)) {
+            PaginationInfo paginationInfo = paginatedIndex.getPaginationInfo(service, operationShape).get();
             OperationShape updatedShape = operationShape.toBuilder()
-                    .addTrait(infoOptional.get().getPaginatedTrait())
+                    .addTrait(paginationInfo.getPaginatedTrait())
                     .build();
             updatedShapes.add(updatedShape);
         }
 
         // Remove the paginated trait from the service as it's info has been flattened into the operations
-        updatedShapes.add(service.toBuilder().removeTrait(serviceLevelPagination.get().toShapeId()).build());
+        updatedShapes.add(service.toBuilder().removeTrait(PaginatedTrait.ID).build());
 
         return transformer.replaceShapes(model, updatedShapes);
     }
