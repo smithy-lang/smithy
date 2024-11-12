@@ -1,0 +1,4 @@
+{
+  "type": "ChangeType.DOCUMENTATION",
+  "description": "Added a tool to generate stageable, non-conflicting changelog entries and render a changelog based on staged entries."
+}
