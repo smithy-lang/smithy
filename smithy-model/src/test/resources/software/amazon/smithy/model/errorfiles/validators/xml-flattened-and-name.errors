@@ -1,0 +1,1 @@
+[WARNING] smithy.example#Struct$flattenedNoXmlName: Member is `@xmlFlattened`, so `@xmlName` of target's member (`smithy.example#ListWithXmlName$member`) has no effect. The flattened list elements will have the name of this member - `flattenedNoXmlName`. If this is unintended, you can add `@xmlName("customMember")` to this member. | XmlFlattenedTrait
