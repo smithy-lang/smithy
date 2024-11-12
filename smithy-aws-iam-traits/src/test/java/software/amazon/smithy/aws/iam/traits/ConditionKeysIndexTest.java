@@ -40,9 +40,9 @@ public class ConditionKeysIndexTest {
 
         ConditionKeysIndex index = ConditionKeysIndex.of(model);
         assertThat(index.getConditionKeyNames(service), containsInAnyOrder(
-                "aws:accountId", "foo:baz", "myservice:Resource1Id1", "myservice:ResourceTwoId2"));
+                "aws:accountId", "foo:baz", "myservice:Resource1Id1", "myservice:ResourceTwoId2", "myservice:bar"));
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Operation1")),
-                containsInAnyOrder("aws:accountId", "foo:baz"));
+                containsInAnyOrder("aws:accountId", "myservice:bar"));
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
                 containsInAnyOrder("aws:accountId", "foo:baz", "myservice:Resource1Id1"));
         // Note that ID1 is not duplicated but rather reused on the child operation.

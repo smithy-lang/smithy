@@ -24,6 +24,7 @@ import software.amazon.smithy.aws.traits.ArnReferenceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -47,34 +48,38 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, Set<String>>> resourceConditionKeys = new HashMap<>();
 
     public ConditionKeysIndex(Model model) {
-        model.shapes(ServiceShape.class).forEach(service -> {
-            service.getTrait(ServiceTrait.class).ifPresent(trait -> {
-                // Copy over the explicitly defined condition keys into the service map.
-                // This will be mutated when adding inferred resource condition keys.
-                serviceConditionKeys.put(service.getId(), new HashMap<>(
-                        service.getTrait(DefineConditionKeysTrait.class)
-                                .map(DefineConditionKeysTrait::getConditionKeys)
-                                .orElse(MapUtils.of())));
-                resourceConditionKeys.put(service.getId(), new HashMap<>());
+        for (ServiceShape service : model.getServiceShapesWithTrait(ServiceTrait.class)) {
+            // Defines the scoping of any derived condition keys.
+            String arnNamespace = service.expectTrait(ServiceTrait.class).getArnNamespace();
 
-                // Defines the scoping of any derived condition keys.
-                String arnRoot = trait.getArnNamespace();
+            // Copy over the explicitly defined condition keys into the service map.
+            // This will be mutated when adding inferred resource condition keys.
+            Map<String, ConditionKeyDefinition> serviceKeys = new HashMap<>();
+            if (service.hasTrait(DefineConditionKeysTrait.ID)) {
+                DefineConditionKeysTrait trait = service.expectTrait(DefineConditionKeysTrait.class);
+                for (Map.Entry<String, ConditionKeyDefinition> entry : trait.getConditionKeys().entrySet()) {
+                    // If no colon is present, we infer that this condition key is for the
+                    // current service and apply its ARN namespace.
+                    String key = entry.getKey();
+                    if (!key.contains(":")) {
+                        key = arnNamespace + ":" + key;
+                    }
+                    serviceKeys.put(key, entry.getValue());
+                }
+            }
+            serviceConditionKeys.put(service.getId(), serviceKeys);
+            resourceConditionKeys.put(service.getId(), new HashMap<>());
 
-                // Compute the keys of child resources.
-                service.getResources().stream()
-                        .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
-                        .forEach(resource -> {
-                            compute(model, service, arnRoot, resource, null);
-                        });
+            // Compute the keys of child resources.
+            for (ShapeId resourceId : service.getResources()) {
+                compute(model, service, arnNamespace, model.expectShape(resourceId, ResourceShape.class), null);
+            }
 
-                // Compute the keys of operations of the service.
-                service.getOperations().stream()
-                        .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
-                        .forEach(operation -> {
-                            compute(model, service, arnRoot, operation, null);
-                        });
-            });
-        });
+            // Compute the keys of operations of the service.
+            for (ShapeId operationId : service.getOperations()) {
+                compute(model, service, arnNamespace, model.expectShape(operationId, OperationShape.class), null);
+            }
+        }
     }
 
     public static ConditionKeysIndex of(Model model) {

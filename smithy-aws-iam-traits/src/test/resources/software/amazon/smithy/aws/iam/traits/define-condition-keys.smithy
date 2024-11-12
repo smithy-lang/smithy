@@ -19,7 +19,7 @@ use aws.iam#serviceResolvedConditionKeys
         externalDocumentation: "http://baz.com"
         required: true
     }
-    "myservice:Foo": {
+    "Foo": {
         type: "String"
         documentation: "The Foo string"
         externalDocumentation: "http://foo.com"

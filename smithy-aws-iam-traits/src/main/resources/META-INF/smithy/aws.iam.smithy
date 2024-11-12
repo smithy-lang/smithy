@@ -28,7 +28,7 @@ string conditionKeyValue
 /// inferred and global condition keys.
 @trait(selector: "service")
 map defineConditionKeys {
-    key: IamIdentifier
+    key: ConditionKeyName
     value: ConditionKeyDefinition
 }
 
@@ -155,6 +155,10 @@ list RequiredActionsList {
 list ResourceNameList {
     member: ResourceName
 }
+
+@private
+@pattern("^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$")
+string ConditionKeyName
 
 /// The IAM policy type of the value that will supplied for this context key
 @private
