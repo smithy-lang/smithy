@@ -32,7 +32,7 @@ public class DefineConditionKeysTraitTest {
         DefineConditionKeysTrait trait = shape.expectTrait(DefineConditionKeysTrait.class);
         assertEquals(3,trait.getConditionKeys().size());
         assertFalse(trait.getConditionKey("myservice:Bar").get().isRequired());
-        assertFalse(trait.getConditionKey("myservice:Foo").get().isRequired());
+        assertFalse(trait.getConditionKey("Foo").get().isRequired());
         assertTrue(trait.getConditionKey("myservice:Baz").get().isRequired());
     }
 }

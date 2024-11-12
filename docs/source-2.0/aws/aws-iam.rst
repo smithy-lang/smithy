@@ -402,10 +402,11 @@ Value type
     ``map`` of IAM identifiers to condition key ``structure``
 
 The ``aws.iam#defineConditionKeys`` trait defines additional condition keys
-that appear within a service. Keys in the map must be valid IAM identifiers,
-meaning they must adhere to the following regular expression:
-``"^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$"``.
-Each condition key structure supports the following members:
+that appear within a service. Keys in the map must be valid IAM identifiers
+or names of condition keys, meaning they must adhere to the following regular
+expression: ``"^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$"``. If only a
+condition key name is specified, the service is inferred to be the
+``arnNamespace``. Each condition key structure supports the following members:
 
 .. list-table::
     :header-rows: 1
