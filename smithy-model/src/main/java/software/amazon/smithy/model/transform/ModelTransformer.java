@@ -687,4 +687,37 @@ public final class ModelTransformer {
     public Model flattenPaginationInfoIntoOperations(Model model, ServiceShape forService) {
         return new FlattenPaginationInfo(forService).transform(this, model);
     }
+
+    /**
+     * Removes any shapes that were deprecated before the specified date.
+     *
+     * <p>The relative date used as a filter should match the ISO 8601 Calendar date format
+     * (i.e. YYYY-MM-DD with optional hyphens).
+     * <p><strong>Note:</strong> Shapes with {@code @deprecated} trait but no {@code since} property are not filtered.
+     *
+     * @param model Model to transform.
+     * @param relativeDate ISO 8601 calendar date to use to filter out deprecated shapes.
+     * @return Returns the transformed model.
+     *
+     * @see <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a>
+     */
+    public Model filterDeprecatedRelativeDate(Model model, String relativeDate) {
+        return new FilterDeprecatedRelativeDate(relativeDate).transform(this, model);
+    }
+
+    /**
+     * Removes any shapes that were deprecated before the specified version.
+     *
+     * <p>The version used should be a valid Semantic Version (SemVer). For example, {@code 1.2.3.1}.
+     * <p><strong>Note:</strong> Shapes with {@code @deprecated} trait but no {@code since} property are not filtered.
+     *
+     * @param model Model to transform.
+     * @param relativeVersion Semantic Version to use to filter out deprecated shapes.
+     * @return Returns the transformed model.
+     *
+     * @see <a href="https://semver.org/">SemVer</a>
+     */
+    public Model filterDeprecatedRelativeVersion(Model model, String relativeVersion) {
+        return new FilterDeprecatedRelativeVersion(relativeVersion).transform(this, model);
+    }
 }
