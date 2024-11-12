@@ -677,4 +677,14 @@ public final class ModelTransformer {
     public Model deconflictErrorsWithSharedStatusCode(Model model, ServiceShape forService) {
         return new DeconflictErrorsWithSharedStatusCode(forService).transform(this, model);
     }
+
+    /**
+     * Flattens all service-level pagination information into operation-level pagination traits.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model flattenPaginationInfoIntoOperations(Model model, ServiceShape forService) {
+        return new FlattenPaginationInfo(forService).transform(this, model);
+    }
 }
