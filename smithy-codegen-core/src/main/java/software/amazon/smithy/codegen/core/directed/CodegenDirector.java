@@ -303,6 +303,19 @@ public final class CodegenDirector<
     }
 
     /**
+     * Flattens service-level pagination information into operation pagination traits.
+     *
+     * @see ModelTransformer#flattenPaginationInfoIntoOperations(Model, ServiceShape)
+     */
+    public void flattenPaginationInfoIntoOperations() {
+        transforms.add((model, transformer) -> {
+            LOGGER.finest("Flattening pagination info into operation traits for directed codegen");
+            return transformer.flattenPaginationInfoIntoOperations(model,
+                    model.expectShape(service, ServiceShape.class));
+        });
+    }
+
+    /**
      * Sets the shapes order for code generation.
      *
      * <p>CodegenDirector order the shapes appropriately before passing them to the code generators.
