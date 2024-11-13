@@ -962,4 +962,20 @@ public class JsonSchemaConverterTest {
                 IoUtils.toUtf8String(getClass().getResourceAsStream("member-documentation.jsonschema.json")));
         Node.assertEquals(document.toNode(), expected);
     }
+
+    @Test
+    public void appliesTitlesCorrectly() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("title-added.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("title-added.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
 }
