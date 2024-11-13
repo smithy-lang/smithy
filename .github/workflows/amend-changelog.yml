@@ -1,0 +1,24 @@
+name: amend-changelog
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+    amend:
+        name: "Add PR links to staged changelogs"
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                ref: ${{ github.head_ref }}
+            - uses: actions/setup-python@v5
+              with:
+                python-version: "3.13"
+
+            - name: "Amend and push any staged changelogs"
+              run: |
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                ./.changes/amend --push
