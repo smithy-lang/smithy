@@ -19,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.utils.IoUtils;
 
 import java.io.IOException;
@@ -35,19 +34,18 @@ public class ResourceSchemaTest {
     @ParameterizedTest
     @MethodSource("resourceSchemaFiles")
     public void validateResourceSchemaFromNodeToNode(String resourceSchemaFile) {
-        NodeMapper mapper = new NodeMapper();
         String json = IoUtils.readUtf8File(resourceSchemaFile);
 
         Node node = Node.parse(json);
-        ResourceSchema schemaFromNode = mapper.deserialize(node, ResourceSchema.class);
+        ResourceSchema schemaFromNode = ResourceSchema.fromNode(node);
         Node nodeFromSchema = schemaFromNode.toNode();
 
-        Node.assertEquals(nodeFromSchema.withDeepSortedKeys(), node.withDeepSortedKeys());
+        Node.assertEquals(nodeFromSchema, node);
     }
 
     public static List<String> resourceSchemaFiles() {
         try {
-            Path definitionPath = Paths.get(ResourceSchemaTest.class.getResource("aws-sagemaker-domain.json").toURI());
+            Path definitionPath = Paths.get(ResourceSchemaTest.class.getResource("aws-sagemaker-domain.cfn.json").toURI());
 
             return Files.walk(Paths.get(definitionPath.getParent().toUri()))
                     .filter(Files::isRegularFile)

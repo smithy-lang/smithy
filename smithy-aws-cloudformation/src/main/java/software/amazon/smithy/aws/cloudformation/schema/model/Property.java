@@ -16,7 +16,9 @@
 package software.amazon.smithy.aws.cloudformation.schema.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -32,8 +34,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see <a href="https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.jsonL74">Resource Type Properties JSON Schema</a>
  */
 public final class Property implements ToNode, ToSmithyBuilder<Property> {
-    private final boolean insertionOrder;
-    private final List<String> dependencies;
     private final Schema schema;
     // Other reserved property names in definition but not in the validation
     // JSON Schema, so not defined in code:
@@ -49,14 +49,12 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
             schemaBuilder = builder.schema.toBuilder();
         }
 
-        this.insertionOrder = builder.insertionOrder;
-        if (this.insertionOrder) {
+        if (builder.insertionOrder) {
             schemaBuilder.putExtension("insertionOrder", Node.from(true));
         }
 
-        this.dependencies = builder.dependencies;
-        if (!this.dependencies.isEmpty()) {
-            schemaBuilder.putExtension("dependencies", Node.fromStrings(this.dependencies));
+        if (!builder.dependencies.isEmpty()) {
+            schemaBuilder.putExtension("dependencies", Node.fromStrings(builder.dependencies));
         }
 
         this.schema = schemaBuilder.build();
@@ -69,19 +67,12 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .insertionOrder(insertionOrder)
-                .dependencies(dependencies)
-                .schema(schema);
+        return builder().schema(schema);
     }
 
     public static Property fromNode(Node node) {
         ObjectNode objectNode = node.expectObjectNode();
         Builder builder = builder();
-
-        objectNode.getBooleanMember("insertionOrder", builder::insertionOrder);
-        objectNode.getArrayMember("dependencies", StringNode::getValue, builder::dependencies);
-
         builder.schema(Schema.fromNode(objectNode));
 
         return builder.build();
@@ -96,11 +87,17 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
     }
 
     public boolean isInsertionOrder() {
-        return insertionOrder;
+        Optional<Boolean> insertionOrder = schema.getExtension("insertionOrder")
+                .map(n -> n.toNode().expectBooleanNode().getValue());
+
+        return insertionOrder.orElse(false);
     }
 
     public List<String> getDependencies() {
-        return dependencies;
+        Optional<List<String>> dependencies = schema.getExtension("dependencies")
+                .map(n -> n.toNode().expectArrayNode().getElementsAs(StringNode::getValue));
+
+        return dependencies.orElse(Collections.emptyList());
     }
 
     public Schema getSchema() {

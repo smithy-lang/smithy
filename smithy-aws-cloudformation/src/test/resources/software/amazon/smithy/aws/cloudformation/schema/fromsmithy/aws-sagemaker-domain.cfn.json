@@ -499,8 +499,8 @@
     "/properties/DomainSettings/RStudioServerProDomainSettings/DefaultResourceSpec",
     "/properties/KmsKeyId",
     "/properties/SubnetIds",
-    "/properties/VpcId",
-    "/properties/Tags"
+    "/properties/Tags",
+    "/properties/VpcId"
   ],
   "writeOnlyProperties": [
     "/properties/Tags"
@@ -510,27 +510,27 @@
   ],
   "readOnlyProperties": [
     "/properties/DomainArn",
-    "/properties/Url",
     "/properties/DomainId",
     "/properties/HomeEfsFileSystemId",
     "/properties/SecurityGroupIdForDomainBoundary",
-    "/properties/SingleSignOnManagedApplicationInstanceId"
+    "/properties/SingleSignOnManagedApplicationInstanceId",
+    "/properties/Url"
   ],
   "handlers": {
     "create": {
       "permissions": [
+        "efs:CreateFileSystem",
+        "iam:CreateServiceLinkedRole",
+        "iam:PassRole",
+        "kms:CreateGrant",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:GenerateDataKeyWithoutPlainText",
         "sagemaker:CreateApp",
         "sagemaker:CreateDomain",
         "sagemaker:DescribeDomain",
         "sagemaker:DescribeImage",
-        "sagemaker:DescribeImageVersion",
-        "iam:CreateServiceLinkedRole",
-        "iam:PassRole",
-        "efs:CreateFileSystem",
-        "kms:CreateGrant",
-        "kms:Decrypt",
-        "kms:DescribeKey",
-        "kms:GenerateDataKeyWithoutPlainText"
+        "sagemaker:DescribeImageVersion"
       ]
     },
     "read": {
@@ -540,12 +540,12 @@
     },
     "update": {
       "permissions": [
+        "iam:PassRole",
         "sagemaker:CreateApp",
-        "sagemaker:UpdateDomain",
         "sagemaker:DescribeDomain",
         "sagemaker:DescribeImage",
         "sagemaker:DescribeImageVersion",
-        "iam:PassRole"
+        "sagemaker:UpdateDomain"
       ]
     },
     "delete": {

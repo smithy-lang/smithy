@@ -166,6 +166,11 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
                 .tagging(tagging);
     }
 
+    public static ResourceSchema fromNode(Node node) {
+        NodeMapper mapper = new NodeMapper();
+        return mapper.deserializeInto(node, ResourceSchema.builder()).build();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
