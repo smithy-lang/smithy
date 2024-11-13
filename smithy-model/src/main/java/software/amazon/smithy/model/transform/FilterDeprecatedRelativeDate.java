@@ -21,7 +21,7 @@ final class FilterDeprecatedRelativeDate {
             "^([0-9]{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])$"
     );
 
-    public final String relativeDate;
+    private final String relativeDate;
 
     FilterDeprecatedRelativeDate(String relativeDate) {
         if (relativeDate != null && !isIso8601Date(relativeDate)) {
@@ -33,7 +33,7 @@ final class FilterDeprecatedRelativeDate {
         this.relativeDate = relativeDate != null ? relativeDate.replace("-", "") : null;
     }
 
-    public Model transform(ModelTransformer transformer, Model model) {
+    Model transform(ModelTransformer transformer, Model model) {
         // If there is no filter. Exit without traversing shapes
         if (relativeDate == null) {
             return model;
@@ -41,22 +41,20 @@ final class FilterDeprecatedRelativeDate {
 
         Set<Shape> shapesToRemove = new HashSet<>();
         for (Shape shape : model.getShapesWithTrait(DeprecatedTrait.class)) {
-            if (shape.hasTrait(DeprecatedTrait.class)) {
-                Optional<String> sinceOptional = shape.expectTrait(DeprecatedTrait.class).getSince();
-                if (!sinceOptional.isPresent()) {
-                    continue;
-                }
-                String since = sinceOptional.get();
+            Optional<String> sinceOptional = shape.expectTrait(DeprecatedTrait.class).getSince();
+            if (!sinceOptional.isPresent()) {
+                continue;
+            }
+            String since = sinceOptional.get();
 
-                if (isIso8601Date(since)) {
-                    // Compare lexicographical ordering without hyphens.
-                    if (relativeDate.compareTo(since.replace("-", "")) > 0) {
-                        LOGGER.fine("Filtering deprecated shape: `"
-                                + shape + "`"
-                                + ". Shape was deprecated as of: " + since
-                        );
-                        shapesToRemove.add(shape);
-                    }
+            if (isIso8601Date(since)) {
+                // Compare lexicographical ordering without hyphens.
+                if (relativeDate.compareTo(since.replace("-", "")) > 0) {
+                    LOGGER.fine("Filtering deprecated shape: `"
+                            + shape + "`"
+                            + ". Shape was deprecated as of: " + since
+                    );
+                    shapesToRemove.add(shape);
                 }
             }
         }

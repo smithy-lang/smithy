@@ -26,7 +26,7 @@ final class FilterDeprecatedRelativeVersion {
             + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     );
 
-    public final String relativeVersion;
+    private final String relativeVersion;
 
     FilterDeprecatedRelativeVersion(String relativeVersion) {
         if (relativeVersion != null && !isSemVer(relativeVersion)) {
@@ -38,7 +38,7 @@ final class FilterDeprecatedRelativeVersion {
         this.relativeVersion = relativeVersion;
     }
 
-    public Model transform(ModelTransformer transformer, Model model) {
+    Model transform(ModelTransformer transformer, Model model) {
         // If there are no filters. Exit without traversing shapes
         if (relativeVersion == null) {
             return model;
@@ -68,7 +68,7 @@ final class FilterDeprecatedRelativeVersion {
         return transformer.removeShapes(model, shapesToRemove);
     }
 
-    public static boolean isSemVer(String string) {
+    private static boolean isSemVer(String string) {
         return SEMVER_REGEX.matcher(string).matches();
     }
 
