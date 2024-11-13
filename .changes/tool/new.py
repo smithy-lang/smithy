@@ -2,20 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 import tempfile
 import string
-from pathlib import Path
 import os
 import subprocess
 import re
 import hashlib
 import json
 
-from . import ChangeType, Change
+from . import ChangeType, Change, NEXT_RELEASE_DIR
 
 
 VALID_CHARS = set(string.ascii_letters + string.digits)
-CURRENT_DIR = Path(__file__).absolute()
-CHANGES_DIR = CURRENT_DIR.parent.parent
-NEXT_RELEASE_DIR = CHANGES_DIR / "next-release"
 TEMPLATE = """\
 # Type should be one of: "feature", "bugfix", "documentation", "break", or "other".
 #

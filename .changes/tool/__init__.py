@@ -2,6 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 from enum import Enum
 from typing import TypedDict, Required, NotRequired
+from pathlib import Path
+
+
+CHANGES_DIR = Path(__file__).absolute().parent.parent
+NEXT_RELEASE_DIR = CHANGES_DIR / "next-release"
+RELEASES_DIR = CHANGES_DIR / "releases"
 
 
 class ChangeType(Enum):
