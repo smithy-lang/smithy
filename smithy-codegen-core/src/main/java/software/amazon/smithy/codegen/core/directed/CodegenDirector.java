@@ -290,6 +290,32 @@ public final class CodegenDirector<
     }
 
     /**
+     * Removes any shapes deprecated before the specified date.
+     *
+     * @param relativeDate Relative date, in YYYY-MM-DD format, to use to filter out deprecated shapes.
+     * @see ModelTransformer#filterDeprecatedRelativeDate(Model, String)
+     */
+    public void removeShapesDeprecatedBeforeDate(String relativeDate) {
+        transforms.add((model, transformer) -> {
+            LOGGER.finest("Removing shapes deprecated before date: " + relativeDate);
+            return transformer.filterDeprecatedRelativeDate(model, relativeDate);
+        });
+    }
+
+    /**
+     * Removes any shapes deprecated before the specified version.
+     *
+     * @param relativeVersion Version, in SemVer format, to use to filter out deprecated shapes.
+     * @see ModelTransformer#filterDeprecatedRelativeVersion(Model, String)
+     */
+    public void removeShapesDeprecatedBeforeVersion(String relativeVersion) {
+        transforms.add((model, transformer) -> {
+            LOGGER.finest("Removing shapes deprecated before version: " + relativeVersion);
+            return transformer.filterDeprecatedRelativeVersion(model, relativeVersion);
+        });
+    }
+
+    /**
      * Changes each compatible string shape with the enum trait to an enum shape.
      *
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
