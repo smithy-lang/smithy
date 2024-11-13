@@ -1,0 +1,70 @@
+#! /usr/bin/env python3
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+from argparse import ArgumentParser
+
+from tool.amend import amend
+
+
+def main() -> None:
+    parser = ArgumentParser(
+        description="""\
+            Amend recently-introduced changelog entries to include a pull request \
+            link. This is intended to be run in GitHub as an action, but can be run \
+            manually by specifying parameters GitHub would otherwise provide in \
+            environment variables.
+            
+            This only checks entries that have been staged in the current branch, \
+            using git to get a list of newly introduced files. If the entry already \
+            has one or more associated pull requests, it is not amended.""",
+    )
+    parser.add_argument(
+        "-n",
+        "--pull-request-number",
+        type=int,
+        help="""\
+            The numeric identifier for the pull request. This is provided by GitHub \
+            in the GITHUB_REF_NAME environment variable in the form \
+            '<pr_number>/merge'.""",
+    )
+    parser.add_argument(
+        "-r",
+        "--repository",
+        type=str,
+        help="""\
+            The name of the repository, defaulting to 'smithy-lang/smithy'. This is \
+            provided by GitHub in the GITHUB_REPOSITORY environment variable.""",
+    )
+    parser.add_argument(
+        "-b",
+        "--base",
+        type=str,
+        help="""\
+            The name of the base branch to diff against, defaulting to 'main'. This \
+            is provided by GitHub in the GITHUB_BASE_REF environment variable.""",
+    )
+    parser.add_argument(
+        "--commit",
+        action="store_true",
+        default=False,
+        help="""Commit any changes made.""",
+    )
+    parser.add_argument(
+        "--push",
+        action="store_true",
+        default=False,
+        help="""Commit and push any changes made.""",
+    )
+
+    args = parser.parse_args()
+    amend(
+        base=args.base,
+        repository=args.repository,
+        pr_number=args.pull_request_number,
+        commit=args.commit,
+        push=args.push,
+    )
+
+
+if __name__ == "__main__":
+    main()
