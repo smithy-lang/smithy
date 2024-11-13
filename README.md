@@ -83,5 +83,5 @@ This library is licensed under the Apache 2.0 License.
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
 [Smithy CLI]: https://smithy.io/2.0/guides/smithy-cli/index.html
 [`smithy-build.json`]: https://smithy.io/2.0/guides/building-models/build-config.html#using-smithy-build-json
-[building]: https://smithy.io/2.0/guides/building-models/index.html
+[building]: https://smithy.io/2.0/guides/smithy-build-json.html
 [awesome-smithy]: https://github.com/smithy-lang/awesome-smithy
