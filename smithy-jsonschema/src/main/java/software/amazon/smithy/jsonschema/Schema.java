@@ -27,8 +27,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -60,6 +62,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     private static final Logger LOGGER = Logger.getLogger(Schema.class.getName());
 
+    // A schema can be an object OR a boolean - when this value is set (true or false), the schema is represented
+    // as a "trivial boolean schema".
+    private final Boolean trivial;
     private final String ref;
     private final String type;
     private final Collection<String> enumValues;
@@ -112,6 +117,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     private Node asNode;
 
     private Schema(Builder builder) {
+        trivial = builder.trivial;
+        if (trivial != null) {
+            asNode = Node.from(trivial);
+        }
+
         ref = builder.ref;
         type = builder.type;
         enumValues = Collections.unmodifiableCollection(builder.enumValues);
@@ -577,10 +587,25 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         return Objects.hash(ref, type, properties, items);
     }
 
+    public static Schema fromNode(Node node) {
+        if (node.isBooleanNode()) {
+            BooleanNode booleanNode = node.expectBooleanNode();
+            return new Schema.Builder().trivial(booleanNode.getValue()).build();
+        }
+
+        ObjectNode objectNode = node.expectObjectNode();
+        Schema.Builder builder = builder();
+        objectNode.getMembers().forEach((key, val) -> builder.applyNode(key.getValue(), val));
+
+        return builder.build();
+    }
+
     /**
      * Abstract class used to build Schema components.
      */
     public static final class Builder implements SmithyBuilder<Schema> {
+        private Boolean trivial;
+
         private String ref;
         private String type;
         private Collection<String> enumValues = ListUtils.of();
@@ -635,6 +660,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         @Override
         public Schema build() {
             return new Schema(this);
+        }
+
+        public Builder trivial(Boolean trivial) {
+            this.trivial = trivial;
+            return this;
         }
 
         public Builder ref(String ref) {
@@ -969,6 +999,139 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     LOGGER.warning("Unknown JSON Schema config 'disable' property: " + propertyName);
                     return this;
             }
+        }
+
+        Builder applyNode(String key, Node node) {
+            switch (key) {
+                case "$ref":
+                    this.ref(node.expectStringNode().getValue());
+                    break;
+                case "type":
+                    this.type(node.expectStringNode().getValue());
+                    break;
+                case "enum":
+                    this.enumValues(node.expectArrayNode().getElementsAs(StringNode::getValue));
+                    break;
+                case "intEnum":
+                    this.intEnumValues(
+                            node.expectArrayNode().getElementsAs((e) -> e.expectNumberNode().getValue().intValue()));
+                    break;
+                case "const":
+                    this.constValue(node);
+                    break;
+                case "default":
+                    this.defaultValue(node);
+                    break;
+                case "multipleOf":
+                    this.multipleOf(node.expectNumberNode().getValue());
+                    break;
+                case "maximum":
+                    this.maximum(node.expectNumberNode().getValue());
+                    break;
+                case "exclusiveMaximum":
+                    this.exclusiveMaximum(node.expectNumberNode().getValue());
+                    break;
+                case "minimum":
+                    this.minimum(node.expectNumberNode().getValue());
+                    break;
+                case "exclusiveMinimum":
+                    this.exclusiveMinimum(node.expectNumberNode().getValue());
+                    break;
+                case "maxLength":
+                    this.maxLength(node.expectNumberNode().getValue().longValue());
+                    break;
+                case "minLength":
+                    this.minLength(node.expectNumberNode().getValue().longValue());
+                    break;
+                case "pattern":
+                    this.pattern(node.expectStringNode().getValue());
+                    break;
+                case "items":
+                    this.items(Schema.fromNode(node));
+                    break;
+                case "maxItems":
+                    this.maxItems(node.expectNumberNode().getValue().intValue());
+                    break;
+                case "minItems":
+                    this.minItems(node.expectNumberNode().getValue().intValue());
+                    break;
+                case "uniqueItems":
+                    this.uniqueItems(node.expectBooleanNode().getValue());
+                    break;
+                case "maxProperties":
+                    this.maxProperties(node.expectNumberNode().getValue().intValue());
+                    break;
+                case "minProperties":
+                    this.minProperties(node.expectNumberNode().getValue().intValue());
+                    break;
+                case "required":
+                    this.required(node.expectArrayNode().getElementsAs(StringNode::getValue));
+                    break;
+                case "properties":
+                    node.expectObjectNode()
+                            .getMembers()
+                            .forEach((k, v) -> this.putProperty(k.getValue(), Schema.fromNode(v)));
+                    break;
+                case "additionalProperties":
+                    this.additionalProperties(Schema.fromNode(node));
+                    break;
+                case "propertyNames":
+                    this.propertyNames(Schema.fromNode(node));
+                    break;
+                case "patternProperties":
+                    node.expectObjectNode()
+                            .getMembers()
+                            .forEach((k, v) -> this.putPatternProperty(k.getValue(), Schema.fromNode(v)));
+                    break;
+                case "allOf":
+                    this.allOf(node.expectArrayNode().getElementsAs(Schema::fromNode));
+                    break;
+                case "anyOf":
+                    this.anyOf(node.expectArrayNode().getElementsAs(Schema::fromNode));
+                    break;
+                case "oneOf":
+                    this.oneOf(node.expectArrayNode().getElementsAs(Schema::fromNode));
+                    break;
+                case "not":
+                    this.not(Schema.fromNode(node));
+                    break;
+                case "title":
+                    this.title(node.expectStringNode().getValue());
+                    break;
+                case "description":
+                    this.description(node.expectStringNode().getValue());
+                    break;
+                case "format":
+                    this.format(node.expectStringNode().getValue());
+                    break;
+                case "readOnly":
+                    this.readOnly(node.expectBooleanNode().getValue());
+                    break;
+                case "writeOnly":
+                    this.writeOnly(node.expectBooleanNode().getValue());
+                    break;
+                case "comment":
+                    this.comment(node.expectStringNode().getValue());
+                    break;
+                case "examples":
+                    this.examples(node);
+                    break;
+                case "deprecated":
+                    this.deprecated(node.expectBooleanNode().getValue());
+                    break;
+                case "contentEncoding":
+                    this.contentEncoding(node.expectStringNode().getValue());
+                    break;
+                case "contentMediaType":
+                    this.contentMediaType(node.expectStringNode().getValue());
+                    break;
+                default:
+                    LOGGER.fine("Unknown property will be added to extensions: " + key);
+                    this.putExtension(key, node);
+                    break;
+            }
+
+            return this;
         }
     }
 }

@@ -126,6 +126,7 @@ final class DefaultNodeDeserializers {
     private static final Map<Type, Function<Number, Object>> NUMBER_MAPPERS = new HashMap<>();
 
     static {
+        NUMBER_MAPPERS.put(Number.class, n -> n);
         NUMBER_MAPPERS.put(Object.class, n -> n);
         NUMBER_MAPPERS.put(Byte.class, Number::byteValue);
         NUMBER_MAPPERS.put(byte.class, Number::byteValue);
