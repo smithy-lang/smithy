@@ -1,15 +1,14 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-import tempfile
-import string
-import os
-import subprocess
-import re
 import hashlib
 import json
+import os
+import re
+import string
+import subprocess
+import tempfile
 
-from . import ChangeType, Change, NEXT_RELEASE_DIR
-
+from . import NEXT_RELEASE_DIR, Change, ChangeType
 
 VALID_CHARS = set(string.ascii_letters + string.digits)
 TEMPLATE = """\
@@ -41,9 +40,9 @@ def new_change(
     pull_requests: list[str] | None,
 ):
     if change_type is not None and description is not None:
-        change: Change = {"type": change_type, "description": description}
+        change = Change(type=change_type, description=description)
         if pull_requests:
-            change["pull_requests"] = pull_requests
+            change.pull_requests = pull_requests
     else:
         parsed = get_values_from_editor(change_type, description, pull_requests)
         if not parsed:
@@ -78,18 +77,16 @@ def get_values_from_editor(
 
 
 def replace_issue_references(change: Change, repo_name: str):
-    description = change["description"]
-
     def linkify(match: re.Match[str]):
         number = match.group()[1:]
         return f"[{match.group()}](https://github.com/{repo_name}/issues/{number})"
 
-    new_description = re.sub(r"#\d+", linkify, description)
-    change["description"] = new_description
+    new_description = re.sub(r"#\d+", linkify, change.description)
+    change.description = new_description
 
-    if "pull_requests" in change:
-        change["pull_requests"] = [
-            re.sub(r"#\d+", linkify, pr) for pr in change["pull_requests"]
+    if change.pull_requests:
+        change.pull_requests = [
+            re.sub(r"#\d+", linkify, pr) for pr in change.pull_requests
         ]
 
 
@@ -99,7 +96,7 @@ def write_new_change(change: Change):
 
     contents = json.dumps(change, indent=2, default=str) + "\n"
     contents_digest = hashlib.sha1(contents.encode("utf-8")).hexdigest()
-    filename = f"{change['type'].name.lower()}-{contents_digest}.json"
+    filename = f"{change.type.name.lower()}-{contents_digest}.json"
 
     with open(NEXT_RELEASE_DIR / filename, "w") as f:
         f.write(contents)
@@ -132,4 +129,4 @@ def parse_filled_in_contents(contents: str) -> Change | None:
             parsed["description"] = full_description.strip()
             break
 
-    return Change(parsed)  # type: ignore
+    return Change(**parsed)  # type: ignore
