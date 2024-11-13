@@ -16,10 +16,8 @@
 description = "This module provides the core implementation of loading, validating, " +
         "traversing, mutating, and serializing a Smithy model."
 
-ext {
-    set("displayName","Smithy :: Model")
-    set("moduleName", "software.amazon.smithy.model")
-}
+extra["displayName"] = "Smithy :: Model"
+extra["moduleName"] = "software.amazon.smithy.model"
 
 plugins {
     id("me.champeau.jmh")
@@ -34,6 +32,8 @@ jmh {
     timeUnit = "us"
 }
 
-tasks.processJmhResources {
-    duplicatesStrategy = DuplicatesStrategy.WARN
+tasks {
+    processJmhResources {
+        duplicatesStrategy = DuplicatesStrategy.WARN
+    }
 }

@@ -15,10 +15,8 @@
 
 description = "Defines Smithy waiters."
 
-ext {
-    set("displayName", "Smithy :: Waiters")
-    set("moduleName", "software.amazon.smithy.waiters")
-}
+extra["displayName"] = "Smithy :: Waiters"
+extra["moduleName"] = "software.amazon.smithy.waiters"
 
 dependencies {
     api(project(":smithy-model"))

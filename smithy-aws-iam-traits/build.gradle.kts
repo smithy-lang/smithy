@@ -15,10 +15,8 @@
 
 description = "This module provides Smithy traits and validators for IAM."
 
-ext {
-    set("displayName", "Smithy :: AWS :: IAM Traits")
-    set("moduleName", "software.amazon.smithy.aws.iam.traits")
-}
+extra["displayName"] = "Smithy :: AWS :: IAM Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.iam.traits"
 
 dependencies {
     api(project(":smithy-aws-traits"))

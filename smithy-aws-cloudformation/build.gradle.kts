@@ -15,10 +15,8 @@
 
 description = "This module contains support for converting Smithy resources to CloudFormation Resource Schemas."
 
-ext {
-    set("displayName", "Smithy :: Cloudformation Conversion")
-    set("moduleName", "software.amazon.smithy.cloudformation.converter")
-}
+extra["displayName"] = "Smithy :: Cloudformation Conversion"
+extra["moduleName"] = "software.amazon.smithy.cloudformation.converter"
 
 // Necessary to load the everit JSON Schema validator.
 repositories {

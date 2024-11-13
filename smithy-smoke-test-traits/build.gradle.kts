@@ -15,10 +15,8 @@
 
 description = "Defines smoke test traits."
 
-ext {
-    set("displayName", "Smithy :: Smoke Test Traits")
-    set("moduleName", "software.amazon.smithy.smoketest.traits")
-}
+extra["displayName"] = "Smithy :: Smoke Test Traits"
+extra["moduleName"] = "software.amazon.smithy.smoketest.traits"
 
 dependencies {
     api(project(":smithy-model"))

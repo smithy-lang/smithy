@@ -19,17 +19,17 @@ plugins {
 
 description = "This module provides support for validation in Smithy server SDKs"
 
-ext {
-    set("displayName", "Smithy :: Validation Support")
-    set("moduleName", "software.amazon.smithy.validation.model")
-}
+extra["displayName"] = "Smithy :: Validation Support"
+extra["moduleName"] = "software.amazon.smithy.validation.model"
 
 dependencies {
     implementation(project(path = ":smithy-cli", configuration = "shadow"))
 }
 
-tasks.sourcesJar {
-    dependsOn("smithyJarStaging")
+tasks {
+    sourcesJar {
+        dependsOn("smithyJarStaging")
+    }
 }
 
 smithy {

@@ -15,10 +15,8 @@
 
 description = "This module provides Smithy traits and validators for API Gateway."
 
-ext {
-    set("displayName", "Smithy :: AWS :: API Gateway Traits")
-    set("moduleName", "software.amazon.smithy.aws.apigateway.traits")
-}
+extra["displayName"] = "Smithy :: AWS :: API Gateway Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.apigateway.traits"
 
 dependencies {
     api(project(":smithy-aws-traits"))

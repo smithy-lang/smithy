@@ -16,10 +16,8 @@
 description = "This module provides support for converting the Amazon API Gateway " +
         "Smithy traits when converting a Smithy model to OpenAPI3."
 
-ext {
-    set("displayName", "Smithy :: Amazon API Gateway OpenAPI Support")
-    set("moduleName", "software.amazon.smithy.aws.apigateway.openapi")
-}
+extra["displayName"] = "Smithy :: Amazon API Gateway OpenAPI Support"
+extra["moduleName"] = "software.amazon.smithy.aws.apigateway.openapi"
 
 dependencies {
     api(project(":smithy-aws-apigateway-traits"))

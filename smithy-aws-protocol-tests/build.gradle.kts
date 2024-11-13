@@ -19,10 +19,8 @@ plugins {
 
 description = "Defines protocol tests for AWS HTTP protocols."
 
-ext {
-    set("displayName", "Smithy :: AWS :: Protocol Tests")
-    set("moduleName", "software.amazon.smithy.aws.protocoltests")
-}
+extra["displayName"] = "Smithy :: AWS :: Protocol Tests"
+extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
 
 dependencies {
     implementation(project(path = ":smithy-cli", configuration = "shadow"))

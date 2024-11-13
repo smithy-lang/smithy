@@ -15,10 +15,8 @@
 
 description = "This module contains support for converting a Smithy model to OpenAPI."
 
-ext {
-    set("displayName", "Smithy :: OpenAPI Conversion")
-    set("moduleName", "software.amazon.smithy.openapi")
-}
+extra["displayName"] = "Smithy :: OpenAPI Conversion"
+extra["moduleName"] = "software.amazon.smithy.openapi"
 
 dependencies {
     api(project(":smithy-model"))

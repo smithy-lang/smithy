@@ -15,10 +15,8 @@
 
 description = "Defines protocol test traits."
 
-ext {
-    set("displayName", "Smithy :: Protocol Test Traits")
-    set("moduleName", "software.amazon.smithy.protocoltest.traits")
-}
+extra["displayName"] = "Smithy :: Protocol Test Traits"
+extra["moduleName"] = "software.amazon.smithy.protocoltest.traits"
 
 dependencies {
     api(project(":smithy-model"))

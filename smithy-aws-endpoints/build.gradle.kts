@@ -5,10 +5,8 @@
 
 description = "AWS specific components for managing endpoints in Smithy"
 
-ext {
-    set("displayName", "Smithy :: AWS Endpoints Components")
-    set("moduleName","software.amazon.smithy.aws.endpoints")
-}
+extra["displayName"] = "Smithy :: AWS Endpoints Components"
+extra["moduleName"] = "software.amazon.smithy.aws.endpoints"
 
 dependencies {
     api(project(":smithy-aws-traits"))

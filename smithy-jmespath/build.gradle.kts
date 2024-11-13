@@ -15,7 +15,5 @@
 
 description = "A standalone JMESPath parser"
 
-ext {
-    set("displayName", "Smithy :: JMESPath")
-    set("moduleName", "software.amazon.smithy.jmespath")
-}
+extra["displayName"] = "Smithy :: JMESPath"
+extra["moduleName"] = "software.amazon.smithy.jmespath"

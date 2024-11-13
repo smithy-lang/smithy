@@ -5,10 +5,8 @@
 
 description = "Plugin for Generating Trait Code from Smithy Models"
 
-ext {
-    set("displayName", "Smithy :: Trait Code Generation")
-    set("moduleName", "software.amazon.smithy.traitcodegen")
-}
+extra["displayName"] = "Smithy :: Trait Code Generation"
+extra["moduleName"] = "software.amazon.smithy.traitcodegen"
 
 dependencies {
     implementation(project(":smithy-codegen-core"))
@@ -17,21 +15,24 @@ dependencies {
 // Set up Integration testing source sets
 sourceSets {
     create("it") {
-        compileClasspath += sourceSets.main.get().output +
+        val main by getting
+        val test by getting
+
+        compileClasspath += main.output +
                 configurations["testRuntimeClasspath"] +
                 configurations["testCompileClasspath"]
 
         runtimeClasspath += output +
                 compileClasspath +
-                sourceSets.test.get().runtimeClasspath +
-                sourceSets.test.get().output
+                test.runtimeClasspath +
+                test.output
 
         java {
             srcDir("${layout.buildDirectory.get()}/integ/")
         }
 
         resources {
-            srcDirs(layout.buildDirectory.get().dir("generated-resources"))
+            srcDirs(layout.buildDirectory.dir("generated-resources").get())
         }
     }
 }
@@ -61,18 +62,28 @@ tasks.register<Test>("integ") {
     classpath = sourceSets["it"].runtimeClasspath
 }
 
-// Do not run checkstyle on generated trait classes
-tasks["checkstyleIt"].enabled = false
+tasks {
+    named("checkstyleIt") {
+        enabled = false
+    }
 
-// Force correct ordering so generated sources are available
-tasks["compileItJava"].dependsOn("generateTraits")
-tasks["compileItJava"].dependsOn("copyGeneratedSrcs")
-tasks["processItResources"].dependsOn("copyGeneratedSrcs")
-tasks["integ"].mustRunAfter("generateTraits")
-tasks["integ"].mustRunAfter("copyGeneratedSrcs")
+    named("compileItJava") {
+        dependsOn("generateTraits", "copyGeneratedSrcs")
+    }
 
-// Always run integ tests after base tests
-tasks["test"].finalizedBy("integ")
+    named("processItResources") {
+        dependsOn("copyGeneratedSrcs")
+    }
 
-// dont run spotbugs on integ tests
-tasks["spotbugsIt"].enabled = false
+    named("integ") {
+        mustRunAfter("generateTraits", "copyGeneratedSrcs")
+    }
+
+    named("test") {
+        finalizedBy("integ")
+    }
+
+    named("spotbugsIt") {
+        enabled = false
+    }
+}

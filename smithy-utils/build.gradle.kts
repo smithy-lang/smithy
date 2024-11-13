@@ -15,8 +15,6 @@
 
 description = "This module contains utility classes and interfaces for Smithy."
 
-ext {
-    set("displayName", "Smithy :: Utilities")
-    set("moduleName", "software.amazon.smithy.utils")
-}
+extra["displayName"] = "Smithy :: Utilities"
+extra["moduleName"] = "software.amazon.smithy.utils"
 

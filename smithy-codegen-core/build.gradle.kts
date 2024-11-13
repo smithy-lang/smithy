@@ -16,10 +16,8 @@
 description = "This module provides a code generation framework for generating clients, " +
         "servers, documentation, and other artifacts for various languages from Smithy models."
 
-ext {
-    set("displayName", "Smithy :: Code Generation Framework")
-    set("moduleName", "software.amazon.smithy.codegen.core")
-}
+extra["displayName"] = "Smithy :: Code Generation Framework"
+extra["moduleName"] = "software.amazon.smithy.codegen.core"
 
 dependencies {
     api(project(":smithy-utils"))

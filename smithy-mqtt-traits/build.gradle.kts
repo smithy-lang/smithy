@@ -15,10 +15,8 @@
 
 description = "This module provides the implementation of MQTT binding traits for Smithy."
 
-ext {
-    set("displayName", "Smithy :: MQTT Traits")
-    set("moduleName", "software.amazon.smithy.mqtt.traits")
-}
+extra["displayName"] = "Smithy :: MQTT Traits"
+extra["moduleName"] = "software.amazon.smithy.mqtt.traits"
 
 dependencies {
     api(project(":smithy-utils"))

@@ -15,10 +15,8 @@
 
 description = "This module provides Smithy traits and validators for CloudFormation."
 
-ext {
-    set("displayName", "Smithy :: AWS :: CloudFormation Traits")
-    set("moduleName", "software.amazon.smithy.aws.cloudformation.traits")
-}
+extra["displayName"] = "Smithy :: AWS :: CloudFormation Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.cloudformation.traits"
 
 dependencies {
     api(project(":smithy-model"))

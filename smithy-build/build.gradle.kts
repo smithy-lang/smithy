@@ -16,10 +16,8 @@
 description = "This module is a library used to validate Smithy models, create filtered " +
         "projections of a model, and generate build artifacts."
 
-ext {
-    set("displayName", "Smithy :: Build")
-    set("moduleName", "software.amazon.smithy.build")
-}
+extra["displayName"] = "Smithy :: Build"
+extra["moduleName"] = "software.amazon.smithy.build"
 
 dependencies {
     api(project(":smithy-utils"))

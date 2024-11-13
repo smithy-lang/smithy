@@ -15,10 +15,8 @@
 
 description = "Provides a parse tree and formatter for Smithy models."
 
-ext {
-    set("displayName", "Smithy :: Syntax")
-    set("moduleName", "software.amazon.smithy.syntax")
-}
+extra["displayName"] = "Smithy :: Syntax"
+extra["moduleName"] = "software.amazon.smithy.syntax"
 
 dependencies {
     api(project(":smithy-utils"))
@@ -30,23 +28,25 @@ dependencies {
     shadow(project(":smithy-utils"))
 }
 
-tasks.shadowJar {
-    // Replace the normal JAR with the shaded JAR. We don't want to publish a JAR that isn't shaded.
-    archiveClassifier.set("")
+tasks {
+    shadowJar {
+        // Replace the normal JAR with the shaded JAR. We don't want to publish a JAR that isn't shaded.
+        archiveClassifier.set("")
 
-    mergeServiceFiles()
+        mergeServiceFiles()
 
-    // Shade and relocate prettier4j.
-    relocate("com.opencastsoftware.prettier4j", "software.amazon.smithy.syntax.shaded.prettier4j")
+        // Shade and relocate prettier4j.
+        relocate("com.opencastsoftware.prettier4j", "software.amazon.smithy.syntax.shaded.prettier4j")
 
-    // Despite the "shadow" configuration under dependencies, we unfortunately need to also list here that
-    // smithy-model and smithy-utils aren't shaded. These are normal dependencies that we want consumers to resolve.
-    dependencies {
-        exclude(project(":smithy-utils"))
-        exclude(project(":smithy-model"))
+        // Despite the "shadow" configuration under dependencies, we unfortunately need to also list here that
+        // smithy-model and smithy-utils aren't shaded. These are normal dependencies that we want consumers to resolve.
+        dependencies {
+            exclude(project(":smithy-utils"))
+            exclude(project(":smithy-model"))
+        }
     }
-}
 
-tasks.jar {
-    finalizedBy(tasks.shadowJar)
+    jar {
+        finalizedBy(shadowJar)
+    }
 }

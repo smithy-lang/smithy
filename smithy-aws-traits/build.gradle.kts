@@ -15,10 +15,8 @@
 
 description = "This module provides Smithy traits and validators that are used by most AWS services."
 
-ext {
-    set("displayName", "Smithy :: AWS Core Traits")
-    set("moduleName", "software.amazon.smithy.aws.traits")
-}
+extra["displayName"] = "Smithy :: AWS Core Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.traits"
 
 dependencies {
     api(project(":smithy-diff"))

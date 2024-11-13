@@ -16,10 +16,8 @@
 description = "This module provides support for customizable linters declared in the " +
         "metadata section of a Smithy model."
 
-ext {
-    set("displayName", "Smithy :: Linters")
-    set("moduleName", "software.amazon.smithy.linters")
-}
+extra["displayName"] = "Smithy :: Linters"
+extra["moduleName"] = "software.amazon.smithy.linters"
 
 dependencies {
     api(project(":smithy-model"))

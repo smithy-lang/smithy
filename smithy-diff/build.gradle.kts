@@ -16,10 +16,8 @@
 description = "This module detects differences between two Smithy models, identifying " +
         "changes that are safe and changes that are backward incompatible."
 
-ext {
-    set("displayName", "Smithy :: Diff")
-    set("moduleName", "software.amazon.smithy.diff")
-}
+extra["displayName"] = "Smithy :: Diff"
+extra["moduleName"] = "software.amazon.smithy.diff"
 
 dependencies {
     api(project(":smithy-utils"))

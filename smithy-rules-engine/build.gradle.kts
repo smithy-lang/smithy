@@ -5,10 +5,8 @@
 
 description = "Smithy rules engine Language and traits"
 
-ext {
-    set("displayName", "Smithy :: Rules Engine")
-    set("moduleName", "software.amazon.smithy.rulesengine")
-}
+extra["displayName"] = "Smithy :: Rules Engine"
+extra["moduleName"] = "software.amazon.smithy.rulesengine"
 
 dependencies {
     api(project(":smithy-model"))

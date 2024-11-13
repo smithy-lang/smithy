@@ -15,10 +15,8 @@
 
 description = "This module contains support for converting a Smithy model to JSON Schema."
 
-ext {
-    set("displayName", "Smithy :: JSON Schema Conversion")
-    set("moduleName", "software.amazon.smithy.jsonschema")
-}
+extra["displayName"] = "Smithy :: JSON Schema Conversion"
+extra["moduleName"] = "software.amazon.smithy.jsonschema"
 
 dependencies {
     api(project(":smithy-utils"))
