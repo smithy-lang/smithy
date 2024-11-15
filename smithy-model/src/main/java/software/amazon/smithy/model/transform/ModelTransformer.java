@@ -720,4 +720,17 @@ public final class ModelTransformer {
     public Model filterDeprecatedRelativeVersion(Model model, String relativeVersion) {
         return new FilterDeprecatedRelativeVersion(relativeVersion).transform(this, model);
     }
+
+    /**
+     * Makes any {@code @idempotencyToken} fields {@code @clientOptional} so that missing tokens can be injected.
+     *
+     * <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
+     * allowing for a default value to be injected when missing.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model makeIdempotencyTokensClientOptional(Model model) {
+        return MakeIdempotencyTokenClientOptional.transform(model);
+    }
 }

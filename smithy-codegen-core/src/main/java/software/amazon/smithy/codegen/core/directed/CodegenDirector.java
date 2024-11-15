@@ -316,6 +316,18 @@ public final class CodegenDirector<
     }
 
     /**
+     * Makes {@code idempotencyToken} fields {@code clientOptional}.
+     *
+     * @see ModelTransformer#makeIdempotencyTokensClientOptional(Model)
+     */
+    public void makeIdempotencyTokensClientOptional() {
+        transforms.add((model, transformer) -> {
+            LOGGER.finest("Making `@idempotencyToken` fields `@clientOptional`");
+            return transformer.makeIdempotencyTokensClientOptional(model);
+        });
+    }
+
+    /**
      * Changes each compatible string shape with the enum trait to an enum shape.
      *
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.

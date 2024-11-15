@@ -18,6 +18,8 @@ software.amazon.smithy.build.transforms.IncludeShapesByTag
 software.amazon.smithy.build.transforms.IncludeTags
 software.amazon.smithy.build.transforms.IncludeTraits
 software.amazon.smithy.build.transforms.IncludeTraitsByTag
+software.amazon.smithy.build.transforms.MakeIdempotencyTokensClientOptional
+software.amazon.smithy.build.transforms.RemoveDeprecatedShapes
 software.amazon.smithy.build.transforms.RemoveTraitDefinitions
 software.amazon.smithy.build.transforms.RemoveUnusedShapes
 software.amazon.smithy.build.transforms.RenameShapes
