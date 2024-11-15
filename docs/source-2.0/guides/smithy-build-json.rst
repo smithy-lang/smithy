@@ -578,7 +578,7 @@ applied.
 makeIdempotencyTokensClientOptional
 -----------------------------------
 
-Makes required Idempotency token members :ref:`@clientOptional <clientOptional-trait>`.
+Makes required :ref:`@idempotencyToken <idempotencyToken-trait>` members :ref:`@clientOptional <clientOptional-trait>`.
 
 Idempotency tokens that are required should fail validation, but shouldn't be required to create a type.
 This allows a default value to get injected when missing.
