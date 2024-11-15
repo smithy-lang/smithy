@@ -722,7 +722,7 @@ public final class ModelTransformer {
     }
 
     /**
-     * Makes any {@code @idempotencyToken fields {@code @clientOptional} so that missing tokens can be injected.
+     * Makes any {@code @idempotencyToken} fields {@code @clientOptional} so that missing tokens can be injected.
      *
      * <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
      * allowing for a default value to be injected when missing.
