@@ -320,7 +320,7 @@ public final class CodegenDirector<
      *
      * @see ModelTransformer#makeIdempotencyTokensClientOptional(Model)
      */
-    public void markIdempotencyTokensClientOptional() {
+    public void makeIdempotencyTokensClientOptional() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Making `@idempotencyToken` fields `@clientOptional`");
             return transformer.makeIdempotencyTokensClientOptional(model);
