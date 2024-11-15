@@ -8,9 +8,9 @@ import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 
 /**
- * Mark Idempotency token members as clientOptional so they can be injected if missing.
+ * Makes Idempotency token members as clientOptional so they can be injected if missing.
  */
-final class MarkIdempotencyTokenClientOptional {
+final class MakeIdempotencyTokenClientOptional {
     public static Model transform(Model model) {
         return ModelTransformer.create().mapShapes(model, shape -> {
             if (shape.isMemberShape()

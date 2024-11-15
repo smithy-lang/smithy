@@ -723,7 +723,7 @@ public final class ModelTransformer {
     }
 
     /**
-     * Marks any Idempotency token fields {@code @clientOptional} so that missing tokens can be injected.
+     * Makes any Idempotency token fields {@code @clientOptional} so that missing tokens can be injected.
      *
      * <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
      * allowing for a default value to get injected when missing.
@@ -731,7 +731,7 @@ public final class ModelTransformer {
      * @param model Model to transform.
      * @return Returns the transformed model.
      */
-    public Model markIdempotencyTokensClientOptional(Model model) {
-        return MarkIdempotencyTokenClientOptional.transform(model);
+    public Model makeIdempotencyTokensClientOptional(Model model) {
+        return MakeIdempotencyTokenClientOptional.transform(model);
     }
 }

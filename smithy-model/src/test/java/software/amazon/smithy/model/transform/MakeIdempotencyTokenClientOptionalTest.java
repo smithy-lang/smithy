@@ -19,7 +19,7 @@ public class MakeIdempotencyTokenClientOptionalTest {
                 .addImport(FlattenPaginationInfoTest.class.getResource("idempotency-token.smithy"))
                 .assemble()
                 .unwrap();
-        Model result = ModelTransformer.create().markIdempotencyTokensClientOptional(before);
+        Model result = ModelTransformer.create().makeIdempotencyTokensClientOptional(before);
 
         Shape input = result.expectShape(operationInput);
         Shape member = result.expectShape(input.getMember("token").get().getId());

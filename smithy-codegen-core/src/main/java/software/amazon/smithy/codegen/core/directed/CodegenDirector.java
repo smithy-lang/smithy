@@ -316,14 +316,14 @@ public final class CodegenDirector<
     }
 
     /**
-     * Marks idempotency token fields {@code clientOptional}.
+     * Makes idempotency token fields {@code clientOptional}.
      *
-     * @see ModelTransformer#markIdempotencyTokensClientOptional(Model)
+     * @see ModelTransformer#makeIdempotencyTokensClientOptional(Model)
      */
     public void markIdempotencyTokensClientOptional() {
         transforms.add((model, transformer) -> {
-            LOGGER.finest("Marking Idempotency Token fields `@clientOptional`");
-            return transformer.markIdempotencyTokensClientOptional(model);
+            LOGGER.finest("Making Idempotency Token fields `@clientOptional`");
+            return transformer.makeIdempotencyTokensClientOptional(model);
         });
     }
 

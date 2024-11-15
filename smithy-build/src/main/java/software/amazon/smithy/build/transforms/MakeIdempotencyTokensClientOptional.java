@@ -10,18 +10,18 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 
 /**
- * {@code markIdempotencyTokensClientOptional} marks required idempotency token fields clientOptional.
+ * {@code makeIdempotencyTokensClientOptional} marks required idempotency token fields clientOptional.
  */
-public final class MarkIdempotencyTokensClientOptional implements ProjectionTransformer {
+public final class MakeIdempotencyTokensClientOptional implements ProjectionTransformer {
 
     @Override
     public String getName() {
-        return "markIdempotencyTokensClientOptional";
+        return "makeIdempotencyTokensClientOptional";
     }
 
     @Override
     public Model transform(TransformContext context) {
         Model model = context.getModel();
-        return context.getTransformer().markIdempotencyTokensClientOptional(model);
+        return context.getTransformer().makeIdempotencyTokensClientOptional(model);
     }
 }

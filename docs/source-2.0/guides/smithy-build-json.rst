@@ -575,10 +575,10 @@ applied.
 
 .. _markIdempotencyTokensClientOptional:
 
-markIdempotencyTokensClientOptional
+makeIdempotencyTokensClientOptional
 -----------------------------------
 
-Marks required Idempotency token members as ``@clientOptional``.
+Makes required Idempotency token members as ``@clientOptional``.
 
 Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
 allowing for a default value to get injected when missing.
@@ -591,7 +591,7 @@ allowing for a default value to get injected when missing.
             "exampleProjection": {
                 "transforms": [
                     {
-                        "name": "markIdempotencyTokensClientOptional"
+                        "name": "makeIdempotencyTokensClientOptional"
                     }
                 ]
             }
