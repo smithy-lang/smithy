@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -109,6 +111,15 @@ public final class DefaultTraitValidator extends AbstractValidator {
         events.addAll(shape.accept(visitor));
 
         switch (shapeTarget.getType()) {
+            case BLOB:
+                try {
+                    value.asStringNode().ifPresent(val -> {
+                        Base64.getDecoder().decode(val.getValue().getBytes(StandardCharsets.UTF_8));
+                    });
+                } catch (IllegalArgumentException exc) {
+                    events.add(warning(shape, trait, "The @default value of a blob should be a valid base64 string."));
+                }
+                break;
             case MAP:
                 value.asObjectNode().ifPresent(obj -> {
                     if (!obj.isEmpty()) {

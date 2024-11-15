@@ -54,7 +54,7 @@ apply OperationWithRequiredMembersWithDefaults @httpResponseTests([
             requiredBoolean: true
             requiredList: []
             requiredTimestamp: 1
-            requiredBlob: "{}"
+            requiredBlob: "YmxvYg=="
             requiredByte: 1
             requiredShort: 1
             requiredInteger: 10
@@ -127,7 +127,7 @@ structure RequiredMembersWithDefaultsMixin {
     requiredTimestamp: Timestamp = 1
 
     @required
-    requiredBlob: Blob = "{}"
+    requiredBlob: Blob = "YmxvYg=="
 
     @required
     requiredByte: Byte = 1
