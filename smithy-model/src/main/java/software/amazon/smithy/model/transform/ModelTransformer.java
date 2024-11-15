@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
+import sun.awt.ModalityListener;
 
 /**
  * Class used to transform {@link Model}s.
@@ -719,5 +720,18 @@ public final class ModelTransformer {
      */
     public Model filterDeprecatedRelativeVersion(Model model, String relativeVersion) {
         return new FilterDeprecatedRelativeVersion(relativeVersion).transform(this, model);
+    }
+
+    /**
+     * Marks any Idempotency token fields {@code @clientOptional} so that missing tokens can be injected.
+     *
+     * <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
+     * allowing for a default value to get injected when missing.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model markIdempotencyTokensClientOptional(Model model) {
+        return MarkIdempotencyTokenClientOptional.transform(model);
     }
 }

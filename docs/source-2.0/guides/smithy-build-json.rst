@@ -573,6 +573,31 @@ applied.
     use an :ref:`enum shape <enum>` instead to avoid needing to use this
     transform.
 
+.. _markIdempotencyTokensClientOptional:
+
+markIdempotencyTokensClientOptional
+-----------------------------------
+
+Marks required Idempotency token members as ``@clientOptional``.
+
+Idempotency tokens that are required should fail validation, but shouldn't be required to create a type,
+allowing for a default value to get injected when missing.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "markIdempotencyTokensClientOptional"
+                    }
+                ]
+            }
+        }
+    }
+
 .. _changeTypes:
 
 changeTypes
