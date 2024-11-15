@@ -322,7 +322,7 @@ public final class CodegenDirector<
      */
     public void markIdempotencyTokensClientOptional() {
         transforms.add((model, transformer) -> {
-            LOGGER.finest("Making Idempotency Token fields `@clientOptional`");
+            LOGGER.finest("Making `@idempotencyToken` fields `@clientOptional`");
             return transformer.makeIdempotencyTokensClientOptional(model);
         });
     }
