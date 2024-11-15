@@ -11,12 +11,15 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -33,10 +36,11 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class SmithyIdlModelSerializerTest {
+    private static final URL TEST_FILE_URL = Objects.requireNonNull(SmithyIdlModelSerializer.class.getResource("idl-serialization/cases"));
+
     @TestFactory
     public Stream<DynamicTest> generateTests() throws IOException, URISyntaxException {
-        return Files.list(Paths.get(
-                SmithyIdlModelSerializer.class.getResource("idl-serialization/cases").toURI()))
+        return Files.list(Paths.get(TEST_FILE_URL.toURI()))
                 .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testConversion(path)));
     }
 
@@ -79,10 +83,13 @@ public class SmithyIdlModelSerializerTest {
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
 
-        assertThat(serialized, aMapWithSize(1));
+        assertThat(serialized, aMapWithSize(2));
         assertThat(serialized, hasKey(Paths.get("ns.structures.smithy")));
         assertThat(serialized.get(Paths.get("ns.structures.smithy")),
                 containsString("namespace ns.structures"));
+        assertThat(serialized, hasKey(Paths.get("metadata.smithy")));
+        assertThat(serialized.get(Paths.get("metadata.smithy")),
+                containsString("metadata shared = true"));
         assertThat(serialized, not(hasKey(Paths.get("smithy.api.smithy"))));
     }
 
@@ -236,15 +243,21 @@ public class SmithyIdlModelSerializerTest {
 
     @Test
     public void sortsAlphabetically() {
-        URL resource = getClass().getResource("idl-serialization/alphabetical.smithy");
-        Model model = Model.assembler().addImport(resource).assemble().unwrap();
+        URL before = getClass().getResource("idl-serialization/alphabetical/before.smithy");
+        URL after = getClass().getResource("idl-serialization/alphabetical/after.smithy");
+        URL metadata = getClass().getResource("idl-serialization/alphabetical/metadata.smithy");
+
+        Model model = Model.assembler().addImport(before).assemble().unwrap();
         Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
                 .componentOrder(SmithyIdlComponentOrder.ALPHA_NUMERIC)
                 .build()
                 .serialize(model);
-        String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
 
-        assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
+        String modelResult = reserialized.get(Paths.get("com.example.smithy")).replace("\r\n", "\n");
+        String metadataResult = reserialized.get(Paths.get("metadata.smithy")).replace("\r\n", "\n");
+
+        assertThat(modelResult, equalTo(IoUtils.readUtf8Url(after).replace("\r\n", "\n")));
+        assertThat(metadataResult, equalTo(IoUtils.readUtf8Url(metadata).replace("\r\n", "\n")));
     }
 
     @Test
