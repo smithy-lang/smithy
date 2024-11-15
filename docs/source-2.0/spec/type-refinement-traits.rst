@@ -105,6 +105,7 @@ numeric types MUST be numbers that fit within the targeted type and match any
 
 The following shapes have restrictions on their default values:
 
+* blob: can be set to any valid base64-encoded string.
 * enum: can be set to any valid string *value* of the enum.
 * intEnum: can be set to any valid integer *value* of the enum.
 * document: can be set to ``null``, ```true``, ``false``, string, numbers,

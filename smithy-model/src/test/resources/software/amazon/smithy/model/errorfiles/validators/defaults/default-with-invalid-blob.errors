@@ -1,0 +1,2 @@
+[WARNING] smithy.example#Foo$invalidBlob: The @default value of a blob should be a valid base64 string. | DefaultTrait
+[WARNING] smithy.example#InvalidBlob: The @default value of a blob should be a valid base64 string. | DefaultTrait
