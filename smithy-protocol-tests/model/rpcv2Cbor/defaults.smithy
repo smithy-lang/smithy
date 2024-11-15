@@ -314,7 +314,7 @@ structure DefaultsMixin {
     defaultBoolean: Boolean = true
     defaultList: TestStringList = []
     defaultTimestamp: Timestamp = 0
-    defaultBlob: Blob = "abc"
+    defaultBlob: Blob = "YWJj"
     defaultByte: Byte = 1
     defaultShort: Short = 1
     defaultInteger: Integer = 10
