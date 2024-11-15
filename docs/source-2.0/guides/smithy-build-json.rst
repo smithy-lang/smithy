@@ -573,12 +573,12 @@ applied.
     use an :ref:`enum shape <enum>` instead to avoid needing to use this
     transform.
 
-.. _markIdempotencyTokensClientOptional:
+.. _makeIdempotencyTokensClientOptional:
 
 makeIdempotencyTokensClientOptional
 -----------------------------------
 
-Makes required Idempotency token members as ``@clientOptional``.
+Makes required Idempotency token members :ref:`@clientOptional <clientOptional-trait>`.
 
 Idempotency tokens that are required should fail validation, but shouldn't be required to create a type.
 This allows a default value to get injected when missing.

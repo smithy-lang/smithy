@@ -10,7 +10,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 
 /**
- * {@code makeIdempotencyTokensClientOptional} marks required idempotency token fields clientOptional.
+ * {@code makeIdempotencyTokensClientOptional} makes {@code @idempotencyToken} fields {@code @clientOptional}.
  */
 public final class MakeIdempotencyTokensClientOptional implements ProjectionTransformer {
 

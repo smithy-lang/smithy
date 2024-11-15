@@ -12,7 +12,7 @@ import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 
 /**
- * Makes Idempotency token members as clientOptional, so they can be injected if missing.
+ * Makes {@code idempotencyToken} members {@code clientOptional}, so they can be injected if missing.
  */
 final class MakeIdempotencyTokenClientOptional {
     private MakeIdempotencyTokenClientOptional() {}
