@@ -13,25 +13,11 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides the core implementation of loading, validating, " +
-        "traversing, mutating, and serializing a Smithy model."
+description = "Defines protocol test traits."
 
-ext {
-    displayName = "Smithy :: Model"
-    moduleName = "software.amazon.smithy.model"
-}
-
-apply plugin: "me.champeau.jmh"
+extra["displayName"] = "Smithy :: Protocol Test Traits"
+extra["moduleName"] = "software.amazon.smithy.protocoltest.traits"
 
 dependencies {
-    api project(":smithy-utils")
-    jmh project(":smithy-utils")
-}
-
-jmh {
-    timeUnit = "us"
-}
-
-processJmhResources {
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    api(project(":smithy-model"))
 }

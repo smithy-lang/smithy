@@ -13,15 +13,8 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides support for converting the Amazon API Gateway " +
-        "Smithy traits when converting a Smithy model to OpenAPI3."
+description = "This module contains utility classes and interfaces for Smithy."
 
-ext {
-    displayName = "Smithy :: Amazon API Gateway OpenAPI Support"
-    moduleName = "software.amazon.smithy.aws.apigateway.openapi"
-}
+extra["displayName"] = "Smithy :: Utilities"
+extra["moduleName"] = "software.amazon.smithy.utils"
 
-dependencies {
-    api project(":smithy-openapi")
-    api project(":smithy-aws-apigateway-traits")
-}

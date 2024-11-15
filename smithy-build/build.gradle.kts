@@ -16,15 +16,13 @@
 description = "This module is a library used to validate Smithy models, create filtered " +
         "projections of a model, and generate build artifacts."
 
-ext {
-    displayName = "Smithy :: Build"
-    moduleName = "software.amazon.smithy.build"
-}
+extra["displayName"] = "Smithy :: Build"
+extra["moduleName"] = "software.amazon.smithy.build"
 
 dependencies {
-    api project(":smithy-utils")
-    api project(":smithy-model")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 
     // Allows testing of annotation processor
-    testImplementation "com.google.testing.compile:compile-testing:0.21.0"
+    testImplementation("com.google.testing.compile:compile-testing:0.21.0")
 }

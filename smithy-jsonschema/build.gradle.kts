@@ -13,16 +13,12 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides a code generation framework for generating clients, " +
-        "servers, documentation, and other artifacts for various languages from Smithy models."
+description = "This module contains support for converting a Smithy model to JSON Schema."
 
-ext {
-    displayName = "Smithy :: Code Generation Framework"
-    moduleName = "software.amazon.smithy.codegen.core"
-}
+extra["displayName"] = "Smithy :: JSON Schema Conversion"
+extra["moduleName"] = "software.amazon.smithy.jsonschema"
 
 dependencies {
-    api project(":smithy-utils")
-    api project(":smithy-model")
-    api project(":smithy-build")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 }

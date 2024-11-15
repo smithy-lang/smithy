@@ -13,14 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides Smithy traits and validators that are used by most AWS services."
+description = "This module provides support for converting the Amazon API Gateway " +
+        "Smithy traits when converting a Smithy model to OpenAPI3."
 
-ext {
-    displayName = "Smithy :: AWS Core Traits"
-    moduleName = "software.amazon.smithy.aws.traits"
-}
+extra["displayName"] = "Smithy :: Amazon API Gateway OpenAPI Support"
+extra["moduleName"] = "software.amazon.smithy.aws.apigateway.openapi"
 
 dependencies {
-    api project(":smithy-diff")
-    api project(":smithy-model")
+    api(project(":smithy-aws-apigateway-traits"))
+    api(project(":smithy-openapi"))
 }

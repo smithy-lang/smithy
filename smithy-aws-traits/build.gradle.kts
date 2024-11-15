@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
  * permissions and limitations under the License.
  */
 
-description = "A standalone JMESPath parser"
+description = "This module provides Smithy traits and validators that are used by most AWS services."
 
-ext {
-    displayName = "Smithy :: JMESPath"
-    moduleName = "software.amazon.smithy.jmespath"
+extra["displayName"] = "Smithy :: AWS Core Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.traits"
+
+dependencies {
+    api(project(":smithy-diff"))
+    api(project(":smithy-model"))
 }

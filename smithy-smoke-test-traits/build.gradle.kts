@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides Smithy traits and validators for IAM."
+description = "Defines smoke test traits."
 
-ext {
-    displayName = "Smithy :: AWS :: IAM Traits"
-    moduleName = "software.amazon.smithy.aws.iam.traits"
-}
+extra["displayName"] = "Smithy :: Smoke Test Traits"
+extra["moduleName"] = "software.amazon.smithy.smoketest.traits"
 
 dependencies {
-    api project(":smithy-aws-traits")
+    api(project(":smithy-model"))
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines smoke test traits."
+description = "This module detects differences between two Smithy models, identifying " +
+        "changes that are safe and changes that are backward incompatible."
 
-ext {
-    displayName = "Smithy :: Smoke Test Traits"
-    moduleName = "software.amazon.smithy.smoketest.traits"
-}
+extra["displayName"] = "Smithy :: Diff"
+extra["moduleName"] = "software.amazon.smithy.diff"
 
 dependencies {
-    api project(":smithy-model")
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 }

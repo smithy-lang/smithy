@@ -14,25 +14,25 @@
  */
 
 plugins {
-    id "software.amazon.smithy.gradle.smithy-jar" version "$smithyGradleVersion"
+    id("software.amazon.smithy.gradle.smithy-jar")
 }
 
 description = "Defines protocol tests for AWS HTTP protocols."
 
-ext {
-    displayName = "Smithy :: AWS :: Protocol Tests"
-    moduleName = "software.amazon.smithy.aws.protocoltests"
-}
+extra["displayName"] = "Smithy :: AWS :: Protocol Tests"
+extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
 
 dependencies {
-    implementation project(path: ":smithy-cli", configuration: "shadow")
-    implementation project(":smithy-protocol-test-traits")
-    implementation project(":smithy-protocol-traits")
-    implementation project(":smithy-aws-traits")
-    api project(":smithy-validation-model")
+    implementation(project(path = ":smithy-cli", configuration = "shadow"))
+    implementation(project(":smithy-protocol-test-traits"))
+    implementation(project(":smithy-protocol-traits"))
+    implementation(project(":smithy-aws-traits"))
+    api(project(":smithy-validation-model"))
 }
 
-tasks["sourcesJar"].dependsOn("smithyJarStaging")
+tasks.sourcesJar {
+    dependsOn("smithyJarStaging")
+}
 
 smithy {
     format.set(false)

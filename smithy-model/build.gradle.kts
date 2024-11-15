@@ -13,9 +13,27 @@
  * permissions and limitations under the License.
  */
 
-description = "This module contains utility classes and interfaces for Smithy."
+description = "This module provides the core implementation of loading, validating, " +
+        "traversing, mutating, and serializing a Smithy model."
 
-ext {
-    displayName = "Smithy :: Utilities"
-    moduleName = "software.amazon.smithy.utils"
+extra["displayName"] = "Smithy :: Model"
+extra["moduleName"] = "software.amazon.smithy.model"
+
+plugins {
+    id("me.champeau.jmh")
+}
+
+dependencies {
+    api(project(":smithy-utils"))
+    jmh(project(":smithy-utils"))
+}
+
+jmh {
+    timeUnit = "us"
+}
+
+tasks {
+    processJmhResources {
+        duplicatesStrategy = DuplicatesStrategy.WARN
+    }
 }
