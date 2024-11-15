@@ -43,7 +43,6 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
-import sun.awt.ModalityListener;
 
 /**
  * Class used to transform {@link Model}s.
