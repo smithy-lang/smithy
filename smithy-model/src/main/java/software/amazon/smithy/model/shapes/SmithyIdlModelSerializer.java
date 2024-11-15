@@ -52,10 +52,10 @@ import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.AbstractCodeWriter;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SimpleCodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -154,13 +154,22 @@ public final class SmithyIdlModelSerializer {
                 .filter(shapeFilter)
                 .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
+        // If there is no metadata, do not create metadata file
+        if (model.getMetadata().isEmpty()) {
+            return result;
+        }
+
+        // Add metadata file to the list of output files
+        Path metadataPath = Paths.get("metadata.smithy");
+        if (basePath != null) {
+            metadataPath = basePath.resolve(metadataPath);
+        }
         if (result.isEmpty()) {
-            Path path = Paths.get("metadata.smithy");
-            if (basePath != null) {
-                path = basePath.resolve(path);
-            }
-            return Collections.singletonMap(path, serializeHeader(
-                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix));
+            return Collections.singletonMap(metadataPath, serializeHeader(
+                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix, true));
+        } else {
+            result.put(metadataPath, serializeHeader(
+                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix, true));
         }
         return result;
     }
@@ -191,8 +200,8 @@ public final class SmithyIdlModelSerializer {
                 .forEach(shape -> shape.accept(shapeSerializer));
 
         String header = serializeHeader(
-                fullModel, namespace, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight());
-        return header + codeWriter.toString();
+                fullModel, namespace, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight(), false);
+        return header + codeWriter;
     }
 
     private Set<ShapeId> getInlineableShapes(
@@ -285,11 +294,10 @@ public final class SmithyIdlModelSerializer {
             String namespace,
             Collection<Shape> shapes,
             String inputSuffix,
-            String outputSuffix
+            String outputSuffix,
+            boolean addMetadata
     ) {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
-        NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
-
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
 
         if (shapes.stream().anyMatch(Shape::isOperationShape)) {
@@ -304,23 +312,19 @@ public final class SmithyIdlModelSerializer {
 
         codeWriter.write("");
 
-        Comparator<Map.Entry<String, Node>> comparator = componentOrder.metadataComparator();
-
-        // Write the full metadata into every output. When loaded back together the conflicts will be ignored,
-        // but if they're separated out then each file will still have all the context.
-        fullModel.getMetadata().entrySet().stream()
-                .filter(entry -> metadataFilter.test(entry.getKey()))
-                .sorted(comparator)
-                .forEach(entry -> {
-                    codeWriter.trimTrailingSpaces(false)
-                            .writeInline("metadata $K = ", entry.getKey())
-                            .trimTrailingSpaces();
-                    nodeSerializer.serialize(entry.getValue());
-                    codeWriter.write("");
-                });
-
-        if (!fullModel.getMetadata().isEmpty()) {
-            codeWriter.write("");
+        if (addMetadata) {
+            NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
+            Comparator<Map.Entry<String, Node>> comparator = componentOrder.metadataComparator();
+            fullModel.getMetadata().entrySet().stream()
+                    .filter(entry -> metadataFilter.test(entry.getKey()))
+                    .sorted(comparator)
+                    .forEach(entry -> {
+                        codeWriter.trimTrailingSpaces(false)
+                                .writeInline("metadata $K = ", entry.getKey())
+                                .trimTrailingSpaces();
+                        nodeSerializer.serialize(entry.getValue());
+                        codeWriter.write("");
+                    });
         }
 
         if (namespace != null) {
@@ -606,7 +610,7 @@ public final class SmithyIdlModelSerializer {
 
         private void writeShapeMembers(Collection<MemberShape> members) {
             if (members.isEmpty()) {
-                // When the are no members to write, put "{}" on the same line.
+                // When there are no members to write, put "{}" on the same line.
                 codeWriter.writeInline("{}").write("");
             } else {
                 codeWriter.openBlock("{", "}", () -> {
@@ -1028,7 +1032,7 @@ public final class SmithyIdlModelSerializer {
             }
 
             // If we're looking at a structure or union shape, we'll need to get the member shape based on the
-            // node key. Here we pre-compute a mapping so we don't have to traverse the member list every time.
+            // node key. Here we pre-compute a mapping, so we don't have to traverse the member list every time.
             Map<String, MemberShape> members;
             if (shape == null) {
                 members = Collections.emptyMap();
@@ -1058,11 +1062,11 @@ public final class SmithyIdlModelSerializer {
     }
 
     /**
-     * Extension of {@link CodeWriter} that provides additional convenience methods.
+     * Extension of {@link SimpleCodeWriter} that provides additional convenience methods.
      *
-     * <p>Provides a built in $I formatter that formats shape ids, automatically trimming namespace where possible.
+     * <p>Provides a built-in $I formatter that formats shape ids, automatically trimming namespace where possible.
      */
-    private static final class SmithyCodeWriter extends CodeWriter {
+    private static final class SmithyCodeWriter extends SimpleCodeWriter {
         private static final Pattern UNQUOTED_KEY_STRING = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
         private final String namespace;
         private final Model model;
