@@ -316,7 +316,7 @@ public final class CodegenDirector<
     }
 
     /**
-     * Makes idempotency token fields {@code clientOptional}.
+     * Makes {@code idempotencyToken} fields {@code clientOptional}.
      *
      * @see ModelTransformer#makeIdempotencyTokensClientOptional(Model)
      */
