@@ -1,0 +1,27 @@
+name: "Amend new changelog entries"
+on: pull_request
+permissions:
+    # Needed to write PR comments
+    pull-requests: write
+jobs:
+    amend:
+        name: "Add PR links to staged changelogs"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                ref: ${{ github.head_ref }}
+                repository: ${{ github.event.pull_request.head.repo.full_name }}
+  
+            - uses: actions/setup-python@v5
+              with:
+                python-version: "3.13"
+  
+            - name: "Amend and push any staged changelogs"
+              env:
+                GITHUB_TOKEN: ${{ github.token }}
+                TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+                PR_TITLE: ${{ github.event.pull_request.title }}
+              run: |
+                git fetch origin ${{ github.base_ref }}
+                ./.changes/amend --review-comment
