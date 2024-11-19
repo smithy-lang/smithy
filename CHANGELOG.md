@@ -1,5 +1,41 @@
 # Smithy Changelog
 
+## 1.53.0 (2024-11-18)
+
+### Features
+
+* Added a transform to mark required idempotency tokens client optional ([#2466](https://github.com/smithy-lang/smithy/pull/2466))
+* Updated the IDL serializer to write metadata to a separate file ([#2464](https://github.com/smithy-lang/smithy/pull/2464))
+* Expanded the `title` trait to be applicable to any non-member shape ([#2461](https://github.com/smithy-lang/smithy/pull/2461))
+* Added a pagination flattening transform ([#2454](https://github.com/smithy-lang/smithy/pull/2454))
+* Added transforms to remove deprecated shapes ([#2452](https://github.com/smithy-lang/smithy/pull/2452))
+* Relaxed the pattern on the `@defineConditionKeys` trait's keys to enable inferring the `service` to be the service's `arnNamespace` ([#2450](https://github.com/smithy-lang/smithy/pull/2450))
+* Added the `useInlineMaps` JSONSchema setting to allow users to configure JSON Schema conversion to inline converted map shapes instead of creating references ([#2449](https://github.com/smithy-lang/smithy/pull/2449))
+* Updated the CFN resource schema generation to fill in the permissions field of the tagging configuration for resources ([#2446](https://github.com/smithy-lang/smithy/pull/2446))
+* Added `resourceDelimiter` and `reusable` properties to the `arn` trait ([#2440](https://github.com/smithy-lang/smithy/pull/2440))
+* Added a validator for the xmlFlattened trait that checks if the member's target is a list that has a member with xmlName, and that xmlName doesn't match the name of the xmlFlattened member ([#2439](https://github.com/smithy-lang/smithy/pull/2439))
+
+### Bug Fixes
+
+* Updated CloudFormation resource schema conversion to be round-trippable ([#2445](https://github.com/smithy-lang/smithy/pull/2445/))
+* Fixed for tagsProperty in CFN schema creation ([#2444](https://github.com/smithy-lang/smithy/pull/2444))
+* Deferred the `scrubTraitDefinitions` call inside JSON Schema deconflicting to happen only when the model is in a state that would have an avoidable conflict ([#2435](https://github.com/smithy-lang/smithy/pull/2435))
+* Updated the `ChangedMemberTarget` diff evaluator to properly check changes to map keys and values the same way it checks changes to list members ([#2434](https://github.com/smithy-lang/smithy/pull/2434))
+
+### Documentation
+
+* Fixed a typo in event stream content-type documentation ([#2458](https://github.com/smithy-lang/smithy/pull/2458))
+* Fixed a broken README link ([#2457](https://github.com/smithy-lang/smithy/pull/2457))
+
+## Other
+
+* Updated blob defaults for protocol tests ([#2467](https://github.com/smithy-lang/smithy/pull/2467))
+* Downgraded a noisy log statement ([#2451](https://github.com/smithy-lang/smithy/pull/2451))
+* Fixed the CBOR type for blobs in RPCv2 CBOR protocol tests ([#2447](https://github.com/smithy-lang/smithy/pull/2447))
+* Updated protocol tests to use lower-cased headers ([#2437](https://github.com/smithy-lang/smithy/pull/2437))
+* Updated server protocol tests to assert serialization of empty headers ([#2433](https://github.com/smithy-lang/smithy/pull/2433))
+* Lowered the severity of `UnboundTestOperation` to `WARNING` ([#2432](https://github.com/smithy-lang/smithy/pull/2432))
+
 ## 1.52.1 (2024-10-22)
 
 ### Bug Fixes
