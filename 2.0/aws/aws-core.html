@@ -590,7 +590,7 @@ placeholder for the region. This can only be set to true if
 <td>Set to true to specify that the ARN does not contain an account ID.
 If not set, or if set to false, the resolved ARN will contain a
 placeholder for the customer account ID. This can only be set to
-true if absolute is not set or is false.</td>
+true if <code class="docutils literal notranslate"><span class="pre">absolute</span></code> is not set or is false.</td>
 </tr>
 <tr class="row-odd"><td>absolute</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
@@ -599,11 +599,22 @@ ARN that does not need to be merged with the service. This type of
 ARN MUST be used when the identifier of a resource is an ARN or is
 based on the ARN identifier of a parent resource.</td>
 </tr>
+<tr class="row-even"><td>resourceDelimiter</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Indicates which character is used to delimit sections of the resource
+segment of an ARN. This can only be set if <code class="docutils literal notranslate"><span class="pre">absolute</span></code> is set to true.
+Valid values are <code class="docutils literal notranslate"><span class="pre">/</span></code> (forward slash) and <code class="docutils literal notranslate"><span class="pre">:</span></code> (colon).</td>
+</tr>
+<tr class="row-odd"><td>reusable</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to indicate that an ARN may be reused for different
+instances of a resource.</td>
+</tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="format-of-an-arn">
-<h3>Format of an ARN<a class="headerlink" href="#format-of-an-arn" title="Permalink to this heading">#</a></h3>
+<span id="aws-api-arn-trait-format-of-an-arn"></span><h3>Format of an ARN<a class="headerlink" href="#format-of-an-arn" title="Permalink to this heading">#</a></h3>
 <p>An ARN is a structured URI made up of the following components:</p>
 <div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>arn:partition:service:region:account-id:resource
                          \       /
@@ -647,7 +658,7 @@ arn:aws:s3:::my_corporate_bucket/exampleobject.png
 </div>
 </div>
 <div class="section" id="relative-arn-templates">
-<h3>Relative ARN templates<a class="headerlink" href="#relative-arn-templates" title="Permalink to this heading">#</a></h3>
+<span id="aws-api-arn-trait-relative-arn-templates"></span><h3>Relative ARN templates<a class="headerlink" href="#relative-arn-templates" title="Permalink to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">arn</span></code> traits with relative templates are combined with the service to form an
 absolute ARN template. This ARN template can only be expanded at runtime with
 actual values for the partition, region name, account ID, and identifier
@@ -679,7 +690,7 @@ identifier is to be inserted into the ARN template when resolving it at
 runtime.</p>
 </div>
 <div class="section" id="using-an-arn-as-a-resource-identifier">
-<h3>Using an ARN as a resource identifier<a class="headerlink" href="#using-an-arn-as-a-resource-identifier" title="Permalink to this heading">#</a></h3>
+<span id="aws-api-arn-trait-using-an-arn-as-a-resource-identifier"></span><h3>Using an ARN as a resource identifier<a class="headerlink" href="#using-an-arn-as-a-resource-identifier" title="Permalink to this heading">#</a></h3>
 <p><em>Absolute</em> ARN templates are used to provide an entire ARN to a resource that
 is not combined with the service ARN namespace. When a resource uses an ARN as
 its identifier, an absolute ARN template MUST be defined on the resource

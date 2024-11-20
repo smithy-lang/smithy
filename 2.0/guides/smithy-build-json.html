@@ -432,7 +432,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.52.1&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.53.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -568,9 +568,9 @@ requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id15">
-<table border="1" class="docutils align-default" id="id15">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id15" title="Permalink to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id16">
+<table border="1" class="docutils align-default" id="id16">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id16" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -686,7 +686,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.52.1&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.53.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -956,8 +956,28 @@ use an <a class="reference internal" href="../spec/simple-types.html#enum"><span
 transform.</p>
 </div>
 </div>
+<div class="section" id="makeidempotencytokensclientoptional">
+<span id="id8"></span><h3>makeIdempotencyTokensClientOptional<a class="headerlink" href="#makeidempotencytokensclientoptional" title="Permalink to this heading">#</a></h3>
+<p>Makes required <a class="reference internal" href="../spec/behavior-traits.html#idempotencytoken-trait"><span class="std std-ref">&#64;idempotencyToken</span></a> members <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">&#64;clientOptional</span></a>.</p>
+<p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type.
+This allows a default value to get injected when missing.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;makeIdempotencyTokensClientOptional&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="changetypes">
-<span id="id8"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this heading">#</a></h3>
+<span id="id9"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this heading">#</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -1951,7 +1971,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="section" id="flattennamespaces">
-<span id="id9"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
+<span id="id10"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2121,6 +2141,65 @@ but keeps the shape if it has any of the provided tags:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="removedeprecatedshapes">
+<span id="removedeprecatedshapes-transform"></span><h3>removeDeprecatedShapes<a class="headerlink" href="#removedeprecatedshapes" title="Permalink to this heading">#</a></h3>
+<p>Removes any shapes that were marked as <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> before the specified version or date.</p>
+<p>This transform can be used to filter out shapes with the <a class="reference internal" href="../spec/documentation-traits.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a> applied if the
+<code class="docutils literal notranslate"><span class="pre">since</span></code> property of the trait specifies a version or date. Versions are expected to follow the
+<a class="reference external" href="https://semver.org/">SemVer Specification</a> and dates are expected to be <a class="reference external" href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> calendar dates (YYYY-MM-DD).
+If the value of the <code class="docutils literal notranslate"><span class="pre">since</span></code> property is not a valid SemVer version or ISO 8601 calendar date then the
+<code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait will be ignored by this transform.</p>
+<p>If the version or date in the <code class="docutils literal notranslate"><span class="pre">since</span></code> property of a <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait is before the configured version or date, then
+the shape the <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait is applied to will be removed from the model. Shapes with the <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait,
+but no <code class="docutils literal notranslate"><span class="pre">since</span></code> property will be ignored by this transform.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>relativeDate</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Date, in <a class="reference external" href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> calendar date format (YYYY-MM-DD), to use to filter out deprecated shapes.
+Any shapes deprecated before this date will be removed from the model.</td>
+</tr>
+<tr class="row-odd"><td>relativeVersion</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Version, following the <a class="reference external" href="https://semver.org/">SemVer Specification</a>, to use to filter out deprecated shapes.
+Any shapes deprecated in an earlier version will be removed from the model.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example removes any deprecated shapes that were deprecated before <code class="docutils literal notranslate"><span class="pre">2024-10-10</span></code>
+or before version <code class="docutils literal notranslate"><span class="pre">1.1.0</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;removeDeprecatedShapes&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;relativeDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-10-10&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;relativeVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.0&quot;</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="renameshapes">
 <span id="renameshapes-transform"></span><h3>renameShapes<a class="headerlink" href="#renameshapes" title="Permalink to this heading">#</a></h3>
 <p>Renames shapes within the model, including updating any references to the
@@ -2241,7 +2320,7 @@ files have access to the following environment variables:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id10"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
+<span id="id11"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -2262,7 +2341,7 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id11"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id12"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file. By default the serialized model excludes <a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
@@ -2280,12 +2359,12 @@ to the <code class="docutils literal notranslate"><span class="pre">smithy-build
 </div>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id12"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id13"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id13"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id14"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2303,7 +2382,7 @@ ignored. A Smithy manifest file is stored in a JAR as <code class="docutils lite
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
 </div>
 <div class="section" id="run-plugin">
-<span id="id14"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id15"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
 useful when integrating Smithy's build process with Smithy implementations
 that are not written in Java.</p>
@@ -2510,6 +2589,7 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
 <li><a class="reference internal" href="#transforms">Transforms</a><ul>
 <li><a class="reference internal" href="#apply">apply</a></li>
 <li><a class="reference internal" href="#changestringenumstoenumshapes">changeStringEnumsToEnumShapes</a></li>
+<li><a class="reference internal" href="#makeidempotencytokensclientoptional">makeIdempotencyTokensClientOptional</a></li>
 <li><a class="reference internal" href="#changetypes">changeTypes</a></li>
 <li><a class="reference internal" href="#excludeshapesbyselector">excludeShapesBySelector</a></li>
 <li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>
@@ -2530,6 +2610,7 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
 <li><a class="reference internal" href="#flattennamespaces">flattenNamespaces</a></li>
 <li><a class="reference internal" href="#removetraitdefinitions">removeTraitDefinitions</a></li>
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
+<li><a class="reference internal" href="#removedeprecatedshapes">removeDeprecatedShapes</a></li>
 <li><a class="reference internal" href="#renameshapes">renameShapes</a></li>
 </ul>
 </li>

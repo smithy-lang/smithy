@@ -804,6 +804,26 @@ mapStrategy (``string``)
             }
         }
 
+.. _generate-openapi-jsonschema-setting-useInlineMaps:
+
+useInlineMaps (``boolean``)
+    Configures Smithy to generate ``map`` shapes inline instead of as
+    references. This is necessary for some code generators to distinguish
+    between ``maps`` and ``structure`` shapes when generating.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "useInlineMaps": true
+                }
+            }
+        }
+
 .. _generate-openapi-jsonschema-setting-schemaDocumentExtensions:
 
 schemaDocumentExtensions (``Map<String, any>``)

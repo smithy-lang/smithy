@@ -435,6 +435,7 @@ numeric types MUST be numbers that fit within the targeted type and match any
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length</span></a> or <a class="reference internal" href="constraint-traits.html#pattern-trait"><span class="std std-ref">pattern</span></a> traits, etc).</p>
 <p>The following shapes have restrictions on their default values:</p>
 <ul class="simple">
+<li>blob: can be set to any valid base64-encoded string.</li>
 <li>enum: can be set to any valid string <em>value</em> of the enum.</li>
 <li>intEnum: can be set to any valid integer <em>value</em> of the enum.</li>
 <li>document: can be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>, <code class="docutils literal notranslate"><span class="pre">`true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, string, numbers,

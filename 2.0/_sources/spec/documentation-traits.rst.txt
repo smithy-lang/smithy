@@ -388,9 +388,9 @@ tags trait are arbitrary and up to the model author.
 Summary
     Defines a proper name for a service or resource shape. This title can be
     used in automatically generated documentation and other contexts to
-    provide a user friendly name for services and resources.
+    provide a user friendly name for a shape.
 Trait selector
-    ``:is(service, resource)``
+    ``:not(member)``
 
     *Any service or resource*
 Value type

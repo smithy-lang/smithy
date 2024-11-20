@@ -715,10 +715,11 @@ keys.</dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait defines additional condition keys
-that appear within a service. Keys in the map must be valid IAM identifiers,
-meaning they must adhere to the following regular expression:
-<code class="docutils literal notranslate"><span class="pre">&quot;^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$&quot;</span></code>.
-Each condition key structure supports the following members:</p>
+that appear within a service. Keys in the map must be valid IAM identifiers
+or names of condition keys, meaning they must adhere to the following regular
+expression: <code class="docutils literal notranslate"><span class="pre">&quot;^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$&quot;</span></code>. If only a
+condition key name is specified, the service is inferred to be the
+<code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>. Each condition key structure supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
 <colgroup>
