@@ -71,13 +71,20 @@ def amend(
 
 def get_new_changes(base: str | None) -> dict[Path, Change]:
     base = base or os.environ.get("GITHUB_BASE_REF", "main")
-    print(f"Running a diff against base branch: {base}")
-    result = subprocess.run(
-        f"git diff origin/{base} --name-only",
-        check=True,
-        shell=True,
-        capture_output=True,
-    )
+    print(f"Running a diff against base branch: `{base}`")
+
+    try:
+        result = subprocess.run(
+            f"git diff --name-only origin/{base}",
+            check=True,
+            shell=True,
+            capture_output=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"stdout: {e.stdout.decode("utf-8")}\n\nstderr: {e.stderr.decode("utf-i")}")
+        raise
+
+    print(f"Changed files:\n{result.stdout.decode("utf-8")}")
 
     new_changes: dict[Path, Change] = {}
     for changed_file in result.stdout.decode("utf-8").splitlines():
