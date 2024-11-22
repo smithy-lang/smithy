@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "fix: Convert blob default values to Base64",
+  "pull_requests": [
+    "[#2474](https://github.com/smithy-lang/smithy/issues/2474)"
+  ]
+}
