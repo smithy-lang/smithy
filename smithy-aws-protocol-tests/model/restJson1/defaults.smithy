@@ -418,7 +418,7 @@ structure DefaultsMixin {
     defaultDocumentList: Document = []
     defaultNullDocument: Document = null
     defaultTimestamp: Timestamp = 0
-    defaultBlob: Blob = "abc"
+    defaultBlob: Blob = "YWJj"
     defaultByte: Byte = 1
     defaultShort: Short = 1
     defaultInteger: Integer = 10
