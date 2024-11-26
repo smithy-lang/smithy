@@ -1,0 +1,55 @@
+[versions]
+junit5 = "5.11.3"
+hamcrest = "3.0"
+jmh = "0.6.6"
+spotbugs = "6.0.22"
+spotless = "6.25.0"
+smithy-gradle = "1.1.0"
+assertj = "3.26.3"
+dep-analysis = "2.4.2"
+prettier4j = "0.1.1"
+maven-resolver-provider = "3.8.6"
+maven-resolver = "1.9.2"
+slf4j = "1.7.36"
+mockserver = "3.10.8"
+compile-testing = "0.21.0"
+json-schema = "1.12.1"
+shadow = "7.1.2"
+api-guardian = "1.1.2"
+
+[libraries]
+prettier4j = { module = "com.opencastsoftware:prettier4j", version.ref = "prettier4j" }
+
+### These maven resolver dependencies are shaded into the smithy-cli JAR.
+maven-resolver-provider = { module = "org.apache.maven:maven-resolver-provider", version.ref = "maven-resolver-provider" }
+maven-resolver-api = { module = "org.apache.maven.resolver:maven-resolver-api", version.ref = "maven-resolver" }
+maven-resolver-spi = { module = "org.apache.maven.resolver:maven-resolver-spi", version.ref =  "maven-resolver" }
+maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util", version.ref =  "maven-resolver" }
+maven-resolver-impl = { module = "org.apache.maven.resolver:maven-resolver-impl", version.ref =  "maven-resolver" }
+maven-resolver-connector-basic = { module = "org.apache.maven.resolver:maven-resolver-connector-basic", version.ref =  "maven-resolver" }
+maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-resolver-transport-file", version.ref =  "maven-resolver" }
+maven-resolver-transport-http = { module = "org.apache.maven.resolver:maven-resolver-transport-http", version.ref =  "maven-resolver" }
+
+slf4j-jul = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j" }
+
+# Test dependencies
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
+hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+mockserver = { module = "org.mock-server:mockserver-netty", version.ref = "mockserver" }
+compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compile-testing" }
+json-schema-validator = { module = "com.github.everit-org.json-schema:org.everit.json.schema", version.ref = "json-schema" }
+apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "api-guardian" }
+
+# plugin artifacts for buildsrc plugins
+spotbugs = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
+spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+dependency-analysis = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dep-analysis" }
+jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmh" }
+
+[plugins]
+smithy-jar = { id = "software.amazon.smithy.gradle.smithy-jar", version.ref = "smithy-gradle" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

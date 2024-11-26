@@ -36,6 +36,7 @@ import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Version;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
 import software.amazon.smithy.utils.IoUtils;
@@ -215,7 +216,7 @@ final class WarmupCommand implements Command {
                 writer.write("{\n"
                              + "  \"version\": \"1.0\",\n"
                              + "  \"maven\": {\"dependencies\": [\"software.amazon.smithy:smithy-model:"
-                             + SmithyCli.getVersion() + "\"]}\n"
+                             + Version.VERSION + "\"]}\n"
                              + "}");
             }
 

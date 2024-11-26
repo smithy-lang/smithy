@@ -56,7 +56,7 @@ public class RootCommandTest {
     public void supportsVersionPseudoCommand() {
         IntegUtils.run("simple-config-sources", ListUtils.of("--version"), result -> {
             assertThat(result.getExitCode(), equalTo(0));
-            assertThat(result.getOutput().trim(), equalTo(SmithyCli.getVersion()));
+            assertThat(result.getOutput().trim(), equalTo(Version.VERSION));
         });
     }
 

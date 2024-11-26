@@ -2,6 +2,9 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+plugins {
+    id("smithy.module-conventions")
+}
 
 description = "Plugin for Generating Trait Code from Smithy Models"
 
@@ -19,13 +22,13 @@ sourceSets {
         val test by getting
 
         compileClasspath += main.output +
-                configurations["testRuntimeClasspath"] +
-                configurations["testCompileClasspath"]
+            configurations["testRuntimeClasspath"] +
+            configurations["testCompileClasspath"]
 
         runtimeClasspath += output +
-                compileClasspath +
-                test.runtimeClasspath +
-                test.output
+            compileClasspath +
+            test.runtimeClasspath +
+            test.output
 
         java {
             srcDir("${layout.buildDirectory.get()}/integ/")

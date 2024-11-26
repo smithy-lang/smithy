@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.Version;
 
 /**
  * Hidden command that implements {@code smithy --version} to print the current version.
@@ -40,7 +41,7 @@ final class VersionCommand implements Command {
 
     @Override
     public int execute(Arguments arguments, Env env) {
-        env.stdout().println(SmithyCli.getVersion());
+        env.stdout().println(Version.VERSION);
         return 0;
     }
 }
