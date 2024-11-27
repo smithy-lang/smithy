@@ -1,4 +1,4 @@
-# <img alt="Smithy" src="docs/_static/favicon.svg" width="28"> Smithy
+# <img alt="Smithy" src="docs/_static/smithy-anvil.svg" width="32"> Smithy
 [![Build Status](https://github.com/smithy-lang/smithy/workflows/ci/badge.svg)](https://github.com/smithy-lang/smithy/actions/workflows/ci.yml)
 
 Smithy defines and generates clients, services, and documentation for
