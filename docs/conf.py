@@ -21,13 +21,14 @@ nitpicky = True
 
 html_theme = 'furo'
 language = "en"
-html_logo = "../_static/smithy.svg"
 
 html_static_path = ["../_static"]
 html_css_files = ["custom.css"]
-html_favicon = "../_static/favicon.png"
+html_favicon = "../_static/favicon.svg"
 
 html_theme_options = {
+    "light_logo": "smithy.svg",
+    "dark_logo": "smithy-dark.svg",
     "light_css_variables": {
         "admonition-font-size": "100%",
         "admonition-title-font-size": "100%",
