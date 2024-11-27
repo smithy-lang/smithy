@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -114,7 +113,7 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             @Override
             protected List<ValidationEvent> getDefault(Shape shape) {
                 if (shape.isStringShape() || shape instanceof NumberShape) {
-                    return validateSimpleShape(shape, patterns);
+                    return validateSimpleShape(shape);
                 } else {
                     return Collections.emptyList();
                 }
@@ -122,17 +121,12 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
             @Override
             public List<ValidationEvent> structureShape(StructureShape shape) {
-                return validateStructure(shape, model, patterns);
+                return validateStructure(shape, model);
             }
 
             @Override
             public List<ValidationEvent> unionShape(UnionShape shape) {
-                return validateUnion(shape, model, patterns);
-            }
-
-            @Override
-            public List<ValidationEvent> timestampShape(TimestampShape shape) {
-                return Collections.emptyList();
+                return validateUnion(shape, model);
             }
 
             @Override
@@ -146,43 +140,39 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateStructure(
             StructureShape structure,
-            Model model,
-            List<Pattern> patterns
+            Model model
     ) {
         return structure
                 .getAllMembers()
                 .entrySet()
                 .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model, patterns))
+                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
                 .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateUnion(
             UnionShape union,
-            Model model,
-            List<Pattern> patterns
+            Model model
     ) {
         return union
                 .getAllMembers()
                 .entrySet()
                 .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model, patterns))
+                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
                 .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateTargetShape(
             String name,
             MemberShape memberShape,
-            Model model,
-            List<Pattern> patterns
+            Model model
     ) {
         return OptionalUtils.stream(model.getShape(memberShape.getTarget())
                 .flatMap(targetShape -> validateName(name, targetShape, memberShape, patterns, model)));
     }
 
     private List<ValidationEvent> validateSimpleShape(
-            Shape shape,
-            List<Pattern> patterns
+            Shape shape
     ) {
         String name = shape.getId().getName();
 
@@ -201,9 +191,7 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             Model model
     ) {
         ShapeType type = targetShape.getType();
-        if (type == ShapeType.TIMESTAMP) {
-            return Optional.empty();
-        } else if (type == ShapeType.ENUM) {
+        if (type == ShapeType.TIMESTAMP || type == ShapeType.ENUM) {
             return Optional.empty();
         } else if (type == ShapeType.STRUCTURE || type == ShapeType.LIST) {
             if (this.onlyContainsTimestamps(targetShape, model)) {
