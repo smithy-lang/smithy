@@ -24,12 +24,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -127,6 +129,16 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             public List<ValidationEvent> unionShape(UnionShape shape) {
                 return validateUnion(shape, model, patterns);
             }
+
+            @Override
+            public List<ValidationEvent> timestampShape(TimestampShape shape) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<ValidationEvent> enumShape(EnumShape shape) {
+                return Collections.emptyList();
+            }
         };
 
         return model.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
@@ -160,37 +172,59 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     private Stream<ValidationEvent> validateTargetShape(
             String name,
-            MemberShape target,
+            MemberShape memberShape,
             Model model,
             List<Pattern> patterns
     ) {
-        return OptionalUtils.stream(model.getShape(target.getTarget())
-                .flatMap(shape -> validateName(name, shape.getType(), target, patterns)));
+        return OptionalUtils.stream(model.getShape(memberShape.getTarget())
+                .flatMap(targetShape -> validateName(name, targetShape, memberShape, patterns, model)));
     }
 
     private List<ValidationEvent> validateSimpleShape(
             Shape shape,
             List<Pattern> patterns
     ) {
-        return validateName(shape.getId().getName(), shape.getType(), shape, patterns)
-                .map(ListUtils::of)
-                .orElse(ListUtils.of());
+        String name = shape.getId().getName();
+
+        return patterns
+                .stream()
+                .filter(pattern -> pattern.matcher(name).matches())
+                .map(matcher -> buildEvent(shape, name, shape.getType()))
+                .collect(Collectors.toList());
     }
 
     private Optional<ValidationEvent> validateName(
             String name,
-            ShapeType type,
+            Shape targetShape,
             Shape context,
-            List<Pattern> patterns
+            List<Pattern> patterns,
+            Model model
     ) {
+        ShapeType type = targetShape.getType();
         if (type == ShapeType.TIMESTAMP) {
             return Optional.empty();
+        } else if (type == ShapeType.ENUM) {
+            return Optional.empty();
+        } else if (type == ShapeType.STRUCTURE || type == ShapeType.LIST) {
+            if (this.onlyContainsTimestamps(targetShape, model)) {
+                return Optional.empty();
+            }
         }
         return patterns
                 .stream()
                 .filter(pattern -> pattern.matcher(name).matches())
                 .map(matcher -> buildEvent(context, name, type))
                 .findAny();
+    }
+
+    private boolean onlyContainsTimestamps(Shape shape, Model model) {
+        return shape.getAllMembers()
+                .values()
+                .stream()
+                .map(memberShape -> model.getShape(memberShape.getTarget()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .allMatch(Shape::isTimestampShape);
     }
 
     private ValidationEvent buildEvent(Shape context, String name, ShapeType type) {
