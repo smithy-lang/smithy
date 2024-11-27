@@ -24,6 +24,48 @@
         },
         "example.namespace#CreatedOn": {
             "type": "timestamp"
+        },
+        "example.namespace#DateEnum": {
+            "type": "enum",
+            "members": {
+                "ANOMALOUS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "anomalous"
+                    }
+                },
+                "NORMAL": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "normal"
+                    }
+                }
+            }
+        },
+        "example.namespace#DateStructureOuter": {
+            "type": "structure",
+            "members": {
+                "TimestampStructure": {
+                    "target": "example.namespace#DateStructure"
+                },
+                "ListOfTimestamp": {
+                    "target": "example.namespace#DateList"
+                }
+            }
+        },
+        "example.namespace#DateStructure": {
+            "type": "structure",
+            "members": {
+                "TimeOn": {
+                    "target": "example.namespace#CreatedOn"
+                }
+            }
+        },
+        "example.namespace#DateList": {
+            "type": "list",
+            "member": {
+                "target": "example.namespace#CreatedOn"
+            }
         }
     },
     "metadata": {
