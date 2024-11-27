@@ -46,12 +46,15 @@ val stagingDirectory = rootProject.layout.buildDirectory.dir("staging")
 
 subprojects {
     apply(plugin = "java-library")
-
     java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        if (project.name == "smithy-docgen-core" || project.name == "smithy-docgen-test") {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } else {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
     }
-
     repositories {
         mavenLocal()
         mavenCentral()
