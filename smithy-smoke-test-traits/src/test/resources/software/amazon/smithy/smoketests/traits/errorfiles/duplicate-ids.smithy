@@ -94,7 +94,8 @@ operation SayHello4 {
 
 service OtherSayStuff {
     version: "2023-10-11"
-    operations: [SayHello5]
+    operations: [SayHello5, SayHello6]
+    resources: [SayHelloResource]
 }
 
 // Shouldn't conflict between services
@@ -110,4 +111,36 @@ service OtherSayStuff {
 operation SayHello5 {
    input := {}
    output := {}
+}
+
+@smokeTests([
+    {
+        id: "not_say_hello" // Conflicts with resource bound operation
+        params: {}
+        expect: {
+            success: {}
+        }
+    }
+])
+operation SayHello6 {
+    input := {}
+    output := {}
+}
+
+resource SayHelloResource {
+    operations: [SayHello7]
+}
+
+@smokeTests([
+    {
+        id: "not_say_hello"
+        params: {}
+        expect: {
+            success: {}
+        }
+    }
+])
+operation SayHello7 {
+    input := {}
+    output := {}
 }

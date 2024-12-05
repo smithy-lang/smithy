@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed a bug in smoke test validation where test case ids weren't checked for uniqueness if their operations were bound to a resource shape",
+  "pull_requests": [
+    "[#2482](https://github.com/smithy-lang/smithy/issues/2482)"
+  ]
+}
