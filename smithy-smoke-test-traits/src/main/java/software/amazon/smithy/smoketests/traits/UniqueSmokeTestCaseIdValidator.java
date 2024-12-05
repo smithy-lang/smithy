@@ -20,18 +20,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates that smoke test cases have unique IDs within a service closure,
@@ -43,30 +42,27 @@ public class UniqueSmokeTestCaseIdValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         Set<ServiceShape> serviceShapes = model.getServiceShapes();
-        Set<ShapeId> serviceBoundOperationIds = new HashSet<>();
+        Set<OperationShape> serviceBoundOperations = new HashSet<>();
+        TopDownIndex index = new TopDownIndex(model);
         // Validate test case ids within each service closure
         for (ServiceShape service : serviceShapes) {
-            Set<ShapeId> operationIds = service.getAllOperations();
-            serviceBoundOperationIds.addAll(operationIds);
-            List<Shape> shapes = operationIds.stream()
-                    .map(model::getShape)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-            addValidationEventsForShapes(shapes, events);
+            Set<OperationShape> boundOperations = index.getContainedOperations(service);
+            addValidationEventsForShapes(boundOperations, events);
+            serviceBoundOperations.addAll(boundOperations);
         }
 
         // Also validate ids are unique within each non-service bound operation
         List<OperationShape> shapes = model.getOperationShapesWithTrait(SmokeTestsTrait.class).stream()
-                .filter(shape -> !serviceBoundOperationIds.contains(shape.getId()))
+                .filter(shape -> !serviceBoundOperations.contains(shape))
                 .collect(Collectors.toList());
+
         for (OperationShape shape : shapes) {
-            addValidationEventsForShapes(ListUtils.of(shape), events);
+            addValidationEventsForShapes(SetUtils.of(shape), events);
         }
         return events;
     }
 
-    private void addValidationEventsForShapes(List<? extends Shape> shapes, List<ValidationEvent> events) {
+    private void addValidationEventsForShapes(Set<OperationShape> shapes, List<ValidationEvent> events) {
         Map<String, List<Shape>> testCaseIdsToOperations = new HashMap<>();
         for (Shape shape : shapes) {
             if (!shape.isOperationShape() || !shape.hasTrait(SmokeTestsTrait.class)) {
@@ -91,6 +87,4 @@ public class UniqueSmokeTestCaseIdValidator extends AbstractValidator {
             }
         }
     }
-
-
 }
