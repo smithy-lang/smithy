@@ -15,7 +15,6 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.SmithyCli;
-import software.amazon.smithy.cli.Version;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.FilterCliVersionResolver;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
@@ -56,7 +55,7 @@ final class LockCommand implements Command {
         SmithyBuildConfig smithyBuildConfig = configOptions.createSmithyBuildConfig();
 
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
-        DependencyResolver resolver = new FilterCliVersionResolver(Version.VERSION, baseResolver);
+        DependencyResolver resolver = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
 
         Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
         Set<String> dependencies = smithyBuildConfig.getMaven()

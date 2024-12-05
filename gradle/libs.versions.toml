@@ -3,10 +3,9 @@ junit5 = "5.11.3"
 hamcrest = "3.0"
 jmh = "0.6.6"
 spotbugs = "6.0.22"
-spotless = "6.25.0"
+spotless = "6.5.0"
 smithy-gradle = "1.1.0"
 assertj = "3.26.3"
-dep-analysis = "2.4.2"
 prettier4j = "0.1.1"
 maven-resolver-provider = "3.8.6"
 maven-resolver = "1.9.2"
@@ -47,7 +46,6 @@ apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "a
 # plugin artifacts for buildsrc plugins
 spotbugs = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
 spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
-dependency-analysis = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dep-analysis" }
 jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmh" }
 
 [plugins]

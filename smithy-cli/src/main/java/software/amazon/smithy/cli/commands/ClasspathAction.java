@@ -32,7 +32,6 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
-import software.amazon.smithy.cli.Version;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.DependencyResolverException;
 import software.amazon.smithy.cli.dependencies.FileCacheResolver;
@@ -129,7 +128,7 @@ class ClasspathAction implements CommandAction {
     ) {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
-        DependencyResolver delegate = new FilterCliVersionResolver(Version.VERSION, baseResolver);
+        DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
         DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
                 lastModified,
                 delegate);

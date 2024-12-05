@@ -17,7 +17,7 @@ dependencies {
 
 // Set up Integration testing source sets
 sourceSets {
-    create("it") {
+    named("it") {
         val main by getting
         val test by getting
 
@@ -58,12 +58,6 @@ tasks.register<Copy>("copyGeneratedSrcs") {
     dependsOn("generateTraits")
 }
 
-// Add the integ test task
-tasks.register<Test>("integ") {
-    useJUnitPlatform()
-    testClassesDirs = sourceSets["it"].output.classesDirs
-    classpath = sourceSets["it"].runtimeClasspath
-}
 
 tasks {
     named("checkstyleIt") {

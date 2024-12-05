@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.beryx.runtime.RuntimeTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.nio.file.Paths
 
 plugins {
     application
-    id("org.beryx.runtime") version "1.12.7"
+    id("org.beryx.runtime") version "1.13.1"
     id("org.jreleaser") version "1.12.0" apply false
     id("smithy.module-conventions")
     alias(libs.plugins.shadow)
@@ -22,7 +23,6 @@ extra["moduleName"] = "software.amazon.smithy.cli"
 
 val imageJreVersion = "17"
 val correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-$imageJreVersion"
-val generatedResourcesDir = file("$buildDir/generated-resources")
 
 dependencies {
     // Keeps these as exported transitive dependencies.
@@ -51,8 +51,33 @@ dependencies {
     testImplementation(libs.mockserver)
 }
 
+tasks.register("generateVersionFile") {
+
+    val versionFile = sourceSets.main.map { sourceSet ->
+        sourceSet.output.resourcesDir?.resolve("software/amazon/smithy/cli/cli-version")
+            ?: throw GradleException("Resources directory not found for main sourceSet")
+    }
+
+    outputs.file(versionFile)
+
+    doLast {
+        versionFile.get().writeText(project.version.toString())
+    }
+}
+
+tasks.processResources {
+    dependsOn("generateVersionFile")
+}
+
+
 // ------ Shade Maven dependency resolvers into the JAR. -------
 tasks {
+
+    val cliVersion by registering(Copy::class) {
+        from(configurations.runtimeClasspath).include("*-all.jar")
+        into("src/main/resources")
+    }
+
     shadowJar {
         // Replace the normal JAR with the shaded JAR. We don't want to publish a JAR that isn't shaded.
         archiveClassifier.set("")
@@ -86,19 +111,13 @@ tasks {
         finalizedBy(shadowJar)
     }
 
-//    // Update the Version.java class to reflect current version of project
-//    withType<ProcessResources> {
-//        filesMatching("**/Version.java") {
-//            filter<ReplaceTokens>("tokens" to mapOf("SMITHY_VERSION" to version))
-//        }
-//    }
 }
 
 // ------ Setup CLI binary -------
 // This setting is needed by the Shadow plugin for some reason to define a main application class.
 val mainClassName = "software.amazon.smithy.cli.SmithyCli"
 application {
-    mainClass = "$mainClassName"
+    mainClass = mainClassName
     applicationName = "smithy"
 }
 
@@ -128,17 +147,23 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 }
 
 // This is needed in order for integration tests to find the build jlink CLI.
-var smithyBinary: String
-if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    smithyBinary = Paths.get("${project.buildDir}", "image", "smithy-cli-$imageOs", "bin", "smithy.bat").toString()
+val smithyBinary = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    Paths.get("${layout.buildDirectory.get()}", "image", "smithy-cli-$imageOs", "bin", "smithy.bat").toString()
 } else {
-    smithyBinary = Paths.get("${project.buildDir}", "image", "smithy-cli-$imageOs", "bin", "smithy").toString()
+    Paths.get("${layout.buildDirectory.get()}", "image", "smithy-cli-$imageOs", "bin", "smithy").toString()
 }
-System.setProperty("SMITHY_BINARY", "$smithyBinary")
+System.setProperty("SMITHY_BINARY", smithyBinary)
 
 runtime {
     addOptions("--compress", "2", "--strip-debug", "--no-header-files", "--no-man-pages")
     addModules("java.logging", "java.xml", "java.naming", "jdk.crypto.ec")
+
+    // This is needed to ensure that jlink is available (jlink is Java 9+)
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     launcher {
         // This script is a combination of the default startup script used by the badass runtime
@@ -178,28 +203,27 @@ runtime {
     }
 
     // Because we're using target-platforms, it will use this property as a prefix for each target zip
-    imageZip = file("$buildDir/image/smithy-cli.zip")
+    imageZip = file("${layout.buildDirectory.get()}/image/smithy-cli.zip")
 }
 
 tasks {
-    val shadowJar by getting
-    val runtime by getting {
+    val runtime by getting(RuntimeTask::class) {
         dependsOn(shadowJar)
+        // Add finishing touches to the distributables, such as an install script, before it gets zipped
+        doLast {
+            targetPlatforms.get().forEach { targetPlatform ->
+                copy {
+                    from("configuration")
+                    include(if (targetPlatform.value.name.contains("windows")) "install.bat" else "install")
+                    into(layout.buildDirectory.dir("image/smithy-cli-${targetPlatform.value.name}").get().toString())
+                }
+            }
+        }
     }
-//        doLast {
-//            targetPlatforms.each { targetPlatform ->
-//                copy {
-//                    from("configuration")
-//                    include targetPlatform . value . name . contains ("windows") ? "install.bat" : "install"
-//                    into Paths . get (
-//                            "${project.buildDir}", "image", "smithy-cli-${targetPlatform.value.name}").toString()
-//                }
-//            }
-//        }
 
-    // Add finishing touches to the distributables, such as an install script, before it gets zipped
+    // Run the warmup command after the image is generated
     val optimize by registering(Exec::class) {
-        commandLine("$smithyBinary", "warmup")
+        commandLine(smithyBinary, "warmup")
         dependsOn(runtime)
     }
 
@@ -222,19 +246,8 @@ tasks {
 }
 
 // ------ Setup integration testing -------
-sourceSets {
-    create("it") {
-        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"] + configurations["testCompileClasspath"]
-        runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
-    }
-}
-
-tasks.register<Test>("integ") {
-    useJUnitPlatform()
-    systemProperty("SMITHY_BINARY", "$smithyBinary")
-    testClassesDirs = sourceSets["it"].output.classesDirs
-    classpath = sourceSets["it"].runtimeClasspath
-
+tasks.named<Test>("integ") {
+    systemProperty("SMITHY_BINARY", smithyBinary)
     // Configuration parameters to execute top-level classes in parallel but methods in same thread
     systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
     systemProperties["junit.jupiter.execution.parallel.mode.default"] = "same_thread"

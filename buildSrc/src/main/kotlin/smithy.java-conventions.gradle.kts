@@ -5,7 +5,6 @@ plugins {
     `java-library`
     jacoco
     id("com.github.spotbugs")
-    id("com.autonomousapps.dependency-analysis")
     id("smithy.formatting-conventions")
 }
 
@@ -126,7 +125,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(false)
         csv.required.set(false)
-        html.outputLocation.set(file("$buildDir/reports/jacoco"))
+        html.outputLocation.set(file("${layout. buildDirectory}/reports/jacoco"))
     }
 }
 

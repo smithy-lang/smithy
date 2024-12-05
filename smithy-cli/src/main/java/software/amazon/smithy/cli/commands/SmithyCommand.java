@@ -27,7 +27,6 @@ import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Version;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 
 public final class SmithyCommand implements Command {
@@ -96,7 +95,7 @@ public final class SmithyCommand implements Command {
     @Override
     public int execute(Arguments arguments, Env env) {
         // Set the current CLI version as a system property, so it can be used in config files.
-        EnvironmentVariable.SMITHY_VERSION.set(Version.VERSION);
+        EnvironmentVariable.SMITHY_VERSION.set(SmithyCli.getVersion());
 
         String command = arguments.shift();
 
