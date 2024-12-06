@@ -83,7 +83,7 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     public static AwsTagIndex of(Model model) {
-        return new AwsTagIndex(model);
+        return model.getKnowledge(AwsTagIndex.class, AwsTagIndex::new);
     }
 
     /**

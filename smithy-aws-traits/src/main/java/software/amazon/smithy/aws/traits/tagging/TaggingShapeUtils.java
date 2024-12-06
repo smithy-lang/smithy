@@ -190,10 +190,10 @@ final class TaggingShapeUtils {
         Model model,
         ResourceShape resource
     ) {
-        PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
-        Optional<String> property = resource.expectTrait(TaggableTrait.class).getProperty();
-        if (property.isPresent()) {
-            if (operationId.isPresent()) {
+        if (operationId.isPresent()) {
+            PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
+            Optional<String> property = resource.expectTrait(TaggableTrait.class).getProperty();
+            if (property.isPresent()) {
                 OperationShape operation = model.expectShape(operationId.get()).asOperationShape().get();
                 Shape inputShape = model.expectShape(operation.getInputShape());
                 return isTagPropertyInShape(property.get(), inputShape, propertyBindingIndex);

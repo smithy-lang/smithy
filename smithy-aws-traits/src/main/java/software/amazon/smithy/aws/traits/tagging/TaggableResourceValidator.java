@@ -16,8 +16,8 @@
 package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +40,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class TaggableResourceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
         for (ServiceShape service : model.getServiceShapes()) {
@@ -72,7 +72,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
             ServiceShape service,
             AwsTagIndex awsTagIndex
     ) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
             Shape operation = resource.getUpdate().isPresent()
@@ -87,7 +87,6 @@ public final class TaggableResourceValidator extends AbstractValidator {
         //    list or tag keys input or output member
         // 2. Tagging via APIs specified in the @taggable trait which are validated
         //    through the tag property, and must be resource instance operations
-        //Caution: avoid short circuiting behavior.
         boolean isServiceWideTaggable = awsTagIndex.serviceHasTagApis(service.getId());
         boolean isInstanceOpTaggable = isTaggableViaInstanceOperations(model, resource);
 
@@ -96,9 +95,11 @@ public final class TaggableResourceValidator extends AbstractValidator {
                     + " It must use the `aws.api@arn` trait."));
         }
 
-        if (!(isServiceWideTaggable || isInstanceOpTaggable)) {
-            events.add(error(resource, "Resource does not have tagging CRUD operations and is not compatible"
-                    + " with service-wide tagging operations."));
+        if (!isServiceWideTaggable && !isInstanceOpTaggable) {
+            events.add(error(resource, String.format("Resource does not have tagging CRUD operations and is not"
+                                                     + " compatible with service-wide tagging operations"
+                                                     + " for service `%s`.",
+                                                     service.getId())));
         }
 
         return events;
@@ -174,7 +175,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
     }
 
     private Collection<Map.Entry<MemberShape, Shape>> collectMemberTargetShapes(ShapeId ioShapeId, Model model) {
-        Collection<Map.Entry<MemberShape, Shape>> collection = new LinkedList<>();
+        Collection<Map.Entry<MemberShape, Shape>> collection = new ArrayList<>();
         for (MemberShape memberShape : model.expectShape(ioShapeId).members()) {
             collection.add(new AbstractMap.SimpleImmutableEntry<>(
                     memberShape, model.expectShape(memberShape.getTarget())));

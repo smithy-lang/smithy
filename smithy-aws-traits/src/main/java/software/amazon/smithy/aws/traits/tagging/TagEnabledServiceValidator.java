@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -30,7 +30,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class TagEnabledServiceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
@@ -44,7 +44,7 @@ public final class TagEnabledServiceValidator extends AbstractValidator {
             AwsTagIndex tagIndex,
             TopDownIndex topDownIndex
     ) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         TagEnabledTrait trait = service.expectTrait(TagEnabledTrait.class);
 
         int taggableResourceCount = 0;

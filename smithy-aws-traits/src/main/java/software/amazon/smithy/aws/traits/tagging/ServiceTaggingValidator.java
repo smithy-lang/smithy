@@ -19,7 +19,7 @@ import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.LIST_T
 import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.TAG_RESOURCE_OPNAME;
 import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.UNTAG_RESOURCE_OPNAME;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -36,7 +36,7 @@ public final class ServiceTaggingValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         AwsTagIndex awsTagIndex = AwsTagIndex.of(model);
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
             events.addAll(validateService(service, awsTagIndex));
         }
@@ -44,7 +44,7 @@ public final class ServiceTaggingValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateService(ServiceShape service, AwsTagIndex awsTagIndex) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
         TagEnabledTrait trait = service.expectTrait(TagEnabledTrait.class);
 
         Optional<ShapeId> tagResourceId = awsTagIndex.getTagResourceOperation(service.getId());
