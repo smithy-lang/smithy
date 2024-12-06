@@ -1,0 +1,3 @@
+[WARNING] example.weather#Forecast: Resource is likely missing `aws.api#taggable` trait. | TaggableResource
+[WARNING] example.weather#AnotherService: Service has resources with `aws.api#taggable` applied but does not have the `aws.api#tagEnabled` trait. | TaggableResource
+[ERROR] example.weather#City: Resource does not have tagging CRUD operations and is not compatible with service-wide tagging operations for service `example.weather#AnotherService`. | TaggableResource
