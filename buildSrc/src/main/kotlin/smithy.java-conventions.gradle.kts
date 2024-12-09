@@ -36,27 +36,27 @@ tasks {
     // Set up tasks that build source and javadoc jars.
     val sourcesJar by registering(Jar::class) {
         metaInf.with(licenseSpec)
-        from(sourceSets.main.get().allSource)
+        from(sourceSets.main.map { it.allSource })
         archiveClassifier.set("sources")
     }
 
-//    val javadoc by configuring {
-//        // Disable HTML doclint to work around heading tag sequence validation
-//        // inconsistencies between JDK15 and earlier Java versions.
-//        (options as StandardJavadocDocletOptions).apply {
-//            addStringOption("Xdoclint:-html", "-quiet")
-//            // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
-//            // --no-module-directories does not exist in JDK 8 and is removed in 13
-//            if (JavaVersion.current().run { isJava9 || isJava10 || isJava11 }) {
-//                addBooleanOption("-no-module-directories", true)
-//            }
-//        }
-//    }
-//
-//    // Always run javadoc after build.
-//    build {
-//        dependsOn(javadoc)
-//    }
+    javadoc {
+        // Disable HTML doclint to work around heading tag sequence validation
+        // inconsistencies between JDK15 and earlier Java versions.
+        (options as StandardJavadocDocletOptions).apply {
+            addStringOption("Xdoclint:-html", "-quiet")
+            // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
+            // --no-module-directories does not exist in JDK 8 and is removed in 13
+            if (JavaVersion.current().run { isJava9 || isJava10 || isJava11 }) {
+                addBooleanOption("-no-module-directories", true)
+            }
+        }
+    }
+
+    // Always run javadoc after build.
+    build {
+        dependsOn(javadoc)
+    }
 
     // Build a javadoc JAR too.
     val javadocJar by registering(Jar::class) {
@@ -125,7 +125,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(false)
         csv.required.set(false)
-        html.outputLocation.set(file("${layout. buildDirectory}/reports/jacoco"))
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco"))
     }
 }
 
