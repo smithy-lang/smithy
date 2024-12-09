@@ -2,6 +2,9 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+plugins {
+    id("smithy.module-conventions")
+}
 
 description = "This module provides the implementation of protocol traits for Smithy."
 
