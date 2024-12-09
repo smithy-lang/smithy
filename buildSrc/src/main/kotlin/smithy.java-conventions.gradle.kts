@@ -28,7 +28,8 @@ val licenseSpec = copySpec {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        setSourceCompatibility(8)
+        setTargetCompatibility(8)
     }
 }
 

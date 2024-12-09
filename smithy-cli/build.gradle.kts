@@ -141,6 +141,7 @@ runtime {
 
     // This is needed to ensure that jlink is available (jlink is Java 9+), we should use the JDK that
     // is configured for the runtime
+    // NOTE: For the runtime task, you *must* have the right JDK set up in your environment (17 at the time of writing)
     javaHome = javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
     }.map { it.metadata.installationPath.asFile.path }

@@ -33,6 +33,7 @@ jobs:
         run: git config --system core.longpaths true
 
       - name: Integration tests
+        if: matrix.java == 17
         run: ./gradlew integ -Plog-tests --stacktrace
 
       - uses: actions/upload-artifact@v4
