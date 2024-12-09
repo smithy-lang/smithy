@@ -13,7 +13,7 @@ slf4j = "1.7.36"
 mockserver = "3.10.8"
 compile-testing = "0.21.0"
 json-schema = "1.12.1"
-shadow = "7.1.2"
+shadow = "8.3.5"
 api-guardian = "1.1.2"
 
 [libraries]
@@ -50,4 +50,4 @@ jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmh" }
 
 [plugins]
 smithy-jar = { id = "software.amazon.smithy.gradle.smithy-jar", version.ref = "smithy-gradle" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

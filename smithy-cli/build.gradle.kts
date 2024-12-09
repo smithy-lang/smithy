@@ -15,8 +15,8 @@ plugins {
     application
     id("org.beryx.runtime") version "1.13.1"
     id("org.jreleaser") version "1.15.0" apply false
-    id("smithy.module-conventions")
     alias(libs.plugins.shadow)
+    id("smithy.module-conventions")
 }
 
 description = "This module implements the Smithy command line interface."

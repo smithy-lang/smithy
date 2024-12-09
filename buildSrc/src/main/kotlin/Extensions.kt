@@ -6,5 +6,6 @@ import org.gradle.kotlin.dsl.*
 // JReleaser publishes artifacts from a local staging repository, rather than maven local.
 // https://jreleaser.org/guide/latest/examples/maven/staging-artifacts.html#_gradle
 fun Project.stagingDir(): Provider<Directory> {
-   return layout.buildDirectory.dir("staging")
+   // We should use the root build directory
+   return rootProject.layout.buildDirectory.dir("staging")
 }

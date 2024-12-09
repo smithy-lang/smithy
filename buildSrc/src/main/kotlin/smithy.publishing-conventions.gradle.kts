@@ -1,3 +1,4 @@
+
 plugins {
     `maven-publish`
     signing
@@ -14,9 +15,11 @@ publishing {
 
     publications {
         create<MavenPublication>("mavenJava") {
-            if (tasks.findByName("shadowJar")?.enabled == true) {
-                artifact(tasks["shadowJar"])
+            if (components.names.contains("shadow")) {
+                // Use the shadow component if its exists
+                from(components["shadow"])
             } else {
+                // Otherwise, use the standard java component
                 from(components["java"])
             }
 
@@ -68,7 +71,7 @@ publishing {
 
 tasks {
     val copyMavenMetadataForDevelopment by registering(Copy::class) {
-        from("build/tmp/publishMavenJavaPublicationToMavenLocal") {
+        from(layout.buildDirectory.dir("tmp/publishMavenJavaPublicationToMavenLocal")) {
             rename("module-maven-metadata.xml", "maven-metadata.xml")
         }
         val wdir = "${System.getProperty("user.home")}/.m2/repository/software/amazon/smithy/${project.name}"

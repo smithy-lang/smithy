@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 plugins {
-    id("smithy.module-conventions")
     alias(libs.plugins.shadow)
+    id("smithy.module-conventions")
 }
 
 description = "Provides a parse tree and formatter for Smithy models."
