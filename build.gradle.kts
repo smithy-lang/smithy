@@ -17,6 +17,7 @@ import org.jreleaser.model.Active
  */
 
 plugins {
+    java
     alias(libs.plugins.jreleaser) apply false
 }
 
@@ -27,6 +28,26 @@ println("Smithy version: '$libraryVersion'")
 allprojects {
     group = "software.amazon.smithy"
     version = libraryVersion
+}
+
+// Consolidated Javadoc creation
+afterEvaluate {
+    tasks {
+        javadoc {
+            title = "Smithy API ${version}"
+            setDestinationDir(layout.buildDirectory.dir("docs/javadoc/latest").get().asFile)
+            source(subprojects.map { project(it.path).sourceSets.main.get().allJava })
+            classpath = files(subprojects.map { project(it.path).sourceSets.main.get().compileClasspath })
+            (options as StandardJavadocDocletOptions).apply {
+                addStringOption("Xdoclint:-html", "-quiet")
+                // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
+                // --no-module-directories does not exist in JDK 8 and is removed in 13
+                if (JavaVersion.current().run { isJava9 || isJava10 || isJava11 }) {
+                    addBooleanOption("-no-module-directories", true)
+                }
+            }
+        }
+    }
 }
 
 // We're using JReleaser in the smithy-cli subproject, so we want to have a flag to control
