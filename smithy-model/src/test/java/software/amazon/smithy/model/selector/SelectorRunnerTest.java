@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import java.io.IOException;
@@ -5,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,23 +36,23 @@ public final class SelectorRunnerTest {
             boolean skipPrelude = test.getBooleanMemberOrDefault("skipPreludeShapes", false);
 
             Set<ShapeId> expectedMatches = test.expectArrayMember("matches")
-                    .getElementsAs(n -> n.expectStringNode("Each element of matches must be an ID").expectShapeId())
-                    .stream()
-                    .filter(shapeId -> {
-                        String namespace = shapeId.getNamespace();
-                        return !namespace.contains(Prelude.NAMESPACE)
-                                || (!skipPrelude && namespace.contains(Prelude.NAMESPACE));
-                    })
-                    .collect(Collectors.toSet());
+                .getElementsAs(n -> n.expectStringNode("Each element of matches must be an ID").expectShapeId())
+                .stream()
+                .filter(shapeId -> {
+                    String namespace = shapeId.getNamespace();
+                    return !namespace.contains(Prelude.NAMESPACE)
+                        || (!skipPrelude && namespace.contains(Prelude.NAMESPACE));
+                })
+                .collect(Collectors.toSet());
 
             Set<ShapeId> actualMatches = selector.shapes(model)
-                    .map(Shape::getId)
-                    .filter(shapeId -> {
-                        String namespace = shapeId.getNamespace();
-                        return !namespace.contains(Prelude.NAMESPACE)
-                                || (!skipPrelude && namespace.contains(Prelude.NAMESPACE));
-                    })
-                    .collect(Collectors.toSet());
+                .map(Shape::getId)
+                .filter(shapeId -> {
+                    String namespace = shapeId.getNamespace();
+                    return !namespace.contains(Prelude.NAMESPACE)
+                        || (!skipPrelude && namespace.contains(Prelude.NAMESPACE));
+                })
+                .collect(Collectors.toSet());
 
             if (!expectedMatches.equals(actualMatches)) {
                 failTest(filename, test, expectedMatches, actualMatches);
@@ -59,9 +62,9 @@ public final class SelectorRunnerTest {
 
     private List<ObjectNode> findTestCases(Model model) {
         return model.getMetadataProperty("selectorTests")
-                .orElseThrow(() -> new IllegalArgumentException("Missing selectorTests metadata key"))
-                .expectArrayNode("selectorTests must be an array")
-                .getElementsAs(ObjectNode.class);
+            .orElseThrow(() -> new IllegalArgumentException("Missing selectorTests metadata key"))
+            .expectArrayNode("selectorTests must be an array")
+            .getElementsAs(ObjectNode.class);
     }
 
     private void failTest(Path filename, ObjectNode test, Set<ShapeId> expectedMatches, Set<ShapeId> actualMatches) {
@@ -85,7 +88,7 @@ public final class SelectorRunnerTest {
         }
 
         test.getStringMember("documentation")
-                .ifPresent(docs -> error.append('(').append(docs.getValue()).append(")"));
+            .ifPresent(docs -> error.append('(').append(docs.getValue()).append(")"));
 
         Assertions.fail(error.toString());
     }

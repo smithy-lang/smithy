@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,8 +39,8 @@ public class RenameShapesTest {
         ShapeId stringId = ShapeId.from("ns.foo#String");
         StringShape fooTarget = StringShape.builder().id(stringId).build();
         Model model = Model.builder()
-                .addShapes(fooTarget)
-                .build();
+            .addShapes(fooTarget)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
         Model result = transformer.renameShapes(model, renamed);
@@ -65,11 +54,11 @@ public class RenameShapesTest {
         ShapeId stringId = ShapeId.from("ns.foo#String");
         StringShape target = StringShape.builder().id(stringId).build();
         Model model = Model.builder()
-                .addShapes(target)
-                .build();
+            .addShapes(target)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
-        renamed.put(stringId, stringId );
+        renamed.put(stringId, stringId);
         Model result = transformer.renameShapes(model, renamed);
 
         assertEquals(result.shapes().count(), 1);
@@ -88,13 +77,13 @@ public class RenameShapesTest {
         MemberShape valueMember = MemberShape.builder().id(valueId).target(fromStringId).build();
         MapShape container = MapShape.builder().id(containerId).key(keyMember).value(valueMember).build();
         Model model = Model.builder()
-                .addShapes(target, keyMember, valueMember, container)
-                .build();
+            .addShapes(target, keyMember, valueMember, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
 
         ShapeId toStringId = ShapeId.from("ns.bar#String");
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
-        renamed.put(fromStringId, toStringId );
+        renamed.put(fromStringId, toStringId);
         Model result = transformer.renameShapes(model, renamed);
 
         assertTrue(result.getShape(toStringId).isPresent());
@@ -104,9 +93,9 @@ public class RenameShapesTest {
     @Test
     public void updatesMetadataReferences() {
         Model model = Model.assembler()
-                .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
-                .assemble()
-                .unwrap();
+            .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
+            .assemble()
+            .unwrap();
 
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
         ShapeId fooUnreferenced = ShapeId.from("ns.foo#UnreferencedString");
@@ -122,9 +111,9 @@ public class RenameShapesTest {
     @Test
     public void updatesIdRefValues() {
         Model model = Model.assembler()
-                .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
-                .assemble()
-                .unwrap();
+            .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
+            .assemble()
+            .unwrap();
 
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
         ShapeId fromId = ShapeId.from("ns.foo#OldShape");
@@ -144,9 +133,9 @@ public class RenameShapesTest {
     @Test
     public void updatesShapeNamesAndReferences() {
         Model model = Model.assembler()
-                .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
-                .assemble()
-                .unwrap();
+            .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
+            .assemble()
+            .unwrap();
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
 
         // Service
@@ -214,8 +203,10 @@ public class RenameShapesTest {
         assertEquals(resource.getIdentifiers().get("myId"), toId);
         assertTrue(resource.getAllOperations().contains(toOtherOperation));
 
-        StructureShape operationInput = result.getShape(ShapeId.from("ns.foo#MyOperationInput")).get()
-                .asStructureShape().get();
+        StructureShape operationInput = result.getShape(ShapeId.from("ns.foo#MyOperationInput"))
+            .get()
+            .asStructureShape()
+            .get();
         MemberShape struct = operationInput.getMember("struct").get();
         MemberShape list = operationInput.getMember("list").get();
         MemberShape map = operationInput.getMember("map").get();
@@ -246,8 +237,8 @@ public class RenameShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(target).build();
         ListShape container = ListShape.builder().id(containerId).addMember(member).build();
         Model model = Model.builder()
-                .addShapes(target, member, container)
-                .build();
+            .addShapes(target, member, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
@@ -273,8 +264,8 @@ public class RenameShapesTest {
         MemberShape valueMember = MemberShape.builder().id(valueId).target(stringId).build();
         MapShape container = MapShape.builder().id(containerId).key(keyMember).value(valueMember).build();
         Model model = Model.builder()
-                .addShapes(target, keyMember, valueMember, container)
-                .build();
+            .addShapes(target, keyMember, valueMember, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newKeyId = ShapeId.from("ns.bar#Baz$key");
@@ -300,8 +291,8 @@ public class RenameShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(target).build();
         SetShape container = SetShape.builder().id(containerId).addMember(member).build();
         Model model = Model.builder()
-                .addShapes(target, member, container)
-                .build();
+            .addShapes(target, member, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
@@ -325,8 +316,8 @@ public class RenameShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(target).build();
         StructureShape container = StructureShape.builder().id(containerId).addMember(member).build();
         Model model = Model.builder()
-                .addShapes(target, member, container)
-                .build();
+            .addShapes(target, member, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
@@ -352,8 +343,8 @@ public class RenameShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(target).build();
         UnionShape container = UnionShape.builder().id(containerId).addMember(member).build();
         Model model = Model.builder()
-                .addShapes(target, member, container)
-                .build();
+            .addShapes(target, member, container)
+            .build();
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
@@ -372,12 +363,18 @@ public class RenameShapesTest {
     @Test
     public void transformationDoesntTriggerValidation() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("rename-with-resulting-errors.json"))
-                .assemble().unwrap();
+            .addImport(getClass().getResource("rename-with-resulting-errors.json"))
+            .assemble()
+            .unwrap();
 
-        Model result = ModelTransformer.create().renameShapes(model, Collections.singletonMap(
-                ShapeId.from("com.example.foo#string"), ShapeId.from("com.example#string")
-        ));
+        Model result = ModelTransformer.create()
+            .renameShapes(
+                model,
+                Collections.singletonMap(
+                    ShapeId.from("com.example.foo#string"),
+                    ShapeId.from("com.example#string")
+                )
+            );
 
         assertTrue(result.getShape(ShapeId.from("com.example#string")).isPresent());
         assertTrue(result.getShape(ShapeId.from("com.example#String")).isPresent());
@@ -386,46 +383,62 @@ public class RenameShapesTest {
     @Test
     public void transformKeepsSyntheticBoxTraitsV2() {
         Model model1 = Model.assembler()
-                .addImport(ModelAssemblerTest.class.getResource("needs-downgrade-document-node.json"))
-                .assemble()
-                .unwrap();
+            .addImport(ModelAssemblerTest.class.getResource("needs-downgrade-document-node.json"))
+            .assemble()
+            .unwrap();
 
         ShapeId originalBoxedId = ShapeId.from("smithy.example#BoxDouble");
         ShapeId originalPrimitiveId = ShapeId.from("smithy.example#PrimitiveDouble");
         ShapeId updatedPrimitiveId = ShapeId.from("smithy.example2#PrimitiveDouble");
 
-        Model model2 = ModelTransformer.create().renameShapes(model1, MapUtils.of(
-            ShapeId.from("smithy.example#PrimitiveDouble"),
-            updatedPrimitiveId
-        ));
+        Model model2 = ModelTransformer.create()
+            .renameShapes(
+                model1,
+                MapUtils.of(
+                    ShapeId.from("smithy.example#PrimitiveDouble"),
+                    updatedPrimitiveId
+                )
+            );
 
-        assertThat(model2.expectShape(updatedPrimitiveId).getAllTraits(),
-                   equalTo(model1.expectShape(originalPrimitiveId).getAllTraits()));
+        assertThat(
+            model2.expectShape(updatedPrimitiveId).getAllTraits(),
+            equalTo(model1.expectShape(originalPrimitiveId).getAllTraits())
+        );
 
-        assertThat(model2.expectShape(originalBoxedId).getAllTraits(),
-                   equalTo(model1.expectShape(originalBoxedId).getAllTraits()));
+        assertThat(
+            model2.expectShape(originalBoxedId).getAllTraits(),
+            equalTo(model1.expectShape(originalBoxedId).getAllTraits())
+        );
     }
 
     @Test
     public void transformKeepsSyntheticBoxTraitsV1() {
         Model model1 = Model.assembler()
-                .addImport(ModelAssemblerTest.class.getResource("needs-upgrade-document-node.json"))
-                .assemble()
-                .unwrap();
+            .addImport(ModelAssemblerTest.class.getResource("needs-upgrade-document-node.json"))
+            .assemble()
+            .unwrap();
 
         ShapeId originalBoxedId = ShapeId.from("smithy.example#BoxDouble");
         ShapeId originalPrimitiveId = ShapeId.from("smithy.example#PrimitiveDouble");
         ShapeId updatedPrimitiveId = ShapeId.from("smithy.example2#PrimitiveDouble");
 
-        Model model2 = ModelTransformer.create().renameShapes(model1, MapUtils.of(
-            ShapeId.from("smithy.example#PrimitiveDouble"),
-            updatedPrimitiveId
-        ));
+        Model model2 = ModelTransformer.create()
+            .renameShapes(
+                model1,
+                MapUtils.of(
+                    ShapeId.from("smithy.example#PrimitiveDouble"),
+                    updatedPrimitiveId
+                )
+            );
 
-        assertThat(model2.expectShape(updatedPrimitiveId).getAllTraits(),
-                   equalTo(model1.expectShape(originalPrimitiveId).getAllTraits()));
+        assertThat(
+            model2.expectShape(updatedPrimitiveId).getAllTraits(),
+            equalTo(model1.expectShape(originalPrimitiveId).getAllTraits())
+        );
 
-        assertThat(model2.expectShape(originalBoxedId).getAllTraits(),
-                   equalTo(model1.expectShape(originalBoxedId).getAllTraits()));
+        assertThat(
+            model2.expectShape(originalBoxedId).getAllTraits(),
+            equalTo(model1.expectShape(originalBoxedId).getAllTraits())
+        );
     }
 }

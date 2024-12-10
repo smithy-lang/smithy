@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
@@ -351,51 +340,59 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         ObjectNode.Builder result = Node.objectNodeBuilder()
-                .withOptionalMember("type", getType().map(Node::from))
-                .withOptionalMember("$ref", getRef().map(Node::from))
-                .withOptionalMember("const", getConstValue())
-                .withOptionalMember("default", getDefaultValue())
+            .withOptionalMember("type", getType().map(Node::from))
+            .withOptionalMember("$ref", getRef().map(Node::from))
+            .withOptionalMember("const", getConstValue())
+            .withOptionalMember("default", getDefaultValue())
 
-                .withOptionalMember("multipleOf", getMultipleOf().map(Node::from))
-                .withOptionalMember("maximum", getMaximum().map(Node::from))
-                .withOptionalMember("exclusiveMaximum", getExclusiveMaximum().map(Node::from))
-                .withOptionalMember("minimum", getMinimum().map(Node::from))
-                .withOptionalMember("exclusiveMinimum", getExclusiveMinimum().map(Node::from))
+            .withOptionalMember("multipleOf", getMultipleOf().map(Node::from))
+            .withOptionalMember("maximum", getMaximum().map(Node::from))
+            .withOptionalMember("exclusiveMaximum", getExclusiveMaximum().map(Node::from))
+            .withOptionalMember("minimum", getMinimum().map(Node::from))
+            .withOptionalMember("exclusiveMinimum", getExclusiveMinimum().map(Node::from))
 
-                .withOptionalMember("items", getItems().map(ToNode::toNode))
-                .withOptionalMember("maxItems", getMaxItems().map(Node::from))
-                .withOptionalMember("minItems", getMinItems().map(Node::from))
-                .withOptionalMember("uniqueItems", uniqueItems ? Optional.of(Node.from(true)) : Optional.empty())
+            .withOptionalMember("items", getItems().map(ToNode::toNode))
+            .withOptionalMember("maxItems", getMaxItems().map(Node::from))
+            .withOptionalMember("minItems", getMinItems().map(Node::from))
+            .withOptionalMember("uniqueItems", uniqueItems ? Optional.of(Node.from(true)) : Optional.empty())
 
-                .withOptionalMember("maxLength", getMaxLength().map(Node::from))
-                .withOptionalMember("minLength", getMinLength().map(Node::from))
-                .withOptionalMember("pattern", getPattern().map(Node::from))
+            .withOptionalMember("maxLength", getMaxLength().map(Node::from))
+            .withOptionalMember("minLength", getMinLength().map(Node::from))
+            .withOptionalMember("pattern", getPattern().map(Node::from))
 
-                .withOptionalMember("additionalProperties", getAdditionalProperties().map(Schema::toNode))
-                .withOptionalMember("propertyNames", getPropertyNames().map(Schema::toNode))
-                .withOptionalMember("maxProperties", getMaxProperties().map(Node::from))
-                .withOptionalMember("minProperties", getMinProperties().map(Node::from))
+            .withOptionalMember("additionalProperties", getAdditionalProperties().map(Schema::toNode))
+            .withOptionalMember("propertyNames", getPropertyNames().map(Schema::toNode))
+            .withOptionalMember("maxProperties", getMaxProperties().map(Node::from))
+            .withOptionalMember("minProperties", getMinProperties().map(Node::from))
 
-                .withOptionalMember("not", getNot().map(Schema::toNode))
+            .withOptionalMember("not", getNot().map(Schema::toNode))
 
-                .withOptionalMember("comment", getComment().map(Node::from))
-                .withOptionalMember("examples", getExamples())
-                .withOptionalMember("deprecated", this.deprecated ? Optional.of(Node.from(true)) : Optional.empty())
-                .withOptionalMember("title", getTitle().map(Node::from))
-                .withOptionalMember("description", getDescription().map(Node::from))
-                .withOptionalMember("format", getFormat().map(Node::from))
+            .withOptionalMember("comment", getComment().map(Node::from))
+            .withOptionalMember("examples", getExamples())
+            .withOptionalMember("deprecated", this.deprecated ? Optional.of(Node.from(true)) : Optional.empty())
+            .withOptionalMember("title", getTitle().map(Node::from))
+            .withOptionalMember("description", getDescription().map(Node::from))
+            .withOptionalMember("format", getFormat().map(Node::from))
 
-                .withOptionalMember("contentEncoding", getContentEncoding().map(Node::from))
-                .withOptionalMember("contentMediaType", getContentMediaType().map(Node::from));
+            .withOptionalMember("contentEncoding", getContentEncoding().map(Node::from))
+            .withOptionalMember("contentMediaType", getContentMediaType().map(Node::from));
 
         if (!properties.isEmpty()) {
-            result.withMember("properties", properties.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
+            result.withMember(
+                "properties",
+                properties.entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode()))
+            );
         }
 
         if (!patternProperties.isEmpty()) {
-            result.withMember("patternProperties", patternProperties.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
+            result.withMember(
+                "patternProperties",
+                patternProperties.entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode()))
+            );
         }
 
         if (!required.isEmpty()) {
@@ -474,8 +471,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             case "properties":
                 // Grab the property name if present, and skip 2 segments.
                 return segments.length == 1
-                       ? Optional.empty()
-                       : getRecursiveSchema(getProperty(segments[1]), segments, 2);
+                    ? Optional.empty()
+                    : getRecursiveSchema(getProperty(segments[1]), segments, 2);
             case "allOf":
                 return getSchemaFromArray(allOf, segments);
             case "anyOf":
@@ -511,8 +508,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         try {
             int position = segments[1].equals("-") ? schemaArray.size() - 1 : Integer.parseInt(segments[1]);
             return position > -1 && position < schemaArray.size()
-                   ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
-                   : Optional.empty();
+                ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
+                : Optional.empty();
         } catch (NumberFormatException e) {
             throw new SmithyJsonSchemaException("Invalid JSON pointer number: " + e.getMessage());
         }
@@ -521,50 +518,50 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     @Override
     public Builder toBuilder() {
         Builder builder = new Builder()
-                .ref(ref)
-                .type(type)
-                .enumValues(enumValues)
-                .intEnumValues(intEnumValues)
-                .constValue(constValue)
-                .defaultValue(defaultValue)
+            .ref(ref)
+            .type(type)
+            .enumValues(enumValues)
+            .intEnumValues(intEnumValues)
+            .constValue(constValue)
+            .defaultValue(defaultValue)
 
-                .multipleOf(multipleOf)
-                .maximum(maximum)
-                .exclusiveMaximum(exclusiveMaximum)
-                .minimum(minimum)
-                .exclusiveMinimum(exclusiveMinimum)
+            .multipleOf(multipleOf)
+            .maximum(maximum)
+            .exclusiveMaximum(exclusiveMaximum)
+            .minimum(minimum)
+            .exclusiveMinimum(exclusiveMinimum)
 
-                .maxLength(maxLength)
-                .minLength(minLength)
-                .pattern(pattern)
+            .maxLength(maxLength)
+            .minLength(minLength)
+            .pattern(pattern)
 
-                .items(items)
-                .maxItems(maxItems)
-                .minItems(minItems)
-                .uniqueItems(uniqueItems)
+            .items(items)
+            .maxItems(maxItems)
+            .minItems(minItems)
+            .uniqueItems(uniqueItems)
 
-                .required(required)
-                .additionalProperties(additionalProperties)
-                .maxProperties(maxProperties)
-                .minProperties(minProperties)
-                .propertyNames(propertyNames)
+            .required(required)
+            .additionalProperties(additionalProperties)
+            .maxProperties(maxProperties)
+            .minProperties(minProperties)
+            .propertyNames(propertyNames)
 
-                .allOf(allOf)
-                .anyOf(anyOf)
-                .oneOf(oneOf)
-                .not(not)
+            .allOf(allOf)
+            .anyOf(anyOf)
+            .oneOf(oneOf)
+            .not(not)
 
-                .title(title)
-                .description(description)
-                .format(format)
-                .readOnly(readOnly)
-                .writeOnly(writeOnly)
-                .comment(comment)
-                .examples(examples)
-                .deprecated(deprecated)
+            .title(title)
+            .description(description)
+            .format(format)
+            .readOnly(readOnly)
+            .writeOnly(writeOnly)
+            .comment(comment)
+            .examples(examples)
+            .deprecated(deprecated)
 
-                .contentEncoding(contentEncoding)
-                .contentMediaType(contentMediaType);
+            .contentEncoding(contentEncoding)
+            .contentMediaType(contentMediaType);
         properties.forEach(builder::putProperty);
         patternProperties.forEach(builder::putPatternProperty);
         extensions.forEach(builder::putExtension);
@@ -1014,7 +1011,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     break;
                 case "intEnum":
                     this.intEnumValues(
-                            node.expectArrayNode().getElementsAs((e) -> e.expectNumberNode().getValue().intValue()));
+                        node.expectArrayNode().getElementsAs((e) -> e.expectNumberNode().getValue().intValue())
+                    );
                     break;
                 case "const":
                     this.constValue(node);
@@ -1069,8 +1067,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     break;
                 case "properties":
                     node.expectObjectNode()
-                            .getMembers()
-                            .forEach((k, v) -> this.putProperty(k.getValue(), Schema.fromNode(v)));
+                        .getMembers()
+                        .forEach((k, v) -> this.putProperty(k.getValue(), Schema.fromNode(v)));
                     break;
                 case "additionalProperties":
                     this.additionalProperties(Schema.fromNode(node));
@@ -1080,8 +1078,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     break;
                 case "patternProperties":
                     node.expectObjectNode()
-                            .getMembers()
-                            .forEach((k, v) -> this.putPatternProperty(k.getValue(), Schema.fromNode(v)));
+                        .getMembers()
+                        .forEach((k, v) -> this.putPatternProperty(k.getValue(), Schema.fromNode(v)));
                     break;
                 case "allOf":
                     this.allOf(node.expectArrayNode().getElementsAs(Schema::fromNode));

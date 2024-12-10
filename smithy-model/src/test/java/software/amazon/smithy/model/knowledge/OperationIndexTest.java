@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,9 +32,9 @@ public class OperationIndexTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(OperationIndexTest.class.getResource("operation-index-test.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(OperationIndexTest.class.getResource("operation-index-test.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -58,12 +47,16 @@ public class OperationIndexTest {
         OperationIndex opIndex = OperationIndex.of(model);
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
-        assertThat(opIndex.getInputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
-                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(
+            opIndex.getInputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+            equalTo(Optional.of(UnitTypeTrait.UNIT))
+        );
         assertThat(opIndex.expectInputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
-        assertThat(opIndex.getOutputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
-                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(
+            opIndex.getOutputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+            equalTo(Optional.of(UnitTypeTrait.UNIT))
+        );
         assertThat(opIndex.expectOutputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getErrors(ShapeId.from("ns.foo#A")), empty());
     }
@@ -111,8 +104,8 @@ public class OperationIndexTest {
         OperationIndex index = OperationIndex.of(model);
         Set<OperationShape> actual = index.getInputBindings(ShapeId.from("ns.foo#Input"));
         Set<OperationShape> expected = SetUtils.of(
-                model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
-                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+            model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
+            model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
         );
         assertThat(actual, equalTo(expected));
         assertThat(index.getInputBindings(ShapeId.from("ns.foo#Output")), empty());
@@ -133,8 +126,8 @@ public class OperationIndexTest {
         OperationIndex index = OperationIndex.of(model);
         Set<OperationShape> actual = index.getOutputBindings(ShapeId.from("ns.foo#Output"));
         Set<OperationShape> expected = SetUtils.of(
-                model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
-                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+            model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
+            model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
         );
         assertThat(actual, equalTo(expected));
         assertThat(index.getOutputBindings(ShapeId.from("ns.foo#Input")), empty());
@@ -163,8 +156,8 @@ public class OperationIndexTest {
         OperationIndex index = OperationIndex.of(model);
         Set<Shape> actual = index.getErrorBindings(ShapeId.from("ns.foo#CommonError1"));
         Set<Shape> expected = SetUtils.of(
-                model.expectShape(ShapeId.from("ns.foo#MyService"), ServiceShape.class),
-                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+            model.expectShape(ShapeId.from("ns.foo#MyService"), ServiceShape.class),
+            model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
         );
         assertThat(actual, equalTo(expected));
 

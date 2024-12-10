@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,10 +21,10 @@ public class ApiGatewayMapperTest {
     @Test
     public void onlyCallsMappersWhenApiTypeMatches() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-model.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-model.json"))
+            .assemble()
+            .unwrap();
 
         runTest(model, ApiGatewayConfig.ApiType.REST, true);
         runTest(model, ApiGatewayConfig.ApiType.DISABLED, false);
@@ -35,8 +39,8 @@ public class ApiGatewayMapperTest {
         config.putExtensions(apiGatewayConfig);
 
         ObjectNode result = OpenApiConverter.create()
-                .config(config)
-                .convertToNode(model);
+            .config(config)
+            .convertToNode(model);
 
         if (present) {
             assertThat(result.getMember("x-amazon-apigateway-gateway-responses"), not(Optional.empty()));

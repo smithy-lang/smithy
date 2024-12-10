@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.waiters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,9 +27,9 @@ public class ModelRuntimeTypeGeneratorTest {
     @BeforeAll
     static void before() {
         model = Model.assembler()
-                .addImport(ModelRuntimeTypeGenerator.class.getResource("model-runtime-types.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(ModelRuntimeTypeGenerator.class.getResource("model-runtime-types.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @ParameterizedTest
@@ -60,7 +64,8 @@ public class ModelRuntimeTypeGeneratorTest {
         recursiveStructAny.put("bar", LiteralExpression.ANY);
         recursiveStruct.put("bar", Collections.singletonList(recursiveStructAny));
 
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(
+            new Object[][]{
                 {"StringList", Arrays.asList("aa", "aa")},
                 {"SizedStringList", Arrays.asList("aa", "aa", "aa", "aa", "aa")},
                 {"StringListMap", stringListMap},
@@ -86,6 +91,7 @@ public class ModelRuntimeTypeGeneratorTest {
                 {"smithy.api#BigDecimal", 8.0},
                 {"smithy.api#Timestamp", LiteralExpression.NUMBER},
                 {"RecursiveStruct", recursiveStruct}
-        });
+            }
+        );
     }
 }

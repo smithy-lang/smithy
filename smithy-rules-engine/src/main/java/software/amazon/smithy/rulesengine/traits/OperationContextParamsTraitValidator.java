@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.ArrayList;
@@ -51,54 +50,73 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
         List<ValidationEvent> events = new ArrayList<>();
         for (OperationShape operationShape : model.getOperationShapes()) {
             Map<String, OperationContextParamDefinition> definitionMap = index.getOperationContextParams(operationShape)
-                    .map(OperationContextParamsTrait::getParameters)
-                    .orElse(Collections.emptyMap());
+                .map(OperationContextParamsTrait::getParameters)
+                .orElse(Collections.emptyMap());
             for (Map.Entry<String, OperationContextParamDefinition> entry : definitionMap.entrySet()) {
 
                 try {
                     JmespathExpression path = JmespathExpression.parse(entry.getValue().getPath());
                     LinterResult linterResult = OperationContextParamsChecker.lint(
-                            entry.getValue(), operationShape, model);
+                        entry.getValue(),
+                        operationShape,
+                        model
+                    );
 
                     if (!linterResult.getProblems().isEmpty()) {
-                        events.add(error(operationShape,
-                                String.format("The operation `%s` is marked with `%s` which contains a "
-                                                + "path `%s` with an invalid JMESPath path `%s`: %s.",
-                                        operationShape.getId(),
-                                        OperationContextParamsTrait.ID.toString(),
-                                        entry.getKey(),
-                                        entry.getValue().getPath(),
-                                        linterResult.getProblems().stream()
-                                                .map(p -> "'" + p.message + "'")
-                                                .collect(Collectors.joining(", "))
-                                )));
-                    }
-
-                    List<String> unsupportedExpressions = path.accept(new UnsupportedJmesPathVisitor());
-                    if (!unsupportedExpressions.isEmpty()) {
-                        events.add(error(operationShape,
-                                String.format("The operation `%s` is marked with `%s` which contains a "
-                                                + "key `%s` with a JMESPath path `%s` with "
-                                                + "unsupported expressions: %s.",
-                                        operationShape.getId(),
-                                        OperationContextParamsTrait.ID.toString(),
-                                        entry.getKey(),
-                                        entry.getValue().getPath(),
-                                        unsupportedExpressions.stream()
-                                                .map(e -> "'" + e + "'")
-                                                .collect(Collectors.joining(", "))
-                                )));
-                    }
-                } catch (JmespathException e) {
-                    events.add(error(operationShape,
-                            String.format("The operation `%s` is marked with `%s` which contains a "
-                                            + "key `%s` with an unparseable JMESPath path `%s`: %s.",
+                        events.add(
+                            error(
+                                operationShape,
+                                String.format(
+                                    "The operation `%s` is marked with `%s` which contains a "
+                                        + "path `%s` with an invalid JMESPath path `%s`: %s.",
                                     operationShape.getId(),
                                     OperationContextParamsTrait.ID.toString(),
                                     entry.getKey(),
                                     entry.getValue().getPath(),
-                                    e.getMessage()
-                            )));
+                                    linterResult.getProblems()
+                                        .stream()
+                                        .map(p -> "'" + p.message + "'")
+                                        .collect(Collectors.joining(", "))
+                                )
+                            )
+                        );
+                    }
+
+                    List<String> unsupportedExpressions = path.accept(new UnsupportedJmesPathVisitor());
+                    if (!unsupportedExpressions.isEmpty()) {
+                        events.add(
+                            error(
+                                operationShape,
+                                String.format(
+                                    "The operation `%s` is marked with `%s` which contains a "
+                                        + "key `%s` with a JMESPath path `%s` with "
+                                        + "unsupported expressions: %s.",
+                                    operationShape.getId(),
+                                    OperationContextParamsTrait.ID.toString(),
+                                    entry.getKey(),
+                                    entry.getValue().getPath(),
+                                    unsupportedExpressions.stream()
+                                        .map(e -> "'" + e + "'")
+                                        .collect(Collectors.joining(", "))
+                                )
+                            )
+                        );
+                    }
+                } catch (JmespathException e) {
+                    events.add(
+                        error(
+                            operationShape,
+                            String.format(
+                                "The operation `%s` is marked with `%s` which contains a "
+                                    + "key `%s` with an unparseable JMESPath path `%s`: %s.",
+                                operationShape.getId(),
+                                OperationContextParamsTrait.ID.toString(),
+                                entry.getKey(),
+                                entry.getValue().getPath(),
+                                e.getMessage()
+                            )
+                        )
+                    );
                 }
             }
         }
@@ -130,10 +148,11 @@ public final class OperationContextParamsTraitValidator extends AbstractValidato
         @Override
         public List<String> visitFunction(FunctionExpression expression) {
             if (expression.getName().equals("keys")) {
-                return expression.getArguments().stream()
-                        .map(e -> e.accept(this))
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
+                return expression.getArguments()
+                    .stream()
+                    .map(e -> e.accept(this))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
             } else {
                 return ListUtils.of("`" + expression.getName() + "` function");
             }

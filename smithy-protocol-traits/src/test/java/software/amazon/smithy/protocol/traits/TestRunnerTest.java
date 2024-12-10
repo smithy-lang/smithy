@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocol.traits;
 
 import java.util.concurrent.Callable;
@@ -15,8 +14,7 @@ import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
 public class TestRunnerTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("source")
-    public void testRunner(String filename, Callable<SmithyTestCase.Result> callable)
-            throws Exception {
+    public void testRunner(String filename, Callable<SmithyTestCase.Result> callable) throws Exception {
         callable.call();
     }
 

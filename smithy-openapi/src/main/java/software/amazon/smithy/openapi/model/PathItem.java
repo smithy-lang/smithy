@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
@@ -129,24 +118,28 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withOptionalMember("description", getDescription().map(Node::from))
-                .withOptionalMember("summary", getSummary().map(Node::from))
-                .withOptionalMember("delete", getDelete())
-                .withOptionalMember("get", getGet())
-                .withOptionalMember("head", getHead())
-                .withOptionalMember("options", getOptions())
-                .withOptionalMember("patch", getPatch())
-                .withOptionalMember("post", getPost())
-                .withOptionalMember("put", getPut())
-                .withOptionalMember("trace", getTrace());
+            .withOptionalMember("description", getDescription().map(Node::from))
+            .withOptionalMember("summary", getSummary().map(Node::from))
+            .withOptionalMember("delete", getDelete())
+            .withOptionalMember("get", getGet())
+            .withOptionalMember("head", getHead())
+            .withOptionalMember("options", getOptions())
+            .withOptionalMember("patch", getPatch())
+            .withOptionalMember("post", getPost())
+            .withOptionalMember("put", getPut())
+            .withOptionalMember("trace", getTrace());
 
         if (!parameters.isEmpty()) {
             builder.withMember("parameters", getParameters().stream().map(Ref::toNode).collect(ArrayNode.collect()));
         }
 
         if (!servers.isEmpty()) {
-            builder.withMember("servers", getServers().stream()
-                    .map(ServerObject::toNode).collect(ArrayNode.collect()));
+            builder.withMember(
+                "servers",
+                getServers().stream()
+                    .map(ServerObject::toNode)
+                    .collect(ArrayNode.collect())
+            );
         }
 
         return builder;
@@ -155,19 +148,19 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
     @Override
     public Builder toBuilder() {
         return builder()
-                .extensions(getExtensions())
-                .summary(summary)
-                .description(description)
-                .servers(servers)
-                .parameters(parameters)
-                .get(get)
-                .put(put)
-                .post(post)
-                .delete(delete)
-                .options(options)
-                .head(head)
-                .patch(patch)
-                .trace(trace);
+            .extensions(getExtensions())
+            .summary(summary)
+            .description(description)
+            .servers(servers)
+            .parameters(parameters)
+            .get(get)
+            .put(put)
+            .post(post)
+            .delete(delete)
+            .options(options)
+            .head(head)
+            .patch(patch)
+            .trace(trace);
     }
 
     public static final class Builder extends Component.Builder<Builder, PathItem> {

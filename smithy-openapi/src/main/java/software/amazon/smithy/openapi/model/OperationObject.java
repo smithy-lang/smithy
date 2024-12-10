@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
@@ -121,11 +110,11 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withOptionalMember("description", getDescription().map(Node::from))
-                .withOptionalMember("summary", getSummary().map(Node::from))
-                .withOptionalMember("externalDocs", getExternalDocs())
-                .withOptionalMember("operationId", getOperationId().map(Node::from))
-                .withOptionalMember("requestBody", getRequestBody());
+            .withOptionalMember("description", getDescription().map(Node::from))
+            .withOptionalMember("summary", getSummary().map(Node::from))
+            .withOptionalMember("externalDocs", getExternalDocs())
+            .withOptionalMember("operationId", getOperationId().map(Node::from))
+            .withOptionalMember("requestBody", getRequestBody());
 
         if (isDeprecated()) {
             builder.withMember("deprecated", Node.from(true));
@@ -136,28 +125,54 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         }
 
         if (!responses.isEmpty()) {
-            builder.withMember("responses", getResponses().entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember(
+                "responses",
+                getResponses().entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+            );
         }
 
         if (!callbacks.isEmpty()) {
-            builder.withMember("callbacks", getCallbacks().entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember(
+                "callbacks",
+                getCallbacks().entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+            );
         }
 
         if (getSecurity().isPresent()) {
-            builder.withMember("security", getSecurity().get().stream()
-                    .map(map -> map.entrySet().stream()
+            builder.withMember(
+                "security",
+                getSecurity().get()
+                    .stream()
+                    .map(
+                        map -> map.entrySet()
+                            .stream()
                             .sorted(Comparator.comparing(Map.Entry::getKey))
-                            .map(entry -> Pair.of(entry.getKey(), entry.getValue().stream().map(Node::from)
-                                    .collect(ArrayNode.collect())))
-                            .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight)))
-                    .collect(ArrayNode.collect()));
+                            .map(
+                                entry -> Pair.of(
+                                    entry.getKey(),
+                                    entry.getValue()
+                                        .stream()
+                                        .map(Node::from)
+                                        .collect(ArrayNode.collect())
+                                )
+                            )
+                            .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight))
+                    )
+                    .collect(ArrayNode.collect())
+            );
         }
 
         if (!servers.isEmpty()) {
-            builder.withMember("servers", getServers().stream()
-                    .map(ServerObject::toNode).collect(ArrayNode.collect()));
+            builder.withMember(
+                "servers",
+                getServers().stream()
+                    .map(ServerObject::toNode)
+                    .collect(ArrayNode.collect())
+            );
         }
 
         if (!tags.isEmpty()) {
@@ -170,18 +185,18 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
     @Override
     public Builder toBuilder() {
         Builder builder = builder()
-                .extensions(getExtensions())
-                .callbacks(callbacks)
-                .responses(responses)
-                .parameters(parameters)
-                .servers(servers)
-                .summary(summary)
-                .tags(tags)
-                .deprecated(deprecated)
-                .description(description)
-                .externalDocs(externalDocs)
-                .operationId(operationId)
-                .requestBody(requestBody);
+            .extensions(getExtensions())
+            .callbacks(callbacks)
+            .responses(responses)
+            .parameters(parameters)
+            .servers(servers)
+            .summary(summary)
+            .tags(tags)
+            .deprecated(deprecated)
+            .description(description)
+            .externalDocs(externalDocs)
+            .operationId(operationId)
+            .requestBody(requestBody);
         getSecurity().ifPresent(builder::security);
         return builder;
     }

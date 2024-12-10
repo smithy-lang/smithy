@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -43,13 +32,13 @@ import software.amazon.smithy.model.SourceLocation;
 public class ObjectNodeTest {
 
     private static final ObjectNode EXPECTATION_NODE = Node.objectNodeBuilder()
-            .withMember("array", Node.arrayNode())
-            .withMember("boolean", Node.from(true))
-            .withMember("number", Node.from(10))
-            .withMember("null", Node.nullNode())
-            .withMember("string", Node.from("hi"))
-            .withMember("object", Node.objectNode())
-            .build();
+        .withMember("array", Node.arrayNode())
+        .withMember("boolean", Node.from(true))
+        .withMember("number", Node.from(10))
+        .withMember("null", Node.nullNode())
+        .withMember("string", Node.from("hi"))
+        .withMember("object", Node.objectNode())
+        .build();
 
     @Test
     public void emptyNodeIsEmpty() {
@@ -92,10 +81,10 @@ public class ObjectNodeTest {
     @Test
     public void containsMember() {
         ObjectNode node = ObjectNode.objectNodeBuilder()
-                .withMember("foo", "bar")
-                .withMember("baz", true)
-                .withMember("bam", false)
-                .build();
+            .withMember("foo", "bar")
+            .withMember("baz", true)
+            .withMember("bam", false)
+            .build();
 
         assertTrue(node.containsMember("foo"));
         assertTrue(node.containsMember("baz"));
@@ -105,23 +94,25 @@ public class ObjectNodeTest {
     @Test
     public void membersAreOrdered() {
         ObjectNode node = ObjectNode.objectNodeBuilder()
-                .withMember("foo", "bar")
-                .withMember("baz", true)
-                .withMember("bam", false)
-                .build();
+            .withMember("foo", "bar")
+            .withMember("baz", true)
+            .withMember("bam", false)
+            .build();
 
-        assertThat(node.getMembers().values(),
-                   contains(node.expectMember("foo"), node.expectMember("baz"), node.expectBooleanMember("bam")));
+        assertThat(
+            node.getMembers().values(),
+            contains(node.expectMember("foo"), node.expectMember("baz"), node.expectBooleanMember("bam"))
+        );
         assertThat(node.getStringMap().keySet(), contains("foo", "baz", "bam"));
     }
 
     @Test
     public void getMemberByType() {
         ObjectNode node = ObjectNode.objectNodeBuilder()
-                .withMember("string", "bar")
-                .withMember("boolean", true)
-                .withMember("number", 10)
-                .build();
+            .withMember("string", "bar")
+            .withMember("boolean", true)
+            .withMember("number", 10)
+            .build();
 
         assertThat(node.getStringMemberOrDefault("string", "hi"), equalTo("bar"));
         assertThat(node.getStringMemberOrDefault("not-there", "hi"), equalTo("hi"));
@@ -138,10 +129,10 @@ public class ObjectNodeTest {
     @Test
     public void getMembersByPrefix() {
         ObjectNode node = ObjectNode.objectNodeBuilder()
-                .withMember("a.1", 1)
-                .withMember("a.2", 2)
-                .withMember("bee", 3)
-                .build();
+            .withMember("a.1", 1)
+            .withMember("a.2", 2)
+            .withMember("bee", 3)
+            .build();
 
         assertThat(node.getMembersByPrefix("a.").keySet(), containsInAnyOrder("a.1", "a.2"));
         assertThat(node.getMembersByPrefix("b").keySet(), containsInAnyOrder("bee"));
@@ -196,9 +187,9 @@ public class ObjectNodeTest {
         SourceLocation sourceLocation = new SourceLocation("filename", 0, 1);
         ObjectNode node = new ObjectNode(new HashMap<>(), sourceLocation);
         node = node
-                .withMember(Node.from("key-1"), Node.from("value-1"))
-                .withMember(Node.from("key-2"), Node.from("value-2"))
-                .withoutMember("key-1");
+            .withMember(Node.from("key-1"), Node.from("value-1"))
+            .withMember(Node.from("key-2"), Node.from("value-2"))
+            .withoutMember("key-1");
 
         assertEquals(1, node.size());
         assertFalse(node.getMember("key-1").isPresent());
@@ -256,8 +247,8 @@ public class ObjectNodeTest {
     public void checksIfAdditionalPropertiesArePresent() {
         ObjectNode node = new ObjectNode(new HashMap<>(), SourceLocation.none());
         node.withMember(Node.from("a"), Node.from("value-1"))
-                .withMember(Node.from("b"), Node.from("value-2"))
-                .expectNoAdditionalProperties(Arrays.asList("a", "b", "c"));
+            .withMember(Node.from("b"), Node.from("value-2"))
+            .expectNoAdditionalProperties(Arrays.asList("a", "b", "c"));
     }
 
     @Test
@@ -265,21 +256,25 @@ public class ObjectNodeTest {
         Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             ObjectNode node = new ObjectNode(new HashMap<>(), SourceLocation.none());
             node.withMember(Node.from("a"), Node.from("value-1"))
-                    .withMember(Node.from("b"), Node.from("value-2"))
-                    .expectNoAdditionalProperties(Arrays.asList("foo", "baz"));
+                .withMember(Node.from("b"), Node.from("value-2"))
+                .expectNoAdditionalProperties(Arrays.asList("foo", "baz"));
         });
 
-        assertThat(thrown.getMessage(), containsString(
+        assertThat(
+            thrown.getMessage(),
+            containsString(
                 "Expected an object with possible properties of `baz`, `foo`, but found "
-                + "additional properties: `a`, `b`"));
+                    + "additional properties: `a`, `b`"
+            )
+        );
     }
 
     @Test
     public void doesNotThrowForAdditionalPropertiesWarning() {
         ObjectNode node = new ObjectNode(new HashMap<>(), SourceLocation.none());
         node.withMember(Node.from("a"), Node.from("value-1"))
-                .withMember(Node.from("b"), Node.from("value-2"))
-                .warnIfAdditionalProperties(Arrays.asList("foo", "baz"));
+            .withMember(Node.from("b"), Node.from("value-2"))
+            .warnIfAdditionalProperties(Arrays.asList("foo", "baz"));
     }
 
     @Test
@@ -452,38 +447,38 @@ public class ObjectNodeTest {
     @Test
     public void successfullyConsumesTypes() {
         ObjectNode value = Node.objectNodeBuilder()
-                .withMember("number1", Node.from(1))
-                .withMember("number2", Node.from(2))
-                .withMember("string1", Node.from("a"))
-                .withMember("string2", Node.from("b"))
-                .withMember("boolean1", Node.from(true))
-                .withMember("boolean2", Node.from(false))
-                .withMember("array1", Node.fromNodes(Node.from("a")))
-                .withMember("array2", Node.fromNodes(Node.from("b")))
-                .withMember("null1", Node.nullNode())
-                .withMember("object1", Node.objectNode())
-                .withMember("object2", Node.objectNode())
-                .withMember("mapper", Node.objectNode().withMember("a", Node.from("hello")))
-                .build();
+            .withMember("number1", Node.from(1))
+            .withMember("number2", Node.from(2))
+            .withMember("string1", Node.from("a"))
+            .withMember("string2", Node.from("b"))
+            .withMember("boolean1", Node.from(true))
+            .withMember("boolean2", Node.from(false))
+            .withMember("array1", Node.fromNodes(Node.from("a")))
+            .withMember("array2", Node.fromNodes(Node.from("b")))
+            .withMember("null1", Node.nullNode())
+            .withMember("object1", Node.objectNode())
+            .withMember("object2", Node.objectNode())
+            .withMember("mapper", Node.objectNode().withMember("a", Node.from("hello")))
+            .build();
 
         Map<String, Object> result = new HashMap<>();
         value.expectObjectNode()
-                .getNumberMember("number1", v -> result.put("number1", v))
-                .expectNumberMember("number2", v -> result.put("number2", v))
-                .getNumberMember("number3", v -> result.put("number3", v))
-                .getStringMember("string1", v -> result.put("string1", v))
-                .expectStringMember("string2", v -> result.put("string2", v))
-                .getStringMember("string3", v -> result.put("string3", v))
-                .getBooleanMember("boolean1", v -> result.put("boolean1", v))
-                .expectBooleanMember("boolean2", v -> result.put("boolean2", v))
-                .getBooleanMember("boolean3", v -> result.put("boolean3", v))
-                .getArrayMember("array1", StringNode::getValue, v -> result.put("array1", v))
-                .expectArrayMember("array2", StringNode::getValue, v -> result.put("array2", v))
-                .getArrayMember("array3", StringNode::getValue, v -> result.put("array3", v))
-                .getMember("null1", Node::expectNullNode, v -> result.put("null1", null))
-                .getObjectMember("object1", v -> result.put("object1", v))
-                .expectObjectMember("object2", v -> result.put("object2", v))
-                .expectMember("mapper", Mapper::fromNode, v -> result.put("mapper", v));
+            .getNumberMember("number1", v -> result.put("number1", v))
+            .expectNumberMember("number2", v -> result.put("number2", v))
+            .getNumberMember("number3", v -> result.put("number3", v))
+            .getStringMember("string1", v -> result.put("string1", v))
+            .expectStringMember("string2", v -> result.put("string2", v))
+            .getStringMember("string3", v -> result.put("string3", v))
+            .getBooleanMember("boolean1", v -> result.put("boolean1", v))
+            .expectBooleanMember("boolean2", v -> result.put("boolean2", v))
+            .getBooleanMember("boolean3", v -> result.put("boolean3", v))
+            .getArrayMember("array1", StringNode::getValue, v -> result.put("array1", v))
+            .expectArrayMember("array2", StringNode::getValue, v -> result.put("array2", v))
+            .getArrayMember("array3", StringNode::getValue, v -> result.put("array3", v))
+            .getMember("null1", Node::expectNullNode, v -> result.put("null1", null))
+            .getObjectMember("object1", v -> result.put("object1", v))
+            .expectObjectMember("object2", v -> result.put("object2", v))
+            .expectMember("mapper", Mapper::fromNode, v -> result.put("mapper", v));
 
         assertThat(result.keySet(), Matchers.equalTo(value.getStringMap().keySet()));
         assertThat(result.get("number1"), Matchers.equalTo(1));

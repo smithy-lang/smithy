@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.smoketests.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -110,13 +114,13 @@ public class SmokeTestsTraitTest {
 
     private static SmokeTestCase getSmokeTestCase(String filename) {
         Model model = Model.assembler()
-                .addImport(SmokeTestsTraitTest.class.getResource(filename))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(SmokeTestsTraitTest.class.getResource(filename))
+            .discoverModels()
+            .assemble()
+            .unwrap();
         return model.expectShape(ShapeId.from("smithy.example#SayHello"))
-                .expectTrait(SmokeTestsTrait.class)
-                .getTestCases()
-                .get(0);
+            .expectTrait(SmokeTestsTrait.class)
+            .getTestCases()
+            .get(0);
     }
 }

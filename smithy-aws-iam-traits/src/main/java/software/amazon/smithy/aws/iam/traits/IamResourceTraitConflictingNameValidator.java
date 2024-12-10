@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import static software.amazon.smithy.model.validation.ValidationUtils.tickedList;
@@ -31,8 +30,8 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
     public List<ValidationEvent> validate(Model model) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         return model.shapes(ServiceShape.class)
-                .flatMap(shape -> validateService(topDownIndex, shape).stream())
-                .collect(Collectors.toList());
+            .flatMap(shape -> validateService(topDownIndex, shape).stream())
+            .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateService(TopDownIndex topDownIndex, ServiceShape service) {
@@ -42,13 +41,22 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
             String resourceName = IamResourceTrait.resolveResourceName(resource);
             resourceMap.computeIfAbsent(resourceName, k -> new ArrayList<>()).add(resource.getId());
         }
-        resourceMap.entrySet().stream()
-                .filter(entry -> entry.getValue().size() > 1)
-                .map(entry -> error(service, String.format(
+        resourceMap.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().size() > 1)
+            .map(
+                entry -> error(
+                    service,
+                    String.format(
                         "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
-                                + "closure, but found multiple resources named `%s` in the service `%s`: [%s]",
-                        entry.getKey(), service.getId(), tickedList(entry.getValue()))))
-                .forEach(events::add);
+                            + "closure, but found multiple resources named `%s` in the service `%s`: [%s]",
+                        entry.getKey(),
+                        service.getId(),
+                        tickedList(entry.getValue())
+                    )
+                )
+            )
+            .forEach(events::add);
         return events;
     }
 }

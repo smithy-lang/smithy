@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,21 +21,22 @@ public class ReverseNeighborSelectorTest {
 
     @BeforeAll
     public static void before() {
-        model =  Model.assembler()
-                .addImport(SelectorTest.class.getResource("reverse-neighbor.smithy"))
-                .assemble()
-                .unwrap();
+        model = Model.assembler()
+            .addImport(SelectorTest.class.getResource("reverse-neighbor.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @Test
     public void parsesValidReverseNeighbors() {
         List<String> exprs = ListUtils.of(
-                "string < member < list",
-                "structure <-[input]-",
-                "structure <-[input]- operation",
-                "structure <-[input, output]- operation",
-                "structure <-[input, output, error]- operation",
-                "structure <-[  input  ,    output,error  ]-operation");
+            "string < member < list",
+            "structure <-[input]-",
+            "structure <-[input]- operation",
+            "structure <-[input, output]- operation",
+            "structure <-[input, output, error]- operation",
+            "structure <-[  input  ,    output,error  ]-operation"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -41,16 +46,17 @@ public class ReverseNeighborSelectorTest {
     @Test
     public void detectsInvalidReverseNeighbors() {
         List<String> exprs = ListUtils.of(
-                "structure <-",
-                "structure <-[",
-                "structure <-[input",
-                "structure <-[input,",
-                "structure <-[input, output",
-                "structure <-[input, output]",
-                "structure <-[input, output]--",
-                "structure < - [input, output]-", // no spaces between '-' and '['
-                "structure <-[input, output] -", // no spaces between ']' and '-'
-                "structure <-[]-");
+            "structure <-",
+            "structure <-[",
+            "structure <-[input",
+            "structure <-[input,",
+            "structure <-[input, output",
+            "structure <-[input, output]",
+            "structure <-[input, output]--",
+            "structure < - [input, output]-", // no spaces between '-' and '['
+            "structure <-[input, output] -", // no spaces between ']' and '-'
+            "structure <-[]-"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -95,7 +101,9 @@ public class ReverseNeighborSelectorTest {
     @Test
     public void traversesDirectedReverseOperationDeepInputOutput() {
         Set<String> result = SelectorTest.exampleIds(
-                model, "string :test(< member < list < member < structure <-[output]- operation)");
+            model,
+            "string :test(< member < list < member < structure <-[output]- operation)"
+        );
 
         assertThat(result, containsInAnyOrder("smithy.example#MyString1"));
     }
@@ -111,16 +119,22 @@ public class ReverseNeighborSelectorTest {
     public void traversesUndirectedReverseOperationInputOutputAndErrors() {
         Set<String> result = SelectorTest.exampleIds(model, ":test(structure <-[input, output, error]- operation)");
 
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 "smithy.example#OperationInput",
                 "smithy.example#OperationOutput",
-                "smithy.example#Error"));
+                "smithy.example#Error"
+            )
+        );
     }
 
     @Test
     public void traversesUndirectedReverseOperationDeepInputOutput() {
         Set<String> result = SelectorTest.exampleIds(
-                model, ":test(string < member < list < member < structure <-[input, output]- operation)");
+            model,
+            ":test(string < member < list < member < structure <-[input, output]- operation)"
+        );
 
         assertThat(result, containsInAnyOrder("smithy.example#MyString1"));
     }
@@ -129,9 +143,13 @@ public class ReverseNeighborSelectorTest {
     public void findsShapesNotConnectedToOtherShapes() {
         Set<String> result = SelectorTest.exampleIds(model, ":not([trait|trait]) :not(< *)");
 
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 "smithy.example#Operation",
-                "smithy.example#MyString2"));
+                "smithy.example#MyString2"
+            )
+        );
     }
 
     @Test

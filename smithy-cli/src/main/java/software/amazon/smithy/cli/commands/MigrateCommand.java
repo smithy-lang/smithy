@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static java.lang.String.format;
@@ -93,8 +82,13 @@ final class MigrateCommand implements Command {
             @Override
             public int execute(Arguments arguments, Env env) {
                 if (!arguments.getReceiver(StandardOptions.class).quiet()) {
-                    env.colors().style(env.stderr(), "upgrade-1-to-2 is deprecated. Use the migrate command instead."
-                                                     + System.lineSeparator(), ColorTheme.DEPRECATED);
+                    env.colors()
+                        .style(
+                            env.stderr(),
+                            "upgrade-1-to-2 is deprecated. Use the migrate command instead."
+                                + System.lineSeparator(),
+                            ColorTheme.DEPRECATED
+                        );
                     env.stderr().flush();
                 }
                 return command.execute(arguments, env);
@@ -123,7 +117,10 @@ final class MigrateCommand implements Command {
         arguments.addReceiver(new BuildOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(
-                this, parentCommandName, this::run);
+            this,
+            parentCommandName,
+            this::run
+        );
 
         return action.apply(arguments, env);
     }
@@ -147,26 +144,26 @@ final class MigrateCommand implements Command {
         SmithyBuildConfig temporaryConfig = configBuilder.build();
 
         Model initialModel = new ModelBuilder()
-                .config(smithyBuildConfig)
-                .arguments(arguments)
-                .env(env)
-                .models(models)
-                .validationPrinter(env.stderr())
-                .defaultSeverity(Severity.DANGER)
-                .build();
+            .config(smithyBuildConfig)
+            .arguments(arguments)
+            .env(env)
+            .models(models)
+            .validationPrinter(env.stderr())
+            .defaultSeverity(Severity.DANGER)
+            .build();
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
-                .config(temporaryConfig)
-                // Only build the source projection
-                .projectionFilter(name -> name.equals("source"))
-                // The only traits we care about looking at are in the prelude,
-                // so we can safely ignore any that are unknown.
-                .modelAssemblerSupplier(() -> {
-                    ModelAssembler assembler = Model.assembler();
-                    assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
-                    return assembler;
-                })
-                .model(initialModel);
+            .config(temporaryConfig)
+            // Only build the source projection
+            .projectionFilter(name -> name.equals("source"))
+            // The only traits we care about looking at are in the prelude,
+            // so we can safely ignore any that are unknown.
+            .modelAssemblerSupplier(() -> {
+                ModelAssembler assembler = Model.assembler();
+                assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+                return assembler;
+            })
+            .model(initialModel);
 
         // Run SmithyBuild to get the finalized model
         ResultConsumer resultConsumer = new ResultConsumer();
@@ -187,13 +184,14 @@ final class MigrateCommand implements Command {
             assembler.addUnparsedModel(modelFilePath.toAbsolutePath().toString(), upgradedModelString);
         }
 
-
         try {
             assembler.assemble().validate();
         } catch (ValidatedResultException e) {
-            throw new RuntimeException("Upgraded Smithy models are invalid. "
+            throw new RuntimeException(
+                "Upgraded Smithy models are invalid. "
                     + "Please report the following errors to Smithy team.\n"
-                    + e.getMessage());
+                    + e.getMessage()
+            );
         }
 
         for (Pair<Path, String> upgradedModel : upgradedModels) {
@@ -205,28 +203,28 @@ final class MigrateCommand implements Command {
 
     private List<Path> resolveModelFiles(Model model, List<String> modelFilesOrDirectories) {
         Set<Path> absoluteModelFilesOrDirectories = modelFilesOrDirectories.stream()
-                .map(path -> Paths.get(path).toAbsolutePath())
-                .collect(Collectors.toSet());
+            .map(path -> Paths.get(path).toAbsolutePath())
+            .collect(Collectors.toSet());
         return model.shapes()
-                .filter(shape -> !Prelude.isPreludeShape(shape))
-                .filter(shape -> !shape.getSourceLocation().getFilename().startsWith("jar:"))
-                .map(shape -> Paths.get(shape.getSourceLocation().getFilename()).toAbsolutePath())
-                .distinct()
-                .filter(locationPath -> {
-                    for (Path inputPath : absoluteModelFilesOrDirectories) {
-                        if (!locationPath.startsWith(inputPath)) {
-                            LOGGER.finest("Skipping non-target model file: " + locationPath);
-                            return false;
-                        }
-                    }
-                    if (!locationPath.toString().endsWith(".smithy")) {
-                        LOGGER.info("Skipping non-IDL model file: " + locationPath);
+            .filter(shape -> !Prelude.isPreludeShape(shape))
+            .filter(shape -> !shape.getSourceLocation().getFilename().startsWith("jar:"))
+            .map(shape -> Paths.get(shape.getSourceLocation().getFilename()).toAbsolutePath())
+            .distinct()
+            .filter(locationPath -> {
+                for (Path inputPath : absoluteModelFilesOrDirectories) {
+                    if (!locationPath.startsWith(inputPath)) {
+                        LOGGER.finest("Skipping non-target model file: " + locationPath);
                         return false;
                     }
-                    return true;
-                })
-                .sorted()
-                .collect(Collectors.toList());
+                }
+                if (!locationPath.toString().endsWith(".smithy")) {
+                    LOGGER.info("Skipping non-IDL model file: " + locationPath);
+                    return false;
+                }
+                return true;
+            })
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     private void writeMigratedFile(String upgradeFileString, Path filePath) {
@@ -246,12 +244,12 @@ final class MigrateCommand implements Command {
         ShapeMigrateVisitor visitor = new ShapeMigrateVisitor(completeModel, contents);
 
         completeModel.shapes()
-                .filter(shape -> shape.getSourceLocation().getFilename().equals(filePath.toString()))
-                // Apply updates to the shapes at the bottom of the file first.
-                // This lets us modify the file without invalidating the existing
-                // source locations.
-                .sorted(Comparator.comparing(Shape::getSourceLocation).reversed())
-                .forEach(shape -> shape.accept(visitor));
+            .filter(shape -> shape.getSourceLocation().getFilename().equals(filePath.toString()))
+            // Apply updates to the shapes at the bottom of the file first.
+            // This lets us modify the file without invalidating the existing
+            // source locations.
+            .sorted(Comparator.comparing(Shape::getSourceLocation).reversed())
+            .forEach(shape -> shape.accept(visitor));
 
         return updateVersion(visitor.getModelString());
     }
@@ -309,9 +307,10 @@ final class MigrateCommand implements Command {
                 addDefault(shape, shape.getType());
             }
             // Handle members in reverse definition order.
-            shape.members().stream()
-                    .sorted(Comparator.comparing(Shape::getSourceLocation).reversed())
-                    .forEach(this::handleMemberShape);
+            shape.members()
+                .stream()
+                .sorted(Comparator.comparing(Shape::getSourceLocation).reversed())
+                .forEach(this::handleMemberShape);
             return null;
         }
 
@@ -327,7 +326,7 @@ final class MigrateCommand implements Command {
 
         private boolean hasSyntheticDefault(Shape shape) {
             Optional<SourceLocation> defaultLocation = shape.getTrait(DefaultTrait.class)
-                    .map(Trait::getSourceLocation);
+                .map(Trait::getSourceLocation);
             // When Smithy injects the default trait, it sets the source
             // location equal to the shape's source location. This is
             // impossible in any other scenario, so we can use this info
@@ -407,14 +406,15 @@ final class MigrateCommand implements Command {
             // We're leaving the other traits where they are in the model
             // string to preserve things like comments as much as is possible.
             StringShape stripped = shape.toBuilder()
-                    .clearTraits()
-                    .addTrait(shape.expectTrait(EnumTrait.class))
-                    .build();
+                .clearTraits()
+                .addTrait(shape.expectTrait(EnumTrait.class))
+                .build();
 
             // Build a faux model that only contains the enum we want to write.
             Model model = Model.assembler()
-                    .addShapes(stripped)
-                    .assemble().unwrap();
+                .addShapes(stripped)
+                .assemble()
+                .unwrap();
 
             // Use existing conversion tools to convert it to an enum shape,
             // then serialize it using the idl serializer.

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.suppressions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,17 +24,17 @@ public class MetadataSuppressionTest {
     @Test
     public void doesNotMatchWhenUsingDifferentNamespace() {
         ObjectNode node = Node.objectNodeBuilder()
-                .withMember("id", "Foo")
-                .withMember("namespace", "smithy.example.nested")
-                .build();
+            .withMember("id", "Foo")
+            .withMember("namespace", "smithy.example.nested")
+            .build();
         Shape s = StringShape.builder().id("smithy.example#String").build();
         Suppression suppression = Suppression.fromMetadata(node);
         ValidationEvent event = ValidationEvent.builder()
-                .id("Foo")
-                .shape(s)
-                .severity(Severity.DANGER)
-                .message("test")
-                .build();
+            .id("Foo")
+            .shape(s)
+            .severity(Severity.DANGER)
+            .message("test")
+            .build();
 
         assertThat(suppression.test(event), is(false));
     }
@@ -39,15 +43,15 @@ public class MetadataSuppressionTest {
     @MethodSource("suppressions")
     public void suppressesEventIds(boolean match, String eventId, String suppressionId) {
         ObjectNode node = Node.objectNodeBuilder()
-                .withMember("id", suppressionId)
-                .withMember("namespace", "*")
-                .build();
+            .withMember("id", suppressionId)
+            .withMember("namespace", "*")
+            .build();
         Suppression suppression = Suppression.fromMetadata(node);
         ValidationEvent event = ValidationEvent.builder()
-                .id(eventId)
-                .severity(Severity.DANGER)
-                .message("test")
-                .build();
+            .id(eventId)
+            .severity(Severity.DANGER)
+            .message("test")
+            .build();
 
         assertThat(eventId + " is " + match + " match for " + suppressionId, suppression.test(event), is(match));
     }
@@ -55,11 +59,11 @@ public class MetadataSuppressionTest {
     // See tests for ValidationEvent#containsId for exhaustive test cases.
     public static Stream<Arguments> suppressions() {
         return Stream.of(
-                Arguments.of(true, "BadThing", "BadThing"),
-                Arguments.of(true, "BadThing.Foo", "BadThing"),
-                Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar"),
-                Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar.Baz"),
-                Arguments.of(false, "BadThing.Fooz", "BadThing.Foo")
+            Arguments.of(true, "BadThing", "BadThing"),
+            Arguments.of(true, "BadThing.Foo", "BadThing"),
+            Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar"),
+            Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar.Baz"),
+            Arguments.of(false, "BadThing.Fooz", "BadThing.Foo")
         );
     }
 }

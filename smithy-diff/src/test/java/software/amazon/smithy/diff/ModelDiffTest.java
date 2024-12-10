@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.diff;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,25 +27,27 @@ public class ModelDiffTest {
         Model oldModel = Model.builder().build();
         Model newModel = Model.builder().build();
         List<ValidationEvent> oldEvents = Collections.singletonList(
-                ValidationEvent.builder()
-                        .id("x")
-                        .severity(Severity.ERROR)
-                        .message("Hello")
-                        .build());
+            ValidationEvent.builder()
+                .id("x")
+                .severity(Severity.ERROR)
+                .message("Hello")
+                .build()
+        );
         List<ValidationEvent> newEvents = Collections.singletonList(
-                ValidationEvent.builder()
-                        .id("y")
-                        .severity(Severity.ERROR)
-                        .message("Hello")
-                        .build());
+            ValidationEvent.builder()
+                .id("y")
+                .severity(Severity.ERROR)
+                .message("Hello")
+                .build()
+        );
 
         ValidatedResult<Model> oldResult = new ValidatedResult<>(oldModel, oldEvents);
         ValidatedResult<Model> newResult = new ValidatedResult<>(newModel, newEvents);
 
         ModelDiff.Result result = ModelDiff.builder()
-                .oldModel(oldResult)
-                .newModel(newResult)
-                .compare();
+            .oldModel(oldResult)
+            .newModel(newResult)
+            .compare();
 
         assertThat(result.getOldModelEvents(), equalTo(oldEvents));
         assertThat(result.getNewModelEvents(), equalTo(newEvents));
@@ -57,13 +63,13 @@ public class ModelDiffTest {
     @Test
     public void testsEquality() {
         Model oldModel = Model.builder()
-                .putMetadataProperty("foo", Node.from("baz"))
-                .addShape(StringShape.builder().id("smithy.example#Str").build())
-                .build();
+            .putMetadataProperty("foo", Node.from("baz"))
+            .addShape(StringShape.builder().id("smithy.example#Str").build())
+            .build();
         Model newModel = Model.builder()
-                .putMetadataProperty("foo", Node.from("bar"))
-                .addShape(StringShape.builder().id("smithy.example#Str").addTrait(new SensitiveTrait()).build())
-                .build();
+            .putMetadataProperty("foo", Node.from("bar"))
+            .addShape(StringShape.builder().id("smithy.example#Str").addTrait(new SensitiveTrait()).build())
+            .build();
         ModelDiff.Result result1 = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();
         ModelDiff.Result result2 = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();
 
@@ -78,8 +84,8 @@ public class ModelDiffTest {
     @Test
     public void findsBreakingChanges() {
         Model oldModel = Model.builder()
-                .addShape(StructureShape.builder().id("smithy.example#Str").build())
-                .build();
+            .addShape(StructureShape.builder().id("smithy.example#Str").build())
+            .build();
         Model newModel = Model.builder().build();
         ModelDiff.Result result = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();
 
@@ -89,8 +95,8 @@ public class ModelDiffTest {
     @Test
     public void detectsWhenNoBreakingChanges() {
         Model model = Model.builder()
-                .addShape(StringShape.builder().id("smithy.example#Str").build())
-                .build();
+            .addShape(StringShape.builder().id("smithy.example#Str").build())
+            .build();
         ModelDiff.Result result = ModelDiff.builder().oldModel(model).newModel(model).compare();
 
         assertThat(result.isDiffBreaking(), is(false));
@@ -99,18 +105,18 @@ public class ModelDiffTest {
     @Test
     public void appliesSuppressionsToDiff() {
         Model oldModel = Model.assembler()
-                .addImport(getClass().getResource("suppressions-a.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("suppressions-a.smithy"))
+            .assemble()
+            .unwrap();
         Model newModel = Model.assembler()
-                .addImport(getClass().getResource("suppressions-b.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("suppressions-b.smithy"))
+            .assemble()
+            .unwrap();
 
         ModelDiff.Result result = ModelDiff.builder()
-                .oldModel(oldModel)
-                .newModel(newModel)
-                .compare();
+            .oldModel(oldModel)
+            .newModel(newModel)
+            .compare();
 
         assertThat(result.isDiffBreaking(), is(false));
 

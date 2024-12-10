@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -18,7 +17,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 @SmithyUnstableApi
 public final class EndpointTestOperationInput implements FromSourceLocation,
-        ToSmithyBuilder<EndpointTestOperationInput> {
+    ToSmithyBuilder<EndpointTestOperationInput> {
     private final SourceLocation sourceLocation;
     private final String operationName;
     private final ObjectNode operationParams;
@@ -68,9 +67,9 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
         }
         EndpointTestOperationInput that = (EndpointTestOperationInput) o;
         return getOperationName().equals(that.getOperationName())
-               && Objects.equals(getOperationParams(), that.getOperationParams())
-               && Objects.equals(getBuiltInParams(), that.getBuiltInParams())
-               && Objects.equals(getClientParams(), that.getClientParams());
+            && Objects.equals(getOperationParams(), that.getOperationParams())
+            && Objects.equals(getBuiltInParams(), that.getBuiltInParams())
+            && Objects.equals(getClientParams(), that.getClientParams());
     }
 
     @Override
@@ -81,11 +80,11 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(sourceLocation)
-                .operationName(operationName)
-                .operationParams(operationParams)
-                .builtInParams(builtInParams)
-                .clientParams(clientParams);
+            .sourceLocation(sourceLocation)
+            .operationName(operationName)
+            .operationParams(operationParams)
+            .builtInParams(builtInParams)
+            .clientParams(clientParams);
     }
 
     public static final class Builder implements SmithyBuilder<EndpointTestOperationInput> {

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import java.util.Collection;
@@ -39,23 +28,27 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
     @Override
     public Model onRemove(ModelTransformer transformer, Collection<Shape> shapes, Model model) {
         Set<ShapeId> removedOperations = shapes.stream()
-                .filter(Shape::isOperationShape)
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+            .filter(Shape::isOperationShape)
+            .map(Shape::getId)
+            .collect(Collectors.toSet());
         Set<ShapeId> removedErrors = shapes.stream()
-                .filter(shape -> shape.hasTrait(ErrorTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+            .filter(shape -> shape.hasTrait(ErrorTrait.class))
+            .map(Shape::getId)
+            .collect(Collectors.toSet());
 
         Set<Shape> servicesToUpdate = getServicesToUpdate(model, removedOperations, removedErrors);
         Set<Shape> shapesToUpdate = new HashSet<>(servicesToUpdate);
 
         Set<Shape> operationsToUpdate = getOperationsToUpdate(
-                model, servicesToUpdate.stream().map(Shape::getId).collect(Collectors.toSet()));
+            model,
+            servicesToUpdate.stream().map(Shape::getId).collect(Collectors.toSet())
+        );
         shapesToUpdate.addAll(operationsToUpdate);
 
         Set<Shape> membersToUpdate = getMembersToUpdate(
-                model, operationsToUpdate.stream().map(Shape::getId).collect(Collectors.toSet()));
+            model,
+            operationsToUpdate.stream().map(Shape::getId).collect(Collectors.toSet())
+        );
         shapesToUpdate.addAll(membersToUpdate);
         return transformer.replaceShapes(model, shapesToUpdate);
     }
@@ -74,19 +67,19 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
     }
 
     private Set<Shape> getOperationsToUpdate(
-            Model model,
-            Set<ShapeId> updatedServices
+        Model model,
+        Set<ShapeId> updatedServices
     ) {
         ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
         Set<ShapeId> stillBoundOperations = model.shapes(ServiceShape.class)
-                // Get all endpoint discovery services
-                .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.class))
-                .map(Shape::getId)
-                // Get those services who aren't having their discovery traits removed
-                .filter(service -> !updatedServices.contains(service))
-                // Get all the discovery operations bound to those services
-                .flatMap(service -> discoveryIndex.getEndpointDiscoveryOperations(service).stream())
-                .collect(Collectors.toSet());
+            // Get all endpoint discovery services
+            .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.class))
+            .map(Shape::getId)
+            // Get those services who aren't having their discovery traits removed
+            .filter(service -> !updatedServices.contains(service))
+            // Get all the discovery operations bound to those services
+            .flatMap(service -> discoveryIndex.getEndpointDiscoveryOperations(service).stream())
+            .collect(Collectors.toSet());
 
         // Get all endpoint discovery operations
         Set<Shape> result = new HashSet<>();
@@ -103,25 +96,25 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
 
     private Set<Shape> getMembersToUpdate(Model model, Set<ShapeId> updatedOperations) {
         Set<ShapeId> stillBoundMembers = model.shapes(OperationShape.class)
-                // Get all endpoint discovery operations
-                .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
-                // Filter out the ones which are having their endpoint discovery traits removed
-                .filter(operation -> !updatedOperations.contains(operation.getId()))
-                // Get the input shapes of those operations
-                .map(operation -> model.getShape(operation.getInputShape()).flatMap(Shape::asStructureShape))
-                .filter(Optional::isPresent)
-                // Get the input members
-                .flatMap(input -> input.get().getAllMembers().values().stream())
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+            // Get all endpoint discovery operations
+            .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
+            // Filter out the ones which are having their endpoint discovery traits removed
+            .filter(operation -> !updatedOperations.contains(operation.getId()))
+            // Get the input shapes of those operations
+            .map(operation -> model.getShape(operation.getInputShape()).flatMap(Shape::asStructureShape))
+            .filter(Optional::isPresent)
+            // Get the input members
+            .flatMap(input -> input.get().getAllMembers().values().stream())
+            .map(Shape::getId)
+            .collect(Collectors.toSet());
 
         return model.shapes(MemberShape.class)
-                // Get all members which have the endpoint discovery id trait
-                .filter(member -> member.hasTrait(ClientEndpointDiscoveryIdTrait.class))
-                // Get those which are on structures that aren't still bound to endpoint discovery operations
-                .filter(member -> !stillBoundMembers.contains(member.getId()))
-                // Remove the trait
-                .map(member -> member.toBuilder().removeTrait(ClientEndpointDiscoveryIdTrait.ID).build())
-                .collect(Collectors.toSet());
+            // Get all members which have the endpoint discovery id trait
+            .filter(member -> member.hasTrait(ClientEndpointDiscoveryIdTrait.class))
+            // Get those which are on structures that aren't still bound to endpoint discovery operations
+            .filter(member -> !stillBoundMembers.contains(member.getId()))
+            // Remove the trait
+            .map(member -> member.toBuilder().removeTrait(ClientEndpointDiscoveryIdTrait.ID).build())
+            .collect(Collectors.toSet());
     }
 }

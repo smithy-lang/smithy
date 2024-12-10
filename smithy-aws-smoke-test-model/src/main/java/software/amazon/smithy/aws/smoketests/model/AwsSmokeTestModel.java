@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.smoketests.model;
 
 import java.util.Optional;
@@ -25,8 +24,8 @@ public final class AwsSmokeTestModel {
      */
     public static boolean hasAwsVendorParams(SmokeTestCase testCase) {
         return testCase.getVendorParamsShape()
-                .filter(AwsVendorParams.ID::equals)
-                .isPresent();
+            .filter(AwsVendorParams.ID::equals)
+            .isPresent();
     }
 
     /**
@@ -36,8 +35,8 @@ public final class AwsSmokeTestModel {
      */
     public static boolean hasS3VendorParams(SmokeTestCase testCase) {
         return testCase.getVendorParamsShape()
-                .filter(S3VendorParams.ID::equals)
-                .isPresent();
+            .filter(S3VendorParams.ID::equals)
+            .isPresent();
     }
 
     /**

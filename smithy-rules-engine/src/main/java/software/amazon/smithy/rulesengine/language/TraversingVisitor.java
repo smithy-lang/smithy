@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.List;
@@ -21,7 +20,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public class TraversingVisitor<R> extends ExpressionVisitor.Default<Stream<R>>
-        implements RuleValueVisitor<Stream<R>> {
+    implements RuleValueVisitor<Stream<R>> {
 
     /**
      * Given an {@link EndpointRuleSet} will invoke the visitor methods for each rule.
@@ -66,8 +65,9 @@ public class TraversingVisitor<R> extends ExpressionVisitor.Default<Stream<R>>
      */
     public Stream<R> visitEndpoint(Endpoint endpoint) {
         return Stream.concat(
-                endpoint.getUrl().accept(this),
-                endpoint.getProperties().values().stream().flatMap(value -> value.accept(this)));
+            endpoint.getUrl().accept(this),
+            endpoint.getProperties().values().stream().flatMap(value -> value.accept(this))
+        );
     }
 
     /**

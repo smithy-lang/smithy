@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.writer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,10 +22,10 @@ public class SymbolWriterTest {
     public void managesDependencies() {
         MySimpleWriter writer = new MySimpleWriter("foo");
         SymbolDependency dep = SymbolDependency.builder()
-                .packageName("foo")
-                .version("123")
-                .dependencyType("Dev")
-                .build();
+            .packageName("foo")
+            .version("123")
+            .dependencyType("Dev")
+            .build();
         writer.addDependency(dep);
 
         assertThat(writer.getDependencies(), contains(dep));
@@ -55,16 +44,16 @@ public class SymbolWriterTest {
     public void addsUseImportsWithReferences() {
         MySimpleWriter writer = new MySimpleWriter("foo");
         Symbol s = Symbol.builder()
-                .declarationFile("foo.ts")
-                .definitionFile("foo.ts")
-                .name("Hello")
-                .namespace("com/foo", "/")
-                .build();
+            .declarationFile("foo.ts")
+            .definitionFile("foo.ts")
+            .name("Hello")
+            .namespace("com/foo", "/")
+            .build();
         SymbolReference reference = SymbolReference.builder()
-                .symbol(s)
-                .alias("X")
-                .options(SymbolReference.ContextOption.USE)
-                .build();
+            .symbol(s)
+            .alias("X")
+            .options(SymbolReference.ContextOption.USE)
+            .build();
         writer.addUseImports(reference);
 
         assertThat(writer.getImportContainer().imports, hasKey("X"));
@@ -75,16 +64,16 @@ public class SymbolWriterTest {
     public void omitsUseImportsWithReferencesIfSameNamespace() {
         MySimpleWriter writer = new MySimpleWriter("foo");
         Symbol s = Symbol.builder()
-                .declarationFile("foo.ts")
-                .definitionFile("foo.ts")
-                .name("Hello")
-                .namespace("foo", "/")
-                .build();
+            .declarationFile("foo.ts")
+            .definitionFile("foo.ts")
+            .name("Hello")
+            .namespace("foo", "/")
+            .build();
         SymbolReference reference = SymbolReference.builder()
-                .symbol(s)
-                .alias("X")
-                .options(SymbolReference.ContextOption.USE)
-                .build();
+            .symbol(s)
+            .alias("X")
+            .options(SymbolReference.ContextOption.USE)
+            .build();
         writer.addUseImports(reference);
 
         assertThat(writer.getImportContainer().imports, not(hasKey("X")));
@@ -94,20 +83,20 @@ public class SymbolWriterTest {
     public void importsUseReferencesFromSymbols() {
         MySimpleWriter writer = new MySimpleWriter("foo");
         Symbol string = Symbol.builder()
-                .definitionFile("java/lang/String.java")
-                .name("String")
-                .namespace("java.lang", ".")
-                .build();
+            .definitionFile("java/lang/String.java")
+            .name("String")
+            .namespace("java.lang", ".")
+            .build();
         SymbolReference reference = SymbolReference.builder()
-                .symbol(string)
-                .alias("MyString")
-                .build();
+            .symbol(string)
+            .alias("MyString")
+            .build();
         Symbol someList = Symbol.builder()
-                .definitionFile("java/util/List.java")
-                .name("List")
-                .namespace("java.util", ".")
-                .addReference(reference)
-                .build();
+            .definitionFile("java/util/List.java")
+            .name("List")
+            .namespace("java.util", ".")
+            .addReference(reference)
+            .build();
         writer.addUseImports(someList);
 
         assertThat(writer.getImportContainer().imports, hasKey("List"));
@@ -142,9 +131,9 @@ public class SymbolWriterTest {
         MySimpleWriter writer = new MySimpleWriter("com.foo");
         Symbol string = Symbol.builder().name("String").namespace("example.foo", ".").build();
         SymbolReference reference = SymbolReference.builder()
-                .alias("Str")
-                .symbol(string)
-                .build();
+            .alias("Str")
+            .symbol(string)
+            .build();
         writer.write("$T", reference);
 
         assertThat(writer.toString(), equalTo("Str\n"));

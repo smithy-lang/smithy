@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation;
 
 import static software.amazon.smithy.model.validation.Severity.ERROR;
@@ -40,7 +29,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * a message, severity, and eventId.
  */
 public final class ValidationEvent
-        implements FromSourceLocation, Comparable<ValidationEvent>, ToNode, ToSmithyBuilder<ValidationEvent> {
+    implements FromSourceLocation, Comparable<ValidationEvent>, ToNode, ToSmithyBuilder<ValidationEvent> {
     private static final ValidationEventFormatter DEFAULT_FORMATTER = new LineValidationEventFormatter();
     private final SourceLocation sourceLocation;
     private final String message;
@@ -89,8 +78,8 @@ public final class ValidationEvent
     public static ValidationEvent fromSourceException(SourceException exception, String prefix) {
         // Extract shape IDs from exceptions that implement ToShapeId.
         ShapeId id = (exception instanceof ToShapeId)
-                ? ((ToShapeId) exception).toShapeId()
-                : null;
+            ? ((ToShapeId) exception).toShapeId()
+            : null;
         return fromSourceException(exception, prefix, id);
     }
 
@@ -105,12 +94,12 @@ public final class ValidationEvent
     public static ValidationEvent fromSourceException(SourceException exception, String prefix, ShapeId shapeId) {
         // Get the message without source location since it's in the event.
         return ValidationEvent.builder()
-                .id(MODEL_ERROR)
-                .severity(ERROR)
-                .message(prefix + exception.getMessageWithoutLocation())
-                .sourceLocation(exception.getSourceLocation())
-                .shapeId(shapeId)
-                .build();
+            .id(MODEL_ERROR)
+            .severity(ERROR)
+            .message(prefix + exception.getMessageWithoutLocation())
+            .sourceLocation(exception.getSourceLocation())
+            .shapeId(shapeId)
+            .build();
     }
 
     @Override
@@ -157,12 +146,12 @@ public final class ValidationEvent
 
         ValidationEvent other = (ValidationEvent) o;
         return sourceLocation.equals(other.sourceLocation)
-                && message.equals(other.message)
-                && severity.equals(other.severity)
-                && eventId.equals(other.eventId)
-                && getShapeId().equals(other.getShapeId())
-                && getSuppressionReason().equals(other.getSuppressionReason())
-                && getHint().equals(other.getHint());
+            && message.equals(other.message)
+            && severity.equals(other.severity)
+            && eventId.equals(other.eventId)
+            && getShapeId().equals(other.getShapeId())
+            && getSuppressionReason().equals(other.getSuppressionReason())
+            && getHint().equals(other.getHint());
     }
 
     @Override
@@ -183,16 +172,16 @@ public final class ValidationEvent
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember("id", Node.from(getId()))
-                .withMember("severity", Node.from(getSeverity().toString()))
-                .withOptionalMember("shapeId", getShapeId().map(Object::toString).map(Node::from))
-                .withMember("message", Node.from(getMessage()))
-                .withOptionalMember("suppressionReason", getSuppressionReason().map(Node::from))
-                .withOptionalMember("hint", getHint().map(Node::from))
-                .withMember("filename", Node.from(getSourceLocation().getFilename()))
-                .withMember("line", Node.from(getSourceLocation().getLine()))
-                .withMember("column", Node.from(getSourceLocation().getColumn()))
-                .build();
+            .withMember("id", Node.from(getId()))
+            .withMember("severity", Node.from(getSeverity().toString()))
+            .withOptionalMember("shapeId", getShapeId().map(Object::toString).map(Node::from))
+            .withMember("message", Node.from(getMessage()))
+            .withOptionalMember("suppressionReason", getSuppressionReason().map(Node::from))
+            .withOptionalMember("hint", getHint().map(Node::from))
+            .withMember("filename", Node.from(getSourceLocation().getFilename()))
+            .withMember("line", Node.from(getSourceLocation().getLine()))
+            .withMember("column", Node.from(getSourceLocation().getColumn()))
+            .build();
     }
 
     public static ValidationEvent fromNode(Node node) {
@@ -202,16 +191,17 @@ public final class ValidationEvent
         // representation of a ValidationEvent. Expect that and default the
         // other properties.
         SourceLocation location = new SourceLocation(
-                objectNode.expectStringMember("filename").getValue(),
-                objectNode.getNumberMemberOrDefault("line", 0).intValue(),
-                objectNode.getNumberMemberOrDefault("column", 0).intValue());
+            objectNode.expectStringMember("filename").getValue(),
+            objectNode.getNumberMemberOrDefault("line", 0).intValue(),
+            objectNode.getNumberMemberOrDefault("column", 0).intValue()
+        );
         Builder builder = builder().sourceLocation(location);
         objectNode.expectStringMember("id", builder::id)
-                .expectMember("severity", Severity::fromNode, builder::severity)
-                .expectStringMember("message", builder::message)
-                .getStringMember("suppressionReason", builder::suppressionReason)
-                .getStringMember("hint", builder::hint)
-                .getMember("shapeId", ShapeId::fromNode, builder::shapeId);
+            .expectMember("severity", Severity::fromNode, builder::severity)
+            .expectStringMember("message", builder::message)
+            .getStringMember("suppressionReason", builder::suppressionReason)
+            .getStringMember("hint", builder::hint)
+            .getMember("shapeId", ShapeId::fromNode, builder::shapeId);
         return builder.build();
     }
 
@@ -402,7 +392,7 @@ public final class ValidationEvent
          */
         public Builder shape(Shape encounteredShape) {
             return sourceLocation(Objects.requireNonNull(encounteredShape).getSourceLocation())
-                    .shapeId(encounteredShape.getId());
+                .shapeId(encounteredShape.getId());
         }
 
         /**

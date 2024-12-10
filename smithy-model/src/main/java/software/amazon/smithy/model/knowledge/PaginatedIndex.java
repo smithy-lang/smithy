@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
@@ -69,19 +58,19 @@ public final class PaginatedIndex implements KnowledgeIndex {
     }
 
     private Optional<PaginationInfo> create(
-            Model model,
-            ServiceShape service,
-            OperationIndex opIndex,
-            OperationShape operation,
-            PaginatedTrait trait
+        Model model,
+        ServiceShape service,
+        OperationIndex opIndex,
+        OperationShape operation,
+        PaginatedTrait trait
     ) {
         StructureShape input = opIndex.expectInputShape(operation.getId());
         StructureShape output = opIndex.expectOutputShape(operation.getId());
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
         List<MemberShape> outputTokenPath = trait.getOutputToken()
-                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
-                .orElse(ListUtils.of());
+            .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
+            .orElse(ListUtils.of());
 
         if (inputToken == null || outputTokenPath.isEmpty()) {
             return Optional.empty();
@@ -89,16 +78,26 @@ public final class PaginatedIndex implements KnowledgeIndex {
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
         List<MemberShape> itemsMemberPath = trait.getItems()
-                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
-                .orElse(ListUtils.of());
+            .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
+            .orElse(ListUtils.of());
 
-        return Optional.of(new PaginationInfo(
-                service, operation, input, output, trait,
-                inputToken, outputTokenPath, pageSizeMember, itemsMemberPath));
+        return Optional.of(
+            new PaginationInfo(
+                service,
+                operation,
+                input,
+                output,
+                trait,
+                inputToken,
+                outputTokenPath,
+                pageSizeMember,
+                itemsMemberPath
+            )
+        );
     }
 
     public Optional<PaginationInfo> getPaginationInfo(ToShapeId service, ToShapeId operation) {
         return Optional.ofNullable(paginationInfo.get(service.toShapeId()))
-                .flatMap(mappings -> Optional.ofNullable(mappings.get(operation.toShapeId())));
+            .flatMap(mappings -> Optional.ofNullable(mappings.get(operation.toShapeId())));
     }
 }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.List;
@@ -32,15 +31,15 @@ public class CoreExtension implements EndpointRuleSetExtension {
     @Override
     public List<FunctionDefinition> getLibraryFunctions() {
         return ListUtils.of(
-                BooleanEquals.getDefinition(),
-                GetAttr.getDefinition(),
-                IsSet.getDefinition(),
-                IsValidHostLabel.getDefinition(),
-                Not.getDefinition(),
-                ParseUrl.getDefinition(),
-                StringEquals.getDefinition(),
-                Substring.getDefinition(),
-                UriEncode.getDefinition()
+            BooleanEquals.getDefinition(),
+            GetAttr.getDefinition(),
+            IsSet.getDefinition(),
+            IsValidHostLabel.getDefinition(),
+            Not.getDefinition(),
+            ParseUrl.getDefinition(),
+            StringEquals.getDefinition(),
+            Substring.getDefinition(),
+            UriEncode.getDefinition()
         );
     }
 }

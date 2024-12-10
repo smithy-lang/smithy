@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.Collections;
@@ -18,7 +17,6 @@ import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.FilterCliVersionResolver;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
-
 
 final class LockCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(LockCommand.class.getName());
@@ -59,18 +57,18 @@ final class LockCommand implements Command {
 
         Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
         Set<String> dependencies = smithyBuildConfig.getMaven()
-                .map(MavenConfig::getDependencies)
-                .orElse(Collections.emptySet());
+            .map(MavenConfig::getDependencies)
+            .orElse(Collections.emptySet());
         dependencies.forEach(resolver::addDependency);
         repositories.forEach(resolver::addRepository);
 
         List<ResolvedArtifact> resolvedArtifacts = resolver.resolve();
         LOGGER.fine(() -> "Resolved artifacts with Maven: " + resolvedArtifacts);
         LockFile lock = LockFile.builder()
-                .configHash(ConfigurationUtils.configHash(dependencies, repositories))
-                .artifacts(resolvedArtifacts)
-                .repositories(repositories)
-                .build();
+            .configHash(ConfigurationUtils.configHash(dependencies, repositories))
+            .artifacts(resolvedArtifacts)
+            .repositories(repositories)
+            .build();
         LOGGER.fine(() -> "Saving resolved artifacts to lockfile.");
         lock.save();
 

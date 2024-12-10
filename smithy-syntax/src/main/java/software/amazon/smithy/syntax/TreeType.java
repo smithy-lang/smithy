@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import software.amazon.smithy.model.loader.IdlToken;
@@ -129,9 +118,10 @@ public enum TreeType {
             } else if (tokenizer.hasNext()) {
                 tokenizer.withState(this, () -> {
                     throw new ModelSyntaxException(
-                            "Expected a namespace definition but found "
+                        "Expected a namespace definition but found "
                             + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()),
-                            tokenizer.getCurrentTokenLocation());
+                        tokenizer.getCurrentTokenLocation()
+                    );
                 });
             }
         }
@@ -207,8 +197,12 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 ShapeType type = ShapeType.fromString(tokenizer.internString(tokenizer.getCurrentTokenLexeme()))
-                        .orElseThrow(() -> new ModelSyntaxException("Expected a valid shape type",
-                                                                    tokenizer.getCurrentTokenLocation()));
+                    .orElseThrow(
+                        () -> new ModelSyntaxException(
+                            "Expected a valid shape type",
+                            tokenizer.getCurrentTokenLocation()
+                        )
+                    );
                 switch (type) {
                     case ENUM:
                     case INT_ENUM:
@@ -412,11 +406,11 @@ public enum TreeType {
     },
 
     ENTITY_TYPE_NAME {
-       @Override
-       void parse(CapturingTokenizer tokenizer)  {
-           // Assumes that the current token is a valid entity type name validated by SHAPE.
-           tokenizer.withState(this, tokenizer::next);
-       }
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the current token is a valid entity type name validated by SHAPE.
+            tokenizer.withState(this, tokenizer::next);
+        }
     },
 
     OPERATION_SHAPE {
@@ -462,9 +456,11 @@ public enum TreeType {
                 } else if (tokenizer.isCurrentLexeme("errors")) {
                     OPERATION_ERRORS.parse(tokenizer);
                 } else {
-                    throw new ModelSyntaxException("Expected 'input', 'output', or 'errors'. Found '"
-                                                   + tokenizer.getCurrentTokenLexeme() + "'",
-                                                   tokenizer.getCurrentTokenLocation());
+                    throw new ModelSyntaxException(
+                        "Expected 'input', 'output', or 'errors'. Found '"
+                            + tokenizer.getCurrentTokenLexeme() + "'",
+                        tokenizer.getCurrentTokenLocation()
+                    );
                 }
             });
         }
@@ -612,8 +608,14 @@ public enum TreeType {
                 optionalWs(tokenizer);
 
                 if (tokenizer.getCurrentToken() != IdlToken.RPAREN) {
-                    tokenizer.expect(IdlToken.LBRACE, IdlToken.LBRACKET, IdlToken.TEXT_BLOCK, IdlToken.STRING,
-                                     IdlToken.NUMBER, IdlToken.IDENTIFIER);
+                    tokenizer.expect(
+                        IdlToken.LBRACE,
+                        IdlToken.LBRACKET,
+                        IdlToken.TEXT_BLOCK,
+                        IdlToken.STRING,
+                        IdlToken.NUMBER,
+                        IdlToken.IDENTIFIER
+                    );
                     switch (tokenizer.getCurrentToken()) {
                         case LBRACE:
                         case LBRACKET:
@@ -624,8 +626,10 @@ public enum TreeType {
                         case STRING:
                         case IDENTIFIER:
                         default:
-                            CapturedToken nextPastWs = tokenizer.peekWhile(1, token ->
-                                    token.isWhitespace() || token == IdlToken.DOC_COMMENT);
+                            CapturedToken nextPastWs = tokenizer.peekWhile(
+                                1,
+                                token -> token.isWhitespace() || token == IdlToken.DOC_COMMENT
+                            );
                             if (nextPastWs.getIdlToken() == IdlToken.COLON) {
                                 TRAIT_STRUCTURE.parse(tokenizer);
                             } else {
@@ -669,8 +673,8 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 // Try to see if this is a singular or block apply statement.
                 IdlToken peek = tokenizer
-                        .peekWhile(1, t -> t != IdlToken.AT && t != IdlToken.LBRACE)
-                        .getIdlToken();
+                    .peekWhile(1, t -> t != IdlToken.AT && t != IdlToken.LBRACE)
+                    .getIdlToken();
                 if (peek == IdlToken.LBRACE) {
                     APPLY_STATEMENT_BLOCK.parse(tokenizer);
                 } else {
@@ -716,12 +720,18 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                IdlToken token = tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.NUMBER,
-                                                  IdlToken.IDENTIFIER, IdlToken.LBRACE, IdlToken.LBRACKET);
+                IdlToken token = tokenizer.expect(
+                    IdlToken.STRING,
+                    IdlToken.TEXT_BLOCK,
+                    IdlToken.NUMBER,
+                    IdlToken.IDENTIFIER,
+                    IdlToken.LBRACE,
+                    IdlToken.LBRACKET
+                );
                 switch (token) {
                     case IDENTIFIER:
                         if (tokenizer.isCurrentLexeme("true") || tokenizer.isCurrentLexeme("false")
-                                || tokenizer.isCurrentLexeme("null")) {
+                            || tokenizer.isCurrentLexeme("null")) {
                             NODE_KEYWORD.parse(tokenizer);
                         } else {
                             NODE_STRING_VALUE.parse(tokenizer);
@@ -823,7 +833,7 @@ public enum TreeType {
         }
     },
 
-    NODE_STRING_VALUE  {
+    NODE_STRING_VALUE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -842,7 +852,7 @@ public enum TreeType {
         }
     },
 
-    QUOTED_TEXT  {
+    QUOTED_TEXT {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -872,7 +882,7 @@ public enum TreeType {
         }
     },
 
-    SHAPE_ID  {
+    SHAPE_ID {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -889,7 +899,8 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 IdlToken after = tokenizer
-                        .peekWhile(0, t -> t == IdlToken.DOT || t == IdlToken.IDENTIFIER).getIdlToken();
+                    .peekWhile(0, t -> t == IdlToken.DOT || t == IdlToken.IDENTIFIER)
+                    .getIdlToken();
                 if (after == IdlToken.POUND) {
                     ABSOLUTE_ROOT_SHAPE_ID.parse(tokenizer);
                 } else {
@@ -911,7 +922,7 @@ public enum TreeType {
         }
     },
 
-    SHAPE_ID_MEMBER  {
+    SHAPE_ID_MEMBER {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -978,8 +989,10 @@ public enum TreeType {
                             COMMENT.parse(tokenizer);
                             break;
                         default:
-                            throw new UnsupportedOperationException("Unexpected WS token: "
-                                                                    + tokenizer.getCurrentToken());
+                            throw new UnsupportedOperationException(
+                                "Unexpected WS token: "
+                                    + tokenizer.getCurrentToken()
+                            );
                     }
                 } while (TreeType.isToken(tokenizer, WS_CHARS));
             });
@@ -1053,8 +1066,12 @@ public enum TreeType {
     };
 
     // For now, this also skips doc comments. We may later move doc comments out of WS.
-    private static final IdlToken[] WS_CHARS = {IdlToken.SPACE, IdlToken.NEWLINE, IdlToken.COMMA,
-                                                IdlToken.COMMENT, IdlToken.DOC_COMMENT};
+    private static final IdlToken[] WS_CHARS = {
+        IdlToken.SPACE,
+        IdlToken.NEWLINE,
+        IdlToken.COMMA,
+        IdlToken.COMMENT,
+        IdlToken.DOC_COMMENT};
 
     abstract void parse(CapturingTokenizer tokenizer);
 

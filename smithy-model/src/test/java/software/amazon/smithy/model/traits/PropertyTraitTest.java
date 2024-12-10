@@ -1,26 +1,16 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -37,8 +27,11 @@ public class PropertyTraitTest {
         Map<StringNode, Node> values = new HashMap<>();
         values.put(Node.from("name"), Node.from("propertyName"));
         ObjectNode objectNode = Node.objectNode(values);
-        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#property"),
-            ShapeId.from("ns.qux#foo"), objectNode);
+        Optional<Trait> trait = provider.createTrait(
+            ShapeId.from("smithy.api#property"),
+            ShapeId.from("ns.qux#foo"),
+            objectNode
+        );
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(PropertyTrait.class));
@@ -56,8 +49,11 @@ public class PropertyTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Map<StringNode, Node> values = new HashMap<>();
         ObjectNode objectNode = Node.objectNode(values);
-        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#property"),
-            ShapeId.from("ns.qux#foo"), objectNode);
+        Optional<Trait> trait = provider.createTrait(
+            ShapeId.from("smithy.api#property"),
+            ShapeId.from("ns.qux#foo"),
+            objectNode
+        );
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(PropertyTrait.class));

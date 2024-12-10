@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -79,8 +68,8 @@ public final class ServiceValidator extends AbstractValidator {
             if (!id.hasMember()) {
                 String possiblyRename = service.getContextualName(id);
                 normalizedNamesToIds
-                        .computeIfAbsent(possiblyRename.toLowerCase(Locale.ENGLISH), name -> new TreeSet<>())
-                        .add(id);
+                    .computeIfAbsent(possiblyRename.toLowerCase(Locale.ENGLISH), name -> new TreeSet<>())
+                    .add(id);
             }
         }
 
@@ -128,13 +117,27 @@ public final class ServiceValidator extends AbstractValidator {
             renameMappings.computeIfAbsent(to.toLowerCase(Locale.ENGLISH), t -> new HashSet<>()).add(from);
 
             if (!ShapeId.isValidIdentifier(to)) {
-                events.add(error(service, String.format(
-                        "Service attempts to rename `%s` to an invalid identifier, \"%s\"",
-                        from, to)));
+                events.add(
+                    error(
+                        service,
+                        String.format(
+                            "Service attempts to rename `%s` to an invalid identifier, \"%s\"",
+                            from,
+                            to
+                        )
+                    )
+                );
             } else if (to.equals(from.getName())) {
-                events.add(error(service, String.format(
-                        "Service rename for `%s` does not actually change the name from `%s`",
-                        from, to)));
+                events.add(
+                    error(
+                        service,
+                        String.format(
+                            "Service rename for `%s` does not actually change the name from `%s`",
+                            from,
+                            to
+                        )
+                    )
+                );
             }
 
             // Each renamed shape ID must actually exist in the closure.
@@ -142,9 +145,18 @@ public final class ServiceValidator extends AbstractValidator {
                 events.add(error(service, "Service attempts to rename a shape not in the service: " + from));
             } else {
                 getInvalidRenameReason(closure.get(from)).ifPresent(reason -> {
-                    events.add(error(service, String.format(
-                            "Service attempts to rename a %s shape from `%s` to \"%s\"; %s",
-                            closure.get(from).getType(), from, to, reason)));
+                    events.add(
+                        error(
+                            service,
+                            String.format(
+                                "Service attempts to rename a %s shape from `%s` to \"%s\"; %s",
+                                closure.get(from).getType(),
+                                from,
+                                to,
+                                reason
+                            )
+                        )
+                    );
                 });
             }
         }
@@ -165,8 +177,8 @@ public final class ServiceValidator extends AbstractValidator {
 
         if (service.getRename().get(subject.getId()) != null) {
             message.append("Renamed shape name \"")
-                    .append(service.getRename().get(subject.getId()))
-                    .append('"');
+                .append(service.getRename().get(subject.getId()))
+                .append('"');
         } else {
             message.append("Shape name `").append(subject.getId()).append('`');
         }
@@ -175,22 +187,24 @@ public final class ServiceValidator extends AbstractValidator {
 
         if (service.getRename().get(other.getId()) != null) {
             message.append("(renamed to \"")
-                    .append(service.getRename().get(other.getId()))
-                    .append("\") ");
+                .append(service.getRename().get(other.getId()))
+                .append("\") ");
         }
 
-        message.append("in the `").append(service.getId()).append("` service closure. ")
-                .append("Shapes in the closure of a service ")
-                .append(severity.ordinal() >= Severity.DANGER.ordinal() ? "must " : "should ")
-                .append("have case-insensitively unique names regardless of their namespaces. ")
-                .append("Use the `rename` property of the service to disambiguate shape names.");
+        message.append("in the `")
+            .append(service.getId())
+            .append("` service closure. ")
+            .append("Shapes in the closure of a service ")
+            .append(severity.ordinal() >= Severity.DANGER.ordinal() ? "must " : "should ")
+            .append("have case-insensitively unique names regardless of their namespaces. ")
+            .append("Use the `rename` property of the service to disambiguate shape names.");
 
         return ValidationEvent.builder()
-                .id(getName())
-                .severity(severity)
-                .shape(subject)
-                .message(message.toString())
-                .build();
+            .id(getName())
+            .severity(severity)
+            .shape(subject)
+            .message(message.toString())
+            .build();
     }
 
     private static final class ConflictDetector {
@@ -212,8 +226,8 @@ public final class ServiceValidator extends AbstractValidator {
             // Create a normalized cache key since the comparison of a to b
             // and b to a is the same result.
             Pair<ShapeId, ShapeId> cacheKey = a.getId().compareTo(b.getId()) < 0
-                    ? Pair.of(a.getId(), b.getId())
-                    : Pair.of(b.getId(), a.getId());
+                ? Pair.of(a.getId(), b.getId())
+                : Pair.of(b.getId(), a.getId());
 
             // Don't use computeIfAbsent here since we don't want to lock the HashMap.
             // Computing if there is a conflict for aggregate shapes requires that
@@ -232,9 +246,9 @@ public final class ServiceValidator extends AbstractValidator {
             // 2. Conflicting shapes must have the same types.
             // 3. Conflicting shapes must have the same traits.
             if (isShapeTypeConflictForbidden(a)
-                    || isShapeTypeConflictForbidden(b)
-                    || a.getType() != b.getType()
-                    || !equivalentTraits(a.getAllTraits(), b.getAllTraits())) {
+                || isShapeTypeConflictForbidden(b)
+                || a.getType() != b.getType()
+                || !equivalentTraits(a.getAllTraits(), b.getAllTraits())) {
                 return Severity.ERROR;
             }
 

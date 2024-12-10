@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.Optional;
@@ -63,9 +52,9 @@ public final class XmlObject extends Component implements ToSmithyBuilder<XmlObj
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withOptionalMember("name", getName().map(Node::from))
-                .withOptionalMember("namespace", getNamespace().map(Node::from))
-                .withOptionalMember("prefix", getPrefix().map(Node::from));
+            .withOptionalMember("name", getName().map(Node::from))
+            .withOptionalMember("namespace", getNamespace().map(Node::from))
+            .withOptionalMember("prefix", getPrefix().map(Node::from));
 
         if (isWrapped()) {
             builder.withMember("wrapped", Node.from(true));
@@ -81,12 +70,12 @@ public final class XmlObject extends Component implements ToSmithyBuilder<XmlObj
     @Override
     public Builder toBuilder() {
         return builder()
-                .extensions(getExtensions())
-                .name(name)
-                .namespace(namespace)
-                .prefix(prefix)
-                .attribute(attribute)
-                .wrapped(wrapped);
+            .extensions(getExtensions())
+            .name(name)
+            .namespace(namespace)
+            .prefix(prefix)
+            .attribute(attribute)
+            .wrapped(wrapped);
     }
 
     public static final class Builder extends Component.Builder<Builder, XmlObject> {

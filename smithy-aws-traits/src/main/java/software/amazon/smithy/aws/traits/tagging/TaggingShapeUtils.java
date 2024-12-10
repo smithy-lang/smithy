@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.Map;
@@ -39,11 +28,11 @@ final class TaggingShapeUtils {
     static final String LIST_TAGS_OPNAME = "ListTagsForResource";
 
     private static final Pattern TAG_PROPERTY_REGEX = Pattern
-            .compile("^[T|t]ag(s|[L|l]ist)$");
+        .compile("^[T|t]ag(s|[L|l]ist)$");
     private static final Pattern RESOURCE_ARN_REGEX = Pattern
-            .compile("^([R|r]esource)?([A|a]rn|ARN)$");
+        .compile("^([R|r]esource)?([A|a]rn|ARN)$");
     private static final Pattern TAG_KEYS_REGEX = Pattern
-            .compile("^[T|t]ag[K|k]eys$");
+        .compile("^[T|t]ag[K|k]eys$");
 
     private TaggingShapeUtils() {}
 
@@ -80,7 +69,7 @@ final class TaggingShapeUtils {
     static boolean hasResourceArnInput(Map<String, MemberShape> inputMembers, Model model) {
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
             if (isArnMemberDesiredName(memberEntry.getKey())
-                    && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()) {
+                && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()) {
                 return true;
             }
         }
@@ -131,10 +120,11 @@ final class TaggingShapeUtils {
     static boolean verifyTagKeysShape(Model model, Shape tagShape) {
         // A list or set that targets a string shape qualifies as listing tag keys
         return (tagShape.isListShape()
-                    && model.expectShape(tagShape.asListShape().get().getMember().getTarget()).isStringShape());
+            && model.expectShape(tagShape.asListShape().get().getMember().getTarget()).isStringShape());
     }
 
-    static boolean verifyTagResourceOperation(Model model,
+    static boolean verifyTagResourceOperation(
+        Model model,
         OperationShape tagResourceOperation,
         OperationIndex operationIndex
     ) {

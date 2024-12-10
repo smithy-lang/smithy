@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.Collections;
@@ -49,13 +38,13 @@ public final class Context<T extends Trait> {
     private OpenApiConfig config;
 
     Context(
-            Model model,
-            ServiceShape service,
-            OpenApiConfig config,
-            JsonSchemaConverter jsonSchemaConverter,
-            OpenApiProtocol<T> openApiProtocol,
-            SchemaDocument schemas,
-            List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters
+        Model model,
+        ServiceShape service,
+        OpenApiConfig config,
+        JsonSchemaConverter jsonSchemaConverter,
+        OpenApiProtocol<T> openApiProtocol,
+        SchemaDocument schemas,
+        List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters
     ) {
         this.model = model;
         this.service = service;
@@ -133,7 +122,7 @@ public final class Context<T extends Trait> {
      */
     public Schema getSchema(String pointer) {
         return schemas.getDefinition(pointer)
-                .orElseThrow(() -> new OpenApiException("Expected JSON schema definition not found: " + pointer));
+            .orElseThrow(() -> new OpenApiException("Expected JSON schema definition not found: " + pointer));
     }
 
     /**
@@ -229,16 +218,16 @@ public final class Context<T extends Trait> {
     }
 
     private static <T extends Trait> Set<String> getSecuritySchemeRequestHeaders(
-            Context<? extends Trait> context,
-            SecuritySchemeConverter<T> converter
+        Context<? extends Trait> context,
+        SecuritySchemeConverter<T> converter
     ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
         return converter.getAuthRequestHeaders(context, t);
     }
 
     private static <T extends Trait> Set<String> getSecuritySchemeResponseHeaders(
-            Context<? extends Trait> context,
-            SecuritySchemeConverter<T> converter
+        Context<? extends Trait> context,
+        SecuritySchemeConverter<T> converter
     ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
         return converter.getAuthResponseHeaders(context, t);

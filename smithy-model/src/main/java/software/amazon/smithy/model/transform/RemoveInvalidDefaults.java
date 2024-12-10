@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -35,7 +34,7 @@ final class RemoveInvalidDefaults {
                 if (defaultTrait.toNode().isNumberNode()) {
                     defaultTrait.toNode().expectNumberNode().asBigDecimal().ifPresent(value -> {
                         if (rangeTrait.getMin().filter(min -> value.compareTo(min) < 0).isPresent()
-                                || rangeTrait.getMin().filter(max -> value.compareTo(max) > 0).isPresent()) {
+                            || rangeTrait.getMin().filter(max -> value.compareTo(max) > 0).isPresent()) {
                             invalidDefaults.add(shape);
                         }
                     });
@@ -53,18 +52,20 @@ final class RemoveInvalidDefaults {
     private Shape modify(Shape shape, Model model, Set<Shape> otherShapes) {
         // To show up here, the shape has to have a range trait, or the target has to have one.
         RangeTrait rangeTrait = shape.getMemberTrait(model, RangeTrait.class).get();
-        LOGGER.info(() -> "Removing default trait from " + shape.getId()
-                          + " because of an incompatible range trait: "
-                          + Node.printJson(rangeTrait.toNode()));
+        LOGGER.info(
+            () -> "Removing default trait from " + shape.getId()
+                + " because of an incompatible range trait: "
+                + Node.printJson(rangeTrait.toNode())
+        );
 
         // Members that target a shape with a default value need to set their default to null to override it.
         // Other members and other shapes can simply remove the default trait.
         if (shape.isMemberShape()) {
             MemberShape member = shape.asMemberShape().get();
             boolean targetHasDefault = model.getShape(member.getTarget())
-                    // Treat target shapes that will have their default removed as if it doesn't have a default.
-                    .filter(target -> !otherShapes.contains(target) && target.hasTrait(DefaultTrait.class))
-                    .isPresent();
+                // Treat target shapes that will have their default removed as if it doesn't have a default.
+                .filter(target -> !otherShapes.contains(target) && target.hasTrait(DefaultTrait.class))
+                .isPresent();
             if (targetHasDefault) {
                 return member.toBuilder().addTrait(new DefaultTrait(Node.nullNode())).build();
             }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -55,28 +44,28 @@ public final class ValidationUtils {
 
     // Critical validators must emit validation events with names that match their class name (Name in NameValidator).
     private static final Set<Class<? extends Validator>> CRITICAL_VALIDATORS = SetUtils.of(
-            // These validators should run before even any other validators. These validators are considered
-            // correctness validators that ensure relationships are valid and to shapes that can be found and that
-            // the model has no cycles.
-            TargetValidator.class,
-            ResourceCycleValidator.class,
+        // These validators should run before even any other validators. These validators are considered
+        // correctness validators that ensure relationships are valid and to shapes that can be found and that
+        // the model has no cycles.
+        TargetValidator.class,
+        ResourceCycleValidator.class,
 
-            // This validator is considered critical because it ensures an enum shape itself is valid.
-            EnumShapeValidator.class,
+        // This validator is considered critical because it ensures an enum shape itself is valid.
+        EnumShapeValidator.class,
 
-            // Ensure that traits are valid, according to the model, before other validators are run.
-            ExclusiveStructureMemberTraitValidator.class,
-            TraitTargetValidator.class,
-            TraitValueValidator.class,
-            TraitConflictValidator.class,
+        // Ensure that traits are valid, according to the model, before other validators are run.
+        ExclusiveStructureMemberTraitValidator.class,
+        TraitTargetValidator.class,
+        TraitValueValidator.class,
+        TraitConflictValidator.class,
 
-            // Defaults need to be valid.
-            DefaultTraitValidator.class,
+        // Defaults need to be valid.
+        DefaultTraitValidator.class,
 
-            // Ensure the semantic model adheres to the requirements of shape IDs and service shape uniqueness.
-            ShapeIdConflictValidator.class,
-            SingleOperationBindingValidator.class,
-            SingleResourceBindingValidator.class
+        // Ensure the semantic model adheres to the requirements of shape IDs and service shape uniqueness.
+        ShapeIdConflictValidator.class,
+        SingleOperationBindingValidator.class,
+        SingleResourceBindingValidator.class
     );
 
     private static final Pattern CAMEL_WORD_SPLITTER = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
@@ -186,20 +175,21 @@ public final class ValidationUtils {
     @Deprecated
     public static <T extends ToShapeId> Map<String, List<ShapeId>> findDuplicateShapeNames(Collection<T> shapes) {
         return shapes.stream()
-                .map(ToShapeId::toShapeId)
-                // Exclude IDs with members since these need to be validated separately.
-                .filter(id -> !id.hasMember())
-                // Group by the lowercase name of each shape, and collect the shape IDs as strings.
-                .collect(groupingBy(id -> id.getName().toLowerCase(Locale.US)))
-                .entrySet().stream()
-                // Only keep entries that have duplicates.
-                .filter(entry -> entry.getValue().size() > 1)
-                // Sort by the member name and collect into an ordered map to preserve sort order.
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .collect(toMap(Map.Entry::getKey, entry -> {
-                    // Sort the shape IDs.
-                    entry.getValue().sort(Comparator.comparing(ShapeId::toString));
-                    return entry.getValue();
-                }, (a, b) -> b, LinkedHashMap::new));
+            .map(ToShapeId::toShapeId)
+            // Exclude IDs with members since these need to be validated separately.
+            .filter(id -> !id.hasMember())
+            // Group by the lowercase name of each shape, and collect the shape IDs as strings.
+            .collect(groupingBy(id -> id.getName().toLowerCase(Locale.US)))
+            .entrySet()
+            .stream()
+            // Only keep entries that have duplicates.
+            .filter(entry -> entry.getValue().size() > 1)
+            // Sort by the member name and collect into an ordered map to preserve sort order.
+            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .collect(toMap(Map.Entry::getKey, entry -> {
+                // Sort the shape IDs.
+                entry.getValue().sort(Comparator.comparing(ShapeId::toString));
+                return entry.getValue();
+            }, (a, b) -> b, LinkedHashMap::new));
     }
 }

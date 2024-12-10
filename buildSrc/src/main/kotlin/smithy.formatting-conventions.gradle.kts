@@ -1,7 +1,6 @@
 import java.util.regex.Pattern
 
 plugins {
-    checkstyle
     id("com.diffplug.spotless")
 }
 

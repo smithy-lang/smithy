@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.math.BigDecimal;
@@ -68,24 +67,26 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol byteShape(ByteShape shape) {
-        return TraitCodegenUtils.fromClass(Byte.class).toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(byte.class))
-                .build();
+        return TraitCodegenUtils.fromClass(Byte.class)
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(byte.class))
+            .build();
     }
 
     @Override
     public Symbol shortShape(ShortShape shape) {
-        return TraitCodegenUtils.fromClass(Short.class).toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(short.class))
-                .build();
+        return TraitCodegenUtils.fromClass(Short.class)
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(short.class))
+            .build();
     }
 
     @Override
     public Symbol integerShape(IntegerShape shape) {
         return TraitCodegenUtils.fromClass(Integer.class)
-                .toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(int.class))
-                .build();
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(int.class))
+            .build();
     }
 
     @Override
@@ -95,25 +96,26 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol longShape(LongShape shape) {
-        return TraitCodegenUtils.fromClass(Long.class).toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(long.class))
-                .build();
+        return TraitCodegenUtils.fromClass(Long.class)
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(long.class))
+            .build();
     }
 
     @Override
     public Symbol floatShape(FloatShape shape) {
         return TraitCodegenUtils.fromClass(Float.class)
-                .toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(float.class))
-                .build();
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(float.class))
+            .build();
     }
 
     @Override
     public Symbol doubleShape(DoubleShape shape) {
         return TraitCodegenUtils.fromClass(Double.class)
-                .toBuilder()
-                .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(double.class))
-                .build();
+            .toBuilder()
+            .putProperty(SymbolProperties.UNBOXED_SYMBOL, TraitCodegenUtils.fromClass(double.class))
+            .build();
     }
 
     @Override
@@ -129,24 +131,27 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
     @Override
     public Symbol listShape(ListShape shape) {
         if (shape.hasTrait(UniqueItemsTrait.class)) {
-            return TraitCodegenUtils.fromClass(Set.class).toBuilder()
-                    .addReference(toSymbol(shape.getMember()))
-                    .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedSet()")
-                    .build();
-        }
-        return TraitCodegenUtils.fromClass(List.class).toBuilder()
+            return TraitCodegenUtils.fromClass(Set.class)
+                .toBuilder()
                 .addReference(toSymbol(shape.getMember()))
-                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forList()")
+                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedSet()")
                 .build();
+        }
+        return TraitCodegenUtils.fromClass(List.class)
+            .toBuilder()
+            .addReference(toSymbol(shape.getMember()))
+            .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forList()")
+            .build();
     }
 
     @Override
     public Symbol mapShape(MapShape shape) {
-        return TraitCodegenUtils.fromClass(Map.class).toBuilder()
-                .addReference(shape.getKey().accept(this))
-                .addReference(shape.getValue().accept(this))
-                .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedMap()")
-                .build();
+        return TraitCodegenUtils.fromClass(Map.class)
+            .toBuilder()
+            .addReference(shape.getKey().accept(this))
+            .addReference(shape.getValue().accept(this))
+            .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, "forOrderedMap()")
+            .build();
     }
 
     @Override
@@ -195,10 +200,10 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
         // If the container is a Map list then we assign a simple "values" holder for the collection
         if (containerShape.isMapShape() || containerShape.isListShape()) {
             return "values";
-        // Enum shapes should have upper snake case members
+            // Enum shapes should have upper snake case members
         } else if (containerShape.isEnumShape() || containerShape.isIntEnumShape()) {
             return CaseUtils.toSnakeCase(TraitCodegenUtils.MEMBER_ESCAPER.escape(member.getMemberName()))
-                    .toUpperCase(Locale.ROOT);
+                .toUpperCase(Locale.ROOT);
         }
 
         if (member.getMemberName().contains("_")) {
@@ -210,11 +215,15 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     private Symbol getJavaClassSymbol(Shape shape) {
         String name = TraitCodegenUtils.getDefaultName(shape);
-        String namespace = TraitCodegenUtils.mapNamespace(smithyNamespace,
-                shape.getId().getNamespace(), packageNamespace);
-        return Symbol.builder().name(name)
-                .namespace(namespace, ".")
-                .declarationFile("./" + namespace.replace(".", "/") + "/"  + name + ".java")
-                .build();
+        String namespace = TraitCodegenUtils.mapNamespace(
+            smithyNamespace,
+            shape.getId().getNamespace(),
+            packageNamespace
+        );
+        return Symbol.builder()
+            .name(name)
+            .namespace(namespace, ".")
+            .declarationFile("./" + namespace.replace(".", "/") + "/" + name + ".java")
+            .build();
     }
 }

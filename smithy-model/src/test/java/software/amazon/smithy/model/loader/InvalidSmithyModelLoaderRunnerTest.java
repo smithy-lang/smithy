@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.io.IOException;
@@ -44,42 +33,52 @@ public class InvalidSmithyModelLoaderRunnerTest {
 
         try {
             Model.assembler()
-                    .addImport(file)
-                    .assemble()
-                    .unwrap();
+                .addImport(file)
+                .assemble()
+                .unwrap();
             throw new IllegalStateException("Expected a parse error for " + file);
         } catch (RuntimeException e) {
             String actualMessage = cleanErrorMessage(e.getMessage());
             String expectedMessage = cleanErrorMessage(expectedError);
             if (!actualMessage.contains(expectedMessage)) {
                 throw new IllegalStateException(
-                        String.format("Expected a different parse error for %s.\nExpected (%s)\nFound (%s)",
-                                      file, expectedMessage, actualMessage),
-                        e);
+                    String.format(
+                        "Expected a different parse error for %s.\nExpected (%s)\nFound (%s)",
+                        file,
+                        expectedMessage,
+                        actualMessage
+                    ),
+                    e
+                );
             }
         }
     }
 
     private String cleanErrorMessage(String errorMessage) {
         return errorMessage
-                // We'll never see EOF on Windows since we only get 2 context characters and those
-                // will be taken up by the line separator characters.
-                .replace("[EOF]", "")
-                // Make sure the line separators and representations of them are consistent across
-                // operating systems.
-                .replace("\r\n", "\\n")
-                .replace("\r", "\\n")
-                .replace("\n", "\\n");
+            // We'll never see EOF on Windows since we only get 2 context characters and those
+            // will be taken up by the line separator characters.
+            .replace("[EOF]", "")
+            // Make sure the line separators and representations of them are consistent across
+            // operating systems.
+            .replace("\r\n", "\\n")
+            .replace("\r", "\\n")
+            .replace("\n", "\\n");
     }
 
     public static Collection<String> data() throws Exception {
-        try (Stream<Path> paths = Files.walk(Paths.get(
-                    ValidSmithyModelLoaderRunnerTest.class.getResource("invalid").toURI()))) {
+        try (
+            Stream<Path> paths = Files.walk(
+                Paths.get(
+                    ValidSmithyModelLoaderRunnerTest.class.getResource("invalid").toURI()
+                )
+            )
+        ) {
             return paths
-                    .filter(Files::isRegularFile)
-                    .filter(file -> file.toString().endsWith(".smithy"))
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .filter(Files::isRegularFile)
+                .filter(file -> file.toString().endsWith(".smithy"))
+                .map(Object::toString)
+                .collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

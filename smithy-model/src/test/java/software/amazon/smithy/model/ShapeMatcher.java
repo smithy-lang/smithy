@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model;
 
 import java.util.ArrayList;
@@ -46,10 +35,10 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
     private final String description;
 
     public ShapeMatcher(
-            Class<S> shapeType,
-            ValidatedResult<Model> result,
-            String description,
-            List<Pair<Predicate<S>, Function<S, String>>> assertions
+        Class<S> shapeType,
+        ValidatedResult<Model> result,
+        String description,
+        List<Pair<Predicate<S>, Function<S, String>>> assertions
     ) {
         this.shapeType = shapeType;
         this.result = result;
@@ -80,10 +69,10 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
      * @return Returns the created matcher.
      */
     public static ShapeMatcher<Shape> hasEvent(
-            ValidatedResult<Model> result,
-            String eventId,
-            Severity severity,
-            String messageContains
+        ValidatedResult<Model> result,
+        String eventId,
+        Severity severity,
+        String messageContains
     ) {
         return builderFor(Shape.class, result).addEventAssertion(eventId, severity, messageContains).build();
     }
@@ -96,29 +85,32 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
      */
     public static ShapeMatcher<MemberShape> memberIsNullable(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("Member is marked with @required or @default trait")
-                .addAssertion(member -> !member.hasTrait(RequiredTrait.class),
-                              member -> "Member is marked with the @required trait")
-                .addAssertion(member -> {
-                                  DefaultTrait trait = member.getTrait(DefaultTrait.class).orElse(null);
-                                  return trait == null || trait.toNode().isNullNode();
-                              },
-                              member -> "Member is marked with the @default trait")
-                .build();
+            .description("Member is marked with @required or @default trait")
+            .addAssertion(
+                member -> !member.hasTrait(RequiredTrait.class),
+                member -> "Member is marked with the @required trait"
+            )
+            .addAssertion(member -> {
+                DefaultTrait trait = member.getTrait(DefaultTrait.class).orElse(null);
+                return trait == null || trait.toNode().isNullNode();
+            },
+                member -> "Member is marked with the @default trait"
+            )
+            .build();
     }
 
     private static boolean findEvent(
-            ValidatedResult<Model> result,
-            String eventId,
-            ToShapeId id,
-            Severity severity,
-            String contains
+        ValidatedResult<Model> result,
+        String eventId,
+        ToShapeId id,
+        Severity severity,
+        String contains
     ) {
         for (ValidationEvent event : result.getValidationEvents()) {
             if (event.getShapeId().filter(sid -> sid.equals(id.toShapeId())).isPresent()
-                    && event.getSeverity() == severity
-                    && event.containsId(eventId)
-                    && event.getMessage().contains(contains)) {
+                && event.getSeverity() == severity
+                && event.containsId(eventId)
+                && event.getMessage().contains(contains)) {
                 return true;
             }
         }
@@ -132,18 +124,18 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
         }
 
         return result.getResult()
-                .flatMap(model -> model.getShape(id))
-                .filter(shapeType::isInstance)
-                .map(shapeType::cast)
-                .filter(s -> {
-                    for (Pair<Predicate<S>, Function<S, String>> pair : assertions) {
-                        if (!pair.left.test(s)) {
-                            return false;
-                        }
+            .flatMap(model -> model.getShape(id))
+            .filter(shapeType::isInstance)
+            .map(shapeType::cast)
+            .filter(s -> {
+                for (Pair<Predicate<S>, Function<S, String>> pair : assertions) {
+                    if (!pair.left.test(s)) {
+                        return false;
                     }
-                    return true;
-                })
-                .isPresent();
+                }
+                return true;
+            })
+            .isPresent();
     }
 
     @Override
@@ -236,11 +228,13 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
          * @return Returns the builder.
          */
         public Builder<S> addEventAssertion(String eventId, Severity severity, String messageContains) {
-            return addAssertion(shape -> findEvent(result, eventId, shape.getId(), severity, messageContains),
-                                shape -> "No event matched ID " + eventId + " on shape " + shape.getId()
-                                         + " with severity " + severity + " containing a message of '"
-                                         + messageContains + "'. Found the following events: "
-                                         + result.getValidationEvents());
+            return addAssertion(
+                shape -> findEvent(result, eventId, shape.getId(), severity, messageContains),
+                shape -> "No event matched ID " + eventId + " on shape " + shape.getId()
+                    + " with severity " + severity + " containing a message of '"
+                    + messageContains + "'. Found the following events: "
+                    + result.getValidationEvents()
+            );
         }
     }
 }

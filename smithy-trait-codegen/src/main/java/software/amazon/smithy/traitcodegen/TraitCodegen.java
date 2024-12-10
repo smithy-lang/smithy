@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.util.ArrayList;
@@ -61,10 +60,11 @@ final class TraitCodegen {
     private List<TraitCodegenIntegration> integrations;
     private TraitCodegenContext codegenContext;
 
-    private TraitCodegen(Model model,
-                         TraitCodegenSettings settings,
-                         FileManifest fileManifest,
-                         PluginContext pluginContext
+    private TraitCodegen(
+        Model model,
+        TraitCodegenSettings settings,
+        FileManifest fileManifest,
+        PluginContext pluginContext
     ) {
         this.model = Objects.requireNonNull(model);
         this.settings = Objects.requireNonNull(settings);
@@ -79,10 +79,10 @@ final class TraitCodegen {
 
     public static TraitCodegen fromPluginContext(PluginContext context) {
         return new TraitCodegen(
-                context.getModel(),
-                TraitCodegenSettings.fromNode(context.getSettings()),
-                context.getFileManifest(),
-                context
+            context.getModel(),
+            TraitCodegenSettings.fromNode(context.getSettings()),
+            context.getFileManifest(),
+            context
         );
     }
 
@@ -157,16 +157,17 @@ final class TraitCodegen {
         // for traits we have already manually defined a provider for.
         Set<ShapeId> existingProviders = new HashSet<>();
         ServiceLoader.load(TraitService.class, TraitCodegen.class.getClassLoader())
-                .forEach(service -> existingProviders.add(service.getShapeId()));
+            .forEach(service -> existingProviders.add(service.getShapeId()));
 
         // Get all trait shapes within the specified namespace, but filter out
         // any trait shapes for which a provider is already defined or which have
         // excluded tags
-        Set<Shape> traitClosure = traitSelector.select(model).stream()
-                .filter(pluginContext::isSourceShape)
-                .filter(shape -> !existingProviders.contains(shape.getId()))
-                .filter(shape -> !this.hasExcludeTag(shape))
-                .collect(Collectors.toSet());
+        Set<Shape> traitClosure = traitSelector.select(model)
+            .stream()
+            .filter(pluginContext::isSourceShape)
+            .filter(shape -> !existingProviders.contains(shape.getId()))
+            .filter(shape -> !this.hasExcludeTag(shape))
+            .collect(Collectors.toSet());
 
         if (traitClosure.isEmpty()) {
             LOGGER.warning("Could not find any trait definitions to generate.");
@@ -179,19 +180,24 @@ final class TraitCodegen {
         Set<Shape> nested = new HashSet<>();
         Walker walker = new Walker(model);
         for (Shape traitShape : traitClosure) {
-            nested.addAll(walker.walkShapes(traitShape).stream()
+            nested.addAll(
+                walker.walkShapes(traitShape)
+                    .stream()
                     .filter(shape -> !shape.isMemberShape())
                     .filter(shape -> !Prelude.isPreludeShape(shape))
-                    .collect(Collectors.toSet()));
+                    .collect(Collectors.toSet())
+            );
         }
 
         // If any nested shapes are not in the specified namespace, throw an error.
         Set<Shape> invalidNested = nested.stream()
-                .filter(shape -> !shape.getId().getNamespace().startsWith(settings.smithyNamespace()))
-                .collect(Collectors.toSet());
+            .filter(shape -> !shape.getId().getNamespace().startsWith(settings.smithyNamespace()))
+            .collect(Collectors.toSet());
         if (!invalidNested.isEmpty()) {
-            throw new RuntimeException("Shapes: " + invalidNested + " are within the trait closure but are not within "
-                    + "the specified namespace `" + settings.smithyNamespace() + "`.");
+            throw new RuntimeException(
+                "Shapes: " + invalidNested + " are within the trait closure but are not within "
+                    + "the specified namespace `" + settings.smithyNamespace() + "`."
+            );
         }
         traitClosure.addAll(nested);
 

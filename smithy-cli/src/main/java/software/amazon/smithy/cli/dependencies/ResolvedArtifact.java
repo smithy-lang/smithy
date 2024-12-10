@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.dependencies;
 
 import java.io.File;
@@ -45,8 +34,13 @@ public final class ResolvedArtifact implements ToNode {
         this(path, groupId + ':' + artifactId + ':' + version, groupId, artifactId, version, null);
     }
 
-    private ResolvedArtifact(Path path, String coordinates, String groupId, String artifactId,
-                             String version, String shaSum
+    private ResolvedArtifact(
+        Path path,
+        String coordinates,
+        String groupId,
+        String artifactId,
+        String version,
+        String shaSum
     ) {
         this.coordinates = Objects.requireNonNull(coordinates);
         this.path = Objects.requireNonNull(path);
@@ -170,16 +164,16 @@ public final class ResolvedArtifact implements ToNode {
         }
         ResolvedArtifact artifact = (ResolvedArtifact) o;
         return path.equals(artifact.path)
-                && shaSum.equals(artifact.shaSum)
-                && coordinates.equals(artifact.coordinates);
+            && shaSum.equals(artifact.shaSum)
+            && coordinates.equals(artifact.coordinates);
     }
 
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(PATH_MEMBER_NAME, path.toString())
-                .withMember(SHA_SUM_MEMBER_NAME, shaSum)
-                .build();
+            .withMember(PATH_MEMBER_NAME, path.toString())
+            .withMember(SHA_SUM_MEMBER_NAME, shaSum)
+            .build();
     }
 
     private static String[] parseCoordinates(String coordinates) {

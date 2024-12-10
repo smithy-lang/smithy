@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
@@ -59,7 +48,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * </pre>
  */
 public final class Symbol extends TypedPropertiesBag
-        implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<Symbol> {
+    implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<Symbol> {
     private final String namespace;
     private final String namespaceDelimiter;
     private final String name;
@@ -188,10 +177,10 @@ public final class Symbol extends TypedPropertiesBag
      */
     public SymbolReference toReference(String alias, SymbolReference.Option... options) {
         return SymbolReference.builder()
-                .alias(alias)
-                .symbol(this)
-                .options(options)
-                .build();
+            .alias(alias)
+            .symbol(this)
+            .options(options)
+            .build();
     }
 
     /**
@@ -242,8 +231,8 @@ public final class Symbol extends TypedPropertiesBag
      */
     public Symbol.Builder toReferencedSymbolBuilder(String alias) {
         return builder()
-                .name(alias)
-                .addReference(toReference(alias, SymbolReference.ContextOption.USE));
+            .name(alias)
+            .addReference(toReference(alias, SymbolReference.ContextOption.USE));
     }
 
     /**
@@ -269,13 +258,13 @@ public final class Symbol extends TypedPropertiesBag
     public Builder toBuilder() {
         Builder builder = new Builder();
         return builder.namespace(namespace, namespaceDelimiter)
-                .name(name)
-                .properties(getProperties())
-                .typedProperties(getTypedProperties())
-                .definitionFile(definitionFile)
-                .declarationFile(declarationFile)
-                .references(references)
-                .dependencies(dependencies);
+            .name(name)
+            .properties(getProperties())
+            .typedProperties(getTypedProperties())
+            .definitionFile(definitionFile)
+            .declarationFile(declarationFile)
+            .references(references)
+            .dependencies(dependencies);
     }
 
     @Override
@@ -292,14 +281,14 @@ public final class Symbol extends TypedPropertiesBag
         }
         Symbol symbol = (Symbol) o;
         return super.equals(o)
-               && Objects.equals(namespace, symbol.namespace)
-               && Objects.equals(namespaceDelimiter, symbol.namespaceDelimiter)
-               && Objects.equals(name, symbol.name)
-               && getProperties().equals(symbol.getProperties())
-               && Objects.equals(declarationFile, symbol.declarationFile)
-               && Objects.equals(definitionFile, symbol.definitionFile)
-               && references.equals(symbol.references)
-               && dependencies.equals(symbol.dependencies);
+            && Objects.equals(namespace, symbol.namespace)
+            && Objects.equals(namespaceDelimiter, symbol.namespaceDelimiter)
+            && Objects.equals(name, symbol.name)
+            && getProperties().equals(symbol.getProperties())
+            && Objects.equals(declarationFile, symbol.declarationFile)
+            && Objects.equals(definitionFile, symbol.definitionFile)
+            && references.equals(symbol.references)
+            && dependencies.equals(symbol.dependencies);
     }
 
     @Override
@@ -311,8 +300,8 @@ public final class Symbol extends TypedPropertiesBag
      * Builds a Symbol.
      */
     public static final class Builder
-            extends TypedPropertiesBag.Builder<Builder>
-            implements SmithyBuilder<Symbol> {
+        extends TypedPropertiesBag.Builder<Builder>
+        implements SmithyBuilder<Symbol> {
 
         private String name;
         private String namespace = "";
@@ -470,11 +459,13 @@ public final class Symbol extends TypedPropertiesBag
          * @return Returns the builder.
          */
         public Builder addDependency(String dependencyType, String packageName, String version) {
-            return addDependency(SymbolDependency.builder()
+            return addDependency(
+                SymbolDependency.builder()
                     .dependencyType(dependencyType)
                     .packageName(packageName)
                     .version(version)
-                    .build());
+                    .build()
+            );
         }
     }
 }

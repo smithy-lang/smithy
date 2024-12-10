@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import software.amazon.smithy.model.node.Node;
@@ -55,8 +54,8 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .ruleSet(ruleSet);
+            .sourceLocation(getSourceLocation())
+            .ruleSet(ruleSet);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -67,8 +66,8 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             EndpointRuleSetTrait trait = builder().sourceLocation(value)
-                    .ruleSet(value)
-                    .build();
+                .ruleSet(value)
+                .build();
             trait.setNodeCache(value);
             return trait;
         }

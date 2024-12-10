@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.suppressions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,10 +28,10 @@ public class ModelBasedEventDecoratorTest {
     @Test
     public void erroneousSuppressionsEmitEvents() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("bad-suppressions.smithy"))
-                // Ensure that events found while loading the model are decorated too.
-                .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
-                .assemble();
+            .addImport(getClass().getResource("bad-suppressions.smithy"))
+            // Ensure that events found while loading the model are decorated too.
+            .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
+            .assemble();
 
         assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
         assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(), containsString("member `id`"));
@@ -37,10 +41,10 @@ public class ModelBasedEventDecoratorTest {
     @Test
     public void erroneousOverridesEmitEvents() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("bad-severityOverrides.smithy"))
-                // Ensure that events found while loading the model are decorated too.
-                .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
-                .assemble();
+            .addImport(getClass().getResource("bad-severityOverrides.smithy"))
+            // Ensure that events found while loading the model are decorated too.
+            .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
+            .assemble();
 
         assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
         assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(), containsString("member `id`"));
@@ -50,10 +54,13 @@ public class ModelBasedEventDecoratorTest {
     @Test
     public void loadsSuppressionsAndOverrides() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(Model.class.getResource(
-                        "errorfiles/validators/severityOverrides/suppressions-take-precedence.smithy"))
-                .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
-                .assemble();
+            .addImport(
+                Model.class.getResource(
+                    "errorfiles/validators/severityOverrides/suppressions-take-precedence.smithy"
+                )
+            )
+            .validatorFactory(testFactory(event -> event.toBuilder().hint("hi").build()))
+            .assemble();
 
         assertThat(result.getValidationEvents(Severity.ERROR), empty());
         assertThat(result.getValidationEvents(), not(empty()));

@@ -1,4 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core.trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +18,17 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 class TracingSymbolProviderTest {
 
     @Test
     void assertBuildDoesNotThrowWithAllFields() {
         Assertions.assertDoesNotThrow(() -> {
             TracingSymbolProvider.builder()
-                    .metadata(constructTraceMetadata())
-                    .artifactDefinitions(constructArtifactDefinitions())
-                    .symbolProvider(new TestSymbolProvider())
-                    .shapeLinkCreator(constructFunction())
-                    .build();
+                .metadata(constructTraceMetadata())
+                .artifactDefinitions(constructArtifactDefinitions())
+                .symbolProvider(new TestSymbolProvider())
+                .shapeLinkCreator(constructFunction())
+                .build();
         });
     }
 
@@ -32,10 +36,10 @@ class TracingSymbolProviderTest {
     void assertBuildDoesNotThrowWithRequiredFields() {
         Assertions.assertDoesNotThrow(() -> {
             TracingSymbolProvider.builder()
-                    .metadata(constructTraceMetadata())
-                    .symbolProvider(new TestSymbolProvider())
-                    .shapeLinkCreator(constructFunction())
-                    .build();
+                .metadata(constructTraceMetadata())
+                .symbolProvider(new TestSymbolProvider())
+                .shapeLinkCreator(constructFunction())
+                .build();
         });
     }
 
@@ -43,16 +47,18 @@ class TracingSymbolProviderTest {
     void assertBuildDoesNotThrowWithDefaultTraceMetadata() {
         Assertions.assertDoesNotThrow(() -> {
             TracingSymbolProvider.builder()
-                    .setTraceMetadataAsDefault("Java")
-                    .symbolProvider(new TestSymbolProvider())
-                    .shapeLinkCreator(constructFunction())
-                    .build();
+                .setTraceMetadataAsDefault("Java")
+                .symbolProvider(new TestSymbolProvider())
+                .shapeLinkCreator(constructFunction())
+                .build();
         });
     }
 
     @Test
     void assertBuildFailsWithoutSymbolProvider() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> TracingSymbolProvider.builder()
                 .metadata(constructTraceMetadata())
                 .shapeLinkCreator(constructFunction())
                 .build()
@@ -61,7 +67,9 @@ class TracingSymbolProviderTest {
 
     @Test
     void assertBuildFailsWithoutTraceMetadata() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> TracingSymbolProvider.builder()
                 .symbolProvider(new TestSymbolProvider())
                 .shapeLinkCreator(constructFunction())
                 .build()
@@ -70,7 +78,9 @@ class TracingSymbolProviderTest {
 
     @Test
     void assertBuildFailsWithoutShapeLinkCreator() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> TracingSymbolProvider.builder()
                 .metadata(constructTraceMetadata())
                 .symbolProvider(new TestSymbolProvider())
                 .build()
@@ -80,11 +90,11 @@ class TracingSymbolProviderTest {
     @Test
     void assertToSymbolShapeLinkCreatorCreatesShapeLink() {
         TracingSymbolProvider tracingSymbolProvider = TracingSymbolProvider.builder()
-                .metadata(constructTraceMetadata())
-                .artifactDefinitions(constructArtifactDefinitions())
-                .symbolProvider(new TestSymbolProvider())
-                .shapeLinkCreator(constructFunction())
-                .build();
+            .metadata(constructTraceMetadata())
+            .artifactDefinitions(constructArtifactDefinitions())
+            .symbolProvider(new TestSymbolProvider())
+            .shapeLinkCreator(constructFunction())
+            .build();
 
         Shape shape = StringShape.builder().id("namespace.foo#baz").build();
 
@@ -101,11 +111,11 @@ class TracingSymbolProviderTest {
     @Test
     void assertToSymbolDoesNotDuplicateShapeLinks() {
         TracingSymbolProvider tracingSymbolProvider = TracingSymbolProvider.builder()
-                .metadata(constructTraceMetadata())
-                .artifactDefinitions(constructArtifactDefinitions())
-                .symbolProvider(new TestSymbolProvider())
-                .shapeLinkCreator(constructFunction())
-                .build();
+            .metadata(constructTraceMetadata())
+            .artifactDefinitions(constructArtifactDefinitions())
+            .symbolProvider(new TestSymbolProvider())
+            .shapeLinkCreator(constructFunction())
+            .build();
 
         Shape shape = StringShape.builder().id("namespace.foo#baz").build();
 
@@ -120,27 +130,29 @@ class TracingSymbolProviderTest {
 
     ArtifactDefinitions constructArtifactDefinitions() {
         return ArtifactDefinitions.builder()
-                .addTag("service", "Service client")
-                .addType("TYPE", "Class, interface (including annotation type), or enum declaration")
-                .build();
+            .addTag("service", "Service client")
+            .addType("TYPE", "Class, interface (including annotation type), or enum declaration")
+            .build();
     }
 
     TraceMetadata constructTraceMetadata() {
         return TraceMetadata.builder()
-                .id("software.amazon.awssdk.services:snowball:2.10.79")
-                .version("2.10.79")
-                .type("Java")
-                .setTimestampAsNow()
-                .build();
+            .id("software.amazon.awssdk.services:snowball:2.10.79")
+            .version("2.10.79")
+            .type("Java")
+            .setTimestampAsNow()
+            .build();
     }
 
     BiFunction<Shape, Symbol, List<ShapeLink>> constructFunction() {
         return (shape, symbol) -> {
             List<ShapeLink> list = new ArrayList<>();
-            list.add(ShapeLink.builder()
+            list.add(
+                ShapeLink.builder()
                     .id(symbol.toString())
                     .type("TYPE")
-                    .build());
+                    .build()
+            );
             return list;
         };
     }
@@ -149,11 +161,12 @@ class TracingSymbolProviderTest {
     static class TestSymbolProvider implements SymbolProvider {
         @Override
         public Symbol toSymbol(Shape shape) {
-            return Symbol.builder().putProperty("shape", shape)
-                    .name(shape.getId().getName())
-                    .namespace(shape.getId().getNamespace(), "/")
-                    .definitionFile("file.java")
-                    .build();
+            return Symbol.builder()
+                .putProperty("shape", shape)
+                .name(shape.getId().getName())
+                .namespace(shape.getId().getNamespace(), "/")
+                .definitionFile("file.java")
+                .build();
         }
 
     }

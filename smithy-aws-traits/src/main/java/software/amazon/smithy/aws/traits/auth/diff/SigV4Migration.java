@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.auth.diff;
 
 import java.util.ArrayList;
@@ -67,11 +66,13 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
                 newServiceShape,
                 oldAuthSchemes,
                 newAuthSchemes,
-                events);
+                events
+            );
         }
 
-        Map<OperationShape, Set<ServiceShape>> operationToContainedServiceBindings =
-            computeOperationToContainedServiceBindings(newModel);
+        Map<OperationShape, Set<ServiceShape>> operationToContainedServiceBindings = computeOperationToContainedServiceBindings(
+            newModel
+        );
         List<ChangedShape<OperationShape>> operationChanges = differences
             .changedShapes(OperationShape.class)
             .collect(Collectors.toList());
@@ -102,7 +103,8 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
                             newOperationShape,
                             oldAuthSchemes,
                             newAuthSchemes,
-                            events);
+                            events
+                        );
                     });
             }
         }
@@ -127,21 +129,27 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
         boolean isSigV4Added = !isOldSigV4Present && isNewSigV4Present && isOldSigV4APresent && isNewSigV4APresent;
         boolean isSigV4AAdded = isOldSigV4Present && isNewSigV4Present && !isOldSigV4APresent && isNewSigV4APresent;
         if (isSigV4Replaced) {
-            events.add(danger(
-                shape,
-                "The `aws.auth#sigv4` authentication scheme was replaced by the `aws.auth#sigv4a` authentication "
-                + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                + "Replacing the `aws.auth#sigv4` authentication scheme with the `aws.auth#sigv4a` authentication "
-                + "scheme directly is not backward compatible since not all credentials usable by `aws.auth#sigv4` are "
-                + "compatible with `aws.auth#sigv4a`, and can break existing clients' authentication."));
+            events.add(
+                danger(
+                    shape,
+                    "The `aws.auth#sigv4` authentication scheme was replaced by the `aws.auth#sigv4a` authentication "
+                        + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                        + "Replacing the `aws.auth#sigv4` authentication scheme with the `aws.auth#sigv4a` authentication "
+                        + "scheme directly is not backward compatible since not all credentials usable by `aws.auth#sigv4` are "
+                        + "compatible with `aws.auth#sigv4a`, and can break existing clients' authentication."
+                )
+            );
         } else if (isSigV4AReplaced) {
-            events.add(danger(
-                shape,
-                "The `aws.auth#sigv4a` authentication scheme was replaced by the `aws.auth#sigv4` authentication "
-                + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                + "Replacing the `aws.auth#sigv4` authentication scheme with the `aws.auth#sigv4a` authentication "
-                + "scheme directly may not be backward compatible if the signing scope was narrowed (typically from "
-                + "`*`)."));
+            events.add(
+                danger(
+                    shape,
+                    "The `aws.auth#sigv4a` authentication scheme was replaced by the `aws.auth#sigv4` authentication "
+                        + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                        + "Replacing the `aws.auth#sigv4` authentication scheme with the `aws.auth#sigv4a` authentication "
+                        + "scheme directly may not be backward compatible if the signing scope was narrowed (typically from "
+                        + "`*`)."
+                )
+            );
         } else if (noSigV4XRemoved) {
             int oldSigV4Index = oldAuthSchemes.indexOf(SigV4Trait.ID);
             int oldSigV4aIndex = oldAuthSchemes.indexOf(SigV4ATrait.ID);
@@ -150,48 +158,60 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
             boolean isOldSigV4BeforeSigV4A = oldSigV4Index < oldSigV4aIndex;
             boolean isSigV4BeforeSigV4A = sigV4Index < sigV4aIndex;
             if (isOldSigV4BeforeSigV4A && !isSigV4BeforeSigV4A) {
-                events.add(danger(
-                    shape,
-                    "The `aws.auth#sigv4a` authentication scheme was moved before the `aws.auth#sigv4` authentication "
-                    + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                    + "Moving the `aws.auth#sigv4a` authentication scheme before the `aws.auth#sigv4` authentication "
-                    + "scheme is not backward compatible since not all credentials usable by `aws.auth#sigv4` are "
-                    + "compatible with `aws.auth#sigv4a`, and can break existing clients' authentication."));
+                events.add(
+                    danger(
+                        shape,
+                        "The `aws.auth#sigv4a` authentication scheme was moved before the `aws.auth#sigv4` authentication "
+                            + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                            + "Moving the `aws.auth#sigv4a` authentication scheme before the `aws.auth#sigv4` authentication "
+                            + "scheme is not backward compatible since not all credentials usable by `aws.auth#sigv4` are "
+                            + "compatible with `aws.auth#sigv4a`, and can break existing clients' authentication."
+                    )
+                );
             }
             if (!isOldSigV4BeforeSigV4A && isSigV4BeforeSigV4A) {
-                events.add(danger(
-                    shape,
-                    "The `aws.auth#sigv4` authentication scheme was moved before the `aws.auth#sigv4a` authentication "
-                    + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                    + "Moving the `aws.auth#sigv4` authentication scheme before the `aws.auth#sigv4a` authentication "
-                    + "scheme may not be backward compatible if the signing scope was narrowed (typically from `*`)."));
+                events.add(
+                    danger(
+                        shape,
+                        "The `aws.auth#sigv4` authentication scheme was moved before the `aws.auth#sigv4a` authentication "
+                            + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                            + "Moving the `aws.auth#sigv4` authentication scheme before the `aws.auth#sigv4a` authentication "
+                            + "scheme may not be backward compatible if the signing scope was narrowed (typically from `*`)."
+                    )
+                );
             }
         } else if (isSigV4Added) {
             int sigV4Index = newAuthSchemes.indexOf(SigV4Trait.ID);
             int sigV4aIndex = newAuthSchemes.indexOf(SigV4ATrait.ID);
             boolean isSigV4AddedBeforeSigV4A = sigV4Index < sigV4aIndex;
             if (isSigV4AddedBeforeSigV4A) {
-                events.add(danger(
-                    shape,
-                    "The `aws.auth#sigv4` authentication scheme was added before the `aws.auth#sigv4a` authentication "
-                    + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                    + "Adding the `aws.auth#sigv4` authentication scheme before an existing `aws.auth#sigv4a` "
-                    + "authentication scheme may not be backward compatible if the signing scope was narrowed "
-                    + "(typically from `*`)."));
+                events.add(
+                    danger(
+                        shape,
+                        "The `aws.auth#sigv4` authentication scheme was added before the `aws.auth#sigv4a` authentication "
+                            + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                            + "Adding the `aws.auth#sigv4` authentication scheme before an existing `aws.auth#sigv4a` "
+                            + "authentication scheme may not be backward compatible if the signing scope was narrowed "
+                            + "(typically from `*`)."
+                    )
+                );
             }
         } else if (isSigV4AAdded) {
             int sigV4Index = newAuthSchemes.indexOf(SigV4Trait.ID);
             int sigV4aIndex = newAuthSchemes.indexOf(SigV4ATrait.ID);
             boolean isSigV4AAddedBeforeSigV4 = sigV4aIndex < sigV4Index;
             if (isSigV4AAddedBeforeSigV4) {
-                events.add(danger(
-                    shape,
-                    "The `aws.auth#sigv4a` authentication scheme was added before the `aws.auth#sigv4` authentication "
-                    + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
-                    + "Adding the `aws.auth#sigv4a` authentication scheme before an existing `aws.auth#sigv4` "
-                    + "authentication scheme is not backward compatible since not all credentials usable by "
-                    + "`aws.auth#sigv4` are compatible with `aws.auth#sigv4a`, and can break existing clients' "
-                    + "authentication."));
+                events.add(
+                    danger(
+                        shape,
+                        "The `aws.auth#sigv4a` authentication scheme was added before the `aws.auth#sigv4` authentication "
+                            + "scheme in the effective auth schemes for `" + shape.getId() + "`. "
+                            + "Adding the `aws.auth#sigv4a` authentication scheme before an existing `aws.auth#sigv4` "
+                            + "authentication scheme is not backward compatible since not all credentials usable by "
+                            + "`aws.auth#sigv4` are compatible with `aws.auth#sigv4a`, and can break existing clients' "
+                            + "authentication."
+                    )
+                );
             }
         }
     }

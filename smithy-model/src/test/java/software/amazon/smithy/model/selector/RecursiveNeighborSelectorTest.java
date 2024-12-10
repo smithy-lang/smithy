@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,9 +24,9 @@ public class RecursiveNeighborSelectorTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(ForwardNeighborSelectorTest.class.getResource("neighbor-test.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(ForwardNeighborSelectorTest.class.getResource("neighbor-test.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -32,18 +36,20 @@ public class RecursiveNeighborSelectorTest {
 
     private Set<String> selectIds(String expression) {
         return Selector.parse(expression)
-                .select(model)
-                .stream()
-                .map(Shape::getId)
-                .map(ShapeId::toString)
-                .collect(Collectors.toSet());
+            .select(model)
+            .stream()
+            .map(Shape::getId)
+            .map(ShapeId::toString)
+            .collect(Collectors.toSet());
     }
 
     @Test
     public void findsClosure() {
         Set<String> result = selectIds("service[id=smithy.example#MyService2] ~> *");
 
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 "smithy.example#MyResource",
                 "smithy.example#GetMyResource",
                 "smithy.example#DeleteMyResource",
@@ -55,7 +61,8 @@ public class RecursiveNeighborSelectorTest {
                 "smithy.api#String",
                 "smithy.example#Input$foo",
                 "smithy.example#Output"
-        ));
+            )
+        );
     }
 
     @Test
@@ -68,16 +75,18 @@ public class RecursiveNeighborSelectorTest {
     @Test
     public void stopsSendingShapesWhenGetsStopSignal() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("http-model.smithy"))
-                .assemble()
-                .getResult() // ignore built-in errors
-                .get();
+            .addImport(getClass().getResource("http-model.smithy"))
+            .assemble()
+            .getResult() // ignore built-in errors
+            .get();
 
         // This is a slightly less efficient variation of a similar
         // test in SelectorTest because it doesn't use a temporary
         // variable to store the recursive neighbors.
-        Set<String> ids = SelectorTest.exampleIds(model,
-                "service :test(~> operation[trait|http]) ~> operation :not([trait|http])");
+        Set<String> ids = SelectorTest.exampleIds(
+            model,
+            "service :test(~> operation[trait|http]) ~> operation :not([trait|http])"
+        );
 
         assertThat(ids, contains("smithy.example#NoHttp"));
     }

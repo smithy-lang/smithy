@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.integrations.annotations;
 
 import java.util.List;
@@ -30,7 +29,8 @@ public class AnnotationIntegration implements TraitCodegenIntegration {
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
-            TraitCodegenContext codegenContext) {
+        TraitCodegenContext codegenContext
+    ) {
         return ListUtils.of(
             new SmithyGeneratedAnnotationInterceptor(),
             new DeprecatedAnnotationInterceptor(),

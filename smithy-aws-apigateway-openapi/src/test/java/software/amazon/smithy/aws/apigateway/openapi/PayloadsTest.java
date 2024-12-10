@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Test;
@@ -13,15 +17,18 @@ public class PayloadsTest {
     @Test
     public void payloadsStructureTargetTest() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("payloads.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("payloads.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("payloads.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("payloads.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }

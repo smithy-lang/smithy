@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.HashMap;
@@ -55,8 +44,8 @@ public final class AwsTagIndex implements KnowledgeIndex {
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
             computeTaggingApis(model, service);
             if (serviceTagOperationIsValid.contains(service.getId())
-                    && serviceUntagOperationIsValid.contains(service.getId())
-                    && serviceListTagsOperationIsValid.contains(service.getId())
+                && serviceUntagOperationIsValid.contains(service.getId())
+                && serviceListTagsOperationIsValid.contains(service.getId())
             ) {
                 servicesWithAllTagOperations.add(service.getId());
             }
@@ -224,9 +213,9 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     private void calculateTagApi(
-            Model model,
-            ServiceShape service,
-            Map<String, ShapeId> operationMap
+        Model model,
+        ServiceShape service,
+        Map<String, ShapeId> operationMap
     ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
@@ -240,18 +229,20 @@ public final class AwsTagIndex implements KnowledgeIndex {
             }
         }
         for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToTagOperation.put(resourceShape.getId(),
-                    resourceShape.getTrait(TaggableTrait.class)
-                            .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getTagApi)
-                            .orElse(shapeToTagOperation.get(service.getId())));
+            shapeToTagOperation.put(
+                resourceShape.getId(),
+                resourceShape.getTrait(TaggableTrait.class)
+                    .flatMap(TaggableTrait::getApiConfig)
+                    .map(TaggableApiConfig::getTagApi)
+                    .orElse(shapeToTagOperation.get(service.getId()))
+            );
         }
     }
 
     private void calculateUntagApi(
-            Model model,
-            ServiceShape service,
-            Map<String, ShapeId> operationMap
+        Model model,
+        ServiceShape service,
+        Map<String, ShapeId> operationMap
     ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
@@ -265,18 +256,20 @@ public final class AwsTagIndex implements KnowledgeIndex {
             }
         }
         for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToUntagOperation.put(resourceShape.getId(),
-                    resourceShape.getTrait(TaggableTrait.class)
-                            .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getUntagApi)
-                            .orElse(shapeToUntagOperation.get(service.getId())));
+            shapeToUntagOperation.put(
+                resourceShape.getId(),
+                resourceShape.getTrait(TaggableTrait.class)
+                    .flatMap(TaggableTrait::getApiConfig)
+                    .map(TaggableApiConfig::getUntagApi)
+                    .orElse(shapeToUntagOperation.get(service.getId()))
+            );
         }
     }
 
     private void calculateListTagsApi(
-            Model model,
-            ServiceShape service,
-            Map<String, ShapeId> operationMap
+        Model model,
+        ServiceShape service,
+        Map<String, ShapeId> operationMap
     ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
@@ -290,11 +283,13 @@ public final class AwsTagIndex implements KnowledgeIndex {
             }
         }
         for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToListTagsOperation.put(resourceShape.getId(),
-                    resourceShape.getTrait(TaggableTrait.class)
-                            .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getListTagsApi)
-                            .orElse(shapeToListTagsOperation.get(service.getId())));
+            shapeToListTagsOperation.put(
+                resourceShape.getId(),
+                resourceShape.getTrait(TaggableTrait.class)
+                    .flatMap(TaggableTrait::getApiConfig)
+                    .map(TaggableApiConfig::getListTagsApi)
+                    .orElse(shapeToListTagsOperation.get(service.getId()))
+            );
         }
     }
 

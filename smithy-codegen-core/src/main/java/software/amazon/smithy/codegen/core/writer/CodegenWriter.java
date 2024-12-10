@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.writer;
 
 import java.util.ArrayList;
@@ -86,7 +75,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 @Deprecated
 public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContainer>
-        extends CodeWriter implements SymbolDependencyContainer {
+    extends CodeWriter implements SymbolDependencyContainer {
 
     private static final Logger LOGGER = Logger.getLogger(CodegenWriter.class.getName());
     private static final String RELATIVIZE_SYMBOLS = "__CodegenWriterRelativizeSymbols";
@@ -127,8 +116,10 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
                 addImport(typeSymbol.getSymbol(), typeSymbol.getAlias(), SymbolReference.ContextOption.USE);
                 return typeSymbol.getAlias();
             } else {
-                throw new CodegenException("Invalid type provided to $T. Expected a Symbol or SymbolReference, "
-                                           + "but found `" + type + "`");
+                throw new CodegenException(
+                    "Invalid type provided to $T. Expected a Symbol or SymbolReference, "
+                        + "but found `" + type + "`"
+                );
             }
         }
     }
@@ -262,8 +253,14 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
      */
     @SuppressWarnings("unchecked")
     public final T addImport(Symbol symbol, String alias, SymbolReference.ContextOption... options) {
-        LOGGER.finest(() -> String.format("Adding import %s as `%s` (%s)",
-                                          symbol.getNamespace(), alias, Arrays.toString(options)));
+        LOGGER.finest(
+            () -> String.format(
+                "Adding import %s as `%s` (%s)",
+                symbol.getNamespace(),
+                alias,
+                Arrays.toString(options)
+            )
+        );
 
         // Always add the dependencies of the symbol.
         dependencies.addAll(symbol.getDependencies());

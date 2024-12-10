@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
@@ -97,9 +86,9 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      */
     @Deprecated
     public static Optional<MemberShape> resolvePath(
-            String path,
-            Model model,
-            StructureShape shape
+        String path,
+        Model model,
+        StructureShape shape
     ) {
         List<MemberShape> memberShapes = resolveFullPath(path, model, shape);
         if (memberShapes.size() == 0) {
@@ -122,9 +111,9 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      * as an empty list.
      */
     public static List<MemberShape> resolveFullPath(
-            String path,
-            Model model,
-            StructureShape shape
+        String path,
+        Model model,
+        StructureShape shape
     ) {
         List<MemberShape> memberShapes = new ArrayList<>();
 
@@ -138,7 +127,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
             }
             memberShapes.add(memberShape.get());
             container = model.getShape(memberShape.get().getTarget())
-                    .flatMap(Shape::asStructureShape);
+                .flatMap(Shape::asStructureShape);
         }
         return memberShapes;
     }
@@ -161,31 +150,31 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         }
 
         return builder()
-                .inputToken(inputToken != null ? inputToken : other.inputToken)
-                .outputToken(outputToken != null ? outputToken : other.outputToken)
-                .pageSize(pageSize != null ? pageSize : other.pageSize)
-                .items(items != null ? items : other.items)
-                .sourceLocation(getSourceLocation())
-                .build();
+            .inputToken(inputToken != null ? inputToken : other.inputToken)
+            .outputToken(outputToken != null ? outputToken : other.outputToken)
+            .pageSize(pageSize != null ? pageSize : other.pageSize)
+            .items(items != null ? items : other.items)
+            .sourceLocation(getSourceLocation())
+            .build();
     }
 
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withOptionalMember("inputToken", getInputToken().map(Node::from))
-                .withOptionalMember("outputToken", getOutputToken().map(Node::from))
-                .withOptionalMember("items", getItems().map(Node::from))
-                .withOptionalMember("pageSize", getPageSize().map(Node::from));
+            .withOptionalMember("inputToken", getInputToken().map(Node::from))
+            .withOptionalMember("outputToken", getOutputToken().map(Node::from))
+            .withOptionalMember("items", getItems().map(Node::from))
+            .withOptionalMember("pageSize", getPageSize().map(Node::from));
     }
 
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .items(items)
-                .inputToken(inputToken)
-                .outputToken(outputToken)
-                .pageSize(pageSize);
+            .sourceLocation(getSourceLocation())
+            .items(items)
+            .inputToken(inputToken)
+            .outputToken(outputToken)
+            .pageSize(pageSize);
     }
 
     /**
@@ -240,10 +229,10 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         public PaginatedTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode()
-                    .getStringMember("pageSize", builder::pageSize)
-                    .getStringMember("items", builder::items)
-                    .getStringMember("inputToken", builder::inputToken)
-                    .getStringMember("outputToken", builder::outputToken);
+                .getStringMember("pageSize", builder::pageSize)
+                .getStringMember("items", builder::items)
+                .getStringMember("inputToken", builder::inputToken)
+                .getStringMember("outputToken", builder::outputToken);
             PaginatedTrait result = builder.build();
             result.setNodeCache(value);
             return result;

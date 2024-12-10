@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language.syntax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,18 +18,22 @@ public class ParameterTest {
     @Test
     public void parameterToBuilderRoundTrips() {
         Parameter p = Parameter.builder()
-                .name("test")
-                .builtIn("Test::BuiltIn")
-                .required(true)
-                .defaultValue(Value.booleanValue(true))
-                .type(ParameterType.BOOLEAN)
-                .deprecated(Deprecated.fromNode(ObjectNode.builder()
+            .name("test")
+            .builtIn("Test::BuiltIn")
+            .required(true)
+            .defaultValue(Value.booleanValue(true))
+            .type(ParameterType.BOOLEAN)
+            .deprecated(
+                Deprecated.fromNode(
+                    ObjectNode.builder()
                         .withMember("message", "message")
                         .withMember("since", "2020-07-02")
-                        .build()))
-                .value(Node.from(true))
-                .documentation("here are some docs")
-                .build();
+                        .build()
+                )
+            )
+            .value(Node.from(true))
+            .documentation("here are some docs")
+            .build();
         assertEquals(p, p.toBuilder().build());
     }
 }

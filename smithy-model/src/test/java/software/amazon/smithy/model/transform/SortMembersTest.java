@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,15 +21,15 @@ public class SortMembersTest {
     public void sortsModelMembers() {
         ModelAssembler assembler = Model.assembler();
         UnionShape u = UnionShape.builder()
-                .id("com.foo#U")
-                .addMember("zoo", ShapeId.from("smithy.api#String"))
-                .addMember("abc", ShapeId.from("smithy.api#String"))
-                .build();
+            .id("com.foo#U")
+            .addMember("zoo", ShapeId.from("smithy.api#String"))
+            .addMember("abc", ShapeId.from("smithy.api#String"))
+            .build();
         StructureShape s = StructureShape.builder()
-                .id("com.foo#S")
-                .addMember("zoo", ShapeId.from("smithy.api#String"))
-                .addMember("abc", ShapeId.from("smithy.api#String"))
-                .build();
+            .id("com.foo#S")
+            .addMember("zoo", ShapeId.from("smithy.api#String"))
+            .addMember("abc", ShapeId.from("smithy.api#String"))
+            .build();
         assembler.addShapes(u, s);
         Model model = assembler.assemble().unwrap();
         ModelTransformer transformer = ModelTransformer.create();
@@ -36,9 +40,13 @@ public class SortMembersTest {
         assertThat(s.getMemberNames(), Matchers.contains("zoo", "abc"));
 
         // Members in the new model use the sorted order.
-        assertThat(sortedModel.expectShape(u.getId(), UnionShape.class).getMemberNames(),
-                   Matchers.contains("abc", "zoo"));
-        assertThat(sortedModel.expectShape(s.getId(), StructureShape.class).getMemberNames(),
-                   Matchers.contains("abc", "zoo"));
+        assertThat(
+            sortedModel.expectShape(u.getId(), UnionShape.class).getMemberNames(),
+            Matchers.contains("abc", "zoo")
+        );
+        assertThat(
+            sortedModel.expectShape(s.getId(), StructureShape.class).getMemberNames(),
+            Matchers.contains("abc", "zoo")
+        );
     }
 }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,15 +21,14 @@ public class FlattenPaginationInfoTest {
     @Test
     void compareTransform() {
         Model before = Model.assembler()
-                .addImport(FlattenPaginationInfoTest.class.getResource("flatten-pagination-before.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(FlattenPaginationInfoTest.class.getResource("flatten-pagination-before.smithy"))
+            .assemble()
+            .unwrap();
         ServiceShape service = before.expectShape(serviceId).asServiceShape().get();
         Model result = ModelTransformer.create().flattenPaginationInfoIntoOperations(before, service);
 
         Shape resultService = result.expectShape(serviceId);
         assertFalse(resultService.hasTrait(PaginatedTrait.class));
-
 
         Shape resultOperation = result.expectShape(operationId);
         PaginatedTrait resultTrait = resultOperation.expectTrait(PaginatedTrait.class);

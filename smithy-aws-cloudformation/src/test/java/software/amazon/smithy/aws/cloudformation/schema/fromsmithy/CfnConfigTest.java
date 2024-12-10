@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,29 +55,32 @@ public class CfnConfigTest {
     @Test
     public void handlesFromNode() {
         Model model = Model.assembler()
-                .addImport(CfnConfigTest.class.getResource("mappers/simple.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(CfnConfigTest.class.getResource("mappers/simple.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
 
         ObjectNode addNode = Node.objectNodeBuilder()
-                .withMember("/arbitrary/foo", "whoa")
-                .build();
+            .withMember("/arbitrary/foo", "whoa")
+            .build();
 
         ObjectNode configNode = Node.objectNodeBuilder()
-                .withMember("organizationName", "Smithy")
-                .withMember("service", "smithy.example#TestService")
-                .withMember("jsonAdd", Node.objectNodeBuilder()
-                        .withMember("smithy.example#FooResource", addNode)
-                        .build())
-                .build();
+            .withMember("organizationName", "Smithy")
+            .withMember("service", "smithy.example#TestService")
+            .withMember(
+                "jsonAdd",
+                Node.objectNodeBuilder()
+                    .withMember("smithy.example#FooResource", addNode)
+                    .build()
+            )
+            .build();
 
         CfnConfig config = CfnConfig.fromNode(configNode);
 
         ObjectNode resourceNode = CfnConverter.create()
-                .config(config)
-                .convertToNodes(model)
-                .get("Smithy::TestService::FooResource");
+            .config(config)
+            .convertToNodes(model)
+            .get("Smithy::TestService::FooResource");
 
         String arbitraryFoo = NodePointer.parse("/arbitrary/foo").getValue(resourceNode).expectStringNode().getValue();
 

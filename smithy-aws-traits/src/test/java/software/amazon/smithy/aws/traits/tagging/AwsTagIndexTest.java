@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.tagging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,10 +31,10 @@ public final class AwsTagIndexTest {
     @BeforeAll
     public static void loadModel() {
         model = Model.assembler()
-                .addImport(AwsTagIndex.class.getResource("aws-tag-index-test-model.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(AwsTagIndex.class.getResource("aws-tag-index-test-model.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
         tagIndex = AwsTagIndex.of(model);
     }
 
@@ -94,11 +93,12 @@ public final class AwsTagIndexTest {
 
     public static Stream<Arguments> resourceTagMutabilities() {
         return Stream.of(
-                Arguments.of(CITY_RESOURCE_ID, false, false),
-                Arguments.of(ShapeId.fromParts(NAMESPACE, "Town"), true, true),
-                Arguments.of(ShapeId.fromParts(NAMESPACE, "Farm"), true, true),
-                Arguments.of(ShapeId.fromParts(NAMESPACE, "Barn"), true, false),
-                Arguments.of(ShapeId.fromParts(NAMESPACE, "Silo"), true, true));
+            Arguments.of(CITY_RESOURCE_ID, false, false),
+            Arguments.of(ShapeId.fromParts(NAMESPACE, "Town"), true, true),
+            Arguments.of(ShapeId.fromParts(NAMESPACE, "Farm"), true, true),
+            Arguments.of(ShapeId.fromParts(NAMESPACE, "Barn"), true, false),
+            Arguments.of(ShapeId.fromParts(NAMESPACE, "Silo"), true, true)
+        );
     }
 
     @Test

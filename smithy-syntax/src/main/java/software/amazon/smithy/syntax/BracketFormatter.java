@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import com.opencastsoftware.prettier4j.Doc;
@@ -35,36 +24,36 @@ final class BracketFormatter {
     private boolean forceInline = false;
 
     static Function<TreeCursor, Stream<Doc>> extractor(
-            Function<TreeCursor, Doc> visitor,
-            Function<TreeCursor, Stream<TreeCursor>> mapper
+        Function<TreeCursor, Doc> visitor,
+        Function<TreeCursor, Stream<TreeCursor>> mapper
     ) {
         return extractor(visitor, mapper, TreeCursor::children);
     }
 
     static Function<TreeCursor, Stream<Doc>> extractor(
-            Function<TreeCursor, Doc> visitor,
-            Function<TreeCursor, Stream<TreeCursor>> mapper,
-            Function<TreeCursor, Stream<TreeCursor>> childrenSupplier
+        Function<TreeCursor, Doc> visitor,
+        Function<TreeCursor, Stream<TreeCursor>> mapper,
+        Function<TreeCursor, Stream<TreeCursor>> childrenSupplier
     ) {
         return (cursor) -> childrenSupplier.apply(cursor)
-                .flatMap(c -> {
-                    TreeType type = c.getTree().getType();
-                    return type == TreeType.WS || type == TreeType.COMMENT ? Stream.of(c) : mapper.apply(c);
-                })
-                .flatMap(c -> {
-                    // If the child extracts WS, then filter it down to just comments.
-                    return c.getTree().getType() == TreeType.WS
-                            ? c.getChildrenByType(TreeType.COMMENT).stream()
-                            : Stream.of(c);
-                })
-                .map(visitor)
-                .filter(doc -> doc != Doc.empty());
+            .flatMap(c -> {
+                TreeType type = c.getTree().getType();
+                return type == TreeType.WS || type == TreeType.COMMENT ? Stream.of(c) : mapper.apply(c);
+            })
+            .flatMap(c -> {
+                // If the child extracts WS, then filter it down to just comments.
+                return c.getTree().getType() == TreeType.WS
+                    ? c.getChildrenByType(TreeType.COMMENT).stream()
+                    : Stream.of(c);
+            })
+            .map(visitor)
+            .filter(doc -> doc != Doc.empty());
     }
 
     static Function<TreeCursor, Stream<TreeCursor>> byTypeMapper(TreeType childType) {
         return child -> child.getTree().getType() == childType
-                ? Stream.of(child)
-                : Stream.empty();
+            ? Stream.of(child)
+            : Stream.empty();
     }
 
     static Function<TreeCursor, Stream<TreeCursor>> siblingChildrenSupplier() {
@@ -74,8 +63,8 @@ final class BracketFormatter {
     // Brackets children of childType between open and closed brackets. If the children can fit together
     // on a single line, they are comma separated. If not, they are split onto multiple lines with no commas.
     static Function<TreeCursor, Stream<Doc>> extractByType(
-            TreeType childType,
-            Function<TreeCursor, Doc> visitor
+        TreeType childType,
+        Function<TreeCursor, Doc> visitor
     ) {
         return extractor(visitor, byTypeMapper(childType));
     }
@@ -107,8 +96,12 @@ final class BracketFormatter {
     // Check if the given tree has any hard lines. Nested arrays and objects are always considered hard lines.
     private boolean hasHardLine(TreeCursor cursor) {
         List<TreeCursor> children = cursor.findChildrenByType(
-                TreeType.COMMENT, TreeType.TEXT_BLOCK, TreeType.NODE_ARRAY, TreeType.NODE_OBJECT,
-                TreeType.QUOTED_TEXT);
+            TreeType.COMMENT,
+            TreeType.TEXT_BLOCK,
+            TreeType.NODE_ARRAY,
+            TreeType.NODE_OBJECT,
+            TreeType.QUOTED_TEXT
+        );
         for (TreeCursor child : children) {
             if (child.getTree().getType() != TreeType.QUOTED_TEXT) {
                 return true;

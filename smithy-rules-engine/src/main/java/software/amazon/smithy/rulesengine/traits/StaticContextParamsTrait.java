@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.LinkedHashMap;
@@ -49,8 +48,8 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .parameters(parameters);
+            .sourceLocation(getSourceLocation())
+            .parameters(parameters);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -66,9 +65,9 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
                 parameters.put(stringNode.getValue(), mapper.deserialize(node, StaticContextParamDefinition.class));
             });
             StaticContextParamsTrait trait = builder()
-                    .sourceLocation(value)
-                    .parameters(parameters)
-                    .build();
+                .sourceLocation(value)
+                .parameters(parameters)
+                .build();
             trait.setNodeCache(value);
             return trait;
         }

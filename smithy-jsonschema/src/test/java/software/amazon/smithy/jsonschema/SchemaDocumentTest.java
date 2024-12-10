@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,8 +43,8 @@ public class SchemaDocumentTest {
     @Test
     public void canSetRootSchema() {
         SchemaDocument document = SchemaDocument.builder()
-                .rootSchema(Schema.builder().type("string").build())
-                .build();
+            .rootSchema(Schema.builder().type("string").build())
+            .build();
         ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getRootSchema().getType().get(), equalTo("string"));
@@ -78,24 +67,26 @@ public class SchemaDocumentTest {
     @Test
     public void canAddDefinitions() {
         SchemaDocument document = SchemaDocument.builder()
-                .putDefinition("#/definitions/foo", Schema.builder().type("string").build())
-                .putDefinition("#/definitions/bar", Schema.builder().type("string").build())
-                .build();
+            .putDefinition("#/definitions/foo", Schema.builder().type("string").build())
+            .putDefinition("#/definitions/bar", Schema.builder().type("string").build())
+            .build();
         ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getDefinitions().values(), hasSize(2));
         assertTrue(document.getDefinition("#/definitions/foo").isPresent());
         assertTrue(document.getDefinition("#/definitions/bar").isPresent());
-        assertThat(node.getObjectMember("definitions").get().getMembers().keySet(),
-                   containsInAnyOrder(Node.from("bar"), Node.from("foo")));
+        assertThat(
+            node.getObjectMember("definitions").get().getMembers().keySet(),
+            containsInAnyOrder(Node.from("bar"), Node.from("foo"))
+        );
         assertThat(document.toBuilder().build(), equalTo(document));
     }
 
     @Test
     public void skipsDefinitionsNotRelative() {
         SchemaDocument document = SchemaDocument.builder()
-                .putDefinition("http://foo.com/bar", Schema.builder().type("string").build())
-                .build();
+            .putDefinition("http://foo.com/bar", Schema.builder().type("string").build())
+            .build();
         ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getDefinitions().values(), hasSize(1));
@@ -107,8 +98,8 @@ public class SchemaDocumentTest {
     public void unescapesJsonPointers() {
         Schema schema = Schema.builder().type("string").build();
         SchemaDocument document = SchemaDocument.builder()
-                .putDefinition("#/definitions/~foo", schema)
-                .build();
+            .putDefinition("#/definitions/~foo", schema)
+            .build();
 
         assertThat(document.getDefinition("#/definitions/~0foo"), equalTo(Optional.of(schema)));
     }
@@ -119,8 +110,8 @@ public class SchemaDocumentTest {
         Schema array = Schema.builder().items(string).build();
         Schema complex = Schema.builder().putProperty("foo", array).build();
         SchemaDocument document = SchemaDocument.builder()
-                .putDefinition("#/definitions/complex", complex)
-                .build();
+            .putDefinition("#/definitions/complex", complex)
+            .build();
 
         assertThat(document.getDefinition("#/definitions/complex"), equalTo(Optional.of(complex)));
         assertThat(document.getDefinition("#/definitions/complex/properties/foo"), equalTo(Optional.of(array)));
@@ -131,8 +122,8 @@ public class SchemaDocumentTest {
     public void emptyPointerReturnsRootSchema() {
         Schema string = Schema.builder().type("string").build();
         SchemaDocument document = SchemaDocument.builder()
-                .rootSchema(string)
-                .build();
+            .rootSchema(string)
+            .build();
 
         assertThat(document.getDefinition(""), equalTo(Optional.of(string)));
         assertThat(document.getDefinition("#"), equalTo(Optional.of(string)));

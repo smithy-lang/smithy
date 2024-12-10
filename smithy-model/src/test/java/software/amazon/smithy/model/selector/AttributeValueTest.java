@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -198,9 +202,9 @@ public class AttributeValueTest {
     @Test
     public void createsServiceValue() {
         ServiceShape serviceShape = ServiceShape.builder()
-                .id("foo.baz#Service")
-                .version("XYZ")
-                .build();
+            .id("foo.baz#Service")
+            .version("XYZ")
+            .build();
         AttributeValue service = AttributeValue.service(serviceShape);
 
         assertThat(service.toString(), equalTo(serviceShape.getId().toString()));
@@ -235,29 +239,41 @@ public class AttributeValueTest {
     @Test
     public void createsShapeValue() {
         ServiceShape serviceShape = ServiceShape.builder()
-                .id("foo.baz#Service")
-                .version("XYZ")
-                .addTrait(new DocumentationTrait("hi"))
-                .build();
+            .id("foo.baz#Service")
+            .version("XYZ")
+            .addTrait(new DocumentationTrait("hi"))
+            .build();
         AttributeValue service = AttributeValue.shape(serviceShape, MapUtils.of());
 
         assertThat(service.toString(), equalTo(serviceShape.getId().toString()));
-        assertThat(service.getPath(
-                ListUtils.of("id", "name")).toString(), equalTo(serviceShape.getId().getName()));
-        assertThat(service.getPath(
-                ListUtils.of("trait", "documentation")).toString(), equalTo("hi"));
-        assertThat(service.getPath(
-                ListUtils.of("service", "version")).toString(), equalTo("XYZ"));
+        assertThat(
+            service.getPath(
+                ListUtils.of("id", "name")
+            ).toString(),
+            equalTo(serviceShape.getId().getName())
+        );
+        assertThat(
+            service.getPath(
+                ListUtils.of("trait", "documentation")
+            ).toString(),
+            equalTo("hi")
+        );
+        assertThat(
+            service.getPath(
+                ListUtils.of("service", "version")
+            ).toString(),
+            equalTo("XYZ")
+        );
     }
 
     @Test
     public void createsTraitValue() {
         ServiceShape serviceShape = ServiceShape.builder()
-                .id("foo.baz#Service")
-                .version("XYZ")
-                .addTrait(new DocumentationTrait("hi"))
-                .addTrait(TagsTrait.builder().addValue("hi").build())
-                .build();
+            .id("foo.baz#Service")
+            .version("XYZ")
+            .addTrait(new DocumentationTrait("hi"))
+            .addTrait(TagsTrait.builder().addValue("hi").build())
+            .build();
         AttributeValue service = AttributeValue.shape(serviceShape, MapUtils.of()).getProperty("trait");
 
         assertThat(service.toString(), equalTo(""));
@@ -299,8 +315,10 @@ public class AttributeValueTest {
 
         assertThat(attr.getProperty("var").toString(), equalTo(""));
         assertThat(attr.getProperty("var").toMessageString(), equalTo(""));
-        assertThat(attr.getPath(ListUtils.of("var", "a")).getProperty("id").toMessageString(),
-                   equalTo("[foo.baz#Foo2, foo.baz#Foo3]"));
+        assertThat(
+            attr.getPath(ListUtils.of("var", "a")).getProperty("id").toMessageString(),
+            equalTo("[foo.baz#Foo2, foo.baz#Foo3]")
+        );
     }
 
     @Test

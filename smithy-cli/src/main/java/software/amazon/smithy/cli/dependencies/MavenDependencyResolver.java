@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.dependencies;
 
 import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
@@ -83,8 +72,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 throw new DependencyResolverException(exception);
             }
         });
-        commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
-                EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
+        commonProxy = getProxy(
+            EnvironmentVariable.SMITHY_PROXY_HOST.get(),
+            EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get()
+        );
         repositorySystem = locator.getService(RepositorySystem.class);
 
         // Sets a default maven local to the default local repo of the user.
@@ -114,15 +105,17 @@ public final class MavenDependencyResolver implements DependencyResolver {
             addProxyInfo(repository, builder);
             remoteRepositories.add(builder.build());
         } catch (URISyntaxException e) {
-            throw new DependencyResolverException("Invalid Maven repository URL: " + repository.getUrl()
-                                                  + ": " + e.getMessage());
+            throw new DependencyResolverException(
+                "Invalid Maven repository URL: " + repository.getUrl()
+                    + ": " + e.getMessage()
+            );
         }
     }
 
     private void addProxyInfo(MavenRepository repository, RemoteRepository.Builder builder) {
         if (repository.getProxyHost().isPresent()) {
             builder.setProxy(
-                    getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null))
+                getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null))
             );
         } else if (commonProxy != null) {
             builder.setProxy(commonProxy);
@@ -138,8 +131,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
         if (userPass != null) {
             String[] userSettings = parseProxyCredentials(userPass);
             AuthenticationBuilder authBuilder = new AuthenticationBuilder()
-                    .addUsername(userSettings[0])
-                    .addPassword(userSettings[1]);
+                .addUsername(userSettings[0])
+                .addPassword(userSettings[1]);
             return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort(), authBuilder.build());
         } else {
             return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort());
@@ -150,8 +143,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
     private static String[] parseProxyCredentials(String value) {
         String[] settings = value.split(":");
         if (settings.length != 2) {
-            throw new DependencyResolverException("Expected two values separated by ':' for "
-                    + EnvironmentVariable.SMITHY_PROXY_CREDENTIALS + ", but found " + settings.length);
+            throw new DependencyResolverException(
+                "Expected two values separated by ':' for "
+                    + EnvironmentVariable.SMITHY_PROXY_CREDENTIALS + ", but found " + settings.length
+            );
         }
         return settings;
     }
@@ -160,8 +155,9 @@ public final class MavenDependencyResolver implements DependencyResolver {
         try {
             return new URL(value);
         } catch (MalformedURLException exc) {
-            throw new DependencyResolverException("Expected a valid URL for "
-                + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value
+            throw new DependencyResolverException(
+                "Expected a valid URL for "
+                    + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value
             );
         }
     }
@@ -194,8 +190,14 @@ public final class MavenDependencyResolver implements DependencyResolver {
         final List<ResolvedArtifact> artifacts = new ArrayList<>(results.size());
         for (ArtifactResult result : results) {
             Artifact artifact = result.getArtifact();
-            artifacts.add(new ResolvedArtifact(artifact.getFile().toPath(), artifact.getGroupId(),
-                    artifact.getArtifactId(), artifact.getVersion()));
+            artifacts.add(
+                new ResolvedArtifact(
+                    artifact.getFile().toPath(),
+                    artifact.getGroupId(),
+                    artifact.getArtifactId(),
+                    artifact.getVersion()
+                )
+            );
         }
         return artifacts;
     }
@@ -225,8 +227,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
     }
 
     private List<ArtifactResult> resolveMavenArtifacts() {
-        LOGGER.fine(() -> "Resolving Maven dependencies for Smithy CLI; repos: "
-                          + remoteRepositories + "; dependencies: " + dependencies);
+        LOGGER.fine(
+            () -> "Resolving Maven dependencies for Smithy CLI; repos: "
+                + remoteRepositories + "; dependencies: " + dependencies
+        );
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRepositories(remoteRepositories);
         collectRequest.setDependencies(dependencies);
@@ -234,8 +238,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
 
         try {
             List<ArtifactResult> results = repositorySystem
-                    .resolveDependencies(session, dependencyRequest)
-                    .getArtifactResults();
+                .resolveDependencies(session, dependencyRequest)
+                .getArtifactResults();
             LOGGER.fine(() -> "Resolved Maven dependencies: " + results);
             return results;
         } catch (DependencyResolutionException e) {

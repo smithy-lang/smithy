@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Test;
@@ -14,17 +18,17 @@ public class AddDefaultConfigSettingsTest {
     @Test
     public void defaultsTo2023_08_11() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("default-config-settings.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("default-config-settings.smithy"))
+            .assemble()
+            .unwrap();
 
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         config.setUseIntegerType(true);
         ObjectNode result = OpenApiConverter.create()
-                .config(config)
-                .convertToNode(model);
+            .config(config)
+            .convertToNode(model);
 
         Node.assertEquals(result, Node.parse(IoUtils.readUtf8Resource(getClass(), "2023-08-11.openapi.json")));
     }
@@ -32,10 +36,10 @@ public class AddDefaultConfigSettingsTest {
     @Test
     public void usesVersion2023_08_11() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("default-config-settings.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("default-config-settings.smithy"))
+            .assemble()
+            .unwrap();
 
         OpenApiConfig openApiConfig = new OpenApiConfig();
         openApiConfig.setService(ShapeId.from("example.smithy#MyService"));
@@ -46,8 +50,8 @@ public class AddDefaultConfigSettingsTest {
         config.setApiGatewayDefaults(ApiGatewayDefaults.VERSION_2023_08_11);
         openApiConfig.setExtensions(mapper.serialize(config).expectObjectNode());
         ObjectNode result = OpenApiConverter.create()
-                .config(openApiConfig)
-                .convertToNode(model);
+            .config(openApiConfig)
+            .convertToNode(model);
 
         Node.assertEquals(result, Node.parse(IoUtils.readUtf8Resource(getClass(), "2023-08-11.openapi.json")));
     }
@@ -55,10 +59,10 @@ public class AddDefaultConfigSettingsTest {
     @Test
     public void canDisableDefaults() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("default-config-settings.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("default-config-settings.smithy"))
+            .assemble()
+            .unwrap();
 
         OpenApiConfig openApiConfig = new OpenApiConfig();
         openApiConfig.setService(ShapeId.from("example.smithy#MyService"));
@@ -69,8 +73,8 @@ public class AddDefaultConfigSettingsTest {
         config.setApiGatewayDefaults(ApiGatewayDefaults.DISABLED);
         openApiConfig.setExtensions(mapper.serialize(config).expectObjectNode());
         ObjectNode result = OpenApiConverter.create()
-                .config(openApiConfig)
-                .convertToNode(model);
+            .config(openApiConfig)
+            .convertToNode(model);
 
         Node.assertEquals(result, Node.parse(IoUtils.readUtf8Resource(getClass(), "disabled-defaults.openapi.json")));
     }

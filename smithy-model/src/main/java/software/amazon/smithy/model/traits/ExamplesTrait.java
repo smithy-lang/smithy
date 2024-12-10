@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
@@ -72,7 +61,6 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     public int hashCode() {
         return Objects.hash(toShapeId(), examples);
     }
-
 
     @Override
     public Builder toBuilder() {
@@ -175,9 +163,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public Node toNode() {
             ObjectNode.Builder builder = Node.objectNodeBuilder()
-                    .withMember("title", Node.from(title))
-                    .withOptionalMember("documentation", getDocumentation().map(Node::from))
-                    .withOptionalMember("error", getError().map(ErrorExample::toNode));
+                .withMember("title", Node.from(title))
+                .withOptionalMember("documentation", getDocumentation().map(Node::from))
+                .withOptionalMember("error", getError().map(ErrorExample::toNode));
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
@@ -203,8 +191,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             }
             Example example = (Example) o;
             return allowConstraintErrors == example.allowConstraintErrors && Objects.equals(title, example.title)
-                    && Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input)
-                    && Objects.equals(output, example.output) && Objects.equals(error, example.error);
+                && Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input)
+                && Objects.equals(output, example.output) && Objects.equals(error, example.error);
         }
 
         @Override
@@ -214,8 +202,12 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
         @Override
         public Builder toBuilder() {
-            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
-                    .allowConstraintErrors(allowConstraintErrors);
+            return new Builder().documentation(documentation)
+                .title(title)
+                .input(input)
+                .output(output)
+                .error(error)
+                .allowConstraintErrors(allowConstraintErrors);
         }
 
         public static Builder builder() {
@@ -282,8 +274,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         public static ErrorExample fromNode(Node node) {
             ErrorExample.Builder builder = builder();
             node.expectObjectNode()
-                    .expectMember("shapeId", ShapeId::fromNode, builder::shapeId)
-                    .expectObjectMember("content", builder::content);
+                .expectMember("shapeId", ShapeId::fromNode, builder::shapeId)
+                .expectObjectMember("content", builder::content);
             return builder.build();
         }
 
@@ -304,9 +296,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public Node toNode() {
             return ObjectNode.objectNodeBuilder()
-                    .withMember("shapeId", shapeId.toString())
-                    .withMember("content", content)
-                    .build();
+                .withMember("shapeId", shapeId.toString())
+                .withMember("content", content)
+                .build();
         }
 
         @Override
@@ -373,12 +365,12 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private static Example exampleFromNode(ObjectNode node) {
             Example.Builder builder = Example.builder();
             node.expectObjectNode()
-                    .getStringMember("title", builder::title)
-                    .getStringMember("documentation", builder::documentation)
-                    .getObjectMember("input", builder::input)
-                    .getObjectMember("output", builder::output)
-                    .getMember("error", ErrorExample::fromNode, builder::error)
-                    .getBooleanMember("allowConstraintErrors", builder::allowConstraintErrors);
+                .getStringMember("title", builder::title)
+                .getStringMember("documentation", builder::documentation)
+                .getObjectMember("input", builder::input)
+                .getObjectMember("output", builder::output)
+                .getMember("error", ErrorExample::fromNode, builder::error)
+                .getBooleanMember("allowConstraintErrors", builder::allowConstraintErrors);
             return builder.build();
         }
     }

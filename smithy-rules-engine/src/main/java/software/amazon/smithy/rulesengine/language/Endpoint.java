@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -94,9 +92,12 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
 
         objectNode.getObjectMember(HEADERS, headers -> {
             for (Map.Entry<String, Node> header : headers.getStringMap().entrySet()) {
-                builder.putHeader(header.getKey(),
-                        header.getValue().expectArrayNode("header values should be an array")
-                                .getElementsAs(Expression::fromNode));
+                builder.putHeader(
+                    header.getKey(),
+                    header.getValue()
+                        .expectArrayNode("header values should be an array")
+                        .getElementsAs(Expression::fromNode)
+                );
             }
         });
 
@@ -151,9 +152,13 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
      */
     public List<Map<Identifier, Literal>> getEndpointAuthSchemes() {
         return Optional.ofNullable(getProperties().get(ID_AUTH_SCHEMES))
-            .map(a -> a.asTupleLiteral().get().stream()
-                .map(l -> l.asRecordLiteral().get())
-                .collect(Collectors.toList()))
+            .map(
+                a -> a.asTupleLiteral()
+                    .get()
+                    .stream()
+                    .map(l -> l.asRecordLiteral().get())
+                    .collect(Collectors.toList())
+            )
             .orElse(Collections.emptyList());
     }
 
@@ -179,10 +184,10 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
         }
 
         return ObjectNode.builder()
-                .withMember(URL, url)
-                .withMember(PROPERTIES, propertiesBuilder.build())
-                .withMember(HEADERS, headersBuilder.build())
-                .build();
+            .withMember(URL, url)
+            .withMember(PROPERTIES, propertiesBuilder.build())
+            .withMember(HEADERS, headersBuilder.build())
+            .build();
     }
 
     @Override
@@ -211,7 +216,7 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
             sb.append("headers:\n");
             for (Map.Entry<String, List<Expression>> entry : headers.entrySet()) {
                 sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2))
-                        .append("\n");
+                    .append("\n");
             }
         }
 
@@ -219,7 +224,7 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
             sb.append("properties:\n");
             for (Map.Entry<Identifier, Literal> entry : properties.entrySet()) {
                 sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2))
-                        .append("\n");
+                    .append("\n");
             }
         }
 

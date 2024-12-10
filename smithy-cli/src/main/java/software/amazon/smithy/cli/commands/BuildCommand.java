@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.PrintWriter;
@@ -77,7 +66,10 @@ final class BuildCommand implements Command {
         arguments.addReceiver(new Options());
 
         CommandAction action = HelpActionWrapper.fromCommand(
-                this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
+            this,
+            parentCommandName,
+            new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader)
+        );
 
         return action.apply(arguments, env);
     }
@@ -112,12 +104,12 @@ final class BuildCommand implements Command {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         ClassLoader classLoader = env.classLoader();
         Model model = new ModelBuilder()
-                .config(config)
-                .arguments(arguments)
-                .env(env)
-                .models(models)
-                .validationPrinter(env.stderr())
-                .build();
+            .config(config)
+            .arguments(arguments)
+            .env(env)
+            .models(models)
+            .validationPrinter(env.stderr())
+            .build();
 
         if (!standardOptions.quiet()) {
             env.colors().println(env.stderr(), "Validated model, now starting projections...", ColorTheme.MUTED);
@@ -132,8 +124,8 @@ final class BuildCommand implements Command {
             return assembler;
         };
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader, modelAssemblerSupplier)
-                .config(config)
-                .model(model);
+            .config(config)
+            .model(model);
 
         if (buildOptions.output() != null) {
             smithyBuild.outputDirectory(buildOptions.output());
@@ -158,10 +150,14 @@ final class BuildCommand implements Command {
         if (!standardOptions.quiet()) {
             try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
                 buffer.print("Summary", ColorTheme.EM_UNDERLINE);
-                buffer.println(String.format(": Smithy built %s projection(s), %s plugin(s), and %s artifacts",
-                                       resultConsumer.projectionCount,
-                                       resultConsumer.pluginCount,
-                                       resultConsumer.artifactCount));
+                buffer.println(
+                    String.format(
+                        ": Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                        resultConsumer.projectionCount,
+                        resultConsumer.pluginCount,
+                        resultConsumer.artifactCount
+                    )
+                );
             }
         }
 
@@ -171,10 +167,13 @@ final class BuildCommand implements Command {
             StringBuilder error = new StringBuilder();
             try (ColorBuffer buffer = ColorBuffer.of(env.colors(), error)) {
                 buffer.println();
-                buffer.println(String.format(
+                buffer.println(
+                    String.format(
                         "The following %d Smithy build projection(s) failed: %s",
                         resultConsumer.failedProjections.size(),
-                        resultConsumer.failedProjections));
+                        resultConsumer.failedProjections
+                    )
+                );
             }
             throw new CliError(error.toString());
         }
@@ -246,23 +245,23 @@ final class BuildCommand implements Command {
                         w.println();
                     }, statusStyle);
                     buffer
-                            .print(status)
-                            .append(" projection ")
-                            .append(result.getProjectionName())
-                            .append(" (")
-                            .append(String.valueOf(result.getModel().toSet().size()))
-                            .append("): ")
-                            .append(String.valueOf(root))
-                            .println();
+                        .print(status)
+                        .append(" projection ")
+                        .append(result.getProjectionName())
+                        .append(" (")
+                        .append(String.valueOf(result.getModel().toSet().size()))
+                        .append("): ")
+                        .append(String.valueOf(root))
+                        .println();
                 }
 
                 if (result.isBroken()) {
                     SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(result.getModel(), 4);
                     PrettyAnsiValidationFormatter formatter = PrettyAnsiValidationFormatter.builder()
-                            .sourceContextLoader(loader)
-                            .colors(colors)
-                            .titleLabel(result.getProjectionName(), statusStyle)
-                            .build();
+                        .sourceContextLoader(loader)
+                        .colors(colors)
+                        .titleLabel(result.getProjectionName(), statusStyle)
+                        .build();
                     result.getEvents().forEach(event -> {
                         if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
                             buffer.println(formatter.format(event));

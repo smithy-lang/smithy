@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -136,15 +140,19 @@ public class ModelInteropTransformerTest {
 
         private static ObjectNode serializeNormalizedModel(Model model, ModelSerializer serializer) {
             Model normalized = Model.assembler()
-                    .addDocumentNode(serializer.serialize(model))
-                    .assemble()
-                    .getResult()
-                    .get();
+                .addDocumentNode(serializer.serialize(model))
+                .assemble()
+                .getResult()
+                .get();
             return serializer.serialize(normalized);
         }
 
         private static UpgradeTestCase createFromDirectory(String directory) {
-            try (Stream<Path> paths = Files.walk(Paths.get(ModelInteropTransformerTest.class.getResource(directory).toURI()))) {
+            try (
+                Stream<Path> paths = Files.walk(
+                    Paths.get(ModelInteropTransformerTest.class.getResource(directory).toURI())
+                )
+            ) {
                 UpgradeTestCase testCase = new UpgradeTestCase();
                 paths.filter(Files::isRegularFile).forEach(file -> {
                     if (file.endsWith("upgraded.smithy") || file.endsWith("upgraded.json")) {
@@ -165,27 +173,34 @@ public class ModelInteropTransformerTest {
 
     private static Matcher<ShapeId> targetsShape(ValidatedResult<Model> result, String shapeName) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("Targets " + shapeName)
-                .addAssertion(member -> member.getTarget()
-                                      .equals(ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, shapeName)),
-                              member -> "targeted " + member.getTarget())
-                .build();
+            .description("Targets " + shapeName)
+            .addAssertion(
+                member -> member.getTarget()
+                    .equals(ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, shapeName)),
+                member -> "targeted " + member.getTarget()
+            )
+            .build();
     }
 
     private static Matcher<ShapeId> addedDefaultTrait(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("member to have a default trait")
-                .addAssertion(member -> member.hasTrait(DefaultTrait.class),
-                              member -> "no @default trait")
-                .build();
+            .description("member to have a default trait")
+            .addAssertion(
+                member -> member.hasTrait(DefaultTrait.class),
+                member -> "no @default trait"
+            )
+            .build();
     }
 
     private static Matcher<ShapeId> v2ShapeUsesBoxTrait(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("v2 shape uses box trait")
-                .addEventAssertion(Validator.MODEL_ERROR, Severity.ERROR,
-                                   "@box is not supported in Smithy IDL 2.0")
-                .build();
+            .description("v2 shape uses box trait")
+            .addEventAssertion(
+                Validator.MODEL_ERROR,
+                Severity.ERROR,
+                "@box is not supported in Smithy IDL 2.0"
+            )
+            .build();
     }
 
     // This test ensures that the upgrader properly upgrades 1.0 models to 2.0 models, back patches 2.0 models with
@@ -231,9 +246,9 @@ public class ModelInteropTransformerTest {
             expectedNode.getStringMap().forEach((k, v) -> nullability.put(k, v.expectBooleanNode().getValue()));
 
             Model original = Model.assembler()
-                    .addUnparsedModel(name + ".smithy", contents)
-                    .assemble()
-                    .unwrap();
+                .addUnparsedModel(name + ".smithy", contents)
+                .assemble()
+                .unwrap();
 
             upgradeAssertions(name, original, nullability, 0);
 
@@ -243,9 +258,9 @@ public class ModelInteropTransformerTest {
             for (int tripCount = 1; tripCount <= 2; tripCount++) {
                 Node serialized = ModelSerializer.builder().build().serialize(updatedModel);
                 updatedModel = Model.assembler()
-                        .addDocumentNode(serialized)
-                        .assemble()
-                        .unwrap();
+                    .addDocumentNode(serialized)
+                    .assemble()
+                    .unwrap();
                 upgradeAssertions(name, updatedModel, nullability, tripCount);
             }
         });
@@ -259,12 +274,14 @@ public class ModelInteropTransformerTest {
         Map<String, Boolean> result = new HashMap<>();
         boolean isBoxed = member.getMemberTrait(model, BoxTrait.class).isPresent();
         result.put("v1-box", isBoxed);
-        result.put("v1-client-zero-value",
-                   index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1));
+        result.put(
+            "v1-client-zero-value",
+            index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1)
+        );
         result.put("v2", index.isMemberNullable(model.expectShape(shape, MemberShape.class)));
 
         String reason = "Expected " + name + " to have nullability of " + expected + " but found "
-                        + result + " (round trip #" + roundTrip + ')';
+            + result + " (round trip #" + roundTrip + ')';
 
         assertThat(reason, expected, equalTo(result));
 
@@ -272,7 +289,7 @@ public class ModelInteropTransformerTest {
         boolean isDeprecatedIndexWorking = index.isNullable(member);
         if (!isDeprecatedIndexWorking == result.get("v1-client-zero-value")) {
             String reasonBox = "Expected deprecated index checks to be " + result.get("v1") + " for " + name
-                               + "; traits: " + member.getAllTraits() + "; round trip " + roundTrip;
+                + "; traits: " + member.getAllTraits() + "; round trip " + roundTrip;
             Assertions.fail(reasonBox);
         }
     }
@@ -283,20 +300,23 @@ public class ModelInteropTransformerTest {
     @Test
     public void boxTraitOnRootShapeIsNotLossyWhenRoundTripped() {
         Model model = Model.assembler()
-                .addUnparsedModel("foo.smithy", "$version: \"1.0\"\n"
-                                                + "namespace smithy.example\n"
-                                                + "@box\n"
-                                                + "integer MyInteger\n"
-                                                + "\n"
-                                                + "integer PrimitiveInteger\n"
-                                                + "\n"
-                                                + "structure Foo {\n"
-                                                + "    @box\n"
-                                                + "    baz: MyInteger\n"
-                                                + "    bam: PrimitiveInteger\n"
-                                                +"}\n")
-                .assemble()
-                .unwrap();
+            .addUnparsedModel(
+                "foo.smithy",
+                "$version: \"1.0\"\n"
+                    + "namespace smithy.example\n"
+                    + "@box\n"
+                    + "integer MyInteger\n"
+                    + "\n"
+                    + "integer PrimitiveInteger\n"
+                    + "\n"
+                    + "structure Foo {\n"
+                    + "    @box\n"
+                    + "    baz: MyInteger\n"
+                    + "    bam: PrimitiveInteger\n"
+                    + "}\n"
+            )
+            .assemble()
+            .unwrap();
 
         Node roundTripNode = ModelSerializer.builder().build().serialize(model);
         Model roundTripModel = Model.assembler().addDocumentNode(roundTripNode).assemble().unwrap();
@@ -321,9 +341,9 @@ public class ModelInteropTransformerTest {
         Node serialized = ModelSerializer.builder().build().serialize(model);
         String raw = Node.prettyPrintJson(serialized);
         Model model2 = Model.assembler()
-                .addUnparsedModel("foo.json", raw)
-                .assemble()
-                .unwrap();
+            .addUnparsedModel("foo.json", raw)
+            .assemble()
+            .unwrap();
 
         assertThat(model2.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
         assertThat(model2.expectShape(myInteger).hasTrait(DefaultTrait.class), is(false));
@@ -346,45 +366,48 @@ public class ModelInteropTransformerTest {
     @Test
     public void boxTraitOnlyAddedToRootWhenNotSetToZeroValueDefault() {
         Model model = Model.assembler()
-                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                + "namespace smithy.example\n"
-                                                + "\n"
-                                                + "@default(\"\")\n"
-                                                + "string DefaultString\n"
-                                                + "\n"
-                                                + "integer BoxedInteger\n"
-                                                + "\n"
-                                                + "@default(1)\n"
-                                                + "integer BoxedIntegerWithDefault\n"
-                                                + "\n"
-                                                + "@default(0)\n"
-                                                + "integer PrimitiveInteger\n"
-                                                + "\n"
-                                                + "intEnum BoxedIntEnum {\n"
-                                                + "    ONE = 1\n"
-                                                + "}\n"
-                                                + "\n"
-                                                + "@default(1)\n"
-                                                + "intEnum BoxedIntEnumWithDefault {\n"
-                                                + "    ONE = 1\n"
-                                                + "}\n"
-                                                + "\n"
-                                                + "@default(0)\n"
-                                                + "intEnum PrimitiveIntEnum {\n"
-                                                + "    ZERO = 0\n"
-                                                + "}\n"
-                                                + "\n"
-                                                + "structure Foo {\n"
-                                                + "    DefaultString: DefaultString = \"\"\n"
-                                                + "    BoxedInteger: BoxedInteger\n"
-                                                + "    PrimitiveInteger: PrimitiveInteger = 0\n"
-                                                + "    BoxedIntegerWithDefault: BoxedIntegerWithDefault = 1\n"
-                                                + "    BoxedIntEnum: BoxedIntEnum\n"
-                                                + "    BoxedIntEnumWithDefault: BoxedIntEnumWithDefault = 1\n"
-                                                + "    PrimitiveIntEnum: PrimitiveIntEnum = 0\n"
-                                                +"}\n")
-                .assemble()
-                .unwrap();
+            .addUnparsedModel(
+                "foo.smithy",
+                "$version: \"2.0\"\n"
+                    + "namespace smithy.example\n"
+                    + "\n"
+                    + "@default(\"\")\n"
+                    + "string DefaultString\n"
+                    + "\n"
+                    + "integer BoxedInteger\n"
+                    + "\n"
+                    + "@default(1)\n"
+                    + "integer BoxedIntegerWithDefault\n"
+                    + "\n"
+                    + "@default(0)\n"
+                    + "integer PrimitiveInteger\n"
+                    + "\n"
+                    + "intEnum BoxedIntEnum {\n"
+                    + "    ONE = 1\n"
+                    + "}\n"
+                    + "\n"
+                    + "@default(1)\n"
+                    + "intEnum BoxedIntEnumWithDefault {\n"
+                    + "    ONE = 1\n"
+                    + "}\n"
+                    + "\n"
+                    + "@default(0)\n"
+                    + "intEnum PrimitiveIntEnum {\n"
+                    + "    ZERO = 0\n"
+                    + "}\n"
+                    + "\n"
+                    + "structure Foo {\n"
+                    + "    DefaultString: DefaultString = \"\"\n"
+                    + "    BoxedInteger: BoxedInteger\n"
+                    + "    PrimitiveInteger: PrimitiveInteger = 0\n"
+                    + "    BoxedIntegerWithDefault: BoxedIntegerWithDefault = 1\n"
+                    + "    BoxedIntEnum: BoxedIntEnum\n"
+                    + "    BoxedIntEnumWithDefault: BoxedIntEnumWithDefault = 1\n"
+                    + "    PrimitiveIntEnum: PrimitiveIntEnum = 0\n"
+                    + "}\n"
+            )
+            .assemble()
+            .unwrap();
 
         Node roundTripNode = ModelSerializer.builder().build().serialize(model);
         Model roundTripModel = Model.assembler().addDocumentNode(roundTripNode).assemble().unwrap();
@@ -462,8 +485,8 @@ public class ModelInteropTransformerTest {
     @Test
     public void doesNotFailWhenUpgradingWhenZeroValueIncompatibleWithRangeTrait() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("range-upgrade-1.0.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("range-upgrade-1.0.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(false));
 
@@ -474,8 +497,11 @@ public class ModelInteropTransformerTest {
         assertThat(shape1.hasTrait(RangeTrait.class), is(true));
         // Make sure the range trait wasn't modified.
         assertThat(shape1.expectTrait(RangeTrait.class).getMin().get().toString(), equalTo("1"));
-        assertThat(result.getValidationEvents().stream()
-                           .anyMatch(event -> event.getMessage().contains("must be greater than or equal to 1")),
-                   is(true));
+        assertThat(
+            result.getValidationEvents()
+                .stream()
+                .anyMatch(event -> event.getMessage().contains("must be greater than or equal to 1")),
+            is(true)
+        );
     }
 }

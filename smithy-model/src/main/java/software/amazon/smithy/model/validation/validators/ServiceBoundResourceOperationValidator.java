@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -49,13 +48,13 @@ public final class ServiceBoundResourceOperationValidator extends AbstractValida
                     for (MemberShape member : operationIndex.getInputMembers(operation).values()) {
                         if (isImplicitIdentifierBinding(member, resource)) {
                             potentiallyBetterBindings.computeIfAbsent(operation, k -> new HashSet<>())
-                                    .add(resource.getId());
+                                .add(resource.getId());
                         }
                     }
                     for (MemberShape member : operationIndex.getOutputMembers(operation).values()) {
                         if (isImplicitIdentifierBinding(member, resource)) {
                             potentiallyBetterBindings.computeIfAbsent(operation, k -> new HashSet<>())
-                                    .add(resource.getId());
+                                .add(resource.getId());
                         }
                     }
                 }
@@ -63,12 +62,22 @@ public final class ServiceBoundResourceOperationValidator extends AbstractValida
 
             // Emit events per service that's present with a potentially bad binding.
             for (Map.Entry<OperationShape, Set<ShapeId>> entry : potentiallyBetterBindings.entrySet()) {
-                events.add(warning(entry.getKey(), service, format(
-                        "The `%s` operation is bound to the `%s` service but has members that match identifiers "
+                events.add(
+                    warning(
+                        entry.getKey(),
+                        service,
+                        format(
+                            "The `%s` operation is bound to the `%s` service but has members that match identifiers "
                                 + "of the following resource shapes: [%s]. It may be more accurately bound to one "
                                 + "of them than directly to the service.",
-                        entry.getKey().getId(), service.getId(), ValidationUtils.tickedList(entry.getValue())),
-                        service.getId().toString(), entry.getKey().getId().getName()));
+                            entry.getKey().getId(),
+                            service.getId(),
+                            ValidationUtils.tickedList(entry.getValue())
+                        ),
+                        service.getId().toString(),
+                        entry.getKey().getId().getName()
+                    )
+                );
             }
         }
 
@@ -77,7 +86,7 @@ public final class ServiceBoundResourceOperationValidator extends AbstractValida
 
     private boolean isImplicitIdentifierBinding(MemberShape member, ResourceShape resource) {
         return resource.getIdentifiers().containsKey(member.getMemberName())
-                && member.getTrait(RequiredTrait.class).isPresent()
-                && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
+            && member.getTrait(RequiredTrait.class).isPresent()
+            && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
     }
 }

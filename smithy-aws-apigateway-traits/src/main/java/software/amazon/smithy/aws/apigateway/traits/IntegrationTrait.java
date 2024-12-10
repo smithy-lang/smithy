@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.traits;
 
 import java.util.ArrayList;
@@ -310,11 +299,23 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      */
     public ObjectNode toExpandedNode(ToShapeId service, ToShapeId operation) {
         ObjectNode result = toNode().expectObjectNode();
-        result = result.withMember(URI_KEY, formatComponent(
-                service, operation, result.expectStringMember(URI_KEY).getValue()));
+        result = result.withMember(
+            URI_KEY,
+            formatComponent(
+                service,
+                operation,
+                result.expectStringMember(URI_KEY).getValue()
+            )
+        );
         if (result.containsMember(CREDENTIALS_KEY)) {
-            result = result.withMember(CREDENTIALS_KEY, formatComponent(
-                    service, operation, result.expectStringMember(CREDENTIALS_KEY).getValue()));
+            result = result.withMember(
+                CREDENTIALS_KEY,
+                formatComponent(
+                    service,
+                    operation,
+                    result.expectStringMember(CREDENTIALS_KEY).getValue()
+                )
+            );
         }
         return result;
     }
@@ -329,8 +330,8 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      */
     public static String formatComponent(ToShapeId service, ToShapeId operation, String component) {
         return component
-                .replace(SERVICE_NAME_LABEL, service.toShapeId().getName())
-                .replace(OPERATION_NAME_LABEL, operation.toShapeId().getName());
+            .replace(SERVICE_NAME_LABEL, service.toShapeId().getName())
+            .replace(OPERATION_NAME_LABEL, operation.toShapeId().getName());
     }
 
     @Override
@@ -344,22 +345,22 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .type(type)
-                .uri(uri)
-                .credentials(credentials)
-                .httpMethod(httpMethod)
-                .passThroughBehavior(passThroughBehavior)
-                .contentHandling(contentHandling)
-                .timeoutInMillis(timeoutInMillis)
-                .connectionId(connectionId)
-                .connectionType(connectionType)
-                .cacheNamespace(cacheNamespace)
-                .payloadFormatVersion(payloadFormatVersion)
-                .requestParameters(requestParameters)
-                .requestTemplates(requestTemplates)
-                .responses(responses)
-                .cacheKeyParameters(cacheKeyParameters);
+            .sourceLocation(getSourceLocation())
+            .type(type)
+            .uri(uri)
+            .credentials(credentials)
+            .httpMethod(httpMethod)
+            .passThroughBehavior(passThroughBehavior)
+            .contentHandling(contentHandling)
+            .timeoutInMillis(timeoutInMillis)
+            .connectionId(connectionId)
+            .connectionType(connectionType)
+            .cacheNamespace(cacheNamespace)
+            .payloadFormatVersion(payloadFormatVersion)
+            .requestParameters(requestParameters)
+            .requestTemplates(requestTemplates)
+            .responses(responses)
+            .cacheKeyParameters(cacheKeyParameters);
     }
 
     public static final class Builder extends AbstractTraitBuilder<IntegrationTrait, Builder> {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.testrunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,8 +19,8 @@ public class SmithyDiffTestSuiteTest {
     public void throwsWhenFailed() {
         try {
             SmithyDiffTestSuite.runner()
-                    .addTestCasesFromUrl(getClass().getResource("testrunner/invalid"))
-                    .run();
+                .addTestCasesFromUrl(getClass().getResource("testrunner/invalid"))
+                .run();
             fail("Expected to throw");
         } catch (SmithyDiffTestSuite.Error e) {
             assertThat(e.result.getSuccessCount(), is(1));
@@ -34,8 +33,8 @@ public class SmithyDiffTestSuiteTest {
     @Test
     public void runsCaseWithFile() {
         SmithyDiffTestSuite.Result result = SmithyDiffTestSuite.runner()
-                .addTestCasesFromUrl(getClass().getResource("testrunner/valid"))
-                .run();
+            .addTestCasesFromUrl(getClass().getResource("testrunner/valid"))
+            .run();
 
         assertThat(result.getFailedResults().size(), is(0));
         assertThat(result.getSuccessCount(), is(3));

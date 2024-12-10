@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
@@ -48,21 +37,23 @@ final class AddIntegrations implements ApiGatewayMapper {
 
     @Override
     public OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String httpMethod,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String httpMethod,
+        String path
     ) {
         IntegrationTraitIndex index = IntegrationTraitIndex.of(context.getModel());
         return index.getIntegrationTrait(context.getService(), shape)
-                .map(trait -> operation.toBuilder()
-                        .putExtension(INTEGRATION_EXTENSION_NAME, createIntegration(context, shape, trait))
-                        .build())
-                .orElseGet(() -> {
-                    LOGGER.warning("No API Gateway integration trait found for " + shape.getId());
-                    return operation;
-                });
+            .map(
+                trait -> operation.toBuilder()
+                    .putExtension(INTEGRATION_EXTENSION_NAME, createIntegration(context, shape, trait))
+                    .build()
+            )
+            .orElseGet(() -> {
+                LOGGER.warning("No API Gateway integration trait found for " + shape.getId());
+                return operation;
+            });
     }
 
     static ObjectNode createIntegration(MockIntegrationTrait integration) {
@@ -72,9 +63,9 @@ final class AddIntegrations implements ApiGatewayMapper {
     }
 
     private static ObjectNode createIntegration(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            Trait integration
+        Context<? extends Trait> context,
+        OperationShape shape,
+        Trait integration
     ) {
         ObjectNode integrationNode;
         if (integration instanceof MockIntegrationTrait) {
@@ -90,24 +81,29 @@ final class AddIntegrations implements ApiGatewayMapper {
         Optional<Node> passthroughBehavior = integrationNode.getMember(INCORRECT_PASSTHROUGH_BEHAVIOR);
         if (passthroughBehavior.isPresent()) {
             integrationNode = integrationNode
-                    .withoutMember(INCORRECT_PASSTHROUGH_BEHAVIOR)
-                    .withMember(PASSTHROUGH_BEHAVIOR, passthroughBehavior.get());
+                .withoutMember(INCORRECT_PASSTHROUGH_BEHAVIOR)
+                .withMember(PASSTHROUGH_BEHAVIOR, passthroughBehavior.get());
         }
         return integrationNode;
     }
 
-    private static void validateTraitConfiguration(IntegrationTrait trait,
-                                                   Context<? extends Trait> context,
-                                                   OperationShape operation) {
+    private static void validateTraitConfiguration(
+        IntegrationTrait trait,
+        Context<? extends Trait> context,
+        OperationShape operation
+    ) {
         // For HTTP APIs, API Gateway requires that the payloadFormatVersion is set on integrations.
         // https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
         // If the payloadFormatVersion has not been set on an integration and the apiGatewayType has been set to "HTTP",
         // the conversion fails.
-        ApiGatewayConfig.ApiType apiType = context.getConfig().getExtensions(ApiGatewayConfig.class)
-                .getApiGatewayType();
+        ApiGatewayConfig.ApiType apiType = context.getConfig()
+            .getExtensions(ApiGatewayConfig.class)
+            .getApiGatewayType();
         if (!trait.getPayloadFormatVersion().isPresent() && apiType.equals(ApiGatewayConfig.ApiType.HTTP)) {
-            throw new OpenApiException("When the 'apiGatewayType' OpenAPI conversion setting is 'HTTP', a "
-                    + "'payloadFormatVersion' must be set on the aws.apigateway#integration trait.");
+            throw new OpenApiException(
+                "When the 'apiGatewayType' OpenAPI conversion setting is 'HTTP', a "
+                    + "'payloadFormatVersion' must be set on the aws.apigateway#integration trait."
+            );
         }
     }
 }

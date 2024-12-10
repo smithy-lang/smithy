@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.ArrayList;
@@ -52,9 +51,12 @@ public final class AwsPartition extends LibraryFunction {
     private static final Map<String, Partition> REGION_MAP = new HashMap<>();
 
     static {
-        PARTITIONS.addAll(Partitions.fromNode(
-                        Node.parse(Partitions.class.getResourceAsStream("partitions.json")))
-                .getPartitions());
+        PARTITIONS.addAll(
+            Partitions.fromNode(
+                Node.parse(Partitions.class.getResourceAsStream("partitions.json"))
+            )
+                .getPartitions()
+        );
         initializeRegionMap();
     }
 
@@ -174,14 +176,24 @@ public final class AwsPartition extends LibraryFunction {
             }
 
             PartitionOutputs matchedPartitionOutputs = matchedPartition.getOutputs();
-            return Value.recordValue(MapUtils.of(
-                    NAME, Value.stringValue(matchedPartition.getId()),
-                    DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
-                    DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
-                    SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
-                    SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
-                    INFERRED, Value.booleanValue(inferred),
-                    IMPLICIT_GLOBAL_REGION, Value.stringValue(matchedPartitionOutputs.getImplicitGlobalRegion())));
+            return Value.recordValue(
+                MapUtils.of(
+                    NAME,
+                    Value.stringValue(matchedPartition.getId()),
+                    DNS_SUFFIX,
+                    Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
+                    DUAL_STACK_DNS_SUFFIX,
+                    Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
+                    SUPPORTS_FIPS,
+                    Value.booleanValue(matchedPartitionOutputs.supportsFips()),
+                    SUPPORTS_DUAL_STACK,
+                    Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
+                    INFERRED,
+                    Value.booleanValue(inferred),
+                    IMPLICIT_GLOBAL_REGION,
+                    Value.stringValue(matchedPartitionOutputs.getImplicitGlobalRegion())
+                )
+            );
         }
 
         @Override

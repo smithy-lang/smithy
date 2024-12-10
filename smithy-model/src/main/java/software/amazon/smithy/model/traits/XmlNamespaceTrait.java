@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.Objects;
@@ -50,8 +39,8 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withMember("uri", Node.from(uri))
-                .withOptionalMember("prefix", getPrefix().map(Node::from));
+            .withMember("uri", Node.from(uri))
+            .withOptionalMember("prefix", getPrefix().map(Node::from));
     }
 
     /**
@@ -64,9 +53,9 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .uri(uri)
-                .prefix(prefix);
+            .sourceLocation(getSourceLocation())
+            .uri(uri)
+            .prefix(prefix);
     }
 
     /**
@@ -104,8 +93,8 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
         public XmlNamespaceTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode()
-                    .expectStringMember("uri", builder::uri)
-                    .getStringMember("prefix", builder::prefix);
+                .expectStringMember("uri", builder::uri)
+                .getStringMember("prefix", builder::prefix);
             XmlNamespaceTrait result = builder.build();
             result.setNodeCache(value);
             return result;

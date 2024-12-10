@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,8 +41,9 @@ public class AnnotationTraitTest {
     @Test
     public void annotationTraitsAreNotLossy() {
         ObjectNode objectNode = new ObjectNode(
-                MapUtils.of(Node.from("hi"), Node.from("bye")),
-                SourceLocation.NONE);
+            MapUtils.of(Node.from("hi"), Node.from("bye")),
+            SourceLocation.NONE
+        );
         SensitiveTrait trait = new SensitiveTrait.Provider().createTrait(ShapeId.from("foo#bar"), objectNode);
 
         assertThat(trait.toNode(), equalTo(objectNode));

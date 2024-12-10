@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -22,7 +21,7 @@ final class FilterDeprecatedRelativeVersion {
      * @see <a href="https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">SemVer</a>
      */
     private static final Pattern SEMVER_REGEX = Pattern.compile(
-            "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)"
+        "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)"
             + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     );
 
@@ -30,7 +29,8 @@ final class FilterDeprecatedRelativeVersion {
 
     FilterDeprecatedRelativeVersion(String relativeVersion) {
         if (relativeVersion != null && !isSemVer(relativeVersion)) {
-            throw new IllegalArgumentException("Provided relativeDate: `"
+            throw new IllegalArgumentException(
+                "Provided relativeDate: `"
                     + relativeVersion
                     + "` is not a valid ."
             );
@@ -56,7 +56,8 @@ final class FilterDeprecatedRelativeVersion {
             // Remove any shapes that were deprecated before the specified version.
             if (isSemVer(since)) {
                 if (compareSemVer(relativeVersion, since) > 0) {
-                    LOGGER.fine("Filtering deprecated shape: `"
+                    LOGGER.fine(
+                        "Filtering deprecated shape: `"
                             + shape + "`"
                             + ". Shape was deprecated as of version: " + since
                     );

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
@@ -79,8 +68,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     public static TraceFile fromNode(Node value) {
         ObjectNode node = value.expectObjectNode();
         Builder builder = builder()
-                .smithyTrace(node.expectStringMember(SMITHY_TRACE_TEXT).getValue())
-                .metadata(TraceMetadata.fromNode(node.expectObjectMember(METADATA_TEXT)));
+            .smithyTrace(node.expectStringMember(SMITHY_TRACE_TEXT).getValue())
+            .metadata(TraceMetadata.fromNode(node.expectObjectMember(METADATA_TEXT)));
 
         //parse shapes
         Map<StringNode, Node> shapeMap = node.expectObjectMember(SHAPES_TEXT).getMembers();
@@ -115,19 +104,19 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         for (Map.Entry<ShapeId, List<ShapeLink>> entry : shapes.entrySet()) {
             String shapeId = entry.getKey().toString();
             ArrayNode shapeListNode = entry.getValue() //get list of ShapeLinks
-                    .stream()
-                    .map(ShapeLink::toNode) //convert each ShapeLink to an ObjectNode
-                    .collect(ArrayNode.collect()); //collect each ObjectNode in an ArrayNode
+                .stream()
+                .map(ShapeLink::toNode) //convert each ShapeLink to an ObjectNode
+                .collect(ArrayNode.collect()); //collect each ObjectNode in an ArrayNode
             shapesBuilder.withMember(shapeId, shapeListNode);
         }
 
         //returning ObjectNode for TraceFile
         return ObjectNode.objectNodeBuilder()
-                .withMember(SMITHY_TRACE_TEXT, smithyTrace)
-                .withMember(METADATA_TEXT, metadata)
-                .withOptionalMember(DEFINITIONS_TEXT, getArtifactDefinitions())
-                .withMember(SHAPES_TEXT, shapesBuilder.build())
-                .build();
+            .withMember(SMITHY_TRACE_TEXT, smithyTrace)
+            .withMember(METADATA_TEXT, metadata)
+            .withOptionalMember(DEFINITIONS_TEXT, getArtifactDefinitions())
+            .withMember(SHAPES_TEXT, shapesBuilder.build())
+            .build();
     }
 
     /**
@@ -147,16 +136,22 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                 for (ShapeLink link : entry.getValue()) {
                     //checking if link's type is in artifactDefinitions
                     if (!artifactDefinitions.getTypes().containsKey(link.getType())) {
-                        throw new ExpectationNotMetException(entry.getKey().toString()
-                                + " contains types that aren't in definitions.", SourceLocation.none());
+                        throw new ExpectationNotMetException(
+                            entry.getKey().toString()
+                                + " contains types that aren't in definitions.",
+                            SourceLocation.none()
+                        );
                     }
 
                     //checking if link's tags are all in artifactDefinitions
                     List<String> tags = link.getTags();
                     for (String tag : tags) {
                         if (!artifactDefinitions.getTags().containsKey(tag)) {
-                            throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
-                                    + " is a tag that isn't in definitions.", SourceLocation.none());
+                            throw new ExpectationNotMetException(
+                                entry.getKey().toString() + " " + tag
+                                    + " is a tag that isn't in definitions.",
+                                SourceLocation.none()
+                            );
                         }
                     }
                 }
@@ -176,10 +171,11 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         Set<ShapeId> fileShapes = new HashSet<>(shapes.keySet());
         Set<ShapeId> fileShapesCopy = new HashSet<>(fileShapes);
 
-        Set<ShapeId> modelShapes = model.toSet().stream()
-                .filter(shape -> !Prelude.isPreludeShape(shape)) //ignore shapes in smithy.api namespace
-                .map(Shape::getId) //get ShapeId for each shape
-                .collect(Collectors.toSet()); //collect into a set of ShapeIds
+        Set<ShapeId> modelShapes = model.toSet()
+            .stream()
+            .filter(shape -> !Prelude.isPreludeShape(shape)) //ignore shapes in smithy.api namespace
+            .map(Shape::getId) //get ShapeId for each shape
+            .collect(Collectors.toSet()); //collect into a set of ShapeIds
 
         //get shapes in TraceFile that aren't in model;
         fileShapes.removeAll(modelShapes);
@@ -262,10 +258,10 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     @Override
     public Builder toBuilder() {
         return builder()
-                .metadata(metadata)
-                .smithyTrace(smithyTrace)
-                .definitions(artifactDefinitions)
-                .shapes(shapes);
+            .metadata(metadata)
+            .smithyTrace(smithyTrace)
+            .definitions(artifactDefinitions)
+            .shapes(shapes);
     }
 
     /**

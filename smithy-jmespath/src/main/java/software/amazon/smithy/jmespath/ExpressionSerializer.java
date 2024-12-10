@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import java.util.Map;
@@ -173,8 +162,8 @@ public final class ExpressionSerializer {
                     Set<Map.Entry<String, Object>> objectEntries = expression.expectObjectValue().entrySet();
                     for (Map.Entry<String, Object> objectEntry : objectEntries) {
                         builder.append('"')
-                                .append(sanitizeString(objectEntry.getKey(), true))
-                                .append("\": ");
+                            .append(sanitizeString(objectEntry.getKey(), true))
+                            .append("\": ");
                         LiteralExpression exp = LiteralExpression.from(objectEntry.getValue());
                         visitLiteral(exp, true);
                         if (oi++ < objectEntries.size() - 1) {
@@ -185,8 +174,8 @@ public final class ExpressionSerializer {
                     break;
                 case STRING:
                     builder.append('"')
-                            .append(sanitizeString(expression.expectStringValue(), true))
-                            .append('"');
+                        .append(sanitizeString(expression.expectStringValue(), true))
+                        .append('"');
                     break;
                 case BOOLEAN:
                     builder.append(expression.expectBooleanValue());
@@ -372,12 +361,12 @@ public final class ExpressionSerializer {
         // These expression need to be preceded by a "." in a binary expression.
         private boolean rhsNeedsDot(JmespathExpression expression) {
             return expression instanceof FieldExpression
-                    || expression instanceof MultiSelectHashExpression
-                    || expression instanceof MultiSelectListExpression
-                    || expression instanceof ObjectProjectionExpression
-                    || expression instanceof FunctionExpression
-                    || (expression instanceof BinaryExpression
-                            && rhsNeedsDot(((BinaryExpression) expression).getLeft()));
+                || expression instanceof MultiSelectHashExpression
+                || expression instanceof MultiSelectListExpression
+                || expression instanceof ObjectProjectionExpression
+                || expression instanceof FunctionExpression
+                || (expression instanceof BinaryExpression
+                    && rhsNeedsDot(((BinaryExpression) expression).getLeft()));
         }
     }
 }

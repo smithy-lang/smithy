@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
@@ -37,7 +26,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * @param <S> Shape being created.
  */
 public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>, S extends Shape>
-        implements SmithyBuilder<S>, FromSourceLocation {
+    implements SmithyBuilder<S>, FromSourceLocation {
 
     private ShapeId id;
     private final BuilderRef<Map<ShapeId, Trait>> traits = BuilderRef.forUnorderedMap();
@@ -224,8 +213,13 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      * @throws UnsupportedOperationException if the shape does not support members.
      */
     public B addMember(MemberShape member) {
-        throw new UnsupportedOperationException(String.format(
-                "Member `%s` cannot be added to %s", member.getId(), getClass().getName()));
+        throw new UnsupportedOperationException(
+            String.format(
+                "Member `%s` cannot be added to %s",
+                member.getId(),
+                getClass().getName()
+            )
+        );
     }
 
     /**

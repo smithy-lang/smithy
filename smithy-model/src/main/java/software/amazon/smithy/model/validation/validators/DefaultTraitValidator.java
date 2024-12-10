@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.nio.charset.StandardCharsets;
@@ -62,21 +51,34 @@ public final class DefaultTraitValidator extends AbstractValidator {
                     if (model.expectShape(member.getContainer()).getType() == ShapeType.STRUCTURE) {
                         DefaultTrait memberDefault = member.getTrait(DefaultTrait.class).orElse(null);
                         if (memberDefault == null) {
-                            events.add(error(member, String.format(
-                                    "Member targets %s, which requires that the member defines the same default "
-                                    + "of `%s` or `null`",
-                                    shape.toShapeId(), Node.printJson(value))));
+                            events.add(
+                                error(
+                                    member,
+                                    String.format(
+                                        "Member targets %s, which requires that the member defines the same default "
+                                            + "of `%s` or `null`",
+                                        shape.toShapeId(),
+                                        Node.printJson(value)
+                                    )
+                                )
+                            );
                         } else if (!memberDefault.toNode().isNullNode()
-                                   && !value.equals(member.expectTrait(DefaultTrait.class).toNode())) {
-                            // The member trait is not set to null nor does it match the target defualt.
-                            events.add(error(member, String.format(
-                                    "Member defines a default value that differs from the default value of the "
-                                    + "target shape, %s. The member has a default of `%s`, but the target has a "
-                                    + "default of `%s`.",
-                                    shape.toShapeId(),
-                                    member.expectTrait(DefaultTrait.class).toNode(),
-                                    Node.printJson(value))));
-                        }
+                            && !value.equals(member.expectTrait(DefaultTrait.class).toNode())) {
+                                // The member trait is not set to null nor does it match the target defualt.
+                                events.add(
+                                    error(
+                                        member,
+                                        String.format(
+                                            "Member defines a default value that differs from the default value of the "
+                                                + "target shape, %s. The member has a default of `%s`, but the target has a "
+                                                + "default of `%s`.",
+                                            shape.toShapeId(),
+                                            member.expectTrait(DefaultTrait.class).toNode(),
+                                            Node.printJson(value)
+                                        )
+                                    )
+                                );
+                            }
                     }
                 }
             }
@@ -86,11 +88,11 @@ public final class DefaultTraitValidator extends AbstractValidator {
     }
 
     private NodeValidationVisitor validateShapeValue(
-            Model model,
-            Shape shape,
-            DefaultTrait trait,
-            NodeValidationVisitor visitor,
-            List<ValidationEvent> events
+        Model model,
+        Shape shape,
+        DefaultTrait trait,
+        NodeValidationVisitor visitor,
+        List<ValidationEvent> events
     ) {
         Node value = trait.toNode();
         Shape shapeTarget = shape;
@@ -138,14 +140,26 @@ public final class DefaultTraitValidator extends AbstractValidator {
             case DOCUMENT:
                 value.asArrayNode().ifPresent(array -> {
                     if (!array.isEmpty()) {
-                        events.add(error(shape, trait, "The @default value of a document cannot be a non-empty "
-                                                       + "array"));
+                        events.add(
+                            error(
+                                shape,
+                                trait,
+                                "The @default value of a document cannot be a non-empty "
+                                    + "array"
+                            )
+                        );
                     }
                 });
                 value.asObjectNode().ifPresent(obj -> {
                     if (!obj.isEmpty()) {
-                        events.add(error(shape, trait, "The @default value of a document cannot be a non-empty "
-                                                       + "object"));
+                        events.add(
+                            error(
+                                shape,
+                                trait,
+                                "The @default value of a document cannot be a non-empty "
+                                    + "object"
+                            )
+                        );
                     }
                 });
                 break;
@@ -157,23 +171,23 @@ public final class DefaultTraitValidator extends AbstractValidator {
     }
 
     private NodeValidationVisitor createOrReuseVisitor(
-            Model model,
-            NodeValidationVisitor visitor,
-            Node value,
-            Shape shape
+        Model model,
+        NodeValidationVisitor visitor,
+        Node value,
+        Shape shape
     ) {
         if (visitor == null) {
             return NodeValidationVisitor
-                    .builder()
-                    .model(model)
-                    .eventId(getName())
-                    .value(value)
-                    .startingContext("Error validating @default trait")
-                    .eventShapeId(shape.getId())
-                    // Use WARNING for range trait errors so that a Smithy model 1.0 to 2.0 conversion can automatically
-                    // suppress any errors to losslessly handle the conversion.
-                    .addFeature(NodeValidationVisitor.Feature.RANGE_TRAIT_ZERO_VALUE_WARNING)
-                    .build();
+                .builder()
+                .model(model)
+                .eventId(getName())
+                .value(value)
+                .startingContext("Error validating @default trait")
+                .eventShapeId(shape.getId())
+                // Use WARNING for range trait errors so that a Smithy model 1.0 to 2.0 conversion can automatically
+                // suppress any errors to losslessly handle the conversion.
+                .addFeature(NodeValidationVisitor.Feature.RANGE_TRAIT_ZERO_VALUE_WARNING)
+                .build();
         } else {
             visitor.setValue(value);
             visitor.setEventShapeId(shape.getId());

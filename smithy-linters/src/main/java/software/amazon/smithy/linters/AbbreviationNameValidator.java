@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
@@ -76,8 +65,8 @@ public final class AbbreviationNameValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes()
-                .flatMap(shape -> validateShapeName(model, shape))
-                .collect(Collectors.toList());
+            .flatMap(shape -> validateShapeName(model, shape))
+            .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateShapeName(Model model, Shape shape) {
@@ -92,17 +81,26 @@ public final class AbbreviationNameValidator extends AbstractValidator {
 
         String descriptor = shape.isMemberShape() ? "member" : "shape";
         String name = shape.asMemberShape()
-                .map(MemberShape::getMemberName)
-                .orElseGet(() -> shape.getId().getName());
+            .map(MemberShape::getMemberName)
+            .orElseGet(() -> shape.getId().getName());
 
         String recommendedName = createRecommendedName(name);
         if (recommendedName.equals(name)) {
             return Stream.empty();
         }
 
-        return Stream.of(danger(shape, format(
-                "%s name, `%s`, contains invalid abbreviations. Change this %s name to `%s`",
-                descriptor, name, descriptor, recommendedName)));
+        return Stream.of(
+            danger(
+                shape,
+                format(
+                    "%s name, `%s`, contains invalid abbreviations. Change this %s name to `%s`",
+                    descriptor,
+                    name,
+                    descriptor,
+                    recommendedName
+                )
+            )
+        );
     }
 
     private String createRecommendedName(String name) {

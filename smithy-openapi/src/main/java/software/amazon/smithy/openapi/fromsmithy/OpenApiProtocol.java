@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.Optional;
@@ -92,11 +81,14 @@ public interface OpenApiProtocol<T extends Trait> {
      */
     default String getOperationUri(Context<T> context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class)
-                .map(HttpTrait::getUri)
-                .map(UriPattern::toString)
-                .orElseThrow(() -> new OpenApiException(
-                        "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
-                        + "required to compute a URI (using the default protocol implementation)"));
+            .map(HttpTrait::getUri)
+            .map(UriPattern::toString)
+            .orElseThrow(
+                () -> new OpenApiException(
+                    "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
+                        + "required to compute a URI (using the default protocol implementation)"
+                )
+            );
     }
 
     /**
@@ -112,10 +104,13 @@ public interface OpenApiProtocol<T extends Trait> {
      */
     default String getOperationMethod(Context<T> context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class)
-                .map(HttpTrait::getMethod)
-                .orElseThrow(() -> new OpenApiException(
-                        "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
-                        + "required to compute a method (using the default protocol implementation)"));
+            .map(HttpTrait::getMethod)
+            .orElseThrow(
+                () -> new OpenApiException(
+                    "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
+                        + "required to compute a method (using the default protocol implementation)"
+                )
+            );
     }
 
     /**

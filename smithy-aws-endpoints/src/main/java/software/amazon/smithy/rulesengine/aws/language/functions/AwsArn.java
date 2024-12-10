@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.Arrays;
@@ -53,13 +52,15 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
             return Optional.empty();
         }
 
-        return Optional.of(builder()
+        return Optional.of(
+            builder()
                 .partition(base[1])
                 .service(base[2])
                 .region(base[3])
                 .accountId(base[4])
                 .resource(Arrays.asList(base[5].split("[:/]", -1)))
-                .build());
+                .build()
+        );
     }
 
     /**
@@ -135,7 +136,7 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         }
         AwsArn awsArn = (AwsArn) o;
         return partition.equals(awsArn.partition) && service.equals(awsArn.service) && region.equals(awsArn.region)
-               && accountId.equals(awsArn.accountId) && resource.equals(awsArn.resource);
+            && accountId.equals(awsArn.accountId) && resource.equals(awsArn.resource);
     }
 
     @Override
@@ -144,20 +145,20 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         resource.forEach(builder::append);
 
         return "Arn[partition=" + partition + ", "
-               + "service=" + service + ", "
-               + "region=" + region + ", "
-               + "accountId=" + accountId + ", "
-               + "resource=" + builder + "]";
+            + "service=" + service + ", "
+            + "region=" + region + ", "
+            + "accountId=" + accountId + ", "
+            + "resource=" + builder + "]";
     }
 
     @Override
     public Builder toBuilder() {
         return builder()
-                .partition(partition)
-                .service(service)
-                .region(region)
-                .accountId(accountId)
-                .resource(resource);
+            .partition(partition)
+            .service(service)
+            .region(region)
+            .accountId(accountId)
+            .resource(resource);
     }
 
     /**

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import java.util.ArrayList;
@@ -48,8 +47,10 @@ public final class TreeRule extends Rule {
             throw new SourceException("Tree rule contains no rules.", getSourceLocation());
         }
         for (Rule rule : rules) {
-            RuleError.context("while checking nested rule in tree rule",
-                    () -> scope.inScope(() -> rule.typeCheck(scope)));
+            RuleError.context(
+                "while checking nested rule in tree rule",
+                () -> scope.inScope(() -> rule.typeCheck(scope))
+            );
         }
         return Type.endpointType();
     }

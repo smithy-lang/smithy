@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -78,8 +77,11 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
             Optional<Node> ref = on.getMember("ref");
             Optional<Node> fn = on.getMember("fn");
             if ((ref.isPresent() ? 1 : 0) + (fn.isPresent() ? 1 : 0) != 1) {
-                throw new SourceException("expected exactly one of `ref` or `fn` to be set, found "
-                                          + Node.printJson(node), node);
+                throw new SourceException(
+                    "expected exactly one of `ref` or `fn` to be set, found "
+                        + Node.printJson(node),
+                    node
+                );
             }
             if (ref.isPresent()) {
                 return getReference(Identifier.of(ref.get().expectStringNode("ref must be a string")), ref.get());
@@ -100,8 +102,15 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
         return context("while parsing `" + shortForm + "` within a template", context, () -> {
             if (shortForm.contains("#")) {
                 String[] parts = shortForm.split("#", 2);
-                return GetAttr.getDefinition().createFunction(FunctionNode.ofExpressions(GetAttr.ID, context,
-                        getReference(Identifier.of(parts[0]), context), of(parts[1])));
+                return GetAttr.getDefinition()
+                    .createFunction(
+                        FunctionNode.ofExpressions(
+                            GetAttr.ID,
+                            context,
+                            getReference(Identifier.of(parts[0]), context),
+                            of(parts[1])
+                        )
+                    );
             } else {
                 return Expression.getReference(Identifier.of(shortForm), context);
             }
@@ -178,8 +187,13 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
         Type type = context(String.format("while typechecking %s", this), this, () -> typeCheckLocal(scope));
 
         if (cachedType != null && !type.equals(cachedType)) {
-            throw new RuntimeException(String.format("Checking type `%s` that doesn't match cached type `%s`",
-                    type, cachedType));
+            throw new RuntimeException(
+                String.format(
+                    "Checking type `%s` that doesn't match cached type `%s`",
+                    type,
+                    cachedType
+                )
+            );
         }
 
         cachedType = type;

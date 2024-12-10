@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
@@ -53,8 +52,8 @@ final class DeconflictErrorsWithSharedStatusCode {
             for (ShapeId errorId : operation.getErrors()) {
                 StructureShape error = model.expectShape(errorId, StructureShape.class);
                 Integer statusCode = error.hasTrait(HttpErrorTrait.ID)
-                        ? error.getTrait(HttpErrorTrait.class).get().getCode()
-                        : error.getTrait(ErrorTrait.class).get().getDefaultHttpStatusCode();
+                    ? error.getTrait(HttpErrorTrait.class).get().getCode()
+                    : error.getTrait(ErrorTrait.class).get().getDefaultHttpStatusCode();
                 statusCodesToErrors.computeIfAbsent(statusCode, k -> new ArrayList<>()).add(error);
             }
 
@@ -64,8 +63,11 @@ final class DeconflictErrorsWithSharedStatusCode {
                     replaceOperation = true;
                     List<StructureShape> errors = statusCodeToErrors.getValue();
                     // Create a new top-level synthetic error and all the shapes that need replaced for it.
-                    Pair<Shape, List<Shape>> syntheticErrorPair = synthesizeErrorUnion(operation.getId().getName(),
-                            statusCodeToErrors.getKey(), errors);
+                    Pair<Shape, List<Shape>> syntheticErrorPair = synthesizeErrorUnion(
+                        operation.getId().getName(),
+                        statusCodeToErrors.getKey(),
+                        errors
+                    );
                     for (StructureShape error : errors) {
                         replacementOperation.removeError(error.getId());
                     }
@@ -85,37 +87,51 @@ final class DeconflictErrorsWithSharedStatusCode {
     }
 
     // Return synthetic error, along with any updated shapes.
-    private Pair<Shape, List<Shape>> synthesizeErrorUnion(String operationName, Integer statusCode,
-                                                          List<StructureShape> errors) {
+    private Pair<Shape, List<Shape>> synthesizeErrorUnion(
+        String operationName,
+        Integer statusCode,
+        List<StructureShape> errors
+    ) {
         List<Shape> replacementShapes = new ArrayList<>();
         StructureShape.Builder errorResponse = StructureShape.builder();
-        ShapeId errorResponseId = ShapeId.fromParts(forService.getId().getNamespace(),
-                operationName + statusCode + "Error");
+        ShapeId errorResponseId = ShapeId.fromParts(
+            forService.getId().getNamespace(),
+            operationName + statusCode + "Error"
+        );
         errorResponse.id(errorResponseId);
         errorResponse.addTraits(getErrorTraitsFromStatusCode(statusCode));
         Map<String, HttpHeaderTrait> headerTraitMap = new HashMap<>();
-        UnionShape.Builder errorUnion = UnionShape.builder().id(
-                ShapeId.fromParts(errorResponseId.getNamespace(), errorResponseId.getName() + "Content"));
+        UnionShape.Builder errorUnion = UnionShape.builder()
+            .id(
+                ShapeId.fromParts(errorResponseId.getNamespace(), errorResponseId.getName() + "Content")
+            );
         for (StructureShape error : errors) {
             StructureShape newError = createNewError(error, headerTraitMap);
             replacementShapes.add(newError);
             MemberShape newErrorMember = MemberShape.builder()
-                    .id(errorUnion.getId().withMember(newError.getId().getName()))
-                    .target(newError.getId())
-                    .build();
+                .id(errorUnion.getId().withMember(newError.getId().getName()))
+                .target(newError.getId())
+                .build();
             replacementShapes.add(newErrorMember);
             errorUnion.addMember(newErrorMember);
         }
         UnionShape union = errorUnion.build();
         replacementShapes.add(union);
-        errorResponse.addMember(MemberShape.builder()
+        errorResponse.addMember(
+            MemberShape.builder()
                 .id(errorResponseId.withMember("errorUnion"))
                 .target(union.getId())
-                .build());
+                .build()
+        );
         // Add members with hoisted HttpHeader traits.
         for (Map.Entry<String, HttpHeaderTrait> entry : headerTraitMap.entrySet()) {
-            errorResponse.addMember(MemberShape.builder().id(errorResponseId.withMember(entry.getKey()))
-                    .addTrait(entry.getValue()).target("smithy.api#String").build());
+            errorResponse.addMember(
+                MemberShape.builder()
+                    .id(errorResponseId.withMember(entry.getKey()))
+                    .addTrait(entry.getValue())
+                    .target("smithy.api#String")
+                    .build()
+            );
         }
         StructureShape built = errorResponse.build();
         return Pair.of(built, replacementShapes);
@@ -150,5 +166,3 @@ final class DeconflictErrorsWithSharedStatusCode {
         return traits;
     }
 }
-
-

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,16 +30,16 @@ public class BuildParameterBuilderTest {
     public void cannotSetTagsUnlessProjecting() {
         Assertions.assertThrows(SmithyBuildException.class, () -> {
             new BuildParameterBuilder()
-                    .projectionSourceTags(ListUtils.of("foo", "baz"))
-                    .build();
+                .projectionSourceTags(ListUtils.of("foo", "baz"))
+                .build();
         });
     }
 
     @Test
     public void skipsMissingConfigFiles() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .addConfigIfExists("/does/not/exist.json")
-                .build();
+            .addConfigIfExists("/does/not/exist.json")
+            .build();
 
         assertThat(result.args, not(hasItem("--config")));
     }
@@ -44,8 +48,8 @@ public class BuildParameterBuilderTest {
     public void addsConfigFilesWhenFound() throws URISyntaxException {
         String configFile = Paths.get(getClass().getResource("smithy-build-a.json").toURI()).toString();
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .addConfigIfExists(configFile)
-                .build();
+            .addConfigIfExists(configFile)
+            .build();
 
         assertThat(result.args, hasItem("--config"));
         assertThat(result.args, hasItem(configFile));
@@ -54,8 +58,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void allowsUnknownTraits() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .allowUnknownTraits(true)
-                .build();
+            .allowUnknownTraits(true)
+            .build();
 
         assertThat(result.args, hasItem("--allow-unknown-traits"));
     }
@@ -63,8 +67,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void canSetOutput() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .output("/path/to/foo")
-                .build();
+            .output("/path/to/foo")
+            .build();
 
         assertThat(result.args, hasItem("--output"));
         assertThat(result.args, hasItem("/path/to/foo"));
@@ -73,8 +77,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void canSetProjection() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .projection("testing")
-                .build();
+            .projection("testing")
+            .build();
 
         assertThat(result.args, hasItem("--projection"));
         assertThat(result.args, hasItem("testing"));
@@ -83,8 +87,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void canSetPlugin() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .plugin("testing")
-                .build();
+            .plugin("testing")
+            .build();
 
         assertThat(result.args, hasItem("--plugin"));
         assertThat(result.args, hasItem("testing"));
@@ -93,8 +97,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void canEnableDiscoveryWithNoClasspaths() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .discover(true)
-                .build();
+            .discover(true)
+            .build();
 
         assertThat(result.args, hasItem("--discover"));
         assertThat(result.args, not(hasItem("--discover-classpath")));
@@ -103,8 +107,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void canAddExtraArguments() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .addExtraArgs("--foo", "baz", "--bar")
-                .build();
+            .addExtraArgs("--foo", "baz", "--bar")
+            .build();
 
         assertThat(result.args, hasItem("--foo"));
         assertThat(result.args, hasItem("baz"));
@@ -114,20 +118,20 @@ public class BuildParameterBuilderTest {
     @Test
     public void ignoresNullAndEmptyValues() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .sources(null)
-                .projectionSource(null)
-                .projectionSource("")
-                .projectionSourceTags((String) null)
-                .projectionSourceTags((Collection<String>) null)
-                .addConfig(null)
-                .addConfig("")
-                .addConfigIfExists(null)
-                .addConfigIfExists("")
-                .buildClasspath(null)
-                .buildClasspath("")
-                .libClasspath(null)
-                .libClasspath("")
-                .build();
+            .sources(null)
+            .projectionSource(null)
+            .projectionSource("")
+            .projectionSourceTags((String) null)
+            .projectionSourceTags((Collection<String>) null)
+            .addConfig(null)
+            .addConfig("")
+            .addConfigIfExists(null)
+            .addConfigIfExists("")
+            .buildClasspath(null)
+            .buildClasspath("")
+            .libClasspath(null)
+            .libClasspath("")
+            .build();
 
         assertThat(result.args, contains("build"));
         assertThat(result.classpath.length(), is(0));
@@ -146,19 +150,23 @@ public class BuildParameterBuilderTest {
     @Test
     public void sourceBuildUsesCorrectClasspaths() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .sources(ListUtils.of("foo.smithy", "bar.smithy"))
-                // Note that duplicates are removed when necessary.
-                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
-                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
-                .discover(true)
-                .build();
+            .sources(ListUtils.of("foo.smithy", "bar.smithy"))
+            // Note that duplicates are removed when necessary.
+            .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+            .buildClasspath(cp("foo.jar", "/abc/123.jar"))
+            .discover(true)
+            .build();
 
-        assertThat(result.args, contains(
+        assertThat(
+            result.args,
+            contains(
                 "build",
                 "--discover-classpath",
                 cp("foo.jar", "baz.jar", "bar.jar"),
                 "foo.smithy",
-                "bar.smithy"));
+                "bar.smithy"
+            )
+        );
         assertThat(result.classpath, equalTo(cp("foo.jar", "baz.jar", "bar.jar", "/abc/123.jar")));
         assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "baz.jar", "bar.jar")));
         assertThat(result.sources, contains("foo.smithy", "bar.smithy"));
@@ -167,8 +175,8 @@ public class BuildParameterBuilderTest {
     @Test
     public void skipsSourcesThatDoNotExsit() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .addSourcesIfExists(ListUtils.of("foo.smithy", "bar.smithy"))
-                .build();
+            .addSourcesIfExists(ListUtils.of("foo.smithy", "bar.smithy"))
+            .build();
 
         assertThat(result.args, contains("build"));
     }
@@ -176,19 +184,23 @@ public class BuildParameterBuilderTest {
     @Test
     public void projectionBuildUsesCorrectClasspaths() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .projectionSource("foo")
-                .sources(ListUtils.of("foo.smithy", "bar.smithy"))
-                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
-                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
-                .discover(true)
-                .build();
+            .projectionSource("foo")
+            .sources(ListUtils.of("foo.smithy", "bar.smithy"))
+            .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+            .buildClasspath(cp("foo.jar", "/abc/123.jar"))
+            .discover(true)
+            .build();
 
-        assertThat(result.args, contains(
+        assertThat(
+            result.args,
+            contains(
                 "build",
                 "--discover-classpath",
                 cp("foo.jar", "/abc/123.jar"),
                 "foo.smithy",
-                "bar.smithy"));
+                "bar.smithy"
+            )
+        );
         assertThat(result.classpath, equalTo(cp("foo.jar", "/abc/123.jar")));
         assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "/abc/123.jar")));
         assertThat(result.sources, contains("foo.smithy", "bar.smithy"));
@@ -197,12 +209,12 @@ public class BuildParameterBuilderTest {
     @Test
     public void projectionBuildSkipsMissingJars() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .projectionSource("foo")
-                .projectionSourceTags("abc, def")
-                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
-                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
-                .discover(true)
-                .build();
+            .projectionSource("foo")
+            .projectionSourceTags("abc, def")
+            .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+            .buildClasspath(cp("foo.jar", "/abc/123.jar"))
+            .discover(true)
+            .build();
 
         assertThat(result.classpath, equalTo(cp("foo.jar", "/abc/123.jar")));
         assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "/abc/123.jar")));
@@ -214,16 +226,16 @@ public class BuildParameterBuilderTest {
         Set<String> parsedTags = new HashSet<>();
 
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .projectionSource("foo")
-                .projectionSourceTags("abc, def")
-                .libClasspath(cp("abc.jar"))
-                .buildClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
-                .discover(true)
-                .tagMatcher((cp, tags) -> {
-                    parsedTags.addAll(tags);
-                    return SetUtils.of("baz.jar");
-                })
-                .build();
+            .projectionSource("foo")
+            .projectionSourceTags("abc, def")
+            .libClasspath(cp("abc.jar"))
+            .buildClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+            .discover(true)
+            .tagMatcher((cp, tags) -> {
+                parsedTags.addAll(tags);
+                return SetUtils.of("baz.jar");
+            })
+            .build();
 
         assertThat(parsedTags, containsInAnyOrder("abc", "def"));
         assertThat(result.classpath, equalTo(cp("foo.jar", "baz.jar", "bar.jar")));
@@ -240,12 +252,12 @@ public class BuildParameterBuilderTest {
         String buildCp = a + separator + b + separator + c;
 
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                .projectionSource("foo")
-                .projectionSourceTags("X, Blah")
-                .libClasspath("abc.jar")
-                .buildClasspath(buildCp)
-                .discover(true)
-                .build();
+            .projectionSource("foo")
+            .projectionSourceTags("X, Blah")
+            .libClasspath("abc.jar")
+            .buildClasspath(buildCp)
+            .discover(true)
+            .build();
 
         // The classpath keeps all of the JARs.
         assertThat(result.classpath, equalTo(buildCp));
@@ -267,12 +279,12 @@ public class BuildParameterBuilderTest {
             String buildCp = a + "|" + b + "|" + c;
 
             BuildParameterBuilder.Result result = new BuildParameterBuilder()
-                    .projectionSource("foo")
-                    .projectionSourceTags("X, Blah")
-                    .libClasspath("abc.jar")
-                    .buildClasspath(buildCp)
-                    .discover(true)
-                    .build();
+                .projectionSource("foo")
+                .projectionSourceTags("X, Blah")
+                .libClasspath("abc.jar")
+                .buildClasspath(buildCp)
+                .discover(true)
+                .build();
 
             assertThat(result.classpath, equalTo(buildCp));
             assertThat(result.discoveryClasspath, equalTo(b + "|" + c));

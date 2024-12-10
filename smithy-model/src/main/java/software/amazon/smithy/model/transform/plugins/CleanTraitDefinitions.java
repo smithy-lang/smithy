@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform.plugins;
 
 import java.util.Collection;
@@ -52,9 +41,11 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
             if (!traits.equals(newTraits)) {
                 // If the list of traits on the AuthDefinitionTrait has changed due to a trait shape being
                 // removed from the model, return a new version of the shape with a new version of the trait.
-                shapes.add(structure.toBuilder()
-                                   .addTrait(authDefTrait.toBuilder().traits(newTraits).build())
-                                   .build());
+                shapes.add(
+                    structure.toBuilder()
+                        .addTrait(authDefTrait.toBuilder().traits(newTraits).build())
+                        .build()
+                );
             }
         }
         return shapes;
@@ -72,9 +63,11 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
                 // If the list of traits on the ProtocolDefinitionTrait has changed due to a trait shape
                 // being removed from the model, return a new version of the shape with a new version of
                 // the trait.
-                shapes.add(structure.toBuilder()
-                                   .addTrait(protocolDefinitionTrait.toBuilder().traits(newTraits).build())
-                                   .build());
+                shapes.add(
+                    structure.toBuilder()
+                        .addTrait(protocolDefinitionTrait.toBuilder().traits(newTraits).build())
+                        .build()
+                );
             }
         }
         return shapes;
@@ -82,7 +75,7 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
 
     private List<ShapeId> excludeTraitsInSet(List<ShapeId> traits, Set<ShapeId> shapeIds) {
         return traits.stream()
-                .filter(trait -> !shapeIds.contains(trait))
-                .collect(Collectors.toList());
+            .filter(trait -> !shapeIds.contains(trait))
+            .collect(Collectors.toList());
     }
 }

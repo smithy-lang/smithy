@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -118,14 +107,14 @@ public class ShapeTest {
         ShapeId id = ShapeId.from("ns.foo#baz");
         DocumentationTrait documentationTrait = new DocumentationTrait("docs", SourceLocation.NONE);
         Shape shape = StringShape.builder()
-                .id(id)
-                .addTrait(trait)
-                .addTrait(otherTrait)
-                .addTrait(documentationTrait)
-                .build();
+            .id(id)
+            .addTrait(trait)
+            .addTrait(otherTrait)
+            .addTrait(documentationTrait)
+            .build();
         Model model = Model.builder()
-                .addShapes(shape)
-                .build();
+            .addShapes(shape)
+            .build();
 
         assertTrue(shape.getTrait(MyTrait.class).isPresent());
         assertTrue(shape.getMemberTrait(model, MyTrait.class).isPresent());
@@ -166,11 +155,11 @@ public class ShapeTest {
         MyTrait trait = new MyTrait(ShapeId.from("foo.baz#foo"), null);
         MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
         Shape shape = StringShape.builder()
-                .id("ns.foo#baz")
-                .addTrait(trait)
-                .addTrait(otherTrait)
-                .removeTrait("foo.baz#other")
-                .build();
+            .id("ns.foo#baz")
+            .addTrait(trait)
+            .addTrait(otherTrait)
+            .removeTrait("foo.baz#other")
+            .build();
 
         assertThat(shape.getAllTraits(), hasKey(ShapeId.from("foo.baz#foo")));
         assertThat(shape.getAllTraits(), not(hasKey(ShapeId.from("foo.baz#other"))));
@@ -247,9 +236,9 @@ public class ShapeTest {
     public void validatesMemberShapeIds() {
         Assertions.assertThrows(SourceException.class, () -> {
             StructureShape.builder()
-                    .id("ns.foo#bar")
-                    .addMember(MemberShape.builder().id("ns.baz#Bar$boo").target(ShapeId.from("ns.foo#String")).build())
-                    .build();
+                .id("ns.foo#bar")
+                .addMember(MemberShape.builder().id("ns.baz#Bar$boo").target(ShapeId.from("ns.foo#String")).build())
+                .build();
         });
     }
 }

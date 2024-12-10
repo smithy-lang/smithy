@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,11 +25,15 @@ public class ModelDiscoveryTest {
         String prefix = manifest.toString().substring(0, manifest.toString().length() - "manifest".length());
         List<URL> models = ModelDiscovery.findModels(manifest);
 
-        assertThat(models, contains(
+        assertThat(
+            models,
+            contains(
                 new URL(prefix + "foo.smithy"),
                 new URL(prefix + "baz/bar/example.json"),
                 new URL(prefix + "test"),
-                new URL(prefix + "test2")));
+                new URL(prefix + "test2")
+            )
+        );
     }
 
     @Test
@@ -34,8 +42,8 @@ public class ModelDiscoveryTest {
         URLClassLoader classLoader = new URLClassLoader(urls);
         List<URL> models = ModelDiscovery.findModels(classLoader);
         List<String> names = models.stream()
-                .map(ModelDiscovery::getSmithyModelPathFromJarUrl)
-                .collect(Collectors.toList());
+            .map(ModelDiscovery::getSmithyModelPathFromJarUrl)
+            .collect(Collectors.toList());
 
         assertThat(names, contains("a.smithy", "b/b.smithy", "b/c/c.json"));
     }
@@ -54,11 +62,15 @@ public class ModelDiscoveryTest {
         String prefix = manifest.toString().substring(0, manifest.toString().length() - "manifest".length());
         List<URL> models = ModelDiscovery.findModels(manifest);
 
-        assertThat(models, contains(
+        assertThat(
+            models,
+            contains(
                 new URL(prefix + "foo.smithy"),
                 new URL(prefix + "baz/bar/example.json"),
                 new URL(prefix + "test"),
-                new URL(prefix + "test2")));
+                new URL(prefix + "test2")
+            )
+        );
     }
 
     @Test
@@ -111,10 +123,14 @@ public class ModelDiscoveryTest {
 
     @Test
     public void extractsOutModelNameFromJarURL() throws IOException {
-        assertThat(ModelDiscovery.getSmithyModelPathFromJarUrl(new URL("jar:file:/a.jar!/META-INF/smithy/a/b.json")),
-                   equalTo("a/b.json"));
-        assertThat(ModelDiscovery.getSmithyModelPathFromJarUrl(new URL("jar:file:/a.jar!/META-INF/smithy/b.json")),
-                   equalTo("b.json"));
+        assertThat(
+            ModelDiscovery.getSmithyModelPathFromJarUrl(new URL("jar:file:/a.jar!/META-INF/smithy/a/b.json")),
+            equalTo("a/b.json")
+        );
+        assertThat(
+            ModelDiscovery.getSmithyModelPathFromJarUrl(new URL("jar:file:/a.jar!/META-INF/smithy/b.json")),
+            equalTo("b.json")
+        );
     }
 
     @Test
@@ -126,19 +142,25 @@ public class ModelDiscoveryTest {
 
     @Test
     public void createSmithyManifestUrlFromPath() throws IOException {
-        assertThat(ModelDiscovery.createSmithyJarManifestUrl("/foo.jar"),
-                   equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest")));
+        assertThat(
+            ModelDiscovery.createSmithyJarManifestUrl("/foo.jar"),
+            equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest"))
+        );
     }
 
     @Test
     public void createSmithyManifestUrlFromFileUrl() throws IOException {
-        assertThat(ModelDiscovery.createSmithyJarManifestUrl("file:/foo.jar"),
-                   equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest")));
+        assertThat(
+            ModelDiscovery.createSmithyJarManifestUrl("file:/foo.jar"),
+            equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest"))
+        );
     }
 
     @Test
     public void createSmithyManifestUrlFromJarUrl() throws IOException {
-        assertThat(ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo.jar"),
-                   equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest")));
+        assertThat(
+            ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo.jar"),
+            equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest"))
+        );
     }
 }

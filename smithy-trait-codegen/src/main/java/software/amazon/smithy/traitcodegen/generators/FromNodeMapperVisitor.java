@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
@@ -61,8 +60,9 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         writer.write("$L.expectArrayNode()", varName);
         writer.indent();
         writer.writeWithNoFormatting(".getElements().stream()");
-        writer.write(".map(n -> $C)",
-                (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n"))
+        writer.write(
+            ".map(n -> $C)",
+            (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n"))
         );
         writer.writeWithNoFormatting(".forEach(builder::addValues);");
         writer.dedent();
@@ -71,11 +71,15 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void mapShape(MapShape shape) {
-        writer.openBlock("$L.expectObjectNode().getMembers().forEach((k, v) -> {", "});",
-                varName,
-                () -> writer.write("builder.putValues($C, $C);",
-                        (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
-                        (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
+        writer.openBlock(
+            "$L.expectObjectNode().getMembers().forEach((k, v) -> {",
+            "});",
+            varName,
+            () -> writer.write(
+                "builder.putValues($C, $C);",
+                (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
+                (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v"))
+            )
         );
         return null;
     }
@@ -155,12 +159,19 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         if (shape.hasTrait(TimestampFormatTrait.class)) {
             switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                 case EPOCH_SECONDS:
-                    writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
-                            varName, Instant.class);
+                    writer.writeInline(
+                        "$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
+                        varName,
+                        Instant.class
+                    );
                     return null;
                 case HTTP_DATE:
-                    writer.writeInline("$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
-                            varName, Instant.class, DateTimeFormatter.class);
+                    writer.writeInline(
+                        "$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
+                        varName,
+                        Instant.class,
+                        DateTimeFormatter.class
+                    );
                     return null;
                 default:
                     // Fall through on default

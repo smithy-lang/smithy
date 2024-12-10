@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.neighbor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,9 +27,9 @@ public class UnreferencedShapesTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(UnreferencedShapesTest.class.getResource("unreferenced-test.json"))
-                .assemble()
-                .unwrap();
+            .addImport(UnreferencedShapesTest.class.getResource("unreferenced-test.json"))
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -59,9 +48,13 @@ public class UnreferencedShapesTest {
     public void doesNotCheckShapesThatAreTraitShapes() {
         UnreferencedShapes unref = new UnreferencedShapes();
 
-        assertThat(unref.compute(model).stream().map(Shape::getId).collect(Collectors.toSet()), containsInAnyOrder(
+        assertThat(
+            unref.compute(model).stream().map(Shape::getId).collect(Collectors.toSet()),
+            containsInAnyOrder(
                 ShapeId.from("ns.foo#Exclude1"),
-                ShapeId.from("ns.foo#Exclude2")));
+                ShapeId.from("ns.foo#Exclude2")
+            )
+        );
     }
 
     @Test
@@ -76,17 +69,17 @@ public class UnreferencedShapesTest {
 
     private Model createPrivateShapeModel(ShapeId id) {
         return Model.assembler()
-                .addShape(StringShape.builder().id(id).addTrait(new PrivateTrait()).build())
-                .assemble()
-                .unwrap();
+            .addShape(StringShape.builder().id(id).addTrait(new PrivateTrait()).build())
+            .assemble()
+            .unwrap();
     }
 
     @Test
     public void checksShapeReferencesThroughIdRef() {
         Model m = Model.assembler()
-                .addImport(getClass().getResource("idref-neighbors.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("idref-neighbors.smithy"))
+            .assemble()
+            .unwrap();
 
         Set<Shape> shapes = new UnreferencedShapes().compute(m);
 
@@ -96,16 +89,19 @@ public class UnreferencedShapesTest {
     @Test
     public void doesNotCheckShapeReferencesThroughIdRefOnUnconnectedShapes() {
         Model m = Model.assembler()
-                .addImport(getClass().getResource("idref-neighbors-unconnected.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("idref-neighbors-unconnected.smithy"))
+            .assemble()
+            .unwrap();
 
         Set<ShapeId> ids = new UnreferencedShapes().compute(m).stream().map(Shape::getId).collect(Collectors.toSet());
 
-        assertThat(ids, containsInAnyOrder(
+        assertThat(
+            ids,
+            containsInAnyOrder(
                 ShapeId.from("com.foo#WithTrait"),
                 ShapeId.from("com.foo#Referenced"),
                 ShapeId.from("com.foo#Unconnected")
-        ));
+            )
+        );
     }
 }

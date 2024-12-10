@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Objects;
@@ -53,15 +42,19 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     public static ConditionKeyDefinition fromNode(Node value) {
         ObjectNode objectNode = value.expectObjectNode();
         Builder builder = builder()
-                .type(objectNode.expectStringMember(TYPE).getValue());
-        objectNode.getStringMember(DOCUMENTATION).map(StringNode::getValue)
-                .ifPresent(builder::documentation);
-        objectNode.getStringMember(EXTERNAL_DOCUMENTATION).map(StringNode::getValue)
-                .ifPresent(builder::externalDocumentation);
-        objectNode.getStringMember(RELATIVE_DOCUMENTATION).map(StringNode::getValue)
-                .ifPresent(builder::relativeDocumentation);
-        objectNode.getBooleanMember(REQUIRED).map(BooleanNode::getValue)
-                .ifPresent(builder::required);
+            .type(objectNode.expectStringMember(TYPE).getValue());
+        objectNode.getStringMember(DOCUMENTATION)
+            .map(StringNode::getValue)
+            .ifPresent(builder::documentation);
+        objectNode.getStringMember(EXTERNAL_DOCUMENTATION)
+            .map(StringNode::getValue)
+            .ifPresent(builder::externalDocumentation);
+        objectNode.getStringMember(RELATIVE_DOCUMENTATION)
+            .map(StringNode::getValue)
+            .ifPresent(builder::relativeDocumentation);
+        objectNode.getBooleanMember(REQUIRED)
+            .map(BooleanNode::getValue)
+            .ifPresent(builder::required);
 
         return builder.build();
     }
@@ -110,22 +103,22 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     @Override
     public Builder toBuilder() {
         return builder()
-                .documentation(documentation)
-                .externalDocumentation(externalDocumentation)
-                .relativeDocumentation(relativeDocumentation)
-                .type(type)
-                .required(required);
+            .documentation(documentation)
+            .externalDocumentation(externalDocumentation)
+            .relativeDocumentation(relativeDocumentation)
+            .type(type)
+            .required(required);
     }
 
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(TYPE, Node.from(type))
-                .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
-                .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
-                .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
-                .withMember(REQUIRED, isRequired())
-                .build();
+            .withMember(TYPE, Node.from(type))
+            .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
+            .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
+            .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
+            .withMember(REQUIRED, isRequired())
+            .build();
     }
 
     @Override
@@ -138,10 +131,10 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
 
         ConditionKeyDefinition that = (ConditionKeyDefinition) o;
         return Objects.equals(type, that.type)
-               && Objects.equals(documentation, that.documentation)
-               && Objects.equals(externalDocumentation, that.externalDocumentation)
-               && Objects.equals(relativeDocumentation, that.relativeDocumentation)
-               && Objects.equals(required, that.required);
+            && Objects.equals(documentation, that.documentation)
+            && Objects.equals(externalDocumentation, that.externalDocumentation)
+            && Objects.equals(relativeDocumentation, that.relativeDocumentation)
+            && Objects.equals(required, that.required);
     }
 
     @Override

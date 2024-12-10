@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Test;
@@ -17,15 +21,18 @@ public class CorsTest {
     @Test
     public void corsIntegrationTest() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-model.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-model.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-model.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-model.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -33,15 +40,18 @@ public class CorsTest {
     @Test
     public void skipsExplicitlyDefinedOptionsOperations() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-explicit-options.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-explicit-options.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-explicit-options.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-explicit-options.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -49,18 +59,21 @@ public class CorsTest {
     @Test
     public void setsConfiguredAdditionalAllowedHeaders() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-model.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-model.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
         apiGatewayConfig.setAdditionalAllowedCorsHeaders(ListUtils.of("foo", "bar", "content-length"));
         config.putExtensions(apiGatewayConfig);
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-with-additional-headers.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-additional-headers.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -75,40 +88,55 @@ public class CorsTest {
     @Test
     public void findsExistingGatewayHeaders() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-explicit-options.json"))
-                .assemble()
-                .unwrap();
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-with-custom-gateway-response-headers.openapi.json")));
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-explicit-options.json"))
+            .assemble()
+            .unwrap();
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-custom-gateway-response-headers.openapi.json")
+            )
+        );
 
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
 
         // Create an OpenAPI model.
         ObjectNode result = OpenApiConverter.create()
-                .config(config)
-                .addOpenApiMapper(new OpenApiMapper() {
-                    @Override
-                    public byte getOrder() {
-                        return -127;
-                    }
+            .config(config)
+            .addOpenApiMapper(new OpenApiMapper() {
+                @Override
+                public byte getOrder() {
+                    return -127;
+                }
 
-                    @Override
-                    public OpenApi after(Context context, OpenApi openapi) {
-                        // Inject a gateway response into the model.
-                        return openapi.toBuilder()
-                                .putExtension("x-amazon-apigateway-gateway-responses", Node.objectNodeBuilder()
-                                        .withMember("ACCESS_DENIED", Node.objectNode()
-                                                .withMember("statusCode", 403)
-                                                .withMember("responseParameters", Node.objectNode()
-                                                        .withMember("gatewayresponse.header.Access-Control-Allow-Origin", "'domain.com'")
-                                                        .withMember("gatewayresponse.header.Foo", "'baz'")))
-                                        .build())
-                                .build();
-                    }
-                })
-                .convertToNode(model);
+                @Override
+                public OpenApi after(Context context, OpenApi openapi) {
+                    // Inject a gateway response into the model.
+                    return openapi.toBuilder()
+                        .putExtension(
+                            "x-amazon-apigateway-gateway-responses",
+                            Node.objectNodeBuilder()
+                                .withMember(
+                                    "ACCESS_DENIED",
+                                    Node.objectNode()
+                                        .withMember("statusCode", 403)
+                                        .withMember(
+                                            "responseParameters",
+                                            Node.objectNode()
+                                                .withMember(
+                                                    "gatewayresponse.header.Access-Control-Allow-Origin",
+                                                    "'domain.com'"
+                                                )
+                                                .withMember("gatewayresponse.header.Foo", "'baz'")
+                                        )
+                                )
+                                .build()
+                        )
+                        .build();
+                }
+            })
+            .convertToNode(model);
 
         Node.assertEquals(result, expectedNode);
     }
@@ -116,16 +144,19 @@ public class CorsTest {
     @Test
     public void withPreflightIntegrationSync() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         config.setSyncCorsPreflightIntegration(true);
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-with-preflight-sync.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-preflight-sync.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -133,15 +164,18 @@ public class CorsTest {
     @Test
     public void withoutPreflightIntegrationSync() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cors-with-multi-request-templates.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cors-without-preflight-sync.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-without-preflight-sync.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }

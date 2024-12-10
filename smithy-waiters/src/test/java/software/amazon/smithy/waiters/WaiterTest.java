@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.waiters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,10 +48,10 @@ public class WaiterTest {
         Matcher<?> matcher = new Matcher.SuccessMember(true);
         Acceptor a1 = new Acceptor(AcceptorState.SUCCESS, matcher);
         Waiter waiter = Waiter.builder()
-                .minDelay(10)
-                .maxDelay(100)
-                .addAcceptor(a1)
-                .build();
+            .minDelay(10)
+            .maxDelay(100)
+            .addAcceptor(a1)
+            .build();
         ObjectNode node = waiter.toNode().expectObjectNode();
 
         assertThat(waiter.getMinDelay(), is(10));
@@ -62,10 +66,10 @@ public class WaiterTest {
     @Test
     public void loadsAndPersistsWaiters() {
         Model model = Model.assembler()
-                .discoverModels()
-                .addImport(getClass().getResource("errorfiles/valid-waiters.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels()
+            .addImport(getClass().getResource("errorfiles/valid-waiters.smithy"))
+            .assemble()
+            .unwrap();
         Shape shape = model.expectShape(ShapeId.from("smithy.example#A"));
         WaitableTrait trait = shape.expectTrait(WaitableTrait.class);
 

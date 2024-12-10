@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import software.amazon.smithy.model.Model;
@@ -61,8 +50,8 @@ public final class Prelude {
      */
     public static boolean isPublicPreludeShape(ToShapeId id) {
         return getPreludeModel().getShape(id.toShapeId())
-                .filter(shape -> !shape.hasTrait(PrivateTrait.class))
-                .isPresent();
+            .filter(shape -> !shape.hasTrait(PrivateTrait.class))
+            .isPresent();
     }
 
     // Used by the ModelAssembler to load the prelude into another visitor.
@@ -76,27 +65,27 @@ public final class Prelude {
 
         private static Model loadPrelude() {
             return Model.assembler()
-                    .disablePrelude()
-                    // Model validation is disabled when loading the prelude
-                    // because the prelude is validated during unit tests and
-                    // the prelude is immutable. However, if the prelude is
-                    // broken for whatever reason, ERROR events encountered
-                    // when performing model validation that uses the prelude
-                    // will still cause an error, meaning the prelude is still
-                    // validated when actually loading and using other models.
-                    .disableValidation()
-                    .traitFactory(ModelAssembler.LazyTraitFactoryHolder.INSTANCE)
-                    .addImport(Prelude.class.getResource("prelude.smithy"))
-                    // Patch in synthetic box traits for v1 compatibility.
-                    .addTrait(ShapeId.from("smithy.api#Boolean"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Byte"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Short"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Integer"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Long"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Float"), new BoxTrait())
-                    .addTrait(ShapeId.from("smithy.api#Double"), new BoxTrait())
-                    .assemble()
-                    .unwrap();
+                .disablePrelude()
+                // Model validation is disabled when loading the prelude
+                // because the prelude is validated during unit tests and
+                // the prelude is immutable. However, if the prelude is
+                // broken for whatever reason, ERROR events encountered
+                // when performing model validation that uses the prelude
+                // will still cause an error, meaning the prelude is still
+                // validated when actually loading and using other models.
+                .disableValidation()
+                .traitFactory(ModelAssembler.LazyTraitFactoryHolder.INSTANCE)
+                .addImport(Prelude.class.getResource("prelude.smithy"))
+                // Patch in synthetic box traits for v1 compatibility.
+                .addTrait(ShapeId.from("smithy.api#Boolean"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Byte"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Short"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Integer"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Long"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Float"), new BoxTrait())
+                .addTrait(ShapeId.from("smithy.api#Double"), new BoxTrait())
+                .assemble()
+                .unwrap();
         }
     }
 }

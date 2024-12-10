@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions.partition;
 
 import java.util.List;
@@ -66,10 +65,12 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
 
         objectNode.expectStringMember(ID, builder::id);
         objectNode.getStringMember(REGION_REGEX, builder::regionRegex);
-        objectNode.getObjectMember(REGIONS, regionsNode -> regionsNode.getMembers().forEach((k, v) ->
-                builder.putRegion(k.toString(), RegionOverride.fromNode(v))));
-        objectNode.getObjectMember(OUTPUTS, outputsNode ->
-                builder.outputs(PartitionOutputs.fromNode(outputsNode)));
+        objectNode.getObjectMember(
+            REGIONS,
+            regionsNode -> regionsNode.getMembers()
+                .forEach((k, v) -> builder.putRegion(k.toString(), RegionOverride.fromNode(v)))
+        );
+        objectNode.getObjectMember(OUTPUTS, outputsNode -> builder.outputs(PartitionOutputs.fromNode(outputsNode)));
 
         return builder.build();
     }
@@ -118,10 +119,10 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
     @Override
     public Builder toBuilder() {
         return new Builder(getSourceLocation())
-                .id(id)
-                .regionRegex(regionRegex)
-                .regions(regions)
-                .outputs(outputs);
+            .id(id)
+            .regionRegex(regionRegex)
+            .regions(regions)
+            .outputs(outputs);
     }
 
     @Override
@@ -132,11 +133,11 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         }
 
         return Node.objectNodeBuilder()
-                .withMember(ID, Node.from(id))
-                .withMember(REGION_REGEX, Node.from(regionRegex))
-                .withMember(REGIONS, regionNodeBuilder.build())
-                .withMember(OUTPUTS, outputs.toNode())
-                .build();
+            .withMember(ID, Node.from(id))
+            .withMember(REGION_REGEX, Node.from(regionRegex))
+            .withMember(REGIONS, regionNodeBuilder.build())
+            .withMember(OUTPUTS, outputs.toNode())
+            .build();
     }
 
     @Override
@@ -149,8 +150,8 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         }
         Partition partition = (Partition) o;
         return Objects.equals(id, partition.id) && Objects.equals(regionRegex, partition.regionRegex)
-               && Objects.equals(regions, partition.regions)
-               && Objects.equals(outputs, partition.outputs);
+            && Objects.equals(regions, partition.regions)
+            && Objects.equals(outputs, partition.outputs);
     }
 
     @Override

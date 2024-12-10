@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.writer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,16 +21,18 @@ public class JavaStyleDocumentationWriterBuilderTest {
             writer.write("Goodbye.");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * Hello.\n * *\\/\n * Goodbye.\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * Hello.\n * *\\/\n * Goodbye.\n */\n")
+        );
     }
 
     @Test
     public void canSetCustomSectionName() {
         MyWriter writer = new MyWriter("foo");
         DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
-                .namedDocumentationSection("docs")
-                .build();
+            .namedDocumentationSection("docs")
+            .build();
         writer.onSection("docs", contents -> {
             writer.writeInlineWithNoFormatting(contents.toString().toUpperCase(Locale.ENGLISH));
         });
@@ -49,16 +40,18 @@ public class JavaStyleDocumentationWriterBuilderTest {
             writer.write("Hello");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * HELLO\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * HELLO\n */\n")
+        );
     }
 
     @Test
     public void ensuresNewlineIsAddedBeforeClosing() {
         MyWriter writer = new MyWriter("foo");
         DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
-                .namedDocumentationSection("docs")
-                .build();
+            .namedDocumentationSection("docs")
+            .build();
         writer.onSection("docs", contents -> {
             writer.writeInlineWithNoFormatting(contents.toString().toUpperCase(Locale.ENGLISH));
         });
@@ -66,50 +59,58 @@ public class JavaStyleDocumentationWriterBuilderTest {
             writer.writeInline("Hello");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * HELLO\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * HELLO\n */\n")
+        );
     }
 
     @Test
     public void canSetCustomMappingFunction() {
         MyWriter writer = new MyWriter("foo");
         DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
-                .mappingFunction(s -> s.toUpperCase(Locale.ENGLISH))
-                .build();
+            .mappingFunction(s -> s.toUpperCase(Locale.ENGLISH))
+            .build();
         docWriter.writeDocs(writer, () -> {
             writer.write("Hello");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * HELLO\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * HELLO\n */\n")
+        );
     }
 
     @Test
     public void canEscapeAt() {
         MyWriter writer = new MyWriter("foo");
         DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
-                .escapeAtSignWithEntity(true)
-                .build();
+            .escapeAtSignWithEntity(true)
+            .build();
         docWriter.writeDocs(writer, () -> {
             writer.write("Hello @foo");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * Hello &#064;foo\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * Hello &#064;foo\n */\n")
+        );
     }
 
     @Test
     public void canEscapeAtWithComposedCustomEscaper() {
         MyWriter writer = new MyWriter("foo");
         DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
-                .mappingFunction(s -> s.toUpperCase(Locale.ENGLISH))
-                .escapeAtSignWithEntity(true)
-                .build();
+            .mappingFunction(s -> s.toUpperCase(Locale.ENGLISH))
+            .escapeAtSignWithEntity(true)
+            .build();
         docWriter.writeDocs(writer, () -> {
             writer.write("Hello @foo");
         });
 
-        assertThat(writer.toString(),
-                   equalTo("/**\n * HELLO &#064;FOO\n */\n"));
+        assertThat(
+            writer.toString(),
+            equalTo("/**\n * HELLO &#064;FOO\n */\n")
+        );
     }
 }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
@@ -65,10 +64,10 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(ENDPOINT, endpoint)
-                .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
-                .withOptionalMember(FIPS, Optional.ofNullable(fips).map(Node::from))
-                .build();
+            .withMember(ENDPOINT, endpoint)
+            .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
+            .withOptionalMember(FIPS, Optional.ofNullable(fips).map(Node::from))
+            .build();
     }
 
     @Override

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import software.amazon.smithy.model.node.Node;
@@ -48,8 +47,8 @@ public final class ContextParamTrait extends AbstractTrait implements ToSmithyBu
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .name(name);
+            .sourceLocation(getSourceLocation())
+            .name(name);
     }
 
     public static final class Provider extends AbstractTrait.Provider {

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.AbstractMap;
@@ -217,8 +206,10 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             } else if (member.getMemberName().equals("value")) {
                 return value(member);
             } else {
-                String message = String.format("Map shapes may only have `key` and `value` members, but found `%s`",
-                        member.getMemberName());
+                String message = String.format(
+                    "Map shapes may only have `key` and `value` members, but found `%s`",
+                    member.getMemberName()
+                );
                 throw new SourceException(message, member);
             }
         }
@@ -253,8 +244,8 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             }
 
             MemberShape.Builder builder = MemberShape.builder()
-                    .target(target)
-                    .id(getId().withMember("key"));
+                .target(target)
+                .id(getId().withMember("key"));
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);
@@ -286,8 +277,8 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             }
 
             MemberShape.Builder builder = MemberShape.builder()
-                    .target(target)
-                    .id(getId().withMember("value"));
+                .target(target)
+                .id(getId().withMember("value"));
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);
@@ -319,13 +310,15 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
                         location = existing.getSourceLocation();
                     }
 
-                    addMember(MemberShape.builder()
+                    addMember(
+                        MemberShape.builder()
                             .id(getId().withMember(member.getMemberName()))
                             .target(member.getTarget())
                             .addTraits(member.getAllTraits().values())
                             .addTraits(localTraits)
                             .source(location)
-                            .build());
+                            .build()
+                    );
                 }
             }
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,10 +17,10 @@ class StandardRegionalEndpointsTraitTest {
     @Test
     public void loadsFromModel() {
         final Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("standardRegionalEndpoints.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("standardRegionalEndpoints.smithy"))
+            .assemble()
+            .unwrap();
         StandardRegionalEndpointsTrait trait;
 
         trait = getTraitFromService(model, "ns.foo#Service1");
@@ -54,7 +58,9 @@ class StandardRegionalEndpointsTraitTest {
     private StandardRegionalEndpointsTrait getTraitFromService(Model model, String service) {
         return model
             .expectShape(ShapeId.from(service))
-            .asServiceShape().get()
-            .getTrait(StandardRegionalEndpointsTrait.class).get();
+            .asServiceShape()
+            .get()
+            .getTrait(StandardRegionalEndpointsTrait.class)
+            .get();
     }
 }

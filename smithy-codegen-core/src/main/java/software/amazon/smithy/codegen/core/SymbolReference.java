@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
@@ -45,8 +34,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * necessary both when defining and when using a symbol.
  */
 public final class SymbolReference
-        extends TypedPropertiesBag
-        implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<SymbolReference> {
+    extends TypedPropertiesBag
+    implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<SymbolReference> {
 
     /**
      * Top-level interface for all {@code SymbolReference} options.
@@ -166,11 +155,11 @@ public final class SymbolReference
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .symbol(symbol)
-                .options(options)
-                .properties(getProperties())
-                .typedProperties(getTypedProperties())
-                .alias(alias);
+            .symbol(symbol)
+            .options(options)
+            .properties(getProperties())
+            .typedProperties(getTypedProperties())
+            .alias(alias);
     }
 
     @Override
@@ -183,10 +172,10 @@ public final class SymbolReference
 
         SymbolReference that = (SymbolReference) o;
         return super.equals(o)
-               && symbol.equals(that.symbol)
-               && getProperties().equals(that.getProperties())
-               && options.equals(that.options)
-               && alias.equals(that.alias);
+            && symbol.equals(that.symbol)
+            && getProperties().equals(that.getProperties())
+            && options.equals(that.options)
+            && alias.equals(that.alias);
     }
 
     @Override
@@ -203,8 +192,8 @@ public final class SymbolReference
      * Builds a SymbolReference.
      */
     public static final class Builder
-            extends TypedPropertiesBag.Builder<Builder>
-            implements SmithyBuilder<SymbolReference> {
+        extends TypedPropertiesBag.Builder<Builder>
+        implements SmithyBuilder<SymbolReference> {
 
         private Symbol symbol;
         private final BuilderRef<Set<Option>> options = BuilderRef.forUnorderedSet();

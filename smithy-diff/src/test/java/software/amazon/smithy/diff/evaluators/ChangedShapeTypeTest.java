@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,13 +39,15 @@ public class ChangedShapeTypeTest {
     @Test
     public void ignoresExpectedSetToListMigration() {
         String rawModel = "$version: \"1.0\"\nnamespace smithy.example\nset Foo { member: String }\n";
-        Model oldModel = Model.assembler().addUnparsedModel("example.smithy", rawModel)
-                .assemble().unwrap();
+        Model oldModel = Model.assembler()
+            .addUnparsedModel("example.smithy", rawModel)
+            .assemble()
+            .unwrap();
         Node serialized = ModelSerializer.builder().build().serialize(oldModel);
         Model newModel = Model.assembler()
-                .addDocumentNode(serialized)
-                .assemble()
-                .unwrap();
+            .addDocumentNode(serialized)
+            .assemble()
+            .unwrap();
 
         List<ValidationEvent> events = ModelDiff.compare(oldModel, newModel);
 
@@ -66,18 +57,22 @@ public class ChangedShapeTypeTest {
     @Test
     public void ignoresExpectedEnumTraitToEnumMigration() {
         Shape stringWithEnumTrait = StringShape.builder()
-                .id("foo.baz#Baz")
-                .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder()
-                                .name("FOO")
-                                .value("FOO")
-                                .build())
-                        .build())
-                .build();
+            .id("foo.baz#Baz")
+            .addTrait(
+                EnumTrait.builder()
+                    .addEnum(
+                        EnumDefinition.builder()
+                            .name("FOO")
+                            .value("FOO")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Shape enumShape = EnumShape.builder()
-                .id("foo.baz#Baz")
-                .addMember("FOO", "FOO")
-                .build();
+            .id("foo.baz#Baz")
+            .addMember("FOO", "FOO")
+            .build();
         Model modelA = Model.assembler().addShapes(stringWithEnumTrait).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(enumShape).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -88,23 +83,31 @@ public class ChangedShapeTypeTest {
     @Test
     public void ignoresEnumTraitToEnumTraitMigration() {
         Shape stringWithEnumTraitA = StringShape.builder()
-                .id("foo.baz#Baz")
-                .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder()
-                                .name("FOO")
-                                .value("FOO")
-                                .build())
-                        .build())
-                .build();
+            .id("foo.baz#Baz")
+            .addTrait(
+                EnumTrait.builder()
+                    .addEnum(
+                        EnumDefinition.builder()
+                            .name("FOO")
+                            .value("FOO")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Shape stringWithEnumTraitB = StringShape.builder()
-                .id("foo.baz#Baz")
-                .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder()
-                                .name("FOO")
-                                .value("FOO")
-                                .build())
-                        .build())
-                .build();
+            .id("foo.baz#Baz")
+            .addTrait(
+                EnumTrait.builder()
+                    .addEnum(
+                        EnumDefinition.builder()
+                            .name("FOO")
+                            .value("FOO")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Model modelA = Model.assembler().addShapes(stringWithEnumTraitA).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(stringWithEnumTraitB).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -115,13 +118,13 @@ public class ChangedShapeTypeTest {
     @Test
     public void ignoresEnumToEnumMigration() {
         Shape enumShapeA = EnumShape.builder()
-                .id("foo.baz#Baz")
-                .addMember("FOO", "FOO")
-                .build();
+            .id("foo.baz#Baz")
+            .addMember("FOO", "FOO")
+            .build();
         Shape enumShapeB = EnumShape.builder()
-                .id("foo.baz#Baz")
-                .addMember("FOO", "FOO")
-                .build();
+            .id("foo.baz#Baz")
+            .addMember("FOO", "FOO")
+            .build();
         Model modelA = Model.assembler().addShapes(enumShapeA).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(enumShapeB).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -132,18 +135,22 @@ public class ChangedShapeTypeTest {
     @Test
     public void doesNotIgnoreEnumTraitToEnumMigration() {
         Shape enumShape = EnumShape.builder()
-                .id("foo.baz#Baz")
-                .addMember("FOO", "FOO")
-                .build();
+            .id("foo.baz#Baz")
+            .addMember("FOO", "FOO")
+            .build();
         Shape stringWithEnumTrait = StringShape.builder()
-                .id("foo.baz#Baz")
-                .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder()
-                                .name("FOO")
-                                .value("FOO")
-                                .build())
-                        .build())
-                .build();
+            .id("foo.baz#Baz")
+            .addTrait(
+                EnumTrait.builder()
+                    .addEnum(
+                        EnumDefinition.builder()
+                            .name("FOO")
+                            .value("FOO")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Model modelA = Model.assembler().addShapes(enumShape).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(stringWithEnumTrait).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);

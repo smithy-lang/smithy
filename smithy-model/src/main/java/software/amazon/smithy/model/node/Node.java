@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static java.lang.String.format;
@@ -307,7 +296,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      */
     public static List<String> loadArrayOfString(String descriptor, Node node) {
         return node.expectArrayNode(() -> "Expected `" + descriptor + "` to be an array of strings. Found {type}.")
-                .getElementsAs(StringNode::getValue);
+            .getElementsAs(StringNode::getValue);
     }
 
     /**
@@ -325,11 +314,15 @@ public abstract class Node implements FromSourceLocation, ToNode {
         Node actualNode = actual.toNode();
         Node expectedNode = expected.toNode();
         if (!actualNode.equals(expectedNode)) {
-            throw new ExpectationNotMetException(String.format(
+            throw new ExpectationNotMetException(
+                String.format(
                     "Actual node did not match expected Node.%nActual:%n%s%nExpected:%n%s%nDiff: %s",
                     Node.prettyPrintJson(actualNode),
                     Node.prettyPrintJson(expectedNode),
-                    String.join(System.lineSeparator(), diff(actualNode, expectedNode))), actualNode);
+                    String.join(System.lineSeparator(), diff(actualNode, expectedNode))
+                ),
+                actualNode
+            );
         }
     }
 
@@ -684,8 +677,8 @@ public abstract class Node implements FromSourceLocation, ToNode {
 
     private String expandMessage(String message, String expectedType) {
         return (message == null
-                ? format("Expected %s, but found {type}.", expectedType)
-                : message).replace("{type}", getType().toString());
+            ? format("Expected %s, but found {type}.", expectedType)
+            : message).replace("{type}", getType().toString());
     }
 
     /**
@@ -725,9 +718,10 @@ public abstract class Node implements FromSourceLocation, ToNode {
 
             @Override
             public Node arrayNode(ArrayNode node) {
-                return node.getElements().stream()
-                        .map(element -> sortNode(element, keyComparator))
-                        .collect(ArrayNode.collect(node.getSourceLocation()));
+                return node.getElements()
+                    .stream()
+                    .map(element -> sortNode(element, keyComparator))
+                    .collect(ArrayNode.collect(node.getSourceLocation()));
             }
         });
     }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
@@ -48,14 +37,14 @@ final class AddRequestValidators implements ApiGatewayMapper {
     private static final String REQUEST_VALIDATOR = "x-amazon-apigateway-request-validator";
     private static final String REQUEST_VALIDATORS = "x-amazon-apigateway-request-validators";
     private static final Map<String, Node> KNOWN_VALIDATORS = MapUtils.of(
-            "params-only",
-            Node.objectNode().withMember("validateRequestParameters", Node.from(true)),
-            "body-only",
-            Node.objectNode().withMember("validateRequestBody", Node.from(true)),
-            "full",
-            Node.objectNode()
-                    .withMember("validateRequestParameters", Node.from(true))
-                    .withMember("validateRequestBody", Node.from(true))
+        "params-only",
+        Node.objectNode().withMember("validateRequestParameters", Node.from(true)),
+        "body-only",
+        Node.objectNode().withMember("validateRequestBody", Node.from(true)),
+        "full",
+        Node.objectNode()
+            .withMember("validateRequestParameters", Node.from(true))
+            .withMember("validateRequestBody", Node.from(true))
     );
 
     @Override
@@ -65,26 +54,27 @@ final class AddRequestValidators implements ApiGatewayMapper {
 
     @Override
     public OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String httpMethod,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String httpMethod,
+        String path
     ) {
         return shape.getTrait(RequestValidatorTrait.class)
-                .map(RequestValidatorTrait::getValue)
-                .map(value -> operation.toBuilder().putExtension(REQUEST_VALIDATOR, value).build())
-                .orElse(operation);
+            .map(RequestValidatorTrait::getValue)
+            .map(value -> operation.toBuilder().putExtension(REQUEST_VALIDATOR, value).build())
+            .orElse(operation);
     }
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         // Find each known request validator on operation shapes.
-        Set<String> validators = context.getModel().shapes(OperationShape.class)
-                .flatMap(shape -> OptionalUtils.stream(shape.getTrait(RequestValidatorTrait.class)))
-                .map(RequestValidatorTrait::getValue)
-                .filter(KNOWN_VALIDATORS::containsKey)
-                .collect(Collectors.toSet());
+        Set<String> validators = context.getModel()
+            .shapes(OperationShape.class)
+            .flatMap(shape -> OptionalUtils.stream(shape.getTrait(RequestValidatorTrait.class)))
+            .map(RequestValidatorTrait::getValue)
+            .filter(KNOWN_VALIDATORS::containsKey)
+            .collect(Collectors.toSet());
 
         // Check if the service has a request validator.
         String serviceValidator = null;

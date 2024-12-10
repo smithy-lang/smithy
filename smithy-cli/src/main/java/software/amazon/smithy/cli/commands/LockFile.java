@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
@@ -40,11 +39,11 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
     private static final String ARTIFACT_LIST_NAME = "artifacts";
     private static final String REPOSITORIES_LIST_NAME = "repositories";
     private static final List<String> EXPECTED_PROPERTIES = ListUtils.of(
-            WARNING_STR,
-            VERSION_NAME,
-            CONFIG_HASH_NAME,
-            ARTIFACT_LIST_NAME,
-            REPOSITORIES_LIST_NAME
+        WARNING_STR,
+        VERSION_NAME,
+        CONFIG_HASH_NAME,
+        ARTIFACT_LIST_NAME,
+        REPOSITORIES_LIST_NAME
     );
 
     private final Map<String, LockedArtifact> artifacts;
@@ -54,7 +53,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
 
     private LockFile(Builder builder) {
         this.artifacts = builder.artifacts.copy();
-        this.repositories =  builder.repositories.copy();
+        this.repositories = builder.repositories.copy();
         this.version = builder.version;
         this.configHash = builder.configHash;
     }
@@ -62,15 +61,15 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
     public static LockFile fromNode(Node node) {
         LockFile.Builder builder = builder();
         node.expectObjectNode()
-                .warnIfAdditionalProperties(EXPECTED_PROPERTIES)
-                .getStringMember(VERSION_NAME, builder::version)
-                .getNumberMember(CONFIG_HASH_NAME, n -> builder.configHash(n.intValue()))
-                .getObjectMember(ARTIFACT_LIST_NAME, artifactList -> {
-                    for (Map.Entry<String, Node> entry : artifactList.getStringMap().entrySet()) {
-                        builder.artifact(LockedArtifact.fromCoordinateNode(entry.getKey(), entry.getValue()));
-                    }
-                })
-                .getArrayMember(REPOSITORIES_LIST_NAME, StringNode::getValue, builder::repositories);
+            .warnIfAdditionalProperties(EXPECTED_PROPERTIES)
+            .getStringMember(VERSION_NAME, builder::version)
+            .getNumberMember(CONFIG_HASH_NAME, n -> builder.configHash(n.intValue()))
+            .getObjectMember(ARTIFACT_LIST_NAME, artifactList -> {
+                for (Map.Entry<String, Node> entry : artifactList.getStringMap().entrySet()) {
+                    builder.artifact(LockedArtifact.fromCoordinateNode(entry.getKey(), entry.getValue()));
+                }
+            })
+            .getArrayMember(REPOSITORIES_LIST_NAME, StringNode::getValue, builder::repositories);
         return builder.build();
     }
 
@@ -93,14 +92,13 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         return Optional.empty();
     }
 
-
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember(WARNING_STR, "")
-                .withMember(VERSION_NAME, version)
-                .withMember(CONFIG_HASH_NAME, configHash)
-                .withMember(REPOSITORIES_LIST_NAME, ArrayNode.fromStrings(repositories));
+            .withMember(WARNING_STR, "")
+            .withMember(VERSION_NAME, version)
+            .withMember(CONFIG_HASH_NAME, configHash)
+            .withMember(REPOSITORIES_LIST_NAME, ArrayNode.fromStrings(repositories));
 
         ObjectNode.Builder artifactNodeBuilder = Node.objectNodeBuilder();
         for (LockedArtifact artifact : artifacts.values()) {
@@ -169,9 +167,9 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
     @Override
     public LockFile.Builder toBuilder() {
         return builder().repositories(repositories)
-                .artifacts(artifacts)
-                .version(version)
-                .configHash(configHash);
+            .artifacts(artifacts)
+            .version(version)
+            .configHash(configHash);
     }
 
     public static final class Builder implements SmithyBuilder<LockFile> {
@@ -262,13 +260,12 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
-                    .withMember(SHA_SUM_MEMBER_NAME, shaSum)
-                    .build();
+                .withMember(SHA_SUM_MEMBER_NAME, shaSum)
+                .build();
         }
 
         boolean matchesResolved(ResolvedArtifact resolved) {
-           return shaSum.equals(resolved.getShaSum());
+            return shaSum.equals(resolved.getShaSum());
         }
     }
 }
-

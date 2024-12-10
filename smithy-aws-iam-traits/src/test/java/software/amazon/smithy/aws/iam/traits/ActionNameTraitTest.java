@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,10 +17,10 @@ public class ActionNameTraitTest {
     @SuppressWarnings("deprecation")
     public void loadsFromModel() {
         Model result = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("actionname-override.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("actionname-override.smithy"))
+            .assemble()
+            .unwrap();
 
         Shape shape = result.expectShape(ShapeId.from("smithy.example#Echo"));
         ActionNameTrait trait = shape.expectTrait(ActionNameTrait.class);

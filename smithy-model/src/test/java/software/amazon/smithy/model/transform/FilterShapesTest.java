@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,14 +30,14 @@ public class FilterShapesTest {
     public void removesShapesThatMatchPredicate() {
         ShapeId aId = ShapeId.from("ns.foo#A");
         StringShape a = StringShape.builder()
-                .id(aId)
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id(aId)
+            .addTrait(new SensitiveTrait())
+            .build();
         ShapeId bId = ShapeId.from("ns.foo#B");
         StringShape b = StringShape.builder().id(bId).build();
         Model model = Model.builder().addShapes(a, b).build();
         Model result = ModelTransformer.create()
-                .filterShapes(model, shape -> !shape.getTrait(SensitiveTrait.class).isPresent());
+            .filterShapes(model, shape -> !shape.getTrait(SensitiveTrait.class).isPresent());
 
         assertThat(result.shapes().count(), Matchers.is(1L));
         assertThat(result.getShape(bId), Matchers.not(Optional.empty()));
@@ -67,8 +56,8 @@ public class FilterShapesTest {
         MapShape map = MapShape.builder().id("ns.foo#Map").key(mapKey).value(mapValue).build();
 
         Model model = Model.builder()
-                .addShapes(string, list, listMember, map, mapKey, mapValue)
-                .build();
+            .addShapes(string, list, listMember, map, mapKey, mapValue)
+            .build();
         Model result = ModelTransformer.create().filterShapes(model, shape -> !shape.isMemberShape());
 
         // No members should be removed because they are not eligible.
@@ -84,14 +73,14 @@ public class FilterShapesTest {
         MemberShape member2 = MemberShape.builder().id("ns.foo#Structure$member2").target("ns.foo#String").build();
         MemberShape member3 = MemberShape.builder().id("ns.foo#Structure$member3").target("ns.foo#String").build();
         StructureShape structure = StructureShape.builder()
-                .id("ns.foo#Structure")
-                .addMember(member1)
-                .addMember(member2)
-                .addMember(member3)
-                .build();
+            .id("ns.foo#Structure")
+            .addMember(member1)
+            .addMember(member2)
+            .addMember(member3)
+            .build();
         Model model = Model.builder()
-                .addShapes(string, structure, member1, member2, member3)
-                .build();
+            .addShapes(string, structure, member1, member2, member3)
+            .build();
 
         // Remove "member2" from the structure.
         Model result = ModelTransformer.create().filterShapes(model, shape -> {
@@ -105,41 +94,47 @@ public class FilterShapesTest {
         assertThat(result.getShape(structure.getId()), Matchers.not(Optional.empty()));
 
         // Make sure the structure was updated so that it no longer has the removed member shape.
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member1"),
-                   Matchers.not(Optional.empty()));
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member3"),
-                   Matchers.not(Optional.empty()));
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
-                   Matchers.is(Optional.empty()));
+        assertThat(
+            result.getShape(structure.getId()).get().asStructureShape().get().getMember("member1"),
+            Matchers.not(Optional.empty())
+        );
+        assertThat(
+            result.getShape(structure.getId()).get().asStructureShape().get().getMember("member3"),
+            Matchers.not(Optional.empty())
+        );
+        assertThat(
+            result.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
+            Matchers.is(Optional.empty())
+        );
     }
 
     @Test
     public void removesTraitsWhenDefinitionIsRemoved() {
         StringShape bazTrait = StringShape.builder()
-                .id("ns.foo#baz")
-                .addTrait(TraitDefinition.builder().build())
-                .build();
+            .id("ns.foo#baz")
+            .addTrait(TraitDefinition.builder().build())
+            .build();
         StringShape barTrait = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(TraitDefinition.builder().build())
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(TraitDefinition.builder().build())
+            .build();
 
         ShapeId shapeId1 = ShapeId.from("ns.foo#id1");
         StringShape shape1 = StringShape.builder()
-                .id(shapeId1)
-                .addTrait(new DynamicTrait(ShapeId.from("foo.baz#foo"), Node.from(true)))
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id(shapeId1)
+            .addTrait(new DynamicTrait(ShapeId.from("foo.baz#foo"), Node.from(true)))
+            .addTrait(new SensitiveTrait())
+            .build();
         ShapeId shapeId2 = ShapeId.from("ns.foo#id2");
         StringShape shape2 = StringShape.builder()
-                .id(shapeId2)
-                .addTrait(new DynamicTrait(ShapeId.from("ns.foo#baz"), Node.from(true)))
-                .addTrait(new DynamicTrait(ShapeId.from("ns.foo#bar"), Node.from(true)))
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id(shapeId2)
+            .addTrait(new DynamicTrait(ShapeId.from("ns.foo#baz"), Node.from(true)))
+            .addTrait(new DynamicTrait(ShapeId.from("ns.foo#bar"), Node.from(true)))
+            .addTrait(new SensitiveTrait())
+            .build();
         Model model = Model.builder()
-                .addShapes(shape1, shape2, bazTrait, barTrait)
-                .build();
+            .addShapes(shape1, shape2, bazTrait, barTrait)
+            .build();
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterShapes(model, shape -> !shape.getId().toString().equals("ns.foo#baz"));

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff;
 
 import java.util.ArrayList;
@@ -73,11 +62,11 @@ public final class ModelDiff {
      */
     public static List<ValidationEvent> compare(ClassLoader classLoader, Model oldModel, Model newModel) {
         return builder()
-                .oldModel(oldModel)
-                .newModel(newModel)
-                .classLoader(classLoader)
-                .compare()
-                .getDiffEvents();
+            .oldModel(oldModel)
+            .newModel(newModel)
+            .classLoader(classLoader)
+            .compare()
+            .getDiffEvents();
     }
 
     /**
@@ -90,10 +79,10 @@ public final class ModelDiff {
         private final List<ValidationEvent> newModelEvents;
 
         public Result(
-                Differences differences,
-                List<ValidationEvent> diffEvents,
-                List<ValidationEvent> oldModelEvents,
-                List<ValidationEvent> newModelEvents
+            Differences differences,
+            List<ValidationEvent> diffEvents,
+            List<ValidationEvent> oldModelEvents,
+            List<ValidationEvent> newModelEvents
         ) {
             this.differences = Objects.requireNonNull(differences);
             this.diffEvents = Objects.requireNonNull(diffEvents);
@@ -184,9 +173,9 @@ public final class ModelDiff {
             }
             Result result = (Result) o;
             return getDifferences().equals(result.getDifferences())
-                   && getDiffEvents().equals(result.getDiffEvents())
-                   && getOldModelEvents().equals(result.getOldModelEvents())
-                   && getNewModelEvents().equals(result.getNewModelEvents());
+                && getDiffEvents().equals(result.getDiffEvents())
+                && getOldModelEvents().equals(result.getOldModelEvents())
+                && getNewModelEvents().equals(result.getNewModelEvents());
         }
 
         @Override
@@ -250,7 +239,7 @@ public final class ModelDiff {
          */
         public Builder oldModel(ValidatedResult<Model> oldModel) {
             this.oldModel = oldModel.getResult()
-                    .orElseThrow(() -> new IllegalArgumentException("No old model present in ValidatedResult"));
+                .orElseThrow(() -> new IllegalArgumentException("No old model present in ValidatedResult"));
             this.oldModelEvents = oldModel.getValidationEvents();
             return this;
         }
@@ -264,7 +253,7 @@ public final class ModelDiff {
          */
         public Builder newModel(ValidatedResult<Model> newModel) {
             this.newModel = newModel.getResult()
-                    .orElseThrow(() -> new IllegalArgumentException("No new model present in ValidatedResult"));
+                .orElseThrow(() -> new IllegalArgumentException("No new model present in ValidatedResult"));
             this.newModelEvents = newModel.getValidationEvents();
             return this;
         }
@@ -285,15 +274,15 @@ public final class ModelDiff {
 
             // Applies suppressions and elevates event severities.
             ValidationEventDecorator decoratorResult = new ModelBasedEventDecorator()
-                    .createDecorator(newModel)
-                    .getResult()
-                    .orElse(ValidationEventDecorator.IDENTITY);
+                .createDecorator(newModel)
+                .getResult()
+                .orElse(ValidationEventDecorator.IDENTITY);
 
             List<ValidationEvent> diffEvents = evaluators.parallelStream()
-                    .flatMap(evaluator -> evaluator.evaluate(differences).stream())
-                    // No need to call canDecorate first since that method will always return true in any code path.
-                    .map(decoratorResult::decorate)
-                    .collect(Collectors.toList());
+                .flatMap(evaluator -> evaluator.evaluate(differences).stream())
+                // No need to call canDecorate first since that method will always return true in any code path.
+                .map(decoratorResult::decorate)
+                .collect(Collectors.toList());
 
             return new Result(differences, diffEvents, oldModelEvents, newModelEvents);
         }

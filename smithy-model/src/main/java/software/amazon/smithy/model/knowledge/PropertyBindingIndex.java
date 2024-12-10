@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -62,17 +51,23 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
                 Shape inputPropertiesShape = getInputPropertiesShape(operationShape);
                 operationToInputPropertiesShape.put(operationShapeId, inputPropertiesShape.getId());
                 for (MemberShape memberShape : inputPropertiesShape.members()) {
-                    if (identifierIndex.getOperationInputBindings(resourceShape, operationShape).values()
-                            .contains(memberShape.getMemberName())) {
+                    if (identifierIndex.getOperationInputBindings(resourceShape, operationShape)
+                        .values()
+                        .contains(memberShape.getMemberName())) {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
                     } else {
-                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
-                                doesNotRequireProperty(memberShape));
+                        memberShapeDoesNotRequireProperty.put(
+                            memberShape.toShapeId(),
+                            doesNotRequireProperty(memberShape)
+                        );
                     }
                     if (doesMemberShapeRequireProperty(memberShape)
-                            || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(), getPropertyTraitName(memberShape)
-                            .orElse(memberShape.getMemberName()));
+                        || propertyNames.contains(memberShape.getMemberName())) {
+                        memberShapeToPropertyName.put(
+                            memberShape.getId(),
+                            getPropertyTraitName(memberShape)
+                                .orElse(memberShape.getMemberName())
+                        );
                     }
                 }
                 // nesting is taking place, so index top level input/output members as not property.
@@ -85,18 +80,24 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
                 Shape outputPropertiesShape = getOutputPropertiesShape(operationShape);
                 operationToOutputPropertiesShape.put(operationShapeId, outputPropertiesShape.getId());
                 for (MemberShape memberShape : outputPropertiesShape.members()) {
-                    if (identifierIndex.getOperationOutputBindings(resourceShape, operationShape).values()
+                    if (identifierIndex.getOperationOutputBindings(resourceShape, operationShape)
+                        .values()
 
-                            .contains(memberShape.getMemberName())) {
+                        .contains(memberShape.getMemberName())) {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
                     } else {
-                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
-                                doesNotRequireProperty(memberShape));
+                        memberShapeDoesNotRequireProperty.put(
+                            memberShape.toShapeId(),
+                            doesNotRequireProperty(memberShape)
+                        );
                     }
                     if (doesMemberShapeRequireProperty(memberShape)
-                            || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(), getPropertyTraitName(memberShape)
-                            .orElse(memberShape.getMemberName()));
+                        || propertyNames.contains(memberShape.getMemberName())) {
+                        memberShapeToPropertyName.put(
+                            memberShape.getId(),
+                            getPropertyTraitName(memberShape)
+                                .orElse(memberShape.getMemberName())
+                        );
                     }
                 }
                 // nesting is taking place, so index top level input/output members as not property.
@@ -148,8 +149,10 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
      */
     public StructureShape getOutputPropertiesShape(OperationShape operation) {
         Model model = getModel();
-        return getPropertiesShape(operationIndex.getOutputMembers(operation).values(),
-                model.expectShape(operation.getOutputShape(), StructureShape.class));
+        return getPropertiesShape(
+            operationIndex.getOutputMembers(operation).values(),
+            model.expectShape(operation.getOutputShape(), StructureShape.class)
+        );
     }
 
     /**
@@ -163,8 +166,10 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
      */
     public StructureShape getInputPropertiesShape(OperationShape operation) {
         Model model = getModel();
-        return getPropertiesShape(operationIndex.getInputMembers(operation).values(),
-                model.expectShape(operation.getInputShape(), StructureShape.class));
+        return getPropertiesShape(
+            operationIndex.getInputMembers(operation).values(),
+            model.expectShape(operation.getInputShape(), StructureShape.class)
+        );
     }
 
     /**
@@ -183,7 +188,8 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
 
     private Set<ShapeId> computeNotPropertyTraits() {
         Model model = getModel();
-        return model.getShapesWithTrait(NotPropertyTrait.class).stream()
+        return model.getShapesWithTrait(NotPropertyTrait.class)
+            .stream()
             .filter(shape -> shape.hasTrait(TraitDefinition.class))
             .map(shape -> shape.toShapeId())
             .collect(Collectors.toSet());
@@ -200,9 +206,9 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     private StructureShape getPropertiesShape(Collection<MemberShape> members, StructureShape presumedShape) {
         Model model = getModel();
         for (MemberShape member : members) {
-            if (member.hasTrait(NestedPropertiesTrait.class))  {
+            if (member.hasTrait(NestedPropertiesTrait.class)) {
                 Shape shape = model.expectShape(member.getTarget());
-                if (shape.isStructureShape())    {
+                if (shape.isStructureShape()) {
                     return shape.asStructureShape().get();
                 }
             }

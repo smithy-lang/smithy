@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -39,8 +38,8 @@ final class FlattenPaginationInfo {
         for (OperationShape operationShape : model.getOperationShapesWithTrait(PaginatedTrait.class)) {
             PaginationInfo paginationInfo = paginatedIndex.getPaginationInfo(service, operationShape).get();
             OperationShape updatedShape = operationShape.toBuilder()
-                    .addTrait(paginationInfo.getPaginatedTrait())
-                    .build();
+                .addTrait(paginationInfo.getPaginatedTrait())
+                .build();
             updatedShapes.add(updatedShape);
         }
 

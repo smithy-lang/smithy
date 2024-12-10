@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import java.util.ArrayList;
@@ -87,11 +76,16 @@ class TokenTreeNode implements TokenTree {
     public final String toString() {
         StringBuilder result = new StringBuilder();
         result.append(getType())
-                .append(" (").append(getStartLine()).append(", ").append(getStartColumn())
-                .append(") - (")
-                .append(getEndLine()).append(", ").append(getEndColumn())
-                .append(") {")
-                .append('\n');
+            .append(" (")
+            .append(getStartLine())
+            .append(", ")
+            .append(getStartColumn())
+            .append(") - (")
+            .append(getEndLine())
+            .append(", ")
+            .append(getEndColumn())
+            .append(") {")
+            .append('\n');
         if (getError() != null) {
             result.append("    ").append(getError()).append("\n    ---\n");
         }

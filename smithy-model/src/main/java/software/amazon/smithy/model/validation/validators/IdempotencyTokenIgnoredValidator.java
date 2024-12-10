@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
             }
             if (relationship.getRelationshipType() != RelationshipType.INPUT) {
                 ignoredRelationships.computeIfAbsent(relationship.getRelationshipType(), x -> new ArrayList<>())
-                                    .add(relationship.getShape().getId());
+                    .add(relationship.getShape().getId());
             }
         }
 
@@ -86,8 +85,7 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
         Trait trait,
         Map<RelationshipType, List<ShapeId>> ignoredRelationships
     ) {
-        String message =
-            "The `idempotencyToken` trait only has an effect when applied to a top-level operation input member, "
+        String message = "The `idempotencyToken` trait only has an effect when applied to a top-level operation input member, "
             + "but it was applied and ignored in the following contexts: "
             + formatIgnoredRelationships(ignoredRelationships);
         return warning(memberShape, trait, message);
@@ -96,12 +94,16 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
     private String formatIgnoredRelationships(Map<RelationshipType, List<ShapeId>> ignoredRelationships) {
         List<String> relationshipTypeBindings = new ArrayList<>();
         for (Map.Entry<RelationshipType, List<ShapeId>> ignoredRelationshipType : ignoredRelationships.entrySet()) {
-            StringBuilder buf = new StringBuilder(ignoredRelationshipType.getKey().toString()
-                                                                         .toLowerCase(Locale.US)
-                                                                         .replace("_", " "));
-            Set<String> bindings = ignoredRelationshipType.getValue().stream()
-                                                          .map(ShapeId::toString)
-                                                          .collect(Collectors.toCollection(TreeSet::new));
+            StringBuilder buf = new StringBuilder(
+                ignoredRelationshipType.getKey()
+                    .toString()
+                    .toLowerCase(Locale.US)
+                    .replace("_", " ")
+            );
+            Set<String> bindings = ignoredRelationshipType.getValue()
+                .stream()
+                .map(ShapeId::toString)
+                .collect(Collectors.toCollection(TreeSet::new));
             buf.append(": [").append(String.join(", ", bindings)).append("]");
             relationshipTypeBindings.add(buf.toString());
         }

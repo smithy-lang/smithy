@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static java.lang.String.format;
@@ -58,8 +47,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
     ObjectNode(Map<StringNode, Node> nodeMap, SourceLocation sourceLocation, boolean defensiveCopy) {
         super(sourceLocation);
         this.nodeMap = defensiveCopy
-                ? Collections.unmodifiableMap(new LinkedHashMap<>(nodeMap))
-                : Collections.unmodifiableMap(nodeMap);
+            ? Collections.unmodifiableMap(new LinkedHashMap<>(nodeMap))
+            : Collections.unmodifiableMap(nodeMap);
     }
 
     private ObjectNode(Builder builder) {
@@ -225,9 +214,10 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @return Returns the map of matching members.
      */
     public Map<String, Node> getMembersByPrefix(String prefix) {
-        return getStringMap().entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(prefix))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getStringMap().entrySet()
+            .stream()
+            .filter(entry -> entry.getKey().startsWith(prefix))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -258,7 +248,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<StringNode> getStringMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectStringNode(() -> format("Expected `%s` to be a string; found {type}", memberName)));
+            .map(n -> n.expectStringNode(() -> format("Expected `%s` to be a string; found {type}", memberName)));
     }
 
     /**
@@ -284,7 +274,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<NumberNode> getNumberMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectNumberNode(() -> format("Expected `%s` to be a number; found {type}", memberName)));
+            .map(n -> n.expectNumberNode(() -> format("Expected `%s` to be a number; found {type}", memberName)));
     }
 
     /**
@@ -310,7 +300,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<ArrayNode> getArrayMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectArrayNode(() -> format("Expected `%s` to be an array; found {type}", memberName)));
+            .map(n -> n.expectArrayNode(() -> format("Expected `%s` to be an array; found {type}", memberName)));
     }
 
     /**
@@ -323,7 +313,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<ObjectNode> getObjectMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectObjectNode(() -> format("Expected `%s` to be an object; found {type}", memberName)));
+            .map(n -> n.expectObjectNode(() -> format("Expected `%s` to be an object; found {type}", memberName)));
     }
 
     /**
@@ -336,7 +326,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<BooleanNode> getBooleanMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectBooleanNode(() -> format("Expected `%s` to be a boolean; found {type}", memberName)));
+            .map(n -> n.expectBooleanNode(() -> format("Expected `%s` to be a boolean; found {type}", memberName)));
     }
 
     /**
@@ -414,7 +404,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public ArrayNode expectArrayMember(String name) {
         return expectMember(name)
-                .expectArrayNode(() -> format("Expected `%s` member to be an array, but found {type}.", name));
+            .expectArrayNode(() -> format("Expected `%s` member to be an array, but found {type}.", name));
     }
 
     /**
@@ -426,7 +416,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public BooleanNode expectBooleanMember(String name) {
         return expectMember(name)
-                .expectBooleanNode(() -> format("Expected `%s` member to be a boolean, but found {type}.", name));
+            .expectBooleanNode(() -> format("Expected `%s` member to be a boolean, but found {type}.", name));
     }
 
     /**
@@ -438,7 +428,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public NullNode expectNullMember(String name) {
         return expectMember(name)
-                .expectNullNode(() -> format("Expected `%s` member to be null, but found {type}.", name));
+            .expectNullNode(() -> format("Expected `%s` member to be null, but found {type}.", name));
     }
 
     /**
@@ -450,7 +440,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public NumberNode expectNumberMember(String name) {
         return expectMember(name)
-                .expectNumberNode(() -> format("Expected `%s` member to be a number, but found {type}.", name));
+            .expectNumberNode(() -> format("Expected `%s` member to be a number, but found {type}.", name));
     }
 
     /**
@@ -462,7 +452,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public ObjectNode expectObjectMember(String name) {
         return expectMember(name)
-                .expectObjectNode(() -> format("Expected `%s` member to be an object, but found {type}.", name));
+            .expectObjectNode(() -> format("Expected `%s` member to be an object, but found {type}.", name));
     }
 
     /**
@@ -474,7 +464,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public StringNode expectStringMember(String name) {
         return expectMember(name)
-                .expectStringNode(() -> format("Expected `%s` member to be a string, but found {type}.", name));
+            .expectStringNode(() -> format("Expected `%s` member to be a string, but found {type}.", name));
     }
 
     /**
@@ -490,9 +480,14 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
             if (!allowedProperties.contains(key)) {
                 Set<String> additional = new HashSet<>(getStringMap().keySet());
                 additional.removeAll(allowedProperties);
-                throw new ExpectationNotMetException(String.format(
+                throw new ExpectationNotMetException(
+                    String.format(
                         "Expected an object with possible properties of %s, but found additional properties: %s",
-                        ValidationUtils.tickedList(allowedProperties), ValidationUtils.tickedList(additional)), this);
+                        ValidationUtils.tickedList(allowedProperties),
+                        ValidationUtils.tickedList(additional)
+                    ),
+                    this
+                );
             }
         }
 
@@ -716,9 +711,10 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
         Map<StringNode, Node> result = new LinkedHashMap<>(getMembers());
         result.putAll(other.nodeMap);
         return new ObjectNode(
-                result,
-                getSourceLocation() != SourceLocation.NONE ? getSourceLocation() : other.getSourceLocation(),
-                false); // Use the constructor that doesn't re-copy.
+            result,
+            getSourceLocation() != SourceLocation.NONE ? getSourceLocation() : other.getSourceLocation(),
+            false
+        ); // Use the constructor that doesn't re-copy.
     }
 
     /**
@@ -730,18 +726,18 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @return Returns the created collector.
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collect(
-            Function<T, StringNode> keyMapper,
-            Function<T, ToNode> valueMapper
+        Function<T, StringNode> keyMapper,
+        Function<T, ToNode> valueMapper
     ) {
         return Collector.of(
-                LinkedHashMap::new,
-                (results, entry) -> results.put(keyMapper.apply(entry), valueMapper.apply(entry).toNode()),
-                (left, right) -> {
-                    left.putAll(right);
-                    return left;
-                },
-                // Use the constructor that doesn't need to re-copy.
-                results -> new ObjectNode(results, SourceLocation.NONE, false)
+            LinkedHashMap::new,
+            (results, entry) -> results.put(keyMapper.apply(entry), valueMapper.apply(entry).toNode()),
+            (left, right) -> {
+                left.putAll(right);
+                return left;
+            },
+            // Use the constructor that doesn't need to re-copy.
+            results -> new ObjectNode(results, SourceLocation.NONE, false)
         );
     }
 
@@ -754,8 +750,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @return Returns the created collector.
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collectStringKeys(
-            Function<T, String> keyMapper,
-            Function<T, ToNode> valueMapper
+        Function<T, String> keyMapper,
+        Function<T, ToNode> valueMapper
     ) {
         return collect(entry -> from(keyMapper.apply(entry)), valueMapper);
     }

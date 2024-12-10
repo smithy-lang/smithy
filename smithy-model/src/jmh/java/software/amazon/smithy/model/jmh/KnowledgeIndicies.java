@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.jmh;
 
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.BottomUpIndex;
 
 @Warmup(iterations = 3)
-@Measurement(iterations = 3, timeUnit = TimeUnit.MICROSECONDS)
+@Measurement(
+    iterations = 3,
+    timeUnit = TimeUnit.MICROSECONDS
+)
 @BenchmarkMode(Mode.AverageTime)
 @Fork(1)
 public class KnowledgeIndicies {
@@ -30,11 +32,11 @@ public class KnowledgeIndicies {
         @Setup
         public void prepare() {
             model = Model.assembler()
-                    .addImport(KnowledgeIndicies.class.getResource("test-model.smithy"))
-                    .disableValidation()
-                    .assemble()
-                    .getResult()
-                    .get();
+                .addImport(KnowledgeIndicies.class.getResource("test-model.smithy"))
+                .disableValidation()
+                .assemble()
+                .getResult()
+                .get();
         }
     }
 

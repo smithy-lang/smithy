@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.mqtt.traits;
 
 import static java.lang.String.format;
@@ -53,21 +42,36 @@ public final class Topic {
 
         for (String level : topic.split("/")) {
             if (level.contains("#") || level.contains("+")) {
-                throw new TopicSyntaxException(format(
-                        "Wildcard levels are not allowed in MQTT topics. Found `%s` in `%s`", level, topic));
+                throw new TopicSyntaxException(
+                    format(
+                        "Wildcard levels are not allowed in MQTT topics. Found `%s` in `%s`",
+                        level,
+                        topic
+                    )
+                );
             } else if (level.startsWith("{") && level.endsWith("}")) {
                 String label = level.substring(1, level.length() - 1);
                 if (!LABEL_PATTERN.matcher(label).matches()) {
-                    throw new TopicSyntaxException(format(
-                            "Invalid topic label name `%s` found in `%s`", label, topic));
+                    throw new TopicSyntaxException(
+                        format(
+                            "Invalid topic label name `%s` found in `%s`",
+                            label,
+                            topic
+                        )
+                    );
                 } else if (labels.contains(label)) {
                     throw new TopicSyntaxException(format("Duplicate topic label `%s` found in `%s`", label, topic));
                 }
                 labels.add(label);
                 levels.add(new Level(label, true));
             } else if (level.contains("{") || level.contains("}")) {
-                throw new TopicSyntaxException(format(
-                        "Topic labels must span an entire level. Found `%s` in `%s`", level, topic));
+                throw new TopicSyntaxException(
+                    format(
+                        "Topic labels must span an entire level. Found `%s` in `%s`",
+                        level,
+                        topic
+                    )
+                );
             } else {
                 levels.add(new Level(level, false));
             }
@@ -92,8 +96,8 @@ public final class Topic {
      */
     public List<Level> getLabels() {
         return levels.stream()
-                .filter(Level::isLabel)
-                .collect(Collectors.toList());
+            .filter(Level::isLabel)
+            .collect(Collectors.toList());
     }
 
     /**

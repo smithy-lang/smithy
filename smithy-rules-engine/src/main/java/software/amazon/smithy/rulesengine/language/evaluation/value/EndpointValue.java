@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation.value;
 
 import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
@@ -70,8 +69,12 @@ public final class EndpointValue extends Value {
 
         objectNode.getObjectMember("headers", headers -> {
             for (Map.Entry<String, Node> entry : headers.getStringMap().entrySet()) {
-                builder.putHeader(entry.getKey(), entry.getValue().expectArrayNode("Header values must be an array")
-                        .getElementsAs(n -> n.expectStringNode().getValue()));
+                builder.putHeader(
+                    entry.getKey(),
+                    entry.getValue()
+                        .expectArrayNode("Header values must be an array")
+                        .getElementsAs(n -> n.expectStringNode().getValue())
+                );
             }
         });
         return builder.build();
@@ -125,10 +128,10 @@ public final class EndpointValue extends Value {
         }
 
         return ObjectNode.builder()
-                .withMember(URL, url)
-                .withMember(PROPERTIES, propertiesBuilder.build())
-                .withMember(HEADERS, headersBuilder.build())
-                .build();
+            .withMember(URL, url)
+            .withMember(PROPERTIES, propertiesBuilder.build())
+            .withMember(HEADERS, headersBuilder.build())
+            .build();
     }
 
     @Override
@@ -141,8 +144,8 @@ public final class EndpointValue extends Value {
         }
         EndpointValue endpoint = (EndpointValue) o;
         return url.equals(endpoint.url)
-                && properties.equals(endpoint.properties)
-                && headers.equals(endpoint.headers);
+            && properties.equals(endpoint.properties)
+            && headers.equals(endpoint.headers);
     }
 
     @Override
@@ -153,9 +156,9 @@ public final class EndpointValue extends Value {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("url: ")
-                .append(url)
-                .append("\nproperties:\n")
-                .append(StringUtils.indent(properties.toString(), 2));
+            .append(url)
+            .append("\nproperties:\n")
+            .append(StringUtils.indent(properties.toString(), 2));
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             sb.append(StringUtils.indent(String.format("%s:%s", entry.getKey(), entry.getValue()), 2));
         }
@@ -167,8 +170,7 @@ public final class EndpointValue extends Value {
      */
     public static final class Builder extends RulesComponentBuilder<Builder, EndpointValue> {
         private final BuilderRef<Map<String, Value>> properties = BuilderRef.forOrderedMap();
-        private final BuilderRef<Map<String, List<String>>> headers =
-                BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, List<String>>> headers = BuilderRef.forOrderedMap();
         private String url;
 
         public Builder(FromSourceLocation sourceLocation) {

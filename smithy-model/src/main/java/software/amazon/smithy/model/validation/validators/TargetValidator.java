@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -51,21 +40,35 @@ public final class TargetValidator extends AbstractValidator {
 
     private static final int MAX_EDIT_DISTANCE_FOR_SUGGESTIONS = 2;
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
-            ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
+        ShapeType.SERVICE,
+        ShapeType.RESOURCE,
+        ShapeType.OPERATION,
+        ShapeType.MEMBER
+    );
 
     private static final String UNRESOLVED_SHAPE_PART = "UnresolvedShape";
 
     // Relationship types listed here are checked to see if a shape refers to a deprecated shape.
     private static final Map<RelationshipType, String> RELATIONSHIP_TYPE_DEPRECATION_MAPPINGS = MapUtils.of(
-            RelationshipType.MEMBER_TARGET, "Member targets a deprecated shape",
-            RelationshipType.RESOURCE, "Binds a deprecated resource",
-            RelationshipType.OPERATION, "Binds a deprecated operation",
-            RelationshipType.IDENTIFIER, "Resource identifier targets a deprecated shape",
-            RelationshipType.PROPERTY, "Resource property targets a deprecated shape",
-            RelationshipType.INPUT, "Operation input targets a deprecated shape",
-            RelationshipType.OUTPUT, "Operation output targets a deprecated shape",
-            RelationshipType.ERROR, "Operation error targets a deprecated shape",
-            RelationshipType.MIXIN, "Applies a deprecated mixin");
+        RelationshipType.MEMBER_TARGET,
+        "Member targets a deprecated shape",
+        RelationshipType.RESOURCE,
+        "Binds a deprecated resource",
+        RelationshipType.OPERATION,
+        "Binds a deprecated operation",
+        RelationshipType.IDENTIFIER,
+        "Resource identifier targets a deprecated shape",
+        RelationshipType.PROPERTY,
+        "Resource property targets a deprecated shape",
+        RelationshipType.INPUT,
+        "Operation input targets a deprecated shape",
+        RelationshipType.OUTPUT,
+        "Operation output targets a deprecated shape",
+        RelationshipType.ERROR,
+        "Operation error targets a deprecated shape",
+        RelationshipType.MIXIN,
+        "Applies a deprecated mixin"
+    );
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -78,10 +81,10 @@ public final class TargetValidator extends AbstractValidator {
     }
 
     private void validateShape(
-            Model model,
-            Shape shape,
-            List<Relationship> relationships,
-            List<ValidationEvent> mutableEvents
+        Model model,
+        Shape shape,
+        List<Relationship> relationships,
+        List<ValidationEvent> mutableEvents
     ) {
         for (Relationship relationship : relationships) {
             if (relationship.getNeighborShape().isPresent()) {
@@ -93,28 +96,44 @@ public final class TargetValidator extends AbstractValidator {
     }
 
     private void validateTarget(
-            Model model,
-            Shape shape,
-            Shape target,
-            Relationship rel,
-            List<ValidationEvent> events
+        Model model,
+        Shape shape,
+        Shape target,
+        Relationship rel,
+        List<ValidationEvent> events
     ) {
         RelationshipType relType = rel.getRelationshipType();
 
         if (relType != RelationshipType.MIXIN && relType.getDirection() == RelationshipDirection.DIRECTED) {
             if (target.hasTrait(TraitDefinition.class)) {
-                events.add(error(shape, format(
-                        "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
-                        + "members or referenced by shapes in any other context other than applying them as "
-                        + "traits.", relType, rel.getNeighborShapeId())));
+                events.add(
+                    error(
+                        shape,
+                        format(
+                            "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
+                                + "members or referenced by shapes in any other context other than applying them as "
+                                + "traits.",
+                            relType,
+                            rel.getNeighborShapeId()
+                        )
+                    )
+                );
                 return;
             }
 
             // Ignoring members with the mixin trait, forbid shapes to reference mixins except as mixins.
             if (!target.isMemberShape() && target.hasTrait(MixinTrait.class)) {
-                events.add(error(shape, format(
-                        "Illegal %s reference to mixin `%s`; shapes marked with the mixin trait can only be "
-                        + "referenced to apply them as a mixin.", relType, rel.getNeighborShapeId())));
+                events.add(
+                    error(
+                        shape,
+                        format(
+                            "Illegal %s reference to mixin `%s`; shapes marked with the mixin trait can only be "
+                                + "referenced to apply them as a mixin.",
+                            relType,
+                            rel.getNeighborShapeId()
+                        )
+                    )
+                );
                 return;
             }
         }
@@ -126,8 +145,16 @@ public final class TargetValidator extends AbstractValidator {
             case MEMBER_TARGET:
                 // Members and property cannot target other members, service, operation, or resource shapes.
                 if (INVALID_MEMBER_TARGETS.contains(target.getType())) {
-                    events.add(error(shape, format(
-                            "Members cannot target %s shapes, but found %s", target.getType(), target)));
+                    events.add(
+                        error(
+                            shape,
+                            format(
+                                "Members cannot target %s shapes, but found %s",
+                                target.getType(),
+                                target
+                            )
+                        )
+                    );
                 }
                 break;
             case MAP_KEY:
@@ -169,16 +196,29 @@ public final class TargetValidator extends AbstractValidator {
             case DELETE:
             case LIST:
                 if (target.getType() != ShapeType.OPERATION) {
-                    events.add(error(shape, format(
-                            "Resource %s lifecycle operation must target an operation, but found %s",
-                            relType.toString().toLowerCase(Locale.US), target)));
+                    events.add(
+                        error(
+                            shape,
+                            format(
+                                "Resource %s lifecycle operation must target an operation, but found %s",
+                                relType.toString().toLowerCase(Locale.US),
+                                target
+                            )
+                        )
+                    );
                 }
                 break;
             case MIXIN:
                 if (!target.hasTrait(MixinTrait.class)) {
-                    events.add(error(shape, format(
-                            "Attempted to use %s as a mixin, but it is not marked with the mixin trait",
-                            target.getId())));
+                    events.add(
+                        error(
+                            shape,
+                            format(
+                                "Attempted to use %s as a mixin, but it is not marked with the mixin trait",
+                                target.getId()
+                            )
+                        )
+                    );
                 }
                 break;
             default:
@@ -187,10 +227,10 @@ public final class TargetValidator extends AbstractValidator {
     }
 
     private void validateDeprecatedTargets(
-            Shape shape,
-            Shape target,
-            RelationshipType relType,
-            List<ValidationEvent> events
+        Shape shape,
+        Shape target,
+        RelationshipType relType,
+        List<ValidationEvent> events
     ) {
         if (!target.hasTrait(DeprecatedTrait.class)) {
             return;
@@ -205,12 +245,14 @@ public final class TargetValidator extends AbstractValidator {
         DeprecatedTrait deprecatedTrait = target.expectTrait(DeprecatedTrait.class);
         deprecatedTrait.getMessage().ifPresent(message -> builder.append(". ").append(message));
         deprecatedTrait.getSince().ifPresent(since -> builder.append(" (since ").append(since).append(')'));
-        events.add(ValidationEvent.builder()
-                           .id("DeprecatedShape." + target.getId())
-                           .severity(Severity.WARNING)
-                           .shape(shape)
-                           .message(builder.toString())
-                           .build());
+        events.add(
+            ValidationEvent.builder()
+                .id("DeprecatedShape." + target.getId())
+                .severity(Severity.WARNING)
+                .shape(shape)
+                .message(builder.toString())
+                .build()
+        );
     }
 
     private void validateMapKey(Shape shape, ShapeId target, Model model, List<ValidationEvent> events) {
@@ -232,26 +274,37 @@ public final class TargetValidator extends AbstractValidator {
         // positives than are useful.
         Collection<String> suggestions = computeTargetSuggestions(model, rel.getNeighborShapeId());
         String suggestionText = !suggestions.isEmpty()
-                ? ". Did you mean " + String.join(", ", suggestions) + "?"
-                : "";
+            ? ". Did you mean " + String.join(", ", suggestions) + "?"
+            : "";
 
         if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
             // Don't show the relationship type for invalid member targets.
-            return error(shape, String.format(
-                    "member shape targets an unresolved shape `%s`%s", rel.getNeighborShapeId(), suggestionText),
-                         UNRESOLVED_SHAPE_PART);
+            return error(
+                shape,
+                String.format(
+                    "member shape targets an unresolved shape `%s`%s",
+                    rel.getNeighborShapeId(),
+                    suggestionText
+                ),
+                UNRESOLVED_SHAPE_PART
+            );
         } else {
             // Use "a" or "an" depending on if the relationship starts with a vowel.
             String indefiniteArticle = isUppercaseVowel(rel.getRelationshipType().toString().charAt(0))
-                    ? "an"
-                    : "a";
-            return error(shape, String.format(
+                ? "an"
+                : "a";
+            return error(
+                shape,
+                String.format(
                     "%s shape has %s `%s` relationship to an unresolved shape `%s`%s",
                     shape.getType(),
                     indefiniteArticle,
                     rel.getRelationshipType().toString().toLowerCase(Locale.US),
                     rel.getNeighborShapeId(),
-                    suggestionText), UNRESOLVED_SHAPE_PART);
+                    suggestionText
+                ),
+                UNRESOLVED_SHAPE_PART
+            );
         }
     }
 
@@ -284,21 +337,37 @@ public final class TargetValidator extends AbstractValidator {
     }
 
     private ValidationEvent badType(Shape shape, Shape target, RelationshipType rel, ShapeType valid) {
-        return error(shape, format(
+        return error(
+            shape,
+            format(
                 "%s shape `%s` relationships must target a %s shape, but found %s",
-                shape.getType(), rel.toString().toLowerCase(Locale.US), valid, target));
+                shape.getType(),
+                rel.toString().toLowerCase(Locale.US),
+                valid,
+                target
+            )
+        );
     }
 
     private ValidationEvent inputOutputWithErrorTrait(Shape shape, Shape target, RelationshipType rel) {
         String descriptor = rel == RelationshipType.INPUT ? "input" : "output";
-        return error(shape, format(
+        return error(
+            shape,
+            format(
                 "Operation %s targets an invalid structure `%s` that is marked with the `error` trait.",
-                descriptor, target.getId()));
+                descriptor,
+                target.getId()
+            )
+        );
     }
 
     private ValidationEvent errorNoTrait(Shape shape, ShapeId target) {
-        return error(shape, format(
+        return error(
+            shape,
+            format(
                 "`%s` cannot be bound as an error because it is not marked with the `error` trait.",
-                target));
+                target
+            )
+        );
     }
 }

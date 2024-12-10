@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import static software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers.HandlerPermissionMapper.getPermissionsEntriesForOperation;
@@ -38,10 +37,10 @@ public final class TaggingMapper implements CfnMapper {
 
     @SmithyInternalApi
     public static void injectTagsMember(
-            CfnConfig config,
-            Model model,
-            ResourceShape resource,
-            StructureShape.Builder builder
+        CfnConfig config,
+        Model model,
+        ResourceShape resource,
+        StructureShape.Builder builder
     ) {
         String tagMemberName = getTagMemberName(config, resource);
         if (resource.hasTrait(TaggableTrait.class)) {
@@ -51,7 +50,7 @@ public final class TaggingMapper implements CfnMapper {
             CfnResource cfnResource = resourceIndex.getResource(resource).get();
 
             if (!trait.getProperty().isPresent() || !cfnResource.getProperties()
-                    .containsKey(trait.getProperty().get())) {
+                .containsKey(trait.getProperty().get())) {
                 if (trait.getProperty().isPresent()) {
                     ShapeId definition = resource.getProperties().get(trait.getProperty().get());
                     builder.addMember(tagMemberName, definition);
@@ -78,36 +77,36 @@ public final class TaggingMapper implements CfnMapper {
         AwsTagIndex tagsIndex = AwsTagIndex.of(model);
         TaggableTrait trait = resourceShape.expectTrait(TaggableTrait.class);
         Tagging.Builder tagBuilder = Tagging.builder()
-                .taggable(true)
-                .tagOnCreate(tagsIndex.isResourceTagOnCreate(resourceShape.getId()))
-                .tagProperty("/properties/" + getTagMemberName(context.getConfig(), resourceShape))
-                .cloudFormationSystemTags(!trait.getDisableSystemTags())
-                // Unless tag-on-create is supported, Smithy tagging means
-                .tagUpdatable(true);
+            .taggable(true)
+            .tagOnCreate(tagsIndex.isResourceTagOnCreate(resourceShape.getId()))
+            .tagProperty("/properties/" + getTagMemberName(context.getConfig(), resourceShape))
+            .cloudFormationSystemTags(!trait.getDisableSystemTags())
+            // Unless tag-on-create is supported, Smithy tagging means
+            .tagUpdatable(true);
 
         // Add the tagging permissions based on the defined tagging operations.
         tagsIndex.getTagResourceOperation(resourceShape)
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(tagBuilder::addPermissions);
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(tagBuilder::addPermissions);
         tagsIndex.getListTagsForResourceOperation(resourceShape)
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(tagBuilder::addPermissions);
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(tagBuilder::addPermissions);
         tagsIndex.getUntagResourceOperation(resourceShape)
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(tagBuilder::addPermissions);
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(tagBuilder::addPermissions);
 
         return resourceSchema.toBuilder().tagging(tagBuilder.build()).build();
     }
 
     private static String getTagMemberName(CfnConfig config, ResourceShape resource) {
         return resource.getTrait(TaggableTrait.class)
-                .flatMap(TaggableTrait::getProperty)
-                .map(property -> {
-                    if (config.getDisableCapitalizedProperties()) {
-                        return property;
-                    }
-                    return StringUtils.capitalize(property);
-                })
-                .orElse(DEFAULT_TAGS_NAME);
+            .flatMap(TaggableTrait::getProperty)
+            .map(property -> {
+                if (config.getDisableCapitalizedProperties()) {
+                    return property;
+                }
+                return StringUtils.capitalize(property);
+            })
+            .orElse(DEFAULT_TAGS_NAME);
     }
 }

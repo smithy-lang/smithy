@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
@@ -290,8 +289,9 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         public Builder validateOrElse(String error, ToCondition... condition) {
             Builder next = new Builder(javaLocation());
             next.onBuild = (Rule rule) -> this.treeRule(
-                    Rule.builder().conditions(condition).treeRule(rule),
-                    Rule.builder().error(error));
+                Rule.builder().conditions(condition).treeRule(rule),
+                Rule.builder().error(error)
+            );
             return next;
         }
     }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.List;
@@ -38,8 +27,13 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpChecksum");
     public static final String CHECKSUM_PREFIX = "x-amz-checksum-";
     // This list should be in sync with the trait definition in `aws.protocols.smithy`.
-    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("CRC64NVME", "CRC32C", "CRC32",
-            "SHA1", "SHA256");
+    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of(
+        "CRC64NVME",
+        "CRC32C",
+        "CRC32",
+        "SHA1",
+        "SHA256"
+    );
     public static final List<String> VALIDATION_MODES = ListUtils.of("ENABLED");
 
     public static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";
@@ -67,11 +61,11 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .requestChecksumRequired(requestChecksumRequired)
-                .requestAlgorithmMember(requestAlgorithmMember)
-                .requestValidationModeMember(requestValidationModeMember)
-                .responseAlgorithms(responseAlgorithms);
+            .sourceLocation(getSourceLocation())
+            .requestChecksumRequired(requestChecksumRequired)
+            .requestAlgorithmMember(requestAlgorithmMember)
+            .requestValidationModeMember(requestValidationModeMember)
+            .responseAlgorithms(responseAlgorithms);
     }
 
     /**
@@ -124,9 +118,9 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = ObjectNode.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withOptionalMember(REQUEST_ALGORITHM_MEMBER, getRequestAlgorithmMember().map(Node::from))
-                .withOptionalMember(REQUEST_VALIDATION_MODE_MEMBER, getRequestValidationModeMember().map(Node::from));
+            .sourceLocation(getSourceLocation())
+            .withOptionalMember(REQUEST_ALGORITHM_MEMBER, getRequestAlgorithmMember().map(Node::from))
+            .withOptionalMember(REQUEST_VALIDATION_MODE_MEMBER, getRequestValidationModeMember().map(Node::from));
 
         if (isRequestChecksumRequired()) {
             builder.withMember(REQUEST_CHECKSUM_REQUIRED, Node.from(true));
@@ -151,8 +145,8 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
             builder.requestChecksumRequired(objectNode.getBooleanMemberOrDefault(REQUEST_CHECKSUM_REQUIRED));
 
             objectNode.getStringMember(REQUEST_ALGORITHM_MEMBER)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::requestAlgorithmMember);
+                .map(StringNode::getValue)
+                .ifPresent(builder::requestAlgorithmMember);
 
             objectNode.getArrayMember(RESPONSE_ALGORITHMS).ifPresent(responseAlgorithmNodes -> {
                 for (String algorithm : responseAlgorithmNodes.getElementsAs(StringNode::getValue)) {
@@ -161,8 +155,8 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
             });
 
             objectNode.getStringMember(REQUEST_VALIDATION_MODE_MEMBER)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::requestValidationModeMember);
+                .map(StringNode::getValue)
+                .ifPresent(builder::requestValidationModeMember);
 
             HttpChecksumTrait result = builder.build();
             result.setNodeCache(value);

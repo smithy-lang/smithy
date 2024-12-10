@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,8 +16,10 @@ public class FormatCommandTest {
     public void failsWhenNoModelsGiven() {
         IntegUtils.run("bad-formatting", ListUtils.of("format"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(),
-                       containsString("No .smithy model or directory was provided as a positional argument"));
+            assertThat(
+                result.getOutput(),
+                containsString("No .smithy model or directory was provided as a positional argument")
+            );
         });
     }
 
@@ -22,8 +28,10 @@ public class FormatCommandTest {
         IntegUtils.run("bad-formatting", ListUtils.of("format", "THIS_FILE_DOES_NOT_EXIST_1234"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
 
-            assertThat(result.getOutput(),
-                       containsString("`THIS_FILE_DOES_NOT_EXIST_1234` is not a valid file or directory"));
+            assertThat(
+                result.getOutput(),
+                containsString("`THIS_FILE_DOES_NOT_EXIST_1234` is not a valid file or directory")
+            );
         });
     }
 
@@ -33,13 +41,20 @@ public class FormatCommandTest {
             assertThat(result.getExitCode(), equalTo(0));
 
             String model = result.getFile("model/other.smithy");
-            assertThat(model, equalTo(String.format("$version: \"2.0\"%n"
-                                      + "%n"
-                                      + "namespace smithy.example%n"
-                                      + "%n"
-                                      + "string MyString%n"
-                                      + "%n"
-                                      + "string MyString2%n")));
+            assertThat(
+                model,
+                equalTo(
+                    String.format(
+                        "$version: \"2.0\"%n"
+                            + "%n"
+                            + "namespace smithy.example%n"
+                            + "%n"
+                            + "string MyString%n"
+                            + "%n"
+                            + "string MyString2%n"
+                    )
+                )
+            );
         });
     }
 
@@ -49,23 +64,37 @@ public class FormatCommandTest {
             assertThat(result.getExitCode(), equalTo(0));
 
             String main = result.getFile("model/main.smithy");
-            assertThat(main, equalTo(String.format("$version: \"2.0\"%n"
-                                     + "%n"
-                                     + "metadata this_is_a_long_string = {%n"
-                                     + "    this_is_a_long_string1: \"a\"%n"
-                                     + "    this_is_a_long_string2: \"b\"%n"
-                                     + "    this_is_a_long_string3: \"c\"%n"
-                                     + "    this_is_a_long_string4: \"d\"%n"
-                                     + "}%n")));
+            assertThat(
+                main,
+                equalTo(
+                    String.format(
+                        "$version: \"2.0\"%n"
+                            + "%n"
+                            + "metadata this_is_a_long_string = {%n"
+                            + "    this_is_a_long_string1: \"a\"%n"
+                            + "    this_is_a_long_string2: \"b\"%n"
+                            + "    this_is_a_long_string3: \"c\"%n"
+                            + "    this_is_a_long_string4: \"d\"%n"
+                            + "}%n"
+                    )
+                )
+            );
 
             String other = result.getFile("model/other.smithy");
-            assertThat(other, equalTo(String.format("$version: \"2.0\"%n"
-                                      + "%n"
-                                      + "namespace smithy.example%n"
-                                      + "%n"
-                                      + "string MyString%n"
-                                      + "%n"
-                                      + "string MyString2%n")));
+            assertThat(
+                other,
+                equalTo(
+                    String.format(
+                        "$version: \"2.0\"%n"
+                            + "%n"
+                            + "namespace smithy.example%n"
+                            + "%n"
+                            + "string MyString%n"
+                            + "%n"
+                            + "string MyString2%n"
+                    )
+                )
+            );
         });
     }
 }

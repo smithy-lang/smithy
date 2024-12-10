@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform.plugins;
 
 import java.util.Collection;
@@ -36,13 +25,13 @@ public final class CleanBindings implements ModelTransformerPlugin {
     @Override
     public Model onRemove(ModelTransformer transformer, Collection<Shape> shapes, Model model) {
         Set<ShapeId> removedResources = shapes.stream()
-                .filter(Shape::isResourceShape)
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+            .filter(Shape::isResourceShape)
+            .map(Shape::getId)
+            .collect(Collectors.toSet());
         Set<ShapeId> removedOperations = shapes.stream()
-                .filter(Shape::isOperationShape)
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+            .filter(Shape::isOperationShape)
+            .map(Shape::getId)
+            .collect(Collectors.toSet());
 
         Set<Shape> toReplace = getServicesToUpdate(model, removedResources, removedOperations);
         toReplace.addAll(getResourcesToUpdate(model, removedResources, removedOperations));
@@ -51,28 +40,32 @@ public final class CleanBindings implements ModelTransformerPlugin {
 
     private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> resources, Set<ShapeId> operations) {
         return model.shapes(ServiceShape.class)
-                .filter(service -> containsAny(service.getResources(), resources)
-                                   || containsAny(service.getOperations(), operations))
-                .map(service -> {
-                    ServiceShape.Builder builder = service.toBuilder();
-                    resources.forEach(builder::removeResource);
-                    operations.forEach(builder::removeOperation);
-                    return builder.build();
-                })
-                .collect(Collectors.toSet());
+            .filter(
+                service -> containsAny(service.getResources(), resources)
+                    || containsAny(service.getOperations(), operations)
+            )
+            .map(service -> {
+                ServiceShape.Builder builder = service.toBuilder();
+                resources.forEach(builder::removeResource);
+                operations.forEach(builder::removeOperation);
+                return builder.build();
+            })
+            .collect(Collectors.toSet());
     }
 
     private Set<Shape> getResourcesToUpdate(Model model, Set<ShapeId> resources, Set<ShapeId> operations) {
         return model.shapes(ResourceShape.class)
-                .filter(resource -> containsAny(resource.getAllOperations(), operations)
-                                    || containsAny(resource.getResources(), resources))
-                .map(resource -> {
-                    ResourceShape.Builder builder = resource.toBuilder();
-                    resources.forEach(builder::removeResource);
-                    operations.forEach(builder::removeFromAllOperationBindings);
-                    return builder.build();
-                })
-                .collect(Collectors.toSet());
+            .filter(
+                resource -> containsAny(resource.getAllOperations(), operations)
+                    || containsAny(resource.getResources(), resources)
+            )
+            .map(resource -> {
+                ResourceShape.Builder builder = resource.toBuilder();
+                resources.forEach(builder::removeResource);
+                operations.forEach(builder::removeFromAllOperationBindings);
+                return builder.build();
+            })
+            .collect(Collectors.toSet());
     }
 
     private boolean containsAny(Set<ShapeId> haystack, Set<ShapeId> needles) {

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,10 +20,10 @@ public class TopDownIndexTest {
     @Test
     public void findDirectChildren() {
         ServiceShape service = ServiceShape.builder()
-                .id("ns.foo#Service")
-                .version("1")
-                .addResource("ns.foo#Resource")
-                .build();
+            .id("ns.foo#Service")
+            .version("1")
+            .addResource("ns.foo#Resource")
+            .build();
         ResourceShape resource = ResourceShape.builder().id("ns.foo#Resource").build();
         Model model = Model.builder().addShapes(service, resource).build();
         TopDownIndex childIndex = TopDownIndex.of(model);
@@ -48,15 +37,15 @@ public class TopDownIndexTest {
     @Test
     public void findsAllChildren() {
         ServiceShape service = ServiceShape.builder()
-                .id("ns.foo#Service")
-                .version("1")
-                .addResource("ns.foo#A")
-                .build();
+            .id("ns.foo#Service")
+            .version("1")
+            .addResource("ns.foo#A")
+            .build();
         ResourceShape resourceA = ResourceShape.builder()
-                .id("ns.foo#A")
-                .list(ShapeId.from("ns.foo#List"))
-                .addResource("ns.foo#B")
-                .build();
+            .id("ns.foo#A")
+            .list(ShapeId.from("ns.foo#List"))
+            .addResource("ns.foo#B")
+            .build();
 
         ResourceShape resourceB = ResourceShape.builder().id("ns.foo#B").addOperation("ns.foo#Operation").build();
         OperationShape operation = OperationShape.builder().id("ns.foo#Operation").build();

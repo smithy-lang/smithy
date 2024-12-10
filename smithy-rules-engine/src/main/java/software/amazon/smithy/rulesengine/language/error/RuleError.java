@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.error;
 
 import java.util.ArrayList;
@@ -81,9 +80,9 @@ public final class RuleError extends RuntimeException {
      * @throws RuleError when the rule being evaluated in the context fails.
      */
     public static <T> T context(
-            String message,
-            FromSourceLocation sourceLocation,
-            Evaluator<T> runnable
+        String message,
+        FromSourceLocation sourceLocation,
+        Evaluator<T> runnable
     ) throws RuleError {
         try {
             return runnable.call();
@@ -96,7 +95,7 @@ public final class RuleError extends RuntimeException {
                 throw new RuntimeException(ex);
             }
             throw new RuleError(new SourceException(ex.getMessage(), sourceLocation.getSourceLocation(), ex))
-                    .withContext(message, sourceLocation.getSourceLocation());
+                .withContext(message, sourceLocation.getSourceLocation());
         }
     }
 
@@ -122,19 +121,21 @@ public final class RuleError extends RuntimeException {
             message.append(System.lineSeparator());
             if (context.right != SourceLocation.NONE && context.right != lastLoc) {
                 message.append("  at ")
-                        .append(context.right.getSourceLocation().getFilename())
-                        .append(":")
-                        .append(context.right.getSourceLocation().getLine())
-                        .append(System.lineSeparator());
+                    .append(context.right.getSourceLocation().getFilename())
+                    .append(":")
+                    .append(context.right.getSourceLocation().getLine())
+                    .append(System.lineSeparator());
                 lastLoc = context.right;
             }
         }
 
         message.append(root.getMessageWithoutLocation());
         if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
-            message.append(System.lineSeparator()).append("  at ")
-                    .append(root.getSourceLocation().getFilename())
-                    .append(":").append(root.getSourceLocation().getLine());
+            message.append(System.lineSeparator())
+                .append("  at ")
+                .append(root.getSourceLocation().getFilename())
+                .append(":")
+                .append(root.getSourceLocation().getLine());
         }
         return message.toString();
     }

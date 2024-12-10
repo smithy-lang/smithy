@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,18 +34,18 @@ public class MemberShapeTest {
     @Test
     public void returnsType() {
         MemberShape shape = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#bar$baz"))
-                .target("ns.foo#baz")
-                .build();
+            .id(ShapeId.from("ns.foo#bar$baz"))
+            .target("ns.foo#baz")
+            .build();
         assertEquals(ShapeType.MEMBER, shape.getType());
     }
 
     @Test
     public void checksForEquality() {
         MemberShape a = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#bar$baz"))
-                .target("ns.foo#baz")
-                .build();
+            .id(ShapeId.from("ns.foo#bar$baz"))
+            .target("ns.foo#baz")
+            .build();
         // Same exact shape.
         assertEquals(a, a);
         // Same semantic shape.
@@ -70,9 +59,9 @@ public class MemberShapeTest {
     @Test
     public void equality() {
         MemberShape a = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#bar$baz"))
-                .target("ns.foo#baz")
-                .build();
+            .id(ShapeId.from("ns.foo#bar$baz"))
+            .target("ns.foo#baz")
+            .build();
         assertEquals(a.hashCode(), a.toBuilder().build().hashCode());
     }
 
@@ -86,28 +75,32 @@ public class MemberShapeTest {
     @Test
     public void getsMemberTraits() {
         Shape target = StringShape.builder()
-                .id("foo.baz#Bar")
-                .addTrait(new DocumentationTrait("hi"))
-                .addTrait(ExternalDocumentationTrait.builder().addUrl("Ref", "http://example.com").build())
-                .build();
+            .id("foo.baz#Bar")
+            .addTrait(new DocumentationTrait("hi"))
+            .addTrait(ExternalDocumentationTrait.builder().addUrl("Ref", "http://example.com").build())
+            .build();
         MemberShape member = MemberShape.builder()
-                .id("foo.baz#Bar$member")
-                .target(target)
-                .addTrait(new DocumentationTrait("override"))
-                .build();
+            .id("foo.baz#Bar$member")
+            .target(target)
+            .addTrait(new DocumentationTrait("override"))
+            .build();
         Model model = Model.builder().addShapes(member, target).build();
 
         assertThat(
-                member.getMemberTrait(model, DocumentationTrait.class).get().getValue(),
-                equalTo("override"));
+            member.getMemberTrait(model, DocumentationTrait.class).get().getValue(),
+            equalTo("override")
+        );
         assertThat(
-                member.getMemberTrait(model, ExternalDocumentationTrait.class).get().getUrls().get("Ref"),
-                equalTo("http://example.com"));
+            member.getMemberTrait(model, ExternalDocumentationTrait.class).get().getUrls().get("Ref"),
+            equalTo("http://example.com")
+        );
         assertThat(
-                member.findMemberTrait(model, "documentation"),
-                equalTo(member.findTrait("documentation")));
+            member.findMemberTrait(model, "documentation"),
+            equalTo(member.findTrait("documentation"))
+        );
         assertThat(
-                member.findMemberTrait(model, "externalDocumentation"),
-                equalTo(target.findTrait("externalDocumentation")));
+            member.findMemberTrait(model, "externalDocumentation"),
+            equalTo(target.findTrait("externalDocumentation"))
+        );
     }
 }

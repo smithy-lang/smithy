@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.net.MalformedURLException;
@@ -71,9 +60,11 @@ final class ModelBuilder {
         // Determine how to format the output, whether it's text (the default) or CSV.
         // Only some commands (like validate) actually let you customize the output format, so assume a default.
         if (validationOutputFormat == null) {
-            validationOutputFormat(arguments.hasReceiver(ValidationEventFormatOptions.class)
+            validationOutputFormat(
+                arguments.hasReceiver(ValidationEventFormatOptions.class)
                     ? arguments.getReceiver(ValidationEventFormatOptions.class).format()
-                    : ValidationEventFormatOptions.Format.TEXT);
+                    : ValidationEventFormatOptions.Format.TEXT
+            );
         }
 
         return this;
@@ -147,8 +138,8 @@ final class ModelBuilder {
 
         // Resolve validator options and severity.
         ValidatorOptions validatorOptions = arguments.hasReceiver(ValidatorOptions.class)
-                ? arguments.getReceiver(ValidatorOptions.class)
-                : new ValidatorOptions();
+            ? arguments.getReceiver(ValidatorOptions.class)
+            : new ValidatorOptions();
         resolveMinSeverity(standardOptions, validatorOptions);
 
         ClassLoader classLoader = env.classLoader();
@@ -193,13 +184,13 @@ final class ModelBuilder {
         sortedEvents.sort(Comparator.comparing(ValidationEvent::getSourceLocation));
 
         SourceContextLoader sourceContextLoader = validatedResult.getResult()
-                .map(model -> SourceContextLoader.createModelAwareLoader(model, DEFAULT_CODE_LINES))
-                .orElseGet(() -> SourceContextLoader.createLineBasedLoader(DEFAULT_CODE_LINES));
+            .map(model -> SourceContextLoader.createModelAwareLoader(model, DEFAULT_CODE_LINES))
+            .orElseGet(() -> SourceContextLoader.createLineBasedLoader(DEFAULT_CODE_LINES));
         PrettyAnsiValidationFormatter formatter = PrettyAnsiValidationFormatter.builder()
-                .sourceContextLoader(sourceContextLoader)
-                .colors(colors)
-                .titleLabel(titleLabel, titleLabelStyles)
-                .build();
+            .sourceContextLoader(sourceContextLoader)
+            .colors(colors)
+            .titleLabel(titleLabel, titleLabelStyles)
+            .build();
 
         if (!disableOutputFormatFraming) {
             validationOutputFormat.beginPrinting(validationPrinter);
@@ -226,10 +217,10 @@ final class ModelBuilder {
     }
 
     static Consumer<ValidationEvent> createStatusUpdater(
-            StandardOptions standardOptions,
-            ColorFormatter colors,
-            CliPrinter stderr,
-            AtomicInteger issueCount
+        StandardOptions standardOptions,
+        ColorFormatter colors,
+        CliPrinter stderr,
+        AtomicInteger issueCount
     ) {
         // Only show the status if not quiet and the terminal supports ANSI.
         if (standardOptions.quiet() || !colors.isColorEnabled()) {
@@ -285,7 +276,7 @@ final class ModelBuilder {
             return true;
         } else {
             return config.getMaven().isPresent()
-                   && EnvironmentVariable.SMITHY_DEPENDENCY_MODE.get().equals("standard");
+                && EnvironmentVariable.SMITHY_DEPENDENCY_MODE.get().equals("standard");
         }
     }
 

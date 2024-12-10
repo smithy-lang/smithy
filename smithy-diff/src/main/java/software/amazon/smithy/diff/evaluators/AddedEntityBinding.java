@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -50,10 +39,10 @@ public final class AddedEntityBinding extends AbstractDiffEvaluator {
 
     private void validateOperation(ChangedShape<EntityShape> change, List<ValidationEvent> events) {
         findAdded(change.getOldShape().getOperations(), change.getNewShape().getOperations())
-                .forEach(added -> events.add(createAddedEvent(ADDED_OPERATION, change.getNewShape(), added)));
+            .forEach(added -> events.add(createAddedEvent(ADDED_OPERATION, change.getNewShape(), added)));
 
         findAdded(change.getOldShape().getResources(), change.getNewShape().getResources())
-                .forEach(added -> events.add(createAddedEvent(ADDED_RESOURCE, change.getNewShape(), added)));
+            .forEach(added -> events.add(createAddedEvent(ADDED_RESOURCE, change.getNewShape(), added)));
     }
 
     private Set<ShapeId> findAdded(Set<ShapeId> oldShapes, Set<ShapeId> newShapes) {
@@ -66,13 +55,17 @@ public final class AddedEntityBinding extends AbstractDiffEvaluator {
         String childType = typeOfAddition.equals(ADDED_RESOURCE) ? "Resource" : "Operation";
         String typeOfParentShape = ShapeType.RESOURCE.equals(parentEntity.getType()) ? TO_RESOURCE : TO_SERVICE;
         String message = String.format(
-                "%s binding of `%s` was added to the %s shape, `%s`",
-                childType, childShape, parentEntity.getType(), parentEntity.getId());
+            "%s binding of `%s` was added to the %s shape, `%s`",
+            childType,
+            childShape,
+            parentEntity.getType(),
+            parentEntity.getId()
+        );
         return ValidationEvent.builder()
-                .id(typeOfAddition + typeOfParentShape + childShape.getName())
-                .severity(Severity.NOTE)
-                .shape(parentEntity)
-                .message(message)
-                .build();
+            .id(typeOfAddition + typeOfParentShape + childShape.getName())
+            .severity(Severity.NOTE)
+            .shape(parentEntity)
+            .message(message)
+            .build();
     }
 }

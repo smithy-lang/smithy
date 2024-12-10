@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation.value;
 
 import static java.lang.String.format;
@@ -226,7 +225,13 @@ public abstract class Value implements FromSourceLocation, ToNode {
     }
 
     private RuntimeException throwTypeMismatch(String expectedType) {
-        return new RuntimeException(format("Expected `%s` but was `%s` with value: `%s`",
-                expectedType, getType(), this));
+        return new RuntimeException(
+            format(
+                "Expected `%s` but was `%s` with value: `%s`",
+                expectedType,
+                getType(),
+                this
+            )
+        );
     }
 }

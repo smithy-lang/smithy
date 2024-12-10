@@ -1,4 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core.trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -6,21 +13,18 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 class TraceMetadataTest {
 
     @Test
     void assertsToNodeWorksWithRequiredFields() {
         TraceMetadata am = new TraceMetadata.Builder()
-                .id("a")
-                .version("b")
-                .type("c")
-                .timestamp("d")
-                .homepage("hp")
-                .typeVersion("tv")
-                .build();
+            .id("a")
+            .version("b")
+            .type("c")
+            .timestamp("d")
+            .homepage("hp")
+            .typeVersion("tv")
+            .build();
 
         ObjectNode node = am.toNode();
 
@@ -35,13 +39,13 @@ class TraceMetadataTest {
     @Test
     void assertsFromNodeWorksWithRequiredFields() {
         Node node = ObjectNode.objectNodeBuilder()
-                .withMember(TraceMetadata.ID_TEXT, "id")
-                .withMember(TraceMetadata.VERSION_TEXT, "version")
-                .withMember(TraceMetadata.TYPE_TEXT, "type")
-                .withMember(TraceMetadata.TIMESTAMP_TEXT, "timestamp")
-                .withOptionalMember(TraceMetadata.TYPE_VERSION_TEXT, Optional.of("type").map(Node::from))
-                .withOptionalMember(TraceMetadata.HOMEPAGE_TEXT, Optional.of("homepage").map(Node::from))
-                .build();
+            .withMember(TraceMetadata.ID_TEXT, "id")
+            .withMember(TraceMetadata.VERSION_TEXT, "version")
+            .withMember(TraceMetadata.TYPE_TEXT, "type")
+            .withMember(TraceMetadata.TIMESTAMP_TEXT, "timestamp")
+            .withOptionalMember(TraceMetadata.TYPE_VERSION_TEXT, Optional.of("type").map(Node::from))
+            .withOptionalMember(TraceMetadata.HOMEPAGE_TEXT, Optional.of("homepage").map(Node::from))
+            .build();
 
         TraceMetadata am2 = TraceMetadata.fromNode(node);
 
@@ -57,10 +61,10 @@ class TraceMetadataTest {
     void assertBuildThrowsWithoutRequiredId() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TraceMetadata am = new TraceMetadata.Builder()
-                    .version("b")
-                    .type("c")
-                    .setTimestampAsNow()
-                    .build();
+                .version("b")
+                .type("c")
+                .setTimestampAsNow()
+                .build();
         });
     }
 
@@ -68,10 +72,10 @@ class TraceMetadataTest {
     void assertBuildThrowsWithoutRequiredVersion() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TraceMetadata am = new TraceMetadata.Builder()
-                    .id("a")
-                    .type("c")
-                    .setTimestampAsNow()
-                    .build();
+                .id("a")
+                .type("c")
+                .setTimestampAsNow()
+                .build();
         });
     }
 
@@ -79,10 +83,10 @@ class TraceMetadataTest {
     void assertBuildThrowsWithoutRequiredType() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TraceMetadata am = new TraceMetadata.Builder()
-                    .id("a")
-                    .version("b")
-                    .setTimestampAsNow()
-                    .build();
+                .id("a")
+                .version("b")
+                .setTimestampAsNow()
+                .build();
         });
     }
 
@@ -90,10 +94,10 @@ class TraceMetadataTest {
     void assertBuildThrowsWithoutRequiredTimestamp() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TraceMetadata am = new TraceMetadata.Builder()
-                    .id("a")
-                    .version("b")
-                    .type("c")
-                    .build();
+                .id("a")
+                .version("b")
+                .type("c")
+                .build();
         });
     }
 

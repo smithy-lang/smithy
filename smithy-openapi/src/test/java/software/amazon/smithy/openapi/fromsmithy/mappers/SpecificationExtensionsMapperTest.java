@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.io.InputStream;
@@ -13,20 +17,22 @@ import software.amazon.smithy.utils.IoUtils;
 
 public class SpecificationExtensionsMapperTest {
     @ParameterizedTest
-    @ValueSource(strings = {
+    @ValueSource(
+        strings = {
             "inlined-type-target",
             "structure-target",
             "operation-target",
             "service-target"
-    })
+        }
+    )
     public void checkMapping(String name) {
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
 
         Node actual = OpenApiConverter
-                        .create()
-                        .config(config)
-                        .convertToNode(getSpecificationExtensionTraits(name));
+            .create()
+            .config(config)
+            .convertToNode(getSpecificationExtensionTraits(name));
         Node expected = getExpectedOpenAPI(name);
 
         Node.assertEquals(actual, expected);
@@ -34,11 +40,11 @@ public class SpecificationExtensionsMapperTest {
 
     private static Model getSpecificationExtensionTraits(String name) {
         return Model.assembler()
-                .addImport(getResource(name + ".smithy"))
-                .addImport(getResource("specification-extension-traits.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(getResource(name + ".smithy"))
+            .addImport(getResource("specification-extension-traits.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
     }
 
     private static Node getExpectedOpenAPI(String name) {

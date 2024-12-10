@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
@@ -151,9 +140,9 @@ final class AttributeValueImpl {
                             return AttributeValue.literal(objectNode.getMembers().size());
                         default:
                             return value.expectObjectNode()
-                                    .getMember(key)
-                                    .<AttributeValue>map(NodeValue::new)
-                                    .orElse(EMPTY);
+                                .getMember(key)
+                                .<AttributeValue>map(NodeValue::new)
+                                .orElse(EMPTY);
                     }
                 case ARRAY:
                     ArrayNode arrayNode = value.expectArrayNode();
@@ -249,9 +238,9 @@ final class AttributeValueImpl {
                 // Returns a comma separated (with a space), sorted list of each flattened
                 // value's debug string.
                 str = getFlattenedValues().stream()
-                        .map(AttributeValue::toMessageString)
-                        .sorted()
-                        .collect(Collectors.joining(", ", "[", "]"));
+                    .map(AttributeValue::toMessageString)
+                    .sorted()
+                    .collect(Collectors.joining(", ", "[", "]"));
                 messageString = str;
             }
             return str;
@@ -351,8 +340,8 @@ final class AttributeValueImpl {
                     return AttributeValue.literal(id.getNamespace());
                 case "member":
                     return id.getMember()
-                            .<AttributeValue>map(Literal::new)
-                            .orElse(EMPTY);
+                        .<AttributeValue>map(Literal::new)
+                        .orElse(EMPTY);
                 case LENGTH:
                     // Length returns the length of the shape ID.
                     return AttributeValue.literal(id.toString().length());
@@ -413,8 +402,8 @@ final class AttributeValueImpl {
                     // A normal property getter. This allows relative trait shape IDs
                     // and absolute IDs. Relative IDs resolve to 'smithy.api'.
                     return shape.findTrait(ShapeId.from(Trait.makeAbsoluteName(property)))
-                            .<AttributeValue>map(trait -> new NodeValue(trait.toNode()))
-                            .orElse(EMPTY);
+                        .<AttributeValue>map(trait -> new NodeValue(trait.toNode()))
+                        .orElse(EMPTY);
             }
         }
     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,7 +33,7 @@ public class DeconflictingStrategyTest {
 
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+            .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         assertThat(strategy.toPointer(a.getId()), equalTo("#/definitions/Page"));
         assertThat(strategy.toPointer(b.getId()), equalTo("#/definitions/PageComFoo"));
     }
@@ -51,7 +55,7 @@ public class DeconflictingStrategyTest {
         Model model = Model.builder().build();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+            .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
 
         assertThat(strategy.toPointer(ShapeId.from("com.foo#Nope")), equalTo("#/definitions/Nope"));
     }
@@ -73,8 +77,12 @@ public class DeconflictingStrategyTest {
         Model model = Model.assembler().addShapes(a).assemble().unwrap();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
-        RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
-                new JsonSchemaConverter.FilterPreludeUnit(false));
+        RefStrategy.createDefaultStrategy(
+            model,
+            new JsonSchemaConfig(),
+            propertyNamingStrategy,
+            new JsonSchemaConverter.FilterPreludeUnit(false)
+        );
     }
 
     @Test
@@ -85,8 +93,12 @@ public class DeconflictingStrategyTest {
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
         Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
-            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
-                    new JsonSchemaConverter.FilterPreludeUnit(false));
+            RefStrategy.createDefaultStrategy(
+                model,
+                new JsonSchemaConfig(),
+                propertyNamingStrategy,
+                new JsonSchemaConverter.FilterPreludeUnit(false)
+            );
         });
     }
 
@@ -104,22 +116,22 @@ public class DeconflictingStrategyTest {
     public void excludesTraitDefinitions() {
         StringShape member = StringShape.builder().id("com.foo#String").build();
         StructureShape matcher = StructureShape.builder()
-                .id("com.foo#Matcher")
-                .addMember("member", member.getId())
-                .build();
+            .id("com.foo#Matcher")
+            .addMember("member", member.getId())
+            .build();
         StructureShape matcherForTrait = StructureShape.builder()
-                .id("com.bar#Matcher")
-                .addTrait(new PrivateTrait())
-                .build();
+            .id("com.bar#Matcher")
+            .addTrait(new PrivateTrait())
+            .build();
         StructureShape trait = StructureShape.builder()
-                .id("com.bar#Trait")
-                .addTrait(TraitDefinition.builder().build())
-                .addMember("matcher", matcherForTrait.toShapeId())
-                .build();
+            .id("com.bar#Trait")
+            .addTrait(TraitDefinition.builder().build())
+            .addMember("matcher", matcherForTrait.toShapeId())
+            .build();
         Model model = Model.assembler().addShapes(trait, matcherForTrait, matcher, member).assemble().unwrap();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+            .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         assertThat(strategy.toPointer(matcher.getId()), equalTo("#/definitions/Matcher"));
     }
 }

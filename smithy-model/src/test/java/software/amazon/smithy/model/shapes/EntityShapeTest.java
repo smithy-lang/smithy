@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,8 +16,8 @@ public class EntityShapeTest {
     @Test
     public void operationsAreOrdered() {
         ServiceShape.Builder builder = ServiceShape.builder()
-                .id("com.foo#Bar")
-                .version("1");
+            .id("com.foo#Bar")
+            .version("1");
 
         List<ShapeId> operations = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
@@ -30,8 +34,8 @@ public class EntityShapeTest {
     @Test
     public void resourcesAreOrdered() {
         ServiceShape.Builder builder = ServiceShape.builder()
-                .id("com.foo#Bar")
-                .version("1");
+            .id("com.foo#Bar")
+            .version("1");
 
         List<ShapeId> resources = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import software.amazon.smithy.utils.SimpleParser;
@@ -67,7 +56,8 @@ public final class ParserUtils {
             }
             if (parser.consumeWhile(ParserUtils::isDigit) == 0) {
                 throw parser.syntax(
-                        createInvalidString(parser, startPosition, "'e', '+', and '-' must be followed by a digit"));
+                    createInvalidString(parser, startPosition, "'e', '+', and '-' must be followed by a digit")
+                );
             }
         }
 
@@ -174,8 +164,10 @@ public final class ParserUtils {
     }
 
     private static RuntimeException invalidIdentifier(SimpleParser parser) {
-        throw parser.syntax("Expected a valid identifier character, but found '"
-                            + parser.peekSingleCharForMessage() + '\'');
+        throw parser.syntax(
+            "Expected a valid identifier character, but found '"
+                + parser.peekSingleCharForMessage() + '\''
+        );
     }
 
     /**
@@ -215,7 +207,7 @@ public final class ParserUtils {
      * @return Returns true if the character can start an identifier.
      */
     public static boolean isIdentifierStart(int c) {
-        return c == '_' ||  isAlphabetic(c);
+        return c == '_' || isAlphabetic(c);
     }
 
     /**

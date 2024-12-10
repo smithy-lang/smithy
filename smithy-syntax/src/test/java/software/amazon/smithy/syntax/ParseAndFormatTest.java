@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.syntax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,18 +37,18 @@ public class ParseAndFormatTest {
 
         // Ensure that the tests can be parsed by smithy-model too.
         Model.assembler()
-                .addImport(filename)
+            .addImport(filename)
+            .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+            .disableValidation()
+            .assemble()
+            .unwrap();
+        if (!formattedFile.equals(filename)) {
+            Model.assembler()
+                .addImport(formattedFile)
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
                 .disableValidation()
                 .assemble()
                 .unwrap();
-        if (!formattedFile.equals(filename)) {
-            Model.assembler()
-                    .addImport(formattedFile)
-                    .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
-                    .disableValidation()
-                    .assemble()
-                    .unwrap();
         }
 
         String model = IoUtils.readUtf8File(filename);
@@ -61,12 +65,12 @@ public class ParseAndFormatTest {
 
         try (Stream<Path> files = Files.walk(Paths.get(ParseAndFormatTest.class.getResource(CORPUS_DIR).toURI()))) {
             files
-                    .filter(Files::isRegularFile)
-                    .filter(file -> {
-                        String filename = file.toString();
-                        return filename.endsWith(".smithy") && !filename.endsWith(".formatted.smithy");
-                    })
-                    .forEach(paths::add);
+                .filter(Files::isRegularFile)
+                .filter(file -> {
+                    String filename = file.toString();
+                    return filename.endsWith(".smithy") && !filename.endsWith(".formatted.smithy");
+                })
+                .forEach(paths::add);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

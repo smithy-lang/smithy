@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions.partition;
 
 import java.util.List;
@@ -29,8 +28,14 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     private static final String SUPPORTS_FIPS = "supportsFIPS";
     private static final String SUPPORTS_DUAL_STACK = "supportsDualStack";
     private static final String IMPLICIT_GLOBAL_REGION = "implicitGlobalRegion";
-    private static final List<String> PROPERTIES = ListUtils.of(NAME, DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX,
-            SUPPORTS_FIPS, SUPPORTS_DUAL_STACK, IMPLICIT_GLOBAL_REGION);
+    private static final List<String> PROPERTIES = ListUtils.of(
+        NAME,
+        DNS_SUFFIX,
+        DUAL_STACK_DNS_SUFFIX,
+        SUPPORTS_FIPS,
+        SUPPORTS_DUAL_STACK,
+        IMPLICIT_GLOBAL_REGION
+    );
 
     private final String name;
     private final String dnsSuffix;
@@ -143,22 +148,22 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     @Override
     public Builder toBuilder() {
         return new Builder(getSourceLocation())
-                .name(name)
-                .dnsSuffix(dnsSuffix)
-                .dualStackDnsSuffix(dualStackDnsSuffix)
-                .supportsFips(supportsFips)
-                .supportsDualStack(supportsDualStack)
-                .implicitGlobalRegion(implicitGlobalRegion);
+            .name(name)
+            .dnsSuffix(dnsSuffix)
+            .dualStackDnsSuffix(dualStackDnsSuffix)
+            .supportsFips(supportsFips)
+            .supportsDualStack(supportsDualStack)
+            .implicitGlobalRegion(implicitGlobalRegion);
     }
 
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember(DNS_SUFFIX, dnsSuffix)
-                .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
-                .withMember(SUPPORTS_FIPS, supportsFips)
-                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack)
-                .withMember(IMPLICIT_GLOBAL_REGION, implicitGlobalRegion);
+            .withMember(DNS_SUFFIX, dnsSuffix)
+            .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
+            .withMember(SUPPORTS_FIPS, supportsFips)
+            .withMember(SUPPORTS_DUAL_STACK, supportsDualStack)
+            .withMember(IMPLICIT_GLOBAL_REGION, implicitGlobalRegion);
 
         if (name != null) {
             builder.withMember(NAME, name);
@@ -176,17 +181,23 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         }
         PartitionOutputs partitionOutputs = (PartitionOutputs) o;
         return supportsFips == partitionOutputs.supportsFips && supportsDualStack == partitionOutputs.supportsDualStack
-                && Objects.equals(name, partitionOutputs.name)
-                && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
-                && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix)
-                && Objects.equals(implicitGlobalRegion, partitionOutputs.implicitGlobalRegion);
+            && Objects.equals(name, partitionOutputs.name)
+            && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
+            && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix)
+            && Objects.equals(implicitGlobalRegion, partitionOutputs.implicitGlobalRegion);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, dnsSuffix, dualStackDnsSuffix,
-                supportsFips, supportsDualStack, implicitGlobalRegion);
+        return Objects.hash(
+            name,
+            dnsSuffix,
+            dualStackDnsSuffix,
+            supportsFips,
+            supportsDualStack,
+            implicitGlobalRegion
+        );
     }
 
     /**

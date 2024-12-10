@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import java.util.ArrayList;
@@ -32,8 +21,8 @@ final class NodeDiff {
 
     static List<String> diff(ToNode actual, ToNode expected) {
         return new NodeDiff().findDifferences(actual.toNode(), expected.toNode(), "")
-                .sorted()
-                .collect(Collectors.toList());
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     private Stream<String> findDifferences(Node actual, Node expected, String prefix) {
@@ -42,13 +31,16 @@ final class NodeDiff {
         }
 
         if (!actual.getType().equals(expected.getType())) {
-            return Stream.of(String.format(
+            return Stream.of(
+                String.format(
                     "[%s]: Expected node of type `%s` but found node of type `%s`.%n%nExpected: %s%n%n Found: %s",
                     prefix,
                     expected.getType(),
                     actual.getType(),
                     nodeToJson(expected, true),
-                    nodeToJson(actual, true)));
+                    nodeToJson(actual, true)
+                )
+            );
         }
 
         switch (actual.getType()) {
@@ -57,25 +49,41 @@ final class NodeDiff {
             case ARRAY:
                 return findDifferences(actual.expectArrayNode(), expected.expectArrayNode(), prefix);
             default:
-                return Stream.of(String.format(
+                return Stream.of(
+                    String.format(
                         "[%s]: Expected `%s` but found `%s`",
-                        prefix, nodeToJson(expected, false), nodeToJson(actual, false)));
+                        prefix,
+                        nodeToJson(expected, false),
+                        nodeToJson(actual, false)
+                    )
+                );
         }
     }
 
     private Stream<String> findDifferences(ObjectNode actual, ObjectNode expected, String prefix) {
         List<String> differences = new ArrayList<>();
-        Set<String> actualKeys = actual.getMembers().keySet().stream().map(StringNode::getValue)
-                .collect(Collectors.toSet());
-        Set<String> expectedKeys = expected.getMembers().keySet().stream().map(StringNode::getValue)
-                .collect(Collectors.toSet());
+        Set<String> actualKeys = actual.getMembers()
+            .keySet()
+            .stream()
+            .map(StringNode::getValue)
+            .collect(Collectors.toSet());
+        Set<String> expectedKeys = expected.getMembers()
+            .keySet()
+            .stream()
+            .map(StringNode::getValue)
+            .collect(Collectors.toSet());
 
         Set<String> extraKeys = new HashSet<>(actualKeys);
         extraKeys.removeAll(expectedKeys);
         for (String extraKey : extraKeys) {
-            differences.add(String.format(
-                    "[%s]: Extra key `%s` encountered with content: %s", prefix, extraKey,
-                    nodeToJson(actual.expectMember(extraKey), true)));
+            differences.add(
+                String.format(
+                    "[%s]: Extra key `%s` encountered with content: %s",
+                    prefix,
+                    extraKey,
+                    nodeToJson(actual.expectMember(extraKey), true)
+                )
+            );
         }
 
         Set<String> missingKeys = new HashSet<>(expectedKeys);
@@ -87,11 +95,17 @@ final class NodeDiff {
         Set<String> sharedKeys = new HashSet<>(actualKeys);
         sharedKeys.retainAll(expectedKeys);
 
-        return Stream.concat(differences.stream(), sharedKeys.stream()
-                .flatMap(key -> findDifferences(
+        return Stream.concat(
+            differences.stream(),
+            sharedKeys.stream()
+                .flatMap(
+                    key -> findDifferences(
                         actual.expectMember(key),
                         expected.expectMember(key),
-                        String.format("%s/%s", prefix, key.replace("^", "^^").replace("/", "^/")))));
+                        String.format("%s/%s", prefix, key.replace("^", "^^").replace("/", "^/"))
+                    )
+                )
+        );
     }
 
     private Stream<String> findDifferences(ArrayNode actual, ArrayNode expected, String prefix) {
@@ -100,24 +114,39 @@ final class NodeDiff {
         List<Node> expectedElements = expected.getElements();
 
         for (int i = expectedElements.size(); i < actualElements.size(); i++) {
-            differences.add(String.format(
-                    "[%s]: Extra element encountered in list at position %d: %s", prefix, i,
-                    nodeToJson(actualElements.get(i), true)));
+            differences.add(
+                String.format(
+                    "[%s]: Extra element encountered in list at position %d: %s",
+                    prefix,
+                    i,
+                    nodeToJson(actualElements.get(i), true)
+                )
+            );
         }
 
         for (int i = actualElements.size(); i < expectedElements.size(); i++) {
-            differences.add(String.format(
-                    "[%s]: Expected element (position %d) not encountered in list: %s", prefix, i,
-                    nodeToJson(expectedElements.get(i), true)));
+            differences.add(
+                String.format(
+                    "[%s]: Expected element (position %d) not encountered in list: %s",
+                    prefix,
+                    i,
+                    nodeToJson(expectedElements.get(i), true)
+                )
+            );
         }
 
         return Stream.concat(
-                differences.stream(),
-                IntStream.range(0, Math.min(actualElements.size(), expectedElements.size())).boxed()
-                        .flatMap(i -> findDifferences(
-                                actualElements.get(i),
-                                expectedElements.get(i),
-                                String.format("%s[%d]", prefix, i))));
+            differences.stream(),
+            IntStream.range(0, Math.min(actualElements.size(), expectedElements.size()))
+                .boxed()
+                .flatMap(
+                    i -> findDifferences(
+                        actualElements.get(i),
+                        expectedElements.get(i),
+                        String.format("%s[%d]", prefix, i)
+                    )
+                )
+        );
     }
 
     private static String nodeToJson(Node node, boolean prettyPrint) {

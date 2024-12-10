@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.ZoneOffset;
@@ -60,8 +59,12 @@ final class ToNodeGenerator implements Runnable {
     @Override
     public void run() {
         writer.override();
-        writer.openBlock(shape.hasTrait(TraitDefinition.class) ? "protected $T createNode() {" : "public $T toNode() {",
-                "}", Node.class, () -> shape.accept(new CreateNodeBodyGenerator()));
+        writer.openBlock(
+            shape.hasTrait(TraitDefinition.class) ? "protected $T createNode() {" : "public $T toNode() {",
+            "}",
+            Node.class,
+            () -> shape.accept(new CreateNodeBodyGenerator())
+        );
         writer.newLine();
     }
 
@@ -70,11 +73,13 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void listShape(ListShape shape) {
             writer.write("return values.stream()")
-                    .indent()
-                    .write(".map(s -> $C)",
-                            (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")))
-                    .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
-                    .dedent();
+                .indent()
+                .write(
+                    ".map(s -> $C)",
+                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s"))
+                )
+                .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
+                .dedent();
             return null;
         }
 
@@ -88,26 +93,35 @@ final class ToNodeGenerator implements Runnable {
         public Void mapShape(MapShape shape) {
             // If it is a Map<string,string> use a simpler syntax
             if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getKey()))
-                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getValue()))
+                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getValue()))
             ) {
                 writer.write("return $T.fromStringMap(values).toBuilder()", ObjectNode.class)
-                        .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
+                    .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
                 return null;
             }
             writer.writeWithNoFormatting("return values.entrySet().stream()")
-                    .indent()
-                    .write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
-                    .indent()
-                    .write("$C, $C))",
-                            (Runnable) () -> shape.getKey().accept(
-                                    new ToNodeMapperVisitor("entry.getKey()")),
-                            (Runnable) () -> shape.getValue().accept(
-                                    new ToNodeMapperVisitor("entry.getValue()")))
-                    .dedent()
-                    .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
-                            ObjectNode.class, Map.Entry.class)
-                    .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
-                    .dedent();
+                .indent()
+                .write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
+                .indent()
+                .write(
+                    "$C, $C))",
+                    (Runnable) () -> shape.getKey()
+                        .accept(
+                            new ToNodeMapperVisitor("entry.getKey()")
+                        ),
+                    (Runnable) () -> shape.getValue()
+                        .accept(
+                            new ToNodeMapperVisitor("entry.getValue()")
+                        )
+                )
+                .dedent()
+                .write(
+                    ".collect($1T.collect($2T::getKey, $2T::getValue))",
+                    ObjectNode.class,
+                    Map.Entry.class
+                )
+                .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
+                .dedent();
             return null;
         }
 
@@ -140,13 +154,18 @@ final class ToNodeGenerator implements Runnable {
             }
             for (MemberShape mem : shape.members()) {
                 if (TraitCodegenUtils.isNullableMember(mem)) {
-                    writer.write(".withOptionalMember($S, get$U().map(m -> $C))",
-                            mem.getMemberName(), symbolProvider.toMemberName(mem),
-                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m")));
+                    writer.write(
+                        ".withOptionalMember($S, get$U().map(m -> $C))",
+                        mem.getMemberName(),
+                        symbolProvider.toMemberName(mem),
+                        (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m"))
+                    );
                 } else {
-                    writer.write(".withMember($S, $C)",
-                            mem.getMemberName(),
-                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
+                    writer.write(
+                        ".withMember($S, $C)",
+                        mem.getMemberName(),
+                        (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem)))
+                    );
                 }
             }
             writer.writeWithNoFormatting(".build();");
@@ -165,15 +184,23 @@ final class ToNodeGenerator implements Runnable {
             if (shape.hasTrait(TimestampFormatTrait.class)) {
                 switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                     case EPOCH_SECONDS:
-                        writer.write("return new $T(value.getEpochSecond(), getSourceLocation());",
-                                NumberNode.class);
+                        writer.write(
+                            "return new $T(value.getEpochSecond(), getSourceLocation());",
+                            NumberNode.class
+                        );
                         break;
                     case HTTP_DATE:
-                        writer.write("return new $T($T.RFC_1123_DATE_TIME.format(",
-                                StringNode.class, DateTimeFormatter.class);
+                        writer.write(
+                            "return new $T($T.RFC_1123_DATE_TIME.format(",
+                            StringNode.class,
+                            DateTimeFormatter.class
+                        );
                         writer.indent();
-                        writer.write("$T.ofInstant(value, $T.UTC)), getSourceLocation());",
-                                ZonedDateTime.class, ZoneOffset.class);
+                        writer.write(
+                            "$T.ofInstant(value, $T.UTC)), getSourceLocation());",
+                            ZonedDateTime.class,
+                            ZoneOffset.class
+                        );
                         writer.dedent();
                         break;
                     default:
@@ -220,28 +247,41 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$L.stream().map(s -> $C).collect($T.collect())",
-                    varName,
-                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
-                    ArrayNode.class
+            writer.write(
+                "$L.stream().map(s -> $C).collect($T.collect())",
+                varName,
+                (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
+                ArrayNode.class
             );
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.openBlock("$L.entrySet().stream()", "",
-                    varName,
-                    () -> writer.write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
-                            .indent()
-                            .write("$C, $C))",
-                                    (Runnable) () -> shape.getKey().accept(
-                                            new ToNodeMapperVisitor("entry.getKey()")),
-                                    (Runnable) () -> shape.getValue().accept(
-                                            new ToNodeMapperVisitor("entry.getValue()")))
-                            .dedent()
-                            .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
-                                    ObjectNode.class, Map.Entry.class));
+            writer.openBlock(
+                "$L.entrySet().stream()",
+                "",
+                varName,
+                () -> writer.write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
+                    .indent()
+                    .write(
+                        "$C, $C))",
+                        (Runnable) () -> shape.getKey()
+                            .accept(
+                                new ToNodeMapperVisitor("entry.getKey()")
+                            ),
+                        (Runnable) () -> shape.getValue()
+                            .accept(
+                                new ToNodeMapperVisitor("entry.getValue()")
+                            )
+                    )
+                    .dedent()
+                    .write(
+                        ".collect($1T.collect($2T::getKey, $2T::getValue))",
+                        ObjectNode.class,
+                        Map.Entry.class
+                    )
+            );
             return null;
         }
 
@@ -293,8 +333,12 @@ final class ToNodeGenerator implements Runnable {
                         writer.write("$T.from($L.getEpochSecond())", Node.class, varName);
                         return null;
                     case HTTP_DATE:
-                        writer.write("$T.from($T.RFC_1123_DATE_TIME.format($L))",
-                                Node.class, DateTimeFormatter.class, varName);
+                        writer.write(
+                            "$T.from($T.RFC_1123_DATE_TIME.format($L))",
+                            Node.class,
+                            DateTimeFormatter.class,
+                            varName
+                        );
                         return null;
                     default:
                         // Fall through on default

@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.nio.file.Path;
@@ -66,11 +55,10 @@ final class CleanCommand implements Command {
             return 0;
         }
 
-
         SmithyBuildConfig config = configOptions.createSmithyBuildConfig();
         Path dir = config.getOutputDirectory()
-                .map(Paths::get)
-                .orElseGet(SmithyBuild::getDefaultOutputDirectory);
+            .map(Paths::get)
+            .orElseGet(SmithyBuild::getDefaultOutputDirectory);
         LOGGER.fine(() -> "Deleting directory: " + dir);
         if (!IoUtils.rmdir(dir)) {
             LOGGER.fine(() -> "Directory does not exist: " + dir);
@@ -84,7 +72,6 @@ final class CleanCommand implements Command {
 
         return 0;
     }
-
 
     private static final class Options implements ArgumentReceiver {
         private Boolean cleanTemplateCache = false;
@@ -103,8 +90,12 @@ final class CleanCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--templates", "-t", null,
-                    "Clean only the templates cache.");
+            printer.param(
+                "--templates",
+                "-t",
+                null,
+                "Clean only the templates cache."
+            );
         }
     }
 }

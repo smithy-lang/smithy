@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
@@ -42,7 +31,6 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
-
 
 final class InitCommand implements Command {
     private static final int LINE_LENGTH = 100;
@@ -95,15 +83,28 @@ final class InitCommand implements Command {
 
         // If the cache directory does not exist, create it
         if (!Files.exists(templateRepoDirPath)) {
-            try (ProgressTracker t = new ProgressTracker(env,
+            try (
+                ProgressTracker t = new ProgressTracker(
+                    env,
                     ProgressStyle.dots("cloning template repo", "template repo cloned"),
                     standardOptions.quiet()
-            )) {
+                )
+            ) {
                 Path templateCachePath = CliCache.getTemplateCache().get();
                 String relativeTemplateDir = templateCachePath.relativize(templateRepoDirPath).toString();
                 // Only clone the latest commit from HEAD. Do not include history
-                exec(ListUtils.of("git", "clone", "--depth", "1", "--single-branch",
-                        options.repositoryUrl, relativeTemplateDir), templateCachePath);
+                exec(
+                    ListUtils.of(
+                        "git",
+                        "clone",
+                        "--depth",
+                        "1",
+                        "--single-branch",
+                        options.repositoryUrl,
+                        relativeTemplateDir
+                    ),
+                    templateCachePath
+                );
             }
         }
 
@@ -116,19 +117,21 @@ final class InitCommand implements Command {
             String response = exec(ListUtils.of("git", "rev-list", "origin..HEAD"), templateRepoDirPath);
             // If a change was detected, force the template repo to update
             if (!StringUtils.isEmpty(response)) {
-                try (ProgressTracker t = new ProgressTracker(env,
+                try (
+                    ProgressTracker t = new ProgressTracker(
+                        env,
                         ProgressStyle.dots("updating template cache", "template repo updated"),
                         standardOptions.quiet()
-                )) {
+                    )
+                ) {
                     exec(ListUtils.of("git", "reset", "--hard", "origin/main"), templateRepoDirPath);
                     exec(ListUtils.of("git", "clean", "-dfx"), templateRepoDirPath);
                 }
             }
         }
 
-
         ObjectNode smithyTemplatesNode = readJsonFileAsNode(templateRepoDirPath.resolve(SMITHY_TEMPLATE_JSON))
-                .expectObjectNode();
+            .expectObjectNode();
         if (options.listTemplates) {
             this.listTemplates(smithyTemplatesNode, env);
         } else {
@@ -144,8 +147,10 @@ final class InitCommand implements Command {
         }
         Path templateJsonPath = templateRepoDirPath.resolve(SMITHY_TEMPLATE_JSON);
         if (!Files.exists(templateJsonPath) && Files.isRegularFile(templateJsonPath)) {
-            throw new CliError("Template repository " + templateUrl
-                    + " does not contain a valid `smithy-templates.json`.");
+            throw new CliError(
+                "Template repository " + templateUrl
+                    + " does not contain a valid `smithy-templates.json`."
+            );
         }
     }
 
@@ -162,9 +167,9 @@ final class InitCommand implements Command {
     // Remove "/" and ".." and ":" characters so a directory can be created with no nesting
     private String getCacheDirFromUrl(final String repositoryUrl) {
         return repositoryUrl.replace(".git", "")
-                .replace(":", "_")
-                .replace("/", "_")
-                .replace(".", "_");
+            .replace(":", "_")
+            .replace("/", "_")
+            .replace(".", "_");
     }
 
     private void listTemplates(ObjectNode smithyTemplatesNode, Env env) {
@@ -174,7 +179,7 @@ final class InitCommand implements Command {
     }
 
     private boolean isLocalRepo(String repoPath) {
-        try  {
+        try {
             Path localPath = Paths.get(repoPath);
             return Files.exists(localPath);
         } catch (InvalidPathException exc) {
@@ -189,11 +194,17 @@ final class InitCommand implements Command {
         for (Map.Entry<StringNode, Node> entry : getTemplatesNode(smithyTemplatesNode).getMembers().entrySet()) {
             String template = entry.getKey().getValue();
             String documentation = entry.getValue()
-                    .expectObjectNode()
-                    .expectMember(DOCUMENTATION, String.format(
-                            "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
-                    .expectStringNode()
-                    .getValue();
+                .expectObjectNode()
+                .expectMember(
+                    DOCUMENTATION,
+                    String.format(
+                        "Missing expected member `%s` from `%s` object",
+                        DOCUMENTATION,
+                        template
+                    )
+                )
+                .expectStringNode()
+                .getValue();
 
             templates.put(template, documentation);
 
@@ -205,9 +216,9 @@ final class InitCommand implements Command {
 
         writeTemplateBorder(builder, maxTemplateLength, maxDocLength);
         builder.print(pad(NAME.toUpperCase(Locale.US), maxTemplateLength), ColorTheme.NOTE)
-                .print(COLUMN_SEPARATOR)
-                .print(DOCUMENTATION.toUpperCase(Locale.US), ColorTheme.NOTE)
-                .println();
+            .print(COLUMN_SEPARATOR)
+            .print(DOCUMENTATION.toUpperCase(Locale.US), ColorTheme.NOTE)
+            .println();
         writeTemplateBorder(builder, maxTemplateLength, maxDocLength);
 
         int offset = maxTemplateLength + COLUMN_SEPARATOR.length();
@@ -217,29 +228,35 @@ final class InitCommand implements Command {
             String doc = entry.getValue();
 
             builder.print(pad(template, maxTemplateLength), ColorTheme.TEMPLATE_TITLE)
-                    .print(COLUMN_SEPARATOR)
-                    .print(wrapDocumentation(doc, maxDocLength, offset),
-                            ColorTheme.MUTED)
-                    .println();
+                .print(COLUMN_SEPARATOR)
+                .print(
+                    wrapDocumentation(doc, maxDocLength, offset),
+                    ColorTheme.MUTED
+                )
+                .println();
         }
 
         return builder.toString();
     }
 
-
     private static void writeTemplateBorder(ColorBuffer writer, int maxNameLength, int maxDocLength) {
         writer.print(pad("", maxNameLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
-                .print(COLUMN_SEPARATOR)
-                .print(pad("", maxDocLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
-                .println();
+            .print(COLUMN_SEPARATOR)
+            .print(pad("", maxDocLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
+            .println();
     }
 
     private static String wrapDocumentation(String doc, int maxLength, int offset) {
         return StringUtils.wrap(doc, maxLength, System.lineSeparator() + pad("", offset), false);
     }
 
-    private void cloneTemplate(Path templateRepoDirPath, ObjectNode smithyTemplatesNode, Options options,
-                               StandardOptions standardOptions, Env env) {
+    private void cloneTemplate(
+        Path templateRepoDirPath,
+        ObjectNode smithyTemplatesNode,
+        Options options,
+        StandardOptions standardOptions,
+        Env env
+    ) {
 
         String template = options.template;
         String directory = options.directory;
@@ -259,9 +276,14 @@ final class InitCommand implements Command {
 
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
         if (!templatesNode.containsMember(template)) {
-            throw new IllegalArgumentException(String.format(
+            throw new IllegalArgumentException(
+                String.format(
                     "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
-                    template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
+                    template,
+                    getTemplatesName(smithyTemplatesNode),
+                    getTemplateList(smithyTemplatesNode, env)
+                )
+            );
         }
         ObjectNode templateNode = templatesNode.expectObjectMember(template).expectObjectNode();
 
@@ -279,8 +301,13 @@ final class InitCommand implements Command {
         exec(ListUtils.of("git", "checkout"), stagingPath);
 
         if (!Files.exists(stagingPath.resolve(templatePath))) {
-            throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
-                    templatePath, template));
+            throw new CliError(
+                String.format(
+                    "Template path `%s` for template \"%s\" is invalid.",
+                    templatePath,
+                    template
+                )
+            );
         }
         IoUtils.copyDir(Paths.get(stagingPath.toString(), templatePath), dest);
         copyIncludedFiles(stagingPath.toString(), dest.toString(), includedFiles, template, env);
@@ -299,8 +326,19 @@ final class InitCommand implements Command {
         } catch (IOException exc) {
             throw new CliError("Unable to create staging directory for template.");
         }
-        exec(ListUtils.of("git", "clone", "--no-checkout", "--depth", "1", "--sparse",
-                "file://" + repoPath.toString(), temp.toString()), Paths.get("."));
+        exec(
+            ListUtils.of(
+                "git",
+                "clone",
+                "--no-checkout",
+                "--depth",
+                "1",
+                "--sparse",
+                "file://" + repoPath.toString(),
+                temp.toString()
+            ),
+            Paths.get(".")
+        );
 
         return temp;
     }
@@ -311,24 +349,36 @@ final class InitCommand implements Command {
 
     private static ObjectNode getTemplatesNode(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-                .expectMember(TEMPLATES, String.format(
-                        "Missing expected member `%s` from %s", TEMPLATES, SMITHY_TEMPLATE_JSON))
-                .expectObjectNode();
+            .expectMember(
+                TEMPLATES,
+                String.format(
+                    "Missing expected member `%s` from %s",
+                    TEMPLATES,
+                    SMITHY_TEMPLATE_JSON
+                )
+            )
+            .expectObjectNode();
     }
 
     private static String getTemplatesName(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-                .expectMember(NAME, String.format(
-                        "Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
-                .expectStringNode()
-                .getValue();
+            .expectMember(
+                NAME,
+                String.format(
+                    "Missing expected member `%s` from %s",
+                    NAME,
+                    SMITHY_TEMPLATE_JSON
+                )
+            )
+            .expectStringNode()
+            .getValue();
     }
 
     private static String getTemplatePath(ObjectNode templateNode, String templateName) {
         return templateNode
-                .expectMember(PATH, String.format("Missing expected member `%s` from `%s` object", PATH, templateName))
-                .expectStringNode()
-                .getValue();
+            .expectMember(PATH, String.format("Missing expected member `%s` from `%s` object", PATH, templateName))
+            .expectStringNode()
+            .getValue();
     }
 
     private static List<String> getIncludedFiles(ObjectNode templateNode) {
@@ -337,14 +387,23 @@ final class InitCommand implements Command {
         return includedPaths;
     }
 
-    private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
-                                          String templateName, Env env) {
+    private static void copyIncludedFiles(
+        String temp,
+        String dest,
+        List<String> includedFiles,
+        String templateName,
+        Env env
+    ) {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
-                throw new CliError(String.format(
+                throw new CliError(
+                    String.format(
                         "File or directory `%s` is marked for inclusion in template \"%s\", but was not found",
-                        included, templateName));
+                        included,
+                        templateName
+                    )
+                );
             }
 
             Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
@@ -354,8 +413,10 @@ final class InitCommand implements Command {
                 try {
                     Files.copy(includedPath, target);
                 } catch (IOException e) {
-                    throw new CliError("Unable to copy included file: " + includedPath
-                            + "to destination directory: " + target);
+                    throw new CliError(
+                        "Unable to copy included file: " + includedPath
+                            + "to destination directory: " + target
+                    );
                 }
             }
         }
@@ -416,15 +477,30 @@ final class InitCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--template", "-t", "quickstart-cli",
-                    "Specify the template to be used in the Smithy project");
-            printer.param("--url", null,
-                    "https://github.com/smithy-lang/smithy-examples.git",
-                    "Smithy templates repository url");
-            printer.param("--output", "-o", "new-smithy-project",
-                    "Smithy project directory");
-            printer.param("--list", "-l", null,
-                    "List available templates");
+            printer.param(
+                "--template",
+                "-t",
+                "quickstart-cli",
+                "Specify the template to be used in the Smithy project"
+            );
+            printer.param(
+                "--url",
+                null,
+                "https://github.com/smithy-lang/smithy-examples.git",
+                "Smithy templates repository url"
+            );
+            printer.param(
+                "--output",
+                "-o",
+                "new-smithy-project",
+                "Smithy project directory"
+            );
+            printer.param(
+                "--list",
+                "-l",
+                null,
+                "List available templates"
+            );
         }
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -60,10 +49,10 @@ import software.amazon.smithy.utils.SetUtils;
 public class SelectorTest {
 
     private static final String OPERATIONS_MISSING_BINDINGS = "service\n"
-                                                              + "$operations(~> operation)\n"
-                                                              + ":test(${operations}[trait|http])\n"
-                                                              + "${operations}\n"
-                                                              + ":not([trait|http])";
+        + "$operations(~> operation)\n"
+        + ":test(${operations}[trait|http])\n"
+        + "${operations}\n"
+        + ":not([trait|http])";
 
     private static Model modelJson;
     private static Model traitModel;
@@ -72,23 +61,24 @@ public class SelectorTest {
 
     @BeforeAll
     public static void before() {
-        modelJson = Model.assembler().addImport(SelectorTest.class.getResource("model.json"))
-                .disablePrelude()
-                .assemble()
-                .unwrap();
+        modelJson = Model.assembler()
+            .addImport(SelectorTest.class.getResource("model.json"))
+            .disablePrelude()
+            .assemble()
+            .unwrap();
         traitModel = Model.assembler()
-                .addImport(SelectorTest.class.getResource("nested-traits.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(SelectorTest.class.getResource("nested-traits.smithy"))
+            .assemble()
+            .unwrap();
         httpModel = Model.assembler()
-                .addImport(SelectorTest.class.getResource("http-model.smithy"))
-                .assemble()
-                .getResult() // ignore built-in errors
-                .get();
+            .addImport(SelectorTest.class.getResource("http-model.smithy"))
+            .assemble()
+            .getResult() // ignore built-in errors
+            .get();
         resourceModel = Model.assembler()
-                .addImport(SelectorTest.class.getResource("resource.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(SelectorTest.class.getResource("resource.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @Test
@@ -129,21 +119,21 @@ public class SelectorTest {
 
     static Set<String> ids(Model model, String expression) {
         return Selector.parse(expression)
-                .select(model)
-                .stream()
-                .map(Shape::getId)
-                .map(ShapeId::toString)
-                .collect(Collectors.toSet());
+            .select(model)
+            .stream()
+            .map(Shape::getId)
+            .map(ShapeId::toString)
+            .collect(Collectors.toSet());
     }
 
     static Set<String> exampleIds(Model model, String expression) {
         return Selector.parse(expression)
-                .select(model)
-                .stream()
-                .map(Shape::getId)
-                .filter(id -> id.getNamespace().equals("smithy.example"))
-                .map(ShapeId::toString)
-                .collect(Collectors.toSet());
+            .select(model)
+            .stream()
+            .map(Shape::getId)
+            .filter(id -> id.getNamespace().equals("smithy.example"))
+            .map(ShapeId::toString)
+            .collect(Collectors.toSet());
     }
 
     @Test
@@ -191,7 +181,10 @@ public class SelectorTest {
 
     @Test
     public void canSelectOnTraitObjectValues() {
-        Set<String> result = ids(traitModel, "[trait|externalDocumentation|(values)='https://www.anotherexample.com/']");
+        Set<String> result = ids(
+            traitModel,
+            "[trait|externalDocumentation|(values)='https://www.anotherexample.com/']"
+        );
 
         assertThat(result, hasItem("smithy.example#DocumentedString2"));
         assertThat(result, not(hasItem("smithy.example#DocumentedString1")));
@@ -243,36 +236,44 @@ public class SelectorTest {
         // "collection" is just an alias for "list".
         Set<Shape> result = Selector.parse("collection").select(modelJson);
 
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 ListShape.builder()
-                        .id("ns.foo#List")
-                        .member(MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build())
-                        .build()));
+                    .id("ns.foo#List")
+                    .member(MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build())
+                    .build()
+            )
+        );
     }
 
     @Test
     public void selectsCustomTraits() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("model-custom-trait.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("model-custom-trait.json"))
+            .assemble()
+            .unwrap();
         Set<Shape> result = Selector.parse("*[trait|'com.example#beta']").select(model);
 
         Trait betaTrait = new DynamicTrait(ShapeId.from("com.example#beta"), Node.objectNode());
         Trait requiredTrait = new RequiredTrait();
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 MemberShape.builder()
-                        .id("com.example#AnotherStructureShape$bar")
-                        .target("com.example#MyShape")
-                        .addTrait(betaTrait)
-                        .addTrait(requiredTrait)
-                        .build(),
+                    .id("com.example#AnotherStructureShape$bar")
+                    .target("com.example#MyShape")
+                    .addTrait(betaTrait)
+                    .addTrait(requiredTrait)
+                    .build(),
                 MemberShape.builder()
-                        .id("com.example#MyShape$foo")
-                        .target("com.example#StringShape")
-                        .addTrait(betaTrait)
-                        .addTrait(requiredTrait)
-                        .build()));
+                    .id("com.example#MyShape$foo")
+                    .target("com.example#StringShape")
+                    .addTrait(betaTrait)
+                    .addTrait(requiredTrait)
+                    .build()
+            )
+        );
     }
 
     @Test
@@ -339,8 +340,9 @@ public class SelectorTest {
     @Test
     public void throwsOnInvalidShapeType() {
         SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("foo"));
+            SelectorSyntaxException.class,
+            () -> Selector.parse("foo")
+        );
 
         assertThat(e.getMessage(), containsString("Unknown shape type"));
     }
@@ -359,8 +361,9 @@ public class SelectorTest {
     @Test
     public void throwsOnInvalidComparator() {
         SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("[id%=100]"));
+            SelectorSyntaxException.class,
+            () -> Selector.parse("[id%=100]")
+        );
 
         assertThat(e.getMessage(), containsString("Found '%', but expected one of the following tokens"));
     }
@@ -373,20 +376,21 @@ public class SelectorTest {
     @Test
     public void detectsInvalidShapeIds() {
         List<String> exprs = ListUtils.of(
-                "[id=#]",
-                "[id=com#]",
-                "[id=com.foo#]",
-                "[id=com.foo#$]",
-                "[id=com.foo#baz$]",
-                "[id=com.foo#.baz$]",
-                "[id=com..foo#baz]",
-                "[id=com#baz$.]",
-                "[id=com#baz$bar$]",
-                "[id=com#baz$bar#]",
-                "[id=com#baz$bar.bam]",
-                "[id=com.baz#foo$bar]", // Members are not permitted and must be quoted.
-                "[id=Com.Baz#Foo$Bar123]",
-                "[id=Com._Baz_#_Foo_$_Bar_123__]");
+            "[id=#]",
+            "[id=com#]",
+            "[id=com.foo#]",
+            "[id=com.foo#$]",
+            "[id=com.foo#baz$]",
+            "[id=com.foo#.baz$]",
+            "[id=com..foo#baz]",
+            "[id=com#baz$.]",
+            "[id=com#baz$bar$]",
+            "[id=com#baz$bar#]",
+            "[id=com#baz$bar.bam]",
+            "[id=com.baz#foo$bar]", // Members are not permitted and must be quoted.
+            "[id=Com.Baz#Foo$Bar123]",
+            "[id=Com._Baz_#_Foo_$_Bar_123__]"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -396,10 +400,11 @@ public class SelectorTest {
     @Test
     public void parsesValidShapeIds() {
         List<String> exprs = ListUtils.of(
-                "[id=com#foo]",
-                "[id=com.baz#foo]",
-                "[id=com.baz.bar#foo]",
-                "[id=Foo]");
+            "[id=com#foo]",
+            "[id=com.baz#foo]",
+            "[id=com.baz.bar#foo]",
+            "[id=Foo]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -409,16 +414,17 @@ public class SelectorTest {
     @Test
     public void detectsInvalidNumbers() {
         List<String> exprs = ListUtils.of(
-                "[id=1-]",
-                "[id=-]",
-                "[id=1.]",
-                "[id=1..1]",
-                "[id=1.0e]",
-                "[id=1.0e+]",
-                "[id=1e+]",
-                "[id=1e++]",
-                "[id=1+]",
-                "[id=+1]");
+            "[id=1-]",
+            "[id=-]",
+            "[id=1.]",
+            "[id=1..1]",
+            "[id=1.0e]",
+            "[id=1.0e+]",
+            "[id=1e+]",
+            "[id=1e++]",
+            "[id=1+]",
+            "[id=+1]"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -428,20 +434,21 @@ public class SelectorTest {
     @Test
     public void parsesValidNumbers() {
         List<String> exprs = ListUtils.of(
-                "[id=1]",
-                "[id=123]",
-                "[id=0]",
-                "[id=-1]",
-                "[id=-10]",
-                "[id=123456789]",
-                "[id=1.5]",
-                "[id=1.123456789]",
-                "[id=1.1e+1]",
-                "[id=1.1e-1]",
-                "[id=1.1e-0]",
-                "[id=1.1e-123456789]",
-                "[id=1e+123456789]",
-                "[id=1e-123456789]");
+            "[id=1]",
+            "[id=123]",
+            "[id=0]",
+            "[id=-1]",
+            "[id=-10]",
+            "[id=123456789]",
+            "[id=1.5]",
+            "[id=1.123456789]",
+            "[id=1.1e+1]",
+            "[id=1.1e-1]",
+            "[id=1.1e-0]",
+            "[id=1.1e-123456789]",
+            "[id=1e+123456789]",
+            "[id=1e-123456789]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -451,12 +458,13 @@ public class SelectorTest {
     @Test
     public void parsesValidQuotedAttributes() {
         List<String> exprs = ListUtils.of(
-                "[id='1']",
-                "[id=\"1\"]",
-                "[id='aaaaa']",
-                "[id=\"aaaaaa\"]",
-                "[trait|'foo'=\"aaaaaa\"]",
-                "[trait|\"foo\"=\"aaaaaa\"]");
+            "[id='1']",
+            "[id=\"1\"]",
+            "[id='aaaaa']",
+            "[id=\"aaaaaa\"]",
+            "[trait|'foo'=\"aaaaaa\"]",
+            "[trait|\"foo\"=\"aaaaaa\"]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -466,9 +474,10 @@ public class SelectorTest {
     @Test
     public void toleratesInvalidKnownAttributePaths() {
         List<String> exprs = ListUtils.of(
-                "[service]",
-                "[service|version|foo]",
-                "[trait]");
+            "[service]",
+            "[service|version|foo]",
+            "[trait]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -478,15 +487,16 @@ public class SelectorTest {
     @Test
     public void parsesValidAttributePathsAndToleratesUnknownPaths() {
         List<String> exprs = ListUtils.of(
-                "[id=abc]",
-                "[id|name=abc]",
-                "[id|member=abc]",
-                "[id|namespace=abc]",
-                "[id|namespace|(foo)=abc]", // invalid, tolerated
-                "[id|blurb=abc]",  // invalid, tolerated
-                "[service|version=abc]",
-                "[service|blurb=abc]",  // invalid, tolerated
-                "[trait|foo=abc]");
+            "[id=abc]",
+            "[id|name=abc]",
+            "[id|member=abc]",
+            "[id|namespace=abc]",
+            "[id|namespace|(foo)=abc]", // invalid, tolerated
+            "[id|blurb=abc]",  // invalid, tolerated
+            "[service|version=abc]",
+            "[service|blurb=abc]",  // invalid, tolerated
+            "[trait|foo=abc]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -538,10 +548,14 @@ public class SelectorTest {
         Set<String> matches2 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,'nope' ]");
         Set<String> matches3 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,   nope ]");
 
-        assertThat(matches1, containsInAnyOrder(
+        assertThat(
+            matches1,
+            containsInAnyOrder(
                 "smithy.example#DocumentedString1",
                 "smithy.example#DocumentedString2",
-                "smithy.example#EnumString"));
+                "smithy.example#EnumString"
+            )
+        );
         assertThat(matches1, equalTo(matches2));
         assertThat(matches1, equalTo(matches3));
     }
@@ -549,25 +563,27 @@ public class SelectorTest {
     @Test
     public void detectsInvalidAttributeCsv() {
         Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("[trait|enum|(values)|value='m256.mega',]"));
+            SelectorSyntaxException.class,
+            () -> Selector.parse("[trait|enum|(values)|value='m256.mega',]")
+        );
     }
 
     @Test
     public void parsedRelativeComparators() {
         List<String> exprs = ListUtils.of(
-                "[trait|httpError > 500]",
-                "[trait|httpError >= 500]",
-                "[trait|httpError < 500]",
-                "[trait|httpError <= 500]",
-                "[trait|httpError>500]",
-                "[trait|httpError>=500]",
-                "[trait|httpError<500]",
-                "[trait|httpError<=500]",
-                "[trait|httpError > 500, 400]", // silly, but supported
-                "[trait|httpError >= 500, 400]", // silly, but supported
-                "[trait|httpError < 500, 400]", // silly, but supported
-                "[trait|httpError <= 500, 400]"); // silly, but supported
+            "[trait|httpError > 500]",
+            "[trait|httpError >= 500]",
+            "[trait|httpError < 500]",
+            "[trait|httpError <= 500]",
+            "[trait|httpError>500]",
+            "[trait|httpError>=500]",
+            "[trait|httpError<500]",
+            "[trait|httpError<=500]",
+            "[trait|httpError > 500, 400]", // silly, but supported
+            "[trait|httpError >= 500, 400]", // silly, but supported
+            "[trait|httpError < 500, 400]", // silly, but supported
+            "[trait|httpError <= 500, 400]"
+        ); // silly, but supported
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -667,22 +683,23 @@ public class SelectorTest {
     @Test
     public void parsesValidScopedAttributes() {
         List<String> exprs = ListUtils.of(
-                "[@trait: 10=10]",
-                "[@trait: @{foo}=10]",
-                "[@trait: @{foo}=@{foo}]",
-                "[@trait: @{foo}=@{foo} && bar=bar]",
-                "[@trait: @{foo}=@{foo} && bar=10]",
-                "[@trait: @{foo}=@{foo} && bar=@{baz}]",
-                "[@trait: @{foo}=@{foo} && bar=@{baz} && bam='abc']",
-                "[@trait: @{foo}=@{foo} i && bar=@{baz} i && bam='abc' i ]",
-                "[@  trait  :    @{foo}=@{foo}    i   &&bar=@{baz} i&&bam='abc'i\n]",
-                "[@\r\n\t  trait\r\n\t : @{foo}=@{foo}]\r\n\t ",
-                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}]",
-                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam}]",
-                // Comma separated values are or'd together.
-                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam} i && 10=10 i]",
-                "[@: foo=bar]",
-                "[@    :  foo   = bam  ]");
+            "[@trait: 10=10]",
+            "[@trait: @{foo}=10]",
+            "[@trait: @{foo}=@{foo}]",
+            "[@trait: @{foo}=@{foo} && bar=bar]",
+            "[@trait: @{foo}=@{foo} && bar=10]",
+            "[@trait: @{foo}=@{foo} && bar=@{baz}]",
+            "[@trait: @{foo}=@{foo} && bar=@{baz} && bam='abc']",
+            "[@trait: @{foo}=@{foo} i && bar=@{baz} i && bam='abc' i ]",
+            "[@  trait  :    @{foo}=@{foo}    i   &&bar=@{baz} i&&bam='abc'i\n]",
+            "[@\r\n\t  trait\r\n\t : @{foo}=@{foo}]\r\n\t ",
+            "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}]",
+            "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam}]",
+            // Comma separated values are or'd together.
+            "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam} i && 10=10 i]",
+            "[@: foo=bar]",
+            "[@    :  foo   = bam  ]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -692,35 +709,36 @@ public class SelectorTest {
     @Test
     public void detectsInvalidScopedAttributes() {
         List<String> exprs = ListUtils.of(
-                "[@",
-                "[@foo",
-                "[@foo:",
-                "[@foo: bar",
-                "[@foo: bar=",
-                "[@foo: bar=bam",
-                "[@foo: bar=bam i",
-                "[@foo: bar+bam]", // Invalid comparator
-                "[@foo: @",
-                "[@foo: @{",
-                "[@foo: @{abc",
-                "[@foo: @{abc}",
-                "[@foo: @{abc}]",
-                "[@foo: @{abc}=",
-                "[@foo: @{abc}=10",
-                "[@foo: @{abc}=10 &&",
-                "[@foo: @{abc}=10 && abc",
-                "[@foo: @{abc}=10 && abc=",
-                "[@foo: @{abc}=10 && abc=def",
-                "[@foo: @{abc}=10 && abc=def i",
-                "[@foo: @{abc{}}=10]",
-                "[@foo: @{abc|}=10]",
-                "[@foo: @{abc|def(baz)}=10]", // not a valid segment
-                "[@foo: @{abc|()}=10]", // missing contents of ()
-                "[@foo: @{abc|(.)}=10]", // invalid contents of ());
-                "[@:",
-                "[@: bar",
-                "[@: bar]",
-                "[@: bar=bam");
+            "[@",
+            "[@foo",
+            "[@foo:",
+            "[@foo: bar",
+            "[@foo: bar=",
+            "[@foo: bar=bam",
+            "[@foo: bar=bam i",
+            "[@foo: bar+bam]", // Invalid comparator
+            "[@foo: @",
+            "[@foo: @{",
+            "[@foo: @{abc",
+            "[@foo: @{abc}",
+            "[@foo: @{abc}]",
+            "[@foo: @{abc}=",
+            "[@foo: @{abc}=10",
+            "[@foo: @{abc}=10 &&",
+            "[@foo: @{abc}=10 && abc",
+            "[@foo: @{abc}=10 && abc=",
+            "[@foo: @{abc}=10 && abc=def",
+            "[@foo: @{abc}=10 && abc=def i",
+            "[@foo: @{abc{}}=10]",
+            "[@foo: @{abc|}=10]",
+            "[@foo: @{abc|def(baz)}=10]", // not a valid segment
+            "[@foo: @{abc|()}=10]", // missing contents of ()
+            "[@foo: @{abc|(.)}=10]", // invalid contents of ());
+            "[@:",
+            "[@: bar",
+            "[@: bar]",
+            "[@: bar=bam"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -741,17 +759,21 @@ public class SelectorTest {
     @Test
     public void evaluatesScopedAttributesWithOr() {
         final Model enumModel = Model.assembler()
-                .addImport(SelectorTest.class.getResource("enums.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(SelectorTest.class.getResource("enums.smithy"))
+            .assemble()
+            .unwrap();
 
         Set<String> shapes = ids(
-            enumModel, "[@trait|enum|(values): @{name} ^= DIA, CLU]");
+            enumModel,
+            "[@trait|enum|(values): @{name} ^= DIA, CLU]"
+        );
 
         assertThat(shapes, containsInAnyOrder("smithy.example#Suit"));
 
         shapes = ids(
-            enumModel, "[@trait|enum|(values): @{name} ^= DIA, BLA]");
+            enumModel,
+            "[@trait|enum|(values): @{name} ^= DIA, BLA]"
+        );
 
         assertThat(shapes, containsInAnyOrder("smithy.example#Color", "smithy.example#Suit"));
     }
@@ -776,9 +798,18 @@ public class SelectorTest {
 
     @Test
     public void nestedProjectionsAreFlattened() {
-        Set<String> shapes1 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=a]");
-        Set<String> shapes2 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=b]");
-        Set<String> shapes3 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=c]");
+        Set<String> shapes1 = ids(
+            traitModel,
+            "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=a]"
+        );
+        Set<String> shapes2 = ids(
+            traitModel,
+            "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=b]"
+        );
+        Set<String> shapes3 = ids(
+            traitModel,
+            "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=c]"
+        );
 
         assertThat(shapes1, contains("smithy.example#MyService"));
         assertThat(shapes2, equalTo(shapes1));
@@ -819,8 +850,9 @@ public class SelectorTest {
     @Test
     public void getsTheLengthOfTraitArray() {
         Set<String> shapes = ids(
-                traitModel,
-                "[id=smithy.example#MyService][trait|smithy.example#listyTrait|(length) = 2]");
+            traitModel,
+            "[id=smithy.example#MyService][trait|smithy.example#listyTrait|(length) = 2]"
+        );
 
         assertThat(shapes, contains("smithy.example#MyService"));
     }
@@ -828,8 +860,9 @@ public class SelectorTest {
     @Test
     public void getsTheLengthOfTraitObject() {
         Set<String> shapes = ids(
-                traitModel,
-                "[id=smithy.example#DocumentedString2][trait|externalDocumentation|(length) = 1]");
+            traitModel,
+            "[id=smithy.example#DocumentedString2][trait|externalDocumentation|(length) = 1]"
+        );
 
         assertThat(shapes, contains("smithy.example#DocumentedString2"));
     }
@@ -839,18 +872,23 @@ public class SelectorTest {
         // Find shapes with the enum trait where there are more than 1 tags on any
         // enum definition.
         Set<String> shapes = exampleIds(
-                traitModel,
-                "[trait|enum|(values)|tags|(length) > 1]");
+            traitModel,
+            "[trait|enum|(values)|tags|(length) > 1]"
+        );
 
         assertThat(shapes, contains("smithy.example#DocumentedString1"));
     }
 
     @Test
     public void canBindShapeAsContext() {
-        assertThat(ids(traitModel, "[trait|trait][@: @{trait|(keys)} = @{id}]"),
-                   hasItems("smithy.example#recursiveTrait",
-                            "smithy.api#trait",
-                            "smithy.api#documentation"));
+        assertThat(
+            ids(traitModel, "[trait|trait][@: @{trait|(keys)} = @{id}]"),
+            hasItems(
+                "smithy.example#recursiveTrait",
+                "smithy.api#trait",
+                "smithy.api#documentation"
+            )
+        );
     }
 
     @Test
@@ -861,11 +899,12 @@ public class SelectorTest {
     @Test
     public void parsesValidProjectionComparators() {
         List<String> exprs = ListUtils.of(
-                "[@: @{trait|tags|(values)} {<<} @{trait|tags|(values)}]",
-                "[@: @{trait|tags|(values)} {<} @{trait|tags|(values)}]",
-                "[@: @{trait|tags|(values)} {!=} @{trait|tags|(values)}]",
-                "[@: @{trait|tags|(values)} {=} @{trait|tags|(values)}]",
-                "[@: @{trait|tags|(values)}    {=}    @{trait|tags|(values)}]");
+            "[@: @{trait|tags|(values)} {<<} @{trait|tags|(values)}]",
+            "[@: @{trait|tags|(values)} {<} @{trait|tags|(values)}]",
+            "[@: @{trait|tags|(values)} {!=} @{trait|tags|(values)}]",
+            "[@: @{trait|tags|(values)} {=} @{trait|tags|(values)}]",
+            "[@: @{trait|tags|(values)}    {=}    @{trait|tags|(values)}]"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -875,10 +914,11 @@ public class SelectorTest {
     @Test
     public void detectsInvalidProjectionComparators() {
         List<String> exprs = ListUtils.of(
-                "[@: @{trait|tags|(values)} {} @{trait|tags|(values)}]",
-                "[@: @{trait|tags|(values)} {<<",
-                "[@: @{trait|tags|(values)} {<",
-                "[@: @{trait|tags|(values)} {");
+            "[@: @{trait|tags|(values)} {} @{trait|tags|(values)}]",
+            "[@: @{trait|tags|(values)} {<<",
+            "[@: @{trait|tags|(values)} {<",
+            "[@: @{trait|tags|(values)} {"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -888,21 +928,22 @@ public class SelectorTest {
     @Test
     public void canQueryVariablesAtPointTheyWereMatched() {
         Model result = Model.assembler()
-                .addImport(SelectorTest.class.getResource("service-with-bad-auth.smithy"))
-                .assemble()
-                .getResult()
-                .get();
+            .addImport(SelectorTest.class.getResource("service-with-bad-auth.smithy"))
+            .assemble()
+            .getResult()
+            .get();
 
         // Find all operation shapes that are in the closure of a service that use
         // auth traits that don't match the auth traits associated with the service.
         Selector selector = Selector.parse(
-                "service\n"
+            "service\n"
                 + "$service(*)\n"
                 + "$authTraits(-[trait]-> [trait|authDefinition])\n"
                 + "~>\n"
                 + "operation\n"
                 + "[trait|auth]"
-                + ":not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}]))");
+                + ":not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}]))"
+        );
 
         List<Pair<Shape, Map<String, Set<Shape>>>> results = new ArrayList<>();
         selector.runner().model(result).selectMatches((s, vars) -> results.add(Pair.of(s, vars)));
@@ -915,26 +956,35 @@ public class SelectorTest {
         // means that the variables available to a shape are specific to each shape
         // as it passes through the selector. These test that each select saw different,
         // expected variables.
-        checkMatches(results, "Expected smithy.example#HasDigestAuth with a service of smithy.example#MyService1",
-                (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasDigestAuth"))
-                          && v.containsKey("service")
-                          && v.get("service").equals(SetUtils.of(service1)));
+        checkMatches(
+            results,
+            "Expected smithy.example#HasDigestAuth with a service of smithy.example#MyService1",
+            (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasDigestAuth"))
+                && v.containsKey("service")
+                && v.get("service").equals(SetUtils.of(service1))
+        );
 
-        checkMatches(results, "Expected smithy.example#HasDigestAuth with a service of smithy.example#MyService2",
-                     (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasDigestAuth"))
-                               && v.containsKey("service")
-                               && v.get("service").equals(SetUtils.of(service2)));
+        checkMatches(
+            results,
+            "Expected smithy.example#HasDigestAuth with a service of smithy.example#MyService2",
+            (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasDigestAuth"))
+                && v.containsKey("service")
+                && v.get("service").equals(SetUtils.of(service2))
+        );
 
-        checkMatches(results, "Expected smithy.example#HasBasicAuth with a service of smithy.example#MyService2",
-                     (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasBasicAuth"))
-                               && v.containsKey("service")
-                               && v.get("service").equals(SetUtils.of(service2)));
+        checkMatches(
+            results,
+            "Expected smithy.example#HasBasicAuth with a service of smithy.example#MyService2",
+            (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasBasicAuth"))
+                && v.containsKey("service")
+                && v.get("service").equals(SetUtils.of(service2))
+        );
     }
 
     private void checkMatches(
-            Iterable<Pair<Shape, Map<String, Set<Shape>>>> matches,
-            String message,
-            BiPredicate<Shape, Map<String, Set<Shape>>> test
+        Iterable<Pair<Shape, Map<String, Set<Shape>>>> matches,
+        String message,
+        BiPredicate<Shape, Map<String, Set<Shape>>> test
     ) {
         for (Pair<Shape, Map<String, Set<Shape>>> match : matches) {
             if (test.test(match.left, match.right)) {
@@ -948,20 +998,21 @@ public class SelectorTest {
     @Test
     public void canPushAndRetrieveVariables() {
         Model result = Model.assembler()
-                .addImport(SelectorTest.class.getResource("service-with-bad-auth.smithy"))
-                .assemble()
-                .getResult()
-                .get();
+            .addImport(SelectorTest.class.getResource("service-with-bad-auth.smithy"))
+            .assemble()
+            .getResult()
+            .get();
 
         // Find all operation shapes that are in the closure of a service that uses
         // http bindings on other operations, but the operation does not use http bindings.
         Selector selector = Selector.parse(
-                "$service(service)\n"
+            "$service(service)\n"
                 + "${service}\n"
                 + "$operations(~> operation)\n"
                 + "$httpOperations(${operations}[trait|http])\n"
                 + "${operations}\n"
-                + ":not([trait|http])");
+                + ":not([trait|http])"
+        );
 
         List<Pair<Shape, Map<String, Set<Shape>>>> results = new ArrayList<>();
         selector.runner().model(result).selectMatches((s, vars) -> results.add(Pair.of(s, vars)));
@@ -975,27 +1026,31 @@ public class SelectorTest {
         assertThat(results, hasSize(2));
 
         for (Shape service : ListUtils.of(service1, service2)) {
-            checkMatches(results, "Expected smithy.example#HasBasicAuth with a service of smithy.example#MyService1",
-                         (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasBasicAuth"))
-                                   && v.containsKey("service")
-                                   && v.containsKey("operations")
-                                   && v.containsKey("httpOperations")
-                                   && v.get("service").equals(SetUtils.of(service))
-                                   && v.get("operations").equals(SetUtils.of(digestAuth, noAuth, basicAuth))
-                                   && v.get("httpOperations").equals(SetUtils.of(digestAuth, noAuth)));
+            checkMatches(
+                results,
+                "Expected smithy.example#HasBasicAuth with a service of smithy.example#MyService1",
+                (s, v) -> s.getId().equals(ShapeId.from("smithy.example#HasBasicAuth"))
+                    && v.containsKey("service")
+                    && v.containsKey("operations")
+                    && v.containsKey("httpOperations")
+                    && v.get("service").equals(SetUtils.of(service))
+                    && v.get("operations").equals(SetUtils.of(digestAuth, noAuth, basicAuth))
+                    && v.get("httpOperations").equals(SetUtils.of(digestAuth, noAuth))
+            );
         }
     }
 
     @Test
     public void parsesValidVariableAccess() {
         List<String> exprs = ListUtils.of(
-                "${foo}",
-                "${ foo }",
-                "${\nfoo\n}\n",
-                "${a}",
-                "${a_b_c}",
-                "${_a}",
-                "${__a}");
+            "${foo}",
+            "${ foo }",
+            "${\nfoo\n}\n",
+            "${a}",
+            "${a_b_c}",
+            "${_a}",
+            "${__a}"
+        );
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -1005,14 +1060,15 @@ public class SelectorTest {
     @Test
     public void detectsInvalidVariableAccess() {
         List<String> exprs = ListUtils.of(
-                "$",
-                "${",
-                "${}",
-                "$}",
-                "${a",
-                "${*}",
-                "${_}",
-                "${__}");
+            "$",
+            "${",
+            "${}",
+            "$}",
+            "${a",
+            "${*}",
+            "${_}",
+            "${__}"
+        );
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -1030,8 +1086,8 @@ public class SelectorTest {
     public void returnsStreamOfShapes() {
         Selector selector = Selector.parse(":test(string, map)");
         Set<Shape> shapes = selector
-                .shapes(modelJson)
-                .collect(Collectors.toSet());
+            .shapes(modelJson)
+            .collect(Collectors.toSet());
 
         assertThat(shapes, equalTo(selector.select(modelJson)));
     }
@@ -1040,8 +1096,8 @@ public class SelectorTest {
     public void returnsStreamOfMatches() {
         Selector selector = Selector.parse(OPERATIONS_MISSING_BINDINGS);
         Set<Selector.ShapeMatch> matches = selector
-                .matches(httpModel)
-                .collect(Collectors.toSet());
+            .matches(httpModel)
+            .collect(Collectors.toSet());
 
         Set<Selector.ShapeMatch> matches2 = new HashSet<>();
         selector.consumeMatches(httpModel, matches2::add);
@@ -1052,14 +1108,14 @@ public class SelectorTest {
     @Test
     public void canPathToErrorsOfStructure() {
         ServiceShape service = ServiceShape.builder()
-                .id("ns.foo#Svc")
-                .version("2017-01-17")
-                .addError("ns.foo#Common1")
-                .build();
+            .id("ns.foo#Svc")
+            .version("2017-01-17")
+            .addError("ns.foo#Common1")
+            .build();
         StructureShape errorShape = StructureShape.builder()
-                .id("ns.foo#Common1")
-                .addTrait(new ErrorTrait("client"))
-                .build();
+            .id("ns.foo#Common1")
+            .addTrait(new ErrorTrait("client"))
+            .build();
         Model model = Model.builder().addShapes(service, errorShape).build();
 
         Selector selector = Selector.parse("service -[error]-> structure");
@@ -1071,59 +1127,83 @@ public class SelectorTest {
     @Test
     public void selectsStructuresWithMixins() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("structure-with-mixins.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("structure-with-mixins.smithy"))
+            .assemble()
+            .unwrap();
         Selector hasMixins = Selector.parse("structure :test(-[mixin]->)");
         Selector isUsedMixin = Selector.parse("structure -[mixin]->");
         Selector noMixins = Selector.parse("structure[id|namespace='smithy.example'] :not(-[mixin]->)");
         Selector unusedMixin = Selector.parse("[trait|mixin][id|namespace='smithy.example'] :not(<-[mixin]-)");
 
-        assertThat(hasMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
-                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin2"), ShapeId.from("smithy.example#Concrete")));
+        assertThat(
+            hasMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+            containsInAnyOrder(ShapeId.from("smithy.example#Mixin2"), ShapeId.from("smithy.example#Concrete"))
+        );
 
-        assertThat(isUsedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
-                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin1"), ShapeId.from("smithy.example#Mixin2")));
+        assertThat(
+            isUsedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+            containsInAnyOrder(ShapeId.from("smithy.example#Mixin1"), ShapeId.from("smithy.example#Mixin2"))
+        );
 
-        assertThat(noMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
-                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin1"),
-                                      ShapeId.from("smithy.example#NoMixins"),
-                                      ShapeId.from("smithy.example#UnusedMixin")));
+        assertThat(
+            noMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+            containsInAnyOrder(
+                ShapeId.from("smithy.example#Mixin1"),
+                ShapeId.from("smithy.example#NoMixins"),
+                ShapeId.from("smithy.example#UnusedMixin")
+            )
+        );
 
-        assertThat(unusedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
-                   contains(ShapeId.from("smithy.example#UnusedMixin")));
+        assertThat(
+            unusedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+            contains(ShapeId.from("smithy.example#UnusedMixin"))
+        );
     }
 
     @Test
     public void supportsResourceProperties() {
         Set<Shape> resourcesWithProperties = Selector.parse("resource :test(-[property]->)").select(resourceModel);
-        ResourceShape forecastResource = resourceModel.expectShape(ShapeId.from("example.weather#Forecast"),
-                ResourceShape.class);
-        ResourceShape cityResource = resourceModel.expectShape(ShapeId.from("example.weather#City"),
-                ResourceShape.class);
+        ResourceShape forecastResource = resourceModel.expectShape(
+            ShapeId.from("example.weather#Forecast"),
+            ResourceShape.class
+        );
+        ResourceShape cityResource = resourceModel.expectShape(
+            ShapeId.from("example.weather#City"),
+            ResourceShape.class
+        );
         assertThat(resourcesWithProperties.size(), equalTo(2));
         assertThat(resourcesWithProperties, containsInAnyOrder(forecastResource, cityResource));
 
         Set<Shape> shapesTargettedByAnyProperty = Selector.parse("resource -[property]-> *").select(resourceModel);
-        StructureShape coordinatesShape = resourceModel.expectShape(ShapeId.from("example.weather#CityCoordinates"),
-                StructureShape.class);
+        StructureShape coordinatesShape = resourceModel.expectShape(
+            ShapeId.from("example.weather#CityCoordinates"),
+            StructureShape.class
+        );
         FloatShape floatShape = resourceModel.expectShape(ShapeId.from("smithy.api#Float"), FloatShape.class);
         StringShape stringShape = resourceModel.expectShape(ShapeId.from("smithy.api#String"), StringShape.class);
         assertThat(shapesTargettedByAnyProperty.size(), equalTo(3));
-        assertThat(shapesTargettedByAnyProperty, containsInAnyOrder(coordinatesShape, floatShape,
-                stringShape));
+        assertThat(
+            shapesTargettedByAnyProperty,
+            containsInAnyOrder(
+                coordinatesShape,
+                floatShape,
+                stringShape
+            )
+        );
 
         Set<Shape> shapesTargettedByCityOnly = Selector.parse("resource [id|name=City] -[property]-> *")
-                .select(resourceModel);
+            .select(resourceModel);
         assertThat(shapesTargettedByCityOnly.size(), equalTo(2));
         assertThat(shapesTargettedByCityOnly, containsInAnyOrder(coordinatesShape, stringShape));
     }
 
     @Test
     public void rootFunctionReturnsAllShapes() {
-        Selector selector = Selector.parse("string"
-                                           + ":in(:root(-[input]-> ~> *))"
-                                           + ":not(:in(:root(-[output]-> ~> *)))");
+        Selector selector = Selector.parse(
+            "string"
+                + ":in(:root(-[input]-> ~> *))"
+                + ":not(:in(:root(-[output]-> ~> *)))"
+        );
         Set<Shape> result = selector.select(resourceModel);
 
         // This is the only string used in input but not output.

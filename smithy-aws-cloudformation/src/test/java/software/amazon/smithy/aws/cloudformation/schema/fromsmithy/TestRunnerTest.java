@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,10 +28,10 @@ public class TestRunnerTest {
     @MethodSource("integFiles")
     public void generatesResources(String modelFile) {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(modelFile)
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(modelFile)
+            .assemble()
+            .unwrap();
 
         CfnConfig config = new CfnConfig();
         config.setService(ShapeId.from("smithy.example#TestService"));
@@ -52,8 +41,9 @@ public class TestRunnerTest {
             config.setOrganizationName("Smithy");
         }
 
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
-                    .convertToNodes(model);
+        Map<String, ObjectNode> result = CfnConverter.create()
+            .config(config)
+            .convertToNodes(model);
         Node expectedNode = Node.parse(IoUtils.readUtf8File(modelFile.replace(".smithy", ".cfn.json")));
 
         // Assert that we got one resource and that it matches
@@ -64,10 +54,10 @@ public class TestRunnerTest {
     public static List<String> integFiles() {
         try {
             return Files.walk(Paths.get(TestRunnerTest.class.getResource("integ").toURI()))
-                    .filter(Files::isRegularFile)
-                    .filter(file -> file.toString().endsWith(".smithy"))
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .filter(Files::isRegularFile)
+                .filter(file -> file.toString().endsWith(".smithy"))
+                .map(Object::toString)
+                .collect(Collectors.toList());
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }

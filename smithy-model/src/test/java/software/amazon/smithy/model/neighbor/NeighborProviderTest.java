@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.neighbor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,9 +25,9 @@ public class NeighborProviderTest {
     @Test
     public void canGetTraitRelationshipsFromStrings() {
         StringShape stringShape = StringShape.builder()
-                .id(ShapeId.from("smithy.example#Foo"))
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id(ShapeId.from("smithy.example#Foo"))
+            .addTrait(new SensitiveTrait())
+            .build();
         Model model = Model.assembler().addShape(stringShape).assemble().unwrap();
 
         NeighborProvider provider = NeighborProvider.of(model);
@@ -37,8 +41,8 @@ public class NeighborProviderTest {
     @Test
     public void canGetTraitRelationshipsFromShapeWithNoTraits() {
         StringShape stringShape = StringShape.builder()
-                .id(ShapeId.from("smithy.example#Foo"))
-                .build();
+            .id(ShapeId.from("smithy.example#Foo"))
+            .build();
         Model model = Model.assembler().addShape(stringShape).assemble().unwrap();
 
         NeighborProvider provider = NeighborProvider.of(model);
@@ -49,7 +53,8 @@ public class NeighborProviderTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
+    @CsvSource(
+        {
             "One,Ref1",
             "Two,Ref2",
             "Three,Ref3",
@@ -64,44 +69,52 @@ public class NeighborProviderTest {
             "Twelve,Ref12",
             "Thirteen,Ref13",
             "Fourteen,Ref14"
-    })
+        }
+    )
     public void canGetIdRefRelationships(String shapeName, String referencedShapeName) {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("idref-neighbors.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("idref-neighbors.smithy"))
+            .assemble()
+            .unwrap();
         NeighborProvider provider = NeighborProvider.of(model);
         provider = NeighborProvider.withIdRefRelationships(model, provider);
 
         Shape shape = model.expectShape(ShapeId.fromParts("com.foo", shapeName));
         Shape ref = model.expectShape(ShapeId.fromParts("com.foo", referencedShapeName));
-        List<Relationship> relationships = provider.getNeighbors(shape).stream()
-                .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
-                .collect(Collectors.toList());
+        List<Relationship> relationships = provider.getNeighbors(shape)
+            .stream()
+            .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
+            .collect(Collectors.toList());
 
-        assertThat(relationships, containsInAnyOrder(
-                equalTo(Relationship.create(shape, RelationshipType.ID_REF, ref))));
+        assertThat(
+            relationships,
+            containsInAnyOrder(
+                equalTo(Relationship.create(shape, RelationshipType.ID_REF, ref))
+            )
+        );
     }
 
     @Test
     public void canGetIdRefRelationshipsThroughTraitDefs() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("idref-neighbors-in-trait-def.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("idref-neighbors-in-trait-def.smithy"))
+            .assemble()
+            .unwrap();
         NeighborProvider provider = NeighborProvider.of(model);
         provider = NeighborProvider.withIdRefRelationships(model, provider);
 
         Shape shape = model.expectShape(ShapeId.from("com.foo#WithRefStructTrait"));
         Shape ref = model.expectShape(ShapeId.from("com.foo#OtherReferenced"));
-        List<Relationship> relationships = provider.getNeighbors(shape).stream()
-                .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
-                .collect(Collectors.toList());
+        List<Relationship> relationships = provider.getNeighbors(shape)
+            .stream()
+            .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
+            .collect(Collectors.toList());
         Shape shape1 = model.expectShape(ShapeId.from("com.foo#refStruct$other"));
         Shape ref1 = model.expectShape(ShapeId.from("com.foo#ReferencedInTraitDef"));
-        List<Relationship> relationships1 = provider.getNeighbors(shape1).stream()
-                .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
-                .collect(Collectors.toList());
+        List<Relationship> relationships1 = provider.getNeighbors(shape1)
+            .stream()
+            .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
+            .collect(Collectors.toList());
 
         assertThat(relationships, containsInAnyOrder(Relationship.create(shape, RelationshipType.ID_REF, ref)));
         assertThat(relationships1, containsInAnyOrder(Relationship.create(shape1, RelationshipType.ID_REF, ref1)));
@@ -110,22 +123,24 @@ public class NeighborProviderTest {
     @Test
     public void canGetIdRefRelationshipsThroughMultipleLevelsOfIdRef() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("idref-neighbors-multiple-levels.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("idref-neighbors-multiple-levels.smithy"))
+            .assemble()
+            .unwrap();
         NeighborProvider provider = NeighborProvider.of(model);
         provider = NeighborProvider.withIdRefRelationships(model, provider);
 
         Shape shape = model.expectShape(ShapeId.from("com.foo#WithIdRef"));
         Shape ref = model.expectShape(ShapeId.from("com.foo#Referenced"));
-        List<Relationship> relationships = provider.getNeighbors(shape).stream()
-                .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
-                .collect(Collectors.toList());
+        List<Relationship> relationships = provider.getNeighbors(shape)
+            .stream()
+            .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
+            .collect(Collectors.toList());
         Shape shape1 = model.expectShape(ShapeId.from("com.foo#ConnectedThroughReferenced"));
         Shape ref1 = model.expectShape(ShapeId.from("com.foo#AnotherReferenced"));
-        List<Relationship> relationships1 = provider.getNeighbors(shape1).stream()
-                .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
-                .collect(Collectors.toList());
+        List<Relationship> relationships1 = provider.getNeighbors(shape1)
+            .stream()
+            .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
+            .collect(Collectors.toList());
 
         assertThat(relationships, containsInAnyOrder(Relationship.create(shape, RelationshipType.ID_REF, ref)));
         assertThat(relationships1, containsInAnyOrder(Relationship.create(shape1, RelationshipType.ID_REF, ref1)));

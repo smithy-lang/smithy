@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.List;
@@ -38,8 +37,14 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
     public static final String DEFAULT = "default";
     private static final String BUILT_IN = "builtIn";
     private static final String REQUIRED = "required";
-    private static final List<String> PROPERTIES = ListUtils.of(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
-            DEFAULT);
+    private static final List<String> PROPERTIES = ListUtils.of(
+        BUILT_IN,
+        REQUIRED,
+        TYPE,
+        DEPRECATED,
+        DOCUMENTATION,
+        DEFAULT
+    );
 
     private final ParameterType type;
     private final Identifier name;
@@ -85,8 +90,13 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
             objectNode.getObjectMember(DEPRECATED, node -> builder.deprecated(Deprecated.fromNode(node)));
 
             objectNode.getMember(DEFAULT).map(Value::fromNode).ifPresent(builder::defaultValue);
-            builder.type(RuleError.context("while parsing the parameter type", objectNode,
-                    () -> ParameterType.fromNode(objectNode.expectStringMember(TYPE))));
+            builder.type(
+                RuleError.context(
+                    "while parsing the parameter type",
+                    objectNode,
+                    () -> ParameterType.fromNode(objectNode.expectStringMember(TYPE))
+                )
+            );
             return builder.build();
         });
     }
@@ -155,8 +165,14 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
         Type out = Type.fromParameterType(type);
 
         if (defaultValue != null && !defaultValue.getType().equals(out)) {
-            throw new RuntimeException(String.format("Invalid type for field \"default\": Type must match "
-                    + "parameter type. Expected `%s`, found `%s`.", out, defaultValue.getType()));
+            throw new RuntimeException(
+                String.format(
+                    "Invalid type for field \"default\": Type must match "
+                        + "parameter type. Expected `%s`, found `%s`.",
+                    out,
+                    defaultValue.getType()
+                )
+            );
         }
 
         if (!required) {
@@ -232,15 +248,15 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
     @Override
     public Builder toBuilder() {
         return builder()
-                .type(type)
-                .name(name)
-                .builtIn(builtIn)
-                .value(value)
-                .required(required)
-                .sourceLocation(sourceLocation)
-                .deprecated(deprecated)
-                .documentation(documentation)
-                .defaultValue(defaultValue);
+            .type(type)
+            .name(name)
+            .builtIn(builtIn)
+            .value(value)
+            .required(required)
+            .sourceLocation(sourceLocation)
+            .deprecated(deprecated)
+            .documentation(documentation)
+            .defaultValue(defaultValue);
     }
 
     @Override
@@ -273,13 +289,13 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
         }
         Parameter parameter = (Parameter) o;
         return required == parameter.required
-                && Objects.equals(type, parameter.type)
-                && name.equals(parameter.name)
-                && Objects.equals(value, parameter.value)
-                && Objects.equals(builtIn, parameter.builtIn)
-                && Objects.equals(defaultValue, parameter.defaultValue)
-                && Objects.equals(deprecated, parameter.deprecated)
-                && Objects.equals(documentation, parameter.documentation);
+            && Objects.equals(type, parameter.type)
+            && name.equals(parameter.name)
+            && Objects.equals(value, parameter.value)
+            && Objects.equals(builtIn, parameter.builtIn)
+            && Objects.equals(defaultValue, parameter.defaultValue)
+            && Objects.equals(deprecated, parameter.deprecated)
+            && Objects.equals(documentation, parameter.documentation);
     }
 
     @Override

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy.security;
 
 import org.junit.jupiter.api.Test;
@@ -13,15 +17,18 @@ public class HttpBasicConverterTest {
     @Test
     public void addsHttpBasicAuth() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("http-basic-security.json"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("http-basic-security.json"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create().config(config).convert(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("http-basic-security.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("http-basic-security.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }

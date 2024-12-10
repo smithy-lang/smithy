@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
@@ -70,14 +59,21 @@ final class MetadataContainer {
             merged.addAll(value.expectArrayNode().getElements());
             data.put(key, new ArrayNode(merged, value.getSourceLocation()));
         } else if (!previous.equals(value)) {
-            events.add(ValidationEvent.builder()
+            events.add(
+                ValidationEvent.builder()
                     .id(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(value)
-                    .message(format(
+                    .message(
+                        format(
                             "Metadata conflict for key `%s`. Defined in both `%s` and `%s`",
-                            key, value.getSourceLocation(), previous.getSourceLocation()))
-                    .build());
+                            key,
+                            value.getSourceLocation(),
+                            previous.getSourceLocation()
+                        )
+                    )
+                    .build()
+            );
         } else {
             LOGGER.fine(() -> "Ignoring duplicate metadata definition of " + key);
         }

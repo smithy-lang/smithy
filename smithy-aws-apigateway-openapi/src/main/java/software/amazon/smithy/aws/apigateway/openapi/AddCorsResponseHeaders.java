@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.ArrayList;
@@ -51,29 +40,36 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
 
     @Override
     public OperationObject postProcessOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String method,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String method,
+        String path
     ) {
-        return context.getService().getTrait(CorsTrait.class)
-                .map(trait -> addCorsHeadersToResponses(context, shape, operation, method, trait))
-                .orElse(operation);
+        return context.getService()
+            .getTrait(CorsTrait.class)
+            .map(trait -> addCorsHeadersToResponses(context, shape, operation, method, trait))
+            .orElse(operation);
     }
 
     private OperationObject addCorsHeadersToResponses(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operationObject,
-            String method,
-            CorsTrait trait
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operationObject,
+        String method,
+        CorsTrait trait
     ) {
         OperationObject.Builder builder = operationObject.toBuilder();
 
         for (Map.Entry<String, ResponseObject> entry : operationObject.getResponses().entrySet()) {
             ResponseObject updated = createUpdatedResponseWithCorsHeaders(
-                    context, shape, operationObject, method, trait, entry.getValue());
+                context,
+                shape,
+                operationObject,
+                method,
+                trait,
+                entry.getValue()
+            );
             builder.putResponse(entry.getKey(), updated);
         }
 
@@ -81,12 +77,12 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
     }
 
     private ResponseObject createUpdatedResponseWithCorsHeaders(
-            Context<? extends Trait> context,
-            OperationShape operation,
-            OperationObject operationObject,
-            String method,
-            CorsTrait trait,
-            ResponseObject response
+        Context<? extends Trait> context,
+        OperationShape operation,
+        OperationObject operationObject,
+        String method,
+        CorsTrait trait,
+        ResponseObject response
     ) {
         // Determine which headers have been added to the response.
         List<String> headers = new ArrayList<>();
@@ -181,8 +177,8 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
         for (String headerName : headers) {
             if (!response.getHeader(headerName).isPresent()) {
                 ParameterObject headerParam = ParameterObject.builder()
-                        .schema(headerSchema)
-                        .build();
+                    .schema(headerSchema)
+                    .build();
                 builder.putHeader(headerName, Ref.local(headerParam));
             }
         }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import software.amazon.smithy.model.FromSourceLocation;
@@ -18,7 +17,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public abstract class RulesComponentBuilder<B extends RulesComponentBuilder<?, ?>, T>
-        implements SmithyBuilder<T>, FromSourceLocation {
+    implements SmithyBuilder<T>, FromSourceLocation {
 
     private SourceLocation sourceLocation;
 
@@ -86,8 +85,8 @@ public abstract class RulesComponentBuilder<B extends RulesComponentBuilder<?, ?
     static boolean isStackTraceRelevant(StackTraceElement e) {
         String normalized = e.getClassName().replace("$", ".");
         return !normalized.startsWith("java.")
-                       && !normalized.startsWith("jdk.")
-                       && !normalized.startsWith(RulesComponentBuilder.class.getCanonicalName())
-                       && !normalized.startsWith("software.amazon.smithy.rulesengine");
+            && !normalized.startsWith("jdk.")
+            && !normalized.startsWith(RulesComponentBuilder.class.getCanonicalName())
+            && !normalized.startsWith("software.amazon.smithy.rulesengine");
     }
 }

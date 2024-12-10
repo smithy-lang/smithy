@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -50,10 +39,15 @@ public class CfnSchemasTest {
 
     @BeforeAll
     public static void loadSchema() {
-        try (InputStream schemaStream = CfnSchemasTest.class.getResourceAsStream(DEFINITION);
-                 InputStream draftSchemaStream = CfnSchemasTest.class.getResourceAsStream(JSON_SCHEMA);
-                 InputStream configSchemaStream = CfnSchemasTest.class.getResourceAsStream(CONFIGURATION);
-                 InputStream baseSchemaStream = CfnSchemasTest.class.getResourceAsStream(BASE_DEFINITION)) {
+        try (
+            InputStream schemaStream = CfnSchemasTest.class.getResourceAsStream(
+                DEFINITION
+            ); InputStream draftSchemaStream = CfnSchemasTest.class.getResourceAsStream(
+                JSON_SCHEMA
+            ); InputStream configSchemaStream = CfnSchemasTest.class.getResourceAsStream(
+                CONFIGURATION
+            ); InputStream baseSchemaStream = CfnSchemasTest.class.getResourceAsStream(BASE_DEFINITION)
+        ) {
 
             JSONObject schemaJson = new JSONObject(new JSONTokener(schemaStream));
             JSONObject baseSchemaJson = new JSONObject(new JSONTokener(baseSchemaStream));
@@ -61,8 +55,8 @@ public class CfnSchemasTest {
             JSONObject draftSchemaJson = new JSONObject(new JSONTokener(draftSchemaStream));
 
             SchemaLoaderBuilder schemaLoaderBuilder = SchemaLoader.builder()
-                    .draftV7Support()
-                    .schemaJson(schemaJson);
+                .draftV7Support()
+                .schemaJson(schemaJson);
             schemaLoaderBuilder.registerSchemaByURI(new URI(BASE_DEFINITION_URI), baseSchemaJson);
             schemaLoaderBuilder.registerSchemaByURI(new URI(CONFIGURATION_URI), configSchemaJson);
             schemaLoaderBuilder.registerSchemaByURI(new URI(JSON_SCHEMA_URI_HTTP), draftSchemaJson);
@@ -94,10 +88,10 @@ public class CfnSchemasTest {
             // Check for any ".cfn.json" files at or deeper than the
             // validation schema definition.
             return Files.walk(Paths.get(definitionPath.getParent().toUri()))
-                    .filter(Files::isRegularFile)
-                    .filter(file -> file.toString().endsWith(".cfn.json"))
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .filter(Files::isRegularFile)
+                .filter(file -> file.toString().endsWith(".cfn.json"))
+                .map(Object::toString)
+                .collect(Collectors.toList());
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }

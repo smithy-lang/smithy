@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -68,8 +67,8 @@ public final class Reference extends Expression {
     @Override
     public Node toNode() {
         return ObjectNode.builder()
-                .withMember("ref", name.toString())
-                .build();
+            .withMember("ref", name.toString())
+            .build();
     }
 
     @Override

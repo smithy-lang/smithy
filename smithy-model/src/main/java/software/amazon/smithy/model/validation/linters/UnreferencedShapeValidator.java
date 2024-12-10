@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.linters;
 
 import java.util.ArrayList;
@@ -55,13 +54,15 @@ public final class UnreferencedShapeValidator extends AbstractValidator {
             super(UnreferencedShapeValidator.class, configuration -> {
                 Config config = new Config();
                 ObjectNode node = configuration.expectObjectNode()
-                        .expectNoAdditionalProperties(Collections.singleton("rootShapeSelector"));
+                    .expectNoAdditionalProperties(Collections.singleton("rootShapeSelector"));
                 node.getStringMember("rootShapeSelector").ifPresent(rootShapeNode -> {
                     try {
                         config.setRootShapeSelector(Selector.parse(rootShapeNode.getValue()));
                     } catch (SelectorSyntaxException e) {
-                        throw new ExpectationNotMetException("Error parsing `rootShapeSelector`: " + e.getMessage(),
-                                                             rootShapeNode);
+                        throw new ExpectationNotMetException(
+                            "Error parsing `rootShapeSelector`: " + e.getMessage(),
+                            rootShapeNode
+                        );
                     }
                 });
                 return new UnreferencedShapeValidator(config);
@@ -80,8 +81,13 @@ public final class UnreferencedShapeValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Shape shape : new UnreferencedShapes(config.rootShapeSelector).compute(model)) {
-            events.add(note(shape, "This shape is unreferenced. It has no modeled connections to shapes "
-                                   + "that match the following selector: `" + config.rootShapeSelector + "`"));
+            events.add(
+                note(
+                    shape,
+                    "This shape is unreferenced. It has no modeled connections to shapes "
+                        + "that match the following selector: `" + config.rootShapeSelector + "`"
+                )
+            );
         }
 
         return events;

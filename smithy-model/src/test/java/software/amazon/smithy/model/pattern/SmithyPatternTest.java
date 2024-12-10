@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,27 +35,33 @@ public class SmithyPatternTest {
     public void parsesGreedyLabels() {
         String target = "/foo/baz/{bar+}";
         SmithyPattern pattern = SmithyPattern.builder()
-                .segments(parser(target))
-                .pattern(target)
-                .build();
+            .segments(parser(target))
+            .pattern(target)
+            .build();
 
         assertThat(pattern.toString(), equalTo(target));
-        assertThat(pattern.getGreedyLabel(), equalTo(Optional.of(
-                new Segment("bar", Segment.Type.GREEDY_LABEL))));
+        assertThat(
+            pattern.getGreedyLabel(),
+            equalTo(
+                Optional.of(
+                    new Segment("bar", Segment.Type.GREEDY_LABEL)
+                )
+            )
+        );
     }
 
     @Test
     public void computesHashAndEquals() {
         String target1 = "/foo";
         SmithyPattern pattern1 = SmithyPattern.builder()
-                .segments(parser(target1))
-                .pattern(target1)
-                .build();
+            .segments(parser(target1))
+            .pattern(target1)
+            .build();
         String target2 = "/foo/{baz+}/";
         SmithyPattern pattern2 = SmithyPattern.builder()
-                .segments(parser(target2))
-                .pattern(target2)
-                .build();
+            .segments(parser(target2))
+            .pattern(target2)
+            .build();
 
         assertThat(pattern1, equalTo(pattern1));
         assertThat(pattern1, not(equalTo(pattern2)));
@@ -80,9 +75,9 @@ public class SmithyPatternTest {
     public void labelsAreCaseInsensitive() {
         String target = "/foo/{baz}";
         SmithyPattern pattern = SmithyPattern.builder()
-                                  .segments(parser(target))
-                .pattern(target)
-                .build();
+            .segments(parser(target))
+            .pattern(target)
+            .build();
         Segment segment = new Segment("baz", Segment.Type.LABEL);
 
         assertThat(pattern.getLabel("baz"), is(Optional.of(segment)));
@@ -94,9 +89,9 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "//baz";
             SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Segments must not be empty at index 1"));
@@ -107,9 +102,9 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}/{Foo}";
             SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Label `Foo` is defined more than once"));
@@ -120,10 +115,10 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/foo/{baz+}";
             SmithyPattern.builder()
-                    .allowsGreedyLabels(false)
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .allowsGreedyLabels(false)
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Pattern must not contain a greedy label"));
@@ -134,9 +129,9 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/a/{}";
             SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Empty label declaration in pattern at index 2"));
@@ -147,9 +142,9 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{!}";
             SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Invalid label name"));
@@ -161,9 +156,9 @@ public class SmithyPatternTest {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}baz";
             SmithyPattern.builder()
-                    .segments(parser(target))
-                    .pattern(target)
-                    .build();
+                .segments(parser(target))
+                .pattern(target)
+                .build();
         });
 
         assertThat(thrown.getMessage(), containsString("Literal segments must not contain"));

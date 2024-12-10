@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -91,11 +80,11 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      */
     public static boolean hasHttpRequestBindings(Shape shape) {
         return shape.hasTrait(HttpHeaderTrait.class)
-                || shape.hasTrait(HttpPrefixHeadersTrait.class)
-                || shape.hasTrait(HttpPayloadTrait.class)
-                || shape.hasTrait(HttpQueryTrait.class)
-                || shape.hasTrait(HttpQueryParamsTrait.class)
-                || shape.hasTrait(HttpLabelTrait.class);
+            || shape.hasTrait(HttpPrefixHeadersTrait.class)
+            || shape.hasTrait(HttpPayloadTrait.class)
+            || shape.hasTrait(HttpQueryTrait.class)
+            || shape.hasTrait(HttpQueryParamsTrait.class)
+            || shape.hasTrait(HttpLabelTrait.class);
     }
 
     /**
@@ -107,19 +96,19 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      */
     public static boolean hasHttpResponseBindings(Shape shape) {
         return shape.hasTrait(HttpHeaderTrait.class)
-                || shape.hasTrait(HttpPrefixHeadersTrait.class)
-                || shape.hasTrait(HttpPayloadTrait.class)
-                || shape.hasTrait(HttpResponseCodeTrait.class);
+            || shape.hasTrait(HttpPrefixHeadersTrait.class)
+            || shape.hasTrait(HttpPayloadTrait.class)
+            || shape.hasTrait(HttpResponseCodeTrait.class);
     }
 
     private HttpTrait getHttpTrait(ToShapeId operation) {
         ShapeId id = operation.toShapeId();
         return getModel().getShape(id)
-                .orElseThrow(() -> new IllegalArgumentException(id + " is not a valid shape"))
-                .asOperationShape()
-                .orElseThrow(() -> new IllegalArgumentException(id + " is not an operation shape"))
-                .getTrait(HttpTrait.class)
-                .orElseThrow(() -> new IllegalArgumentException(id + " has no http binding trait"));
+            .orElseThrow(() -> new IllegalArgumentException(id + " is not a valid shape"))
+            .asOperationShape()
+            .orElseThrow(() -> new IllegalArgumentException(id + " is not an operation shape"))
+            .getTrait(HttpTrait.class)
+            .orElseThrow(() -> new IllegalArgumentException(id + " has no http binding trait"));
     }
 
     private Model getModel() {
@@ -159,8 +148,8 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public Map<String, HttpBinding> getRequestBindings(ToShapeId operationShapeOrId) {
         ShapeId id = operationShapeOrId.toShapeId();
         return requestBindings.getOrDefault(id, Collections.emptyList())
-                .stream()
-                .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
+            .stream()
+            .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
     }
 
     /**
@@ -174,9 +163,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public List<HttpBinding> getRequestBindings(ToShapeId operationShapeOrId, HttpBinding.Location requestLocation) {
         ShapeId id = operationShapeOrId.toShapeId();
         return requestBindings.getOrDefault(id, Collections.emptyList())
-                .stream()
-                .filter(binding -> binding.getLocation() == requestLocation)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(binding -> binding.getLocation() == requestLocation)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -189,8 +178,8 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public Map<String, HttpBinding> getResponseBindings(ToShapeId shapeOrId) {
         ShapeId id = shapeOrId.toShapeId();
         return responseBindings.getOrDefault(id, Collections.emptyList())
-                .stream()
-                .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
+            .stream()
+            .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
     }
 
     /**
@@ -206,9 +195,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public List<HttpBinding> getResponseBindings(ToShapeId shapeOrId, HttpBinding.Location bindingLocation) {
         ShapeId id = shapeOrId.toShapeId();
         return responseBindings.getOrDefault(id, Collections.emptyList())
-                .stream()
-                .filter(binding -> binding.getLocation() == bindingLocation)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(binding -> binding.getLocation() == bindingLocation)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -221,28 +210,28 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @return Returns the determined timestamp format.
      */
     public TimestampFormatTrait.Format determineTimestampFormat(
-            ToShapeId member,
-            HttpBinding.Location location,
-            TimestampFormatTrait.Format defaultFormat
+        ToShapeId member,
+        HttpBinding.Location location,
+        TimestampFormatTrait.Format defaultFormat
     ) {
         Model model = getModel();
         return model.getShape(member.toShapeId())
-                // Use the timestampFormat trait on the member or target if present.
-                .flatMap(shape -> shape.getMemberTrait(model, TimestampFormatTrait.class))
-                .map(TimestampFormatTrait::getFormat)
-                .orElseGet(() -> {
-                    // Determine the format based on the location.
-                    switch (location) {
-                        case PREFIX_HEADERS:
-                        case HEADER:
-                            return TimestampFormatTrait.Format.HTTP_DATE;
-                        case QUERY:
-                        case LABEL:
-                            return TimestampFormatTrait.Format.DATE_TIME;
-                        default:
-                            return defaultFormat;
-                    }
-                });
+            // Use the timestampFormat trait on the member or target if present.
+            .flatMap(shape -> shape.getMemberTrait(model, TimestampFormatTrait.class))
+            .map(TimestampFormatTrait::getFormat)
+            .orElseGet(() -> {
+                // Determine the format based on the location.
+                switch (location) {
+                    case PREFIX_HEADERS:
+                    case HEADER:
+                        return TimestampFormatTrait.Format.HTTP_DATE;
+                    case QUERY:
+                    case LABEL:
+                        return TimestampFormatTrait.Format.DATE_TIME;
+                    default:
+                        return defaultFormat;
+                }
+            });
     }
 
     /**
@@ -288,9 +277,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @return Returns the optionally resolved content-type of the request.
      */
     public Optional<String> determineRequestContentType(
-            ToShapeId operation,
-            String documentContentType,
-            String eventStreamContentType
+        ToShapeId operation,
+        String documentContentType,
+        String eventStreamContentType
     ) {
         Collection<HttpBinding> bindings = getRequestBindings(operation).values();
         return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
@@ -341,18 +330,18 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @return Returns the optionally resolved content-type of the response.
      */
     public Optional<String> determineResponseContentType(
-            ToShapeId operationOrError,
-            String documentContentType,
-            String eventStreamContentType
+        ToShapeId operationOrError,
+        String documentContentType,
+        String eventStreamContentType
     ) {
         Collection<HttpBinding> bindings = getResponseBindings(operationOrError).values();
         return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
     }
 
     private String determineContentType(
-            Collection<HttpBinding> bindings,
-            String documentContentType,
-            String eventStreamContentType
+        Collection<HttpBinding> bindings,
+        String documentContentType,
+        String eventStreamContentType
     ) {
         Model model = getModel();
 
@@ -370,17 +359,17 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 } else if (StreamingTrait.isEventStream(target)) {
                     return eventStreamContentType;
                 } else if (target.isDocumentShape() || target.isStructureShape() || target.isUnionShape()
-                        || target.isListShape() || target.isMapShape()) {
-                    // Document type and structure targets are always the document content-type.
-                    return documentContentType;
-                } else if (target.getTrait(MediaTypeTrait.class).isPresent()) {
-                    // Use the @mediaType trait if available.
-                    return target.getTrait(MediaTypeTrait.class).get().getValue();
-                } else if (target.isBlobShape()) {
-                    return "application/octet-stream";
-                } else if (target.isStringShape()) {
-                    return "text/plain";
-                }
+                    || target.isListShape() || target.isMapShape()) {
+                        // Document type and structure targets are always the document content-type.
+                        return documentContentType;
+                    } else if (target.getTrait(MediaTypeTrait.class).isPresent()) {
+                        // Use the @mediaType trait if available.
+                        return target.getTrait(MediaTypeTrait.class).get().getValue();
+                    } else if (target.isBlobShape()) {
+                        return "application/octet-stream";
+                    } else if (target.isStringShape()) {
+                        return "text/plain";
+                    }
             }
         }
 
@@ -410,7 +399,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     private boolean hasPayloadBindings(Collection<HttpBinding> bindings) {
         for (HttpBinding binding : bindings) {
             if (binding.getLocation() == HttpBinding.Location.DOCUMENT
-                    || binding.getLocation() == HttpBinding.Location.PAYLOAD) {
+                || binding.getLocation() == HttpBinding.Location.PAYLOAD) {
                 return true;
             }
         }
@@ -452,8 +441,14 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 bindings.add(new HttpBinding(member, HttpBinding.Location.LABEL, member.getMemberName(), trait));
             } else if (!isRequest && member.getTrait(HttpResponseCodeTrait.class).isPresent()) {
                 HttpResponseCodeTrait trait = member.getTrait(HttpResponseCodeTrait.class).get();
-                bindings.add(new HttpBinding(
-                        member, HttpBinding.Location.RESPONSE_CODE, member.getMemberName(), trait));
+                bindings.add(
+                    new HttpBinding(
+                        member,
+                        HttpBinding.Location.RESPONSE_CODE,
+                        member.getMemberName(),
+                        trait
+                    )
+                );
             } else {
                 unbound.add(member);
             }
@@ -461,11 +456,17 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
         if (!unbound.isEmpty()) {
             if (foundPayload) {
-                unbound.forEach(member -> bindings.add(
-                        new HttpBinding(member, HttpBinding.Location.UNBOUND, member.getMemberName(), null)));
+                unbound.forEach(
+                    member -> bindings.add(
+                        new HttpBinding(member, HttpBinding.Location.UNBOUND, member.getMemberName(), null)
+                    )
+                );
             } else {
-                unbound.forEach(member -> bindings.add(
-                        new HttpBinding(member, HttpBinding.Location.DOCUMENT, member.getMemberName(), null)));
+                unbound.forEach(
+                    member -> bindings.add(
+                        new HttpBinding(member, HttpBinding.Location.DOCUMENT, member.getMemberName(), null)
+                    )
+                );
             }
         }
 

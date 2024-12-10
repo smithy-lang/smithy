@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.protocoltests.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,25 +23,25 @@ public class TraitTest {
 
     @BeforeAll
     public static void before() {
-         appliesToModel = Model.assembler()
-                 .discoverModels()
-                 .addImport(TraitTest.class.getResource("test-with-appliesto.smithy"))
-                 .assemble()
-                 .unwrap();
+        appliesToModel = Model.assembler()
+            .discoverModels()
+            .addImport(TraitTest.class.getResource("test-with-appliesto.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @Test
     public void simpleRequestTest() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("say-hello.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("say-hello.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
         HttpRequestTestCase testCase = model.expectShape(ShapeId.from("smithy.example#SayHello"))
-                .getTrait(HttpRequestTestsTrait.class)
-                .get()
-                .getTestCases()
-                .get(0);
+            .getTrait(HttpRequestTestsTrait.class)
+            .get()
+            .getTestCases()
+            .get(0);
 
         assertThat(testCase.toBuilder().build(), equalTo(testCase));
         assertThat(HttpRequestTestCase.fromNode(testCase.toNode()), equalTo(testCase));
@@ -46,15 +50,15 @@ public class TraitTest {
     @Test
     public void simpleResponseTest() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("say-goodbye.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("say-goodbye.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
         HttpResponseTestCase testCase = model.expectShape(ShapeId.from("smithy.example#SayGoodbye"))
-                .getTrait(HttpResponseTestsTrait.class)
-                .get()
-                .getTestCases()
-                .get(0);
+            .getTrait(HttpResponseTestsTrait.class)
+            .get()
+            .getTestCases()
+            .get(0);
 
         assertThat(testCase.toBuilder().build(), equalTo(testCase));
         assertThat(HttpResponseTestCase.fromNode(testCase.toNode()), equalTo(testCase));
@@ -63,20 +67,20 @@ public class TraitTest {
     @Test
     public void messageHasTags() {
         Model model = Model.assembler()
-                .discoverModels()
-                .addImport(getClass().getResource("test-with-tags.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels()
+            .addImport(getClass().getResource("test-with-tags.smithy"))
+            .assemble()
+            .unwrap();
         HttpRequestTestCase request = model.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .getTrait(HttpRequestTestsTrait.class)
-                .get()
-                .getTestCases()
-                .get(0);
+            .getTrait(HttpRequestTestsTrait.class)
+            .get()
+            .getTestCases()
+            .get(0);
         HttpResponseTestCase response = model.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .getTrait(HttpResponseTestsTrait.class)
-                .get()
-                .getTestCases()
-                .get(0);
+            .getTrait(HttpResponseTestsTrait.class)
+            .get()
+            .getTestCases()
+            .get(0);
 
         assertThat(request.getTags(), contains("foo", "bar"));
         assertThat(request.toBuilder().build().getTags(), contains("foo", "bar"));
@@ -93,7 +97,7 @@ public class TraitTest {
     @Test
     public void messageHasAppliesTo() {
         HttpRequestTestsTrait requestTrait = appliesToModel.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .expectTrait(HttpRequestTestsTrait.class);
+            .expectTrait(HttpRequestTestsTrait.class);
         HttpRequestTestCase request = requestTrait.getTestCases().get(1);
 
         assertThat(request.getAppliesTo().isPresent(), is(true));
@@ -102,7 +106,7 @@ public class TraitTest {
         assertThat(HttpRequestTestCase.fromNode(request.toNode()), equalTo(request));
 
         HttpResponseTestsTrait responseTrait = appliesToModel.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .expectTrait(HttpResponseTestsTrait.class);
+            .expectTrait(HttpResponseTestsTrait.class);
         HttpResponseTestCase response = responseTrait.getTestCases().get(1);
 
         assertThat(response.getAppliesTo().isPresent(), is(true));
@@ -114,24 +118,32 @@ public class TraitTest {
     @Test
     public void canFilterTestsByAppliesTo() {
         HttpRequestTestsTrait requestTrait = appliesToModel.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .expectTrait(HttpRequestTestsTrait.class);
+            .expectTrait(HttpRequestTestsTrait.class);
         HttpResponseTestsTrait responseTrait = appliesToModel.expectShape(ShapeId.from("smithy.example#SaySomething"))
-                .expectTrait(HttpResponseTestsTrait.class);
+            .expectTrait(HttpResponseTestsTrait.class);
 
-        assertThat(getCaseIds(requestTrait.getTestCasesFor(AppliesTo.CLIENT)),
-                   containsInAnyOrder("say_hello_all", "say_hello_client"));
-        assertThat(getCaseIds(requestTrait.getTestCasesFor(AppliesTo.SERVER)),
-                   containsInAnyOrder("say_hello_all", "say_hello_server"));
+        assertThat(
+            getCaseIds(requestTrait.getTestCasesFor(AppliesTo.CLIENT)),
+            containsInAnyOrder("say_hello_all", "say_hello_client")
+        );
+        assertThat(
+            getCaseIds(requestTrait.getTestCasesFor(AppliesTo.SERVER)),
+            containsInAnyOrder("say_hello_all", "say_hello_server")
+        );
 
-        assertThat(getCaseIds(responseTrait.getTestCasesFor(AppliesTo.CLIENT)),
-                   containsInAnyOrder("say_goodbye_all", "say_goodbye_client"));
-        assertThat(getCaseIds(responseTrait.getTestCasesFor(AppliesTo.SERVER)),
-                   containsInAnyOrder("say_goodbye_all", "say_goodbye_server"));
+        assertThat(
+            getCaseIds(responseTrait.getTestCasesFor(AppliesTo.CLIENT)),
+            containsInAnyOrder("say_goodbye_all", "say_goodbye_client")
+        );
+        assertThat(
+            getCaseIds(responseTrait.getTestCasesFor(AppliesTo.SERVER)),
+            containsInAnyOrder("say_goodbye_all", "say_goodbye_server")
+        );
     }
 
     private List<String> getCaseIds(List<? extends HttpMessageTestCase> cases) {
         return cases.stream()
-                .map(HttpMessageTestCase::getId)
-                .collect(Collectors.toList());
+            .map(HttpMessageTestCase::getId)
+            .collect(Collectors.toList());
     }
 }

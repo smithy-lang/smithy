@@ -2,9 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
-
 
 import java.nio.file.Paths;
 import software.amazon.smithy.build.FileManifest;
@@ -24,20 +22,20 @@ public final class PluginExecutor {
     public static void main(String[] args) {
         TraitCodegenPlugin plugin = new TraitCodegenPlugin();
         Model model = Model.assembler(PluginExecutor.class.getClassLoader())
-                .discoverModels(PluginExecutor.class.getClassLoader())
-                .assemble()
-                .unwrap();
+            .discoverModels(PluginExecutor.class.getClassLoader())
+            .assemble()
+            .unwrap();
         PluginContext context = PluginContext.builder()
-                .fileManifest(FileManifest.create(Paths.get("build/integ")))
-                .settings(ObjectNode.builder()
-                        .withMember("package", "com.example.traits")
-                        .withMember("namespace", "test.smithy.traitcodegen")
-                        .withMember("header", ArrayNode.fromStrings("Header line One"))
-                        .build()
-                )
-                .model(model)
-                .build();
+            .fileManifest(FileManifest.create(Paths.get("build/integ")))
+            .settings(
+                ObjectNode.builder()
+                    .withMember("package", "com.example.traits")
+                    .withMember("namespace", "test.smithy.traitcodegen")
+                    .withMember("header", ArrayNode.fromStrings("Header line One"))
+                    .build()
+            )
+            .model(model)
+            .build();
         plugin.execute(context);
     }
 }
-

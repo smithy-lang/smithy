@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.ArrayList;
@@ -177,17 +166,30 @@ public final class OpenApiConverter {
 
         if (config.getAddReferenceDescriptions() && config.getVersion() == OpenApiVersion.VERSION_3_0_2) {
             throw new OpenApiException(
-                    "openapi property `addReferenceDescriptions` requires openapi version 3.1.0 or later.\n"
-                    + "Suggestion: Add `\"version\"`: \"3.1.0\" to your openapi config.");
+                "openapi property `addReferenceDescriptions` requires openapi version 3.1.0 or later.\n"
+                    + "Suggestion: Add `\"version\"`: \"3.1.0\" to your openapi config."
+            );
         }
 
         // Find the service shape.
         ServiceShape service = model.getShape(serviceShapeId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` not found in model", serviceShapeId)))
-                .asServiceShape()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` is not a service shape", serviceShapeId)));
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Shape `%s` not found in model",
+                        serviceShapeId
+                    )
+                )
+            )
+            .asServiceShape()
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Shape `%s` is not a service shape",
+                        serviceShapeId
+                    )
+                )
+            );
 
         // Copy service errors onto each operation to ensure that common errors are
         // generated for each operation.
@@ -242,23 +244,34 @@ public final class OpenApiConverter {
 
         // Load security scheme converters.
         List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters = loadSecuritySchemes(
-                model, service, extensions);
+            model,
+            service,
+            extensions
+        );
 
         Context<Trait> context = new Context<>(
-                model, service, config, jsonSchemaConverter,
-                openApiProtocol, document, securitySchemeConverters);
+            model,
+            service,
+            config,
+            jsonSchemaConverter,
+            openApiProtocol,
+            document,
+            securitySchemeConverters
+        );
 
         return new ConversionEnvironment<>(context, extensions, components, composedMapper);
     }
 
     private static OpenApiMapper createComposedMapper(
-            List<Smithy2OpenApiExtension> extensions,
-            List<OpenApiMapper> mappers
+        List<Smithy2OpenApiExtension> extensions,
+        List<OpenApiMapper> mappers
     ) {
-        return OpenApiMapper.compose(Stream.concat(
+        return OpenApiMapper.compose(
+            Stream.concat(
                 extensions.stream().flatMap(extension -> extension.getOpenApiMappers().stream()),
                 mappers.stream()
-        ).collect(Collectors.toList()));
+            ).collect(Collectors.toList())
+        );
     }
 
     // Gets the protocol configured in `protocol` if set.
@@ -275,18 +288,31 @@ public final class OpenApiConverter {
         if (config.getProtocol() != null) {
             ShapeId protocolTraitId = config.getProtocol();
             return service.findTrait(protocolTraitId).orElseThrow(() -> {
-                return new OpenApiException(String.format(
+                return new OpenApiException(
+                    String.format(
                         "Unable to find protocol `%s` on service `%s`. This service supports the following "
-                        + "protocols: %s", protocolTraitId, service.getId(), serviceProtocols));
+                            + "protocols: %s",
+                        protocolTraitId,
+                        service.getId(),
+                        serviceProtocols
+                    )
+                );
             });
         } else if (serviceProtocols.isEmpty()) {
-            throw new OpenApiException(String.format(
+            throw new OpenApiException(
+                String.format(
                     "No Smithy protocol was configured and `%s` does not define any protocols.",
-                    service.getId()));
+                    service.getId()
+                )
+            );
         } else if (serviceProtocols.size() > 1) {
-            throw new OpenApiException(String.format(
+            throw new OpenApiException(
+                String.format(
                     "No Smithy protocol was configured and `%s` defines multiple protocols: %s",
-                    service.getId(), serviceProtocols));
+                    service.getId(),
+                    serviceProtocols
+                )
+            );
         } else {
             // Get the first and only service protocol trait.
             return serviceIndex.getProtocols(service).values().iterator().next();
@@ -300,10 +326,10 @@ public final class OpenApiConverter {
         private final OpenApiMapper mapper;
 
         private ConversionEnvironment(
-                Context<T> context,
-                List<Smithy2OpenApiExtension> extensions,
-                ComponentsObject.Builder components,
-                OpenApiMapper composedMapper
+            Context<T> context,
+            List<Smithy2OpenApiExtension> extensions,
+            ComponentsObject.Builder components,
+            OpenApiMapper composedMapper
         ) {
             this.context = context;
             this.extensions = extensions;
@@ -324,7 +350,7 @@ public final class OpenApiConverter {
 
         // The externalDocumentation trait of the service maps to externalDocs.
         OpenApiJsonSchemaMapper.getResolvedExternalDocs(service, context.getConfig())
-                .ifPresent(openapi::externalDocs);
+            .ifPresent(openapi::externalDocs);
 
         // Include @tags trait tags that are compatible with OpenAPI settings.
         for (String tag : getSupportedTags(service)) {
@@ -350,46 +376,49 @@ public final class OpenApiConverter {
     // Find the corresponding protocol OpenApiProtocol service provider.
     @SuppressWarnings("unchecked")
     private <T extends Trait> OpenApiProtocol<T> loadOpenApiProtocol(
-            ServiceShape service,
-            T protocolTrait,
-            List<Smithy2OpenApiExtension> extensions
+        ServiceShape service,
+        T protocolTrait,
+        List<Smithy2OpenApiExtension> extensions
     ) {
         // Collect into a list so that a better error message can be presented if the
         // protocol converter can't be found.
         List<OpenApiProtocol> protocolProviders = extensions.stream()
-                .flatMap(e -> e.getProtocols().stream())
-                .collect(Collectors.toList());
+            .flatMap(e -> e.getProtocols().stream())
+            .collect(Collectors.toList());
 
         return protocolProviders.stream()
-                .filter(openApiProtocol -> openApiProtocol.getProtocolType().equals(protocolTrait.getClass()))
-                .findFirst()
-                .map(result -> (OpenApiProtocol<T>) result)
-                .orElseThrow(() -> {
-                    Stream<String> supportedProtocols = protocolProviders.stream()
-                            .map(OpenApiProtocol::getProtocolType)
-                            .map(Class::getCanonicalName);
-                    return new OpenApiException(String.format(
-                            "Unable to find an OpenAPI service provider for the `%s` protocol when converting `%s`. "
+            .filter(openApiProtocol -> openApiProtocol.getProtocolType().equals(protocolTrait.getClass()))
+            .findFirst()
+            .map(result -> (OpenApiProtocol<T>) result)
+            .orElseThrow(() -> {
+                Stream<String> supportedProtocols = protocolProviders.stream()
+                    .map(OpenApiProtocol::getProtocolType)
+                    .map(Class::getCanonicalName);
+                return new OpenApiException(
+                    String.format(
+                        "Unable to find an OpenAPI service provider for the `%s` protocol when converting `%s`. "
                             + "Protocol service providers were found for the following protocol classes: [%s].",
-                            protocolTrait.toShapeId(),
-                            service.getId(),
-                            ValidationUtils.tickedList(supportedProtocols)));
-                });
+                        protocolTrait.toShapeId(),
+                        service.getId(),
+                        ValidationUtils.tickedList(supportedProtocols)
+                    )
+                );
+            });
     }
 
     // Loads all of the OpenAPI security scheme implementations that are referenced by a service.
     private List<SecuritySchemeConverter<? extends Trait>> loadSecuritySchemes(
-            Model model,
-            ServiceShape service,
-            List<Smithy2OpenApiExtension> extensions
+        Model model,
+        ServiceShape service,
+        List<Smithy2OpenApiExtension> extensions
     ) {
         // Note: Using a LinkedHashSet here in case order is ever important.
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Set<Class<? extends Trait>> schemes = getTraitMapTypes(serviceIndex.getAuthSchemes(service));
 
         List<SecuritySchemeConverter<? extends Trait>> converters = extensions.stream()
-                .flatMap(extension -> extension.getSecuritySchemeConverters().stream())
-                .collect(Collectors.toList());
+            .flatMap(extension -> extension.getSecuritySchemeConverters().stream())
+            .collect(Collectors.toList());
 
         List<SecuritySchemeConverter<? extends Trait>> resolved = new ArrayList<>();
         for (SecuritySchemeConverter<? extends Trait> converter : converters) {
@@ -399,8 +428,12 @@ public final class OpenApiConverter {
         }
 
         if (!schemes.isEmpty()) {
-            LOGGER.warning(() -> String.format(
-                    "Unable to find an OpenAPI authentication converter for the following schemes: [%s]", schemes));
+            LOGGER.warning(
+                () -> String.format(
+                    "Unable to find an OpenAPI authentication converter for the following schemes: [%s]",
+                    schemes
+                )
+            );
         }
 
         return resolved;
@@ -414,9 +447,9 @@ public final class OpenApiConverter {
 
         List<String> supported = config.getSupportedTags();
         return tagged.getTags()
-                .stream()
-                .filter(tag -> supported == null || supported.contains(tag))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(tag -> supported == null || supported.contains(tag))
+            .collect(Collectors.toList());
     }
 
     private InfoObject createInfo(ServiceShape service) {
@@ -426,17 +459,19 @@ public final class OpenApiConverter {
         // Service version maps to info.version.
         infoBuilder.version(service.getVersion());
         // The title trait maps to info.title.
-        infoBuilder.title(service.getTrait(TitleTrait.class)
-                                  .map(TitleTrait::getValue)
-                                  .orElse(service.getId().getName()));
+        infoBuilder.title(
+            service.getTrait(TitleTrait.class)
+                .map(TitleTrait::getValue)
+                .orElse(service.getId().getName())
+        );
         return infoBuilder.build();
     }
 
     private <T extends Trait> void addPaths(
-            Context<T> context,
-            OpenApi.Builder openApiBuilder,
-            OpenApiProtocol<T> protocolService,
-            OpenApiMapper plugin
+        Context<T> context,
+        OpenApi.Builder openApiBuilder,
+        OpenApiProtocol<T> protocolService,
+        OpenApiMapper plugin
     ) {
         TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
         Map<String, PathItem.Builder> paths = new HashMap<>();
@@ -458,12 +493,12 @@ public final class OpenApiConverter {
 
                 // Add the documentation trait to the operation if present.
                 shape.getTrait(DocumentationTrait.class)
-                        .map(DocumentationTrait::getValue)
-                        .ifPresent(description -> result.getOperation().description(description));
+                    .map(DocumentationTrait::getValue)
+                    .ifPresent(description -> result.getOperation().description(description));
 
                 // The externalDocumentation trait of the operation maps to externalDocs.
                 OpenApiJsonSchemaMapper.getResolvedExternalDocs(shape, context.getConfig())
-                        .ifPresent(result.getOperation()::externalDocs);
+                    .ifPresent(result.getOperation()::externalDocs);
 
                 OperationObject builtOperation = result.getOperation().build();
 
@@ -506,16 +541,24 @@ public final class OpenApiConverter {
                         pathItem.options(builtOperation);
                         break;
                     default:
-                        LOGGER.warning(String.format(
+                        LOGGER.warning(
+                            String.format(
                                 "The %s HTTP method of `%s` is not supported by OpenAPI",
-                                result.getMethod(), shape.getId()));
+                                result.getMethod(),
+                                shape.getId()
+                            )
+                        );
                 }
-            }, () -> LOGGER.warning(String.format(
-                    "The `%s` operation is not supported by the `%s` protocol (implemented by `%s`), and "
-                    + "was omitted",
-                    shape.getId(),
-                    protocolService.getClass().getName(),
-                    context.getProtocolTrait().toShapeId()))
+            },
+                () -> LOGGER.warning(
+                    String.format(
+                        "The `%s` operation is not supported by the `%s` protocol (implemented by `%s`), and "
+                            + "was omitted",
+                        shape.getId(),
+                        protocolService.getClass().getName(),
+                        context.getProtocolTrait().toShapeId()
+                    )
+                )
             );
         });
 
@@ -528,10 +571,10 @@ public final class OpenApiConverter {
     }
 
     private <T extends Trait> void addOperationSecurity(
-            Context<T> context,
-            OperationObject.Builder builder,
-            OperationShape shape,
-            OpenApiMapper plugin
+        Context<T> context,
+        OperationObject.Builder builder,
+        OperationShape shape,
+        OpenApiMapper plugin
     ) {
         ServiceShape service = context.getService();
         ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
@@ -551,7 +594,9 @@ public final class OpenApiConverter {
             Collection<Class<? extends Trait>> authSchemeClasses = getTraitMapTypes(operationSchemes);
             // Find all the converters with matching types of auth traits on the service.
             Collection<SecuritySchemeConverter<? extends Trait>> converters = findMatchingConverters(
-                    context, authSchemeClasses);
+                context,
+                authSchemeClasses
+            );
             for (SecuritySchemeConverter<? extends Trait> converter : converters) {
                 List<String> result = createSecurityRequirements(context, converter, service);
                 String openApiAuthName = converter.getOpenApiAuthSchemeName();
@@ -566,20 +611,21 @@ public final class OpenApiConverter {
 
     // This method exists primarily to appease the type-checker.
     private <P extends Trait, A extends Trait> List<String> createSecurityRequirements(
-            Context<P> context,
-            SecuritySchemeConverter<A> converter,
-            ServiceShape service
+        Context<P> context,
+        SecuritySchemeConverter<A> converter,
+        ServiceShape service
     ) {
         return converter.createSecurityRequirements(
-                context,
-                service.expectTrait(converter.getAuthSchemeType()),
-                context.getService());
+            context,
+            service.expectTrait(converter.getAuthSchemeType()),
+            context.getService()
+        );
     }
 
     private OperationObject addOperationTags(
-            Context<? extends Trait> context,
-            Shape shape,
-            OperationObject operation
+        Context<? extends Trait> context,
+        Shape shape,
+        OperationObject operation
     ) {
         // Include @tags trait tags of the operation that are compatible with OpenAPI settings.
         if (context.getConfig().getTags()) {
@@ -591,12 +637,12 @@ public final class OpenApiConverter {
 
     // Applies mappers to parameters and updates the operation if parameters change.
     private <T extends Trait> OperationObject updateParameters(
-            Context<T> context,
-            OperationShape shape,
-            OperationObject operation,
-            String method,
-            String path,
-            OpenApiMapper plugin
+        Context<T> context,
+        OperationShape shape,
+        OperationObject operation,
+        String method,
+        String path,
+        OpenApiMapper plugin
     ) {
         List<ParameterObject> parameters = new ArrayList<>();
         for (ParameterObject parameter : operation.getParameters()) {
@@ -604,44 +650,50 @@ public final class OpenApiConverter {
         }
 
         return !parameters.equals(operation.getParameters())
-               ? operation.toBuilder().parameters(parameters).build()
-               : operation;
+            ? operation.toBuilder().parameters(parameters).build()
+            : operation;
     }
 
     // Applies mappers to each request body and update the operation if the body changes.
     private <T extends Trait> OperationObject updateRequestBody(
-            Context<T> context,
-            OperationShape shape,
-            OperationObject operation,
-            String method,
-            String path,
-            OpenApiMapper plugin
+        Context<T> context,
+        OperationShape shape,
+        OperationObject operation,
+        String method,
+        String path,
+        OpenApiMapper plugin
     ) {
         return operation.getRequestBody()
-                .map(body -> {
-                    RequestBodyObject updatedBody = plugin.updateRequestBody(context, shape, method, path, body);
-                    return body.equals(updatedBody)
-                           ? operation
-                           : operation.toBuilder().requestBody(updatedBody).build();
-                })
-                .orElse(operation);
+            .map(body -> {
+                RequestBodyObject updatedBody = plugin.updateRequestBody(context, shape, method, path, body);
+                return body.equals(updatedBody)
+                    ? operation
+                    : operation.toBuilder().requestBody(updatedBody).build();
+            })
+            .orElse(operation);
     }
 
     // Ensures that responses have at least one entry, and applies mappers to
     // responses and updates the operation is a response changes.
     private <T extends Trait> OperationObject updateResponses(
-            Context<T> context,
-            OperationShape shape,
-            OperationObject operation,
-            String methodName,
-            String path,
-            OpenApiMapper plugin
+        Context<T> context,
+        OperationShape shape,
+        OperationObject operation,
+        String methodName,
+        String path,
+        OpenApiMapper plugin
     ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
         for (Map.Entry<String, ResponseObject> entry : operation.getResponses().entrySet()) {
             String status = entry.getKey();
             ResponseObject responseObject = plugin.updateResponse(
-                    context, shape, status, methodName, path, entry.getValue());
+                context,
+                shape,
+                status,
+                methodName,
+                path,
+                entry.getValue()
+            );
             newResponses.put(status, responseObject);
         }
 
@@ -653,10 +705,10 @@ public final class OpenApiConverter {
     }
 
     private <T extends Trait> void addSecurityComponents(
-            Context<T> context,
-            OpenApi.Builder openApiBuilder,
-            ComponentsObject.Builder components,
-            OpenApiMapper plugin
+        Context<T> context,
+        OpenApi.Builder openApiBuilder,
+        ComponentsObject.Builder components,
+        OpenApiMapper plugin
     ) {
         ServiceShape service = context.getService();
         ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
@@ -679,7 +731,11 @@ public final class OpenApiConverter {
                 List<String> result = createSecurityRequirements(context, converter, context.getService());
                 String authSchemeName = converter.getOpenApiAuthSchemeName();
                 Map<String, List<String>> requirement = plugin.updateSecurity(
-                        context, context.getService(), converter, MapUtils.of(authSchemeName, result));
+                    context,
+                    context.getService(),
+                    converter,
+                    MapUtils.of(authSchemeName, result)
+                );
                 if (requirement != null) {
                     openApiBuilder.addSecurity(requirement);
                 }
@@ -693,10 +749,10 @@ public final class OpenApiConverter {
 
     // This method exists primarily to appease the type-checker.
     private <P extends Trait, A extends Trait> SecurityScheme createAndUpdateSecurityScheme(
-            Context<P> context,
-            OpenApiMapper plugin,
-            SecuritySchemeConverter<A> converter,
-            ServiceShape service
+        Context<P> context,
+        OpenApiMapper plugin,
+        SecuritySchemeConverter<A> converter,
+        ServiceShape service
     ) {
         A authTrait = service.expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
@@ -705,12 +761,13 @@ public final class OpenApiConverter {
 
     @SuppressWarnings("unchecked")
     private Collection<SecuritySchemeConverter<? extends Trait>> findMatchingConverters(
-            Context<? extends Trait> context,
-            Collection<Class<? extends Trait>> schemes
+        Context<? extends Trait> context,
+        Collection<Class<? extends Trait>> schemes
     ) {
-        return context.getSecuritySchemeConverters().stream()
-                .filter(converter -> schemes.contains(converter.getAuthSchemeType()))
-                .map(converter -> (SecuritySchemeConverter<Trait>) converter)
-                .collect(Collectors.toList());
+        return context.getSecuritySchemeConverters()
+            .stream()
+            .filter(converter -> schemes.contains(converter.getAuthSchemeType()))
+            .map(converter -> (SecuritySchemeConverter<Trait>) converter)
+            .collect(Collectors.toList());
     }
 }

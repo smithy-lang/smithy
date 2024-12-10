@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.analysis;
 
 import java.util.ArrayList;
@@ -55,14 +54,20 @@ public final class OperationContextParamsChecker {
     }
 
     public static LinterResult lint(
-            OperationContextParamDefinition paramDefinition, OperationShape operationShape, Model model) {
+        OperationContextParamDefinition paramDefinition,
+        OperationShape operationShape,
+        Model model
+    ) {
         JmespathExpression path = JmespathExpression.parse(paramDefinition.getPath());
         StructureShape input = OperationIndex.of(model).expectInputShape(operationShape);
         return path.lint(createCurrentNodeFromShape(input, model));
     }
 
     public static Optional<ParameterType> inferParameterType(
-            OperationContextParamDefinition paramDefinition, OperationShape operationShape, Model model) {
+        OperationContextParamDefinition paramDefinition,
+        OperationShape operationShape,
+        Model model
+    ) {
         RuntimeType runtimeType = lint(paramDefinition, operationShape, model).getReturnType();
         switch (runtimeType) {
             case BOOLEAN:
@@ -78,10 +83,9 @@ public final class OperationContextParamsChecker {
 
     private static LiteralExpression createCurrentNodeFromShape(Shape shape, Model model) {
         return shape == null
-                ? LiteralExpression.ANY
-                : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+            ? LiteralExpression.ANY
+            : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
     }
-
 
     /**
      * This class is duplicated from
@@ -233,10 +237,10 @@ public final class OperationContextParamsChecker {
             }
 
             return model.getShape(shape.getTarget())
-                    .map(target -> target.accept(this))
-                    // Rather than fail on broken models during waiter validation,
-                    // return an ANY to get *some* validation.
-                    .orElse(LiteralExpression.ANY);
+                .map(target -> target.accept(this))
+                // Rather than fail on broken models during waiter validation,
+                // return an ANY to get *some* validation.
+                .orElse(LiteralExpression.ANY);
         }
 
         @Override

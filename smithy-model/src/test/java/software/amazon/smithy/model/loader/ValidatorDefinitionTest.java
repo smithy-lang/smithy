@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,30 +26,33 @@ public class ValidatorDefinitionTest {
     @Test
     public void mapsAndFiltersOverShapes() {
         List<ValidationEvent> events = Model.assembler()
-                .addImport(getClass().getResource("validator-filtering-and-mapping.smithy"))
-                .validatorFactory(new ValidatorFactory() {
-                    @Override
-                    public List<Validator> loadBuiltinValidators() {
-                        return Collections.emptyList();
-                    }
+            .addImport(getClass().getResource("validator-filtering-and-mapping.smithy"))
+            .validatorFactory(new ValidatorFactory() {
+                @Override
+                public List<Validator> loadBuiltinValidators() {
+                    return Collections.emptyList();
+                }
 
-                    @Override
-                    public Optional<Validator> createValidator(String name, ObjectNode configuration) {
-                        return name.equals("hello")
-                               ? Optional.of(
-                                       model -> model.shapes()
-                                               .map(shape -> ValidationEvent.builder()
-                                                       .id("hello.subpart")
-                                                       .shape(shape)
-                                                       .severity(Severity.WARNING)
-                                                       .message("Hello!")
-                                                       .build())
-                                               .collect(Collectors.toList()))
-                               : Optional.empty();
-                    }
-                })
-                .assemble()
-                .getValidationEvents();
+                @Override
+                public Optional<Validator> createValidator(String name, ObjectNode configuration) {
+                    return name.equals("hello")
+                        ? Optional.of(
+                            model -> model.shapes()
+                                .map(
+                                    shape -> ValidationEvent.builder()
+                                        .id("hello.subpart")
+                                        .shape(shape)
+                                        .severity(Severity.WARNING)
+                                        .message("Hello!")
+                                        .build()
+                                )
+                                .collect(Collectors.toList())
+                        )
+                        : Optional.empty();
+                }
+            })
+            .assemble()
+            .getValidationEvents();
 
         assertThat(events, not(empty()));
         Assertions.assertEquals(2, events.stream().filter(e -> e.getId().equals("hello.subpart")).count());

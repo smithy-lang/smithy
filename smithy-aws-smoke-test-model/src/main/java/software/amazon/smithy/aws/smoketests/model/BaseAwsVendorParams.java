@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.smoketests.model;
 
 import java.util.List;
@@ -28,13 +27,15 @@ public abstract class BaseAwsVendorParams {
     BaseAwsVendorParams(ObjectNode node) {
         this.region = node.getStringMemberOrDefault("region", DEFAULT_REGION);
         this.sigv4aRegionSet = node.getArrayMember("sigv4aRegionSet")
-                .map(a -> a.getElementsAs(el -> el.expectStringNode().getValue()))
-                .orElse(null);
+            .map(a -> a.getElementsAs(el -> el.expectStringNode().getValue()))
+            .orElse(null);
         this.uri = node.getStringMemberOrDefault("uri", null);
         this.useFips = node.getBooleanMemberOrDefault("useFips", DEFAULT_USE_FIPS);
         this.useDualstack = node.getBooleanMemberOrDefault("useDualstack", DEFAULT_USE_DUALSTACK);
         this.useAccountIdRouting = node.getBooleanMemberOrDefault(
-                "useAccountIdRouting", DEFAULT_USE_ACCOUNT_ID_ROUTING);
+            "useAccountIdRouting",
+            DEFAULT_USE_ACCOUNT_ID_ROUTING
+        );
     }
 
     /**

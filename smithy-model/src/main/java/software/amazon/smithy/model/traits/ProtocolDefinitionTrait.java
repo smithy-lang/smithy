@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.List;
@@ -68,9 +57,9 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
         builder.sourceLocation(getSourceLocation());
         if (!traits.isEmpty()) {
             ArrayNode ids = traits.stream()
-                    .map(ShapeId::toString)
-                    .map(Node::from)
-                    .collect(ArrayNode.collect());
+                .map(ShapeId::toString)
+                .map(Node::from)
+                .collect(ArrayNode.collect());
             builder.withMember("traits", ids);
 
             if (noInlineDocumentSupport) {
@@ -83,9 +72,9 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .traits(traits)
-                .noInlineDocumentSupport(noInlineDocumentSupport);
+            .sourceLocation(getSourceLocation())
+            .traits(traits)
+            .noInlineDocumentSupport(noInlineDocumentSupport);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -97,8 +86,8 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
         public ProtocolDefinitionTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode()
-                    .getArrayMember("traits", ShapeId::fromNode, builder::traits)
-                    .getBooleanMember("noInlineDocumentSupport", builder::noInlineDocumentSupport);
+                .getArrayMember("traits", ShapeId::fromNode, builder::traits)
+                .getBooleanMember("noInlineDocumentSupport", builder::noInlineDocumentSupport);
             ProtocolDefinitionTrait result = builder.build();
             result.setNodeCache(value);
             return result;

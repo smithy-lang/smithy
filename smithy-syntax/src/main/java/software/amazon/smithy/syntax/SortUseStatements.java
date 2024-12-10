@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import java.util.ArrayList;
@@ -36,7 +25,7 @@ final class SortUseStatements implements Function<TokenTree, TokenTree> {
     @Override
     public TokenTree apply(TokenTree tree) {
         TreeCursor useSection = Objects.requireNonNull(tree.zipper().getFirstChild(TreeType.SHAPE_SECTION))
-                .getFirstChild(TreeType.USE_SECTION);
+            .getFirstChild(TreeType.USE_SECTION);
 
         // All trees should have a USE_SECTION. If the section is empty, then no use statements need to be sorted.
         // Note that if it isn't empty, then there is a guaranteed NAMESPACE_STATEMENT too.
@@ -48,7 +37,7 @@ final class SortUseStatements implements Function<TokenTree, TokenTree> {
 
         // Remove the original statements since they get sorted and re-added.
         useSection.getChildrenByType(TreeType.USE_STATEMENT)
-                .forEach(s -> useSection.getTree().removeChild(s.getTree()));
+            .forEach(s -> useSection.getTree().removeChild(s.getTree()));
 
         dataModel.addFirstUse(useSection);
         dataModel.addSubsequentUse(useSection);
@@ -100,9 +89,9 @@ final class SortUseStatements implements Function<TokenTree, TokenTree> {
             // statement is moved, then the comments from the previous section need to be removed and moved into this
             // section, and potentially replaced with comments from USE_SECTION.
             TreeCursor br = root.findChildrenByType(TreeType.NAMESPACE_STATEMENT)
-                    .get(0)
-                    .findChildrenByType(TreeType.BR)
-                    .get(0);
+                .get(0)
+                .findChildrenByType(TreeType.BR)
+                .get(0);
 
             namespaceBrWs = br.getFirstChild(TreeType.WS);
 
@@ -174,14 +163,18 @@ final class SortUseStatements implements Function<TokenTree, TokenTree> {
                 br.appendChild(sp);
                 br.appendChild(lineComment.getTree());
             } else {
-                br.appendChild(TokenTree.of(CapturedToken.builder()
-                        .token(IdlToken.NEWLINE)
-                        .lexeme("\n")
-                        // Set the start line to be the start line of the use statement
-                        // so the formatter  knows it's a line comment.
-                        .startLine(id.getStartLine())
-                        .endLine(id.getStartLine() + 1)
-                        .build()));
+                br.appendChild(
+                    TokenTree.of(
+                        CapturedToken.builder()
+                            .token(IdlToken.NEWLINE)
+                            .lexeme("\n")
+                            // Set the start line to be the start line of the use statement
+                            // so the formatter  knows it's a line comment.
+                            .startLine(id.getStartLine())
+                            .endLine(id.getStartLine() + 1)
+                            .build()
+                    )
+                );
             }
 
             TokenTree ws = TokenTree.of(TreeType.WS);

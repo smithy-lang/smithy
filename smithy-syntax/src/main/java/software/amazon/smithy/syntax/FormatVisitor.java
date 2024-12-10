@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import com.opencastsoftware.prettier4j.Doc;
@@ -40,9 +29,9 @@ final class FormatVisitor {
     // Renders members and anything bracketed that are known to need expansion on multiple lines.
     static Doc renderBlock(Doc open, Doc close, Doc contents) {
         return open
-                .append(Doc.line().append(contents).indent(4))
-                .append(Doc.line())
-                .append(close);
+            .append(Doc.line().append(contents).indent(4))
+            .append(Doc.line())
+            .append(close);
     }
 
     Doc visit(TreeCursor cursor) {
@@ -55,10 +44,10 @@ final class FormatVisitor {
         switch (tree.getType()) {
             case IDL: {
                 return visit(cursor.getFirstChild(TreeType.WS))
-                        .append(visit(cursor.getFirstChild(TreeType.CONTROL_SECTION)))
-                        .append(visit(cursor.getFirstChild(TreeType.METADATA_SECTION)))
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE_SECTION)))
-                        .append(flushBrBuffer());
+                    .append(visit(cursor.getFirstChild(TreeType.CONTROL_SECTION)))
+                    .append(visit(cursor.getFirstChild(TreeType.METADATA_SECTION)))
+                    .append(visit(cursor.getFirstChild(TreeType.SHAPE_SECTION)))
+                    .append(flushBrBuffer());
             }
 
             case CONTROL_SECTION: {
@@ -82,36 +71,36 @@ final class FormatVisitor {
                         result = result.append(Doc.line());
                     }
                     result = result.append(visit(childIterator.next())) // SHAPE
-                            .append(visit(childIterator.next()))        // BR
-                            .append(Doc.line());
+                        .append(visit(childIterator.next()))        // BR
+                        .append(Doc.line());
                 }
                 return result;
             }
 
             case CONTROL_STATEMENT: {
                 return flushBrBuffer()
-                        .append(Doc.text("$"))
-                        .append(visit(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY)))
-                        .append(Doc.text(": "))
-                        .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
-                        .append(visit(cursor.getFirstChild(TreeType.BR)));
+                    .append(Doc.text("$"))
+                    .append(visit(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY)))
+                    .append(Doc.text(": "))
+                    .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
+                    .append(visit(cursor.getFirstChild(TreeType.BR)));
             }
 
             case METADATA_STATEMENT: {
                 return flushBrBuffer()
-                        .append(Doc.text("metadata "))
-                        .append(visit(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY)))
-                        .append(Doc.text(" = "))
-                        .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
-                        .append(visit(cursor.getFirstChild(TreeType.BR)));
+                    .append(Doc.text("metadata "))
+                    .append(visit(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY)))
+                    .append(Doc.text(" = "))
+                    .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
+                    .append(visit(cursor.getFirstChild(TreeType.BR)));
             }
 
             case NAMESPACE_STATEMENT: {
                 return Doc.line()
-                        .append(flushBrBuffer())
-                        .append(Doc.text("namespace "))
-                        .append(visit(cursor.getFirstChild(TreeType.NAMESPACE)))
-                        .append(visit(cursor.getFirstChild(TreeType.BR)));
+                    .append(flushBrBuffer())
+                    .append(Doc.text("namespace "))
+                    .append(visit(cursor.getFirstChild(TreeType.NAMESPACE)))
+                    .append(visit(cursor.getFirstChild(TreeType.BR)));
             }
 
             case USE_SECTION: {
@@ -120,9 +109,9 @@ final class FormatVisitor {
 
             case USE_STATEMENT: {
                 return flushBrBuffer()
-                        .append(Doc.text("use "))
-                        .append(visit(cursor.getFirstChild(TreeType.ABSOLUTE_ROOT_SHAPE_ID)))
-                        .append(visit(cursor.getFirstChild(TreeType.BR)));
+                    .append(Doc.text("use "))
+                    .append(visit(cursor.getFirstChild(TreeType.ABSOLUTE_ROOT_SHAPE_ID)))
+                    .append(visit(cursor.getFirstChild(TreeType.BR)));
             }
 
             case SHAPE_OR_APPLY_STATEMENT:
@@ -141,9 +130,9 @@ final class FormatVisitor {
 
             case SHAPE_STATEMENT: {
                 return flushBrBuffer()
-                        .append(visit(cursor.getFirstChild(TreeType.WS)))
-                        .append(visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS)))
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE)));
+                    .append(visit(cursor.getFirstChild(TreeType.WS)))
+                    .append(visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS)))
+                    .append(visit(cursor.getFirstChild(TreeType.SHAPE)));
             }
 
             case SIMPLE_SHAPE: {
@@ -152,10 +141,13 @@ final class FormatVisitor {
 
             case ENUM_SHAPE: {
                 return skippedComments(cursor, false)
-                        .append(formatShape(
-                                cursor,
-                                visit(cursor.getFirstChild(TreeType.ENUM_TYPE_NAME)),
-                                visit(cursor.getFirstChild(TreeType.ENUM_SHAPE_MEMBERS))));
+                    .append(
+                        formatShape(
+                            cursor,
+                            visit(cursor.getFirstChild(TreeType.ENUM_TYPE_NAME)),
+                            visit(cursor.getFirstChild(TreeType.ENUM_SHAPE_MEMBERS))
+                        )
+                    );
             }
 
             case ENUM_SHAPE_MEMBERS: {
@@ -164,16 +156,19 @@ final class FormatVisitor {
 
             case ENUM_SHAPE_MEMBER: {
                 return visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS))
-                        .append(visit(cursor.getFirstChild(TreeType.IDENTIFIER)))
-                        .append(visit(cursor.getFirstChild(TreeType.VALUE_ASSIGNMENT)));
+                    .append(visit(cursor.getFirstChild(TreeType.IDENTIFIER)))
+                    .append(visit(cursor.getFirstChild(TreeType.VALUE_ASSIGNMENT)));
             }
 
             case AGGREGATE_SHAPE: {
                 return skippedComments(cursor, false)
-                        .append(formatShape(
-                                cursor,
-                                visit(cursor.getFirstChild(TreeType.AGGREGATE_TYPE_NAME)),
-                                visit(cursor.getFirstChild(TreeType.SHAPE_MEMBERS))));
+                    .append(
+                        formatShape(
+                            cursor,
+                            visit(cursor.getFirstChild(TreeType.AGGREGATE_TYPE_NAME)),
+                            visit(cursor.getFirstChild(TreeType.SHAPE_MEMBERS))
+                        )
+                    );
             }
 
             case FOR_RESOURCE: {
@@ -186,15 +181,15 @@ final class FormatVisitor {
 
             case SHAPE_MEMBER: {
                 return visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS))
-                        .append(visit(cursor.getFirstChild(TreeType.ELIDED_SHAPE_MEMBER)))
-                        .append(visit(cursor.getFirstChild(TreeType.EXPLICIT_SHAPE_MEMBER)))
-                        .append(visit(cursor.getFirstChild(TreeType.VALUE_ASSIGNMENT)));
+                    .append(visit(cursor.getFirstChild(TreeType.ELIDED_SHAPE_MEMBER)))
+                    .append(visit(cursor.getFirstChild(TreeType.EXPLICIT_SHAPE_MEMBER)))
+                    .append(visit(cursor.getFirstChild(TreeType.VALUE_ASSIGNMENT)));
             }
 
             case EXPLICIT_SHAPE_MEMBER: {
                 return visit(cursor.getFirstChild(TreeType.IDENTIFIER))
-                        .append(Doc.text(": "))
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)));
+                    .append(Doc.text(": "))
+                    .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)));
             }
 
             case ELIDED_SHAPE_MEMBER: {
@@ -209,17 +204,22 @@ final class FormatVisitor {
 
                 // Place the values of resources, operations, and errors on multiple lines.
                 Doc body = new BracketFormatter()
-                        .extractChildren(nodeCursor, BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP, visitor))
-                        .detectHardLines(nodeCursor) // If the list is empty, then keep it as "[]".
-                        .write();
+                    .extractChildren(nodeCursor, BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP, visitor))
+                    .detectHardLines(nodeCursor) // If the list is empty, then keep it as "[]".
+                    .write();
 
                 return skippedComments.append(formatShape(cursor, entityType, Doc.lineOrSpace().append(body)));
             }
 
             case OPERATION_SHAPE: {
                 return skippedComments(cursor, false)
-                        .append(formatShape(cursor, Doc.text("operation"),
-                                            visit(cursor.getFirstChild(TreeType.OPERATION_BODY))));
+                    .append(
+                        formatShape(
+                            cursor,
+                            Doc.text("operation"),
+                            visit(cursor.getFirstChild(TreeType.OPERATION_BODY))
+                        )
+                    );
             }
 
             case OPERATION_BODY: {
@@ -229,34 +229,40 @@ final class FormatVisitor {
             case OPERATION_INPUT: {
                 TreeCursor simpleTarget = cursor.getFirstChild(TreeType.SHAPE_ID);
                 return skippedComments(cursor, false)
-                        .append(Doc.text("input"))
-                        .append(simpleTarget == null
-                                ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
-                                : Doc.text(": ")).append(visit(simpleTarget));
+                    .append(Doc.text("input"))
+                    .append(
+                        simpleTarget == null
+                            ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
+                            : Doc.text(": ")
+                    )
+                    .append(visit(simpleTarget));
             }
 
             case OPERATION_OUTPUT: {
                 TreeCursor simpleTarget = cursor.getFirstChild(TreeType.SHAPE_ID);
                 return skippedComments(cursor, false)
-                        .append(Doc.text("output"))
-                        .append(simpleTarget == null
-                                ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
-                                : Doc.text(": ")).append(visit(simpleTarget));
+                    .append(Doc.text("output"))
+                    .append(
+                        simpleTarget == null
+                            ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
+                            : Doc.text(": ")
+                    )
+                    .append(visit(simpleTarget));
             }
 
             case INLINE_AGGREGATE_SHAPE: {
                 boolean hasComment = hasComment(cursor);
                 boolean hasTraits = Optional.ofNullable(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS))
-                        .filter(c -> !c.getChildrenByType(TreeType.TRAIT).isEmpty())
-                        .isPresent();
+                    .filter(c -> !c.getChildrenByType(TreeType.TRAIT).isEmpty())
+                    .isPresent();
                 Doc memberDoc = visit(cursor.getFirstChild(TreeType.SHAPE_MEMBERS));
                 if (hasComment || hasTraits) {
                     return Doc.text(" :=")
-                            .append(Doc.line())
-                            .append(skippedComments(cursor, false))
-                            .append(visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS)))
-                            .append(formatShape(cursor, Doc.empty(), memberDoc))
-                            .indent(4);
+                        .append(Doc.line())
+                        .append(skippedComments(cursor, false))
+                        .append(visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS)))
+                        .append(formatShape(cursor, Doc.empty(), memberDoc))
+                        .indent(4);
                 }
 
                 return formatShape(cursor, Doc.text(" :="), memberDoc);
@@ -276,104 +282,115 @@ final class FormatVisitor {
                     comments = comments.append(skippedComments(child.getNextSibling(), false));
                     child = child.getNextSibling();
                 }
-                return comments.append(Doc.text("errors: ")
-                        .append(new BracketFormatter()
-                                        .open(Formatter.LBRACKET)
-                                        .close(Formatter.RBRACKET)
-                                        .extractChildren(child, BracketFormatter.extractor(
-                                                this::visit,
-                                                BracketFormatter.byTypeMapper(TreeType.SHAPE_ID),
-                                                BracketFormatter.siblingChildrenSupplier()))
-                                        .forceLineBreaks() // always put each error on separate lines.
-                                        .write()));
+                return comments.append(
+                    Doc.text("errors: ")
+                        .append(
+                            new BracketFormatter()
+                                .open(Formatter.LBRACKET)
+                                .close(Formatter.RBRACKET)
+                                .extractChildren(
+                                    child,
+                                    BracketFormatter.extractor(
+                                        this::visit,
+                                        BracketFormatter.byTypeMapper(TreeType.SHAPE_ID),
+                                        BracketFormatter.siblingChildrenSupplier()
+                                    )
+                                )
+                                .forceLineBreaks() // always put each error on separate lines.
+                                .write()
+                        )
+                );
             }
 
             case MIXINS: {
                 return Doc.text("with ")
-                        .append(new BracketFormatter()
-                                        .open(Formatter.LBRACKET)
-                                        .close(Formatter.RBRACKET)
-                                        .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                            return child.getTree().getType() == TreeType.SHAPE_ID
-                                                   ? Stream.of(child)
-                                                   : Stream.empty();
-                                        }))
-                                        .detectHardLines(cursor)
-                                        .write());
+                    .append(
+                        new BracketFormatter()
+                            .open(Formatter.LBRACKET)
+                            .close(Formatter.RBRACKET)
+                            .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                                return child.getTree().getType() == TreeType.SHAPE_ID
+                                    ? Stream.of(child)
+                                    : Stream.empty();
+                            }))
+                            .detectHardLines(cursor)
+                            .write()
+                    );
             }
 
             case VALUE_ASSIGNMENT: {
                 return Doc.text(" = ")
-                        .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
-                        .append(visit(cursor.getFirstChild(TreeType.BR)));
+                    .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)))
+                    .append(visit(cursor.getFirstChild(TreeType.BR)));
             }
 
             case TRAIT_STATEMENTS: {
                 return Doc.intersperse(
-                                Doc.line(),
-                                cursor.children()
-                                        // Skip WS nodes that have no comments.
-                                        .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
-                                        .map(this::visit))
-                        .append(tree.isEmpty() ? Doc.empty() : Doc.line());
+                    Doc.line(),
+                    cursor.children()
+                        // Skip WS nodes that have no comments.
+                        .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
+                        .map(this::visit)
+                )
+                    .append(tree.isEmpty() ? Doc.empty() : Doc.line());
             }
 
             case TRAIT: {
                 return Doc.text("@")
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
-                        .append(visit(cursor.getFirstChild(TreeType.TRAIT_BODY)));
+                    .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
+                    .append(visit(cursor.getFirstChild(TreeType.TRAIT_BODY)));
             }
 
             case TRAIT_BODY: {
                 TreeCursor structuredBody = cursor.getFirstChild(TreeType.TRAIT_STRUCTURE);
                 if (structuredBody != null) {
                     return new BracketFormatter()
-                            .open(Formatter.LPAREN)
-                            .close(Formatter.RPAREN)
-                            .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                if (child.getTree().getType() == TreeType.TRAIT_STRUCTURE) {
-                                    // Split WS and NODE_OBJECT_KVP so that they appear on different lines.
-                                    return child.getChildrenByType(TreeType.NODE_OBJECT_KVP, TreeType.WS).stream();
-                                }
-                                return Stream.empty();
-                            }))
-                            .detectHardLines(cursor)
-                            .write();
+                        .open(Formatter.LPAREN)
+                        .close(Formatter.RPAREN)
+                        .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                            if (child.getTree().getType() == TreeType.TRAIT_STRUCTURE) {
+                                // Split WS and NODE_OBJECT_KVP so that they appear on different lines.
+                                return child.getChildrenByType(TreeType.NODE_OBJECT_KVP, TreeType.WS).stream();
+                            }
+                            return Stream.empty();
+                        }))
+                        .detectHardLines(cursor)
+                        .write();
                 } else if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
                     TreeCursor traitNode = cursor.getFirstChild(TreeType.TRAIT_NODE);
                     // Check the inner trait node for hard line breaks rather than the wrapper.
                     TreeCursor actualTraitNodeValue = traitNode
-                            .getFirstChild(TreeType.NODE_VALUE)
-                            .getFirstChild(); // The actual node value.
+                        .getFirstChild(TreeType.NODE_VALUE)
+                        .getFirstChild(); // The actual node value.
 
                     BracketFormatter formatter = new BracketFormatter()
-                            .open(Formatter.LPAREN)
-                            .close(Formatter.RPAREN)
-                            .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                if (child.getTree().getType() == TreeType.TRAIT_NODE) {
-                                    // Split WS and NODE_VALUE so that they appear on different lines.
-                                    return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
-                                } else {
-                                    return Stream.empty();
-                                }
-                            }));
+                        .open(Formatter.LPAREN)
+                        .close(Formatter.RPAREN)
+                        .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                            if (child.getTree().getType() == TreeType.TRAIT_NODE) {
+                                // Split WS and NODE_VALUE so that they appear on different lines.
+                                return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
+                            } else {
+                                return Stream.empty();
+                            }
+                        }));
 
                     // TraitBody may have leading comments and TraitNode may have trailing comments
                     // which both require line break
                     TreeCursor bodyWs = cursor.getFirstChild(TreeType.WS);
                     TreeCursor traitNodeWs = traitNode.getFirstChild(TreeType.WS);
                     if ((bodyWs != null && !bodyWs.findChildrenByType(TreeType.COMMENT).isEmpty())
-                            || (traitNodeWs != null && !traitNodeWs.findChildrenByType(TreeType.COMMENT).isEmpty())) {
+                        || (traitNodeWs != null && !traitNodeWs.findChildrenByType(TreeType.COMMENT).isEmpty())) {
                         // Need to line break if there's a leading comment in the trait body no matter what
                         formatter.forceLineBreaks();
                     } else if (actualTraitNodeValue.getTree().getType() == TreeType.NODE_ARRAY
-                            || actualTraitNodeValue.getTree().getType() == TreeType.NODE_OBJECT) {
-                        // Just inline arrays and objects in trait body
-                        formatter.forceInline();
-                    } else {
-                        // Any other values can use normal detection
-                        formatter.detectHardLines(cursor);
-                    }
+                        || actualTraitNodeValue.getTree().getType() == TreeType.NODE_OBJECT) {
+                            // Just inline arrays and objects in trait body
+                            formatter.forceInline();
+                        } else {
+                            // Any other values can use normal detection
+                            formatter.detectHardLines(cursor);
+                        }
 
                     return formatter.write();
                 } else {
@@ -393,11 +410,11 @@ final class FormatVisitor {
             case APPLY_STATEMENT_SINGULAR: {
                 // If there is an awkward comment before the TRAIT value, hoist it above the statement.
                 return flushBrBuffer()
-                        .append(skippedComments(cursor, false))
-                        .append(Doc.text("apply "))
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
-                        .append(Formatter.SPACE)
-                        .append(visit(cursor.getFirstChild(TreeType.TRAIT)));
+                    .append(skippedComments(cursor, false))
+                    .append(Doc.text("apply "))
+                    .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
+                    .append(Formatter.SPACE)
+                    .append(visit(cursor.getFirstChild(TreeType.TRAIT)));
             }
 
             case APPLY_STATEMENT_BLOCK: {
@@ -405,33 +422,50 @@ final class FormatVisitor {
                 //   the trailing newline + closing bracket. Otherwise, we'll get a blank, indented line, before
                 //   the closing brace.
                 return flushBrBuffer()
-                        .append(Doc.text(skippedComments(cursor, false)
-                                                 .append(Doc.text("apply "))
-                                                 .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
-                                                 .append(Doc.text(" {"))
-                                                 .append(Doc.line().append(visit(cursor.getFirstChild(
-                                                         TreeType.TRAIT_STATEMENTS)))
-                                                                 .indent(4))
-                                                 .render(width)
-                                                 .trim())
-                                        .append(Doc.line())
-                                        .append(Formatter.RBRACE));
+                    .append(
+                        Doc.text(
+                            skippedComments(cursor, false)
+                                .append(Doc.text("apply "))
+                                .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
+                                .append(Doc.text(" {"))
+                                .append(
+                                    Doc.line()
+                                        .append(
+                                            visit(
+                                                cursor.getFirstChild(
+                                                    TreeType.TRAIT_STATEMENTS
+                                                )
+                                            )
+                                        )
+                                        .indent(4)
+                                )
+                                .render(width)
+                                .trim()
+                        )
+                            .append(Doc.line())
+                            .append(Formatter.RBRACE)
+                    );
             }
 
             case NODE_ARRAY: {
                 return new BracketFormatter()
-                        .open(Formatter.LBRACKET)
-                        .close(Formatter.RBRACKET)
-                        .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_VALUE, this::visit))
-                        .detectHardLines(cursor)
-                        .write();
+                    .open(Formatter.LBRACKET)
+                    .close(Formatter.RBRACKET)
+                    .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_VALUE, this::visit))
+                    .detectHardLines(cursor)
+                    .write();
             }
 
             case NODE_OBJECT: {
                 BracketFormatter formatter = new BracketFormatter()
-                        .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP,
-                                                                                this::visit));
-                if (cursor.getParent().getParent().getTree().getType() == TreeType.NODE_ARRAY)  {
+                    .extractChildren(
+                        cursor,
+                        BracketFormatter.extractByType(
+                            TreeType.NODE_OBJECT_KVP,
+                            this::visit
+                        )
+                    );
+                if (cursor.getParent().getParent().getTree().getType() == TreeType.NODE_ARRAY) {
                     // Always break objects inside arrays if not empty
                     formatter.forceLineBreaksIfNotEmpty();
                 } else {
@@ -443,18 +477,18 @@ final class FormatVisitor {
 
             case NODE_OBJECT_KVP: {
                 return skippedComments(cursor, false)
-                        .append(formatNodeObjectKvp(cursor, this::visit, this::visit));
+                    .append(formatNodeObjectKvp(cursor, this::visit, this::visit));
             }
 
             case NODE_OBJECT_KEY: {
                 // Unquote object keys that can be unquoted.
                 CharSequence unquoted = Optional.ofNullable(cursor.getFirstChild(TreeType.QUOTED_TEXT))
-                        .flatMap(quoted -> quoted.getTree().tokens().findFirst())
-                        .map(token -> token.getLexeme().subSequence(1, token.getSpan() - 1))
-                        .orElse("");
+                    .flatMap(quoted -> quoted.getTree().tokens().findFirst())
+                    .map(token -> token.getLexeme().subSequence(1, token.getSpan() - 1))
+                    .orElse("");
                 return ShapeId.isValidIdentifier(unquoted)
-                       ? Doc.text(unquoted.toString())
-                       : Doc.text(tree.concatTokens());
+                    ? Doc.text(unquoted.toString())
+                    : Doc.text(tree.concatTokens());
             }
 
             case TEXT_BLOCK: {
@@ -464,10 +498,10 @@ final class FormatVisitor {
                 // We need to rebuild the text block to remove any incidental leading whitespace. The easiest way to
                 // do that is to use the already parsed and resolved value from the lexer.
                 String stringValue = cursor.getTree()
-                        .tokens()
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
-                        .getStringContents();
+                    .tokens()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
+                    .getStringContents();
 
                 // If the last character is a newline, then the closing triple quote must be on the next line.
                 boolean endQuoteOnNextLine = stringValue.endsWith("\n") || stringValue.endsWith("\r");
@@ -532,8 +566,8 @@ final class FormatVisitor {
             case WS: {
                 // Ignore all whitespace except for comments and doc comments.
                 return Doc.intersperse(
-                        Doc.line(),
-                        cursor.getChildrenByType(TreeType.COMMENT).stream().map(this::visit)
+                    Doc.line(),
+                    cursor.getChildrenByType(TreeType.COMMENT).stream().map(this::visit)
                 );
             }
 
@@ -700,17 +734,17 @@ final class FormatVisitor {
     }
 
     private static Doc formatNodeObjectKvp(
-            TreeCursor cursor,
-            Function<TreeCursor, Doc> keyVisitor,
-            Function<TreeCursor, Doc> valueVisitor
+        TreeCursor cursor,
+        Function<TreeCursor, Doc> keyVisitor,
+        Function<TreeCursor, Doc> valueVisitor
     ) {
         // Since text blocks span multiple lines, when they are the NODE_VALUE for NODE_OBJECT_KVP,
         // they have to be indented. Since we only format valid models, NODE_OBJECT_KVP is guaranteed to
         // have a NODE_VALUE child.
         TreeCursor nodeValue = cursor.getFirstChild(TreeType.NODE_VALUE);
         boolean isTextBlock = Optional.ofNullable(nodeValue.getFirstChild(TreeType.NODE_STRING_VALUE))
-                .map(nodeString -> nodeString.getFirstChild(TreeType.TEXT_BLOCK))
-                .isPresent();
+            .map(nodeString -> nodeString.getFirstChild(TreeType.TEXT_BLOCK))
+            .isPresent();
         Doc nodeValueDoc = valueVisitor.apply(nodeValue);
 
         if (isTextBlock) {
@@ -720,8 +754,8 @@ final class FormatVisitor {
         // Hoist awkward comments in the KVP *before* the KVP rather than between the values and colon.
         // If there is an awkward comment before the TRAIT value, hoist it above the statement.
         return keyVisitor.apply(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY))
-                .append(Doc.text(": "))
-                .append(nodeValueDoc);
+            .append(Doc.text(": "))
+            .append(nodeValueDoc);
     }
 
     // Ensure that special key-value pairs of service and resource shapes are always on multiple lines if not empty.
@@ -731,22 +765,28 @@ final class FormatVisitor {
         private final Function<TreeCursor, Doc> hardLineList = value -> {
             value = value.getFirstChild(TreeType.NODE_ARRAY);
             return new BracketFormatter()
-                    .open(Formatter.LBRACKET)
-                    .close(Formatter.RBRACKET)
-                    .extractChildren(value, BracketFormatter
-                            .extractByType(TreeType.NODE_VALUE, FormatVisitor.this::visit))
-                    .forceLineBreaksIfNotEmpty()
-                    .write();
+                .open(Formatter.LBRACKET)
+                .close(Formatter.RBRACKET)
+                .extractChildren(
+                    value,
+                    BracketFormatter
+                        .extractByType(TreeType.NODE_VALUE, FormatVisitor.this::visit)
+                )
+                .forceLineBreaksIfNotEmpty()
+                .write();
         };
 
         // Format known NODE_OBJECT_KVP object values to always place them on multiple lines.
         private final Function<TreeCursor, Doc> hardLineObject = value -> {
             value = value.getFirstChild(TreeType.NODE_OBJECT);
             return new BracketFormatter()
-                    .extractChildren(value, BracketFormatter
-                            .extractByType(TreeType.NODE_OBJECT_KVP, FormatVisitor.this::visit))
-                    .forceLineBreaksIfNotEmpty()
-                    .write();
+                .extractChildren(
+                    value,
+                    BracketFormatter
+                        .extractByType(TreeType.NODE_OBJECT_KVP, FormatVisitor.this::visit)
+                )
+                .forceLineBreaksIfNotEmpty()
+                .write();
         };
 
         @Override

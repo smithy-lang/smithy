@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
@@ -92,12 +81,12 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
     @Override
     public Builder toBuilder() {
         Builder builder = builder()
-                .openapi(openapi)
-                .info(info)
-                .paths(paths)
-                .components(components)
-                .externalDocs(externalDocs)
-                .extensions(getExtensions());
+            .openapi(openapi)
+            .info(info)
+            .paths(paths)
+            .components(components)
+            .externalDocs(externalDocs)
+            .extensions(getExtensions());
         security.forEach(builder::addSecurity);
         servers.forEach(builder::addServer);
         tags.forEach(builder::addTag);
@@ -107,29 +96,42 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember("openapi", openapi)
-                .withMember("info", info)
-                .withOptionalMember("externalDocumentation", getExternalDocs());
+            .withMember("openapi", openapi)
+            .withMember("info", info)
+            .withOptionalMember("externalDocumentation", getExternalDocs());
 
         if (!servers.isEmpty()) {
             builder.withMember("servers", servers.stream().collect(ArrayNode.collect()));
         }
 
         if (!paths.isEmpty()) {
-            builder.withMember("paths", paths.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember(
+                "paths",
+                paths.entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+            );
         }
 
         builder.withMember("components", components);
 
         if (!security.isEmpty()) {
-            builder.withMember("security", security.stream()
-                    .map(mapping -> mapping.entrySet().stream()
+            builder.withMember(
+                "security",
+                security.stream()
+                    .map(
+                        mapping -> mapping.entrySet()
+                            .stream()
                             .sorted(Comparator.comparing(Map.Entry::getKey))
-                            .collect(ObjectNode.collectStringKeys(
+                            .collect(
+                                ObjectNode.collectStringKeys(
                                     Map.Entry::getKey,
-                                    entry -> entry.getValue().stream().map(Node::from).collect(ArrayNode.collect()))))
-                    .collect(ArrayNode.collect()));
+                                    entry -> entry.getValue().stream().map(Node::from).collect(ArrayNode.collect())
+                                )
+                            )
+                    )
+                    .collect(ArrayNode.collect())
+            );
         }
 
         if (!tags.isEmpty()) {

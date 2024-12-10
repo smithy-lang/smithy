@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -53,9 +52,16 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
 
             Set<ShapeId> potentialReferences = computePotentialReferences(model, member);
             if (!potentialReferences.isEmpty()) {
-                events.add(warning(member, format("This member appears to reference the following resources without "
-                        + "being included in a `@references` trait: [%s]",
-                        ValidationUtils.tickedList(potentialReferences))));
+                events.add(
+                    warning(
+                        member,
+                        format(
+                            "This member appears to reference the following resources without "
+                                + "being included in a `@references` trait: [%s]",
+                            ValidationUtils.tickedList(potentialReferences)
+                        )
+                    )
+                );
             }
         }
 
@@ -99,11 +105,15 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         return potentialResources;
     }
 
-    private void computeResourcesToIgnore(Model model, MemberShape member, ResourceShape resource,
-            Set<ShapeId> resourcesToIgnore) {
+    private void computeResourcesToIgnore(
+        Model model,
+        MemberShape member,
+        ResourceShape resource,
+        Set<ShapeId> resourcesToIgnore
+    ) {
         // Exclude actually bound members via searching with a PathFinder.
         List<PathFinder.Path> resourceMemberPaths = PathFinder.create(model)
-                .search(resource, ListUtils.of(member));
+            .search(resource, ListUtils.of(member));
         if (!resourceMemberPaths.isEmpty()) {
             // This member is already bound to a resource, so we don't need a references trait for it.
             // In addition, we should not tell users to add a references trait for other resources that
@@ -123,7 +133,7 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
     private void ignoreReferencedResources(Shape shape, Set<ShapeId> resourcesToIgnore) {
         if (shape.hasTrait(ReferencesTrait.class)) {
             for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class)
-                    .getReferences()) {
+                .getReferences()) {
                 resourcesToIgnore.add(reference.getResource());
             }
         }
@@ -132,6 +142,6 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
     private boolean isIdentifierMatch(ResourceShape resource, MemberShape member) {
         Map<String, ShapeId> identifiers = resource.getIdentifiers();
         return identifiers.containsKey(member.getMemberName())
-                && identifiers.get(member.getMemberName()).equals(member.getTarget());
+            && identifiers.get(member.getMemberName()).equals(member.getTarget());
     }
 }
