@@ -15,6 +15,8 @@ compile-testing = "0.21.0"
 json-schema = "1.12.1"
 shadow = "8.3.5"
 api-guardian = "1.1.2"
+jreleaser = "1.15.0"
+runtime = "1.13.1"
 
 [libraries]
 prettier4j = { module = "com.opencastsoftware:prettier4j", version.ref = "prettier4j" }
@@ -51,3 +53,5 @@ jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmh" }
 [plugins]
 smithy-jar = { id = "software.amazon.smithy.gradle.smithy-jar", version.ref = "smithy-gradle" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+runtime = { id = "org.beryx.runtime", version.ref = "runtime"}

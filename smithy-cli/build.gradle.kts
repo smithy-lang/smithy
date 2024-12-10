@@ -13,10 +13,11 @@ import org.jreleaser.model.Stereotype
 
 plugins {
     application
-    id("org.beryx.runtime") version "1.13.1"
-    id("org.jreleaser") version "1.15.0" apply false
+    alias(libs.plugins.jreleaser) apply false
+    alias(libs.plugins.runtime)
     alias(libs.plugins.shadow)
     id("smithy.module-conventions")
+    id("smithy.integ-test-conventions")
 }
 
 description = "This module implements the Smithy command line interface."

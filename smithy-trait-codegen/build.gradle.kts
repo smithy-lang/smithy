@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.integ-test-conventions")
 }
 
 description = "Plugin for Generating Trait Code from Smithy Models"

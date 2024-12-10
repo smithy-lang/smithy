@@ -17,7 +17,7 @@ import org.jreleaser.model.Active
  */
 
 plugins {
-    id("org.jreleaser") version "1.15.0" apply false
+    alias(libs.plugins.jreleaser) apply false
 }
 
 // Load the Smithy version from VERSION.
