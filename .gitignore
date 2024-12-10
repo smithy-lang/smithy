@@ -28,7 +28,7 @@ target/
 **/dependency-reduced-pom.xml
 
 # Gradle
-/.gradle
+**/.gradle
 build/
 !smithy-build/src/main/java/software/amazon/smithy/build
 !smithy-build/src/main/resources/software/amazon/smithy/build

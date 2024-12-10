@@ -25,16 +25,16 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'corretto'
 
-      - name: Clean, build and javadoc
+      - name: Clean, build, test, and javadoc
         run: ./gradlew clean build javadoc -Plog-tests --stacktrace
 
       - name: Allow long file names in git for windows
         if: matrix.os == 'windows-latest'
         run: git config --system core.longpaths true
 
-      - name: CLI integration tests
+      - name: Integration tests
         if: matrix.java == 17
-        run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
+        run: ./gradlew integ -Plog-tests --stacktrace
 
       - uses: actions/upload-artifact@v4
         if: failure()

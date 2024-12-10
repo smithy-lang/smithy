@@ -2,6 +2,10 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+plugins {
+    id("smithy.module-conventions")
+    id("smithy.integ-test-conventions")
+}
 
 description = "Plugin for Generating Trait Code from Smithy Models"
 
@@ -14,25 +18,15 @@ dependencies {
 
 // Set up Integration testing source sets
 sourceSets {
-    create("it") {
-        val main by getting
-        val test by getting
-
-        compileClasspath += main.output +
-                configurations["testRuntimeClasspath"] +
-                configurations["testCompileClasspath"]
-
-        runtimeClasspath += output +
-                compileClasspath +
-                test.runtimeClasspath +
-                test.output
-
+    named("it") {
+        // Set up the generated integ source
         java {
-            srcDir("${layout.buildDirectory.get()}/integ/")
+            srcDir(layout.buildDirectory.dir("integ"))
         }
 
+        // Set up the generated integ resources
         resources {
-            srcDirs(layout.buildDirectory.dir("generated-resources").get())
+            srcDir(layout.buildDirectory.dir("generated-resources"))
         }
     }
 }
@@ -47,19 +41,10 @@ tasks.register<JavaExec>("generateTraits") {
 
 // Copy generated META-INF files to a new generated-resources directory to
 // make it easy to include as resource srcDir
-val generatedMetaInf = File("$buildDir/integ/META-INF")
-val destResourceDir = File("$buildDir/generated-resources/META-INF")
 tasks.register<Copy>("copyGeneratedSrcs") {
-    from(generatedMetaInf)
-    into(destResourceDir)
+    from(layout.buildDirectory.dir("integ/META-INF"))
+    into(layout.buildDirectory.dir("generated-resources/META-INF"))
     dependsOn("generateTraits")
-}
-
-// Add the integ test task
-tasks.register<Test>("integ") {
-    useJUnitPlatform()
-    testClassesDirs = sourceSets["it"].output.classesDirs
-    classpath = sourceSets["it"].runtimeClasspath
 }
 
 tasks {
