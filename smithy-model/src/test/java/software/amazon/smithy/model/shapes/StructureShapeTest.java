@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,36 +39,40 @@ public class StructureShapeTest {
     @Test
     public void addMemberWithTarget() {
         StructureShape shape = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .build();
 
-        assertEquals(shape.getMember("foo").get(),
-                     MemberShape.builder().id(shape.getId().withMember("foo")).target("ns.foo#bam").build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder().id(shape.getId().withMember("foo")).target("ns.foo#bam").build()
+        );
     }
 
     @Test
     public void addMemberWithConsumer() {
         StructureShape shape = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"), builder -> builder.addTrait(new SensitiveTrait()))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"), builder -> builder.addTrait(new SensitiveTrait()))
+            .build();
 
-        assertEquals(shape.getMember("foo").get(),
-                     MemberShape.builder()
-                             .id(shape.getId().withMember("foo"))
-                             .target("ns.foo#bam")
-                             .addTrait(new SensitiveTrait())
-                             .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target("ns.foo#bam")
+                .addTrait(new SensitiveTrait())
+                .build()
+        );
     }
 
     @Test
     public void returnsMembers() {
         StructureShape shape = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .addMember("baz", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .addMember("baz", ShapeId.from("ns.foo#bam"))
+            .build();
 
         assertThat(shape.members(), hasSize(2));
         // Members are ordered.
@@ -90,16 +83,16 @@ public class StructureShapeTest {
     @Test
     public void memberOrderMattersForEqualComparison() {
         StructureShape a = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .addMember("baz", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .addMember("baz", ShapeId.from("ns.foo#bam"))
+            .build();
 
         StructureShape b = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("baz", ShapeId.from("ns.foo#bam"))
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("baz", ShapeId.from("ns.foo#bam"))
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .build();
 
         assertThat(a, not(equalTo(b)));
     }
@@ -107,18 +100,18 @@ public class StructureShapeTest {
     @Test
     public void builderUpdatesMemberIds() {
         StructureShape original = StructureShape.builder()
-                .id("ns.foo#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .addMember("baz", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .addMember("baz", ShapeId.from("ns.foo#bam"))
+            .build();
 
         StructureShape actual = original.toBuilder().id(ShapeId.from("ns.bar#bar")).build();
 
         StructureShape expected = StructureShape.builder()
-                .id("ns.bar#bar")
-                .addMember("foo", ShapeId.from("ns.foo#bam"))
-                .addMember("baz", ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.bar#bar")
+            .addMember("foo", ShapeId.from("ns.foo#bam"))
+            .addMember("baz", ShapeId.from("ns.foo#bam"))
+            .build();
 
         assertThat(actual, equalTo(expected));
     }
@@ -126,23 +119,23 @@ public class StructureShapeTest {
     @Test
     public void supportsMixinTraits() {
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(new SensitiveTrait())
+            .build();
         StructureShape mixin2 = StructureShape.builder()
-                .id("smithy.example#Mixin2")
-                .addTrait(DeprecatedTrait.builder().build())
-                .build();
+            .id("smithy.example#Mixin2")
+            .addTrait(DeprecatedTrait.builder().build())
+            .build();
         StructureShape mixin3 = StructureShape.builder()
-                .id("smithy.example#Mixin3")
-                .addMixin(mixin2)
-                .build();
+            .id("smithy.example#Mixin3")
+            .addMixin(mixin2)
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addMixin(mixin1)
-                .addMixin(mixin3)
-                .addTrait(new DocumentationTrait("hi"))
-                .build();
+            .id("smithy.example#Concrete")
+            .addMixin(mixin1)
+            .addMixin(mixin3)
+            .addTrait(new DocumentationTrait("hi"))
+            .build();
 
         assertTrue(concrete.hasTrait(SensitiveTrait.class));
         assertTrue(concrete.hasTrait(DeprecatedTrait.class));
@@ -153,29 +146,29 @@ public class StructureShapeTest {
     public void reordersMixinMembersAutomatically() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
         StructureShape mixin2 = StructureShape.builder()
-                .id("smithy.example#Mixin2")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("b", string.getId())
-                .build();
+            .id("smithy.example#Mixin2")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("b", string.getId())
+            .build();
         StructureShape mixin3 = StructureShape.builder()
-                .id("smithy.example#Mixin3")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("c", string.getId())
-                .addMixin(mixin2)
-                .build();
+            .id("smithy.example#Mixin3")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("c", string.getId())
+            .addMixin(mixin2)
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                // Note that d is added before mixins, but the builder tracks this
-                // and handles ordering appropriately when building the shape.
-                .addMember("d", string.getId())
-                .addMixin(mixin1)
-                .addMixin(mixin3)
-                .build();
+            .id("smithy.example#Concrete")
+            // Note that d is added before mixins, but the builder tracks this
+            // and handles ordering appropriately when building the shape.
+            .addMember("d", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin3)
+            .build();
 
         assertThat(concrete.getMemberNames(), contains("a", "b", "c", "d"));
     }
@@ -184,22 +177,24 @@ public class StructureShapeTest {
     public void mixinMembersCanBeModifiedJustLikeNormalMembers() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addMixin(mixin1)
-                .build();
+            .id("smithy.example#Concrete")
+            .addMixin(mixin1)
+            .build();
 
         // Just like you'd do with a normal member, you first get the member,
         // then convert it to a builder to update it, then build it. Then the
         // member is added to a new container shape and rebuilt. The workflow
         // is exactly the same as a normal structure with no mixin members.
-        MemberShape updatedA = concrete.getMember("a").get().toBuilder()
-                .addTrait(new SensitiveTrait())
-                .build();
+        MemberShape updatedA = concrete.getMember("a")
+            .get()
+            .toBuilder()
+            .addTrait(new SensitiveTrait())
+            .build();
         StructureShape updated = concrete.toBuilder().addMember(updatedA).build();
 
         assertThat(updated.getMemberNames(), contains("a"));
@@ -211,21 +206,21 @@ public class StructureShapeTest {
     public void structuresAccountForMissingMixinsOnLocalMembers() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#TestMixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
-                .addMember("b", string.getId())
-                .build();
+            .id("smithy.example#TestMixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+            .addMember("b", string.getId())
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                // The missing mixin is automatically added to the computed members because the mixin
-                // is added after the member is added. If the member is added after the mixin, then
-                // this safeguard doesn't work.
-                .addMember(MemberShape.builder().id("smithy.example#Concrete$a").target(string).build())
-                // Note that b becomes a local member because it introduces a new trait.
-                .addMember("b", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
-                .addMixin(mixin1)
-                .build();
+            .id("smithy.example#Concrete")
+            // The missing mixin is automatically added to the computed members because the mixin
+            // is added after the member is added. If the member is added after the mixin, then
+            // this safeguard doesn't work.
+            .addMember(MemberShape.builder().id("smithy.example#Concrete$a").target(string).build())
+            // Note that b becomes a local member because it introduces a new trait.
+            .addMember("b", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+            .addMixin(mixin1)
+            .build();
 
         assertTrue(concrete.getMember("a").get().hasTrait(SensitiveTrait.class));
         assertThat(concrete.getMember("a").get().getMixins(), contains(mixin1.getMember("a").get().getId()));
@@ -238,30 +233,30 @@ public class StructureShapeTest {
     public void flattensMixins() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#TestMixin1")
-                .addTrait(MixinTrait.builder().addLocalTrait(InternalTrait.ID).build())
-                .addTrait(DeprecatedTrait.builder().build())
-                .addTrait(new InternalTrait()) // local and not copied.
-                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
-                .addMember("b", string.getId())
-                .build();
+            .id("smithy.example#TestMixin1")
+            .addTrait(MixinTrait.builder().addLocalTrait(InternalTrait.ID).build())
+            .addTrait(DeprecatedTrait.builder().build())
+            .addTrait(new InternalTrait()) // local and not copied.
+            .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+            .addMember("b", string.getId())
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addTrait(new SensitiveTrait())
-                .addMixin(mixin1)
-                .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
-                .addMember("c", string.getId())
-                .build();
+            .id("smithy.example#Concrete")
+            .addTrait(new SensitiveTrait())
+            .addMixin(mixin1)
+            .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
+            .addMember("c", string.getId())
+            .build();
 
         StructureShape flattened = concrete.toBuilder().flattenMixins().build();
         StructureShape expected = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addTrait(new SensitiveTrait())
-                .addTrait(DeprecatedTrait.builder().build())
-                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
-                .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
-                .addMember("c", string.getId())
-                .build();
+            .id("smithy.example#Concrete")
+            .addTrait(new SensitiveTrait())
+            .addTrait(DeprecatedTrait.builder().build())
+            .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+            .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
+            .addMember("c", string.getId())
+            .build();
 
         assertThat(flattened, equalTo(expected));
         assertThat(flattened.getMemberNames(), contains("a", "b", "c"));
@@ -278,35 +273,35 @@ public class StructureShapeTest {
     public void redefiningMembersPreservesOrder() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .addMember("b", string.getId())
-                .addMember("c", string.getId())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .addMember("b", string.getId())
+            .addMember("c", string.getId())
+            .build();
         StructureShape mixin2 = StructureShape.builder()
-                .id("smithy.example#Mixin2")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("c", string.getId())
-                .addMember("b", string.getId())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin2")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("c", string.getId())
+            .addMember("b", string.getId())
+            .addMember("a", string.getId())
+            .build();
         StructureShape mixin3 = StructureShape.builder()
-                .id("smithy.example#Mixin3")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("b", string.getId())
-                .addMember("c", string.getId())
-                .addMember("a", string.getId())
-                .addMixin(mixin2)
-                .build();
+            .id("smithy.example#Mixin3")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("b", string.getId())
+            .addMember("c", string.getId())
+            .addMember("a", string.getId())
+            .addMixin(mixin2)
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                // Note that d is added before mixins, but the builder tracks this
-                // and handles ordering appropriately when building the shape.
-                .addMember("d", string.getId())
-                .addMixin(mixin1)
-                .addMixin(mixin3)
-                .build();
+            .id("smithy.example#Concrete")
+            // Note that d is added before mixins, but the builder tracks this
+            // and handles ordering appropriately when building the shape.
+            .addMember("d", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin3)
+            .build();
 
         assertThat(concrete.getMemberNames(), contains("a", "b", "c", "d"));
     }
@@ -315,25 +310,28 @@ public class StructureShapeTest {
     public void fixesMissingMemberMixins() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
         StructureShape mixin2 = StructureShape.builder()
-                .id("smithy.example#Mixin2")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin2")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addMember("a", string.getId())
-                .addMixin(mixin1)
-                .addMixin(mixin2)
-                .build();
+            .id("smithy.example#Concrete")
+            .addMember("a", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin2)
+            .build();
 
-        assertThat(concrete.getMember("a").get().getMixins(), contains(
+        assertThat(
+            concrete.getMember("a").get().getMixins(),
+            contains(
                 ShapeId.from("smithy.example#Mixin1$a"),
                 ShapeId.from("smithy.example#Mixin2$a")
-        ));
+            )
+        );
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.io.ByteArrayInputStream;
@@ -218,8 +207,10 @@ public final class ModelAssembler {
      * @return Returns the assembler.
      */
     public ModelAssembler addUnparsedModel(String sourceLocation, String model) {
-        inputStreamModels.put(sourceLocation,
-                              () -> new ByteArrayInputStream(model.getBytes(StandardCharsets.UTF_8)));
+        inputStreamModels.put(
+            sourceLocation,
+            () -> new ByteArrayInputStream(model.getBytes(StandardCharsets.UTF_8))
+        );
         return this;
     }
 
@@ -259,9 +250,11 @@ public final class ModelAssembler {
         Objects.requireNonNull(importPath, "The importPath provided to ModelAssembler#addImport was null");
 
         if (Files.isDirectory(importPath)) {
-            try (Stream<Path> files = Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
+            try (
+                Stream<Path> files = Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
                     .filter(p -> !p.equals(importPath))
-                    .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))) {
+                    .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
+            ) {
                 files.forEach(this::addImport);
             } catch (IOException e) {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
@@ -273,7 +266,9 @@ public final class ModelAssembler {
                     return Files.newInputStream(importPath);
                 } catch (IOException e) {
                     throw new ModelImportException(
-                            "Unable to import Smithy model from " + importPath + ": " + e.getMessage(), e);
+                        "Unable to import Smithy model from " + importPath + ": " + e.getMessage(),
+                        e
+                    );
                 }
             });
         } else {
@@ -518,7 +513,12 @@ public final class ModelAssembler {
 
         // As issues are encountered, they are decorated and then emitted.
         LoadOperationProcessor processor = new LoadOperationProcessor(
-                traitFactory, prelude, areUnknownTraitsAllowed(), validationEventListener, decorator);
+            traitFactory,
+            prelude,
+            areUnknownTraitsAllowed(),
+            validationEventListener,
+            decorator
+        );
         List<ValidationEvent> events = processor.events();
 
         // Register manually added metadata.
@@ -574,13 +574,13 @@ public final class ModelAssembler {
 
         try {
             List<ValidationEvent> mergedEvents = ModelValidator.builder()
-                    .addValidators(validators)
-                    .validatorFactory(validatorFactory, decorator)
-                    .eventListener(validationEventListener)
-                    .includeEvents(events)
-                    .legacyValidationMode((boolean) properties.getOrDefault("LEGACY_VALIDATION_MODE", false))
-                    .build()
-                    .validate(transformed);
+                .addValidators(validators)
+                .validatorFactory(validatorFactory, decorator)
+                .eventListener(validationEventListener)
+                .includeEvents(events)
+                .legacyValidationMode((boolean) properties.getOrDefault("LEGACY_VALIDATION_MODE", false))
+                .build()
+                .validate(transformed);
             return new ValidatedResult<>(transformed, mergedEvents);
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e));

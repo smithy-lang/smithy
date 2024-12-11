@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.traitcodegen.integrations.annotations;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,26 +23,28 @@ import software.amazon.smithy.traitcodegen.TraitCodegenPlugin;
 
 public class AnnotationsTest {
 
-    private static final URL TEST_FILE = Objects.requireNonNull(AnnotationsTest.class.getResource("annotations-test.smithy"));
+    private static final URL TEST_FILE = Objects.requireNonNull(
+        AnnotationsTest.class.getResource("annotations-test.smithy")
+    );
     private final MockManifest manifest = new MockManifest();
 
     @BeforeEach
     void setup() {
         Model model = Model.assembler()
-                .addImport(TEST_FILE)
-                .assemble()
-                .unwrap();
+            .addImport(TEST_FILE)
+            .assemble()
+            .unwrap();
         PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .settings(
-                        ObjectNode.builder()
-                                .withMember("package", "com.example.traits")
-                                .withMember("namespace", "com.example.annotations")
-                                .withMember("header", ArrayNode.fromStrings("Header line One"))
-                                .build()
-                )
-                .model(model)
-                .build();
+            .fileManifest(manifest)
+            .settings(
+                ObjectNode.builder()
+                    .withMember("package", "com.example.traits")
+                    .withMember("namespace", "com.example.annotations")
+                    .withMember("header", ArrayNode.fromStrings("Header line One"))
+                    .build()
+            )
+            .model(model)
+            .build();
         SmithyBuildPlugin plugin = new TraitCodegenPlugin();
         plugin.execute(context);
 
@@ -58,8 +64,8 @@ public class AnnotationsTest {
     void deprecatedAnnotationOnClass() {
         String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
         String expected = "@Deprecated\n" +
-                "@SmithyGenerated\n" +
-                "public final class DeprecatedStructureTrait";
+            "@SmithyGenerated\n" +
+            "public final class DeprecatedStructureTrait";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -67,7 +73,7 @@ public class AnnotationsTest {
     void deprecatedAnnotationOnMember() {
         String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
         String expected = "    @Deprecated\n" +
-                "    public Optional<String> getDeprecatedMember() {";
+            "    public Optional<String> getDeprecatedMember() {";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -75,10 +81,10 @@ public class AnnotationsTest {
     void deprecatedAnnotationWithDocsOnMember() {
         String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
         String expected = "    /**\n" +
-                "     * Has docs in addition to deprecated\n" +
-                "     */\n" +
-                "    @Deprecated\n" +
-                "    public Optional<String> getDeprecatedWithDocs() {";
+            "     * Has docs in addition to deprecated\n" +
+            "     */\n" +
+            "    @Deprecated\n" +
+            "    public Optional<String> getDeprecatedWithDocs() {";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -86,8 +92,8 @@ public class AnnotationsTest {
     void unstableAnnotationOnClass() {
         String fileContents = getFileContentsFromShapeName("UnstableStructure", true);
         String expected = "@SmithyUnstableApi\n" +
-                "@SmithyGenerated\n" +
-                "public final class UnstableStructureTrait extends AbstractTrait";
+            "@SmithyGenerated\n" +
+            "public final class UnstableStructureTrait extends AbstractTrait";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -95,7 +101,7 @@ public class AnnotationsTest {
     void unstableAnnotationOnMember() {
         String fileContents = getFileContentsFromShapeName("UnstableStructure", true);
         String expected = "    @SmithyUnstableApi\n" +
-                "    public Optional<String> getUnstableMember() {";
+            "    public Optional<String> getUnstableMember() {";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -103,10 +109,10 @@ public class AnnotationsTest {
     void unstableAnnotationWithDocsOnMember() {
         String fileContents = getFileContentsFromShapeName("UnstableStructure", true);
         String expected = "    /**\n" +
-                "     * Has docs in addition to unstable\n" +
-                "     */\n" +
-                "    @SmithyUnstableApi\n" +
-                "    public Optional<String> getUnstableWithDocs() {";
+            "     * Has docs in addition to unstable\n" +
+            "     */\n" +
+            "    @SmithyUnstableApi\n" +
+            "    public Optional<String> getUnstableWithDocs() {";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -114,7 +120,7 @@ public class AnnotationsTest {
     void deprecatedAnnotationOnEnumVariant() {
         String fileContents = getFileContentsFromShapeName("EnumWithAnnotations", true);
         String expected = "        @Deprecated\n" +
-                "        DEPRECATED(\"DEPRECATED\"),";
+            "        DEPRECATED(\"DEPRECATED\"),";
         assertTrue(fileContents.contains(expected));
     }
 
@@ -122,7 +128,7 @@ public class AnnotationsTest {
     void unstableAnnotationOnEnumVariant() {
         String fileContents = getFileContentsFromShapeName("EnumWithAnnotations", true);
         String expected = "        @SmithyUnstableApi\n" +
-                "        UNSTABLE(\"UNSTABLE\"),";
+            "        UNSTABLE(\"UNSTABLE\"),";
         assertTrue(fileContents.contains(expected));
     }
 

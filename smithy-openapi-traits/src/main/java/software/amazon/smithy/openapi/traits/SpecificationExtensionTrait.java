@@ -1,8 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.traits;
 
 import java.util.Optional;
@@ -65,8 +64,8 @@ public final class SpecificationExtensionTrait extends AbstractTrait
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .as(this.as);
+            .sourceLocation(getSourceLocation())
+            .as(this.as);
     }
 
     /**

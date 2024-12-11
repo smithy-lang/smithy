@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,9 +32,9 @@ public class TopologicalIndexTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(TopologicalIndexTest.class.getResource("topological-sort.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(TopologicalIndexTest.class.getResource("topological-sort.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -52,7 +56,9 @@ public class TopologicalIndexTest {
             recursive.add(shape.getId().toString());
         }
 
-        assertThat(ordered, contains(
+        assertThat(
+            ordered,
+            contains(
                 "smithy.example#MyString",
                 "smithy.example#BamList$member",
                 "smithy.example#BamList",
@@ -62,14 +68,20 @@ public class TopologicalIndexTest {
                 "smithy.example#Bar",
                 "smithy.example#Foo$bar",
                 "smithy.example#Foo$foo",
-                "smithy.example#Foo"));
+                "smithy.example#Foo"
+            )
+        );
 
-        assertThat(recursive, contains(
+        assertThat(
+            recursive,
+            contains(
                 "smithy.example#Recursive",
                 "smithy.example#Recursive$b",
                 "smithy.example#RecursiveList$member",
                 "smithy.example#RecursiveList",
-                "smithy.example#Recursive$a"));
+                "smithy.example#Recursive$a"
+            )
+        );
     }
 
     @Test
@@ -100,47 +112,59 @@ public class TopologicalIndexTest {
     public void getsRecursiveClosureByShape() {
         TopologicalIndex index = TopologicalIndex.of(model);
 
-        assertThat(index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#MyString"))),
-                empty());
-        assertThat(index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#Recursive$b"))),
-                not(empty()));
+        assertThat(
+            index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#MyString"))),
+            empty()
+        );
+        assertThat(
+            index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#Recursive$b"))),
+            not(empty())
+        );
     }
 
     @Test
     public void handlesMoreRecursion() {
         Model recursive = Model.assembler()
-                .addImport(getClass().getResource("topological-recursion.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("topological-recursion.smithy"))
+            .assemble()
+            .unwrap();
         TopologicalIndex index = TopologicalIndex.of(recursive);
 
         // The topological index must capture all shapes in the index not in the prelude.
         Set<Shape> nonPrelude = recursive.shapes()
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
-                .collect(Collectors.toSet());
+            .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+            .collect(Collectors.toSet());
         Set<Shape> topologicalShapes = new HashSet<>(index.getOrderedShapes());
         topologicalShapes.addAll(index.getRecursiveShapes());
         assertThat(topologicalShapes, equalTo(nonPrelude));
 
         // The ordered shape IDs must be in the this order.
-        List<String> orderedIds = index.getOrderedShapes().stream()
-                .map(Shape::getId)
-                .map(ShapeId::toString)
-                .collect(Collectors.toList());
-        assertThat(orderedIds, contains(
+        List<String> orderedIds = index.getOrderedShapes()
+            .stream()
+            .map(Shape::getId)
+            .map(ShapeId::toString)
+            .collect(Collectors.toList());
+        assertThat(
+            orderedIds,
+            contains(
                 "smithy.example#MyString",
                 "smithy.example#NonRecursive$foo",
                 "smithy.example#NonRecursive",
                 "smithy.example#NonRecursiveList$member",
                 "smithy.example#NonRecursiveList",
                 "smithy.example#User$notRecursive",
-                "smithy.example#UsersMap$key"));
+                "smithy.example#UsersMap$key"
+            )
+        );
 
-        List<String> recursiveIds = index.getRecursiveShapes().stream()
-                .map(Shape::getId)
-                .map(ShapeId::toString)
-                .collect(Collectors.toList());
-        assertThat(recursiveIds, contains(
+        List<String> recursiveIds = index.getRecursiveShapes()
+            .stream()
+            .map(Shape::getId)
+            .map(ShapeId::toString)
+            .collect(Collectors.toList());
+        assertThat(
+            recursiveIds,
+            contains(
                 "smithy.example#User",
                 "smithy.example#User$recursiveUser",
                 "smithy.example#UsersList$member",
@@ -152,7 +176,9 @@ public class TopologicalIndexTest {
                 "smithy.example#User$recursiveList",
                 "smithy.example#User$recursiveMap",
                 "smithy.example#GetFoo",
-                "smithy.example#Example"));
+                "smithy.example#Example"
+            )
+        );
 
         for (String recursiveId : recursiveIds) {
             ShapeId id = ShapeId.from(recursiveId);

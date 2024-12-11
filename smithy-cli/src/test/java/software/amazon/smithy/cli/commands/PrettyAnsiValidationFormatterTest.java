@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,17 +26,21 @@ public class PrettyAnsiValidationFormatterTest {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.NO_COLOR);
         String formatted = formatTestEventWithSeverity(pretty, Severity.ERROR);
 
-        assertThat(formatted, equalTo(
+        assertThat(
+            formatted,
+            equalTo(
                 "\n"
-                + "──  ERROR  ───────────────────────────────────────────────────────────────── Foo\n"
-                + "Shape: smithy.example#Foo\n"
-                + "File:  build/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\n"
-                + "\n"
-                + "4| \n"
-                + "5| resource Foo {\n"
-                + " | ^\n"
-                + "\n"
-                + "Hello, `there`\n")); // keeps ticks because formatting is disabled.
+                    + "──  ERROR  ───────────────────────────────────────────────────────────────── Foo\n"
+                    + "Shape: smithy.example#Foo\n"
+                    + "File:  build/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\n"
+                    + "\n"
+                    + "4| \n"
+                    + "5| resource Foo {\n"
+                    + " | ^\n"
+                    + "\n"
+                    + "Hello, `there`\n"
+            )
+        ); // keeps ticks because formatting is disabled.
     }
 
     @Test
@@ -55,18 +48,22 @@ public class PrettyAnsiValidationFormatterTest {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.NO_COLOR);
         String formatted = formatTestEventWithSeverity(pretty, Severity.ERROR, "Some hint");
 
-        assertThat(formatted, equalTo(
+        assertThat(
+            formatted,
+            equalTo(
                 "\n"
-                + "──  ERROR  ───────────────────────────────────────────────────────────────── Foo\n"
-                + "Shape: smithy.example#Foo\n"
-                + "File:  build/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\n"
-                + "\n"
-                + "4| \n"
-                + "5| resource Foo {\n"
-                + " | ^\n"
-                + "\n"
-                + "Hello, `there`\n\n"
-                + "HINT: Some hint\n")); // keeps ticks because formatting is disabled.
+                    + "──  ERROR  ───────────────────────────────────────────────────────────────── Foo\n"
+                    + "Shape: smithy.example#Foo\n"
+                    + "File:  build/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\n"
+                    + "\n"
+                    + "4| \n"
+                    + "5| resource Foo {\n"
+                    + " | ^\n"
+                    + "\n"
+                    + "Hello, `there`\n\n"
+                    + "HINT: Some hint\n"
+            )
+        ); // keeps ticks because formatting is disabled.
     }
 
     @Test
@@ -74,17 +71,21 @@ public class PrettyAnsiValidationFormatterTest {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.FORCE_COLOR);
         String formatted = formatTestEventWithSeverity(pretty, Severity.ERROR);
 
-        assertThat(formatted, equalTo(
-            "\n"
-            + "\u001B[31m── \u001B[0m\u001B[41;30m ERROR \u001B[0m\u001B[31m ───────────────────────────────────────────────────────────────── \u001B[0mFoo\n"
-            + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
-            + "\u001B[90mFile:  \u001B[0m\u001B[90mbuild/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\u001B[0m\n"
-            + "\n"
-            + "\u001B[90m4| \u001B[0m\n"
-            + "\u001B[90m5| \u001B[0mresource Foo {\n"
-            + "\u001B[90m |\u001B[0m \u001B[31m^\u001B[0m\n"
-            + "\n"
-            + "Hello, \u001B[36mthere\u001B[0m\n"));
+        assertThat(
+            formatted,
+            equalTo(
+                "\n"
+                    + "\u001B[31m── \u001B[0m\u001B[41;30m ERROR \u001B[0m\u001B[31m ───────────────────────────────────────────────────────────────── \u001B[0mFoo\n"
+                    + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
+                    + "\u001B[90mFile:  \u001B[0m\u001B[90mbuild/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\u001B[0m\n"
+                    + "\n"
+                    + "\u001B[90m4| \u001B[0m\n"
+                    + "\u001B[90m5| \u001B[0mresource Foo {\n"
+                    + "\u001B[90m |\u001B[0m \u001B[31m^\u001B[0m\n"
+                    + "\n"
+                    + "Hello, \u001B[36mthere\u001B[0m\n"
+            )
+        );
     }
 
     @Test
@@ -92,59 +93,74 @@ public class PrettyAnsiValidationFormatterTest {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.FORCE_COLOR);
         String formatted = formatTestEventWithSeverity(pretty, Severity.ERROR, "Some hint");
 
-        assertThat(formatted, equalTo(
-            "\n"
-            + "\u001B[31m── \u001B[0m\u001B[41;30m ERROR \u001B[0m\u001B[31m ───────────────────────────────────────────────────────────────── \u001B[0mFoo\n"
-            + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
-            + "\u001B[90mFile:  \u001B[0m\u001B[90mbuild/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\u001B[0m\n"
-            + "\n"
-            + "\u001B[90m4| \u001B[0m\n"
-            + "\u001B[90m5| \u001B[0mresource Foo {\n"
-            + "\u001B[90m |\u001B[0m \u001B[31m^\u001B[0m\n"
-            + "\n"
-            + "Hello, \u001B[36mthere\u001B[0m\n\n"
-            + "\u001B[92mHINT: \u001B[0mSome hint\n"));
+        assertThat(
+            formatted,
+            equalTo(
+                "\n"
+                    + "\u001B[31m── \u001B[0m\u001B[41;30m ERROR \u001B[0m\u001B[31m ───────────────────────────────────────────────────────────────── \u001B[0mFoo\n"
+                    + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
+                    + "\u001B[90mFile:  \u001B[0m\u001B[90mbuild/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\u001B[0m\n"
+                    + "\n"
+                    + "\u001B[90m4| \u001B[0m\n"
+                    + "\u001B[90m5| \u001B[0mresource Foo {\n"
+                    + "\u001B[90m |\u001B[0m \u001B[31m^\u001B[0m\n"
+                    + "\n"
+                    + "Hello, \u001B[36mthere\u001B[0m\n\n"
+                    + "\u001B[92mHINT: \u001B[0mSome hint\n"
+            )
+        );
     }
+
     @Test
     public void doesNotIncludeSourceLocationNoneInOutput() {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.NO_COLOR);
         ValidationEvent event = ValidationEvent.builder()
-                .id("Hello")
-                .severity(Severity.WARNING)
-                .shapeId(ShapeId.from("smithy.example#Foo"))
-                .message("Hi")
-                .build();
+            .id("Hello")
+            .severity(Severity.WARNING)
+            .shapeId(ShapeId.from("smithy.example#Foo"))
+            .message("Hi")
+            .build();
 
-        String formatted =  normalizeLinesAndFiles(pretty.format(event));
+        String formatted = normalizeLinesAndFiles(pretty.format(event));
 
-        assertThat(formatted, equalTo(
+        assertThat(
+            formatted,
+            equalTo(
                 "\n"
-                + "──  WARNING  ───────────────────────────────────────────────────────────── Hello\n"
-                + "Shape: smithy.example#Foo\n"
-                + "\n"
-                + "Hi\n"));
+                    + "──  WARNING  ───────────────────────────────────────────────────────────── Hello\n"
+                    + "Shape: smithy.example#Foo\n"
+                    + "\n"
+                    + "Hi\n"
+            )
+        );
     }
 
     @Test
     public void wrapsLongLines() {
         PrettyAnsiValidationFormatter pretty = createFormatter(AnsiColorFormatter.NO_COLOR);
         ValidationEvent event = ValidationEvent.builder()
-                .id("Hello")
-                .severity(Severity.WARNING)
-                .shapeId(ShapeId.from("smithy.example#Foo"))
-                .message("abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 "
-                         + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890")
-                .build();
+            .id("Hello")
+            .severity(Severity.WARNING)
+            .shapeId(ShapeId.from("smithy.example#Foo"))
+            .message(
+                "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 "
+                    + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890"
+            )
+            .build();
 
-        String formatted =  normalizeLinesAndFiles(pretty.format(event));
+        String formatted = normalizeLinesAndFiles(pretty.format(event));
 
-        assertThat(formatted, equalTo(
+        assertThat(
+            formatted,
+            equalTo(
                 "\n"
-                + "──  WARNING  ───────────────────────────────────────────────────────────── Hello\n"
-                + "Shape: smithy.example#Foo\n"
-                + "\n"
-                + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890\n"
-                + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890\n"));
+                    + "──  WARNING  ───────────────────────────────────────────────────────────── Hello\n"
+                    + "Shape: smithy.example#Foo\n"
+                    + "\n"
+                    + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890\n"
+                    + "abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 1234567890\n"
+            )
+        );
     }
 
     private PrettyAnsiValidationFormatter createFormatter(ColorFormatter colors) {
@@ -159,12 +175,12 @@ public class PrettyAnsiValidationFormatterTest {
     private String formatTestEventWithSeverity(PrettyAnsiValidationFormatter pretty, Severity severity, String hint) {
         Model model = Model.assembler().addImport(getClass().getResource("valid-model.smithy")).assemble().unwrap();
         ValidationEvent event = ValidationEvent.builder()
-                .id("Foo")
-                .severity(severity)
-                .shape(model.expectShape(ShapeId.from("smithy.example#Foo")))
-                .message("Hello, `there`")
-                .hint(hint)
-                .build();
+            .id("Foo")
+            .severity(severity)
+            .shape(model.expectShape(ShapeId.from("smithy.example#Foo")))
+            .message("Hello, `there`")
+            .hint(hint)
+            .build();
         return normalizeLinesAndFiles(pretty.format(event));
     }
 
@@ -179,50 +195,58 @@ public class PrettyAnsiValidationFormatterTest {
             throw new UncheckedIOException(new IOException("Error!!!"));
         };
         PrettyAnsiValidationFormatter pretty = PrettyAnsiValidationFormatter.builder()
-                .sourceContextLoader(loader)
-                .colors(colors)
-                .build();
+            .sourceContextLoader(loader)
+            .colors(colors)
+            .build();
         ValidationEvent event = ValidationEvent.builder()
-                .id("Foo")
-                .severity(Severity.NOTE)
-                .sourceLocation(new SourceLocation("/foo", 1, 1))
-                .message("Hello")
-                .build();
+            .id("Foo")
+            .severity(Severity.NOTE)
+            .sourceLocation(new SourceLocation("/foo", 1, 1))
+            .message("Hello")
+            .build();
 
         String result = normalizeLinesAndFiles(pretty.format(event));
 
-        assertThat(result, equalTo(
+        assertThat(
+            result,
+            equalTo(
                 "\n"
-                + "──  NOTE  ────────────────────────────────────────────────────────────────── Foo\n"
-                + "File:  /foo:1:1\n"
-                + "\n"
-                + "Invalid source file: Error!!!\n"
-                + "\n"
-                + "Hello\n"));
+                    + "──  NOTE  ────────────────────────────────────────────────────────────────── Foo\n"
+                    + "File:  /foo:1:1\n"
+                    + "\n"
+                    + "Invalid source file: Error!!!\n"
+                    + "\n"
+                    + "Hello\n"
+            )
+        );
     }
 
     @Test
     public void showsTitleLabelsWhenPresent() {
         PrettyAnsiValidationFormatter pretty = PrettyAnsiValidationFormatter.builder()
-                .sourceContextLoader(SourceContextLoader.createLineBasedLoader(4))
-                .colors(AnsiColorFormatter.FORCE_COLOR)
-                .titleLabel("FOO", Style.BG_BLUE, Style.BLACK)
-                .build();
+            .sourceContextLoader(SourceContextLoader.createLineBasedLoader(4))
+            .colors(AnsiColorFormatter.FORCE_COLOR)
+            .titleLabel("FOO", Style.BG_BLUE, Style.BLACK)
+            .build();
         ValidationEvent event = ValidationEvent.builder()
-                .id("Hello")
-                .severity(Severity.WARNING)
-                .shapeId(ShapeId.from("smithy.example#Foo"))
-                .message("hello")
-                .build();
+            .id("Hello")
+            .severity(Severity.WARNING)
+            .shapeId(ShapeId.from("smithy.example#Foo"))
+            .message("hello")
+            .build();
 
-        String formatted =  normalizeLinesAndFiles(pretty.format(event));
+        String formatted = normalizeLinesAndFiles(pretty.format(event));
 
-        assertThat(formatted, equalTo(
+        assertThat(
+            formatted,
+            equalTo(
                 "\n"
-                + "\u001B[33m── \u001B[0m\u001B[44;30m FOO \u001B[0m\u001B[43;30m "
-                + "WARNING \u001B[0m\u001B[33m ──────────────────────────────────────────────────────── \u001B[0mHello\n"
-                + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
-                + "\n"
-                + "hello\n"));
+                    + "\u001B[33m── \u001B[0m\u001B[44;30m FOO \u001B[0m\u001B[43;30m "
+                    + "WARNING \u001B[0m\u001B[33m ──────────────────────────────────────────────────────── \u001B[0mHello\n"
+                    + "\u001B[90mShape: \u001B[0m\u001B[95msmithy.example#Foo\u001B[0m\n"
+                    + "\n"
+                    + "hello\n"
+            )
+        );
     }
 }

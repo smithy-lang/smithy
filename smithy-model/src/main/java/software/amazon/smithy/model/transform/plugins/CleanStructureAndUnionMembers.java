@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform.plugins;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -121,21 +110,25 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
      * @return Returns a list of shapes that need to be modified in the model.
      */
     private <S extends Shape> Collection<Shape> createUpdatedShapes(
-            Model model,
-            Collection<Shape> removed,
-            Function<Shape, Optional<S>> containerShapeMapper,
-            Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory
+        Model model,
+        Collection<Shape> removed,
+        Function<Shape, Optional<S>> containerShapeMapper,
+        Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory
     ) {
         return removed.stream()
-                .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
-                .flatMap(member -> OptionalUtils.stream(model.getShape(member.getContainer())
+            .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
+            .flatMap(
+                member -> OptionalUtils.stream(
+                    model.getShape(member.getContainer())
                         .flatMap(containerShapeMapper)
-                        .map(container -> Pair.of(container, member))))
-                .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, Collectors.toList())))
-                .entrySet()
-                .stream()
-                .map(entryMapperAndFactory)
-                .collect(Collectors.toList());
+                        .map(container -> Pair.of(container, member))
+                )
+            )
+            .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, Collectors.toList())))
+            .entrySet()
+            .stream()
+            .map(entryMapperAndFactory)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -151,13 +144,13 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
         Set<ShapeId> removedIds = removed.stream().map(Shape::getId).collect(Collectors.toSet());
         Collection<Shape> removeMembers = new HashSet<>();
         model.shapes(StructureShape.class)
-                .flatMap(shape -> shape.getAllMembers().values().stream())
-                .filter(value -> removedIds.contains(value.getTarget()))
-                .forEach(removeMembers::add);
+            .flatMap(shape -> shape.getAllMembers().values().stream())
+            .filter(value -> removedIds.contains(value.getTarget()))
+            .forEach(removeMembers::add);
         model.shapes(UnionShape.class)
-                .flatMap(shape -> shape.getAllMembers().values().stream())
-                .filter(value -> removedIds.contains(value.getTarget()))
-                .forEach(removeMembers::add);
+            .flatMap(shape -> shape.getAllMembers().values().stream())
+            .filter(value -> removedIds.contains(value.getTarget()))
+            .forEach(removeMembers::add);
         return removeMembers;
     }
 }

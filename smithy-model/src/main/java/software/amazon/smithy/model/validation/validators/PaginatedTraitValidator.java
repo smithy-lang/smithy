@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -56,10 +45,17 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
-    private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.BYTE, ShapeType.INTEGER,
-            ShapeType.LONG, ShapeType.SHORT);
-    private static final Set<ShapeType> DANGER_PAGE_SHAPES = SetUtils.of(ShapeType.BYTE, ShapeType.LONG,
-            ShapeType.SHORT);
+    private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(
+        ShapeType.BYTE,
+        ShapeType.INTEGER,
+        ShapeType.LONG,
+        ShapeType.SHORT
+    );
+    private static final Set<ShapeType> DANGER_PAGE_SHAPES = SetUtils.of(
+        ShapeType.BYTE,
+        ShapeType.LONG,
+        ShapeType.SHORT
+    );
     private static final Set<ShapeType> TOKEN_SHAPES = SetUtils.of(ShapeType.STRING, ShapeType.MAP);
     private static final Set<ShapeType> DANGER_TOKEN_SHAPES = SetUtils.of(ShapeType.MAP);
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
@@ -82,11 +78,11 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateOperation(
-            Model model,
-            TopDownIndex topDownIndex,
-            OperationIndex opIndex,
-            OperationShape operation,
-            PaginatedTrait trait
+        Model model,
+        TopDownIndex topDownIndex,
+        OperationIndex opIndex,
+        OperationShape operation,
+        PaginatedTrait trait
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 
@@ -95,15 +91,22 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         PageSizeValidator pageSizeValidator = new PageSizeValidator();
         events.addAll(validateMember(opIndex, model, null, operation, trait, pageSizeValidator));
         pageSizeValidator.getMember(model, opIndex, operation, trait)
-                .filter(MemberShape::isRequired)
-                .ifPresent(member -> events.add(warning(
+            .filter(MemberShape::isRequired)
+            .ifPresent(
+                member -> events.add(
+                    warning(
                         operation,
                         trait,
                         String.format(
                             "paginated trait `%s` member `%s` should not be required",
-                            pageSizeValidator.propertyName(), member.getMemberName()),
-                        SHOULD_NOT_BE_REQUIRED, pageSizeValidator.propertyName())
-                ));
+                            pageSizeValidator.propertyName(),
+                            member.getMemberName()
+                        ),
+                        SHOULD_NOT_BE_REQUIRED,
+                        pageSizeValidator.propertyName()
+                    )
+                )
+            );
 
         // Validate output.
         events.addAll(validateMember(opIndex, model, null, operation, trait, new OutputTokenValidator()));
@@ -126,51 +129,96 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateMember(
-            OperationIndex opIndex,
-            Model model,
-            ServiceShape service,
-            OperationShape operation,
-            PaginatedTrait trait,
-            PropertyValidator validator
+        OperationIndex opIndex,
+        Model model,
+        ServiceShape service,
+        OperationShape operation,
+        PaginatedTrait trait,
+        PropertyValidator validator
     ) {
         String prefix = service != null ? "When bound within the `" + service.getId() + "` service, " : "";
         String memberPath = validator.getMemberPath(opIndex, operation, trait).orElse(null);
 
         if (memberPath == null) {
             return service != null && validator.isRequiredToBePresent()
-                    ? Collections.singletonList(error(operation, trait, String.format(
-                    "%spaginated trait `%s` is not configured", prefix, validator.propertyName())))
-                    : Collections.emptyList();
+                ? Collections.singletonList(
+                    error(
+                        operation,
+                        trait,
+                        String.format(
+                            "%spaginated trait `%s` is not configured",
+                            prefix,
+                            validator.propertyName()
+                        )
+                    )
+                )
+                : Collections.emptyList();
         }
 
         if (!validator.pathsAllowed() && memberPath.contains(".")) {
-            return Collections.singletonList(error(operation, trait, String.format(
-                    "%spaginated trait `%s` does not allow path values", prefix, validator.propertyName()
-            )));
+            return Collections.singletonList(
+                error(
+                    operation,
+                    trait,
+                    String.format(
+                        "%spaginated trait `%s` does not allow path values",
+                        prefix,
+                        validator.propertyName()
+                    )
+                )
+            );
         }
 
         MemberShape member = validator.getMember(model, opIndex, operation, trait).orElse(null);
         if (member == null) {
-            return Collections.singletonList(error(operation, trait, String.format(
-                    "%spaginated trait `%s` targets a member `%s` that does not exist",
-                    prefix, validator.propertyName(), memberPath)));
+            return Collections.singletonList(
+                error(
+                    operation,
+                    trait,
+                    String.format(
+                        "%spaginated trait `%s` targets a member `%s` that does not exist",
+                        prefix,
+                        validator.propertyName(),
+                        memberPath
+                    )
+                )
+            );
         }
 
         List<ValidationEvent> events = new ArrayList<>();
         if (validator.mustBeOptional() && member.isRequired()) {
-            events.add(error(operation, trait, String.format(
-                    "%spaginated trait `%s` member `%s` must not be required",
-                    prefix, validator.propertyName(), member.getMemberName())));
+            events.add(
+                error(
+                    operation,
+                    trait,
+                    String.format(
+                        "%spaginated trait `%s` member `%s` must not be required",
+                        prefix,
+                        validator.propertyName(),
+                        member.getMemberName()
+                    )
+                )
+            );
         }
 
         Shape target = model.getShape(member.getTarget()).orElse(null);
         if (target != null) {
             if (!validator.validTargets().contains(target.getType())) {
-                events.add(error(operation, trait, String.format(
-                        "%spaginated trait `%s` member `%s` targets a %s shape, but must target one of "
+                events.add(
+                    error(
+                        operation,
+                        trait,
+                        String.format(
+                            "%spaginated trait `%s` member `%s` targets a %s shape, but must target one of "
                                 + "the following: [%s]",
-                        prefix, validator.propertyName(), member.getId().getMember().get(), target.getType(),
-                        ValidationUtils.tickedList(validator.validTargets()))));
+                            prefix,
+                            validator.propertyName(),
+                            member.getId().getMember().get(),
+                            target.getType(),
+                            ValidationUtils.tickedList(validator.validTargets())
+                        )
+                    )
+                );
             }
             if (validator.dangerTargets().contains(target.getType())) {
                 Set<ShapeType> preferredTargets = new TreeSet<>(validator.validTargets());
@@ -178,22 +226,41 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 String traitName = validator.propertyName();
                 String memberName = member.getId().getMember().get();
                 String targetType = target.getType().toString();
-                events.add(danger(operation, trait, String.format(
+                events.add(
+                    danger(
+                        operation,
+                        trait,
+                        String.format(
                             "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
-                                    + "One of [%s] SHOULD be targeted.",
-                            prefix, traitName, memberName, targetType, ValidationUtils.tickedList(preferredTargets)),
-                        WRONG_SHAPE_TYPE, traitName
-                ));
+                                + "One of [%s] SHOULD be targeted.",
+                            prefix,
+                            traitName,
+                            memberName,
+                            targetType,
+                            ValidationUtils.tickedList(preferredTargets)
+                        ),
+                        WRONG_SHAPE_TYPE,
+                        traitName
+                    )
+                );
             }
         }
 
         if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
-            events.add(warning(operation, trait, String.format(
+            events.add(
+                warning(
+                    operation,
+                    trait,
+                    String.format(
                         "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
-                        + "cumbersome to use",
-                        prefix, validator.propertyName()),
-                    DEEPLY_NESTED, validator.propertyName()
-            ));
+                            + "cumbersome to use",
+                        prefix,
+                        validator.propertyName()
+                    ),
+                    DEEPLY_NESTED,
+                    validator.propertyName()
+                )
+            );
         }
 
         return events;
@@ -215,7 +282,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         abstract Optional<String> getMemberPath(OperationIndex opIndex, OperationShape operation, PaginatedTrait trait);
 
         abstract Optional<MemberShape> getMember(
-                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+            Model model,
+            OperationIndex opIndex,
+            OperationShape operation,
+            PaginatedTrait trait
         );
 
         boolean pathsAllowed() {
@@ -231,17 +301,20 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+            Model model,
+            OperationIndex opIndex,
+            OperationShape operation,
+            PaginatedTrait trait
         ) {
             StructureShape outputShape = opIndex.expectOutputShape(operation);
             return getMemberPath(opIndex, operation, trait)
-                    .map(path -> PaginatedTrait.resolveFullPath(path, model, outputShape))
-                    .flatMap(memberShapes -> {
-                        if (memberShapes.size() == 0) {
-                            return Optional.empty();
-                        }
-                        return Optional.of(memberShapes.get(memberShapes.size() - 1));
-                    });
+                .map(path -> PaginatedTrait.resolveFullPath(path, model, outputShape))
+                .flatMap(memberShapes -> {
+                    if (memberShapes.size() == 0) {
+                        return Optional.empty();
+                    }
+                    return Optional.of(memberShapes.get(memberShapes.size() - 1));
+                });
         }
     }
 
@@ -271,7 +344,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+            Model model,
+            OperationIndex opIndex,
+            OperationShape operation,
+            PaginatedTrait trait
         ) {
             StructureShape input = opIndex.expectInputShape(operation);
             return getMemberPath(opIndex, operation, trait).flatMap(input::getMember);
@@ -330,7 +406,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+            Model model,
+            OperationIndex opIndex,
+            OperationShape operation,
+            PaginatedTrait trait
         ) {
             StructureShape input = opIndex.expectInputShape(operation);
             return getMemberPath(opIndex, operation, trait).flatMap(input::getMember);

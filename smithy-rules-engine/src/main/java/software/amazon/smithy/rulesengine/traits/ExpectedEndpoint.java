@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.List;
@@ -58,10 +57,10 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(sourceLocation)
-                .url(url)
-                .headers(headers)
-                .properties(properties);
+            .sourceLocation(sourceLocation)
+            .url(url)
+            .headers(headers)
+            .properties(properties);
     }
 
     @Override
@@ -79,7 +78,7 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         }
         ExpectedEndpoint that = (ExpectedEndpoint) o;
         return getUrl().equals(that.getUrl()) && Objects.equals(getHeaders(), that.getHeaders())
-               && Objects.equals(getProperties(), that.getProperties());
+            && Objects.equals(getProperties(), that.getProperties());
     }
 
     @Override
@@ -88,17 +87,22 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         sb.append("url: ").append(url).append("\n");
         if (!headers.isEmpty()) {
             headers.forEach(
-                    (key, value) -> {
-                        sb.append(StringUtils.indent(String.format("%s:%s", key, value), 2));
-                    });
+                (key, value) -> {
+                    sb.append(StringUtils.indent(String.format("%s:%s", key, value), 2));
+                }
+            );
         }
         if (!properties.isEmpty()) {
             sb.append("properties:\n");
-            properties.forEach((k, v) -> sb
+            properties.forEach(
+                (k, v) -> sb
                     .append(
-                            StringUtils.indent(
-                                    String.format("%s: %s", k, Node.prettyPrintJson(v)), 2)
-                    ));
+                        StringUtils.indent(
+                            String.format("%s: %s", k, Node.prettyPrintJson(v)),
+                            2
+                        )
+                    )
+            );
         }
         return sb.toString();
     }

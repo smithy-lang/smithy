@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import software.amazon.smithy.model.Model;
@@ -20,9 +19,9 @@ final class MakeIdempotencyTokenClientOptional {
     public static Model transform(Model model) {
         return ModelTransformer.create().mapShapes(model, shape -> {
             if (shape.isMemberShape()
-                    && shape.hasTrait(RequiredTrait.class)
-                    && shape.hasTrait(IdempotencyTokenTrait.class)
-                    && !shape.hasTrait(ClientOptionalTrait.class)) {
+                && shape.hasTrait(RequiredTrait.class)
+                && shape.hasTrait(IdempotencyTokenTrait.class)
+                && !shape.hasTrait(ClientOptionalTrait.class)) {
                 return Shape.shapeToBuilder(shape).addTrait(new ClientOptionalTrait()).build();
             }
             return shape;

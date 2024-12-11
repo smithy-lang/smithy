@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.Objects;
@@ -57,14 +46,14 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);
             objectNode.getStringMember(TYPE)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::type);
+                .map(StringNode::getValue)
+                .ifPresent(builder::type);
             objectNode.getStringMember(SERVICE)
-                    .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
-                    .ifPresent(builder::service);
+                .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
+                .ifPresent(builder::service);
             objectNode.getStringMember(RESOURCE)
-                    .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
-                    .ifPresent(builder::resource);
+                .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
+                .ifPresent(builder::resource);
             ArnReferenceTrait result = builder.build();
             result.setNodeCache(value);
             return result;
@@ -105,20 +94,20 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .type(type)
-                .service(service)
-                .resource(resource);
+            .sourceLocation(getSourceLocation())
+            .type(type)
+            .service(service)
+            .resource(resource);
     }
 
     @Override
     protected Node createNode() {
         return Node.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withOptionalMember(TYPE, getType().map(Node::from))
-                .withOptionalMember(SERVICE, getService().map(ShapeId::toString).map(Node::from))
-                .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from))
-                .build();
+            .sourceLocation(getSourceLocation())
+            .withOptionalMember(TYPE, getType().map(Node::from))
+            .withOptionalMember(SERVICE, getService().map(ShapeId::toString).map(Node::from))
+            .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from))
+            .build();
     }
 
     // Due to the defaulting of this trait, equals has to be overridden
@@ -132,8 +121,8 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
         } else {
             ArnReferenceTrait ot = (ArnReferenceTrait) other;
             return Objects.equals(type, ot.type)
-                    && Objects.equals(service, ot.service)
-                    && Objects.equals(resource, ot.resource);
+                && Objects.equals(service, ot.service)
+                && Objects.equals(resource, ot.resource);
         }
     }
 

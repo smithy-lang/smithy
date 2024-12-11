@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,29 +27,29 @@ public class ServiceRenameTest {
     @BeforeAll
     public static void before() {
         operation = OperationShape.builder()
-                .id("smithy.example#O")
-                .build();
+            .id("smithy.example#O")
+            .build();
         service = ServiceShape.builder()
-                .id("smithy.example#S")
-                .version("1")
-                .addOperation(operation)
-                .build();
+            .id("smithy.example#S")
+            .version("1")
+            .addOperation(operation)
+            .build();
     }
 
     @Test
     public void detectsRenameRemoved() {
         SourceLocation source = new SourceLocation("foo.smithy");
         ServiceShape service1 = service.toBuilder()
-                .putRename(operation.getId(), "O1")
-                .build();
+            .putRename(operation.getId(), "O1")
+            .build();
         Model modelA = Model.builder()
-                .addShapes(operation, service1)
-                .build();
+            .addShapes(operation, service1)
+            .build();
 
         ServiceShape service2 = service.toBuilder()
-                .clearRename()
-                .source(source)
-                .build();
+            .clearRename()
+            .source(source)
+            .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -74,16 +63,16 @@ public class ServiceRenameTest {
     public void detectsRenameChange() {
         SourceLocation source = new SourceLocation("foo.smithy");
         ServiceShape service1 = service.toBuilder()
-                .putRename(operation.getId(), "O1")
-                .build();
+            .putRename(operation.getId(), "O1")
+            .build();
         Model modelA = Model.builder()
-                .addShapes(operation, service1)
-                .build();
+            .addShapes(operation, service1)
+            .build();
 
         ServiceShape service2 = service.toBuilder()
-                .putRename(operation.getId(), "O2")
-                .source(source)
-                .build();
+            .putRename(operation.getId(), "O2")
+            .source(source)
+            .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -97,13 +86,13 @@ public class ServiceRenameTest {
     public void detectsRenameAdded() {
         SourceLocation source = new SourceLocation("foo.smithy");
         Model modelA = Model.builder()
-                .addShapes(operation, service)
-                .build();
+            .addShapes(operation, service)
+            .build();
 
         ServiceShape service2 = service.toBuilder()
-                .putRename(operation.getId(), "O2")
-                .source(source)
-                .build();
+            .putRename(operation.getId(), "O2")
+            .source(source)
+            .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -117,11 +106,11 @@ public class ServiceRenameTest {
     @Test
     public void ignoresSameRenames() {
         ServiceShape service1 = service.toBuilder()
-                .putRename(operation.getId(), "O1")
-                .build();
+            .putRename(operation.getId(), "O1")
+            .build();
         Model model = Model.builder()
-                .addShapes(operation, service1)
-                .build();
+            .addShapes(operation, service1)
+            .build();
 
         List<ValidationEvent> events = ModelDiff.compare(model, model);
         assertThat(TestHelper.findEvents(events, "ServiceRename"), empty());
@@ -130,18 +119,18 @@ public class ServiceRenameTest {
     @Test
     public void ignoresRenamesOfNewShapes() {
         ServiceShape service1 = service.toBuilder()
-                .removeOperation(operation.getId())
-                .build();
+            .removeOperation(operation.getId())
+            .build();
         Model modelA = Model.builder()
-                .addShapes(operation, service1)
-                .build();
+            .addShapes(operation, service1)
+            .build();
 
         ServiceShape service2 = service.toBuilder()
-                .putRename(operation.getId(), "Oo")
-                .build();
+            .putRename(operation.getId(), "Oo")
+            .build();
         Model modelB = Model.builder()
-                .addShapes(service2, service1)
-                .build();
+            .addShapes(service2, service1)
+            .build();
 
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 

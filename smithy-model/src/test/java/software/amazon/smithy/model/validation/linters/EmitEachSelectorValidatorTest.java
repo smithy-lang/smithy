@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.linters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,30 +39,36 @@ public class EmitEachSelectorValidatorTest {
     public void expandsMessageTemplates() {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
-                .addShape(StringShape.builder()
-                        .id(ShapeId.from("foo.bar#Baz"))
-                        .addTrait(new DocumentationTrait("hello"))
-                        .build())
-                .build();
+            .addShape(
+                StringShape.builder()
+                    .id(ShapeId.from("foo.bar#Baz"))
+                    .addTrait(new DocumentationTrait("hello"))
+                    .build()
+            )
+            .build();
         config.setSelector(Selector.parse("$foo(*)"));
         config.setMessageTemplate("before `@{trait|documentation}` after. ID: @{id}. Var: @{var|foo|id}.");
         EmitEachSelectorValidator validator = new EmitEachSelectorValidator(config);
         List<ValidationEvent> events = validator.validate(model);
 
-        assertThat(events.get(0).getMessage(),
-                   equalTo("before `\"hello\"` after. ID: foo.bar#Baz. Var: [foo.bar#Baz]."));
+        assertThat(
+            events.get(0).getMessage(),
+            equalTo("before `\"hello\"` after. ID: foo.bar#Baz. Var: [foo.bar#Baz].")
+        );
     }
 
     @Test
     public void onlyEmitsEventsWhenShapeHasBoundTraitAndNoTemplate() {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
-                .addShape(StringShape.builder()
-                                  .id(ShapeId.from("foo.bar#A"))
-                                  .addTrait(new DocumentationTrait("hello"))
-                                  .build())
-                .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
-                .build();
+            .addShape(
+                StringShape.builder()
+                    .id(ShapeId.from("foo.bar#A"))
+                    .addTrait(new DocumentationTrait("hello"))
+                    .build()
+            )
+            .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
+            .build();
         config.setSelector(Selector.parse("*"));
         config.setBindToTrait(DocumentationTrait.ID);
         EmitEachSelectorValidator validator = new EmitEachSelectorValidator(config);
@@ -72,12 +82,14 @@ public class EmitEachSelectorValidatorTest {
     public void onlyEmitsEventsWhenShapeHasBoundTraitAndHasTemplate() {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
-                .addShape(StringShape.builder()
-                                  .id(ShapeId.from("foo.bar#A"))
-                                  .addTrait(new DocumentationTrait("hello"))
-                                  .build())
-                .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
-                .build();
+            .addShape(
+                StringShape.builder()
+                    .id(ShapeId.from("foo.bar#A"))
+                    .addTrait(new DocumentationTrait("hello"))
+                    .build()
+            )
+            .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
+            .build();
         config.setSelector(Selector.parse("*"));
         config.setMessageTemplate("This is only set to test the necessary code path of using templates...");
         config.setBindToTrait(DocumentationTrait.ID);
@@ -92,8 +104,8 @@ public class EmitEachSelectorValidatorTest {
     public void skipsUsingTheActualValidatorIfNoTraitsUseTheBoundTrait() {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
-                .addShape(StringShape.builder().id(ShapeId.from("foo.bar#A")).build())
-                .build();
+            .addShape(StringShape.builder().id(ShapeId.from("foo.bar#A")).build())
+            .build();
         config.setSelector(Selector.parse("*"));
         config.setBindToTrait(DocumentationTrait.ID);
         EmitEachSelectorValidator validator = new EmitEachSelectorValidator(config);
@@ -108,8 +120,8 @@ public class EmitEachSelectorValidatorTest {
         config.setMessageTemplate("A@@@@B");
         EmitEachSelectorValidator validator = new EmitEachSelectorValidator(config);
         Model model = Model.builder()
-                .addShape(StringShape.builder().id(ShapeId.from("foo.bar#Baz")).build())
-                .build();
+            .addShape(StringShape.builder().id(ShapeId.from("foo.bar#Baz")).build())
+            .build();
         List<ValidationEvent> events = validator.validate(model);
 
         assertThat(events, hasSize(1));
@@ -125,8 +137,10 @@ public class EmitEachSelectorValidatorTest {
             new EmitEachSelectorValidator(config);
         });
 
-        assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 12 of EmitEachSelector message template"));
+        assertThat(
+            e.getMessage(),
+            containsString("Syntax error at line 1 column 12 of EmitEachSelector message template")
+        );
     }
 
     @Test
@@ -138,8 +152,10 @@ public class EmitEachSelectorValidatorTest {
             new EmitEachSelectorValidator(config);
         });
 
-        assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 3 of EmitEachSelector message template"));
+        assertThat(
+            e.getMessage(),
+            containsString("Syntax error at line 1 column 3 of EmitEachSelector message template")
+        );
     }
 
     @Test
@@ -151,7 +167,9 @@ public class EmitEachSelectorValidatorTest {
             new EmitEachSelectorValidator(config);
         });
 
-        assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 7 of EmitEachSelector message template"));
+        assertThat(
+            e.getMessage(),
+            containsString("Syntax error at line 1 column 7 of EmitEachSelector message template")
+        );
     }
 }

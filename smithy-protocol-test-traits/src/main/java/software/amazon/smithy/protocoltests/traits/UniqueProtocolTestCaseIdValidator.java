@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
@@ -47,13 +36,13 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
 
         Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class)).forEach(shape -> {
             shape.getTrait(HttpRequestTestsTrait.class)
-                    .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), requestIdsToTraits));
+                .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), requestIdsToTraits));
             shape.getTrait(HttpResponseTestsTrait.class)
-                    .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), responseIdsToTraits));
+                .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), responseIdsToTraits));
             // This deliberately uses the expanded, instead of parameterized test cases,
             // in case someone does something wild with naming, like add _case0 to the end of the id
             shape.getTrait(HttpMalformedRequestTestsTrait.class)
-                    .ifPresent(t -> addMalformedRequestTestCaseIdsToMap(shape, t.getTestCases(), responseIdsToTraits));
+                .ifPresent(t -> addMalformedRequestTestCaseIdsToMap(shape, t.getTestCases(), responseIdsToTraits));
         });
 
         removeEntriesWithSingleValue(requestIdsToTraits);
@@ -64,9 +53,9 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     }
 
     private void addTestCaseIdsToMap(
-            Shape shape,
-            List<? extends HttpMessageTestCase> testCases,
-            Map<String, List<Shape>> map
+        Shape shape,
+        List<? extends HttpMessageTestCase> testCases,
+        Map<String, List<Shape>> map
     ) {
         for (HttpMessageTestCase testCase : testCases) {
             map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
@@ -74,9 +63,9 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     }
 
     private void addMalformedRequestTestCaseIdsToMap(
-            Shape shape,
-            List<HttpMalformedRequestTestCase> testCases,
-            Map<String, List<Shape>> map
+        Shape shape,
+        List<HttpMalformedRequestTestCase> testCases,
+        Map<String, List<Shape>> map
     ) {
         for (HttpMalformedRequestTestCase testCase : testCases) {
             map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
@@ -88,9 +77,9 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> collectEvents(
-            Map<String, List<Shape>> requestIdsToTraits,
-            Map<String, List<Shape>> responseIdsToTraits,
-            Map<String, List<Shape>> malformedRequestIdsToTraits
+        Map<String, List<Shape>> requestIdsToTraits,
+        Map<String, List<Shape>> responseIdsToTraits,
+        Map<String, List<Shape>> malformedRequestIdsToTraits
     ) {
         if (requestIdsToTraits.isEmpty() && responseIdsToTraits.isEmpty() && malformedRequestIdsToTraits.isEmpty()) {
             return Collections.emptyList();
@@ -104,16 +93,23 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     }
 
     private void addValidationEvents(
-            Map<String, List<Shape>> conflicts,
-            List<ValidationEvent> mutableEvents,
-            ShapeId trait
+        Map<String, List<Shape>> conflicts,
+        List<ValidationEvent> mutableEvents,
+        ShapeId trait
     ) {
         for (Map.Entry<String, List<Shape>> entry : conflicts.entrySet()) {
             for (Shape shape : entry.getValue()) {
-                mutableEvents.add(error(shape, String.format(
-                        "Conflicting `%s` test case IDs found for ID `%s`: %s",
-                        trait, entry.getKey(),
-                        ValidationUtils.tickedList(entry.getValue().stream().map(Shape::getId)))));
+                mutableEvents.add(
+                    error(
+                        shape,
+                        String.format(
+                            "Conflicting `%s` test case IDs found for ID `%s`: %s",
+                            trait,
+                            entry.getKey(),
+                            ValidationUtils.tickedList(entry.getValue().stream().map(Shape::getId))
+                        )
+                    )
+                );
             }
         }
     }

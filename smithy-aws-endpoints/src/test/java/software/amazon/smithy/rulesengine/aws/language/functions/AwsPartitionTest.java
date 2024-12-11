@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -45,27 +49,36 @@ public class AwsPartitionTest {
         assertThat(result.get(AwsPartition.INFERRED).expectBooleanValue().getValue(), equalTo(false));
 
         // Remove the enumerated regions, so the same region is now inferred.
-        AwsPartition.overridePartitions(Partitions.builder()
-                .addPartition(Partition.builder()
+        AwsPartition.overridePartitions(
+            Partitions.builder()
+                .addPartition(
+                    Partition.builder()
                         .id("aws")
                         .regionRegex("^(us|eu|ap|sa|ca|me|af)-\\w+-\\d+$")
-                        .outputs(PartitionOutputs.builder()
+                        .outputs(
+                            PartitionOutputs.builder()
                                 .name("aws")
                                 .dnsSuffix("amazonaws.com")
                                 .dualStackDnsSuffix("api.aws")
                                 .supportsFips(true)
                                 .supportsDualStack(true)
                                 .implicitGlobalRegion("us-east-1")
-                                .build())
-                        .build())
-                .build());
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
 
         result = evalWithRegion("us-west-1");
         assertThat(result.get(AwsPartition.INFERRED).expectBooleanValue().getValue(), equalTo(true));
 
         // Set the partitions back to what they were.
-        AwsPartition.overridePartitions(Partitions.fromNode(
-                        Node.parse(Partitions.class.getResourceAsStream("partitions.json"))));
+        AwsPartition.overridePartitions(
+            Partitions.fromNode(
+                Node.parse(Partitions.class.getResourceAsStream("partitions.json"))
+            )
+        );
     }
 
     private RecordValue evalWithRegion(String region) {

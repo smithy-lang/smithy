@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import java.util.Locale;
@@ -54,17 +43,17 @@ final class HandlerPermissionMapper implements CfnMapper {
         // Start the create and update handler permission gathering.
         // TODO Break this out to its own knowledge index if it becomes useful in more contexts.
         Set<String> createPermissions = resource.getCreate()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .orElseGet(TreeSet::new);
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .orElseGet(TreeSet::new);
         Set<String> updatePermissions = resource.getUpdate()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .orElseGet(TreeSet::new);
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .orElseGet(TreeSet::new);
 
         // Add the permissions from the resource's put lifecycle operation
         // to the relevant handlers.
         Set<String> putPermissions = resource.getPut()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .orElse(SetUtils.of());
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .orElse(SetUtils.of());
         createPermissions.addAll(putPermissions);
         // Put operations without the noReplace trait are used for updates.
         if (!resource.hasTrait(NoReplaceTrait.class)) {
@@ -82,19 +71,37 @@ final class HandlerPermissionMapper implements CfnMapper {
         // Add the handler permission sets that don't need operation
         // permissions to be combined.
         resource.getRead()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("read", Handler.builder()
-                        .permissions(permissions).build()));
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(
+                permissions -> resourceSchema.addHandler(
+                    "read",
+                    Handler.builder()
+                        .permissions(permissions)
+                        .build()
+                )
+            );
 
         resource.getDelete()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("delete", Handler.builder()
-                        .permissions(permissions).build()));
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(
+                permissions -> resourceSchema.addHandler(
+                    "delete",
+                    Handler.builder()
+                        .permissions(permissions)
+                        .build()
+                )
+            );
 
         resource.getList()
-                .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("list", Handler.builder()
-                        .permissions(permissions).build()));
+            .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
+            .ifPresent(
+                permissions -> resourceSchema.addHandler(
+                    "list",
+                    Handler.builder()
+                        .permissions(permissions)
+                        .build()
+                )
+            );
     }
 
     static Set<String> getPermissionsEntriesForOperation(Model model, ServiceShape service, ShapeId operationId) {
@@ -102,11 +109,10 @@ final class HandlerPermissionMapper implements CfnMapper {
         Set<String> permissionsEntries = new TreeSet<>();
 
         // Add the operation's permission name itself.
-        String operationActionName =
-                service.getTrait(ServiceTrait.class)
-                        .map(ServiceTrait::getArnNamespace)
-                        .orElse(service.getId().getName())
-                .toLowerCase(Locale.US);
+        String operationActionName = service.getTrait(ServiceTrait.class)
+            .map(ServiceTrait::getArnNamespace)
+            .orElse(service.getId().getName())
+            .toLowerCase(Locale.US);
         operationActionName += ":" + operationId.getName(service);
         permissionsEntries.add(operationActionName);
 

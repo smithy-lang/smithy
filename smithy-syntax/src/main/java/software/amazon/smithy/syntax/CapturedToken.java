@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import java.math.BigDecimal;
@@ -48,17 +37,17 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
     private final Number numberValue;
 
     private CapturedToken(
-            IdlToken token,
-            String filename,
-            int position,
-            int startLine,
-            int startColumn,
-            int endLine,
-            int endColumn,
-            CharSequence lexeme,
-            String stringContents,
-            Number numberValue,
-            String errorMessage
+        IdlToken token,
+        String filename,
+        int position,
+        int startLine,
+        int startColumn,
+        int endLine,
+        int endColumn,
+        CharSequence lexeme,
+        String stringContents,
+        Number numberValue,
+        String errorMessage
     ) {
         this.token = Objects.requireNonNull(token, "Missing required token");
         this.lexeme = Objects.requireNonNull(lexeme, "Missing required lexeme");
@@ -70,7 +59,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         this.endColumn = endColumn;
 
         if (stringContents == null
-                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING || token == IdlToken.TEXT_BLOCK)) {
+            && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING || token == IdlToken.TEXT_BLOCK)) {
             this.stringContents = lexeme.toString();
         } else {
             this.stringContents = stringContents;
@@ -201,36 +190,38 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
     public static CapturedToken from(IdlTokenizer tokenizer, Function<CharSequence, String> stringTable) {
         IdlToken tok = tokenizer.getCurrentToken();
         return builder()
-                .token(tok)
-                .filename(tokenizer.getSourceFilename())
-                .position(tokenizer.getCurrentTokenStart())
-                .startLine(tokenizer.getCurrentTokenLine())
-                .startColumn(tokenizer.getCurrentTokenColumn())
-                .endLine(tokenizer.getLine())
-                .endColumn(tokenizer.getColumn())
-                .lexeme(tokenizer.getCurrentTokenLexeme())
-                .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
-                                ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
-                                : null)
-                .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
-                .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
-                .build();
+            .token(tok)
+            .filename(tokenizer.getSourceFilename())
+            .position(tokenizer.getCurrentTokenStart())
+            .startLine(tokenizer.getCurrentTokenLine())
+            .startColumn(tokenizer.getCurrentTokenColumn())
+            .endLine(tokenizer.getLine())
+            .endColumn(tokenizer.getColumn())
+            .lexeme(tokenizer.getCurrentTokenLexeme())
+            .stringContents(
+                tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
+                    ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
+                    : null
+            )
+            .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
+            .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
+            .build();
     }
 
     @Override
     public Builder toBuilder() {
         return builder()
-                .token(token)
-                .filename(filename)
-                .position(position)
-                .startLine(startLine)
-                .startColumn(startColumn)
-                .endLine(endLine)
-                .endColumn(endColumn)
-                .lexeme(lexeme)
-                .errorMessage(errorMessage)
-                .numberValue(numberValue)
-                .stringContents(stringContents);
+            .token(token)
+            .filename(filename)
+            .position(position)
+            .startLine(startLine)
+            .startColumn(startColumn)
+            .endLine(endLine)
+            .endColumn(endColumn)
+            .lexeme(lexeme)
+            .errorMessage(errorMessage)
+            .numberValue(numberValue)
+            .stringContents(stringContents);
     }
 
     /**

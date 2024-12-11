@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
@@ -102,73 +91,75 @@ public interface ApiGatewayMapper extends OpenApiMapper {
 
             @Override
             public OperationObject updateOperation(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    OperationObject operation,
-                    String httpMethodName, String path
+                Context<? extends Trait> context,
+                OperationShape shape,
+                OperationObject operation,
+                String httpMethodName,
+                String path
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateOperation(context, shape, operation, httpMethodName, path)
-                       : operation;
+                    ? delegate.updateOperation(context, shape, operation, httpMethodName, path)
+                    : operation;
             }
 
             @Override
             public OperationObject postProcessOperation(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    OperationObject operation,
-                    String httpMethodName, String path
+                Context<? extends Trait> context,
+                OperationShape shape,
+                OperationObject operation,
+                String httpMethodName,
+                String path
             ) {
                 return matchesApiType(context)
-                       ? delegate.postProcessOperation(context, shape, operation, httpMethodName, path)
-                       : operation;
+                    ? delegate.postProcessOperation(context, shape, operation, httpMethodName, path)
+                    : operation;
             }
 
             @Override
             public PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {
                 return matchesApiType(context)
-                       ? delegate.updatePathItem(context, path, pathItem)
-                       : pathItem;
+                    ? delegate.updatePathItem(context, path, pathItem)
+                    : pathItem;
             }
 
             @Override
             public ParameterObject updateParameter(
-                    Context<? extends Trait> context,
-                    OperationShape operation,
-                    String httpMethodName,
-                    String path,
-                    ParameterObject parameterObject
+                Context<? extends Trait> context,
+                OperationShape operation,
+                String httpMethodName,
+                String path,
+                ParameterObject parameterObject
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateParameter(context, operation, httpMethodName, path, parameterObject)
-                       : parameterObject;
+                    ? delegate.updateParameter(context, operation, httpMethodName, path, parameterObject)
+                    : parameterObject;
             }
 
             @Override
             public RequestBodyObject updateRequestBody(
-                    Context<? extends Trait> context,
-                    OperationShape operation,
-                    String httpMethodName,
-                    String path,
-                    RequestBodyObject requestBody
+                Context<? extends Trait> context,
+                OperationShape operation,
+                String httpMethodName,
+                String path,
+                RequestBodyObject requestBody
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateRequestBody(context, operation, httpMethodName, path, requestBody)
-                       : requestBody;
+                    ? delegate.updateRequestBody(context, operation, httpMethodName, path, requestBody)
+                    : requestBody;
             }
 
             @Override
             public ResponseObject updateResponse(
-                    Context<? extends Trait> context,
-                    OperationShape operation,
-                    String status,
-                    String httpMethodName,
-                    String path,
-                    ResponseObject response
+                Context<? extends Trait> context,
+                OperationShape operation,
+                String status,
+                String httpMethodName,
+                String path,
+                ResponseObject response
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateResponse(context, operation, status, httpMethodName, path, response)
-                       : response;
+                    ? delegate.updateResponse(context, operation, status, httpMethodName, path, response)
+                    : response;
             }
 
             @Override
@@ -180,39 +171,39 @@ public interface ApiGatewayMapper extends OpenApiMapper {
 
             @Override
             public SecurityScheme updateSecurityScheme(
-                    Context<? extends Trait> context,
-                    Trait authTrait,
-                    SecurityScheme securityScheme
+                Context<? extends Trait> context,
+                Trait authTrait,
+                SecurityScheme securityScheme
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateSecurityScheme(context, authTrait, securityScheme)
-                       : securityScheme;
+                    ? delegate.updateSecurityScheme(context, authTrait, securityScheme)
+                    : securityScheme;
             }
 
             @Override
             public Map<String, List<String>> updateSecurity(
-                    Context<? extends Trait> context,
-                    Shape shape,
-                    SecuritySchemeConverter<? extends Trait> converter,
-                    Map<String, List<String>> requirement
+                Context<? extends Trait> context,
+                Shape shape,
+                SecuritySchemeConverter<? extends Trait> converter,
+                Map<String, List<String>> requirement
             ) {
                 return matchesApiType(context)
-                       ? delegate.updateSecurity(context, shape, converter, requirement)
-                       : requirement;
+                    ? delegate.updateSecurity(context, shape, converter, requirement)
+                    : requirement;
             }
 
             @Override
             public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
                 return matchesApiType(context)
-                       ? delegate.after(context, openapi)
-                       : openapi;
+                    ? delegate.after(context, openapi)
+                    : openapi;
             }
 
             @Override
             public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
                 return matchesApiType(context)
-                       ? delegate.updateNode(context, openapi, node)
-                       : node;
+                    ? delegate.updateNode(context, openapi, node)
+                    : node;
             }
         };
     }

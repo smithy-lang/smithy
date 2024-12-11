@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import java.math.BigDecimal;
@@ -49,28 +38,28 @@ public final class NumberNode extends Node {
         if (value instanceof BigDecimal) {
             return (BigDecimal) value;
         } else if (value instanceof Integer || value instanceof Long || value instanceof Short
-                   || value instanceof Byte) {
-            return BigDecimal.valueOf(value.longValue());
-        } else if (value instanceof Float || value instanceof Double) {
-            double d = value.doubleValue();
-            if (Double.isNaN(d)) {
-                isNaN = true;
-                return null;
-            } else if (Double.isInfinite(d)) {
-                if (stringCache.startsWith("-")) {
-                    isNegativeInfinity = true;
+            || value instanceof Byte) {
+                return BigDecimal.valueOf(value.longValue());
+            } else if (value instanceof Float || value instanceof Double) {
+                double d = value.doubleValue();
+                if (Double.isNaN(d)) {
+                    isNaN = true;
+                    return null;
+                } else if (Double.isInfinite(d)) {
+                    if (stringCache.startsWith("-")) {
+                        isNegativeInfinity = true;
+                    } else {
+                        isPositiveInfinity = true;
+                    }
+                    return null;
                 } else {
-                    isPositiveInfinity = true;
+                    return BigDecimal.valueOf(d);
                 }
-                return null;
+            } else if (value instanceof BigInteger) {
+                return new BigDecimal((BigInteger) value);
             } else {
-                return BigDecimal.valueOf(d);
+                return new BigDecimal(stringCache);
             }
-        } else if (value instanceof BigInteger) {
-            return new BigDecimal((BigInteger) value);
-        } else {
-            return new BigDecimal(stringCache);
-        }
     }
 
     /**
@@ -190,9 +179,9 @@ public final class NumberNode extends Node {
         } else {
             NumberNode o = (NumberNode) other;
             return isNaN == o.isNaN
-                   && isPositiveInfinity == o.isPositiveInfinity
-                   && isNegativeInfinity == o.isNegativeInfinity
-                   && Objects.equals(value, o.value);
+                && isPositiveInfinity == o.isPositiveInfinity
+                && isNegativeInfinity == o.isNegativeInfinity
+                && Objects.equals(value, o.value);
         }
     }
 

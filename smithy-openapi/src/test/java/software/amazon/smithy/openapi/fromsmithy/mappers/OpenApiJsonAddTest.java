@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.logging.Handler;
@@ -36,30 +25,30 @@ public class OpenApiJsonAddTest {
     @BeforeAll
     public static void before() {
         MODEL = Model.assembler()
-                // Reusing another test cases's model, but that doesn't matter for the
-                // purpose of this test.
-                .addImport(RemoveUnusedComponentsTest.class.getResource("substitutions.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            // Reusing another test cases's model, but that doesn't matter for the
+            // purpose of this test.
+            .addImport(RemoveUnusedComponentsTest.class.getResource("substitutions.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
     }
 
     @Test
     public void addsWithPointers() {
         ObjectNode addNode = Node.objectNodeBuilder()
-                .withMember("/info/description", "hello")
-                .withMember("/info/foo", "bar")
-                .withMember("/info/nested/abc", "nested")
-                .withMember("/info/title", "custom")
-                .build();
+            .withMember("/info/description", "hello")
+            .withMember("/info/foo", "bar")
+            .withMember("/info/nested/abc", "nested")
+            .withMember("/info/title", "custom")
+            .build();
 
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
         config.setJsonAdd(addNode.getStringMap());
 
         ObjectNode openApi = OpenApiConverter.create()
-                .config(config)
-                .convertToNode(MODEL);
+            .config(config)
+            .convertToNode(MODEL);
 
         String description = NodePointer.parse("/info/description").getValue(openApi).expectStringNode().getValue();
         String infoFoo = NodePointer.parse("/info/foo").getValue(openApi).expectStringNode().getValue();
@@ -101,7 +90,7 @@ public class OpenApiJsonAddTest {
         logger.addHandler(handler);
 
         ObjectNode addNode = Node.objectNode()
-                .withMember("/components/schemas/Merged", Node.objectNode().withMember("type", "string"));
+            .withMember("/components/schemas/Merged", Node.objectNode().withMember("type", "string"));
 
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
@@ -68,8 +57,8 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
      */
     public List<Reference> getResourceReferences(ShapeId shapeId) {
         return getReferences().stream()
-                .filter(reference -> reference.getResource().equals(shapeId))
-                .collect(Collectors.toList());
+            .filter(reference -> reference.getResource().equals(shapeId))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -209,9 +198,9 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
             Reference reference = (Reference) o;
             return resource.equals(reference.resource)
-                   && Objects.equals(ids, reference.ids)
-                   && Objects.equals(service, reference.service)
-                   && Objects.equals(rel, reference.rel);
+                && Objects.equals(ids, reference.ids)
+                && Objects.equals(service, reference.service)
+                && Objects.equals(rel, reference.rel);
         }
 
         @Override
@@ -222,13 +211,16 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
-                    .withMember("resource", Node.from(resource.toString()))
-                    .withOptionalMember("ids", ids.isEmpty()
-                            ? Optional.empty()
-                            : Optional.of(ObjectNode.fromStringMap(getIds())))
-                    .withOptionalMember("service", getService().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("rel", getRel().map(Node::from))
-                    .build();
+                .withMember("resource", Node.from(resource.toString()))
+                .withOptionalMember(
+                    "ids",
+                    ids.isEmpty()
+                        ? Optional.empty()
+                        : Optional.of(ObjectNode.fromStringMap(getIds()))
+                )
+                .withOptionalMember("service", getService().map(ShapeId::toString).map(Node::from))
+                .withOptionalMember("rel", getRel().map(Node::from))
+                .build();
         }
 
         /**
@@ -290,16 +282,16 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         private static Reference referenceFromNode(ObjectNode referenceProperties) {
             Reference.Builder builder = Reference.builder();
             referenceProperties.expectObjectNode()
-                    .expectMember("resource", ShapeId::fromNode, builder::resource)
-                    .getObjectMember("ids", object -> {
-                        Map<String, String> result = new LinkedHashMap<>(object.size());
-                        object.getStringMap().forEach((k, v) -> {
-                            result.put(k, v.expectStringNode().getValue());
-                        });
-                        builder.ids(result);
-                    })
-                    .getMember("service", ShapeId::fromNode, builder::service)
-                    .getStringMember("rel", builder::rel);
+                .expectMember("resource", ShapeId::fromNode, builder::resource)
+                .getObjectMember("ids", object -> {
+                    Map<String, String> result = new LinkedHashMap<>(object.size());
+                    object.getStringMap().forEach((k, v) -> {
+                        result.put(k, v.expectStringNode().getValue());
+                    });
+                    builder.ids(result);
+                })
+                .getMember("service", ShapeId::fromNode, builder::service)
+                .getStringMember("rel", builder::rel);
             return builder.build();
         }
     }

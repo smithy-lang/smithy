@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.analysis;
 
 import java.util.HashSet;
@@ -151,7 +150,7 @@ public final class CoverageChecker {
          */
         public String pretty() {
             return "leaf: " + condition + "(" + condition.getSourceLocation().getFilename() + ":"
-                    + condition.getSourceLocation().getLine() + ")";
+                + condition.getSourceLocation().getLine() + ")";
         }
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -174,8 +163,20 @@ public class CodeFormatterTest {
     public void formatsMultipleDigitPositionalLiterals() {
         SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = writer.format("$1L $2L $3L $4L $5L $6L $7L $8L $9L $10L $11L",
-                                      "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+        String result = writer.format(
+            "$1L $2L $3L $4L $5L $6L $7L $8L $9L $10L $11L",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        );
 
         assertThat(result, equalTo("1 2 3 4 5 6 7 8 9 10 11"));
     }
@@ -189,8 +190,13 @@ public class CodeFormatterTest {
             writer.format("hello $1L");
         });
 
-        assertThat(e.getMessage(), containsString("Positional argument index 0 out of range of provided 0 arguments "
-                                                  + "in format string"));
+        assertThat(
+            e.getMessage(),
+            containsString(
+                "Positional argument index 0 out of range of provided 0 arguments "
+                    + "in format string"
+            )
+        );
     }
 
     @Test
@@ -437,9 +443,13 @@ public class CodeFormatterTest {
     @Test
     public void expandsAlignedBlocksWithNewlines() {
         SimpleCodeWriter writer = new SimpleCodeWriter();
-        writer.write("$1L() {\n" +
-                     "    ${2L|}\n" +
-                     "}", "method", "// this\n// is a test.");
+        writer.write(
+            "$1L() {\n" +
+                "    ${2L|}\n" +
+                "}",
+            "method",
+            "// this\n// is a test."
+        );
 
         assertThat(writer.toString(), equalTo("method() {\n    // this\n    // is a test.\n}\n"));
     }
@@ -448,9 +458,13 @@ public class CodeFormatterTest {
     public void alignedBlocksComposeWithPrefixes() {
         SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.setNewlinePrefix("| ");
-        writer.write("$1L() {\n" +
-                     "    ${2L|}\n" +
-                     "}", "method", "// this\n// is a test.");
+        writer.write(
+            "$1L() {\n" +
+                "    ${2L|}\n" +
+                "}",
+            "method",
+            "// this\n// is a test."
+        );
 
         assertThat(writer.toString(), equalTo("| method() {\n|     // this\n|     // is a test.\n| }\n"));
     }
@@ -459,9 +473,13 @@ public class CodeFormatterTest {
     public void defaultCFormatterRequiresRunnableOrFunction() {
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> new CodeWriter().write("$C", "hi"));
 
-        assertThat(e.getMessage(), containsString(
+        assertThat(
+            e.getMessage(),
+            containsString(
                 "Expected value for 'C' formatter to be an instance of " + Runnable.class.getName()
-                + " or " + Consumer.class.getName() + ", but found " + String.class.getName()));
+                    + " or " + Consumer.class.getName() + ", but found " + String.class.getName()
+            )
+        );
     }
 
     @Test
@@ -491,9 +509,13 @@ public class CodeFormatterTest {
     @Test
     public void alignsBlocksWithStaticWhitespace() {
         SimpleCodeWriter writer = new SimpleCodeWriter();
-        writer.write("$1L() {\n" +
-                     "\t\t${2L|}\n" +
-                     "}", "method", "hi\nthere");
+        writer.write(
+            "$1L() {\n" +
+                "\t\t${2L|}\n" +
+                "}",
+            "method",
+            "hi\nthere"
+        );
 
         assertThat(writer.toString(), equalTo("method() {\n\t\thi\n\t\tthere\n}\n"));
     }
@@ -501,9 +523,13 @@ public class CodeFormatterTest {
     @Test
     public void alignsBlocksWithStaticAndSpecificWhitespace() {
         SimpleCodeWriter writer = new SimpleCodeWriter();
-        writer.write("$1L() {\n" +
-                     "\t\t  ${2L|}\n" +
-                     "}", "method", "hi\nthere");
+        writer.write(
+            "$1L() {\n" +
+                "\t\t  ${2L|}\n" +
+                "}",
+            "method",
+            "hi\nthere"
+        );
 
         assertThat(writer.toString(), equalTo("method() {\n\t\t  hi\n\t\t  there\n}\n"));
     }
@@ -519,33 +545,47 @@ public class CodeFormatterTest {
             });
         });
 
-        assertThat(writer.toString(), equalTo("a() {\n"
-                                              + "\t\tb() {\n"
-                                              + "\t\t\t\tc() {\n"
-                                              + "\t\t\t\t\t\t  d\n"
-                                              + "\t\t\t\t}\n"
-                                              + "\t\t}\n"
-                                              + "}\n"));
+        assertThat(
+            writer.toString(),
+            equalTo(
+                "a() {\n"
+                    + "\t\tb() {\n"
+                    + "\t\t\t\tc() {\n"
+                    + "\t\t\t\t\t\t  d\n"
+                    + "\t\t\t\t}\n"
+                    + "\t\t}\n"
+                    + "}\n"
+            )
+        );
     }
 
     @Test
     public void canProvideCustomLoopPrefixes() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo as k, v}\n"
-                     + "${k:L} ${v:L} ${k.first:L} ${k.last:L}\n"
-                     + "${/foo}");
+        writer.write(
+            "${#foo as k, v}\n"
+                + "${k:L} ${v:L} ${k.first:L} ${k.last:L}\n"
+                + "${/foo}"
+        );
 
-        assertThat(writer.toString(), equalTo("0 a true false\n"
-                                              + "1 b false false\n"
-                                              + "2 c false true\n"));
+        assertThat(
+            writer.toString(),
+            equalTo(
+                "0 a true false\n"
+                    + "1 b false false\n"
+                    + "2 c false true\n"
+            )
+        );
     }
 
     @Test
     public void validatesKeyBindingName() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
-        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
-                                                     () -> writer.write("${#foo as 0a, v}${/foo}"));
+        RuntimeException e = Assertions.assertThrows(
+            RuntimeException.class,
+            () -> writer.write("${#foo as 0a, v}${/foo}")
+        );
 
         assertThat(e.getMessage(), containsString("Invalid format expression name `0a`"));
     }
@@ -553,8 +593,10 @@ public class CodeFormatterTest {
     @Test
     public void validatesValueBindingName() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
-        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
-                                                     () -> writer.write("${#foo as k, 0v}${/foo}"));
+        RuntimeException e = Assertions.assertThrows(
+            RuntimeException.class,
+            () -> writer.write("${#foo as k, 0v}${/foo}")
+        );
 
         assertThat(e.getMessage(), containsString("Invalid format expression name `0v`"));
     }
@@ -562,8 +604,10 @@ public class CodeFormatterTest {
     @Test
     public void requiresBothKeyAndValueBindingNamesWhenAnySet() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
-        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
-                                                     () -> writer.write("${#foo as k}${/foo}"));
+        RuntimeException e = Assertions.assertThrows(
+            RuntimeException.class,
+            () -> writer.write("${#foo as k}${/foo}")
+        );
 
         assertThat(e.getMessage(), containsString("Expected: ',', but found '}'"));
     }
@@ -572,21 +616,28 @@ public class CodeFormatterTest {
     public void canNestForLoops() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo as k1, v1}\n"
-                     + "${#foo as k2, v2}\n"
-                     + "${k1:L} ${v1:L}; ${k2:L} ${v2:L}\n"
-                     + "${/foo}\n"
-                     + "${/foo}");
+        writer.write(
+            "${#foo as k1, v1}\n"
+                + "${#foo as k2, v2}\n"
+                + "${k1:L} ${v1:L}; ${k2:L} ${v2:L}\n"
+                + "${/foo}\n"
+                + "${/foo}"
+        );
 
-        assertThat(writer.toString(), equalTo("0 a; 0 a\n"
-                                              + "0 a; 1 b\n"
-                                              + "0 a; 2 c\n"
-                                              + "1 b; 0 a\n"
-                                              + "1 b; 1 b\n"
-                                              + "1 b; 2 c\n"
-                                              + "2 c; 0 a\n"
-                                              + "2 c; 1 b\n"
-                                              + "2 c; 2 c\n"));
+        assertThat(
+            writer.toString(),
+            equalTo(
+                "0 a; 0 a\n"
+                    + "0 a; 1 b\n"
+                    + "0 a; 2 c\n"
+                    + "1 b; 0 a\n"
+                    + "1 b; 1 b\n"
+                    + "1 b; 2 c\n"
+                    + "2 c; 0 a\n"
+                    + "2 c; 1 b\n"
+                    + "2 c; 2 c\n"
+            )
+        );
     }
 
     @Test
@@ -620,42 +671,58 @@ public class CodeFormatterTest {
     public void controlsLeadingWhitespaceWithConditionals() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo as k1, v1}\n"      // elided because it's standalone
-                     + "  ${#foo as k2, v2}\n"  // elided because it's standalone
-                     + "      ${~k1:L} ${v1:L}; ${k2:L} ${v2:L}\n" // removes leading ws
-                     + "  ${/foo}\n" // elided
-                     + "${/foo}"); // elided
+        writer.write(
+            "${#foo as k1, v1}\n"      // elided because it's standalone
+                + "  ${#foo as k2, v2}\n"  // elided because it's standalone
+                + "      ${~k1:L} ${v1:L}; ${k2:L} ${v2:L}\n" // removes leading ws
+                + "  ${/foo}\n" // elided
+                + "${/foo}"
+        ); // elided
 
-        assertThat(writer.toString(), equalTo("0 a; 0 a\n"
-                                              + "0 a; 1 b\n"
-                                              + "0 a; 2 c\n"
-                                              + "1 b; 0 a\n"
-                                              + "1 b; 1 b\n"
-                                              + "1 b; 2 c\n"
-                                              + "2 c; 0 a\n"
-                                              + "2 c; 1 b\n"
-                                              + "2 c; 2 c\n"));
+        assertThat(
+            writer.toString(),
+            equalTo(
+                "0 a; 0 a\n"
+                    + "0 a; 1 b\n"
+                    + "0 a; 2 c\n"
+                    + "1 b; 0 a\n"
+                    + "1 b; 1 b\n"
+                    + "1 b; 2 c\n"
+                    + "2 c; 0 a\n"
+                    + "2 c; 1 b\n"
+                    + "2 c; 2 c\n"
+            )
+        );
     }
 
     @Test
     public void controlsLeadingWhitespaceWithConditionalsAndBlocks() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.putContext("foo", "text");
-        writer.write("${?foo}\n"             // elided because it's standalone
-                     + "  ${~foo:L} ${C|}\n" // removes leading ws before v, and C is properly formatted.
-                     + "${/foo}",            // elided
-                     writer.consumer(w -> w.writeInlineWithNoFormatting("hi1\nhi2")));
+        writer.write(
+            "${?foo}\n"             // elided because it's standalone
+                + "  ${~foo:L} ${C|}\n" // removes leading ws before v, and C is properly formatted.
+                + "${/foo}",            // elided
+            writer.consumer(w -> w.writeInlineWithNoFormatting("hi1\nhi2"))
+        );
 
-        assertThat(writer.toString(), equalTo("text hi1\n"
-                                              + "     hi2\n"));
+        assertThat(
+            writer.toString(),
+            equalTo(
+                "text hi1\n"
+                    + "     hi2\n"
+            )
+        );
     }
 
     @Test
     public void cannotUseInlineBlockAlignmentWithTrimmedWhitespace() {
         SimpleCodeWriter writer = new SimpleCodeWriter();
 
-        Assertions.assertThrows(RuntimeException.class,
-                                () -> writer.write("${~C|}", writer.consumer(w -> w.write("x"))));
+        Assertions.assertThrows(
+            RuntimeException.class,
+            () -> writer.write("${~C|}", writer.consumer(w -> w.write("x")))
+        );
     }
 
     @Test
@@ -671,9 +738,11 @@ public class CodeFormatterTest {
     public void canSkipTrailingWhitespaceInConditionals() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.putContext("nav", "http://example.com");
-        writer.write("${?nav~}\n"
-                     + "  <a href=\"${nav:L}\">${nav:L}</a>\n"
-                     + "${~/nav}");
+        writer.write(
+            "${?nav~}\n"
+                + "  <a href=\"${nav:L}\">${nav:L}</a>\n"
+                + "${~/nav}"
+        );
 
         assertThat(writer.toString(), equalTo("<a href=\"http://example.com\">http://example.com</a>"));
     }

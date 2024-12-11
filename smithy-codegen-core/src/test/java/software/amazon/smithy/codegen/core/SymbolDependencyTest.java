@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,9 +23,9 @@ public class SymbolDependencyTest {
     @Test
     public void setsDefaultTypeToEmptyString() {
         SymbolDependency dependency = SymbolDependency.builder()
-                .packageName("foo")
-                .version("10")
-                .build();
+            .packageName("foo")
+            .version("10")
+            .build();
 
         assertThat(dependency.getPackageName(), equalTo("foo"));
         assertThat(dependency.getVersion(), equalTo("10"));
@@ -31,10 +35,10 @@ public class SymbolDependencyTest {
     @Test
     public void convertsToBuilder() {
         SymbolDependency dependency = SymbolDependency.builder()
-                .dependencyType("dev")
-                .packageName("foo")
-                .version("10.0.1")
-                .build();
+            .dependencyType("dev")
+            .packageName("foo")
+            .version("10.0.1")
+            .build();
 
         assertThat(dependency.toBuilder().build(), equalTo(dependency));
     }
@@ -42,11 +46,11 @@ public class SymbolDependencyTest {
     @Test
     public void hasProperties() {
         SymbolDependency dependency = SymbolDependency.builder()
-                .dependencyType("dev")
-                .packageName("foo")
-                .version("10.0.1")
-                .putProperty("foo", "baz!")
-                .build();
+            .dependencyType("dev")
+            .packageName("foo")
+            .version("10.0.1")
+            .putProperty("foo", "baz!")
+            .build();
 
         assertThat(dependency.expectProperty("foo", String.class), equalTo("baz!"));
     }
@@ -81,11 +85,12 @@ public class SymbolDependencyTest {
 
         List<Pair<SymbolDependency, SymbolDependency>> conflicts = new ArrayList<>();
         Map<String, Map<String, SymbolDependency>> result = SymbolDependency.gatherDependencies(
-                Stream.of(a, aDuplicate, a2, a3, b, b2, c),
-                (sa, sb) -> {
-                    conflicts.add(Pair.of(sa, sb));
-                    return sb;
-                });
+            Stream.of(a, aDuplicate, a2, a3, b, b2, c),
+            (sa, sb) -> {
+                conflicts.add(Pair.of(sa, sb));
+                return sb;
+            }
+        );
 
         assertThat(conflicts, contains(Pair.of(b, b2)));
         assertThat(result, hasKey("a"));

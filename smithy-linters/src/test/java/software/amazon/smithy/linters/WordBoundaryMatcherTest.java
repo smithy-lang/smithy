@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.linters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -77,9 +81,11 @@ public class WordBoundaryMatcherTest {
     public void validatesSyntax(String invalidPattern) {
         WordBoundaryMatcher matcher = new WordBoundaryMatcher();
 
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-                                () -> matcher.addSearch(invalidPattern),
-                                invalidPattern);
+        IllegalArgumentException e = Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> matcher.addSearch(invalidPattern),
+            invalidPattern
+        );
 
         // All syntax errors should show the invalid pattern.
         assertThat(e.getMessage(), containsString(invalidPattern));

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import org.junit.jupiter.api.Test;
@@ -14,13 +13,13 @@ public class RemoveInvalidDefaultsTest {
     @Test
     public void removeInvalidDefaultsBasedOnRangeTrait() {
         Model input = Model.assembler()
-                .addImport(getClass().getResource("bad-defaults-range-trait.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("bad-defaults-range-trait.smithy"))
+            .assemble()
+            .unwrap();
         Model output = Model.assembler()
-                .addImport(getClass().getResource("bad-defaults-range-trait.fixed.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("bad-defaults-range-trait.fixed.smithy"))
+            .assemble()
+            .unwrap();
 
         ModelTransformer transformer = ModelTransformer.create();
 

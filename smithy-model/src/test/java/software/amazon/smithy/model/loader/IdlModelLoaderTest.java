@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -63,9 +52,9 @@ public class IdlModelLoaderTest {
     @Test
     public void loadsAppropriateSourceLocations() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/main-test.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/main-test.smithy"))
+            .assemble()
+            .unwrap();
 
         model.shapes().forEach(shape -> {
             if (!Prelude.isPreludeShape(shape.getId())) {
@@ -84,9 +73,9 @@ public class IdlModelLoaderTest {
     @Test
     public void loadsAppropriateTraitSourceLocations() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/trait-locations.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/trait-locations.smithy"))
+            .assemble()
+            .unwrap();
 
         Shape shape = model.expectShape(ShapeId.from("com.example#TraitBearer"));
 
@@ -104,16 +93,19 @@ public class IdlModelLoaderTest {
     @Test
     public void fallsBackToPublicPreludeShapes() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/forward-reference-resolver.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/forward-reference-resolver.smithy"))
+            .assemble()
+            .unwrap();
 
         MemberShape baz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"))
-                .asMemberShape().get();
+            .asMemberShape()
+            .get();
         MemberShape bar = model.expectShape(ShapeId.from("smithy.example#Foo$bar"))
-                .asMemberShape().get();
+            .asMemberShape()
+            .get();
         ResourceShape resource = model.expectShape(ShapeId.from("smithy.example#MyResource"))
-                .asResourceShape().get();
+            .asResourceShape()
+            .get();
 
         assertThat(baz.getTarget().toString(), equalTo("smithy.api#String"));
         assertThat(bar.getTarget().toString(), equalTo("smithy.example#Integer"));
@@ -125,20 +117,20 @@ public class IdlModelLoaderTest {
     @Test
     public void canLoadAndAliasShapesAndTraits() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("first-namespace.smithy"))
-                .addImport(getClass().getResource("second-namespace.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("first-namespace.smithy"))
+            .addImport(getClass().getResource("second-namespace.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @Test
     public void defersApplyTargetAndTrait() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("apply-use-1.smithy"))
-                .addImport(getClass().getResource("apply-use-2.smithy"))
-                .addImport(getClass().getResource("apply-use-3.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("apply-use-1.smithy"))
+            .addImport(getClass().getResource("apply-use-2.smithy"))
+            .addImport(getClass().getResource("apply-use-3.smithy"))
+            .assemble()
+            .unwrap();
 
         Shape shape = model.expectShape(ShapeId.from("smithy.example#Foo"));
 
@@ -168,15 +160,15 @@ public class IdlModelLoaderTest {
     @Test
     public void handlesMultilineDocComments() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("multiline-comments.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("multiline-comments.smithy"))
+            .assemble()
+            .unwrap();
 
         Shape shape = model.expectShape(ShapeId.from("smithy.example#MyStruct$myMember"));
         String docs = shape.getTrait(DocumentationTrait.class)
-                .map(StringTrait::getValue)
-                .orElse("")
-                .replace("\r\n", "\n");
+            .map(StringTrait::getValue)
+            .orElse("")
+            .replace("\r\n", "\n");
 
         assertThat(docs, equalTo("This is the first line.\nThis is the second line."));
     }
@@ -184,41 +176,50 @@ public class IdlModelLoaderTest {
     @Test
     public void warnsWhenInvalidSyntacticShapeIdIsFound() {
         ValidatedResult<Model> result = Model.assembler()
-                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                + "namespace smithy.example\n"
-                                                + "@tags([nonono])\n"
-                                                + "string Foo\n")
-                .assemble();
+            .addUnparsedModel(
+                "foo.smithy",
+                "$version: \"2.0\"\n"
+                    + "namespace smithy.example\n"
+                    + "@tags([nonono])\n"
+                    + "string Foo\n"
+            )
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         List<ValidationEvent> events = result.getValidationEvents(Severity.DANGER);
         assertThat(events.stream().filter(e -> e.getId().equals("SyntacticShapeIdTarget")).count(), equalTo(1L));
-        assertThat(events.stream()
-                           .filter(e -> e.getId().equals("SyntacticShapeIdTarget"))
-                           .filter(e -> e.getMessage().contains("`nonono`"))
-                           .count(),
-                   equalTo(1L));
+        assertThat(
+            events.stream()
+                .filter(e -> e.getId().equals("SyntacticShapeIdTarget"))
+                .filter(e -> e.getMessage().contains("`nonono`"))
+                .count(),
+            equalTo(1L)
+        );
     }
 
     @Test
     public void properlyLoadsOperationsWithUseStatements() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("use-operations/service.smithy"))
-                .addImport(getClass().getResource("use-operations/nested.smithy"))
-                .addImport(getClass().getResource("use-operations/other.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("use-operations/service.smithy"))
+            .addImport(getClass().getResource("use-operations/nested.smithy"))
+            .addImport(getClass().getResource("use-operations/other.smithy"))
+            .assemble()
+            .unwrap();
 
         // Spot check for a specific "use" shape.
-        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getInput(),
-                   equalTo(Optional.of(ShapeId.from("smithy.example.nested#A"))));
+        assertThat(
+            model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getInput(),
+            equalTo(Optional.of(ShapeId.from("smithy.example.nested#A")))
+        );
 
-        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrors(),
-                   equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C"))));
+        assertThat(
+            model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrors(),
+            equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C")))
+        );
 
         Map<String, ShapeId> identifiers = model.expectShape(
-                ShapeId.from("smithy.example.nested#Resource"),
-                ResourceShape.class
+            ShapeId.from("smithy.example.nested#Resource"),
+            ResourceShape.class
         ).getIdentifiers();
 
         assertThat(identifiers.get("s"), equalTo(ShapeId.from("smithy.api#String")));
@@ -245,10 +246,10 @@ public class IdlModelLoaderTest {
         };
 
         List<ValidationEvent> events = Model.assembler()
-                .traitFactory(factory)
-                .addUnparsedModel("foo.smithy", "namespace smithy.example\n@foo\nstring MyString\n")
-                .assemble()
-                .getValidationEvents();
+            .traitFactory(factory)
+            .addUnparsedModel("foo.smithy", "namespace smithy.example\n@foo\nstring MyString\n")
+            .assemble()
+            .getValidationEvents();
 
         // Ensure that there is also an event that the @foo trait couldn't be found.
         // This is a bit overkill, but ensures that it works end-to-end.
@@ -267,23 +268,25 @@ public class IdlModelLoaderTest {
     @Test
     public void loadsServiceRenames() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/__shared.json"))
-                .addImport(getClass().getResource("valid/service-with-rename.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/__shared.json"))
+            .addImport(getClass().getResource("valid/service-with-rename.smithy"))
+            .assemble()
+            .unwrap();
 
         // Spot check for a specific "use" shape.
-        assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
-                   equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
+        assertThat(
+            model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
+            equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget"))
+        );
     }
 
     @Test
     public void loadsServicesWithNonconflictingUnitTypes() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/__shared.json"))
-                .addImport(getClass().getResource("valid/service-with-nonconflicting-unit.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/__shared.json"))
+            .addImport(getClass().getResource("valid/service-with-nonconflicting-unit.smithy"))
+            .assemble()
+            .unwrap();
 
         // Make sure we can find our Unit type
         assertThat(model.expectShape(ShapeId.from("smithy.example#Unit")), Matchers.notNullValue());
@@ -324,13 +327,15 @@ public class IdlModelLoaderTest {
     @Test
     public void setsCorrectLocationForEnum() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/enums/enums.smithy"))
-                .addImport(getClass().getResource("valid/enums/enum-docs.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("valid/enums/enums.smithy"))
+            .addImport(getClass().getResource("valid/enums/enum-docs.smithy"))
+            .assemble()
+            .unwrap();
 
-        EnumShape enumWithoutValueTraits = model.expectShape(ShapeId.from("smithy.example#EnumWithoutValueTraits"),
-                                                             EnumShape.class);
+        EnumShape enumWithoutValueTraits = model.expectShape(
+            ShapeId.from("smithy.example#EnumWithoutValueTraits"),
+            EnumShape.class
+        );
         MemberShape barMember = enumWithoutValueTraits.getMember("BAR").orElseThrow(AssertionFailedError::new);
 
         assertThat(enumWithoutValueTraits.getSourceLocation().getLine(), is(5));
@@ -350,8 +355,8 @@ public class IdlModelLoaderTest {
     @Test
     public void doesBasicErrorRecoveryToTrait() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/to-trait.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/to-trait.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
@@ -366,8 +371,10 @@ public class IdlModelLoaderTest {
         boolean foundSyntax = false;
         boolean foundTrait = false;
         for (ValidationEvent e : result.getValidationEvents()) {
-            if (e.getSeverity() == Severity.ERROR && e.getMessage().contains(
-                    "Syntax error at line 9, column 9: Expected COLON(':') but found IDENTIFIER('MyInteger')")) {
+            if (e.getSeverity() == Severity.ERROR && e.getMessage()
+                .contains(
+                    "Syntax error at line 9, column 9: Expected COLON(':') but found IDENTIFIER('MyInteger')"
+                )) {
                 foundSyntax = true;
             }
             if (e.getSeverity() == Severity.ERROR && e.getMessage().contains("Unable to resolve trait")) {
@@ -382,8 +389,8 @@ public class IdlModelLoaderTest {
     @Test
     public void doesBasicErrorRecoveryToDocs() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/to-docs.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/to-docs.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
@@ -413,8 +420,8 @@ public class IdlModelLoaderTest {
     @Test
     public void doesBasicErrorRecoveryToIdentifier() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/to-identifier.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/to-identifier.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
@@ -425,9 +432,12 @@ public class IdlModelLoaderTest {
         assertThat(model.getShape(myString).isPresent(), is(true));
         assertThat(model.expectShape(myString).hasTrait(ExternalDocumentationTrait.class), is(false));
 
-        boolean foundSyntax = result.getValidationEvents().stream()
-                .anyMatch(e -> e.getSeverity() == Severity.ERROR
-                               && e.getMessage().contains("Syntax error at line 6, column 28"));
+        boolean foundSyntax = result.getValidationEvents()
+            .stream()
+            .anyMatch(
+                e -> e.getSeverity() == Severity.ERROR
+                    && e.getMessage().contains("Syntax error at line 6, column 28")
+            );
 
         assertThat(foundSyntax, is(true));
     }
@@ -435,8 +445,8 @@ public class IdlModelLoaderTest {
     @Test
     public void doesBasicErrorRecoveryToControl() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
@@ -445,9 +455,12 @@ public class IdlModelLoaderTest {
 
         assertThat(model.getShape(ShapeId.from("smithy.example#MyInteger")).isPresent(), is(true));
 
-        boolean foundSyntax = result.getValidationEvents().stream()
-                .anyMatch(e -> e.getSeverity() == Severity.ERROR
-                               && e.getMessage().contains("Syntax error at line 1, column 5"));
+        boolean foundSyntax = result.getValidationEvents()
+            .stream()
+            .anyMatch(
+                e -> e.getSeverity() == Severity.ERROR
+                    && e.getMessage().contains("Syntax error at line 1, column 5")
+            );
 
         assertThat(foundSyntax, is(true));
     }
@@ -455,8 +468,8 @@ public class IdlModelLoaderTest {
     @Test
     public void doesBasicErrorRecoveryInMetadata() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/in-metadata.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/in-metadata.smithy"))
+            .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
@@ -471,9 +484,10 @@ public class IdlModelLoaderTest {
         assertThat(model.getMetadata().get("valid4"), equalTo(Node.from("ok")));
 
         // Find all four invalid metadata keys.
-        long foundSyntax = result.getValidationEvents().stream()
-                .filter(e -> e.getSeverity() == Severity.ERROR && e.getMessage().contains("Syntax error"))
-                .count();
+        long foundSyntax = result.getValidationEvents()
+            .stream()
+            .filter(e -> e.getSeverity() == Severity.ERROR && e.getMessage().contains("Syntax error"))
+            .count();
 
         assertThat(foundSyntax, equalTo(4L));
     }
@@ -488,14 +502,16 @@ public class IdlModelLoaderTest {
 
         ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, loader::increaseNestingLevel);
 
-        assertThat(e.getMessage(),
-                   startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
+        assertThat(
+            e.getMessage(),
+            startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64")
+        );
     }
 
     @Test
     public void handlesMultipleMemberInheritance() {
         ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
-                .assemble();
+            .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
+            .assemble();
     }
 }

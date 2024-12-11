@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,9 +18,9 @@ public class ValidatorLoaderTest {
     @Test
     public void loadsAppropriateSourceLocations() {
         List<ValidationEvent> events = Model.assembler()
-                .addImport(getClass().getResource("invalid-validation-selector.json"))
-                .assemble()
-                .getValidationEvents();
+            .addImport(getClass().getResource("invalid-validation-selector.json"))
+            .assemble()
+            .getValidationEvents();
 
         assertThat(events, not(empty()));
         Assertions.assertTrue(events.stream().anyMatch(e -> e.getMessage().contains("Syntax error")));

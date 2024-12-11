@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.io.IOException;
@@ -59,12 +48,12 @@ final class ModelLoader {
      * @throws SourceException if there is an error reading from the contents.
      */
     static boolean load(
-            TraitFactory traitFactory,
-            Map<String, Object> properties,
-            String filename,
-            Consumer<LoadOperation> operationConsumer,
-            Supplier<InputStream> contentSupplier,
-            Function<CharSequence, String> stringTable
+        TraitFactory traitFactory,
+        Map<String, Object> properties,
+        String filename,
+        Consumer<LoadOperation> operationConsumer,
+        Supplier<InputStream> contentSupplier,
+        Function<CharSequence, String> stringTable
     ) {
         try {
             if (filename.endsWith(".smithy")) {
@@ -102,8 +91,10 @@ final class ModelLoader {
                 StringNode versionNode = model.expectStringMember("smithy");
                 Version version = Version.fromString(versionNode.getValue());
                 if (version == null) {
-                    throw new ModelSyntaxException("Unsupported Smithy version number: " + versionNode.getValue(),
-                                                   versionNode);
+                    throw new ModelSyntaxException(
+                        "Unsupported Smithy version number: " + versionNode.getValue(),
+                        versionNode
+                    );
                 } else {
                     new AstModelLoader(version, model).parse(operationConsumer);
                     return true;
@@ -118,11 +109,11 @@ final class ModelLoader {
     // Allows importing JAR files by discovering models inside a JAR file.
     // This is similar to model discovery, but done using an explicit import.
     private static void loadJar(
-            TraitFactory traitFactory,
-            Map<String, Object> properties,
-            String filename,
-            Consumer<LoadOperation> operationConsumer,
-            Function<CharSequence, String> stringTable
+        TraitFactory traitFactory,
+        Map<String, Object> properties,
+        String filename,
+        Consumer<LoadOperation> operationConsumer,
+        Function<CharSequence, String> stringTable
     ) {
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
@@ -156,6 +147,8 @@ final class ModelLoader {
 
     private static ModelImportException throwIoJarException(URL model, Throwable e) {
         return new ModelImportException(
-                String.format("Error loading Smithy model from URL `%s`: %s", model, e.getMessage()), e);
+            String.format("Error loading Smithy model from URL `%s`: %s", model, e.getMessage()),
+            e
+        );
     }
 }

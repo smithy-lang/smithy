@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,40 +29,40 @@ public class SchemaTest {
     public void canRemoveSettings() {
         Schema.Builder builder = Schema.builder();
         Set<String> values = SetUtils.of(
-                "const",
-                "default",
-                "enum",
-                "multipleOf",
-                "maximum",
-                "exclusiveMaximum",
-                "minimum",
-                "exclusiveMinimum",
-                "maxLength",
-                "minLength",
-                "pattern",
-                "items",
-                "maxItems",
-                "minItems",
-                "uniqueItems",
-                "properties",
-                "additionalProperties",
-                "required",
-                "maxProperties",
-                "minProperties",
-                "propertyNames",
-                "allOf",
-                "anyOf",
-                "oneOf",
-                "not",
-                "title",
-                "description",
-                "format",
-                "readOnly",
-                "writeOnly",
-                "comment",
-                "contentEncoding",
-                "contentMediaType",
-                "examples"
+            "const",
+            "default",
+            "enum",
+            "multipleOf",
+            "maximum",
+            "exclusiveMaximum",
+            "minimum",
+            "exclusiveMinimum",
+            "maxLength",
+            "minLength",
+            "pattern",
+            "items",
+            "maxItems",
+            "minItems",
+            "uniqueItems",
+            "properties",
+            "additionalProperties",
+            "required",
+            "maxProperties",
+            "minProperties",
+            "propertyNames",
+            "allOf",
+            "anyOf",
+            "oneOf",
+            "not",
+            "title",
+            "description",
+            "format",
+            "readOnly",
+            "writeOnly",
+            "comment",
+            "contentEncoding",
+            "contentMediaType",
+            "examples"
         );
 
         for (String value : values) {
@@ -189,9 +178,9 @@ public class SchemaTest {
     @Test
     public void maintainsPropertyOrder() {
         Schema schema = Schema.builder()
-                .putProperty("foo", Schema.builder().build())
-                .putProperty("bar", Schema.builder().build())
-                .build();
+            .putProperty("foo", Schema.builder().build())
+            .putProperty("bar", Schema.builder().build())
+            .build();
 
         assertThat(schema.getProperties().keySet(), contains("foo", "bar"));
     }
@@ -199,13 +188,13 @@ public class SchemaTest {
     @Test
     public void removingPropertiesRemovesRequiredPropertiesToo() {
         Schema schema = Schema.builder()
-                .removeProperty("notThere")
-                .required(null)
-                .putProperty("foo", Schema.builder().build())
-                .putProperty("bar", Schema.builder().build())
-                .required(ListUtils.of("foo", "bar"))
-                .removeProperty("foo")
-                .build();
+            .removeProperty("notThere")
+            .required(null)
+            .putProperty("foo", Schema.builder().build())
+            .putProperty("bar", Schema.builder().build())
+            .required(ListUtils.of("foo", "bar"))
+            .removeProperty("foo")
+            .build();
 
         assertThat(schema.getProperties().keySet(), contains("bar"));
         assertThat(schema.getRequired(), contains("bar"));
@@ -214,14 +203,18 @@ public class SchemaTest {
     @Test
     public void mergesEnumValuesWhenConvertingToNode() {
         Schema schema = Schema.builder()
-                .enumValues(ListUtils.of("foo", "bar"))
-                .intEnumValues(ListUtils.of(1, 2))
-                .build();
+            .enumValues(ListUtils.of("foo", "bar"))
+            .intEnumValues(ListUtils.of(1, 2))
+            .build();
         ArrayNode node = schema.toNode().asObjectNode().get().expectArrayMember("enum");
-        assertThat(node.getElements(), containsInAnyOrder(
+        assertThat(
+            node.getElements(),
+            containsInAnyOrder(
                 Node.from("foo"),
                 Node.from("bar"),
                 Node.from(1),
-                Node.from(2)));
+                Node.from(2)
+            )
+        );
     }
 }

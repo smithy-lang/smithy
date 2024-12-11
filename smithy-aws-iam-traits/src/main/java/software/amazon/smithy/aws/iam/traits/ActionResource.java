@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Collections;
@@ -45,8 +44,8 @@ public final class ActionResource implements ToNode, ToSmithyBuilder<ActionResou
     public static ActionResource fromNode(Node value) {
         Builder builder = builder();
         value.expectObjectNode()
-                .warnIfAdditionalProperties(Collections.singletonList(CONDITION_KEYS))
-                .getArrayMember(CONDITION_KEYS, StringNode::getValue, builder::conditionKeys);
+            .warnIfAdditionalProperties(Collections.singletonList(CONDITION_KEYS))
+            .getArrayMember(CONDITION_KEYS, StringNode::getValue, builder::conditionKeys);
         return builder.build();
     }
 

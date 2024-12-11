@@ -1,21 +1,23 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.model;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 class TagObjectTest {
-    private static final TagObject TAG_OBJECT_1 =
-        TagObject.builder()
-            .name("tag1")
-            .description("description1")
-            .externalDocs(ExternalDocumentation.builder().url("url1").build())
-            .build();
+    private static final TagObject TAG_OBJECT_1 = TagObject.builder()
+        .name("tag1")
+        .description("description1")
+        .externalDocs(ExternalDocumentation.builder().url("url1").build())
+        .build();
 
     private static Stream<Arguments> testData() {
         return Stream.of(

@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
@@ -58,9 +47,11 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         }
 
         public static StructurallyExclusive fromNode(Node node) {
-            String value = node.expectStringNode().expectOneOf(
+            String value = node.expectStringNode()
+                .expectOneOf(
                     StructurallyExclusive.MEMBER.toString(),
-                    StructurallyExclusive.TARGET.toString());
+                    StructurallyExclusive.TARGET.toString()
+                );
             return StructurallyExclusive.valueOf(value.toUpperCase(Locale.ENGLISH));
         }
     }
@@ -115,9 +106,9 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             if (obj instanceof BreakingChangeRule) {
                 BreakingChangeRule other = (BreakingChangeRule) obj;
                 return Objects.equals(path, other.path)
-                       && Objects.equals(severity, other.severity)
-                       && Objects.equals(message, other.message)
-                       && change == other.change;
+                    && Objects.equals(severity, other.severity)
+                    && Objects.equals(message, other.message)
+                    && change == other.change;
             } else {
                 return false;
             }
@@ -131,11 +122,11 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
-                    .withOptionalMember("path", getPath().map(NodePointer::toString).map(Node::from))
-                    .withOptionalMember("severity", getSeverity().map(Severity::toNode))
-                    .withMember("change", change.toNode())
-                    .withOptionalMember("message", getMessage().map(Node::from))
-                    .build();
+                .withOptionalMember("path", getPath().map(NodePointer::toString).map(Node::from))
+                .withOptionalMember("severity", getSeverity().map(Severity::toNode))
+                .withMember("change", change.toNode())
+                .withOptionalMember("message", getMessage().map(Node::from))
+                .build();
         }
 
         /**
@@ -222,10 +213,10 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     @Override
     public Builder toBuilder() {
         Builder builder = builder()
-                .sourceLocation(getSourceLocation())
-                .selector(selector)
-                .structurallyExclusive(structurallyExclusive)
-                .breakingChanges(breakingChanges);
+            .sourceLocation(getSourceLocation())
+            .selector(selector)
+            .structurallyExclusive(structurallyExclusive)
+            .breakingChanges(breakingChanges);
         conflicts.forEach(builder::addConflict);
         return builder;
     }
@@ -287,14 +278,19 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         }
 
         if (!conflicts.isEmpty()) {
-            builder.withMember("conflicts", conflicts.stream()
+            builder.withMember(
+                "conflicts",
+                conflicts.stream()
                     .map(ShapeId::toString)
                     .map(Node::from)
-                    .collect(ArrayNode.collect()));
+                    .collect(ArrayNode.collect())
+            );
         }
 
-        builder.withOptionalMember("structurallyExclusive",
-                                   getStructurallyExclusive().map(StructurallyExclusive::toNode));
+        builder.withOptionalMember(
+            "structurallyExclusive",
+            getStructurallyExclusive().map(StructurallyExclusive::toNode)
+        );
 
         if (!breakingChanges.isEmpty()) {
             List<Node> result = new ArrayList<>(breakingChanges.size());
@@ -315,9 +311,9 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         } else {
             TraitDefinition od = (TraitDefinition) other;
             return selector.equals(od.selector)
-                    && conflicts.equals(od.conflicts)
-                    && Objects.equals(structurallyExclusive, od.structurallyExclusive)
-                    && breakingChanges.equals(od.breakingChanges);
+                && conflicts.equals(od.conflicts)
+                && Objects.equals(structurallyExclusive, od.structurallyExclusive)
+                && breakingChanges.equals(od.breakingChanges);
         }
     }
 
@@ -398,14 +394,14 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             ObjectNode members = value.isNullNode() ? Node.objectNode() : value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);
             members.expectObjectNode()
-                    .getMember("selector", Selector::fromNode, builder::selector)
-                    .getMember("structurallyExclusive", StructurallyExclusive::fromNode, builder::structurallyExclusive)
-                    .getArrayMember("conflicts", nodes -> {
-                        for (Node element : nodes) {
-                            builder.addConflict(element.expectStringNode().getValue());
-                        }
-                    })
-                    .getArrayMember("breakingChanges", BreakingChangeRule::fromNode, builder::breakingChanges);
+                .getMember("selector", Selector::fromNode, builder::selector)
+                .getMember("structurallyExclusive", StructurallyExclusive::fromNode, builder::structurallyExclusive)
+                .getArrayMember("conflicts", nodes -> {
+                    for (Node element : nodes) {
+                        builder.addConflict(element.expectStringNode().getValue());
+                    }
+                })
+                .getArrayMember("breakingChanges", BreakingChangeRule::fromNode, builder::breakingChanges);
             TraitDefinition result = builder.build();
             result.setNodeCache(value);
             return result;

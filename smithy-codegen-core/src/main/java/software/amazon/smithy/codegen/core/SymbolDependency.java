@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
@@ -68,7 +57,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * suggestion.
  */
 public final class SymbolDependency extends TypedPropertiesBag
-        implements SymbolDependencyContainer, ToSmithyBuilder<SymbolDependency>, Comparable<SymbolDependency> {
+    implements SymbolDependencyContainer, ToSmithyBuilder<SymbolDependency>, Comparable<SymbolDependency> {
 
     private final String dependencyType;
     private final String packageName;
@@ -104,11 +93,18 @@ public final class SymbolDependency extends TypedPropertiesBag
      * @throws CodegenException when two package versions conflict.
      */
     public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
-            Stream<SymbolDependency> symbolStream) {
+        Stream<SymbolDependency> symbolStream
+    ) {
         return gatherDependencies(symbolStream, (a, b) -> {
-            throw new CodegenException(String.format(
+            throw new CodegenException(
+                String.format(
                     "Found a conflicting `%s` dependency for `%s`: `%s` conflicts with `%s`",
-                    a.getDependencyType(), a.getPackageName(), a.getVersion(), b.getVersion()));
+                    a.getDependencyType(),
+                    a.getPackageName(),
+                    a.getVersion(),
+                    b.getVersion()
+                )
+            );
         });
     }
 
@@ -136,18 +132,22 @@ public final class SymbolDependency extends TypedPropertiesBag
      * @return Returns a map of dependency types to a map of package to version.
      */
     public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
-            Stream<SymbolDependency> symbolStream,
-            BinaryOperator<SymbolDependency> versionMergeFunction
+        Stream<SymbolDependency> symbolStream,
+        BinaryOperator<SymbolDependency> versionMergeFunction
     ) {
         return symbolStream
-                .sorted()
-                .collect(Collectors.groupingBy(
-                        SymbolDependency::getDependencyType,
-                        Collectors.toMap(
-                                SymbolDependency::getPackageName,
-                                Function.identity(),
-                                guardedMerge(versionMergeFunction),
-                                TreeMap::new)));
+            .sorted()
+            .collect(
+                Collectors.groupingBy(
+                    SymbolDependency::getDependencyType,
+                    Collectors.toMap(
+                        SymbolDependency::getPackageName,
+                        Function.identity(),
+                        guardedMerge(versionMergeFunction),
+                        TreeMap::new
+                    )
+                )
+            );
     }
 
     private static BinaryOperator<SymbolDependency> guardedMerge(BinaryOperator<SymbolDependency> original) {
@@ -197,20 +197,20 @@ public final class SymbolDependency extends TypedPropertiesBag
     @Override
     public Builder toBuilder() {
         return builder()
-                .dependencyType(dependencyType)
-                .packageName(packageName)
-                .version(version)
-                .properties(getProperties())
-                .typedProperties(getTypedProperties());
+            .dependencyType(dependencyType)
+            .packageName(packageName)
+            .version(version)
+            .properties(getProperties())
+            .typedProperties(getTypedProperties());
     }
 
     @Override
     public String toString() {
         return "SymbolDependency{"
-               + "dependencyType='" + dependencyType + '\''
-               + ", packageName='" + packageName + '\''
-               + ", version='" + version + '\''
-               + '}';
+            + "dependencyType='" + dependencyType + '\''
+            + ", packageName='" + packageName + '\''
+            + ", version='" + version + '\''
+            + '}';
     }
 
     @Override
@@ -223,9 +223,9 @@ public final class SymbolDependency extends TypedPropertiesBag
 
         SymbolDependency that = (SymbolDependency) o;
         return super.equals(o)
-               && dependencyType.equals(that.dependencyType)
-               && packageName.equals(that.packageName)
-               && version.equals(that.version);
+            && dependencyType.equals(that.dependencyType)
+            && packageName.equals(that.packageName)
+            && version.equals(that.version);
     }
 
     @Override
@@ -258,8 +258,8 @@ public final class SymbolDependency extends TypedPropertiesBag
      * Builds a SymbolDependency.
      */
     public static final class Builder
-            extends TypedPropertiesBag.Builder<Builder>
-            implements SmithyBuilder<SymbolDependency> {
+        extends TypedPropertiesBag.Builder<Builder>
+        implements SmithyBuilder<SymbolDependency> {
 
         private String dependencyType = "";
         private String packageName;

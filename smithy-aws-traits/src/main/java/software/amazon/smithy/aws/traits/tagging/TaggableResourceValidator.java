@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.AbstractMap;
@@ -58,8 +47,13 @@ public final class TaggableResourceValidator extends AbstractValidator {
 
                 // It's possible the resource was marked as taggable but the service isn't tagEnabled.
                 if (resourceLikelyTaggable && !service.hasTrait(TagEnabledTrait.class)) {
-                    events.add(warning(service, "Service has resources with `aws.api#taggable` applied but does not "
-                            + "have the `aws.api#tagEnabled` trait."));
+                    events.add(
+                        warning(
+                            service,
+                            "Service has resources with `aws.api#taggable` applied but does not "
+                                + "have the `aws.api#tagEnabled` trait."
+                        )
+                    );
                 }
             }
         }
@@ -67,19 +61,24 @@ public final class TaggableResourceValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateResource(
-            Model model,
-            ResourceShape resource,
-            ServiceShape service,
-            AwsTagIndex awsTagIndex
+        Model model,
+        ResourceShape resource,
+        ServiceShape service,
+        AwsTagIndex awsTagIndex
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
             Shape operation = resource.getUpdate().isPresent()
-                    ? model.expectShape(resource.getUpdate().get())
-                    : model.expectShape(resource.getPut().get());
-            events.add(danger(operation, "Update and put resource lifecycle operations should not support updating tags"
-                    + " because it is a privileged operation that modifies access."));
+                ? model.expectShape(resource.getUpdate().get())
+                : model.expectShape(resource.getPut().get());
+            events.add(
+                danger(
+                    operation,
+                    "Update and put resource lifecycle operations should not support updating tags"
+                        + " because it is a privileged operation that modifies access."
+                )
+            );
         }
         // A valid taggable resource must support one of the following:
         // 1. Tagging via service-wide TagResource/UntagResource/ListTagsForResource
@@ -91,15 +90,27 @@ public final class TaggableResourceValidator extends AbstractValidator {
         boolean isInstanceOpTaggable = isTaggableViaInstanceOperations(model, resource);
 
         if (isServiceWideTaggable && !isInstanceOpTaggable && !resource.hasTrait(ArnTrait.class)) {
-            events.add(error(resource, "Resource is taggable only via service-wide tag operations."
-                    + " It must use the `aws.api@arn` trait."));
+            events.add(
+                error(
+                    resource,
+                    "Resource is taggable only via service-wide tag operations."
+                        + " It must use the `aws.api@arn` trait."
+                )
+            );
         }
 
         if (!isServiceWideTaggable && !isInstanceOpTaggable) {
-            events.add(error(resource, String.format("Resource does not have tagging CRUD operations and is not"
-                                                     + " compatible with service-wide tagging operations"
-                                                     + " for service `%s`.",
-                                                     service.getId())));
+            events.add(
+                error(
+                    resource,
+                    String.format(
+                        "Resource does not have tagging CRUD operations and is not"
+                            + " compatible with service-wide tagging operations"
+                            + " for service `%s`.",
+                        service.getId()
+                    )
+                )
+            );
         }
 
         return events;
@@ -120,8 +131,11 @@ public final class TaggableResourceValidator extends AbstractValidator {
             Optional<OperationShape> tagApi = resolveTagOperation(apiConfig.getTagApi(), model);
             if (tagApi.isPresent()) {
                 tagApiVerified = TaggingShapeUtils.isTagPropertyInInput(
-                        Optional.of(tagApi.get().getId()), model, resource)
-                        && verifyTagApi(tagApi.get(), model);
+                    Optional.of(tagApi.get().getId()),
+                    model,
+                    resource
+                )
+                    && verifyTagApi(tagApi.get(), model);
             }
 
             Optional<OperationShape> untagApi = resolveTagOperation(apiConfig.getUntagApi(), model);
@@ -141,24 +155,30 @@ public final class TaggableResourceValidator extends AbstractValidator {
 
     private boolean verifyListTagsApi(OperationShape listTagsApi, Model model) {
         // Verify Tags map or list member but on the output.
-        return exactlyOne(collectMemberTargetShapes(listTagsApi.getOutputShape(), model),
-                memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                        && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+        return exactlyOne(
+            collectMemberTargetShapes(listTagsApi.getOutputShape(), model),
+            memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue())
+        );
     }
 
     private boolean verifyUntagApi(OperationShape untagApi, Model model) {
         // Tag API has a tags property on its input AND has exactly one member targeting a tag shape with an
         // appropriate name.
-        return exactlyOne(collectMemberTargetShapes(untagApi.getInputShape(), model),
-                memberEntry -> TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey().getMemberName())
-                        && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue()));
+        return exactlyOne(
+            collectMemberTargetShapes(untagApi.getInputShape(), model),
+            memberEntry -> TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue())
+        );
     }
 
     private boolean verifyTagApi(OperationShape tagApi, Model model) {
         // Tag API has exactly one member targeting a tag list or map shape with an appropriate name.
-        return exactlyOne(collectMemberTargetShapes(tagApi.getInputShape(), model),
-                memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                        && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+        return exactlyOne(
+            collectMemberTargetShapes(tagApi.getInputShape(), model),
+            memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue())
+        );
     }
 
     private boolean exactlyOne(
@@ -177,8 +197,12 @@ public final class TaggableResourceValidator extends AbstractValidator {
     private Collection<Map.Entry<MemberShape, Shape>> collectMemberTargetShapes(ShapeId ioShapeId, Model model) {
         Collection<Map.Entry<MemberShape, Shape>> collection = new ArrayList<>();
         for (MemberShape memberShape : model.expectShape(ioShapeId).members()) {
-            collection.add(new AbstractMap.SimpleImmutableEntry<>(
-                    memberShape, model.expectShape(memberShape.getTarget())));
+            collection.add(
+                new AbstractMap.SimpleImmutableEntry<>(
+                    memberShape,
+                    model.expectShape(memberShape.getTarget())
+                )
+            );
         }
         return collection;
     }

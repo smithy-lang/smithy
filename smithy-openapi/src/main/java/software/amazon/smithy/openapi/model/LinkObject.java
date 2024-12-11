@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
@@ -71,15 +60,19 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withOptionalMember("operationRef", getOperationRef().map(Node::from))
-                .withOptionalMember("operationId", getOperationId().map(Node::from))
-                .withOptionalMember("requestBody", getRequestBody())
-                .withOptionalMember("description", getDescription().map(Node::from))
-                .withOptionalMember("server", getServer());
+            .withOptionalMember("operationRef", getOperationRef().map(Node::from))
+            .withOptionalMember("operationId", getOperationId().map(Node::from))
+            .withOptionalMember("requestBody", getRequestBody())
+            .withOptionalMember("description", getDescription().map(Node::from))
+            .withOptionalMember("server", getServer());
 
         if (!parameters.isEmpty()) {
-            builder.withMember("parameters", parameters.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember(
+                "parameters",
+                parameters.entrySet()
+                    .stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+            );
         }
 
         return builder;
@@ -88,13 +81,13 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
     @Override
     public Builder toBuilder() {
         return builder()
-                .extensions(getExtensions())
-                .parameters(parameters)
-                .operationId(operationId)
-                .operationRef(operationRef)
-                .requestBody(requestBody)
-                .description(description)
-                .server(server);
+            .extensions(getExtensions())
+            .parameters(parameters)
+            .operationId(operationId)
+            .operationRef(operationRef)
+            .requestBody(requestBody)
+            .description(description)
+            .server(server);
     }
 
     public static final class Builder extends Component.Builder<Builder, LinkObject> {

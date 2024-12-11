@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.testrunner;
 
 import static java.lang.String.format;
@@ -35,7 +34,8 @@ public final class SmithyDiffTestCase {
             + "?(?<message>.*) "
             + "\\| "
             + "(?<id>[^)]+)",
-        Pattern.DOTALL);
+        Pattern.DOTALL
+    );
 
     private final Path path;
     private final String name;
@@ -119,13 +119,17 @@ public final class SmithyDiffTestCase {
      */
     public Result createResult(List<ValidationEvent> actualEvents) {
         List<ValidationEvent> unmatchedEvents = expectedEvents.stream()
-            .filter(expectedEvent -> actualEvents.stream()
-                .noneMatch(actualEvent -> compareEvents(expectedEvent, actualEvent)))
+            .filter(
+                expectedEvent -> actualEvents.stream()
+                    .noneMatch(actualEvent -> compareEvents(expectedEvent, actualEvent))
+            )
             .collect(Collectors.toList());
 
         List<ValidationEvent> extraEvents = actualEvents.stream()
-            .filter(actualEvent -> expectedEvents.stream()
-                .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent)))
+            .filter(
+                actualEvent -> expectedEvents.stream()
+                    .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent))
+            )
             // Exclude suppressed events from needing to be defined as acceptable events.
             // However, these can still be defined as required events.
             .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
@@ -167,9 +171,15 @@ public final class SmithyDiffTestCase {
     static ValidationEvent parseValidationEvent(String event, String fileName) {
         Matcher matcher = EVENT_PATTERN.matcher(event);
         if (!matcher.find()) {
-            throw new IllegalArgumentException(format("Invalid validation event in file `%s`, the following event did "
-                + "not match the expected regular expression `%s`: %s",
-                fileName, EVENT_PATTERN.pattern(), event));
+            throw new IllegalArgumentException(
+                format(
+                    "Invalid validation event in file `%s`, the following event did "
+                        + "not match the expected regular expression `%s`: %s",
+                    fileName,
+                    EVENT_PATTERN.pattern(),
+                    event
+                )
+            );
         }
 
         // Construct a dummy source location since we don't validate it.
@@ -212,23 +222,29 @@ public final class SmithyDiffTestCase {
             StringBuilder builder = new StringBuilder();
 
             builder
-                .append("============================\n"
-                      + "Model Diff Validation Result\n"
-                      + "============================\n")
+                .append(
+                    "============================\n"
+                        + "Model Diff Validation Result\n"
+                        + "============================\n"
+                )
                 .append(name)
                 .append('\n');
 
             if (!unmatchedEvents.isEmpty()) {
-                builder.append("\nDid not match the following events\n"
-                             + "----------------------------------\n");
+                builder.append(
+                    "\nDid not match the following events\n"
+                        + "----------------------------------\n"
+                );
                 for (ValidationEvent event : unmatchedEvents) {
                     builder.append(event.toString()).append("\n\n");
                 }
             }
 
             if (!extraEvents.isEmpty()) {
-                builder.append("\nEncountered unexpected events\n"
-                             + "-----------------------------\n");
+                builder.append(
+                    "\nEncountered unexpected events\n"
+                        + "-----------------------------\n"
+                );
                 for (ValidationEvent event : extraEvents) {
                     builder.append(event.toString()).append("\n\n");
                 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import software.amazon.smithy.model.node.Node;
@@ -108,21 +97,24 @@ enum Version {
         ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             String errorMessage = null;
             if (traitId.equals(MixinTrait.ID)) {
-                errorMessage = String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
-                                             + "a @mixin trait to `%s` in a model file using version `%s`.",
-                                             target, this);
+                errorMessage = String.format(
+                    "Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
+                        + "a @mixin trait to `%s` in a model file using version `%s`.",
+                    target,
+                    this
+                );
             } else if (traitId.equals(DefaultTrait.ID)) {
                 errorMessage = "The @default trait can only be used in Smithy 2.0 or later";
             }
 
             if (errorMessage != null) {
                 return ValidationEvent.builder()
-                        .severity(Severity.ERROR)
-                        .id(Validator.MODEL_ERROR)
-                        .shapeId(target)
-                        .sourceLocation(value)
-                        .message(errorMessage)
-                        .build();
+                    .severity(Severity.ERROR)
+                    .id(Validator.MODEL_ERROR)
+                    .shapeId(target)
+                    .sourceLocation(value)
+                    .message(errorMessage)
+                    .build();
             }
 
             return null;
@@ -175,20 +167,20 @@ enum Version {
         ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             if (traitId.equals(BoxTrait.ID)) {
                 return ValidationEvent.builder()
-                        .id(Validator.MODEL_ERROR)
-                        .severity(Severity.ERROR)
-                        .shapeId(target)
-                        .sourceLocation(value)
-                        .message("@box is not supported in Smithy IDL 2.0")
-                        .build();
+                    .id(Validator.MODEL_ERROR)
+                    .severity(Severity.ERROR)
+                    .shapeId(target)
+                    .sourceLocation(value)
+                    .message("@box is not supported in Smithy IDL 2.0")
+                    .build();
             } else if (traitId.equals(EnumTrait.ID)) {
                 return ValidationEvent.builder()
-                        .id(Validator.MODEL_DEPRECATION)
-                        .severity(Severity.WARNING)
-                        .shapeId(target)
-                        .sourceLocation(value)
-                        .message("The enum trait is deprecated. Smithy 2.0 models should use the enum shape.")
-                        .build();
+                    .id(Validator.MODEL_DEPRECATION)
+                    .severity(Severity.WARNING)
+                    .shapeId(target)
+                    .sourceLocation(value)
+                    .message("The enum trait is deprecated. Smithy 2.0 models should use the enum shape.")
+                    .build();
             }
 
             return null;

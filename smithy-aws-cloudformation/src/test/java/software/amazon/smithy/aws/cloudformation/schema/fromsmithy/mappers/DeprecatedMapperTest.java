@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,31 +20,34 @@ public class DeprecatedMapperTest {
     @Test
     public void addsDeprecatedPropertiesByDefault() {
         Model model = Model.assembler()
-                .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
 
         CfnConfig config = new CfnConfig();
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("smithy.example#TestService"));
 
         ObjectNode resourceNode = CfnConverter.create()
-                .config(config)
-                .convertToNodes(model)
-                .get("Smithy::TestService::FooResource");
+            .config(config)
+            .convertToNodes(model)
+            .get("Smithy::TestService::FooResource");
 
-        Assertions.assertEquals(ListUtils.of("/properties/FooDeprecatedMutableProperty"),
-                resourceNode.expectArrayMember("deprecatedProperties")
-                        .getElementsAs(StringNode::getValue));
+        Assertions.assertEquals(
+            ListUtils.of("/properties/FooDeprecatedMutableProperty"),
+            resourceNode.expectArrayMember("deprecatedProperties")
+                .getElementsAs(StringNode::getValue)
+        );
     }
+
     @Test
     public void canDisableDeprecatedPropertyGeneration() {
         Model model = Model.assembler()
-                .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
 
         CfnConfig config = new CfnConfig();
         config.setOrganizationName("Smithy");
@@ -63,9 +55,9 @@ public class DeprecatedMapperTest {
         config.setDisableDeprecatedPropertyGeneration(true);
 
         ObjectNode resourceNode = CfnConverter.create()
-                .config(config)
-                .convertToNodes(model)
-                .get("Smithy::TestService::FooResource");
+            .config(config)
+            .convertToNodes(model)
+            .get("Smithy::TestService::FooResource");
 
         assertFalse(resourceNode.getMember("deprecatedProperties").isPresent());
     }

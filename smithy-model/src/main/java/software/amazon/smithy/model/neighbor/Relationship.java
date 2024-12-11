@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.neighbor;
 
 import java.util.Objects;
@@ -36,10 +25,10 @@ public final class Relationship {
     private final Shape neighborShape;
 
     private Relationship(
-            Shape shape,
-            RelationshipType relationshipType,
-            ShapeId neighborShapeId,
-            Shape neighborShape
+        Shape shape,
+        RelationshipType relationshipType,
+        ShapeId neighborShapeId,
+        Shape neighborShape
     ) {
         this.shape = Objects.requireNonNull(shape);
         this.relationshipType = Objects.requireNonNull(relationshipType);
@@ -153,8 +142,13 @@ public final class Relationship {
 
     @Override
     public String toString() {
-        return String.format("[Relationship shape=\"%s\" type=\"%s\" neighbor=\"%s\" neighborPresent=%b]",
-                shape.getId(), relationshipType, neighborShapeId, neighborShape != null);
+        return String.format(
+            "[Relationship shape=\"%s\" type=\"%s\" neighbor=\"%s\" neighborPresent=%b]",
+            shape.getId(),
+            relationshipType,
+            neighborShapeId,
+            neighborShape != null
+        );
     }
 
     @Override
@@ -164,9 +158,9 @@ public final class Relationship {
         }
         Relationship otherRelationship = (Relationship) other;
         return shape.equals(otherRelationship.shape)
-                && relationshipType.equals(otherRelationship.relationshipType)
-                && neighborShapeId.equals(otherRelationship.neighborShapeId)
-                && Objects.equals(neighborShape, otherRelationship.neighborShape);
+            && relationshipType.equals(otherRelationship.relationshipType)
+            && neighborShapeId.equals(otherRelationship.neighborShapeId)
+            && Objects.equals(neighborShape, otherRelationship.neighborShape);
     }
 
     @Override

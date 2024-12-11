@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,8 +13,8 @@ public class ReservedWordsBuilderTest {
     @Test
     public void loadsWords() {
         ReservedWords words = new ReservedWordsBuilder()
-                .loadWords(getClass().getResource("words.txt"))
-                .build();
+            .loadWords(getClass().getResource("words.txt"))
+            .build();
 
         basicWordTestTest(words, "_");
         assertThat(words.escape("Boolean"), equalTo("Boolean"));
@@ -27,8 +31,8 @@ public class ReservedWordsBuilderTest {
     @Test
     public void loadsCaseInsensitiveWords() {
         ReservedWords words = new ReservedWordsBuilder()
-                .loadCaseInsensitiveWords(getClass().getResource("words.txt"))
-                .build();
+            .loadCaseInsensitiveWords(getClass().getResource("words.txt"))
+            .build();
 
         basicWordTestTest(words, "_");
         assertThat(words.escape("Boolean"), equalTo("_Boolean"));
@@ -37,8 +41,8 @@ public class ReservedWordsBuilderTest {
     @Test
     public void loadsWordsWithCustomEscaper() {
         ReservedWords words = new ReservedWordsBuilder()
-                .loadWords(getClass().getResource("words.txt"), word -> "$" + word)
-                .build();
+            .loadWords(getClass().getResource("words.txt"), word -> "$" + word)
+            .build();
 
         basicWordTestTest(words, "$");
         assertThat(words.escape("Boolean"), equalTo("Boolean"));
@@ -47,8 +51,8 @@ public class ReservedWordsBuilderTest {
     @Test
     public void loadsCaseInsensitiveWordsWithCustomEscaper() {
         ReservedWords words = new ReservedWordsBuilder()
-                .loadCaseInsensitiveWords(getClass().getResource("words.txt"), word -> "$" + word)
-                .build();
+            .loadCaseInsensitiveWords(getClass().getResource("words.txt"), word -> "$" + word)
+            .build();
 
         basicWordTestTest(words, "$");
         assertThat(words.escape("Boolean"), equalTo("$Boolean"));

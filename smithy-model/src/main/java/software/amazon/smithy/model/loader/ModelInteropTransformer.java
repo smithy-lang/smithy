@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -60,14 +49,15 @@ final class ModelInteropTransformer {
 
     /** Shape types in Smithy 1.0 that had a default value. */
     private static final EnumSet<ShapeType> HAD_DEFAULT_VALUE_IN_1_0 = EnumSet.of(
-            ShapeType.BYTE,
-            ShapeType.SHORT,
-            ShapeType.INTEGER,
-            ShapeType.LONG,
-            ShapeType.FLOAT,
-            ShapeType.DOUBLE,
-            ShapeType.BOOLEAN,
-            ShapeType.INT_ENUM); // intEnum is actually an integer in v1, but the ShapeType is different.
+        ShapeType.BYTE,
+        ShapeType.SHORT,
+        ShapeType.INTEGER,
+        ShapeType.LONG,
+        ShapeType.FLOAT,
+        ShapeType.DOUBLE,
+        ShapeType.BOOLEAN,
+        ShapeType.INT_ENUM
+    ); // intEnum is actually an integer in v1, but the ShapeType is different.
 
     private final Model model;
     private final List<ValidationEvent> events;
@@ -165,7 +155,7 @@ final class ModelInteropTransformer {
 
     private boolean v2ShapeNeedsBoxTrait(MemberShape member, Shape target) {
         return isMemberInherentlyBoxedInV1(member)
-               && memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target);
+            && memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target);
     }
 
     // Only apply box to members where the trait can be applied.
@@ -191,9 +181,9 @@ final class ModelInteropTransformer {
     }
 
     static void patchShapeBeforeBuilding(
-            LoadOperation.DefineShape defineShape,
-            AbstractShapeBuilder<?, ?> builder,
-            List<ValidationEvent> events
+        LoadOperation.DefineShape defineShape,
+        AbstractShapeBuilder<?, ?> builder,
+        List<ValidationEvent> events
     ) {
         handleBoxing(defineShape, builder);
     }
@@ -218,7 +208,7 @@ final class ModelInteropTransformer {
             Trait defaultTrait = builder.getAllTraits().get(DefaultTrait.ID);
             Node defaultValue = defaultTrait == null ? null : defaultTrait.toNode();
             boolean isDefaultZeroValue = NullableIndex
-                    .isDefaultZeroValueOfTypeInV1(defaultValue, defineShape.getShapeType());
+                .isDefaultZeroValueOfTypeInV1(defaultValue, defineShape.getShapeType());
             if (!isDefaultZeroValue) {
                 builder.addTrait(new BoxTrait());
             }

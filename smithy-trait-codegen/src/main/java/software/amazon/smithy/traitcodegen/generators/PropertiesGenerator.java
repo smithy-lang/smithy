@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -99,9 +98,11 @@ final class PropertiesGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             for (MemberShape member : shape.members()) {
-                writer.write("private final $T $L;",
-                        symbolProvider.toSymbol(member),
-                        symbolProvider.toMemberName(member));
+                writer.write(
+                    "private final $T $L;",
+                    symbolProvider.toSymbol(member),
+                    symbolProvider.toMemberName(member)
+                );
             }
             return null;
         }

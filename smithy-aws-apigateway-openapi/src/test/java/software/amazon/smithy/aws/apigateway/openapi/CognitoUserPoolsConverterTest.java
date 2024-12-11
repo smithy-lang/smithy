@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Assertions;
@@ -15,15 +19,18 @@ public class CognitoUserPoolsConverterTest {
     @Test
     public void addsAwsV4() {
         Model model = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("cognito-user-pools-security.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("cognito-user-pools-security.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create().config(config).convert(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("cognito-user-pools-security.openapi.json")));
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cognito-user-pools-security.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -32,10 +39,10 @@ public class CognitoUserPoolsConverterTest {
     public void requiresProviderArns() {
         Assertions.assertThrows(ValidatedResultException.class, () -> {
             Model model = Model.assembler(getClass().getClassLoader())
-                    .discoverModels(getClass().getClassLoader())
-                    .addImport(getClass().getResource("invalid-cognito-user-pools-security.json"))
-                    .assemble()
-                    .unwrap();
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("invalid-cognito-user-pools-security.json"))
+                .assemble()
+                .unwrap();
             OpenApiConfig config = new OpenApiConfig();
             config.setService(ShapeId.from("smithy.example#Service"));
             OpenApiConverter.create().config(config).convert(model);

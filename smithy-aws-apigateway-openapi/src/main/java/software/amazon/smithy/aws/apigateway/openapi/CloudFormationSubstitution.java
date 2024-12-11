@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.ArrayDeque;
@@ -56,12 +45,13 @@ final class CloudFormationSubstitution implements ApiGatewayMapper {
      * in this list.
      */
     private static final List<String> PATHS = Arrays.asList(
-            "components/securitySchemes/*/x-amazon-apigateway-authorizer/providerARNs/*",
-            "components/securitySchemes/*/x-amazon-apigateway-authorizer/authorizerCredentials",
-            "components/securitySchemes/*/x-amazon-apigateway-authorizer/authorizerUri",
-            "paths/*/*/x-amazon-apigateway-integration/connectionId",
-            "paths/*/*/x-amazon-apigateway-integration/credentials",
-            "paths/*/*/x-amazon-apigateway-integration/uri");
+        "components/securitySchemes/*/x-amazon-apigateway-authorizer/providerARNs/*",
+        "components/securitySchemes/*/x-amazon-apigateway-authorizer/authorizerCredentials",
+        "components/securitySchemes/*/x-amazon-apigateway-authorizer/authorizerUri",
+        "paths/*/*/x-amazon-apigateway-integration/connectionId",
+        "paths/*/*/x-amazon-apigateway-integration/credentials",
+        "paths/*/*/x-amazon-apigateway-integration/uri"
+    );
 
     @Override
     public List<ApiGatewayConfig.ApiType> getApiTypes() {
@@ -123,9 +113,13 @@ final class CloudFormationSubstitution implements ApiGatewayMapper {
         @Override
         public Node stringNode(StringNode node) {
             if (SUBSTITUTION_PATTERN.matcher(node.getValue()).find() && isInPath()) {
-                LOGGER.fine(() -> String.format(
+                LOGGER.fine(
+                    () -> String.format(
                         "Detected CloudFormation variable syntax in %s; replacing with a `Fn::Sub` "
-                        + "CloudFormation intrinsic function block", node.getValue()));
+                            + "CloudFormation intrinsic function block",
+                        node.getValue()
+                    )
+                );
                 return Node.objectNode().withMember(SUBSTITUTION_KEY, node);
             }
 

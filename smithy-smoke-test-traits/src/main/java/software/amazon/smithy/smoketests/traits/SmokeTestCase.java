@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.smoketests.traits;
 
 import java.util.ArrayList;
@@ -62,7 +51,6 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
     public static Builder builder() {
         return new Builder();
     }
-
 
     /**
      * Creates a {@link SmokeTestCase} from a {@link Node}.
@@ -154,23 +142,25 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
     @Override
     public Builder toBuilder() {
         return builder()
-                .id(this.getId())
-                .params(this.getParams().orElse(null))
-                .vendorParams(this.getVendorParams().orElse(null))
-                .vendorParamsShape(this.getVendorParamsShape().orElse(null))
-                .expectation(this.getExpectation())
-                .tags(this.getTags());
+            .id(this.getId())
+            .params(this.getParams().orElse(null))
+            .vendorParams(this.getVendorParams().orElse(null))
+            .vendorParamsShape(this.getVendorParamsShape().orElse(null))
+            .expectation(this.getExpectation())
+            .tags(this.getTags());
     }
 
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember(ID, this.getId())
-                .withOptionalMember(PARAMS, this.getParams())
-                .withOptionalMember(VENDOR_PARAMS, this.getVendorParams())
-                .withOptionalMember(VENDOR_PARAMS_SHAPE,
-                        this.getVendorParamsShape().map(ShapeId::toString).map(Node::from))
-                .withMember(EXPECT, this.getExpectation());
+            .withMember(ID, this.getId())
+            .withOptionalMember(PARAMS, this.getParams())
+            .withOptionalMember(VENDOR_PARAMS, this.getVendorParams())
+            .withOptionalMember(
+                VENDOR_PARAMS_SHAPE,
+                this.getVendorParamsShape().map(ShapeId::toString).map(Node::from)
+            )
+            .withMember(EXPECT, this.getExpectation());
 
         if (!this.tags.isEmpty()) {
             builder.withMember(TAGS, ArrayNode.fromStrings(tags));

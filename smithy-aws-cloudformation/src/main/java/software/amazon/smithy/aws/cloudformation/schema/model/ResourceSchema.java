@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.model;
 
 import static java.lang.String.format;
@@ -67,8 +56,13 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         description = SmithyBuilder.requiredState("description", builder.description);
 
         if (builder.properties.isEmpty()) {
-            throw new CfnException(format("Expected CloudFormation resource %s to have properties, "
-                    + "found none", typeName));
+            throw new CfnException(
+                format(
+                    "Expected CloudFormation resource %s to have properties, "
+                        + "found none",
+                    typeName
+                )
+            );
         }
         properties.putAll(builder.properties);
 
@@ -148,22 +142,22 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
     @Override
     public Builder toBuilder() {
         return builder()
-                .typeName(typeName)
-                .description(description)
-                .sourceUrl(sourceUrl)
-                .documentationUrl(documentationUrl)
-                .definitions(definitions)
-                .properties(properties)
-                .required(required)
-                .readOnlyProperties(readOnlyProperties)
-                .writeOnlyProperties(writeOnlyProperties)
-                .primaryIdentifier(primaryIdentifier)
-                .createOnlyProperties(createOnlyProperties)
-                .deprecatedProperties(deprecatedProperties)
-                .additionalIdentifiers(additionalIdentifiers)
-                .handlers(handlers)
-                .remotes(remotes)
-                .tagging(tagging);
+            .typeName(typeName)
+            .description(description)
+            .sourceUrl(sourceUrl)
+            .documentationUrl(documentationUrl)
+            .definitions(definitions)
+            .properties(properties)
+            .required(required)
+            .readOnlyProperties(readOnlyProperties)
+            .writeOnlyProperties(writeOnlyProperties)
+            .primaryIdentifier(primaryIdentifier)
+            .createOnlyProperties(createOnlyProperties)
+            .deprecatedProperties(deprecatedProperties)
+            .additionalIdentifiers(additionalIdentifiers)
+            .handlers(handlers)
+            .remotes(remotes)
+            .tagging(tagging);
     }
 
     public static ResourceSchema fromNode(Node node) {

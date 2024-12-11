@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,8 +46,13 @@ public class IdlInternalTokenizerTest {
 
         ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, tokenizer::expectAndSkipSpaces);
 
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected SPACE(' ') but found "
-                                              + "IDENTIFIER('abc')"));
+        assertThat(
+            e.getMessage(),
+            startsWith(
+                "Syntax error at line 1, column 1: Expected SPACE(' ') but found "
+                    + "IDENTIFIER('abc')"
+            )
+        );
     }
 
     @Test
@@ -87,17 +81,26 @@ public class IdlInternalTokenizerTest {
     public void throwsWhenExpectedWhitespaceNotFound() {
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "hi");
 
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         tokenizer::expectAndSkipWhitespace);
+        ModelSyntaxException e = Assertions.assertThrows(
+            ModelSyntaxException.class,
+            tokenizer::expectAndSkipWhitespace
+        );
 
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected one or more whitespace "
-                                              + "characters, but found IDENTIFIER('hi')"));
+        assertThat(
+            e.getMessage(),
+            startsWith(
+                "Syntax error at line 1, column 1: Expected one or more whitespace "
+                    + "characters, but found IDENTIFIER('hi')"
+            )
+        );
     }
 
     @Test
     public void skipDocsAndWhitespace() {
-        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy",
-                                                                  " \n\n /// Docs\n/// Docs\n\n hi");
+        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer(
+            "a.smithy",
+            " \n\n /// Docs\n/// Docs\n\n hi"
+        );
 
         tokenizer.skipWsAndDocs();
 
@@ -121,11 +124,18 @@ public class IdlInternalTokenizerTest {
     public void throwsWhenBrNotFound() {
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "Hi");
 
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         tokenizer::expectAndSkipBr);
+        ModelSyntaxException e = Assertions.assertThrows(
+            ModelSyntaxException.class,
+            tokenizer::expectAndSkipBr
+        );
 
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected a line break, but "
-                                              + "found IDENTIFIER('Hi')"));
+        assertThat(
+            e.getMessage(),
+            startsWith(
+                "Syntax error at line 1, column 1: Expected a line break, but "
+                    + "found IDENTIFIER('Hi')"
+            )
+        );
     }
 
     @Test
@@ -146,11 +156,18 @@ public class IdlInternalTokenizerTest {
     public void failsForSingleExpectedToken() {
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "Hi");
 
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         () -> tokenizer.expect(IdlToken.NUMBER));
+        ModelSyntaxException e = Assertions.assertThrows(
+            ModelSyntaxException.class,
+            () -> tokenizer.expect(IdlToken.NUMBER)
+        );
 
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected NUMBER but "
-                                              + "found IDENTIFIER('Hi')"));
+        assertThat(
+            e.getMessage(),
+            startsWith(
+                "Syntax error at line 1, column 1: Expected NUMBER but "
+                    + "found IDENTIFIER('Hi')"
+            )
+        );
     }
 
     @Test
@@ -164,19 +181,26 @@ public class IdlInternalTokenizerTest {
     public void failsForMultipleExpectedTokens() {
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "Hi");
 
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         () -> tokenizer.expect(IdlToken.NUMBER, IdlToken.LBRACE));
+        ModelSyntaxException e = Assertions.assertThrows(
+            ModelSyntaxException.class,
+            () -> tokenizer.expect(IdlToken.NUMBER, IdlToken.LBRACE)
+        );
 
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected one of NUMBER, LBRACE('{'); "
-                                              + "but found IDENTIFIER('Hi')"));
+        assertThat(
+            e.getMessage(),
+            startsWith(
+                "Syntax error at line 1, column 1: Expected one of NUMBER, LBRACE('{'); "
+                    + "but found IDENTIFIER('Hi')"
+            )
+        );
     }
 
     @Test
     public void returnsCapturedDocsInRange() {
         String model = "/// Hi\n"
-                       + "/// There\n"
-                       + "/// 123\n"
-                       + "/// 456\n";
+            + "/// There\n"
+            + "/// 123\n"
+            + "/// 456\n";
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", model);
 
         tokenizer.skipWsAndDocs();
@@ -188,69 +212,69 @@ public class IdlInternalTokenizerTest {
 
     public static Stream<Arguments> textBlockTests() {
         return Stream.of(
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "    Hello\n"
-                        + "        - Indented\"\"\"\n",
-                        "Hello\n    - Indented"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "    Hello\n"
-                        + "        - Indented\n"
-                        + "    \"\"\"\n",
-                        "Hello\n    - Indented\n"
-                ),
-                Arguments.of(
-                    "\"\"\"\n"
+            Arguments.of(
+                "\"\"\"\n"
+                    + "    Hello\n"
+                    + "        - Indented\"\"\"\n",
+                "Hello\n    - Indented"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "    Hello\n"
+                    + "        - Indented\n"
+                    + "    \"\"\"\n",
+                "Hello\n    - Indented\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
                     + "    Hello\n"
                     + "        - Indented\n"
                     + "\"\"\"\n",
-                    "    Hello\n        - Indented\n"
-                ),
-                Arguments.of(
-                    "\"\"\"\n"
+                "    Hello\n        - Indented\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
                     + "    Hello\"\"\"\n",
-                    "Hello"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "    Hello\n"
-                        + "\n"
-                        + "        - Indented\n"
-                        + "\"\"\"\n",
-                        "    Hello\n\n        - Indented\n"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "                        \n" // only WS doesn't influence line length calculations.
-                        + "          Hello\n"
-                        + "                        \n" // only WS doesn't influence line length calculations.
-                        + "          \"\"\"",
-                        "\nHello\n\n"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "\n" // empty lines are incidental whitespace.
-                        + "          Hello\n"
-                        + "                        \n" // only WS doesn't influence line length calculations.
-                        + "          \"\"\"",
-                        "\nHello\n\n"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "\n" // empty lines are incidental whitespace.
-                        + "Hello\n"
-                        + "\n"
-                        + "\n"
-                        + "\"\"\"",
-                        "\nHello\n\n\n"
-                ),
-                Arguments.of(
-                        "\"\"\"\n"
-                        + "\"\"\"",
-                        ""
-                )
+                "Hello"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "    Hello\n"
+                    + "\n"
+                    + "        - Indented\n"
+                    + "\"\"\"\n",
+                "    Hello\n\n        - Indented\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "                        \n" // only WS doesn't influence line length calculations.
+                    + "          Hello\n"
+                    + "                        \n" // only WS doesn't influence line length calculations.
+                    + "          \"\"\"",
+                "\nHello\n\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "\n" // empty lines are incidental whitespace.
+                    + "          Hello\n"
+                    + "                        \n" // only WS doesn't influence line length calculations.
+                    + "          \"\"\"",
+                "\nHello\n\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "\n" // empty lines are incidental whitespace.
+                    + "Hello\n"
+                    + "\n"
+                    + "\n"
+                    + "\"\"\"",
+                "\nHello\n\n\n"
+            ),
+            Arguments.of(
+                "\"\"\"\n"
+                    + "\"\"\"",
+                ""
+            )
         );
     }
 

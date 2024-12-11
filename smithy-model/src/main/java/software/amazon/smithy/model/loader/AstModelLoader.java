@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -83,12 +72,39 @@ final class AstModelLoader {
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
     private static final Set<String> REFERENCE_PROPERTIES = SetUtils.of(TARGET);
     private static final Set<String> OPERATION_PROPERTY_NAMES = SetUtils.of(
-            TYPE, "input", "output", ERRORS, TRAITS, MIXINS);
+        TYPE,
+        "input",
+        "output",
+        ERRORS,
+        TRAITS,
+        MIXINS
+    );
     private static final Set<String> RESOURCE_PROPERTIES = SetUtils.of(
-            TYPE, "create", "read", "update", "delete", "list", "put",
-            "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS, MIXINS);
+        TYPE,
+        "create",
+        "read",
+        "update",
+        "delete",
+        "list",
+        "put",
+        "identifiers",
+        "resources",
+        "operations",
+        "collectionOperations",
+        "properties",
+        TRAITS,
+        MIXINS
+    );
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
-            TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS, MIXINS);
+        TYPE,
+        "version",
+        "operations",
+        "resources",
+        "rename",
+        ERRORS,
+        TRAITS,
+        MIXINS
+    );
 
     private final Version modelVersion;
     private final ObjectNode model;
@@ -207,8 +223,16 @@ final class AstModelLoader {
             // JSON AST model traits are never considered annotation traits, meaning
             // that a null value provided in the AST is not coerced in the same way
             // as an omitted value in the IDL (e.g., "@foo").
-            operations.accept(new LoadOperation.ApplyTrait(modelVersion, traitNode.getKey().getSourceLocation(),
-                                                        id.getNamespace(), id, traitId, traitNode.getValue()));
+            operations.accept(
+                new LoadOperation.ApplyTrait(
+                    modelVersion,
+                    traitNode.getKey().getSourceLocation(),
+                    id.getNamespace(),
+                    id,
+                    traitId,
+                    traitNode.getValue()
+                )
+            );
         }
     }
 
@@ -230,9 +254,9 @@ final class AstModelLoader {
     }
 
     private LoadOperation.DefineShape loadCollection(
-            ShapeId id,
-            ObjectNode node,
-            CollectionShape.Builder<?, ?> builder
+        ShapeId id,
+        ObjectNode node,
+        CollectionShape.Builder<?, ?> builder
     ) {
         LoaderUtils.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES).ifPresent(this::emit);
         applyShapeTraits(id, node);
@@ -263,9 +287,9 @@ final class AstModelLoader {
         LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES).ifPresent(this::emit);
         applyShapeTraits(id, node);
         OperationShape.Builder builder = OperationShape.builder()
-                .id(id)
-                .source(node.getSourceLocation())
-                .addErrors(loadOptionalTargetList(id, node, ERRORS));
+            .id(id)
+            .source(node.getSourceLocation())
+            .addErrors(loadOptionalTargetList(id, node, ERRORS));
         loadOptionalTarget(id, node, "input").ifPresent(builder::input);
         loadOptionalTarget(id, node, "output").ifPresent(builder::output);
         LoadOperation.DefineShape operation = createShape(builder);
@@ -299,13 +323,17 @@ final class AstModelLoader {
         // Load properties and resolve forward references.
         node.getObjectMember("properties").ifPresent(properties -> {
             if (!modelVersion.supportsResourceProperties()) {
-                emit(ValidationEvent.builder()
+                emit(
+                    ValidationEvent.builder()
                         .sourceLocation(properties.getSourceLocation())
                         .id(Validator.MODEL_ERROR)
                         .severity(Severity.ERROR)
-                        .message("Resource properties can only be used with Smithy version 2 or later. "
-                                 + "Attempted to use resource properties with version `" + modelVersion + "`.")
-                        .build());
+                        .message(
+                            "Resource properties can only be used with Smithy version 2 or later. "
+                                + "Attempted to use resource properties with version `" + modelVersion + "`."
+                        )
+                        .build()
+                );
             }
             for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
@@ -344,7 +372,10 @@ final class AstModelLoader {
     }
 
     private LoadOperation.DefineShape loadSimpleShape(
-            ShapeId id, ObjectNode node, AbstractShapeBuilder<?, ?> builder) {
+        ShapeId id,
+        ObjectNode node,
+        AbstractShapeBuilder<?, ?> builder
+    ) {
         LoaderUtils.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES).ifPresent(this::emit);
         applyShapeTraits(id, node);
         builder.id(id).source(node.getSourceLocation());
@@ -354,9 +385,9 @@ final class AstModelLoader {
     }
 
     private LoadOperation.DefineShape loadNamedMemberShape(
-            ShapeId id,
-            ObjectNode node,
-            AbstractShapeBuilder<?, ?> builder
+        ShapeId id,
+        ObjectNode node,
+        AbstractShapeBuilder<?, ?> builder
     ) {
         LoaderUtils.checkForAdditionalProperties(node, id, NAMED_MEMBER_SHAPE_PROPERTY_NAMES).ifPresent(this::emit);
         builder.id(id).source(node.getSourceLocation());
@@ -369,8 +400,11 @@ final class AstModelLoader {
         applyShapeTraits(operation.toShapeId(), node);
         ObjectNode memberObject = node.getObjectMember(MEMBERS).orElse(Node.objectNode());
         for (Map.Entry<String, Node> entry : memberObject.getStringMap().entrySet()) {
-            loadMember(operation, operation.toShapeId().withMember(entry.getKey()),
-                       entry.getValue().expectObjectNode());
+            loadMember(
+                operation,
+                operation.toShapeId().withMember(entry.getKey()),
+                entry.getValue().expectObjectNode()
+            );
         }
         addMixins(operation, node);
     }

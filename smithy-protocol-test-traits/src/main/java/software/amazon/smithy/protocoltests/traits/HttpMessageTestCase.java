@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
@@ -172,14 +161,14 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember(ID, getId())
-                .withMember(PROTOCOL, getProtocol().toString())
-                .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
-                .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(ShapeId::toString).map(Node::from))
-                .withOptionalMember(BODY, getBody().map(Node::from))
-                .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from))
-                .withOptionalMember(APPLIES_TO, getAppliesTo())
-                .withOptionalMember(VENDOR_PARAMS_SHAPE, getVendorParamsShape().map(ShapeId::toString).map(Node::from));
+            .withMember(ID, getId())
+            .withMember(PROTOCOL, getProtocol().toString())
+            .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
+            .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(ShapeId::toString).map(Node::from))
+            .withOptionalMember(BODY, getBody().map(Node::from))
+            .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from))
+            .withOptionalMember(APPLIES_TO, getAppliesTo())
+            .withOptionalMember(VENDOR_PARAMS_SHAPE, getVendorParamsShape().map(ShapeId::toString).map(Node::from));
 
         if (!headers.isEmpty()) {
             builder.withMember(HEADERS, ObjectNode.fromStringMap(getHeaders()));
@@ -226,20 +215,20 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
 
     void updateBuilder(Builder<?, ?> builder) {
         builder
-                .id(id)
-                .headers(headers)
-                .forbidHeaders(forbidHeaders)
-                .requireHeaders(requireHeaders)
-                .params(params)
-                .vendorParamsShape(vendorParamsShape)
-                .vendorParams(vendorParams)
-                .documentation(documentation)
-                .authScheme(authScheme)
-                .protocol(protocol)
-                .body(body)
-                .bodyMediaType(bodyMediaType)
-                .tags(tags)
-                .appliesTo(appliesTo);
+            .id(id)
+            .headers(headers)
+            .forbidHeaders(forbidHeaders)
+            .requireHeaders(requireHeaders)
+            .params(params)
+            .vendorParamsShape(vendorParamsShape)
+            .vendorParams(vendorParams)
+            .documentation(documentation)
+            .authScheme(authScheme)
+            .protocol(protocol)
+            .body(body)
+            .bodyMediaType(bodyMediaType)
+            .tags(tags)
+            .appliesTo(appliesTo);
     }
 
     abstract static class Builder<B extends Builder<?, ?>, T extends HttpMessageTestCase> implements SmithyBuilder<T> {

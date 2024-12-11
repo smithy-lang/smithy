@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,15 +53,15 @@ public class RemoveShapesTest {
     @BeforeAll
     public static void before() {
         mixinsModel = Model.assembler()
-                .addImport(RemoveShapesTest.class.getResource("mixin-removal/model.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(RemoveShapesTest.class.getResource("mixin-removal/model.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     private void assertContainerMembersAreRemoved(Shape container, List<Shape> members) {
         Model.Builder builder = Model.builder()
-                .addShape(container)
-                .addShape(StringShape.builder().id(STRING_TARGET).build());
+            .addShape(container)
+            .addShape(StringShape.builder().id(STRING_TARGET).build());
         members.forEach(builder::addShape);
         Model model = builder.build();
         ModelTransformer transformer = ModelTransformer.create();
@@ -86,9 +75,9 @@ public class RemoveShapesTest {
     @Test
     public void removesListMemberWhenRemoved() {
         MemberShape member = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$member"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$member"))
+            .target(STRING_TARGET)
+            .build();
         ListShape container = ListShape.builder().id(ShapeId.from("ns.foo#Container")).member(member).build();
         assertContainerMembersAreRemoved(container, Collections.singletonList(member));
     }
@@ -96,13 +85,13 @@ public class RemoveShapesTest {
     @Test
     public void removesMapMembersWhenRemoved() {
         MemberShape key = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$key"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$key"))
+            .target(STRING_TARGET)
+            .build();
         MemberShape value = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$value"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$value"))
+            .target(STRING_TARGET)
+            .build();
         MapShape container = MapShape.builder().id(ShapeId.from("ns.foo#Container")).key(key).value(value).build();
         assertContainerMembersAreRemoved(container, Arrays.asList(key, value));
     }
@@ -110,22 +99,22 @@ public class RemoveShapesTest {
     @Test
     public void removesEnumMembersWhenRemoved() {
         EnumShape container = EnumShape.builder()
-                .id(ShapeId.from("ns.foo#Enum"))
-                .addMember("foo", "foo")
-                .build();
+            .id(ShapeId.from("ns.foo#Enum"))
+            .addMember("foo", "foo")
+            .build();
         assertContainerMembersAreRemoved(container, new ArrayList<>(container.members()));
     }
 
     @Test
     public void notAllEnumMembersCanBeRemoved() {
         EnumShape container = EnumShape.builder()
-                .id(ShapeId.from("ns.foo#Enum"))
-                .addMember("foo", "foo")
-                .build();
+            .id(ShapeId.from("ns.foo#Enum"))
+            .addMember("foo", "foo")
+            .build();
 
         Model.Builder builder = Model.builder()
-                .addShape(container)
-                .addShape(StringShape.builder().id(STRING_TARGET).build());
+            .addShape(container)
+            .addShape(StringShape.builder().id(STRING_TARGET).build());
         container.members().forEach(builder::addShape);
         Model model = builder.build();
         ModelTransformer transformer = ModelTransformer.create();
@@ -135,22 +124,22 @@ public class RemoveShapesTest {
     @Test
     public void removesIntEnumMembersWhenRemoved() {
         IntEnumShape container = IntEnumShape.builder()
-                .id(ShapeId.from("ns.foo#Enum"))
-                .addMember("foo", 1)
-                .build();
+            .id(ShapeId.from("ns.foo#Enum"))
+            .addMember("foo", 1)
+            .build();
         assertContainerMembersAreRemoved(container, new ArrayList<>(container.members()));
     }
 
     @Test
     public void notAllIntEnumMembersCanBeRemoved() {
         IntEnumShape container = IntEnumShape.builder()
-                .id(ShapeId.from("ns.foo#Enum"))
-                .addMember("foo", 1)
-                .build();
+            .id(ShapeId.from("ns.foo#Enum"))
+            .addMember("foo", 1)
+            .build();
 
         Model.Builder builder = Model.builder()
-                .addShape(container)
-                .addShape(StringShape.builder().id(STRING_TARGET).build());
+            .addShape(container)
+            .addShape(StringShape.builder().id(STRING_TARGET).build());
         container.members().forEach(builder::addShape);
         Model model = builder.build();
         ModelTransformer transformer = ModelTransformer.create();
@@ -160,51 +149,51 @@ public class RemoveShapesTest {
     @Test
     public void removesStructureMembersWhenRemoved() {
         MemberShape a = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$a"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$a"))
+            .target(STRING_TARGET)
+            .build();
         MemberShape b = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$b"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$b"))
+            .target(STRING_TARGET)
+            .build();
         StructureShape container = StructureShape.builder()
-                .id(ShapeId.from("ns.foo#Container"))
-                .addMember(a)
-                .addMember(b)
-                .build();
+            .id(ShapeId.from("ns.foo#Container"))
+            .addMember(a)
+            .addMember(b)
+            .build();
         assertContainerMembersAreRemoved(container, Arrays.asList(a, b));
     }
 
     @Test
     public void removesTaggedUnionMembersWhenRemoved() {
         MemberShape a = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$a"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$a"))
+            .target(STRING_TARGET)
+            .build();
         MemberShape b = MemberShape.builder()
-                .id(ShapeId.from("ns.foo#Container$b"))
-                .target(STRING_TARGET)
-                .build();
+            .id(ShapeId.from("ns.foo#Container$b"))
+            .target(STRING_TARGET)
+            .build();
         UnionShape container = UnionShape.builder()
-                .id(ShapeId.from("ns.foo#Container"))
-                .addMember(a)
-                .addMember(b)
-                .build();
+            .id(ShapeId.from("ns.foo#Container"))
+            .addMember(a)
+            .addMember(b)
+            .build();
         assertContainerMembersAreRemoved(container, Arrays.asList(a, b));
     }
 
     @Test
     public void removesOperationsFromResourcesWhenOperationRemoved() {
         ResourceShape container = ResourceShape.builder()
-                .id(ShapeId.from("ns.foo#Container"))
-                .addOperation("ns.foo#A")
-                .create(ShapeId.from("ns.foo#B"))
-                .addOperation("ns.foo#C")
-                .build();
+            .id(ShapeId.from("ns.foo#Container"))
+            .addOperation("ns.foo#A")
+            .create(ShapeId.from("ns.foo#B"))
+            .addOperation("ns.foo#C")
+            .build();
         OperationShape a = OperationShape.builder()
-                .id("ns.foo#A")
-                .addTrait(new ReadonlyTrait())
-                .build();
+            .id("ns.foo#A")
+            .addTrait(new ReadonlyTrait())
+            .build();
         OperationShape b = OperationShape.builder().id("ns.foo#B").build();
         OperationShape c = OperationShape.builder().id("ns.foo#C").build();
 
@@ -215,19 +204,20 @@ public class RemoveShapesTest {
         assertThat(result.shapes().count(), Matchers.equalTo(2L));
         assertThat(result.getShape(container.getId()), Matchers.not(Optional.empty()));
         assertThat(result.getShape(c.getId()), Matchers.not(Optional.empty()));
-        assertThat(result.expectShape(container.getId()).asResourceShape().get().getOperations(),
-                   Matchers.contains(c.getId()));
+        assertThat(
+            result.expectShape(container.getId()).asResourceShape().get().getOperations(),
+            Matchers.contains(c.getId())
+        );
     }
 
     @Test
     public void removesTraitsFromAuthDefinitionWhenReferenceRemoved() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("remove-shapes.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("remove-shapes.json"))
+            .assemble()
+            .unwrap();
         ShapeId removedId = ShapeId.from("ns.foo#bar");
         Shape removedShape = model.expectShape(removedId);
-
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.removeShapes(model, Collections.singletonList(removedShape));
@@ -242,9 +232,9 @@ public class RemoveShapesTest {
     @Test
     public void removesTraitsFromProtocolDefinitionWhenReferenceRemoved() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("remove-shapes.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("remove-shapes.json"))
+            .assemble()
+            .unwrap();
         ShapeId removedId = ShapeId.from("ns.foo#baz");
         Shape removedShape = model.expectShape(removedId);
 
@@ -262,10 +252,10 @@ public class RemoveShapesTest {
     public void removingShapeUpdatesServiceRename() {
         StringShape string = StringShape.builder().id("example.foo#A").build();
         ServiceShape service = ServiceShape.builder()
-                .id("com.foo#Example")
-                .version("1")
-                .putRename(ShapeId.from("example.foo#A"), "AA")
-                .build();
+            .id("com.foo#Example")
+            .version("1")
+            .putRename(ShapeId.from("example.foo#A"), "AA")
+            .build();
         Model model = Model.builder().addShapes(string, service).build();
 
         ModelTransformer transformer = ModelTransformer.create();
@@ -281,27 +271,27 @@ public class RemoveShapesTest {
         Model.Builder builder = Model.builder();
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         StructureShape mixin1 = StructureShape.builder()
-                .id("smithy.example#Mixin1")
-                .addTrait(MixinTrait.builder().build())
-                .addMember("a", string.getId())
-                .build();
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
         StructureShape mixin2 = StructureShape.builder()
-                .id("smithy.example#Mixin2")
-                .addMember("b", string.getId())
-                .addTrait(MixinTrait.builder().build())
-                .build();
+            .id("smithy.example#Mixin2")
+            .addMember("b", string.getId())
+            .addTrait(MixinTrait.builder().build())
+            .build();
         StructureShape mixin3 = StructureShape.builder()
-                .id("smithy.example#Mixin3")
-                .addMember("c", string.getId())
-                .addTrait(MixinTrait.builder().build())
-                .addMixin(mixin2)
-                .build();
+            .id("smithy.example#Mixin3")
+            .addMember("c", string.getId())
+            .addTrait(MixinTrait.builder().build())
+            .addMixin(mixin2)
+            .build();
         StructureShape concrete = StructureShape.builder()
-                .id("smithy.example#Concrete")
-                .addMember("d", string.getId())
-                .addMixin(mixin1)
-                .addMixin(mixin3)
-                .build();
+            .id("smithy.example#Concrete")
+            .addMember("d", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin3)
+            .build();
         builder.addShapes(mixin1, mixin2, mixin3, concrete);
         Model model = builder.build();
 
@@ -334,28 +324,30 @@ public class RemoveShapesTest {
 
         Model result = ModelTransformer.create().removeShapes(start, shapesToRemove);
         Model expected = Model.assembler()
-                .addImport(RemoveShapesTest.class.getResource("mixin-removal/" + mixinFile))
-                .assemble()
-                .unwrap();
+            .addImport(RemoveShapesTest.class.getResource("mixin-removal/" + mixinFile))
+            .assemble()
+            .unwrap();
         ModelSerializer serializer = ModelSerializer.builder().build();
 
         Node.assertEquals(serializer.serialize(result), serializer.serialize(expected));
     }
 
     public static Collection<Object[]> removeMixinData() {
-        return Arrays.asList(new Object[][] {
-            { "without-a.smithy", new String[] {"A"}},
-            { "without-a2.smithy", new String[] {"A2"}},
-            { "without-a3.smithy", new String[] {"A3"}},
-            { "without-a-a2.smithy", new String[] {"A", "A2"}},
-            { "without-a-a2-a3.smithy", new String[] {"A", "A2", "A3"}},
-            { "without-a-a2-a3-b-b2-b3.smithy", new String[] {"A", "A2", "A3", "B", "B2", "B3"}},
-            { "without-a-b.smithy", new String[] {"A", "B"}},
-            { "without-b.smithy", new String[] {"B"}},
-            { "without-b2.smithy", new String[] {"B2"}},
-            { "without-b3.smithy", new String[] {"B3"}},
-            { "without-c.smithy", new String[] {"C"}},
-            { "without-d.smithy", new String[] {"D"}}
-        });
+        return Arrays.asList(
+            new Object[][]{
+                {"without-a.smithy", new String[]{"A"}},
+                {"without-a2.smithy", new String[]{"A2"}},
+                {"without-a3.smithy", new String[]{"A3"}},
+                {"without-a-a2.smithy", new String[]{"A", "A2"}},
+                {"without-a-a2-a3.smithy", new String[]{"A", "A2", "A3"}},
+                {"without-a-a2-a3-b-b2-b3.smithy", new String[]{"A", "A2", "A3", "B", "B2", "B3"}},
+                {"without-a-b.smithy", new String[]{"A", "B"}},
+                {"without-b.smithy", new String[]{"B"}},
+                {"without-b2.smithy", new String[]{"B2"}},
+                {"without-b3.smithy", new String[]{"B3"}},
+                {"without-c.smithy", new String[]{"C"}},
+                {"without-d.smithy", new String[]{"D"}}
+            }
+        );
     }
 }

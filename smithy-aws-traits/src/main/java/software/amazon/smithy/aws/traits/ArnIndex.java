@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import static java.util.Collections.unmodifiableMap;
@@ -54,12 +43,14 @@ public final class ArnIndex implements KnowledgeIndex {
         // Pre-compute all of the ARN templates in a service shape.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         List<ServiceShape> services = model.shapes(ServiceShape.class)
-                .filter(shape -> shape.hasTrait(ServiceTrait.class))
-                .collect(Collectors.toList());
+            .filter(shape -> shape.hasTrait(ServiceTrait.class))
+            .collect(Collectors.toList());
 
-        templates = unmodifiableMap(services.stream()
+        templates = unmodifiableMap(
+            services.stream()
                 .map(service -> compileServiceArns(topDownIndex, service))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight))
+        );
 
         // Pre-compute all effective ARNs in each service.
         IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
@@ -84,7 +75,10 @@ public final class ArnIndex implements KnowledgeIndex {
     }
 
     private void compileEffectiveArns(
-            TopDownIndex index, IdentifierBindingIndex bindings, ServiceShape service) {
+        TopDownIndex index,
+        IdentifierBindingIndex bindings,
+        ServiceShape service
+    ) {
         Map<ShapeId, ArnTrait> operationMappings = new HashMap<>();
         effectiveArns.put(service.getId(), operationMappings);
 
@@ -103,7 +97,7 @@ public final class ArnIndex implements KnowledgeIndex {
                     for (ResourceShape resource : index.getContainedResources(service)) {
                         if (resource.getResources().contains(entry.getKey())) {
                             resource.getTrait(ArnTrait.class)
-                                    .ifPresent(trait -> operationMappings.put(operation.getId(), trait));
+                                .ifPresent(trait -> operationMappings.put(operation.getId(), trait));
                         }
                     }
                 }
@@ -120,8 +114,8 @@ public final class ArnIndex implements KnowledgeIndex {
      */
     public String getServiceArnNamespace(ToShapeId serviceId) {
         return arnServices.containsKey(serviceId.toShapeId())
-               ? arnServices.get(serviceId.toShapeId())
-               : serviceId.toShapeId().getName().toLowerCase(Locale.US);
+            ? arnServices.get(serviceId.toShapeId())
+            : serviceId.toShapeId().getName().toLowerCase(Locale.US);
     }
 
     /**
@@ -150,7 +144,7 @@ public final class ArnIndex implements KnowledgeIndex {
      */
     public Optional<ArnTrait> getEffectiveOperationArn(ToShapeId service, ToShapeId operation) {
         return Optional.ofNullable(effectiveArns.get(service.toShapeId()))
-                .flatMap(operationArns -> Optional.ofNullable(operationArns.get(operation.toShapeId())));
+            .flatMap(operationArns -> Optional.ofNullable(operationArns.get(operation.toShapeId())));
     }
 
     /**
@@ -176,24 +170,24 @@ public final class ArnIndex implements KnowledgeIndex {
      */
     public Optional<String> getFullResourceArnTemplate(ToShapeId service, ToShapeId resource) {
         return Optional.ofNullable(getServiceResourceArns(service).get(resource.toShapeId()))
-                .map(trait -> {
-                    StringBuilder result = new StringBuilder();
-                    if (!trait.isAbsolute()) {
-                        result.append("arn:")
-                                .append("{AWS::Partition}:")
-                                .append(getServiceArnNamespace(service))
-                                .append(":");
-                        if (!trait.isNoRegion()) {
-                            result.append("{AWS::Region}");
-                        }
-                        result.append(":");
-                        if (!trait.isNoAccount()) {
-                            result.append("{AWS::AccountId}");
-                        }
-                        result.append(":");
+            .map(trait -> {
+                StringBuilder result = new StringBuilder();
+                if (!trait.isAbsolute()) {
+                    result.append("arn:")
+                        .append("{AWS::Partition}:")
+                        .append(getServiceArnNamespace(service))
+                        .append(":");
+                    if (!trait.isNoRegion()) {
+                        result.append("{AWS::Region}");
                     }
+                    result.append(":");
+                    if (!trait.isNoAccount()) {
+                        result.append("{AWS::AccountId}");
+                    }
+                    result.append(":");
+                }
 
-                    return result.append(trait.getTemplate()).toString();
-                });
+                return result.append(trait.getTemplate()).toString();
+            });
     }
 }

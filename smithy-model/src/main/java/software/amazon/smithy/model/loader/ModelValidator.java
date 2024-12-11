@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -66,13 +55,16 @@ final class ModelValidator implements Validator {
     // Lazy initialization holder class idiom to hold a default validator factory.
     private static final class LazyValidatorFactoryHolder {
         static final ValidatorFactory INSTANCE = ValidatorFactory.createServiceFactory(
-                ModelAssembler.class.getClassLoader());
+            ModelAssembler.class.getClassLoader()
+        );
     }
 
     /** If these validators fail, then many others will too. Validate these first. */
     private static final Map<Class<?>, Validator> CORRECTNESS_VALIDATORS = MapUtils.of(
-            TargetValidator.class, new TargetValidator(),
-            ResourceCycleValidator.class, new ResourceCycleValidator()
+        TargetValidator.class,
+        new TargetValidator(),
+        ResourceCycleValidator.class,
+        new ResourceCycleValidator()
     );
 
     private final ValidatorFactory validatorFactory;
@@ -112,7 +104,7 @@ final class ModelValidator implements Validator {
         private final BuilderRef<List<Validator>> criticalValidators = BuilderRef.forList();
         private final BuilderRef<List<ValidationEvent>> includeEvents = BuilderRef.forList();
         private ValidatorFactory validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
-        private Consumer<ValidationEvent> eventListener = event -> { };
+        private Consumer<ValidationEvent> eventListener = event -> {};
         private ValidationEventDecorator validationEventDecorator;
         private boolean legacyValidationMode = false;
 
@@ -156,8 +148,8 @@ final class ModelValidator implements Validator {
          * @return Returns the builder.
          */
         public Builder validatorFactory(
-                ValidatorFactory validatorFactory,
-                ValidationEventDecorator validationEventDecorator
+            ValidatorFactory validatorFactory,
+            ValidationEventDecorator validationEventDecorator
         ) {
             this.validatorFactory = Objects.requireNonNull(validatorFactory);
             this.validationEventDecorator = validationEventDecorator;
@@ -230,9 +222,12 @@ final class ModelValidator implements Validator {
             ModelBasedEventDecorator modelBasedEventDecorator = new ModelBasedEventDecorator();
             ValidatedResult<ValidationEventDecorator> result = modelBasedEventDecorator.createDecorator(model);
             this.validationEventDecorator = result.getResult()
-                    .map(decorator -> ValidationEventDecorator.compose(
-                            ListUtils.of(decorator, validator.validationEventDecorator)))
-                    .orElse(validator.validationEventDecorator);
+                .map(
+                    decorator -> ValidationEventDecorator.compose(
+                        ListUtils.of(decorator, validator.validationEventDecorator)
+                    )
+                )
+                .orElse(validator.validationEventDecorator);
 
             // Events encountered while loading suppressions and overrides have been modified by everything the
             // modelBasedEventDecorator knows about, but has not been modified by any custom decorator (if any).
@@ -255,7 +250,7 @@ final class ModelValidator implements Validator {
         private void loadModelValidators(ValidatorFactory validatorFactory) {
             // Load validators defined in metadata.
             ValidatedResult<List<ValidatorDefinition>> loaded = ValidationLoader
-                    .loadValidators(model.getMetadata());
+                .loadValidators(model.getMetadata());
             pushEvents(loaded.getValidationEvents());
             List<ValidatorDefinition> definitions = loaded.getResult().orElseGet(Collections::emptyList);
             ValidatorFromDefinitionFactory factory = new ValidatorFromDefinitionFactory(validatorFactory);
@@ -275,12 +270,12 @@ final class ModelValidator implements Validator {
         // Unknown validators don't fail the build!
         private static ValidationEvent unknownValidatorError(String name, SourceLocation location) {
             return ValidationEvent.builder()
-                    // Per the spec, the eventID is "UnknownValidator_<validatorName>".
-                    .id("UnknownValidator_" + name)
-                    .severity(Severity.WARNING)
-                    .sourceLocation(location)
-                    .message("Unable to locate a validator named `" + name + "`")
-                    .build();
+                // Per the spec, the eventID is "UnknownValidator_<validatorName>".
+                .id("UnknownValidator_" + name)
+                .severity(Severity.WARNING)
+                .sourceLocation(location)
+                .message("Unable to locate a validator named `" + name + "`")
+                .build();
         }
 
         private void pushEvents(List<ValidationEvent> source) {
@@ -322,10 +317,10 @@ final class ModelValidator implements Validator {
 
         private List<ValidationEvent> streamEvents(Stream<Validator> validators) {
             return validators
-                    .flatMap(validator -> validator.validate(model).stream())
-                    .filter(this::filterPrelude)
-                    .map(this::updateAndEmitEvent)
-                    .collect(Collectors.toList());
+                .flatMap(validator -> validator.validate(model).stream())
+                .filter(this::filterPrelude)
+                .map(this::updateAndEmitEvent)
+                .collect(Collectors.toList());
         }
 
         private boolean filterPrelude(ValidationEvent event) {
@@ -333,8 +328,8 @@ final class ModelValidator implements Validator {
             // This prevents custom validators from unnecessarily needing to worry about prelude shapes and trait
             // definitions, but still allows for validation events when the prelude is broken.
             return event.getSeverity() == Severity.ERROR || !event.getShapeId()
-                    .filter(Prelude::isPreludeShape)
-                    .isPresent();
+                .filter(Prelude::isPreludeShape)
+                .isPresent();
         }
     }
 }

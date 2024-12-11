@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import java.util.ArrayList;
@@ -49,37 +38,37 @@ final class Parser {
 
     /** Tokens that can start an expression. */
     private static final TokenType[] NUD_TOKENS = {
-            TokenType.CURRENT,
-            TokenType.IDENTIFIER,
-            TokenType.LITERAL,
-            TokenType.STAR,
-            TokenType.LBRACE,
-            TokenType.LBRACKET,
-            TokenType.FLATTEN,
-            TokenType.EXPREF,
-            TokenType.NOT,
-            TokenType.FILTER,
-            TokenType.LPAREN
+        TokenType.CURRENT,
+        TokenType.IDENTIFIER,
+        TokenType.LITERAL,
+        TokenType.STAR,
+        TokenType.LBRACE,
+        TokenType.LBRACKET,
+        TokenType.FLATTEN,
+        TokenType.EXPREF,
+        TokenType.NOT,
+        TokenType.FILTER,
+        TokenType.LPAREN
     };
 
     /** Tokens that can follow led tokens. */
     private static final TokenType[] LED_TOKENS = {
-            TokenType.DOT,
-            TokenType.LBRACKET,
-            TokenType.OR,
-            TokenType.AND,
-            TokenType.PIPE,
-            TokenType.FLATTEN,
-            TokenType.FILTER,
-            TokenType.EQUAL,
-            TokenType.NOT_EQUAL,
-            TokenType.GREATER_THAN,
-            TokenType.GREATER_THAN_EQUAL,
-            TokenType.LESS_THAN,
-            TokenType.LESS_THAN_EQUAL,
-            // While not found in the led() method, a led LPAREN is handled
-            // when parsing a nud identifier because it creates a function.
-            TokenType.LPAREN
+        TokenType.DOT,
+        TokenType.LBRACKET,
+        TokenType.OR,
+        TokenType.AND,
+        TokenType.PIPE,
+        TokenType.FLATTEN,
+        TokenType.FILTER,
+        TokenType.EQUAL,
+        TokenType.NOT_EQUAL,
+        TokenType.GREATER_THAN,
+        TokenType.GREATER_THAN_EQUAL,
+        TokenType.LESS_THAN,
+        TokenType.LESS_THAN_EQUAL,
+        // While not found in the led() method, a led LPAREN is handled
+        // when parsing a nud identifier because it creates a function.
+        TokenType.LPAREN
     };
 
     private final String expression;
@@ -224,7 +213,8 @@ final class Parser {
         Integer[] parts = new Integer[]{null, null, 1}; // start, stop, step (defaults to 1)
         int pos = 0;
 
-        loop: while (true) {
+        loop:
+        while (true) {
             Token next = iterator.expectPeek(TokenType.NUMBER, TokenType.RBRACKET, TokenType.COLON);
             switch (next.type) {
                 case NUMBER:
@@ -371,10 +361,11 @@ final class Parser {
     // Parses the right hand side of a ".".
     private JmespathExpression parseDotRhs(int lbp) {
         Token token = iterator.expectPeek(
-                TokenType.LBRACKET,
-                TokenType.LBRACE,
-                TokenType.STAR,
-                TokenType.IDENTIFIER);
+            TokenType.LBRACKET,
+            TokenType.LBRACE,
+            TokenType.STAR,
+            TokenType.IDENTIFIER
+        );
 
         if (token.type == TokenType.LBRACKET) {
             // Skip '[', parse the list.
@@ -396,10 +387,11 @@ final class Parser {
         iterator.expect(TokenType.RBRACKET);
         JmespathExpression conditionRhs = parseProjectionRhs(TokenType.FILTER.lbp);
         return new FilterProjectionExpression(
-                left,
-                condition,
-                conditionRhs,
-                condition.getLine(),
-                condition.getColumn());
+            left,
+            condition,
+            conditionRhs,
+            condition.getLine(),
+            condition.getColumn()
+        );
     }
 }

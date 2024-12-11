@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -38,8 +37,10 @@ abstract class TraitVisitor<R> extends ShapeVisitor.DataShapeVisitor<R> {
 
     @Override
     public R booleanShape(BooleanShape shape) {
-        throw new UnsupportedOperationException("Boolean traits not supported. Consider using an "
-                + " Annotation Trait.");
+        throw new UnsupportedOperationException(
+            "Boolean traits not supported. Consider using an "
+                + " Annotation Trait."
+        );
     }
 
     @Override
@@ -84,20 +85,26 @@ abstract class TraitVisitor<R> extends ShapeVisitor.DataShapeVisitor<R> {
 
     @Override
     public R unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Property generator does not support shape "
-                + shape + " of type " + shape.getType());
+        throw new UnsupportedOperationException(
+            "Property generator does not support shape "
+                + shape + " of type " + shape.getType()
+        );
     }
 
     @Override
     public R blobShape(BlobShape shape) {
-        throw new UnsupportedOperationException("Property generator does not support shape "
-                + shape + " of type " + shape.getType());
+        throw new UnsupportedOperationException(
+            "Property generator does not support shape "
+                + shape + " of type " + shape.getType()
+        );
     }
 
     @Override
     public R memberShape(MemberShape shape) {
-        throw new IllegalArgumentException("Property generator cannot visit member shapes. Attempted "
-                + "to visit " + shape);
+        throw new IllegalArgumentException(
+            "Property generator cannot visit member shapes. Attempted "
+                + "to visit " + shape
+        );
     }
 
     protected abstract R numberShape(NumberShape shape);

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -61,9 +50,9 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(MemberShape.class)
-                .filter(change -> !change.getOldShape().getTarget().equals(change.getNewShape().getTarget()))
-                .map(change -> createChangeEvent(differences, change))
-                .collect(Collectors.toList());
+            .filter(change -> !change.getOldShape().getTarget().equals(change.getNewShape().getTarget()))
+            .map(change -> createChangeEvent(differences, change))
+            .collect(Collectors.toList());
     }
 
     private ValidationEvent createChangeEvent(Differences differences, ChangedShape<MemberShape> change) {
@@ -80,11 +69,11 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         }
 
         return ValidationEvent.builder()
-                .severity(severity)
-                .id(getEventId())
-                .shape(change.getNewShape())
-                .message(message)
-                .build();
+            .severity(severity)
+            .id(getEventId())
+            .shape(change.getNewShape())
+            .message(message)
+            .build();
     }
 
     private Shape getShapeTarget(Model model, ShapeId id) {
@@ -97,8 +86,13 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         }
 
         if (oldShape.getType() != newShape.getType()) {
-            return ListUtils.of(String.format("The type of the targeted shape changed from %s to %s",
-                                              oldShape.getType(), newShape.getType()));
+            return ListUtils.of(
+                String.format(
+                    "The type of the targeted shape changed from %s to %s",
+                    oldShape.getType(),
+                    newShape.getType()
+                )
+            );
         }
 
         if (!(oldShape instanceof SimpleShape || oldShape instanceof CollectionShape || oldShape instanceof MapShape)) {
@@ -108,9 +102,13 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         List<String> results = new ArrayList<>();
         for (ShapeId significantCodegenTrait : SIGNIFICANT_CODEGEN_TRAITS) {
             if (oldShape.hasTrait(significantCodegenTrait)) {
-                results.add(String.format("The `%s` trait was found on the target, so the name of the targeted "
-                                          + "shape matters for codegen",
-                                          significantCodegenTrait));
+                results.add(
+                    String.format(
+                        "The `%s` trait was found on the target, so the name of the targeted "
+                            + "shape matters for codegen",
+                        significantCodegenTrait
+                    )
+                );
             }
         }
 
@@ -119,50 +117,73 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         }
 
         if (oldShape instanceof CollectionShape) {
-            evaluateMember(oldShape.getType(), results,
-                    ((CollectionShape) oldShape).getMember(),
-                    ((CollectionShape) newShape).getMember());
+            evaluateMember(
+                oldShape.getType(),
+                results,
+                ((CollectionShape) oldShape).getMember(),
+                ((CollectionShape) newShape).getMember()
+            );
         } else if (oldShape instanceof MapShape) {
             MapShape oldMapShape = (MapShape) oldShape;
             MapShape newMapShape = (MapShape) newShape;
             // Both the key and value need to be evaluated for maps.
-            evaluateMember(oldShape.getType(), results,
-                    oldMapShape.getKey(),
-                    newMapShape.getKey());
-            evaluateMember(oldShape.getType(), results,
-                    oldMapShape.getValue(),
-                    newMapShape.getValue());
+            evaluateMember(
+                oldShape.getType(),
+                results,
+                oldMapShape.getKey(),
+                newMapShape.getKey()
+            );
+            evaluateMember(
+                oldShape.getType(),
+                results,
+                oldMapShape.getValue(),
+                newMapShape.getValue()
+            );
         }
 
         return results;
     }
 
     private static void evaluateMember(
-            ShapeType oldShapeType,
-            List<String> results,
-            MemberShape oldMember,
-            MemberShape newMember
+        ShapeType oldShapeType,
+        List<String> results,
+        MemberShape oldMember,
+        MemberShape newMember
     ) {
         String memberSlug = oldShapeType == ShapeType.MAP ? oldMember.getMemberName() + " " : "";
         if (!oldMember.getTarget().equals(newMember.getTarget())) {
-            results.add(String.format("Both the old and new shapes are a %s, but the old shape %stargeted "
-                            + "`%s` while the new shape targets `%s`",
-                    oldShapeType, memberSlug, oldMember.getTarget(), newMember.getTarget()));
+            results.add(
+                String.format(
+                    "Both the old and new shapes are a %s, but the old shape %stargeted "
+                        + "`%s` while the new shape targets `%s`",
+                    oldShapeType,
+                    memberSlug,
+                    oldMember.getTarget(),
+                    newMember.getTarget()
+                )
+            );
         } else if (!oldMember.getAllTraits().equals(newMember.getAllTraits())) {
-            results.add(String.format("Both the old and new shapes are a %s, but their %smembers have "
-                            + "differing traits. %s",
-                    oldShapeType, memberSlug, createTraitDiffMessage(oldMember, newMember)));
+            results.add(
+                String.format(
+                    "Both the old and new shapes are a %s, but their %smembers have "
+                        + "differing traits. %s",
+                    oldShapeType,
+                    memberSlug,
+                    createTraitDiffMessage(oldMember, newMember)
+                )
+            );
         }
     }
 
     private static String createSimpleMessage(ChangedShape<MemberShape> change, Shape oldTarget, Shape newTarget) {
         return String.format(
-                "The shape targeted by the member `%s` changed from `%s` (%s) to `%s` (%s). ",
-                change.getShapeId(),
-                change.getOldShape().getTarget(),
-                oldTarget.getType(),
-                change.getNewShape().getTarget(),
-                newTarget.getType());
+            "The shape targeted by the member `%s` changed from `%s` (%s) to `%s` (%s). ",
+            change.getShapeId(),
+            change.getOldShape().getTarget(),
+            oldTarget.getType(),
+            change.getNewShape().getTarget(),
+            newTarget.getType()
+        );
     }
 
     private static String createTraitDiffMessage(Shape oldShape, Shape newShape) {
@@ -170,16 +191,16 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         ChangedShape<Shape> targetChange = new ChangedShape<>(oldShape, newShape);
 
         Set<ShapeId> removedTraits = targetChange.removedTraits()
-                .map(Trait::toShapeId)
-                .collect(Collectors.toCollection(TreeSet::new));
+            .map(Trait::toShapeId)
+            .collect(Collectors.toCollection(TreeSet::new));
 
         if (!removedTraits.isEmpty()) {
             joiner.add("The targeted shape no longer has the following traits: " + removedTraits);
         }
 
         Set<ShapeId> addedTraits = targetChange.addedTraits()
-                .map(Trait::toShapeId)
-                .collect(Collectors.toCollection(TreeSet::new));
+            .map(Trait::toShapeId)
+            .collect(Collectors.toCollection(TreeSet::new));
 
         if (!addedTraits.isEmpty()) {
             joiner.add("The newly targeted shape now has the following additional traits: " + addedTraits);

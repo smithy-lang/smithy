@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
@@ -126,16 +115,23 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
         switch (mapStrategy) {
             case PROPERTY_NAMES:
-                return buildSchema(shape, createBuilder(shape, "object")
+                return buildSchema(
+                    shape,
+                    createBuilder(shape, "object")
                         .propertyNames(createRef(shape.getKey()))
-                        .additionalProperties(createRef(shape.getValue())));
+                        .additionalProperties(createRef(shape.getValue()))
+                );
             case PATTERN_PROPERTIES:
-                String keyPattern = shape.getKey().getMemberTrait(model, PatternTrait.class)
-                        .map(PatternTrait::getPattern)
-                        .map(Pattern::pattern)
-                        .orElse(".+");
-                return buildSchema(shape, createBuilder(shape, "object")
-                        .putPatternProperty(keyPattern, createRef(shape.getValue())));
+                String keyPattern = shape.getKey()
+                    .getMemberTrait(model, PatternTrait.class)
+                    .map(PatternTrait::getPattern)
+                    .map(Pattern::pattern)
+                    .orElse(".+");
+                return buildSchema(
+                    shape,
+                    createBuilder(shape, "object")
+                        .putPatternProperty(keyPattern, createRef(shape.getValue()))
+                );
             default:
                 throw new SmithyJsonSchemaException(String.format("Unsupported map strategy: %s", mapStrategy));
         }
@@ -183,13 +179,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         Schema nonNumericValues = Schema.builder()
-                .type("string")
-                .enumValues(NON_NUMERIC_FLOAT_VALUES)
-                .build();
+            .type("string")
+            .enumValues(NON_NUMERIC_FLOAT_VALUES)
+            .build();
 
         Schema.Builder nonNumericNumberBuilder = createBuilder(shape, "number")
-                .type(null)
-                .oneOf(ListUtils.of(numberBuilder.build(), nonNumericValues));
+            .type(null)
+            .oneOf(ListUtils.of(numberBuilder.build(), nonNumericValues));
 
         return buildSchema(shape, nonNumericNumberBuilder);
     }
@@ -243,12 +239,14 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 List<Schema> schemas = new ArrayList<>();
                 for (MemberShape member : shape.getAllMembers().values()) {
                     String memberName = converter.toPropertyName(member);
-                    schemas.add(Schema.builder()
+                    schemas.add(
+                        Schema.builder()
                             .type("object")
                             .title(memberName)
                             .required(ListUtils.of(memberName))
                             .putProperty(memberName, createRef(member))
-                            .build());
+                            .build()
+                    );
                 }
                 return buildSchema(shape, createBuilder(shape, "object").type(null).oneOf(schemas));
             default:
@@ -269,7 +267,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     private Shape getTarget(MemberShape member) {
         return model.getShape(member.getTarget())
-                .orElseThrow(() -> new SmithyJsonSchemaException("Unable to find the shape targeted by " + member));
+            .orElseThrow(() -> new SmithyJsonSchemaException("Unable to find the shape targeted by " + member));
     }
 
     private Schema.Builder createBuilder(Shape shape, String defaultType) {
@@ -287,17 +285,17 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         descriptionMessage(shape).ifPresent(builder::description);
 
         shape.getTrait(TitleTrait.class)
-                .map(TitleTrait::getValue)
-                .ifPresent(builder::title);
+            .map(TitleTrait::getValue)
+            .ifPresent(builder::title);
 
         shape.getTrait(MediaTypeTrait.class)
-                .map(MediaTypeTrait::getValue)
-                .ifPresent(builder::contentMediaType);
+            .map(MediaTypeTrait::getValue)
+            .ifPresent(builder::contentMediaType);
 
         shape.getMemberTrait(model, PatternTrait.class)
-                .map(PatternTrait::getPattern)
-                .map(Pattern::pattern)
-                .ifPresent(builder::pattern);
+            .map(PatternTrait::getPattern)
+            .map(Pattern::pattern)
+            .ifPresent(builder::pattern);
 
         shape.getMemberTrait(model, RangeTrait.class).ifPresent(t -> {
             t.getMin().ifPresent(builder::minimum);
@@ -307,8 +305,8 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         shape.getMemberTrait(model, LengthTrait.class).ifPresent(t -> {
             // The current shape or target for members dictates how this translates.
             Shape targetShape = shape.asMemberShape()
-                    .flatMap(target -> model.getShape(target.getTarget()))
-                    .orElse(shape);
+                .flatMap(target -> model.getShape(target.getTarget()))
+                .orElse(shape);
             if (targetShape.isListShape() || targetShape.isSetShape()) {
                 t.getMin().map(Long::intValue).ifPresent(builder::minItems);
                 t.getMax().map(Long::intValue).ifPresent(builder::maxItems);
@@ -326,8 +324,8 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         shape.getTrait(EnumTrait.class)
-                .map(EnumTrait::getEnumDefinitionValues)
-                .ifPresent(builder::enumValues);
+            .map(EnumTrait::getEnumDefinitionValues)
+            .ifPresent(builder::enumValues);
 
         if (shape.isIntEnumShape() && !converter.getConfig().getDisableIntEnums()) {
             builder.intEnumValues(shape.asIntEnumShape().get().getEnumValues().values());
@@ -348,13 +346,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         StringBuilder builder = new StringBuilder();
         shape
             .getTrait(DocumentationTrait.class)
-            .ifPresent(trait ->
-                builder.append(trait.getValue())
+            .ifPresent(
+                trait -> builder.append(trait.getValue())
             );
         shape
             .getTrait(DeprecatedTrait.class)
-            .ifPresent(trait ->
-                builder
+            .ifPresent(
+                trait -> builder
                     .append("\n")
                     .append(trait.getDeprecatedDescription(shape.getType()))
             );

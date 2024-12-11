@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation;
 
 import java.io.StringWriter;
@@ -48,10 +37,12 @@ public final class ContextualValidationEventFormatter implements ValidationEvent
     public String format(ValidationEvent event) {
         StringWriter writer = new StringWriter();
         Formatter formatter = new Formatter(writer);
-        formatter.format("%s: %s (%s)%n",
-                         event.getSeverity(),
-                         event.getShapeId().map(ShapeId::toString).orElse("-"),
-                         event.getId());
+        formatter.format(
+            "%s: %s (%s)%n",
+            event.getSeverity(),
+            event.getShapeId().map(ShapeId::toString).orElse("-"),
+            event.getId()
+        );
 
         if (event.getSourceLocation() != SourceLocation.NONE) {
             String humanReadableFilename = getHumanReadableFilename(event.getSourceLocation());
@@ -64,8 +55,11 @@ public final class ContextualValidationEventFormatter implements ValidationEvent
                 formatter.format("     @ %s%n", humanReadableFilename);
                 formatter.format("     |%n");
                 // Show the line number and source code line.
-                formatter.format("%4d | %s%n",
-                                 event.getSourceLocation().getLine(), lines.iterator().next().getContent());
+                formatter.format(
+                    "%4d | %s%n",
+                    event.getSourceLocation().getLine(),
+                    lines.iterator().next().getContent()
+                );
                 // Add a carat to point to the column of the error.
                 formatter.format("     | %" + event.getSourceLocation().getColumn() + "s%n", "^");
             }

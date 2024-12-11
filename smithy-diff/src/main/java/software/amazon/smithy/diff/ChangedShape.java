@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff;
 
 import java.util.Collections;
@@ -83,9 +72,10 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      * @return Returns the traits that were added.
      */
     public Stream<Trait> addedTraits() {
-        return traitDiff.values().stream()
-                .filter(pair -> pair.getLeft() == null)
-                .map(Pair::getRight);
+        return traitDiff.values()
+            .stream()
+            .filter(pair -> pair.getLeft() == null)
+            .map(Pair::getRight);
     }
 
     /**
@@ -94,9 +84,10 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      * @return Returns the traits that were removed.
      */
     public Stream<Trait> removedTraits() {
-        return traitDiff.values().stream()
-                .filter(pair -> pair.getRight() == null)
-                .map(Pair::getLeft);
+        return traitDiff.values()
+            .stream()
+            .filter(pair -> pair.getRight() == null)
+            .map(Pair::getLeft);
     }
 
     /**
@@ -148,9 +139,9 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
     @SuppressWarnings("unchecked")
     public <T extends Trait> Optional<Pair<T, T>> getChangedTrait(Class<T> traitType) {
         return changedTraits()
-                .filter(p -> traitType.isInstance(p.getLeft()) && traitType.isInstance(p.getRight()))
-                .map(p -> (Pair<T, T>) p)
-                .findFirst();
+            .filter(p -> traitType.isInstance(p.getLeft()) && traitType.isInstance(p.getRight()))
+            .map(p -> (Pair<T, T>) p)
+            .findFirst();
     }
 
     /**
@@ -180,7 +171,7 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
             // there's no need to compare the traitDiff property.
             ChangedShape<?> that = (ChangedShape<?>) o;
             return Objects.equals(getOldShape(), that.getOldShape())
-                   && Objects.equals(getNewShape(), that.getNewShape());
+                && Objects.equals(getNewShape(), that.getNewShape());
         }
     }
 
@@ -207,9 +198,11 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
             }
         }
         // Find traits that were added.
-        newShape.getAllTraits().values().stream()
-                .filter(newTrait -> !oldShape.findTrait(newTrait.toShapeId()).isPresent())
-                .forEach(newTrait -> changes.put(newTrait.toShapeId(), Pair.of(null, newTrait)));
+        newShape.getAllTraits()
+            .values()
+            .stream()
+            .filter(newTrait -> !oldShape.findTrait(newTrait.toShapeId()).isPresent())
+            .forEach(newTrait -> changes.put(newTrait.toShapeId(), Pair.of(null, newTrait)));
 
         return changes;
     }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,14 +21,14 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("/foo/bar/bam", "/rewritten").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
-                .symbolProvider(delegate)
-                .filenameReservedWords(reservedWords)
-                .build();
+            .symbolProvider(delegate)
+            .filenameReservedWords(reservedWords)
+            .build();
         delegate.mock = Symbol.builder()
-                .name("foo")
-                .definitionFile("/foo/bar/bam")
-                .declarationFile("/foo/bar/bam")
-                .build();
+            .name("foo")
+            .definitionFile("/foo/bar/bam")
+            .declarationFile("/foo/bar/bam")
+            .build();
 
         assertThat(provider.toSymbol(s1).getDeclarationFile(), equalTo("/rewritten"));
         assertThat(provider.toSymbol(s2).getDefinitionFile(), equalTo("/rewritten"));
@@ -53,9 +42,9 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("foo.baz", "foo._baz").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
-                .symbolProvider(delegate)
-                .namespaceReservedWords(reservedWords)
-                .build();
+            .symbolProvider(delegate)
+            .namespaceReservedWords(reservedWords)
+            .build();
 
         delegate.mock = Symbol.builder().namespace("foo.bar", ".").name("Baz").build();
         assertThat(provider.toSymbol(s1).getNamespace(), equalTo("foo.bar"));
@@ -72,9 +61,9 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("Bam", "_Bam").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
-                .symbolProvider(delegate)
-                .nameReservedWords(reservedWords)
-                .build();
+            .symbolProvider(delegate)
+            .nameReservedWords(reservedWords)
+            .build();
 
         delegate.mock = Symbol.builder().namespace("foo.bar", ".").name("Baz").build();
         assertThat(provider.toSymbol(s1).getName(), equalTo("Baz"));
@@ -91,9 +80,9 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("baz", "_baz").build();
         SymbolProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
-                .symbolProvider(delegate)
-                .memberReservedWords(reservedWords)
-                .build();
+            .symbolProvider(delegate)
+            .memberReservedWords(reservedWords)
+            .build();
 
         assertThat(provider.toMemberName(s1), equalTo("foo"));
         assertThat(provider.toMemberName(s2), equalTo("_baz"));
@@ -106,10 +95,10 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("Bam", "_Bam").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
-                .symbolProvider(delegate)
-                .nameReservedWords(reservedWords)
-                .escapePredicate((shape, symbol) -> false)
-                .build();
+            .symbolProvider(delegate)
+            .nameReservedWords(reservedWords)
+            .escapePredicate((shape, symbol) -> false)
+            .build();
 
         delegate.mock = Symbol.builder().namespace("foo.baz", ".").name("Bam").build();
         assertThat(provider.toSymbol(stringShape).getName(), equalTo("Bam"));
@@ -122,8 +111,8 @@ public class ReservedWordSymbolProviderTest {
         ReservedWords reservedWords = new ReservedWordsBuilder().put("baz", "_baz").build();
         SymbolProvider delegate = new MockProvider();
         ReservedWordSymbolProvider.Escaper escaper = ReservedWordSymbolProvider.builder()
-                .memberReservedWords(reservedWords)
-                .buildEscaper();
+            .memberReservedWords(reservedWords)
+            .buildEscaper();
 
         assertThat(escaper.escapeMemberName(delegate.toMemberName(s1)), equalTo("_baz"));
     }

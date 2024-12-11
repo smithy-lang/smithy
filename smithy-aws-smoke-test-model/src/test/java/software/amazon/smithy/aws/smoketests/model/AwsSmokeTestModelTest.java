@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.smoketests.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,16 +22,16 @@ public class AwsSmokeTestModelTest {
     @Test
     public void determinesIfTestCaseHasAwsVendorParams() {
         SmokeTestCase withAwsVendorParamsShape = SmokeTestCase.builder()
-                .id("foo")
-                .expectation(Expectation.success())
-                .vendorParamsShape(AwsVendorParams.ID)
-                .build();
+            .id("foo")
+            .expectation(Expectation.success())
+            .vendorParamsShape(AwsVendorParams.ID)
+            .build();
         SmokeTestCase withNoVendorParamsShape = withAwsVendorParamsShape.toBuilder()
-                .vendorParamsShape(null)
-                .build();
+            .vendorParamsShape(null)
+            .build();
         SmokeTestCase withOtherVendorParamsShape = withNoVendorParamsShape.toBuilder()
-                .vendorParamsShape(S3VendorParams.ID)
-                .build();
+            .vendorParamsShape(S3VendorParams.ID)
+            .build();
 
         assertThat(AwsSmokeTestModel.hasAwsVendorParams(withAwsVendorParamsShape), is(true));
         assertThat(AwsSmokeTestModel.hasAwsVendorParams(withNoVendorParamsShape), is(false));
@@ -37,16 +41,16 @@ public class AwsSmokeTestModelTest {
     @Test
     public void determinesIfTestCaseHasS3VendorParams() {
         SmokeTestCase withS3VendorParamsShape = SmokeTestCase.builder()
-                .id("foo")
-                .expectation(Expectation.success())
-                .vendorParamsShape(S3VendorParams.ID)
-                .build();
+            .id("foo")
+            .expectation(Expectation.success())
+            .vendorParamsShape(S3VendorParams.ID)
+            .build();
         SmokeTestCase withNoVendorParamsShape = withS3VendorParamsShape.toBuilder()
-                .vendorParamsShape(null)
-                .build();
+            .vendorParamsShape(null)
+            .build();
         SmokeTestCase withOtherVendorParamsShape = withNoVendorParamsShape.toBuilder()
-                .vendorParamsShape(AwsVendorParams.ID)
-                .build();
+            .vendorParamsShape(AwsVendorParams.ID)
+            .build();
 
         assertThat(AwsSmokeTestModel.hasS3VendorParams(withS3VendorParamsShape), is(true));
         assertThat(AwsSmokeTestModel.hasS3VendorParams(withNoVendorParamsShape), is(false));
@@ -56,16 +60,16 @@ public class AwsSmokeTestModelTest {
     @Test
     public void canGetAwsVendorParamsFromTestCase() {
         SmokeTestCase withoutVendorParams = SmokeTestCase.builder()
-                .id("foo")
-                .expectation(Expectation.success())
-                .vendorParamsShape(AwsVendorParams.ID)
-                .build();
+            .id("foo")
+            .expectation(Expectation.success())
+            .vendorParamsShape(AwsVendorParams.ID)
+            .build();
         SmokeTestCase withNoVendorParamsShape = withoutVendorParams.toBuilder()
-                .vendorParamsShape(null)
-                .build();
+            .vendorParamsShape(null)
+            .build();
         SmokeTestCase withOtherVendorParamsShape = withNoVendorParamsShape.toBuilder()
-                .vendorParamsShape(S3VendorParams.ID)
-                .build();
+            .vendorParamsShape(S3VendorParams.ID)
+            .build();
 
         assertThat(AwsSmokeTestModel.getAwsVendorParams(withoutVendorParams), not(equalTo(Optional.empty())));
         assertThat(AwsSmokeTestModel.getAwsVendorParams(withNoVendorParamsShape), equalTo(Optional.empty()));
@@ -74,11 +78,13 @@ public class AwsSmokeTestModelTest {
 
     @Test
     public void fillsInDefaultsForAwsVendorParams() {
-        AwsVendorParams vendorParams = AwsSmokeTestModel.getAwsVendorParams(SmokeTestCase.builder()
+        AwsVendorParams vendorParams = AwsSmokeTestModel.getAwsVendorParams(
+            SmokeTestCase.builder()
                 .id("foo")
                 .expectation(Expectation.success())
                 .vendorParamsShape(AwsVendorParams.ID)
-                .build()).get();
+                .build()
+        ).get();
 
         assertThat(vendorParams.getRegion(), equalTo("us-west-2"));
         assertThat(vendorParams.getSigv4aRegionSet(), equalTo(Optional.empty()));
@@ -90,11 +96,13 @@ public class AwsSmokeTestModelTest {
 
     @Test
     public void fillsInDefaultsForS3VendorParams() {
-        S3VendorParams vendorParams = AwsSmokeTestModel.getS3VendorParams(SmokeTestCase.builder()
+        S3VendorParams vendorParams = AwsSmokeTestModel.getS3VendorParams(
+            SmokeTestCase.builder()
                 .id("foo")
                 .expectation(Expectation.success())
                 .vendorParamsShape(S3VendorParams.ID)
-                .build()).get();
+                .build()
+        ).get();
 
         assertThat(vendorParams.getRegion(), equalTo("us-west-2"));
         assertThat(vendorParams.getSigv4aRegionSet(), equalTo(Optional.empty()));
@@ -113,15 +121,16 @@ public class AwsSmokeTestModelTest {
     @Test
     public void loadsAwsVendorParamsFromModel() {
         Model model = Model.assembler()
-                .discoverModels()
-                .addImport(getClass().getResource("vendor-params.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels()
+            .addImport(getClass().getResource("vendor-params.smithy"))
+            .assemble()
+            .unwrap();
         SmokeTestsTrait trait = model.expectShape(ShapeId.from("com.foo#GetFoo")).expectTrait(SmokeTestsTrait.class);
-        SmokeTestCase awsCase = trait.getTestCases().stream()
-                .filter(testCase -> testCase.getId().equals("AwsVendorParamsCase"))
-                .findAny()
-                .get();
+        SmokeTestCase awsCase = trait.getTestCases()
+            .stream()
+            .filter(testCase -> testCase.getId().equals("AwsVendorParamsCase"))
+            .findAny()
+            .get();
 
         assertThat(AwsSmokeTestModel.hasAwsVendorParams(awsCase), is(true));
         assertThat(AwsSmokeTestModel.getAwsVendorParams(awsCase), not(equalTo(Optional.empty())));
@@ -138,17 +147,17 @@ public class AwsSmokeTestModelTest {
     @Test
     public void loadsS3VendorParamsFromModel() {
         Model model = Model.assembler()
-                .discoverModels()
-                .addImport(getClass().getResource("vendor-params.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels()
+            .addImport(getClass().getResource("vendor-params.smithy"))
+            .assemble()
+            .unwrap();
         SmokeTestCase s3Case = model.expectShape(ShapeId.from("com.foo#GetFoo"))
-                .expectTrait(SmokeTestsTrait.class)
-                .getTestCases()
-                .stream()
-                .filter(testCase -> testCase.getId().equals("S3VendorParamsCase"))
-                .findAny()
-                .get();
+            .expectTrait(SmokeTestsTrait.class)
+            .getTestCases()
+            .stream()
+            .filter(testCase -> testCase.getId().equals("S3VendorParamsCase"))
+            .findAny()
+            .get();
 
         assertThat(AwsSmokeTestModel.hasS3VendorParams(s3Case), is(true));
         assertThat(AwsSmokeTestModel.getS3VendorParams(s3Case), not(equalTo(Optional.empty())));

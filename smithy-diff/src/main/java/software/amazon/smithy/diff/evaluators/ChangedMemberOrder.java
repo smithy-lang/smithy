@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.Collection;
@@ -36,16 +25,23 @@ public final class ChangedMemberOrder extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         Stream<ChangedShape<?>> changes = Stream.concat(
-                differences.changedShapes(StructureShape.class),
-                differences.changedShapes(UnionShape.class));
+            differences.changedShapes(StructureShape.class),
+            differences.changedShapes(UnionShape.class)
+        );
 
         return changes
-                .filter(diff -> isUnordered(diff.getOldShape().members(), diff.getNewShape().members()))
-                .map(diff -> danger(diff.getNewShape(), String.format(
+            .filter(diff -> isUnordered(diff.getOldShape().members(), diff.getNewShape().members()))
+            .map(
+                diff -> danger(
+                    diff.getNewShape(),
+                    String.format(
                         "%s shape members were reordered. This can cause ABI compatibility issues in languages "
-                        + "like C and C++ where the layout and alignment of a data structure matters.",
-                        diff.getOldShape().getType())))
-                .collect(Collectors.toList());
+                            + "like C and C++ where the layout and alignment of a data structure matters.",
+                        diff.getOldShape().getType()
+                    )
+                )
+            )
+            .collect(Collectors.toList());
     }
 
     private static boolean isUnordered(Collection<MemberShape> a, Collection<MemberShape> b) {

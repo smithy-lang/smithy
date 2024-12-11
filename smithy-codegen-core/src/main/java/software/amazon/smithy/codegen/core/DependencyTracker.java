@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.io.IOException;
@@ -100,7 +89,11 @@ public final class DependencyTracker implements SymbolDependencyContainer {
     private static final String PROPERTIES = "properties";
     private static final Set<String> TOP_LEVEL_PROPERTIES = SetUtils.of(VERSION, DEPENDENCIES);
     private static final Set<String> ALLOWED_SYMBOL_PROPERTIES = SetUtils.of(
-            PACKAGE_NAME, DEPENDENCY_TYPE, VERSION, PROPERTIES);
+        PACKAGE_NAME,
+        DEPENDENCY_TYPE,
+        VERSION,
+        PROPERTIES
+    );
 
     private final List<SymbolDependency> dependencies = new ArrayList<>();
 
@@ -139,8 +132,10 @@ public final class DependencyTracker implements SymbolDependencyContainer {
                 return dependency;
             }
         }
-        throw new IllegalArgumentException("Unknown dependency '" + name + "' of type '" + dependencyType + "'. "
-                                           + "Known dependencies: " + dependencies);
+        throw new IllegalArgumentException(
+            "Unknown dependency '" + name + "' of type '" + dependencyType + "'. "
+                + "Known dependencies: " + dependencies
+        );
     }
 
     /**
@@ -215,10 +210,10 @@ public final class DependencyTracker implements SymbolDependencyContainer {
      */
     public void addDependency(String packageName, String version, String dependencyType) {
         SymbolDependency dependency = SymbolDependency.builder()
-                .packageName(packageName)
-                .version(version)
-                .dependencyType(dependencyType)
-                .build();
+            .packageName(packageName)
+            .version(version)
+            .dependencyType(dependencyType)
+            .build();
         addDependency(dependency);
     }
 
@@ -251,8 +246,11 @@ public final class DependencyTracker implements SymbolDependencyContainer {
         try (InputStream stream = jsonFile.openConnection().getInputStream()) {
             parseDependenciesFromJson(Node.parse(stream));
         } catch (IOException e) {
-            throw new UncheckedIOException("Error loading dependencies from "
-                                           + jsonFile + ": " + e.getMessage(), e);
+            throw new UncheckedIOException(
+                "Error loading dependencies from "
+                    + jsonFile + ": " + e.getMessage(),
+                e
+            );
         }
     }
 

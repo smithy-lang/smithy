@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,9 +31,9 @@ public class ServiceShapeTest {
     @Test
     public void convertsToBuilder() {
         ServiceShape service = ServiceShape.builder()
-                .id("ns.foo#Bar")
-                .version("2017-01-17")
-                .build();
+            .id("ns.foo#Bar")
+            .version("2017-01-17")
+            .build();
         assertEquals(service, service.toBuilder().build());
     }
 
@@ -52,10 +41,10 @@ public class ServiceShapeTest {
     public void providesContextualShapeName() {
         ShapeId id = ShapeId.from("foo.bar#Name");
         ServiceShape serviceShape = ServiceShape.builder()
-                .id("smithy.example#Service")
-                .version("1")
-                .putRename(id, "FooName")
-                .build();
+            .id("smithy.example#Service")
+            .version("1")
+            .putRename(id, "FooName")
+            .build();
 
         assertThat(serviceShape.getContextualName(id), equalTo("FooName"));
     }
@@ -63,8 +52,8 @@ public class ServiceShapeTest {
     @Test
     public void versionDefaultsToEmptyString() {
         ServiceShape shape = ServiceShape.builder()
-                .id("com.foo#Example")
-                .build();
+            .id("com.foo#Example")
+            .build();
 
         assertThat(shape.getVersion(), equalTo(""));
     }
@@ -72,18 +61,18 @@ public class ServiceShapeTest {
     @Test
     public void hasErrors() {
         ServiceShape shape = ServiceShape.builder()
-                .id("com.foo#Example")
-                .version("x")
-                .addError("com.foo#Common1")
-                .addError(ShapeId.from("com.foo#Common2"))
-                .build();
+            .id("com.foo#Example")
+            .version("x")
+            .addError("com.foo#Common1")
+            .addError(ShapeId.from("com.foo#Common2"))
+            .build();
 
         assertThat(shape, equalTo(shape));
         assertThat(shape, equalTo(shape.toBuilder().build()));
 
         ServiceShape shape2 = shape.toBuilder()
-                .errors(Arrays.asList(ShapeId.from("com.foo#Common1"), ShapeId.from("com.foo#Common2")))
-                .build();
+            .errors(Arrays.asList(ShapeId.from("com.foo#Common1"), ShapeId.from("com.foo#Common2")))
+            .build();
 
         assertThat(shape, equalTo(shape2));
     }

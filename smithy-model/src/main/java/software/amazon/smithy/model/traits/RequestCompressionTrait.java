@@ -1,18 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.List;
@@ -34,13 +23,14 @@ public final class RequestCompressionTrait extends AbstractTrait implements ToSm
      * Set of supported compression algorithm encoding values.
      */
     public static final Set<String> SUPPORTED_COMPRESSION_ALGORITHMS = SetUtils.of(
-            // NOTE: When a new encoding is supported, add the encoding to
-            //       `multiple-encodings.smithy`
-            // TODO: When the next encoding value after "gzip" is added, remove the
-            //       duplicate "gzip" value in `multiple-encodings.smithy`. Also, add
-            //       validation to make sure encoding values are unique. Then remove
-            //       this TODO item.
-            "gzip");
+        // NOTE: When a new encoding is supported, add the encoding to
+        //       `multiple-encodings.smithy`
+        // TODO: When the next encoding value after "gzip" is added, remove the
+        //       duplicate "gzip" value in `multiple-encodings.smithy`. Also, add
+        //       validation to make sure encoding values are unique. Then remove
+        //       this TODO item.
+        "gzip"
+    );
 
     public static final String ENCODINGS = "encodings";
 
@@ -74,9 +64,9 @@ public final class RequestCompressionTrait extends AbstractTrait implements ToSm
     @Override
     protected Node createNode() {
         return ObjectNode.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withMember(ENCODINGS, Node.fromStrings(getEncodings()))
-                .build();
+            .sourceLocation(getSourceLocation())
+            .withMember(ENCODINGS, Node.fromStrings(getEncodings()))
+            .build();
     }
 
     public static Builder builder() {
@@ -86,12 +76,12 @@ public final class RequestCompressionTrait extends AbstractTrait implements ToSm
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .encodings(encodings);
+            .sourceLocation(getSourceLocation())
+            .encodings(encodings);
     }
 
     public static final class Builder
-            extends AbstractTraitBuilder<RequestCompressionTrait, RequestCompressionTrait.Builder> {
+        extends AbstractTraitBuilder<RequestCompressionTrait, RequestCompressionTrait.Builder> {
         private final BuilderRef<List<String>> encodings = BuilderRef.forList();
 
         private Builder() {}

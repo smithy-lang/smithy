@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,10 +28,10 @@ public class CodeWriterTest {
     public void limitsBlankLines() {
         CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
         writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
-                .indent()
-                .write("print($L)", "BAZ")
-                .dedent()
-                .write("}");
+            .indent()
+            .write("print($L)", "BAZ")
+            .dedent()
+            .write("}");
 
         assertThat(writer.toString(), equalTo("if (BAZ == \"foo\") {\n\n    print(BAZ)\n}\n"));
     }
@@ -51,10 +40,10 @@ public class CodeWriterTest {
     public void doesNotLimitBlankLines() {
         CodeWriter writer = new CodeWriter().trimTrailingSpaces();
         writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
-                .indent()
-                .write("print($L)", "BAZ")
-                .dedent()
-                .write("}");
+            .indent()
+            .write("print($L)", "BAZ")
+            .dedent()
+            .write("}");
 
         assertThat(writer.toString(), equalTo("if (BAZ == \"foo\") {\n\n\n\n\n    print(BAZ)\n}\n"));
     }
@@ -78,9 +67,9 @@ public class CodeWriterTest {
     @Test
     public void toStringCanDisableTrimmingTrailingSpaces() {
         CodeWriter writer = new CodeWriter()
-                .insertTrailingNewline(false)
-                .trimTrailingSpaces(false)
-                .writeInline("hi ");
+            .insertTrailingNewline(false)
+            .trimTrailingSpaces(false)
+            .writeInline("hi ");
 
         assertThat(writer.toString(), equalTo("hi "));
     }
@@ -112,13 +101,13 @@ public class CodeWriterTest {
     public void canWriteTextWithNewlinePrefixAndBlankLineTrimming() {
         CodeWriter writer = CodeWriter.createDefault();
         writer
-                .write("/**")
-                .setNewlinePrefix(" * ")
-                .write("This is some docs.")
-                .write("And more docs.\n")
-                .write("Foo.")
-                .setNewlinePrefix("")
-                .write(" */");
+            .write("/**")
+            .setNewlinePrefix(" * ")
+            .write("This is some docs.")
+            .write("And more docs.\n")
+            .write("Foo.")
+            .setNewlinePrefix("")
+            .write(" */");
 
         /* Becomes:
          *
@@ -133,27 +122,29 @@ public class CodeWriterTest {
          *    ^ Minus this character.
          */
         assertThat(
-                writer.toString(),
-                equalTo("/**\n * This is some docs.\n * And more docs.\n *\n * Foo.\n */\n"));
+            writer.toString(),
+            equalTo("/**\n * This is some docs.\n * And more docs.\n *\n * Foo.\n */\n")
+        );
     }
 
     @Test
     public void handlesIndentation() {
         CodeWriter writer = CodeWriter.createDefault();
         writer
-                .write("Hi")
-                    .indent()
-                    .write("A")
-                    .indent()
-                        .write("B")
-                        .dedent()
-                    .write("C")
-                    .dedent()
-                .write("Fin.");
+            .write("Hi")
+            .indent()
+            .write("A")
+            .indent()
+            .write("B")
+            .dedent()
+            .write("C")
+            .dedent()
+            .write("Fin.");
 
         assertThat(
-                writer.toString(),
-                equalTo("Hi\n    A\n        B\n    C\nFin.\n"));
+            writer.toString(),
+            equalTo("Hi\n    A\n        B\n    C\nFin.\n")
+        );
     }
 
     @Test
@@ -175,14 +166,14 @@ public class CodeWriterTest {
     public void canIndentDocBlocks() {
         CodeWriter writer = CodeWriter.createDefault();
         writer.indent()
-                .write("/**")
-                .setNewlinePrefix(" * ")
-                .write("This is some docs.")
-                .write("And more docs.\n")
-                .write("Foo.")
-                .setNewlinePrefix("")
-                .write(" */")
-                .dedent();
+            .write("/**")
+            .setNewlinePrefix(" * ")
+            .write("This is some docs.")
+            .write("And more docs.\n")
+            .write("Foo.")
+            .setNewlinePrefix("")
+            .write(" */")
+            .dedent();
 
         /* Becomes:
          *
@@ -197,8 +188,9 @@ public class CodeWriterTest {
          *        ^ Minus this character.
          */
         assertThat(
-                writer.toString(),
-                equalTo("    /**\n     * This is some docs.\n     * And more docs.\n     *\n     * Foo.\n     */\n"));
+            writer.toString(),
+            equalTo("    /**\n     * This is some docs.\n     * And more docs.\n     *\n     * Foo.\n     */\n")
+        );
     }
 
     @Test
@@ -221,9 +213,9 @@ public class CodeWriterTest {
     public void cannotPopMoreStatesThanExist() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             CodeWriter.createDefault()
-                    .pushState()
-                    .popState()
-                    .popState();
+                .pushState()
+                .popState()
+                .popState();
         });
     }
 
@@ -231,37 +223,43 @@ public class CodeWriterTest {
     public void canPushAndPopState() {
         CodeWriter writer = CodeWriter.createDefault();
         writer
-                .setNewlinePrefix("0: ")
-                .write("Hi")
-                .pushState()
-                .indent(2)
-                    .setNewlinePrefix("2: ")
-                    .write("there,")
-                    .pushState()
-                    .indent(2)
-                        .setNewlinePrefix("4: ")
-                        .write("guy")
-                        .popState()
-                    .write("Foo")
-                    .popState()
-                .write("baz");
+            .setNewlinePrefix("0: ")
+            .write("Hi")
+            .pushState()
+            .indent(2)
+            .setNewlinePrefix("2: ")
+            .write("there,")
+            .pushState()
+            .indent(2)
+            .setNewlinePrefix("4: ")
+            .write("guy")
+            .popState()
+            .write("Foo")
+            .popState()
+            .write("baz");
 
         assertThat(
-                writer.toString(),
-                equalTo("0: Hi\n        2: there,\n                4: guy\n        2: Foo\n0: baz\n"));
+            writer.toString(),
+            equalTo("0: Hi\n        2: there,\n                4: guy\n        2: Foo\n0: baz\n")
+        );
     }
 
     @Test
     public void writesBlocks() {
         String result = CodeWriter.createDefault()
-                .openBlock("public final class $L {", "Foo")
-                    .openBlock("public void main(String[] args) {")
-                        .write("System.out.println(args[0]);")
-                    .closeBlock("}")
-                .closeBlock("}")
-                .toString();
+            .openBlock("public final class $L {", "Foo")
+            .openBlock("public void main(String[] args) {")
+            .write("System.out.println(args[0]);")
+            .closeBlock("}")
+            .closeBlock("}")
+            .toString();
 
-        assertThat(result, equalTo("public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"));
+        assertThat(
+            result,
+            equalTo(
+                "public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"
+            )
+        );
     }
 
     @Test
@@ -327,12 +325,12 @@ public class CodeWriterTest {
     @Test
     public void writesWithNamedContext() {
         CodeWriter w = CodeWriter.createDefault()
-                .putContext("foo", "Hello!")
-                .pushState()
-                .putContext("foo", "Hola!")
-                .write("Hi. $foo:L")
-                .popState()
-                .write("Hi. $foo:L");
+            .putContext("foo", "Hello!")
+            .pushState()
+            .putContext("foo", "Hola!")
+            .write("Hi. $foo:L")
+            .popState()
+            .write("Hi. $foo:L");
 
         assertThat(w.toString(), equalTo("Hi. Hola!\nHi. Hello!\n"));
     }
@@ -357,8 +355,13 @@ public class CodeWriterTest {
             w.getContext("foo", Integer.class);
         });
 
-        assertThat(e.getMessage(), equalTo("Expected context value 'foo' to be an instance of java.lang.Integer, but "
-                                           + "found java.lang.String (Debug Info {path=ROOT/a, near=Hello {\\n})"));
+        assertThat(
+            e.getMessage(),
+            equalTo(
+                "Expected context value 'foo' to be an instance of java.lang.Integer, but "
+                    + "found java.lang.String (Debug Info {path=ROOT/a, near=Hello {\\n})"
+            )
+        );
     }
 
     @Test
@@ -455,18 +458,22 @@ public class CodeWriterTest {
         writer.popState();
         writer.write(" */");
 
-        assertThat(writer.toString(), equalTo(
+        assertThat(
+            writer.toString(),
+            equalTo(
                 "/**\n"
-                + " * Hi!\n"
-                + " *\n"
-                + " * Intercepted: baz!\n"
-                + " * Yap!\n"
-                + " *     This is indented, in flow of parent.\n"
-                + " *     Yap!\n"
-                + " *     Yap?\n"
-                + " *     # Has a prefix\n"
-                + " *     # Yes\n"
-                + " */\n"));
+                    + " * Hi!\n"
+                    + " *\n"
+                    + " * Intercepted: baz!\n"
+                    + " * Yap!\n"
+                    + " *     This is indented, in flow of parent.\n"
+                    + " *     Yap!\n"
+                    + " *     Yap?\n"
+                    + " *     # Has a prefix\n"
+                    + " *     # Yes\n"
+                    + " */\n"
+            )
+        );
     }
 
     @Test
@@ -493,18 +500,22 @@ public class CodeWriterTest {
         writer.popState();
         writer.write(" */");
 
-        assertThat(writer.toString(), equalTo(
+        assertThat(
+            writer.toString(),
+            equalTo(
                 "/**\n"
-                + " * Foo \"foo!\"\n"
-                + " *\n"
-                + " * \"baz\"!\n"
-                + " * Yap!\n"
-                + " *     This is indented, in flow of parent.\n"
-                + " *     Yap!\n"
-                + " *     Yap?\n"
-                + " *     # Has a prefix\n"
-                + " *     # Yes\n"
-                + " */\n"));
+                    + " * Foo \"foo!\"\n"
+                    + " *\n"
+                    + " * \"baz\"!\n"
+                    + " * Yap!\n"
+                    + " *     This is indented, in flow of parent.\n"
+                    + " *     Yap!\n"
+                    + " *     Yap?\n"
+                    + " *     # Has a prefix\n"
+                    + " *     # Yes\n"
+                    + " */\n"
+            )
+        );
     }
 
     @Test
@@ -513,7 +524,7 @@ public class CodeWriterTest {
         String result = writer.openBlock("public {", "}", () -> {
             writer.write("hi();");
         })
-        .toString();
+            .toString();
 
         assertThat(result, equalTo("public {\n    hi();\n}\n"));
     }
@@ -526,9 +537,14 @@ public class CodeWriterTest {
                 writer.write("System.out.println(args[0]);");
             });
         })
-        .toString();
+            .toString();
 
-        assertThat(result, equalTo("public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"));
+        assertThat(
+            result,
+            equalTo(
+                "public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"
+            )
+        );
     }
 
     @Test
@@ -537,7 +553,7 @@ public class CodeWriterTest {
         String result = writer.openBlock("public $L $L {", "}", "1", "2", () -> {
             writer.write("hi();");
         })
-        .toString();
+            .toString();
 
         assertThat(result, equalTo("public 1 2 {\n    hi();\n}\n"));
     }
@@ -548,7 +564,7 @@ public class CodeWriterTest {
         String result = writer.openBlock("public $L $L $L {", "}", "1", "2", "3", () -> {
             writer.write("hi();");
         })
-        .toString();
+            .toString();
 
         assertThat(result, equalTo("public 1 2 3 {\n    hi();\n}\n"));
     }
@@ -559,7 +575,7 @@ public class CodeWriterTest {
         String result = writer.openBlock("public $L $L $L $L {", "}", "1", "2", "3", "4", () -> {
             writer.write("hi();");
         })
-        .toString();
+            .toString();
 
         assertThat(result, equalTo("public 1 2 3 4 {\n    hi();\n}\n"));
     }
@@ -570,7 +586,7 @@ public class CodeWriterTest {
         String result = writer.openBlock("public $L $L $L $L $L {", "}", "1", "2", "3", "4", "5", () -> {
             writer.write("hi();");
         })
-        .toString();
+            .toString();
 
         assertThat(result, equalTo("public 1 2 3 4 5 {\n    hi();\n}\n"));
     }
@@ -587,13 +603,13 @@ public class CodeWriterTest {
     public void poppedSectionsEscapeCustomExpressionStarts() {
         CodeWriter writer = CodeWriter.createDefault();
         String result = writer
-                .setExpressionStart('#')
-                .pushState("foo")
-                .write("##Hello")
-                .write("$Hello")
-                .write("$$Hello")
-                .popState()
-                .toString();
+            .setExpressionStart('#')
+            .pushState("foo")
+            .write("##Hello")
+            .write("$Hello")
+            .write("$$Hello")
+            .popState()
+            .toString();
 
         assertThat(result, equalTo("#Hello\n$Hello\n$$Hello\n"));
     }
@@ -601,10 +617,10 @@ public class CodeWriterTest {
     @Test
     public void canWriteInline() {
         String result = CodeWriter.createDefault()
-                .insertTrailingNewline(false)
-                .writeInline("foo")
-                .writeInline(", bar")
-                .toString();
+            .insertTrailingNewline(false)
+            .writeInline("foo")
+            .writeInline(", bar")
+            .toString();
 
         assertThat(result, equalTo("foo, bar"));
     }
@@ -612,10 +628,11 @@ public class CodeWriterTest {
     @Test
     public void writeInlineHandlesSingleNewline() {
         String result = CodeWriter.createDefault()
-                .insertTrailingNewline(false)
-                .writeInline("foo").indent()
-                .writeInline(":\nbar")
-                .toString();
+            .insertTrailingNewline(false)
+            .writeInline("foo")
+            .indent()
+            .writeInline(":\nbar")
+            .toString();
 
         assertThat(result, equalTo("foo:\n    bar"));
     }
@@ -623,12 +640,14 @@ public class CodeWriterTest {
     @Test
     public void writeInlineHandlesMultipleNewlines() {
         String result = CodeWriter.createDefault()
-                .insertTrailingNewline(false)
-                .writeInline("foo:")
-                .writeInline(" [").indent()
-                .writeInline("\nbar,\nbaz,\nbam,")
-                .dedent().writeInline("\n]")
-                .toString();
+            .insertTrailingNewline(false)
+            .writeInline("foo:")
+            .writeInline(" [")
+            .indent()
+            .writeInline("\nbar,\nbaz,\nbam,")
+            .dedent()
+            .writeInline("\n]")
+            .toString();
 
         assertThat(result, equalTo("foo: [\n    bar,\n    baz,\n    bam,\n]"));
     }
@@ -636,10 +655,10 @@ public class CodeWriterTest {
     @Test
     public void writeInlineStripsSpaces() {
         String result = CodeWriter.createDefault()
-                .insertTrailingNewline(false)
-                .trimTrailingSpaces()
-                .writeInline("foo ")
-                .toString();
+            .insertTrailingNewline(false)
+            .trimTrailingSpaces()
+            .writeInline("foo ")
+            .toString();
 
         assertThat(result, equalTo("foo"));
     }
@@ -647,19 +666,19 @@ public class CodeWriterTest {
     @Test
     public void writeInlineDoesNotAllowIndentationToBeEscaped() {
         String result = CodeWriter.createDefault()
-                .setIndentText("\t")
-                .insertTrailingNewline(false)
-                .indent()
-                .indent()
-                .writeInline("{foo:")
-                .writeInline(" [\n")
-                .indent()
-                .writeInline("hi,\nbye")
-                .dedent()
-                .writeInline("\n]\n")
-                .dedent()
-                .writeInline("}")
-                .toString();
+            .setIndentText("\t")
+            .insertTrailingNewline(false)
+            .indent()
+            .indent()
+            .writeInline("{foo:")
+            .writeInline(" [\n")
+            .indent()
+            .writeInline("hi,\nbye")
+            .dedent()
+            .writeInline("\n]\n")
+            .dedent()
+            .writeInline("}")
+            .toString();
 
         assertThat(result, equalTo("\t\t{foo: [\n\t\t\thi,\n\t\t\tbye\n\t\t]\n\t}"));
     }
@@ -667,12 +686,12 @@ public class CodeWriterTest {
     @Test
     public void newlineCanBeDisabled() {
         CodeWriter writer = CodeWriter
-                .createDefault()
-                .insertTrailingNewline();
+            .createDefault()
+            .insertTrailingNewline();
         String result = writer
-                .disableNewlines()
-                .openBlock("[", "]", () -> writer.write("hi"))
-                .toString();
+            .disableNewlines()
+            .openBlock("[", "]", () -> writer.write("hi"))
+            .toString();
 
         assertThat(result, equalTo("[hi]\n"));
     }
@@ -680,13 +699,13 @@ public class CodeWriterTest {
     @Test
     public void newlineCanBeDisabledWithEmptyString() {
         CodeWriter writer = CodeWriter
-                .createDefault()
-                .insertTrailingNewline();
+            .createDefault()
+            .insertTrailingNewline();
         String result = writer
-                .setNewline("")
-                .openBlock("[", "]", () -> writer.write("hi"))
-                .enableNewlines()
-                .toString();
+            .setNewline("")
+            .openBlock("[", "]", () -> writer.write("hi"))
+            .enableNewlines()
+            .toString();
 
         assertThat(result, equalTo("[hi]\n"));
     }
@@ -694,13 +713,13 @@ public class CodeWriterTest {
     @Test
     public void newlineCanBeMultipleCharacters() {
         CodeWriter writer = CodeWriter
-                .createDefault()
-                .insertTrailingNewline()
-                .setNewline("\r\n");
+            .createDefault()
+            .insertTrailingNewline()
+            .setNewline("\r\n");
         String result = writer
-                .openBlock("[", "]", () -> writer.write("hi"))
-                .enableNewlines()
-                .toString();
+            .openBlock("[", "]", () -> writer.write("hi"))
+            .enableNewlines()
+            .toString();
 
         assertThat(result, equalTo("[\r\n    hi\r\n]\r\n"));
     }
@@ -708,13 +727,13 @@ public class CodeWriterTest {
     @Test
     public void newlineCanBeLotsOfCharacters() {
         CodeWriter writer = CodeWriter
-                .createDefault()
-                .insertTrailingNewline()
-                .setNewline("HELLO_THIS_IS_A_NEWLINE!!!");
+            .createDefault()
+            .insertTrailingNewline()
+            .setNewline("HELLO_THIS_IS_A_NEWLINE!!!");
         String result = writer
-                .write("Hi.")
-                .write("There.")
-                .toString();
+            .write("Hi.")
+            .write("There.")
+            .toString();
 
         assertThat(result, equalTo("Hi.HELLO_THIS_IS_A_NEWLINE!!!There.HELLO_THIS_IS_A_NEWLINE!!!"));
     }
@@ -723,10 +742,10 @@ public class CodeWriterTest {
     public void settingNewlineEnablesNewlines() {
         CodeWriter writer = CodeWriter.createDefault();
         String result = writer
-                .disableNewlines()
-                .setNewline("\n")
-                .openBlock("[", "]", () -> writer.write("hi"))
-                .toString();
+            .disableNewlines()
+            .setNewline("\n")
+            .openBlock("[", "]", () -> writer.write("hi"))
+            .toString();
 
         assertThat(result, equalTo("[\n    hi\n]\n"));
     }
@@ -747,14 +766,19 @@ public class CodeWriterTest {
         writer.write("Hi, $$L");
         String result = writer.toString();
 
-        assertThat(result, equalTo("Hi, 1\n"
-                                   + "Hi, #L\n"
-                                   + "Hi, $L\n"
-                                   + "Hi, $$L\n"
-                                   + "Hi, #L\n"
-                                   + "Hi, ##L\n"
-                                   + "Hi, 2\n"
-                                   + "Hi, $L\n"));
+        assertThat(
+            result,
+            equalTo(
+                "Hi, 1\n"
+                    + "Hi, #L\n"
+                    + "Hi, $L\n"
+                    + "Hi, $$L\n"
+                    + "Hi, #L\n"
+                    + "Hi, ##L\n"
+                    + "Hi, 2\n"
+                    + "Hi, $L\n"
+            )
+        );
     }
 
     @Test
@@ -866,7 +890,6 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("original\n/// after\n"));
     }
-
 
     @Test
     public void canUnwriteMatchingStrings() {
@@ -1097,16 +1120,18 @@ public class CodeWriterTest {
     @Test
     public void skipsConditionalsWithAllWhitespaceLines1() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", true);
-        writer.write(" ${?foo}\n" // "  " is skipped.
-                     + "  ${foo:L} foo ${foo:L}\n" // "  " is kept, so is the newline.
-                     + " ${/foo}\n" // whole line is skipped.
-                     + " ${^foo}\n" // whole line is skipped.
-                     + "  not ${foo:L}\n" // skipped.
-                     + " ${/foo}\n" // Whole line is skipped.
-                     + "Who?"); // Includes only "Who?"
+        writer.write(
+            " ${?foo}\n" // "  " is skipped.
+                + "  ${foo:L} foo ${foo:L}\n" // "  " is kept, so is the newline.
+                + " ${/foo}\n" // whole line is skipped.
+                + " ${^foo}\n" // whole line is skipped.
+                + "  not ${foo:L}\n" // skipped.
+                + " ${/foo}\n" // Whole line is skipped.
+                + "Who?"
+        ); // Includes only "Who?"
 
         assertThat(writer.toString(), equalTo("  true foo true\nWho?"));
     }
@@ -1114,16 +1139,18 @@ public class CodeWriterTest {
     @Test
     public void skipsConditionalsWithAllWhitespaceLines2() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", true);
-        writer.write("${?foo}\n" // "  " is skipped.
-                     + " ${foo:L}\n" // " " is kept, so is the newline.
-                     + "${/foo}\n" // whole line is skipped.
-                     + "${^foo}\n" // whole line is skipped.
-                     + " not ${foo:L}\n" // skipped.
-                     + "${/foo}\n" // Whole line is skipped.
-                     + "Who?"); // Includes only "Who?"
+        writer.write(
+            "${?foo}\n" // "  " is skipped.
+                + " ${foo:L}\n" // " " is kept, so is the newline.
+                + "${/foo}\n" // whole line is skipped.
+                + "${^foo}\n" // whole line is skipped.
+                + " not ${foo:L}\n" // skipped.
+                + "${/foo}\n" // Whole line is skipped.
+                + "Who?"
+        ); // Includes only "Who?"
 
         assertThat(writer.toString(), equalTo(" true\nWho?"));
     }
@@ -1131,15 +1158,17 @@ public class CodeWriterTest {
     @Test
     public void skipsConditionalsWithAllWhitespaceLines3() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
-        writer.write(" ${?foo}\n" // Whole line is skipped.
-                     + "  ${foo:L} foo ${foo:L}\n" // Whole line is skipped.
-                     + " ${/foo}\n" // whole line is skipped.
-                     + " ${^foo}\n" // whole line is skipped.
-                     + "  not ${foo:L}\n" // Includes "  not \n"
-                     + " ${/foo}\n" // Whole line is skipped.
-                     + "Who?"); // Includes only "Who?"
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
+        writer.write(
+            " ${?foo}\n" // Whole line is skipped.
+                + "  ${foo:L} foo ${foo:L}\n" // Whole line is skipped.
+                + " ${/foo}\n" // whole line is skipped.
+                + " ${^foo}\n" // whole line is skipped.
+                + "  not ${foo:L}\n" // Includes "  not \n"
+                + " ${/foo}\n" // Whole line is skipped.
+                + "Who?"
+        ); // Includes only "Who?"
 
         assertThat(writer.toString(), equalTo("  not \nWho?"));
     }
@@ -1147,11 +1176,13 @@ public class CodeWriterTest {
     @Test
     public void expandsEmptyConditionalSections() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
-        writer.write("Hi\n"
-                     + "${^foo}\n"
-                     + "${/foo}");
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
+        writer.write(
+            "Hi\n"
+                + "${^foo}\n"
+                + "${/foo}"
+        );
 
         assertThat(writer.toString(), equalTo("Hi\n"));
     }
@@ -1162,16 +1193,21 @@ public class CodeWriterTest {
     @Test
     public void failsWhenFormatterIsUnknownInsideConditional() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
 
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
             writer.write("${^foo}$P${/foo}", 10);
         });
 
-        assertThat(e.getMessage(), equalTo("Syntax error at line 1 column 9: Unknown formatter `P` "
-                                           + "found in format string (template: ${^foo}$P${/foo}) "
-                                           + "(Debug Info {path=ROOT, near=})"));
+        assertThat(
+            e.getMessage(),
+            equalTo(
+                "Syntax error at line 1 column 9: Unknown formatter `P` "
+                    + "found in format string (template: ${^foo}$P${/foo}) "
+                    + "(Debug Info {path=ROOT, near=})"
+            )
+        );
     }
 
     // This test is important because formatters are applied only if the
@@ -1180,8 +1216,8 @@ public class CodeWriterTest {
     @Test
     public void ignoresInvalidFormattersInUnevaluatedConditions() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.write("${?foo}$P${/foo}", 10);
 
         assertThat(writer.toString(), equalTo(""));
@@ -1191,13 +1227,15 @@ public class CodeWriterTest {
     @MethodSource("nestedBlocksProvider")
     public void evaluatesNestedBlocks(String line) {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
-        writer.write("${^foo}" + line
-                     + " ${^foo}Hi1${/foo}" + line
-                     + " ${^foo}${^foo}Hi2${?foo}No${/foo}${/foo}${/foo}" + line
-                     + " ${^foo}Hi3${/foo}" + line
-                     + "${/foo}");
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
+        writer.write(
+            "${^foo}" + line
+                + " ${^foo}Hi1${/foo}" + line
+                + " ${^foo}${^foo}Hi2${?foo}No${/foo}${/foo}${/foo}" + line
+                + " ${^foo}Hi3${/foo}" + line
+                + "${/foo}"
+        );
 
         assertThat(writer.toString(), equalTo(" Hi1" + line + " Hi2" + line + " Hi3" + line));
     }
@@ -1209,12 +1247,14 @@ public class CodeWriterTest {
     @Test
     public void canIterateOverVariable() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo}\n"
-                     + " - ${key:L}: ${value:L}\n"
-                     + "${/foo}");
+        writer.write(
+            "${#foo}\n"
+                + " - ${key:L}: ${value:L}\n"
+                + "${/foo}"
+        );
 
         assertThat(writer.toString(), equalTo(" - 0: a\n - 1: b\n - 2: c\n"));
     }
@@ -1222,14 +1262,16 @@ public class CodeWriterTest {
     @Test
     public void canIterateOverVariableAndDelayConditionals() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "", "b"));
-        writer.write("${#foo}\n"
-                     + " ${?value}\n"
-                     + " - ${key:L}: ${value:L}\n"
-                     + " ${/value}\n"
-                     + "${/foo}\n");
+        writer.write(
+            "${#foo}\n"
+                + " ${?value}\n"
+                + " - ${key:L}: ${value:L}\n"
+                + " ${/value}\n"
+                + "${/foo}\n"
+        );
 
         assertThat(writer.toString(), equalTo(" - 0: a\n - 2: b\n"));
     }
@@ -1237,18 +1279,20 @@ public class CodeWriterTest {
     @Test
     public void canGetFirstAndLastFromIterator() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo}\n"
-                     + "${?key.first}\n"
-                     + "[\n"
-                     + "${/key.first}\n"
-                     + "    ${value:L}${^key.last},${/key.last}\n"
-                     + "${?key.last}\n"
-                     + "]\n"
-                     + "${/key.last}\n"
-                     + "${/foo}\n");
+        writer.write(
+            "${#foo}\n"
+                + "${?key.first}\n"
+                + "[\n"
+                + "${/key.first}\n"
+                + "    ${value:L}${^key.last},${/key.last}\n"
+                + "${?key.last}\n"
+                + "]\n"
+                + "${/key.last}\n"
+                + "${/foo}\n"
+        );
 
         assertThat(writer.toString(), equalTo("[\n    a,\n    b,\n    c\n]\n"));
     }
@@ -1256,18 +1300,20 @@ public class CodeWriterTest {
     @Test
     public void canGetFirstAndLastFromIteratorWithCustomName() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
-        writer.write("${#foo as i, value}\n"
-                     + "${?i.first}\n"
-                     + "[\n"
-                     + "${/i.first}\n"
-                     + "    ${value:L}${^i.last},${/i.last}\n"
-                     + "${?i.last}\n"
-                     + "]\n"
-                     + "${/i.last}\n"
-                     + "${/foo}\n");
+        writer.write(
+            "${#foo as i, value}\n"
+                + "${?i.first}\n"
+                + "[\n"
+                + "${/i.first}\n"
+                + "    ${value:L}${^i.last},${/i.last}\n"
+                + "${?i.last}\n"
+                + "]\n"
+                + "${/i.last}\n"
+                + "${/foo}\n"
+        );
 
         assertThat(writer.toString(), equalTo("[\n    a,\n    b,\n    c\n]\n"));
     }
@@ -1277,32 +1323,32 @@ public class CodeWriterTest {
     public void truthyAndFalsey(Object fooValue, String expected) {
         String template = "${?foo}A${/foo}${^foo}B${/foo}";
         String actual = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false)
-                .putContext("foo", fooValue)
-                .write(template)
-                .toString();
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false)
+            .putContext("foo", fooValue)
+            .write(template)
+            .toString();
 
         assertThat(actual, equalTo(expected));
     }
 
     public static Stream<Arguments> truthyAndFalseyTestCases() {
         return Stream.of(
-                Arguments.of(null, "B"),
-                Arguments.of(false, "B"),
-                Arguments.of("", "B"),
-                Arguments.of(Collections.emptyList(), "B"),
-                Arguments.of(Collections.emptySet(), "B"),
-                Arguments.of(Collections.emptyMap(), "B"),
-                Arguments.of(Optional.empty(), "B"),
-                Arguments.of(0, "A"),
-                Arguments.of(1, "A"),
-                Arguments.of("a", "A"),
-                Arguments.of(ListUtils.of("a"), "A"),
-                Arguments.of(SetUtils.of("a"), "A"),
-                Arguments.of(MapUtils.of("a", "a"), "A"),
-                Arguments.of(Optional.of(0), "A"),
-                Arguments.of(Optional.of(Collections.emptyList()), "A")
+            Arguments.of(null, "B"),
+            Arguments.of(false, "B"),
+            Arguments.of("", "B"),
+            Arguments.of(Collections.emptyList(), "B"),
+            Arguments.of(Collections.emptySet(), "B"),
+            Arguments.of(Collections.emptyMap(), "B"),
+            Arguments.of(Optional.empty(), "B"),
+            Arguments.of(0, "A"),
+            Arguments.of(1, "A"),
+            Arguments.of("a", "A"),
+            Arguments.of(ListUtils.of("a"), "A"),
+            Arguments.of(SetUtils.of("a"), "A"),
+            Arguments.of(MapUtils.of("a", "a"), "A"),
+            Arguments.of(Optional.of(0), "A"),
+            Arguments.of(Optional.of(Collections.emptyList()), "A")
         );
     }
 
@@ -1310,34 +1356,36 @@ public class CodeWriterTest {
     @MethodSource("iterationTestCases")
     public void handlesIteration(Object fooValue, String expected) {
         String template = "${#foo}\n"
-                          + "k: ${key:L}, v: ${value:L}, f: ${key.first:L}, l: ${key.last:L}\n"
-                          + "${/foo}";
+            + "k: ${key:L}, v: ${value:L}, f: ${key.first:L}, l: ${key.last:L}\n"
+            + "${/foo}";
         String actual = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false)
-                .putContext("foo", fooValue)
-                .write(template)
-                .toString();
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false)
+            .putContext("foo", fooValue)
+            .write(template)
+            .toString();
 
         assertThat(actual, equalTo(expected));
     }
 
     public static Stream<Arguments> iterationTestCases() {
         return Stream.of(
-                Arguments.of(null, ""),
-                Arguments.of(false, ""),
-                Arguments.of("", ""),
-                Arguments.of(Collections.emptyList(), ""),
-                Arguments.of(Collections.emptySet(), ""),
-                Arguments.of(Collections.emptyMap(), ""),
-                Arguments.of(Optional.empty(), ""),
-                Arguments.of(Optional.of(0), ""),
-                Arguments.of(Optional.of(Collections.emptyList()), ""),
-                Arguments.of(ListUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
-                Arguments.of(SetUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
-                Arguments.of(MapUtils.of("ak", "av"), "k: ak, v: av, f: true, l: true\n"),
-                Arguments.of(Arrays.asList("a", "b"),
-                             "k: 0, v: a, f: true, l: false\nk: 1, v: b, f: false, l: true\n")
+            Arguments.of(null, ""),
+            Arguments.of(false, ""),
+            Arguments.of("", ""),
+            Arguments.of(Collections.emptyList(), ""),
+            Arguments.of(Collections.emptySet(), ""),
+            Arguments.of(Collections.emptyMap(), ""),
+            Arguments.of(Optional.empty(), ""),
+            Arguments.of(Optional.of(0), ""),
+            Arguments.of(Optional.of(Collections.emptyList()), ""),
+            Arguments.of(ListUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
+            Arguments.of(SetUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
+            Arguments.of(MapUtils.of("ak", "av"), "k: ak, v: av, f: true, l: true\n"),
+            Arguments.of(
+                Arrays.asList("a", "b"),
+                "k: 0, v: a, f: true, l: false\nk: 1, v: b, f: false, l: true\n"
+            )
         );
     }
 
@@ -1371,16 +1419,27 @@ public class CodeWriterTest {
     @Test
     public void handlesNestedBlockAlignment() {
         SimpleCodeWriter writer = new SimpleCodeWriter()
-                .trimTrailingSpaces(false)
-                .insertTrailingNewline(false);
+            .trimTrailingSpaces(false)
+            .insertTrailingNewline(false);
         writer.onSection("nested", writer::writeInlineWithNoFormatting);
-        writer.write("Hello: ${C@nested|}",
-                     writer.consumer(w -> w.write(". ${C|}",
-                                                  w.consumer(w2 -> w2.write("* Hi\n* There")))));
+        writer.write(
+            "Hello: ${C@nested|}",
+            writer.consumer(
+                w -> w.write(
+                    ". ${C|}",
+                    w.consumer(w2 -> w2.write("* Hi\n* There"))
+                )
+            )
+        );
         String actual = writer.toString();
 
-        assertThat(actual, equalTo("Hello: . * Hi\n"
-                                   + "         * There"));
+        assertThat(
+            actual,
+            equalTo(
+                "Hello: . * Hi\n"
+                    + "         * There"
+            )
+        );
     }
 
     @Test
@@ -1456,8 +1515,13 @@ public class CodeWriterTest {
             writer.write("${bad:L}");
         });
 
-        assertThat(e.getMessage(), containsString("Unable to get context 'bad' from a matching method of the current "
-                                                  + "CodeSection: This was bad! "));
+        assertThat(
+            e.getMessage(),
+            containsString(
+                "Unable to get context 'bad' from a matching method of the current "
+                    + "CodeSection: This was bad! "
+            )
+        );
         // The debug info contains the class name of the section.
         assertThat(e.getMessage(), containsString(MySection.class.getCanonicalName()));
     }

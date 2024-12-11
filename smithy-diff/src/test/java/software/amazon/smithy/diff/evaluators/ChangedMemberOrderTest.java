@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,16 +26,16 @@ public class ChangedMemberOrderTest {
         MemberShape member1 = MemberShape.builder().id("foo.baz#Struct$member1").target(shape1).build();
         MemberShape member2 = MemberShape.builder().id("foo.baz#Struct$member2").target(shape1).build();
         StructureShape oldStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member2)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member2)
+            .build();
 
         StructureShape newStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member2)
-                .addMember(member1)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member2)
+            .addMember(member1)
+            .build();
 
         Model modelA = Model.assembler().addShapes(shape1, oldStruct).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shape1, newStruct).assemble().unwrap();
@@ -63,18 +52,18 @@ public class ChangedMemberOrderTest {
         MemberShape member1 = MemberShape.builder().id("foo.baz#Struct$member1").target(shape1).build();
         MemberShape member2 = MemberShape.builder().id("foo.baz#Struct$member2").target(shape1).build();
         StructureShape oldStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member2)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member2)
+            .build();
 
         MemberShape member3 = MemberShape.builder().id("foo.baz#Struct$member3").target(shape1).build();
         StructureShape newStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member3)
-                .addMember(member2)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member3)
+            .addMember(member2)
+            .build();
 
         Model modelA = Model.assembler().addShapes(shape1, oldStruct).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shape1, newStruct).assemble().unwrap();
@@ -91,18 +80,18 @@ public class ChangedMemberOrderTest {
         MemberShape member1 = MemberShape.builder().id("foo.baz#Struct$member1").target(shape1).build();
         MemberShape member2 = MemberShape.builder().id("foo.baz#Struct$member2").target(shape1).build();
         StructureShape oldStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member2)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member2)
+            .build();
 
         MemberShape member3 = MemberShape.builder().id("foo.baz#Struct$member3").target(shape1).build();
         StructureShape newStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member2)
-                .addMember(member3)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member2)
+            .addMember(member3)
+            .build();
 
         Model modelA = Model.assembler().addShapes(shape1, oldStruct).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shape1, newStruct).assemble().unwrap();
@@ -118,15 +107,15 @@ public class ChangedMemberOrderTest {
         MemberShape member1 = MemberShape.builder().id("foo.baz#Struct$member1").target(shape1).build();
         MemberShape member2 = MemberShape.builder().id("foo.baz#Struct$member2").target(shape1).build();
         StructureShape oldStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .addMember(member2)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .addMember(member2)
+            .build();
 
         StructureShape newStruct = StructureShape.builder()
-                .id("foo.baz#Struct")
-                .addMember(member1)
-                .build();
+            .id("foo.baz#Struct")
+            .addMember(member1)
+            .build();
 
         Model modelA = Model.assembler().addShapes(shape1, oldStruct).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shape1, newStruct).assemble().unwrap();

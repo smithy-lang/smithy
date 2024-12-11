@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,7 +45,8 @@ public class FileCacheResolverTest {
         File jar = File.createTempFile("foo", ".json");
 
         List<ResolvedArtifact> result = ListUtils.of(
-                ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0"));
+            ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0")
+        );
         Mock mock = new Mock(result);
         DependencyResolver resolver = new FileCacheResolver(cache, System.currentTimeMillis(), mock);
 

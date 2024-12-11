@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
@@ -44,7 +33,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 @SmithyUnstableApi
 final class ParameterizedHttpMalformedRequestTestCase
-        implements Tagged, ToNode, ToSmithyBuilder<ParameterizedHttpMalformedRequestTestCase> {
+    implements Tagged, ToNode, ToSmithyBuilder<ParameterizedHttpMalformedRequestTestCase> {
 
     private static final String DOCUMENTATION = "documentation";
     private static final String ID = "id";
@@ -104,17 +93,20 @@ final class ParameterizedHttpMalformedRequestTestCase
     public List<HttpMalformedRequestTestCase> generateTestCasesFromParameters() {
         if (testParameters.isEmpty()) {
             HttpMalformedRequestTestCase.Builder builder = HttpMalformedRequestTestCase.builder()
-                    .id(getId())
-                    .protocol(getProtocol())
-                    .request(request)
-                    .response(response)
-                    .tags(getTags());
+                .id(getId())
+                .protocol(getProtocol())
+                .request(request)
+                .response(response)
+                .tags(getTags());
             getDocumentation().ifPresent(builder::documentation);
             return ListUtils.of(builder.build());
         }
 
-        int paramLength = testParameters.values().stream().findFirst().map(List::size)
-                .orElseThrow(IllegalStateException::new);
+        int paramLength = testParameters.values()
+            .stream()
+            .findFirst()
+            .map(List::size)
+            .orElseThrow(IllegalStateException::new);
         final List<HttpMalformedRequestTestCase> testCases = new ArrayList<>(paramLength);
         for (int i = 0; i < paramLength; i++) {
             final SimpleCodeWriter writer = new SimpleCodeWriter();
@@ -123,43 +115,45 @@ final class ParameterizedHttpMalformedRequestTestCase
             }
 
             HttpMalformedRequestTestCase.Builder builder = HttpMalformedRequestTestCase.builder()
-                    .id(String.format(getId() + "_case%d", i))
-                    .protocol(getProtocol())
-                    .tags(getTags().stream().map(writer::format).collect(Collectors.toList()));
+                .id(String.format(getId() + "_case%d", i))
+                .protocol(getProtocol())
+                .tags(getTags().stream().map(writer::format).collect(Collectors.toList()));
             getDocumentation().map(writer::format).ifPresent(builder::documentation);
 
-            testCases.add(builder.request(interpolateRequest(request, writer))
-                                 .response(interpolateResponse(response, writer))
-                                 .build());
+            testCases.add(
+                builder.request(interpolateRequest(request, writer))
+                    .response(interpolateResponse(response, writer))
+                    .build()
+            );
         }
         return testCases;
     }
 
     private static HttpMalformedResponseDefinition interpolateResponse(
-            HttpMalformedResponseDefinition response,
-            SimpleCodeWriter writer
+        HttpMalformedResponseDefinition response,
+        SimpleCodeWriter writer
     ) {
-        HttpMalformedResponseDefinition.Builder responseBuilder =
-                response.toBuilder().headers(formatHeaders(writer, response.getHeaders()));
+        HttpMalformedResponseDefinition.Builder responseBuilder = response.toBuilder()
+            .headers(formatHeaders(writer, response.getHeaders()));
         response.getBody()
-                .map(responseBody -> {
-                    HttpMalformedResponseBodyDefinition.Builder bodyBuilder = responseBody.toBuilder()
-                            .mediaType(writer.format(responseBody.getMediaType()));
-                    responseBody.getContents().map(writer::format).ifPresent(bodyBuilder::contents);
-                    responseBody.getMessageRegex().map(writer::format).ifPresent(bodyBuilder::messageRegex);
-                    return bodyBuilder.build();
-                })
-                .ifPresent(responseBuilder::body);
+            .map(responseBody -> {
+                HttpMalformedResponseBodyDefinition.Builder bodyBuilder = responseBody.toBuilder()
+                    .mediaType(writer.format(responseBody.getMediaType()));
+                responseBody.getContents().map(writer::format).ifPresent(bodyBuilder::contents);
+                responseBody.getMessageRegex().map(writer::format).ifPresent(bodyBuilder::messageRegex);
+                return bodyBuilder.build();
+            })
+            .ifPresent(responseBuilder::body);
         return responseBuilder.build();
     }
 
     private static HttpMalformedRequestDefinition interpolateRequest(
-            HttpMalformedRequestDefinition request,
-            SimpleCodeWriter writer
+        HttpMalformedRequestDefinition request,
+        SimpleCodeWriter writer
     ) {
         HttpMalformedRequestDefinition.Builder requestBuilder = request.toBuilder()
-                .headers(formatHeaders(writer, request.getHeaders()))
-                .queryParams(request.getQueryParams().stream().map(writer::format).collect(Collectors.toList()));
+            .headers(formatHeaders(writer, request.getHeaders()))
+            .queryParams(request.getQueryParams().stream().map(writer::format).collect(Collectors.toList()));
         request.getBody().map(writer::format).ifPresent(requestBuilder::body);
         request.getUri().map(writer::format).ifPresent(requestBuilder::uri);
         return requestBuilder.build();
@@ -187,8 +181,10 @@ final class ParameterizedHttpMalformedRequestTestCase
         o.getObjectMember(TEST_PARAMETERS).ifPresent(params -> {
             Map<String, List<String>> paramsMap = new HashMap<>();
             for (Map.Entry<String, Node> e : params.getStringMap().entrySet()) {
-                paramsMap.put(e.getKey(),
-                              e.getValue().expectArrayNode().getElementsAs(n -> n.expectStringNode().getValue()));
+                paramsMap.put(
+                    e.getKey(),
+                    e.getValue().expectArrayNode().getElementsAs(n -> n.expectStringNode().getValue())
+                );
             }
             builder.testParameters(paramsMap);
         });
@@ -198,11 +194,11 @@ final class ParameterizedHttpMalformedRequestTestCase
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
-                .withMember(ID, getId())
-                .withMember(PROTOCOL, getProtocol().toString())
-                .withMember(REQUEST, getRequest().toNode())
-                .withMember(RESPONSE, getResponse().toNode());
+            .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
+            .withMember(ID, getId())
+            .withMember(PROTOCOL, getProtocol().toString())
+            .withMember(REQUEST, getRequest().toNode())
+            .withMember(RESPONSE, getResponse().toNode());
 
         if (!tags.isEmpty()) {
             builder.withMember(TAGS, ArrayNode.fromStrings(getTags()));
@@ -220,12 +216,12 @@ final class ParameterizedHttpMalformedRequestTestCase
     @Override
     public Builder toBuilder() {
         Builder builder = builder()
-                .id(getId())
-                .protocol(getProtocol())
-                .request(getRequest())
-                .response(getResponse())
-                .tags(getTags())
-                .testParameters(getTestParameters());
+            .id(getId())
+            .protocol(getProtocol())
+            .request(getRequest())
+            .response(getResponse())
+            .tags(getTags())
+            .testParameters(getTestParameters());
         getDocumentation().ifPresent(builder::documentation);
         return builder;
     }

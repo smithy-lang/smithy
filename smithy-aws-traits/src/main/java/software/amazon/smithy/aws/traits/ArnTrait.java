@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
@@ -67,8 +56,11 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
         this.reusable = builder.reusable;
 
         if (template.startsWith("/")) {
-            throw new SourceException("Invalid aws.api#arn trait. The template must not start with '/'. "
-                                      + "Found `" + template + "`", getSourceLocation());
+            throw new SourceException(
+                "Invalid aws.api#arn trait. The template must not start with '/'. "
+                    + "Found `" + template + "`",
+                getSourceLocation()
+            );
         }
     }
 
@@ -161,26 +153,26 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
     @Override
     protected Node createNode() {
         return Node.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withMember(TEMPLATE, Node.from(getTemplate()))
-                .withMember(ABSOLUTE, Node.from(isAbsolute()))
-                .withMember(NO_ACCOUNT, Node.from(isNoAccount()))
-                .withMember(NO_REGION, Node.from(isNoRegion()))
-                .withOptionalMember(RESOURCE_DELIMITER, getResourceDelimiter())
-                .withMember(REUSABLE, Node.from(isReusable()))
-                .build();
+            .sourceLocation(getSourceLocation())
+            .withMember(TEMPLATE, Node.from(getTemplate()))
+            .withMember(ABSOLUTE, Node.from(isAbsolute()))
+            .withMember(NO_ACCOUNT, Node.from(isNoAccount()))
+            .withMember(NO_REGION, Node.from(isNoRegion()))
+            .withOptionalMember(RESOURCE_DELIMITER, getResourceDelimiter())
+            .withMember(REUSABLE, Node.from(isReusable()))
+            .build();
     }
 
     @Override
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(getSourceLocation())
-                .noRegion(isNoRegion())
-                .noAccount(isNoAccount())
-                .absolute(isAbsolute())
-                .template(getTemplate())
-                .resourceDelimiter(resourceDelimiter)
-                .reusable(reusable);
+            .sourceLocation(getSourceLocation())
+            .noRegion(isNoRegion())
+            .noAccount(isNoAccount())
+            .absolute(isAbsolute())
+            .template(getTemplate())
+            .resourceDelimiter(resourceDelimiter)
+            .reusable(reusable);
     }
 
     // Due to the defaulting of this trait, equals has to be overridden
@@ -194,11 +186,11 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
         } else {
             ArnTrait oa = (ArnTrait) other;
             return template.equals(oa.template)
-                    && absolute == oa.absolute
-                    && noAccount == oa.noAccount
-                    && noRegion == oa.noRegion
-                    && resourceDelimiter == oa.resourceDelimiter
-                    && reusable == oa.reusable;
+                && absolute == oa.absolute
+                && noAccount == oa.noAccount
+                && noRegion == oa.noRegion
+                && resourceDelimiter == oa.resourceDelimiter
+                && reusable == oa.reusable;
         }
     }
 

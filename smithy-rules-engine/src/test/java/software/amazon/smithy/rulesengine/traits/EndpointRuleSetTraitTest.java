@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -16,12 +20,15 @@ public final class EndpointRuleSetTraitTest {
     @Test
     public void indexesTheModel() {
         Model result = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("traits-test-model.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("traits-test-model.smithy"))
+            .assemble()
+            .unwrap();
 
-        ServiceShape serviceShape = result.expectShape(ShapeId.from("smithy.example#ExampleService"), ServiceShape.class);
+        ServiceShape serviceShape = result.expectShape(
+            ShapeId.from("smithy.example#ExampleService"),
+            ServiceShape.class
+        );
 
         EndpointRuleSetTrait ruleSetTrait = serviceShape.getTrait(EndpointRuleSetTrait.class).get();
 
@@ -33,12 +40,16 @@ public final class EndpointRuleSetTraitTest {
     @Test
     public void roundTrips() {
         Node expectedNode = Node.parse(
-                "{\"version\":\"1.0\",\"parameters\":{\"stringParam\":{\"type\":\"string\"}"
-                + ",\"booleanParam\":{\"type\":\"boolean\"}},\"rules\":[]}");
+            "{\"version\":\"1.0\",\"parameters\":{\"stringParam\":{\"type\":\"string\"}"
+                + ",\"booleanParam\":{\"type\":\"boolean\"}},\"rules\":[]}"
+        );
 
         TraitFactory traitFactory = TraitFactory.createServiceFactory();
-        EndpointRuleSetTrait expectedTrait = (EndpointRuleSetTrait) traitFactory.createTrait(EndpointRuleSetTrait.ID,
-                ShapeId.from("ns.example#Foo"), expectedNode).get();
+        EndpointRuleSetTrait expectedTrait = (EndpointRuleSetTrait) traitFactory.createTrait(
+            EndpointRuleSetTrait.ID,
+            ShapeId.from("ns.example#Foo"),
+            expectedNode
+        ).get();
 
         EndpointRuleSetTrait actualTrait = expectedTrait.toBuilder().build();
         assertThat(expectedTrait, equalTo(actualTrait));

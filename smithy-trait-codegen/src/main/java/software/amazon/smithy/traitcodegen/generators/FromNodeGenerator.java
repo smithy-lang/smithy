@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
@@ -51,8 +50,13 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     private final SymbolProvider symbolProvider;
     private final Model model;
 
-    FromNodeGenerator(TraitCodegenWriter writer, Symbol symbol, Shape shape, SymbolProvider symbolProvider,
-                      Model model) {
+    FromNodeGenerator(
+        TraitCodegenWriter writer,
+        Symbol symbol,
+        Shape shape,
+        SymbolProvider symbolProvider,
+        Model model
+    ) {
         this.writer = writer;
         this.symbol = symbol;
         this.shape = shape;
@@ -72,12 +76,17 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         }
 
         writeFromNodeJavaDoc();
-        writer.openBlock("public static $T fromNode($T node) {", "}",
-                symbol, Node.class, () -> {
-            writer.writeWithNoFormatting("Builder builder = builder();");
-            shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-            writer.writeWithNoFormatting("return builder.build();");
-        });
+        writer.openBlock(
+            "public static $T fromNode($T node) {",
+            "}",
+            symbol,
+            Node.class,
+            () -> {
+                writer.writeWithNoFormatting("Builder builder = builder();");
+                shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+                writer.writeWithNoFormatting("return builder.build();");
+            }
+        );
         writer.newLine();
 
         return null;
@@ -86,12 +95,17 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     @Override
     public Void mapShape(MapShape shape) {
         writeFromNodeJavaDoc();
-        writer.openBlock("public static $T fromNode($T node) {", "}",
-                symbol, Node.class, () -> {
-                    writer.writeWithNoFormatting("Builder builder = builder();");
-                    shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
-                    writer.writeWithNoFormatting("return builder.build();");
-                });
+        writer.openBlock(
+            "public static $T fromNode($T node) {",
+            "}",
+            symbol,
+            Node.class,
+            () -> {
+                writer.writeWithNoFormatting("Builder builder = builder();");
+                shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+                writer.writeWithNoFormatting("return builder.build();");
+            }
+        );
         writer.newLine();
 
         return null;
@@ -110,7 +124,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     @Override
     public Void enumShape(EnumShape shape) {
         // Enum traits do not need this method, only nested enums.
-        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent())  {
+        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent()) {
             return null;
         }
         writeFromNodeJavaDoc();
@@ -124,7 +138,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     @Override
     public Void intEnumShape(IntEnumShape shape) {
         // Enum traits do not need this method, only nested enums.
-        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent())  {
+        if (symbol.getProperty(SymbolProperties.BASE_SYMBOL).isPresent()) {
             return null;
         }
         writeFromNodeJavaDoc();
@@ -173,8 +187,13 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
     @Override
     public Void timestampShape(TimestampShape shape) {
         writeFromNodeJavaDoc();
-        writer.openBlock("public static $T fromNode($T node) {", "}",
-                symbol, Node.class, this::writeTimestampDeser);
+        writer.openBlock(
+            "public static $T fromNode($T node) {",
+            "}",
+            symbol,
+            Node.class,
+            this::writeTimestampDeser
+        );
         writer.newLine();
 
         return null;
@@ -185,27 +204,40 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         // way to deserialize the input node. Without the timestamp format trait
         // timestamp should be able to handle both epoch seconds and date time formats.
         if (shape.hasTrait(TimestampFormatTrait.class)) {
-            writer.write("return new $T($C, node.getSourceLocation());",
-                    symbol,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node")));
+            writer.write(
+                "return new $T($C, node.getSourceLocation());",
+                symbol,
+                (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node"))
+            );
         } else {
             writer.openBlock("if (node.isNumberNode()) {", "}", () -> {
-                writer.write("return new $T($T.ofEpochSecond(node.expectNumberNode().getValue().longValue()),",
-                        symbol, Instant.class).indent();
+                writer.write(
+                    "return new $T($T.ofEpochSecond(node.expectNumberNode().getValue().longValue()),",
+                    symbol,
+                    Instant.class
+                ).indent();
                 writer.writeWithNoFormatting("node.getSourceLocation());").dedent();
             });
-            writer.write("return new $T($T.parse(node.expectStringNode().getValue()), node.getSourceLocation());",
-                    symbol, Instant.class);
+            writer.write(
+                "return new $T($T.parse(node.expectStringNode().getValue()), node.getSourceLocation());",
+                symbol,
+                Instant.class
+            );
         }
         writer.newLine();
     }
 
     private void writeFromNodeJavaDoc() {
-        writer.writeDocString(writer.format("Creates a {@link $1T} from a {@link Node}.\n\n"
+        writer.writeDocString(
+            writer.format(
+                "Creates a {@link $1T} from a {@link Node}.\n\n"
                     + "@param node Node to create the $1T from.\n"
                     + "@return Returns the created $1T.\n"
                     + "@throws $2T if the given Node is invalid.\n",
-                symbol, ExpectationNotMetException.class));
+                symbol,
+                ExpectationNotMetException.class
+            )
+        );
     }
 
     /**
@@ -235,87 +267,122 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
-                    fieldName, memberName,
-                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
+            writer.writeInline(
+                memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
+                fieldName,
+                memberName,
+                (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n"))
+            );
             return null;
         }
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.byteValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.byteValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.shortValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.shortValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.intValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.longValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.longValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.floatValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, $3T::expectObjectNode, builder::$2L)",
-                    fieldName, memberName, Node.class);
+            writer.writeInline(
+                memberPrefix + "Member($1S, $3T::expectObjectNode, builder::$2L)",
+                fieldName,
+                memberName,
+                Node.class
+            );
             return null;
         }
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L(n.doubleValue()))",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L(n.doubleValue()))",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void bigIntegerShape(BigIntegerShape shape) {
-            writer.writeInline(memberPrefix
-                            + "Member($S, n -> n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$L)",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix
+                    + "Member($S, n -> n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$L)",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.writeInline(memberPrefix
-                            + "Member($S, n -> n.expectNumberNode().asBigDecimal().get(), builder::$L)",
-                    fieldName, memberName);
+            writer.writeInline(
+                memberPrefix
+                    + "Member($S, n -> n.expectNumberNode().asBigDecimal().get(), builder::$L)",
+                fieldName,
+                memberName
+            );
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
             writer.disableNewlines();
-            writer.openBlock(memberPrefix
-                            + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
-                    fieldName,
-                    () -> writer.write("builder.put$L($C, $C);\n",
-                            StringUtils.capitalize(memberName),
-                            (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
-                            (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v")))
+            writer.openBlock(
+                memberPrefix
+                    + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n",
+                "}))",
+                fieldName,
+                () -> writer.write(
+                    "builder.put$L($C, $C);\n",
+                    StringUtils.capitalize(memberName),
+                    (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
+                    (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v"))
+                )
             );
             writer.enableNewlines();
             return null;
@@ -323,8 +390,12 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            writer.writeInline(memberPrefix + "NumberMember($S, n -> builder.$L($T.from(n.intValue())))",
-                    fieldName, memberName, symbolProvider.toSymbol(shape));
+            writer.writeInline(
+                memberPrefix + "NumberMember($S, n -> builder.$L($T.from(n.intValue())))",
+                fieldName,
+                memberName,
+                symbolProvider.toSymbol(shape)
+            );
             return null;
         }
 
@@ -333,9 +404,11 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
                 writer.writeInline(memberPrefix + "StringMember($S, builder::$L)", fieldName, memberName);
             } else {
-                writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                        fieldName, memberName,
-                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
+                writer.writeInline(
+                    memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                    fieldName,
+                    memberName,
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
                 );
             }
             return null;
@@ -343,25 +416,34 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void enumShape(EnumShape shape) {
-            writer.writeInline(memberPrefix + "StringMember($S, n -> builder.$L($T.from(n)))",
-                    fieldName, memberName, symbolProvider.toSymbol(shape));
+            writer.writeInline(
+                memberPrefix + "StringMember($S, n -> builder.$L($T.from(n)))",
+                fieldName,
+                memberName,
+                symbolProvider.toSymbol(shape)
+            );
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                    fieldName, memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
+            writer.writeInline(
+                memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                fieldName,
+                memberName,
+                (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
             );
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                    fieldName, memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+            writer.writeInline(
+                memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                fieldName,
+                memberName,
+                (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n"))
+            );
             return null;
         }
 

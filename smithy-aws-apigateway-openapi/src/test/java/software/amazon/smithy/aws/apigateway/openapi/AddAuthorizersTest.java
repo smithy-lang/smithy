@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,16 +30,16 @@ public class AddAuthorizersTest {
     @Test
     public void addsAuthorizers() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("authorizers.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("authorizers.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -72,16 +61,16 @@ public class AddAuthorizersTest {
     @Test
     public void addsOnlyAuthType() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("basic-authorizers.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("basic-authorizers.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -95,16 +84,16 @@ public class AddAuthorizersTest {
     @Test
     public void addsCustomAuthType() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("custom-auth-type-authorizer.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("custom-auth-type-authorizer.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -118,16 +107,16 @@ public class AddAuthorizersTest {
     @Test
     public void emptyCustomAuthTypeNotSet() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("empty-custom-auth-type-authorizer.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("empty-custom-auth-type-authorizer.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
         SecurityScheme apiKey = result.getComponents().getSecuritySchemes().get("api_key");
 
         assertThat(apiKey.getType(), equalTo("apiKey"));
@@ -140,18 +129,21 @@ public class AddAuthorizersTest {
     @Test
     public void addsOperationLevelApiKeyScheme() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("operation-http-api-key-security.json"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("operation-http-api-key-security.json"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("operation-http-api-key-security.openapi.json")));
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
+        Node expectedNode = Node.parse(
+            IoUtils.toUtf8String(
+                getClass().getResourceAsStream("operation-http-api-key-security.openapi.json")
+            )
+        );
 
         Node.assertEquals(result, expectedNode);
     }
@@ -159,16 +151,16 @@ public class AddAuthorizersTest {
     @Test
     public void resolvesEffectiveAuthorizersForEachOperation() {
         Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("effective-authorizers.smithy"))
-                .assemble()
-                .unwrap();
+            .discoverModels(getClass().getClassLoader())
+            .addImport(getClass().getResource("effective-authorizers.smithy"))
+            .assemble()
+            .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#ServiceA"));
         OpenApi result = OpenApiConverter.create()
-                .config(config)
-                .classLoader(getClass().getClassLoader())
-                .convert(model);
+            .config(config)
+            .classLoader(getClass().getClassLoader())
+            .convert(model);
 
         // The security of the service is just "foo".
         assertThat(result.getSecurity(), contains(MapUtils.of("foo", ListUtils.of())));
@@ -177,7 +169,9 @@ public class AddAuthorizersTest {
         // The security schemes of operationA must be empty.
         assertThat(result.getPaths().get("/operationA").getGet().get().getSecurity(), is(Optional.empty()));
         // The security schemes of operationB must be "baz".
-        assertThat(result.getPaths().get("/operationB").getGet().get().getSecurity(),
-                   is(Optional.of(ListUtils.of(MapUtils.of("baz", ListUtils.of())))));
+        assertThat(
+            result.getPaths().get("/operationB").getGet().get().getSecurity(),
+            is(Optional.of(ListUtils.of(MapUtils.of("baz", ListUtils.of()))))
+        );
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.transform;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,13 +17,13 @@ public class DeconflictErrorsWithSharedStatusCodeTest {
     @Test
     public void deconflictErrorsWithSharedStatusCodes() {
         Model input = Model.assembler()
-                .addImport(getClass().getResource("conflicting-errors.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("conflicting-errors.smithy"))
+            .assemble()
+            .unwrap();
         Model output = Model.assembler()
-                .addImport(getClass().getResource("deconflicted-errors.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("deconflicted-errors.smithy"))
+            .assemble()
+            .unwrap();
 
         ModelTransformer transformer = ModelTransformer.create();
 
@@ -35,14 +39,16 @@ public class DeconflictErrorsWithSharedStatusCodeTest {
     @Test
     public void throwsWhenHeadersConflict() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("conflicting-errors-with-conflicting-headers.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("conflicting-errors-with-conflicting-headers.smithy"))
+            .assemble()
+            .unwrap();
 
         ModelTransformer transformer = ModelTransformer.create();
 
         ServiceShape service = model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class);
-        assertThrows(ModelTransformException.class,
-                () -> transformer.deconflictErrorsWithSharedStatusCode(model, service));
+        assertThrows(
+            ModelTransformException.class,
+            () -> transformer.deconflictErrorsWithSharedStatusCode(model, service)
+        );
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static software.amazon.smithy.model.node.NodeMapper.ObjectCreatorFactory;
@@ -83,8 +72,8 @@ final class DefaultNodeDeserializers {
     private static final ObjectCreatorFactory EXACT_CREATOR_FACTORY = (nodeType, targetType, nodeMapper) -> {
         Class<?> targetClass = classFromType(targetType);
         if (targetClass != null
-                && Node.class.isAssignableFrom(targetClass)
-                && targetClass.isAssignableFrom(nodeType.getNodeClass())) {
+            && Node.class.isAssignableFrom(targetClass)
+            && targetClass.isAssignableFrom(nodeType.getNodeClass())) {
             return (node, target, pointer, mapper) -> node;
         } else {
             return null;
@@ -215,19 +204,19 @@ final class DefaultNodeDeserializers {
             if (targetClass != null) {
                 // Create an ArrayList for most cases of lists or iterables.
                 if (targetClass == List.class
-                        || targetClass == Collection.class
-                        || targetClass == Object.class
-                        || targetClass == ArrayList.class
-                        || targetClass == Iterable.class) {
+                    || targetClass == Collection.class
+                    || targetClass == Object.class
+                    || targetClass == ArrayList.class
+                    || targetClass == Iterable.class) {
                     return ArrayList::new;
                 } else if (targetClass == Set.class
-                           || targetClass == HashSet.class
-                           || targetClass == LinkedHashSet.class) {
-                    // Special casing for Set or HashSet.
-                    return LinkedHashSet::new;
-                } else if (Collection.class.isAssignableFrom(targetClass)) {
-                    return createSupplierFromReflection(targetClass);
-                }
+                    || targetClass == HashSet.class
+                    || targetClass == LinkedHashSet.class) {
+                        // Special casing for Set or HashSet.
+                        return LinkedHashSet::new;
+                    } else if (Collection.class.isAssignableFrom(targetClass)) {
+                        return createSupplierFromReflection(targetClass);
+                    }
             }
 
             return null;
@@ -245,8 +234,10 @@ final class DefaultNodeDeserializers {
                 // We *could* pass here and try to let the next deserializer take a crack, but that would
                 // probably never work in practice and results in a less descriptive error message.
                 throw new NodeDeserializationException(
-                        "Unable to find a zero-arg constructor for Collection " + into.getName(),
-                        SourceLocation.NONE, e);
+                    "Unable to find a zero-arg constructor for Collection " + into.getName(),
+                    SourceLocation.NONE,
+                    e
+                );
             }
         }
     };
@@ -297,9 +288,17 @@ final class DefaultNodeDeserializers {
                 for (Map.Entry<StringNode, Node> entry : objectNode.getMembers().entrySet()) {
                     String keyValue = entry.getKey().getValue();
                     Object key = mapper.deserializeNext(
-                            entry.getKey(), pointer + "/(key:" + keyValue + ")", keyType, mapper);
+                        entry.getKey(),
+                        pointer + "/(key:" + keyValue + ")",
+                        keyType,
+                        mapper
+                    );
                     Object value = mapper.deserializeNext(
-                            entry.getValue(), pointer + "/" + keyValue, valueType, mapper);
+                        entry.getValue(),
+                        pointer + "/" + keyValue,
+                        valueType,
+                        mapper
+                    );
                     map.put(key, value);
                 }
 
@@ -330,8 +329,10 @@ final class DefaultNodeDeserializers {
                 // We *could* pass here and try to let the next deserializer take a crack, but that would
                 // probably never work in practice and results in a less descriptive error message.
                 throw new NodeDeserializationException(
-                        "Unable to find a zero-arg constructor for Map " + into.getName(),
-                        SourceLocation.NONE, e);
+                    "Unable to find a zero-arg constructor for Map " + into.getName(),
+                    SourceLocation.NONE,
+                    e
+                );
             }
         }
     };
@@ -343,17 +344,17 @@ final class DefaultNodeDeserializers {
         if (targetClass != null && !nodeMapper.getDisableFromNode().contains(targetClass)) {
             for (Method method : targetClass.getMethods()) {
                 if ((method.getName().equals("fromNode"))
-                        && targetClass.isAssignableFrom(method.getReturnType())
-                        && method.getParameters().length == 1
-                        && Node.class.isAssignableFrom(method.getParameters()[0].getType())
-                        && Modifier.isStatic(method.getModifiers())) {
+                    && targetClass.isAssignableFrom(method.getReturnType())
+                    && method.getParameters().length == 1
+                    && Node.class.isAssignableFrom(method.getParameters()[0].getType())
+                    && Modifier.isStatic(method.getModifiers())) {
                     return (node, targetType, pointer, mapper) -> {
                         try {
                             return method.invoke(null, node);
                         } catch (ReflectiveOperationException e) {
                             String message = "Unable to deserialize Node using fromNode method: " + getCauseMessage(e);
                             throw NodeDeserializationException
-                                    .fromReflectiveContext(targetType, pointer, node, e, message);
+                                .fromReflectiveContext(targetType, pointer, node, e, message);
                         }
                     };
                 }
@@ -367,11 +368,11 @@ final class DefaultNodeDeserializers {
         private static final ConcurrentMap<Pair<Class<?>, String>, Method> SETTER_CACHE = new ConcurrentHashMap<>();
 
         static void apply(
-                Object value,
-                Node node,
-                Type target,
-                String pointer,
-                NodeMapper mapper
+            Object value,
+            Node node,
+            Type target,
+            String pointer,
+            NodeMapper mapper
         ) throws ReflectiveOperationException {
             for (Map.Entry<String, Node> entry : node.expectObjectNode().getStringMap().entrySet()) {
                 Method setter = findSetter(target, entry.getKey());
@@ -379,10 +380,11 @@ final class DefaultNodeDeserializers {
                     mapper.getWhenMissingSetter().handle(target, pointer, entry.getKey(), entry.getValue());
                 } else {
                     Object member = mapper.deserializeNext(
-                            entry.getValue(),
-                            pointer + "/" + entry.getKey(),
-                            setter.getParameters()[0].getParameterizedType(),
-                            mapper);
+                        entry.getValue(),
+                        pointer + "/" + entry.getKey(),
+                        setter.getParameters()[0].getParameterizedType(),
+                        mapper
+                    );
                     setter.invoke(value, member);
                 }
             }
@@ -472,9 +474,9 @@ final class DefaultNodeDeserializers {
 
         for (Method method : targetClass.getMethods()) {
             if ((method.getName().equals("builder"))
-                    && SmithyBuilder.class.isAssignableFrom(method.getReturnType())
-                    && method.getParameters().length == 0
-                    && Modifier.isStatic(method.getModifiers())) {
+                && SmithyBuilder.class.isAssignableFrom(method.getReturnType())
+                && method.getParameters().length == 0
+                && Modifier.isStatic(method.getModifiers())) {
                 method.setAccessible(true);
                 return (node, targetType, pointer, mapper) -> {
                     try {
@@ -492,8 +494,10 @@ final class DefaultNodeDeserializers {
         return null;
     };
 
-    private static void applySourceLocation(Object object, FromSourceLocation sourceLocation)
-            throws ReflectiveOperationException {
+    private static void applySourceLocation(
+        Object object,
+        FromSourceLocation sourceLocation
+    ) throws ReflectiveOperationException {
         Method setter = BeanMapper.findSetter(object.getClass(), "sourceLocation");
         if (setter != null) {
             setter.invoke(object, sourceLocation.getSourceLocation());
@@ -511,7 +515,9 @@ final class DefaultNodeDeserializers {
             // TODO: we could potentially add support for this if it's not too complicated.
             if (targetClass.getEnclosingClass() != null && !Modifier.isStatic(targetClass.getModifiers())) {
                 throw new NodeDeserializationException(
-                        "Cannot create non-static inner class: " + targetClass.getCanonicalName(), SourceLocation.NONE);
+                    "Cannot create non-static inner class: " + targetClass.getCanonicalName(),
+                    SourceLocation.NONE
+                );
             }
 
             Constructor<?> ctor = targetClass.getDeclaredConstructor();
@@ -524,8 +530,13 @@ final class DefaultNodeDeserializers {
                     applySourceLocation(value, node);
                     return value;
                 } catch (ReflectiveOperationException e) {
-                    throw NodeDeserializationException.fromReflectiveContext(targetType, pointer, node, e,
-                            "Unable to deserialize a Node when invoking target constructor: " + getCauseMessage(e));
+                    throw NodeDeserializationException.fromReflectiveContext(
+                        targetType,
+                        pointer,
+                        node,
+                        e,
+                        "Unable to deserialize a Node when invoking target constructor: " + getCauseMessage(e)
+                    );
                 }
             };
         } catch (NoSuchMethodException e) {
@@ -559,8 +570,13 @@ final class DefaultNodeDeserializers {
                 names.add(constant.toString());
             }
 
-            throw NodeDeserializationException.fromContext(targetClass, pointer, node, null,
-                    "Expected one of the following enum strings: " + names);
+            throw NodeDeserializationException.fromContext(
+                targetClass,
+                pointer,
+                node,
+                null,
+                "Expected one of the following enum strings: " + names
+            );
         };
     };
 
@@ -572,11 +588,16 @@ final class DefaultNodeDeserializers {
     // This mirrors the simpler behaviors allowed in Jackson.
     // See https://github.com/FasterXML/jackson-databind/blob/ab583fb2319ee33ef6b548b720afec84265d40a7/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
     private static final Map<Type, FromStringClassFactory> FROM_STRING_CLASSES = MapUtils.of(
-            URL.class, URL::new,
-            URI.class, URI::new,
-            Pattern.class, Pattern::compile,
-            Path.class, Paths::get,
-            File.class, File::new
+        URL.class,
+        URL::new,
+        URI.class,
+        URI::new,
+        Pattern.class,
+        Pattern::compile,
+        Path.class,
+        Paths::get,
+        File.class,
+        File::new
     );
 
     private static final ObjectCreatorFactory FROM_STRING = (nodeType, target, nodeMapper) -> {
@@ -603,18 +624,18 @@ final class DefaultNodeDeserializers {
     // If we ever open up the API, then we should consider making the priority
     // more explicit by adding it to the ObjectCreatorFactory interface.
     private static final List<ObjectCreatorFactory> DEFAULT_FACTORIES = ListUtils.of(
-            EXACT_CREATOR_FACTORY,
-            NULL_CREATOR,
-            FROM_NODE_CREATOR,
-            BOOLEAN_CREATOR_FACTORY,
-            FROM_STRING,
-            STRING_CREATOR,
-            ENUM_CREATOR,
-            NUMBER_CREATOR,
-            COLLECTION_CREATOR,
-            MAP_CREATOR,
-            FROM_BUILDER_CREATOR,
-            BEAN_CREATOR
+        EXACT_CREATOR_FACTORY,
+        NULL_CREATOR,
+        FROM_NODE_CREATOR,
+        BOOLEAN_CREATOR_FACTORY,
+        FROM_STRING,
+        STRING_CREATOR,
+        ENUM_CREATOR,
+        NUMBER_CREATOR,
+        COLLECTION_CREATOR,
+        MAP_CREATOR,
+        FROM_BUILDER_CREATOR,
+        BEAN_CREATOR
     );
 
     static final ObjectCreatorFactory DEFAULT_CHAIN = (nodeType, target, nodeMapper) -> {

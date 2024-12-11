@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import java.util.stream.Stream;
@@ -14,10 +18,12 @@ public class MavenDependencyResolverTest {
     public void allowsValidDependenciesAndRepos() {
         DependencyResolver resolver = new MavenDependencyResolver();
         resolver.addRepository(MavenRepository.builder().url("https://example.com").build());
-        resolver.addRepository(MavenRepository.builder()
+        resolver.addRepository(
+            MavenRepository.builder()
                 .url("https://mvn.example.com")
                 .httpCredentials("user:pass")
-                .build());
+                .build()
+        );
         resolver.addDependency("com.foo:baz1:1.0.0");
         resolver.addDependency("com.foo:baz2:[1.0.0]");
         resolver.addDependency("com.foo:baz3:[1.0.0,]");
@@ -53,9 +59,11 @@ public class MavenDependencyResolverTest {
         DependencyResolver resolver = new MavenDependencyResolver();
 
         Assertions.assertThrows(DependencyResolverException.class, () -> {
-            resolver.addRepository(MavenRepository.builder()
+            resolver.addRepository(
+                MavenRepository.builder()
                     .url("!nope://")
-                    .build());
+                    .build()
+            );
         });
     }
 }

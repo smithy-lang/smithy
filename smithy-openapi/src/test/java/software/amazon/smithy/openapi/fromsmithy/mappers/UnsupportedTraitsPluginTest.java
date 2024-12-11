@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import org.junit.jupiter.api.AfterAll;
@@ -16,10 +20,10 @@ public class UnsupportedTraitsPluginTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(UnsupportedTraitsPluginTest.class.getResource("endpoint-service.smithy"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
+            .addImport(UnsupportedTraitsPluginTest.class.getResource("endpoint-service.smithy"))
+            .discoverModels()
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -33,8 +37,8 @@ public class UnsupportedTraitsPluginTest {
         config.setService(ShapeId.from("smithy.example#EndpointService"));
         config.setIgnoreUnsupportedTraits(true);
         OpenApiConverter.create()
-                .config(config)
-                .convert(model);
+            .config(config)
+            .convert(model);
     }
 
     @Test

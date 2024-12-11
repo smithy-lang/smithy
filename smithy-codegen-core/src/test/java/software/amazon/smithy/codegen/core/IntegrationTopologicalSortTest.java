@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,11 +20,8 @@ public class IntegrationTopologicalSortTest {
 
     private static final class MySettings {}
 
-    private static final class MyIntegration implements SmithyIntegration<
-            MySettings,
-            MySimpleWriter,
-            CodegenContext<MySettings, MySimpleWriter, MyIntegration>
-    > {
+    private static final class MyIntegration implements
+        SmithyIntegration<MySettings, MySimpleWriter, CodegenContext<MySettings, MySimpleWriter, MyIntegration>> {
         private final String name;
         private final byte priority;
         private final List<String> runBefore;
@@ -87,9 +73,10 @@ public class IntegrationTopologicalSortTest {
     }
 
     static List<String> toStrings(List<? extends SmithyIntegration<?, ?, ?>> integrations) {
-        return SmithyIntegration.sort(integrations).stream()
-                .map(SmithyIntegration::name)
-                .collect(Collectors.toList());
+        return SmithyIntegration.sort(integrations)
+            .stream()
+            .map(SmithyIntegration::name)
+            .collect(Collectors.toList());
     }
 
     @Test
@@ -180,8 +167,10 @@ public class IntegrationTopologicalSortTest {
         integrations.add(new MyIntegration("c", (byte) 0, ListUtils.of("d")));
         integrations.add(new MyIntegration("d", (byte) 0, ListUtils.of("b"), ListUtils.of("a")));
 
-        RuntimeException e = Assertions.assertThrows(IllegalArgumentException.class,
-                                                     () -> SmithyIntegration.sort(integrations));
+        RuntimeException e = Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> SmithyIntegration.sort(integrations)
+        );
         assertThat(e.getMessage(), equalTo("SmithyIntegration cycles detected among [b, d]"));
     }
 
@@ -191,11 +180,17 @@ public class IntegrationTopologicalSortTest {
         integrations.add(new MyIntegration("a"));
         integrations.add(new MyIntegration("a"));
 
-        RuntimeException e = Assertions.assertThrows(IllegalArgumentException.class,
-                                                     () -> SmithyIntegration.sort(integrations));
-        assertThat(e.getMessage(), equalTo(
+        RuntimeException e = Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> SmithyIntegration.sort(integrations)
+        );
+        assertThat(
+            e.getMessage(),
+            equalTo(
                 "Conflicting SmithyIntegration names detected for 'a': software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration "
-                + "and software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration"));
+                    + "and software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration"
+            )
+        );
     }
 
     @Test

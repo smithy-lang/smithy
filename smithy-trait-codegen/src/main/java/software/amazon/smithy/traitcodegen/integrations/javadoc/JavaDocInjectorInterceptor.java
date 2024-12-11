@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 import software.amazon.smithy.model.shapes.Shape;
@@ -30,8 +29,8 @@ final class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<Code
     @Override
     public boolean isIntercepted(CodeSection section) {
         return section instanceof ClassSection
-                || section instanceof GetterSection
-                || section instanceof EnumVariantSection;
+            || section instanceof GetterSection
+            || section instanceof EnumVariantSection;
     }
 
     @Override

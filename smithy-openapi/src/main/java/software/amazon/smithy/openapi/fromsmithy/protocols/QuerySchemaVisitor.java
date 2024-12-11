@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import software.amazon.smithy.jsonschema.Schema;
@@ -54,13 +43,14 @@ final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sch
         // Recursively change the items schema and its targets as needed.
         Schema refSchema = context.inlineOrReferenceSchema(collectionMember);
         Schema itemsSchema = collectionTarget.accept(
-                new QuerySchemaVisitor<>(context, refSchema, collectionMember));
+            new QuerySchemaVisitor<>(context, refSchema, collectionMember)
+        );
         // Copy the collection schema, remove any $ref, and change the items.
         return schema.toBuilder()
-                .ref(null)
-                .type("array")
-                .items(itemsSchema)
-                .build();
+            .ref(null)
+            .type("array")
+            .items(itemsSchema)
+            .build();
     }
 
     // Query string timestamps in Smithy are date-time strings by default
@@ -77,7 +67,7 @@ final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sch
         // Synthesize a new inline shape that defines an explicit format.
         Schema originalSchema = context.getJsonSchemaConverter().convertShape(member).getRootSchema();
         return ModelUtils.convertSchemaToStringBuilder(originalSchema)
-                .format("date-time")
-                .build();
+            .format("date-time")
+            .build();
     }
 }

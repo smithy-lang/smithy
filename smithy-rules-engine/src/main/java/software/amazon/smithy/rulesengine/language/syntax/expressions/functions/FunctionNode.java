@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.ArrayList;
@@ -67,15 +66,15 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return the {@link FunctionNode}.
      */
     public static FunctionNode ofExpressions(
-            String functionName,
-            FromSourceLocation sourceLocation,
-            ToExpression... arguments
+        String functionName,
+        FromSourceLocation sourceLocation,
+        ToExpression... arguments
     ) {
         return builder()
-                .sourceLocation(sourceLocation)
-                .name(StringNode.from(functionName))
-                .arguments(Arrays.asList(arguments))
-                .build();
+            .sourceLocation(sourceLocation)
+            .name(StringNode.from(functionName))
+            .arguments(Arrays.asList(arguments))
+            .build();
     }
 
     /**
@@ -99,10 +98,10 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
             arguments.add(Expression.fromNode(node));
         }
         return builder()
-                .sourceLocation(function)
-                .name(function.expectStringMember(FN))
-                .arguments(arguments)
-                .build();
+            .sourceLocation(function)
+            .name(function.expectStringMember(FN))
+            .arguments(arguments)
+            .build();
     }
 
     /**
@@ -111,9 +110,16 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return this function as an expression.
      */
     public Expression createFunction() {
-        return EndpointRuleSet.createFunctionFactory().apply(this)
-                .orElseThrow(() -> new RuleError(new SourceException(
-                        String.format("`%s` is not a valid function", name), name)));
+        return EndpointRuleSet.createFunctionFactory()
+            .apply(this)
+            .orElseThrow(
+                () -> new RuleError(
+                    new SourceException(
+                        String.format("`%s` is not a valid function", name),
+                        name
+                    )
+                )
+            );
     }
 
     /**
@@ -146,9 +152,9 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      */
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(sourceLocation)
-                .name(name)
-                .arguments(arguments);
+            .sourceLocation(sourceLocation)
+            .name(name)
+            .arguments(arguments);
     }
 
     @Override
@@ -159,9 +165,9 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
         }
 
         return ObjectNode.builder()
-                .withMember(FN, name)
-                .withMember(ARGV, builder.build())
-                .build();
+            .withMember(FN, name)
+            .withMember(ARGV, builder.build())
+            .build();
     }
 
     @Override

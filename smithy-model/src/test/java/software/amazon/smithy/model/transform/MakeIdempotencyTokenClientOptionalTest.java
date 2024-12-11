@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,9 +20,9 @@ public class MakeIdempotencyTokenClientOptionalTest {
     @Test
     void compareTransform() {
         Model before = Model.assembler()
-                .addImport(FlattenPaginationInfoTest.class.getResource("idempotency-token.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(FlattenPaginationInfoTest.class.getResource("idempotency-token.smithy"))
+            .assemble()
+            .unwrap();
         Model result = ModelTransformer.create().makeIdempotencyTokensClientOptional(before);
 
         Shape input = result.expectShape(operationInput);

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.function.Consumer;
@@ -68,14 +67,18 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Generation of nested types for Union shapes "
-                    + " is not supported at this time.");
+            throw new UnsupportedOperationException(
+                "Generation of nested types for Union shapes "
+                    + " is not supported at this time."
+            );
         }
 
         @Override
         public Void memberShape(MemberShape shape) {
-            throw new IllegalArgumentException("NestedShapeGenerator should not visit member shapes. "
-             + " Attempted to visit " + shape);
+            throw new IllegalArgumentException(
+                "NestedShapeGenerator should not visit member shapes. "
+                    + " Attempted to visit " + shape
+            );
         }
     }
 }

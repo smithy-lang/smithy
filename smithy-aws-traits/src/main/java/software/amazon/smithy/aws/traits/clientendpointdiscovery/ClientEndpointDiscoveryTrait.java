@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import java.util.Optional;
@@ -27,7 +16,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Configures endpoint discovery for the targeted service.
  */
 public final class ClientEndpointDiscoveryTrait extends AbstractTrait
-        implements ToSmithyBuilder<ClientEndpointDiscoveryTrait> {
+    implements ToSmithyBuilder<ClientEndpointDiscoveryTrait> {
     public static final ShapeId ID = ShapeId.from("aws.api#clientEndpointDiscovery");
 
     private static final String OPERATION = "operation";
@@ -84,18 +73,18 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
     @Override
     protected Node createNode() {
         return Node.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withMember(OPERATION, Node.from(getOperation().toString()))
-                .withOptionalMember(ERROR, getOptionalError().map(error -> Node.from(error.toString())))
-                .build();
+            .sourceLocation(getSourceLocation())
+            .withMember(OPERATION, Node.from(getOperation().toString()))
+            .withOptionalMember(ERROR, getOptionalError().map(error -> Node.from(error.toString())))
+            .build();
     }
 
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .operation(operation)
-                .error(error);
+            .sourceLocation(getSourceLocation())
+            .operation(operation)
+            .error(error);
     }
 
     /** Builder for {@link ClientEndpointDiscoveryTrait}. */
@@ -148,8 +137,8 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
         public ClientEndpointDiscoveryTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder()
-                    .sourceLocation(value)
-                    .operation(objectNode.expectStringMember(OPERATION).expectShapeId());
+                .sourceLocation(value)
+                .operation(objectNode.expectStringMember(OPERATION).expectShapeId());
             objectNode.getStringMember(ERROR).ifPresent(error -> builder.error(error.expectShapeId()));
             ClientEndpointDiscoveryTrait result = builder.build();
             result.setNodeCache(objectNode);

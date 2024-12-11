@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,9 +21,10 @@ public class NotSelectorTest {
 
     @BeforeAll
     public static void before() {
-        model = Model.assembler().addImport(SelectorTest.class.getResource("not-test.smithy"))
-                .assemble()
-                .unwrap();
+        model = Model.assembler()
+            .addImport(SelectorTest.class.getResource("not-test.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @Test
@@ -42,8 +47,9 @@ public class NotSelectorTest {
     @Test
     public void allowsSingleSelector() {
         SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse(":not(string, float)"));
+            SelectorSyntaxException.class,
+            () -> Selector.parse(":not(string, float)")
+        );
 
         assertThat(e.getMessage(), containsString("The :not function requires a single selector argument"));
     }
@@ -63,10 +69,11 @@ public class NotSelectorTest {
         // match structure members that don't have a length trait and they
         // target string shapes that don't have a length trait.
         Set<String> ids = SelectorTest.ids(
-                model,
-                "structure > member"
+            model,
+            "structure > member"
                 + ":not([trait|length])"
-                + ":test(> string :not([trait|length]))");
+                + ":test(> string :not([trait|length]))"
+        );
 
         assertThat(ids, hasItem("smithy.example#StructA$noLengthOnEither"));
         assertThat(ids, not(hasItem("smithy.example#StructA")));

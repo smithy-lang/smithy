@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.HashMap;
@@ -52,9 +51,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final TraitCodegenSettings settings;
     private final Map<String, Set<Symbol>> symbolNames = new HashMap<>();
 
-    public TraitCodegenWriter(String fileName,
-                              String namespace,
-                              TraitCodegenSettings settings
+    public TraitCodegenWriter(
+        String fileName,
+        String namespace,
+        TraitCodegenSettings settings
     ) {
         super(new TraitCodegenImportContainer(namespace));
         this.namespace = namespace;
@@ -69,7 +69,6 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         putFormatter('B', new BaseTypeFormatter());
         putFormatter('U', new CapitalizingFormatter());
     }
-
 
     private void addImport(Symbol symbol) {
         addImport(symbol, symbol.getName());
@@ -206,8 +205,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             } else if (type instanceof Class<?>) {
                 typeSymbol = TraitCodegenUtils.fromClass((Class<?>) type);
             } else {
-                throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol or Class "
-                        + "but found: `" + type + "`.");
+                throw new IllegalArgumentException(
+                    "Invalid type provided for $T. Expected a Symbol or Class "
+                        + "but found: `" + type + "`."
+                );
             }
 
             if (typeSymbol.getReferences().isEmpty()) {
@@ -254,8 +255,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         @Override
         public String apply(Object type, String indent) {
             if (!(type instanceof Symbol)) {
-                throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol but found: `"
-                        + type + "`.");
+                throw new IllegalArgumentException(
+                    "Invalid type provided for $T. Expected a Symbol but found: `"
+                        + type + "`."
+                );
             }
             Symbol symbol = (Symbol) type;
             Optional<Symbol> baseSymbolOptional = symbol.getProperty(SymbolProperties.BASE_SYMBOL);
@@ -276,8 +279,8 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                 return StringUtils.capitalize((String) type);
             }
             throw new IllegalArgumentException(
-                    "Invalid type provided for $U. Expected a String but found: `"
-                            + type + "`."
+                "Invalid type provided for $U. Expected a String but found: `"
+                    + type + "`."
             );
         }
     }

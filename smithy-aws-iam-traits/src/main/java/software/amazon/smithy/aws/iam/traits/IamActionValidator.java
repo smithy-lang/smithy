@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import static java.lang.String.format;
@@ -36,35 +35,56 @@ public final class IamActionValidator extends AbstractValidator {
     private List<ValidationEvent> validateDuplicateTraits(OperationShape operation, IamActionTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         if (operation.hasTrait(ActionNameTrait.ID) && trait.getName().isPresent()) {
-            events.add(emitDeprecatedOverride(operation,
+            events.add(
+                emitDeprecatedOverride(
+                    operation,
                     operation.expectTrait(ActionNameTrait.class),
-                    "name"));
+                    "name"
+                )
+            );
         }
 
         if (operation.hasTrait(ActionPermissionDescriptionTrait.ID) && trait.getDocumentation().isPresent()) {
-            events.add(emitDeprecatedOverride(operation,
+            events.add(
+                emitDeprecatedOverride(
+                    operation,
                     operation.expectTrait(ActionPermissionDescriptionTrait.class),
-                    "documentation"));
+                    "documentation"
+                )
+            );
         }
 
         if (operation.hasTrait(RequiredActionsTrait.ID) && !trait.getRequiredActions().isEmpty()) {
-            events.add(emitDeprecatedOverride(operation,
+            events.add(
+                emitDeprecatedOverride(
+                    operation,
                     operation.expectTrait(RequiredActionsTrait.class),
-                    "requiredActions"));
+                    "requiredActions"
+                )
+            );
         }
         return events;
     }
 
     private ValidationEvent emitDeprecatedOverride(OperationShape operation, Trait trait, String name) {
-        return error(operation, trait, format("Operation has the `%s` property of the "
-                + "`@aws.iam#iamAction` trait set and the deprecated `@%s` trait applied.",
-                name, trait.toShapeId()), "ConflictingProperty", name);
+        return error(
+            operation,
+            trait,
+            format(
+                "Operation has the `%s` property of the "
+                    + "`@aws.iam#iamAction` trait set and the deprecated `@%s` trait applied.",
+                name,
+                trait.toShapeId()
+            ),
+            "ConflictingProperty",
+            name
+        );
     }
 
     private Optional<ValidationEvent> validateUniqueResourceNames(OperationShape operation, IamActionTrait trait) {
         if (!trait.getResources().isPresent()
-                || trait.getResources().get().getRequired().isEmpty()
-                || trait.getResources().get().getOptional().isEmpty()
+            || trait.getResources().get().getRequired().isEmpty()
+            || trait.getResources().get().getOptional().isEmpty()
         ) {
             return Optional.empty();
         }
@@ -75,7 +95,15 @@ public final class IamActionValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(danger(operation, trait, "Operation has the following resource names defined as both "
-                + "required and optional: " + duplicateNames, "Resources", "DuplicateEntries"));
+        return Optional.of(
+            danger(
+                operation,
+                trait,
+                "Operation has the following resource names defined as both "
+                    + "required and optional: " + duplicateNames,
+                "Resources",
+                "DuplicateEntries"
+            )
+        );
     }
 }

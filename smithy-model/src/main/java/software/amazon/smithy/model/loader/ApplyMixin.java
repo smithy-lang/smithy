@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -47,10 +36,10 @@ final class ApplyMixin implements ShapeModifier {
 
     @Override
     public void modifyMember(
-            AbstractShapeBuilder<?, ?> shapeBuilder,
-            MemberShape.Builder memberBuilder,
-            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap
+        AbstractShapeBuilder<?, ?> shapeBuilder,
+        MemberShape.Builder memberBuilder,
+        Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+        Function<ShapeId, Shape> shapeMap
     ) {
         // The target could have been set by resource based properties.
         if (memberBuilder.getTarget() != null) {
@@ -60,8 +49,10 @@ final class ApplyMixin implements ShapeModifier {
         // to the target defined in the mixin.
         Shape mixinShape = shapeMap.apply(mixin);
         if (mixinShape == null) {
-            throw new SourceException("Cannot apply mixin to " + memberBuilder.getId() + ": " + mixin + " not found",
-                                      memberBuilder);
+            throw new SourceException(
+                "Cannot apply mixin to " + memberBuilder.getId() + ": " + mixin + " not found",
+                memberBuilder
+            );
         }
 
         String name = memberBuilder.getId().getMember().get();
@@ -70,15 +61,17 @@ final class ApplyMixin implements ShapeModifier {
 
     @Override
     public void modifyShape(
-            AbstractShapeBuilder<?, ?> builder,
-            Map<String, MemberShape.Builder> memberBuilders,
-            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap
+        AbstractShapeBuilder<?, ?> builder,
+        Map<String, MemberShape.Builder> memberBuilders,
+        Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+        Function<ShapeId, Shape> shapeMap
     ) {
         Shape mixinShape = shapeMap.apply(mixin);
         if (mixinShape == null) {
-            throw new SourceException("Cannot apply mixin to " + builder.getId() + ": " + mixin + " not found",
-                                      builder);
+            throw new SourceException(
+                "Cannot apply mixin to " + builder.getId() + ": " + mixin + " not found",
+                builder
+            );
         }
 
         for (MemberShape member : mixinShape.members()) {
@@ -98,8 +91,8 @@ final class ApplyMixin implements ShapeModifier {
                 if (!previous.getMixins().isEmpty()) {
                     MemberShape.Builder previouslyAddedBuilder = previous.toBuilder();
                     introducedMember = previouslyAddedBuilder
-                            .addMixin(member)
-                            .build();
+                        .addMixin(member)
+                        .build();
                     if (!previous.getTarget().equals(member.getTarget())) {
                         mixinMemberConflict(previouslyAddedBuilder, member);
                     }
@@ -117,12 +110,12 @@ final class ApplyMixin implements ShapeModifier {
                     // Build local member copies before adding mixins if traits
                     // were introduced to inherited mixin members.
                     introducedMember = MemberShape.builder()
-                            .id(targetId)
-                            .target(member.getTarget())
-                            .source(member.getSourceLocation())
-                            .addTraits(introducedTraits.values())
-                            .addMixin(member)
-                            .build();
+                        .id(targetId)
+                        .target(member.getTarget())
+                        .source(member.getSourceLocation())
+                        .addTraits(introducedTraits.values())
+                        .addMixin(member)
+                        .build();
                 }
             }
 
@@ -138,13 +131,15 @@ final class ApplyMixin implements ShapeModifier {
         if (events == null) {
             events = new ArrayList<>();
         }
-        events.add(ValidationEvent.builder()
+        events.add(
+            ValidationEvent.builder()
                 .severity(Severity.ERROR)
                 .id(Validator.MODEL_ERROR)
                 .shapeId(conflict.getId())
                 .sourceLocation(conflict.getSourceLocation())
                 .message("Member conflicts with an inherited mixin member: `" + other.getId() + "`")
-                .build());
+                .build()
+        );
     }
 
     @Override
@@ -157,8 +152,10 @@ final class ApplyMixin implements ShapeModifier {
             potentiallyIntroducedTraits = new HashMap<>();
         }
 
-        Map<ShapeId, Trait> shapeUnclaimedTraits = potentiallyIntroducedTraits.computeIfAbsent(target,
-                id -> new LinkedHashMap<>());
+        Map<ShapeId, Trait> shapeUnclaimedTraits = potentiallyIntroducedTraits.computeIfAbsent(
+            target,
+            id -> new LinkedHashMap<>()
+        );
         shapeUnclaimedTraits.put(trait.toShapeId(), trait);
     }
 }

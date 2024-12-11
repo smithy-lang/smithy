@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.ArrayList;
@@ -76,7 +65,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends ImportContainer>
-        extends AbstractCodeWriter<W> implements SymbolDependencyContainer {
+    extends AbstractCodeWriter<W> implements SymbolDependencyContainer {
 
     private static final Logger LOGGER = Logger.getLogger(SymbolWriter.class.getName());
     private static final String RELATIVIZE_SYMBOLS = "__RelativizeSymbols";
@@ -109,7 +98,7 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
      */
     @FunctionalInterface
     public interface Factory<W extends SymbolWriter<W, ? extends ImportContainer>>
-            extends BiFunction<String, String, W> {
+        extends BiFunction<String, String, W> {
         /**
          * Creates a {@code SymbolWriter} of type {@code W} for the given
          * filename and namespace.
@@ -151,8 +140,10 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
                 addImport(typeSymbol.getSymbol(), typeSymbol.getAlias(), SymbolReference.ContextOption.USE);
                 return typeSymbol.getAlias();
             } else {
-                throw new CodegenException("Invalid type provided to $T. Expected a Symbol or SymbolReference, "
-                                           + "but found `" + type + "`");
+                throw new CodegenException(
+                    "Invalid type provided to $T. Expected a Symbol or SymbolReference, "
+                        + "but found `" + type + "`"
+                );
             }
         }
     }
@@ -277,8 +268,14 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
      */
     @SuppressWarnings("unchecked")
     public final W addImport(Symbol symbol, String alias, SymbolReference.ContextOption... options) {
-        LOGGER.finest(() -> String.format("Adding import %s as `%s` (%s)",
-                                          symbol.getNamespace(), alias, Arrays.toString(options)));
+        LOGGER.finest(
+            () -> String.format(
+                "Adding import %s as `%s` (%s)",
+                symbol.getNamespace(),
+                alias,
+                Arrays.toString(options)
+            )
+        );
 
         // Always add the dependencies of the symbol.
         dependencies.addAll(symbol.getDependencies());

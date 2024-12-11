@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
@@ -153,8 +142,8 @@ public final class ModelTransformer {
      * @return Returns the transformed model.base.
      */
     public Model renameShapes(
-            Model model,
-            Map<ShapeId, ShapeId> renamed
+        Model model,
+        Map<ShapeId, ShapeId> renamed
     ) {
         return this.renameShapes(model, renamed, () -> Model.assembler().disableValidation());
     }
@@ -172,9 +161,9 @@ public final class ModelTransformer {
      * @return Returns the transformed model.
      */
     public Model renameShapes(
-            Model model,
-            Map<ShapeId, ShapeId> renamed,
-            Supplier<ModelAssembler> modelAssemblerSupplier
+        Model model,
+        Map<ShapeId, ShapeId> renamed,
+        Supplier<ModelAssembler> modelAssemblerSupplier
     ) {
         return new RenameShapes(renamed, modelAssemblerSupplier).transform(this, model);
     }
@@ -271,9 +260,12 @@ public final class ModelTransformer {
      * @see #mapShapes(Model, Function) for more information.
      */
     public Model mapTraits(Model model, List<BiFunction<Shape, Trait, Trait>> mappers) {
-        return mapTraits(model, mappers.stream()
+        return mapTraits(
+            model,
+            mappers.stream()
                 .reduce((a, b) -> (s, t) -> b.apply(s, a.apply(s, t)))
-                .orElse((s, t) -> t));
+                .orElse((s, t) -> t)
+        );
     }
 
     /**
@@ -435,10 +427,10 @@ public final class ModelTransformer {
         // model, grabbing shapes from the original model, and building a new
         // Model.
         scrubTraitDefinitions(model, keepFilter).shapes()
-                .map(Shape::getId)
-                .map(model::getShape)
-                .map(Optional::get)
-                .forEach(builder::addShape);
+            .map(Shape::getId)
+            .map(model::getShape)
+            .map(Optional::get)
+            .forEach(builder::addShape);
 
         return builder.build();
     }
@@ -502,9 +494,9 @@ public final class ModelTransformer {
      * @throws ModelTransformException if an incompatible type transform is attempted.
      */
     public Model changeShapeType(
-            Model model,
-            Map<ShapeId, ShapeType> shapeToType,
-            ChangeShapeTypeOption... changeShapeTypeOptions
+        Model model,
+        Map<ShapeId, ShapeType> shapeToType,
+        ChangeShapeTypeOption... changeShapeTypeOptions
     ) {
         boolean synthesizeNames = ChangeShapeTypeOption.SYNTHESIZE_ENUM_NAMES.hasFeature(changeShapeTypeOptions);
         return new ChangeShapeType(shapeToType, synthesizeNames).transform(this, model);

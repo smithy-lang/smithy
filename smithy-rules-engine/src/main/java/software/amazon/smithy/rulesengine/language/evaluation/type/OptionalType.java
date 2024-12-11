@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import java.util.Objects;
@@ -43,14 +42,24 @@ public final class OptionalType extends AbstractType {
 
     @Override
     public StringType expectStringType() throws InnerParseError {
-        throw new InnerParseError(String.format("Expected string but found %s. hint: use `assign` in a condition "
-                + "or `isSet` to prove that this value is non-null", this));
+        throw new InnerParseError(
+            String.format(
+                "Expected string but found %s. hint: use `assign` in a condition "
+                    + "or `isSet` to prove that this value is non-null",
+                this
+            )
+        );
     }
 
     @Override
     public BooleanType expectBooleanType() throws InnerParseError {
-        throw new InnerParseError(String.format("Expected boolean but found %s. hint: use `isSet` to convert "
-                + "OptionalType[BooleanType] to bool", this));
+        throw new InnerParseError(
+            String.format(
+                "Expected boolean but found %s. hint: use `isSet` to convert "
+                    + "OptionalType[BooleanType] to bool",
+                this
+            )
+        );
     }
 
     @Override

@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.File;
@@ -71,46 +60,64 @@ class ClasspathAction implements CommandAction {
     }
 
     private void runTaskWithClasspath(
-            BuildOptions buildOptions,
-            SmithyBuildConfig smithyBuildConfig,
-            Command.Env env,
-            Consumer<ClassLoader> consumer
+        BuildOptions buildOptions,
+        SmithyBuildConfig smithyBuildConfig,
+        Command.Env env,
+        Consumer<ClassLoader> consumer
     ) {
         Set<String> dependencies = smithyBuildConfig.getMaven()
-                .map(MavenConfig::getDependencies)
-                .orElse(Collections.emptySet());
+            .map(MavenConfig::getDependencies)
+            .orElse(Collections.emptySet());
 
         String dependencyMode = EnvironmentVariable.SMITHY_DEPENDENCY_MODE.get();
         boolean useIsolation = false;
         switch (dependencyMode) {
             case "forbid":
                 if (!dependencies.isEmpty()) {
-                    throw new DependencyResolverException(String.format(
+                    throw new DependencyResolverException(
+                        String.format(
                             "%s is set to 'forbid', but the following Maven dependencies are defined in "
-                            + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
-                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
+                                + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
+                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                            dependencies
+                        )
+                    );
                 }
                 break;
             case "ignore":
                 if (!dependencies.isEmpty()) {
-                    LOGGER.warning(() -> String.format(
+                    LOGGER.warning(
+                        () -> String.format(
                             "%s is set to 'ignore', and the following Maven dependencies are defined in "
-                            + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
-                            + "the classpath.", EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
+                                + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
+                                + "the classpath.",
+                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                            dependencies
+                        )
+                    );
                 }
                 break;
             case "standard":
                 useIsolation = !dependencies.isEmpty();
                 break;
             default:
-                throw new CliError(String.format("Unknown %s setting: '%s'",
-                                                 EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencyMode));
+                throw new CliError(
+                    String.format(
+                        "Unknown %s setting: '%s'",
+                        EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                        dependencyMode
+                    )
+                );
         }
 
         if (useIsolation) {
             long start = System.nanoTime();
-            List<Path> files = resolveDependencies(buildOptions, smithyBuildConfig, env,
-                                                   smithyBuildConfig.getMaven().get());
+            List<Path> files = resolveDependencies(
+                buildOptions,
+                smithyBuildConfig,
+                env,
+                smithyBuildConfig.getMaven().get()
+            );
             long end = System.nanoTime();
             LOGGER.fine(() -> "Dependency resolution time in ms: " + ((end - start) / 1000000));
             new IsolatedRunnable(files, env.classLoader(), consumer).run();
@@ -121,17 +128,19 @@ class ClasspathAction implements CommandAction {
     }
 
     private List<Path> resolveDependencies(
-            BuildOptions buildOptions,
-            SmithyBuildConfig smithyBuildConfig,
-            Command.Env env,
-            MavenConfig maven
+        BuildOptions buildOptions,
+        SmithyBuildConfig smithyBuildConfig,
+        Command.Env env,
+        MavenConfig maven
     ) {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
-        DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
-                lastModified,
-                delegate);
+        DependencyResolver resolver = new FileCacheResolver(
+            getCacheFile(buildOptions, smithyBuildConfig),
+            lastModified,
+            delegate
+        );
 
         Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
         repositories.forEach(resolver::addRepository);
@@ -142,11 +151,14 @@ class ClasspathAction implements CommandAction {
             LockFile lockFile = lockFileOptional.get();
             if (lockFile.getConfigHash() != ConfigurationUtils.configHash(maven.getDependencies(), repositories)) {
                 throw new CliError(
-                        "`smithy-lock.json` does not match configured dependencies. "
-                                + "Re-lock dependencies using the `lock` command or revert changes.");
+                    "`smithy-lock.json` does not match configured dependencies. "
+                        + "Re-lock dependencies using the `lock` command or revert changes."
+                );
             }
-            LOGGER.fine(() -> "`smithy-lock.json` found. Using locked dependencies: "
-                    + lockFile.getDependencyCoordinateSet());
+            LOGGER.fine(
+                () -> "`smithy-lock.json` found. Using locked dependencies: "
+                    + lockFile.getDependencyCoordinateSet()
+            );
             lockFile.getDependencyCoordinateSet().forEach(resolver::addDependency);
         } else {
             maven.getDependencies().forEach(resolver::addDependency);

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.ArrayList;
@@ -56,9 +55,11 @@ public class CleanEndpointTestOperationInput implements ModelTransformerPlugin {
 
             // Update the shape if the trait has changed.
             if (updatedTestCases.size() != trait.getTestCases().size()) {
-                result.add(serviceShape.toBuilder()
+                result.add(
+                    serviceShape.toBuilder()
                         .addTrait(trait.toBuilder().testCases(updatedTestCases).build())
-                        .build());
+                        .build()
+                );
             }
         }
 

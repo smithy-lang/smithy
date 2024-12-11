@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.Optional;
@@ -70,24 +59,24 @@ public final class InfoObject extends Component implements ToSmithyBuilder<InfoO
     @Override
     public Builder toBuilder() {
         return builder()
-                .extensions(getExtensions())
-                .title(title)
-                .version(version)
-                .description(description)
-                .termsOfService(termsOfService)
-                .license(license)
-                .contact(contact);
+            .extensions(getExtensions())
+            .title(title)
+            .version(version)
+            .description(description)
+            .termsOfService(termsOfService)
+            .license(license)
+            .contact(contact);
     }
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
         return Node.objectNodeBuilder()
-                .withMember("title", getTitle())
-                .withMember("version", getVersion())
-                .withOptionalMember("termsOfService", getTermsOfService().map(Node::from))
-                .withOptionalMember("description", getDescription().map(Node::from))
-                .withOptionalMember("license", getLicense())
-                .withOptionalMember("contact", getContact());
+            .withMember("title", getTitle())
+            .withMember("version", getVersion())
+            .withOptionalMember("termsOfService", getTermsOfService().map(Node::from))
+            .withOptionalMember("description", getDescription().map(Node::from))
+            .withOptionalMember("license", getLicense())
+            .withOptionalMember("contact", getContact());
     }
 
     public static final class Builder extends Component.Builder<Builder, InfoObject> {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation;
 
 import java.util.ArrayList;
@@ -93,8 +92,8 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     @Override
     public Value visitRef(Reference reference) {
         return scope
-                .getValue(reference.getName())
-                .orElse(Value.emptyValue());
+            .getValue(reference.getName())
+            .orElse(Value.emptyValue());
     }
 
     @Override
@@ -109,14 +108,20 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
     @Override
     public Value visitBoolEquals(Expression left, Expression right) {
-        return Value.booleanValue(left.accept(this).expectBooleanValue()
-                .equals(right.accept(this).expectBooleanValue()));
+        return Value.booleanValue(
+            left.accept(this)
+                .expectBooleanValue()
+                .equals(right.accept(this).expectBooleanValue())
+        );
     }
 
     @Override
     public Value visitStringEquals(Expression left, Expression right) {
-        return Value.booleanValue(left.accept(this).expectStringValue()
-                .equals(right.accept(this).expectStringValue()));
+        return Value.booleanValue(
+            left.accept(this)
+                .expectStringValue()
+                .equals(right.accept(this).expectStringValue())
+        );
     }
 
     @Override
@@ -153,7 +158,8 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
                         }
                     }
                     throw new RuntimeException(
-                            String.format("no rules inside of tree rule matched—invalid rules (%s)", rule));
+                        String.format("no rules inside of tree rule matched—invalid rules (%s)", rule)
+                    );
                 }
 
                 @Override
@@ -164,11 +170,13 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
                 @Override
                 public Value visitEndpointRule(Endpoint endpoint) {
                     EndpointValue.Builder builder = EndpointValue.builder()
-                            .sourceLocation(endpoint)
-                            .url(endpoint.getUrl()
-                                    .accept(RuleEvaluator.this)
-                                    .expectStringValue()
-                                    .getValue());
+                        .sourceLocation(endpoint)
+                        .url(
+                            endpoint.getUrl()
+                                .accept(RuleEvaluator.this)
+                                .expectStringValue()
+                                .getValue()
+                        );
 
                     for (Map.Entry<Identifier, Literal> entry : endpoint.getProperties().entrySet()) {
                         builder.putProperty(entry.getKey().toString(), entry.getValue().accept(RuleEvaluator.this));

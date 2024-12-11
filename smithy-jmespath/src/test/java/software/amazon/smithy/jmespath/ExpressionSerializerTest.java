@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +31,8 @@ public class ExpressionSerializerTest {
     }
 
     public static Collection<Object[]> shapeSource() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(
+            new Object[][]{
                 // Current node
                 {"@", "@"},
 
@@ -108,7 +98,8 @@ public class ExpressionSerializerTest {
 
                 // Filter expressions.
                 {"foo[?bar > baz][?qux > baz]", "\"foo\"[?\"bar\" > \"baz\"][?\"qux\" > \"baz\"]"}
-        });
+            }
+        );
     }
 
     @ParameterizedTest()
@@ -133,6 +124,6 @@ public class ExpressionSerializerTest {
     // The serialized string my be different, but the AST must be the same.
     public static Stream<Object[]> validExpressions() {
         return new NewLineExpressionsDataSource().validTests()
-                .map(line -> new Object[] {line});
+            .map(line -> new Object[]{line});
     }
 }

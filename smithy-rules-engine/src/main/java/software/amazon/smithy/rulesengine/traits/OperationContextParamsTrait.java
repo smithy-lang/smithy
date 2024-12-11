@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.LinkedHashMap;
@@ -22,7 +21,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 @SmithyUnstableApi
 public final class OperationContextParamsTrait extends AbstractTrait
-        implements ToSmithyBuilder<OperationContextParamsTrait> {
+    implements ToSmithyBuilder<OperationContextParamsTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.rules#operationContextParams");
 
     private final Map<String, OperationContextParamDefinition> parameters;
@@ -50,8 +49,8 @@ public final class OperationContextParamsTrait extends AbstractTrait
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .sourceLocation(getSourceLocation())
-                .parameters(parameters);
+            .sourceLocation(getSourceLocation())
+            .parameters(parameters);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -67,9 +66,9 @@ public final class OperationContextParamsTrait extends AbstractTrait
                 parameters.put(stringNode.getValue(), mapper.deserialize(node, OperationContextParamDefinition.class));
             });
             OperationContextParamsTrait trait = builder()
-                    .sourceLocation(value)
-                    .parameters(parameters)
-                    .build();
+                .sourceLocation(value)
+                .parameters(parameters)
+                .build();
             trait.setNodeCache(value);
             return trait;
         }

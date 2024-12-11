@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,10 +17,12 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class ExternalDocumentationTraitTest {
     @Test
     public void loadsTrait() {
-        Node node = Node.parse("{\"API Reference\": \"https://foo.bar/api\","
-                             + "\"Usage Guide\": \"https://foo.bar/guide\"}");
+        Node node = Node.parse(
+            "{\"API Reference\": \"https://foo.bar/api\","
+                + "\"Usage Guide\": \"https://foo.bar/guide\"}"
+        );
         ExternalDocumentationTrait trait = new ExternalDocumentationTrait.Provider()
-                .createTrait(ShapeId.from("ns.foo#baz"), node);
+            .createTrait(ShapeId.from("ns.foo#baz"), node);
 
         assertThat(trait.toNode(), equalTo(node));
         assertThat(trait.toBuilder().build(), equalTo(trait));
@@ -30,8 +36,11 @@ public class ExternalDocumentationTraitTest {
     public void expectsValidUrls() {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
-            provider.createTrait(ShapeId.from("smithy.api#externalDocumentation"),
-                    ShapeId.from("ns.qux#foo"), Node.parse("{\"API Reference\": \"foobarapi\""));
+            provider.createTrait(
+                ShapeId.from("smithy.api#externalDocumentation"),
+                ShapeId.from("ns.qux#foo"),
+                Node.parse("{\"API Reference\": \"foobarapi\"")
+            );
         });
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,15 +18,13 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class ChangedDefaultTest {
     @Test
     public void errorWhenDefaultIsRemovedFromShape() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "@default(0)\n"
-                + "integer Integer\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "integer Integer\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "@default(0)\n"
+            + "integer Integer\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "integer Integer\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -33,15 +35,13 @@ public class ChangedDefaultTest {
 
     @Test
     public void errorWhenDefaultIsAddedToRoot() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "integer Integer\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "@default(0)\n"
-                + "integer Integer\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "integer Integer\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "@default(0)\n"
+            + "integer Integer\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -52,16 +52,14 @@ public class ChangedDefaultTest {
 
     @Test
     public void errorWhenDefaultIsChangedOnRoot() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "@default(10)\n"
-                + "integer Integer\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "@default(20)\n"
-                + "integer Integer\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "@default(10)\n"
+            + "integer Integer\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "@default(20)\n"
+            + "integer Integer\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -72,18 +70,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void dangerWhenDefaultIsChangedOnMember() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 2\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 2\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -94,18 +90,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void errorWhenDefaultIsAddedToMemberWithNoAddedDefault() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -117,20 +111,18 @@ public class ChangedDefaultTest {
 
     @Test
     public void updateModelWithAddedDefault() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    @required\n"
-                + "    bar: Integer\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    @addedDefault\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    @required\n"
+            + "    bar: Integer\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    @addedDefault\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -141,18 +133,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void errorWhenDefaultChangesFromZeroToNonZeroValue() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 0\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 0\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -163,18 +153,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void errorWhenDefaultChangesFromNonZeroToZeroValue() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 0\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 0\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -185,18 +173,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void addingTheDefaultTraitToNullableMemberEmitsNoEvents() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = null\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = null\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -207,18 +193,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void changingFromNullDefaultToOneIsBreaking() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = null\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 1\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = null\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 1\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -229,18 +213,16 @@ public class ChangedDefaultTest {
 
     @Test
     public void changingFromNullDefaultToZeroIsBreaking() {
-        String originalModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = null\n"
-                + "}\n";
-        String updatedModel =
-                "$version: \"2\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    bar: Integer = 0\n"
-                + "}\n";
+        String originalModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = null\n"
+            + "}\n";
+        String updatedModel = "$version: \"2\"\n"
+            + "namespace smithy.example\n"
+            + "structure Foo {\n"
+            + "    bar: Integer = 0\n"
+            + "}\n";
         Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
         Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);

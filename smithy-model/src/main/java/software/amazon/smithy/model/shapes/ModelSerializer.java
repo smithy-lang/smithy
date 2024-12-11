@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
@@ -65,11 +54,12 @@ public final class ModelSerializer {
     // default traits from the output, whereas the downgradeToV1 transform only removes unnecessary default traits
     // that don't correlate to boxing in V1 models.
     private static final Set<ShapeId> V2_TRAITS_TO_FILTER_FROM_V1 = SetUtils.of(
-            DefaultTrait.ID,
-            AddedDefaultTrait.ID,
-            ClientOptionalTrait.ID,
-            PropertyTrait.ID,
-            NotPropertyTrait.ID);
+        DefaultTrait.ID,
+        AddedDefaultTrait.ID,
+        ClientOptionalTrait.ID,
+        PropertyTrait.ID,
+        NotPropertyTrait.ID
+    );
 
     private final Predicate<String> metadataFilter;
     private final Predicate<Shape> shapeFilter;
@@ -114,8 +104,8 @@ public final class ModelSerializer {
         }
 
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember("smithy", Node.from(version))
-                .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys));
+            .withMember("smithy", Node.from(version))
+            .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys));
 
         // Sort shapes by ID.
         Map<StringNode, Node> shapes = new TreeMap<>();
@@ -131,7 +121,8 @@ public final class ModelSerializer {
                 if (!shapeSerializer.mixinMemberTraits.isEmpty()) {
                     for (MemberShape member : shapeSerializer.mixinMemberTraits) {
                         Map<StringNode, Node> introducedTraits = createIntroducedTraitsMap(
-                                member.getIntroducedTraits().values());
+                            member.getIntroducedTraits().values()
+                        );
                         if (!introducedTraits.isEmpty()) {
                             ObjectNode.Builder applyBuilder = Node.objectNodeBuilder();
                             applyBuilder.withMember("type", "apply");
@@ -150,9 +141,11 @@ public final class ModelSerializer {
 
     private Optional<Node> createMetadata(Model model) {
         // Grab metadata, filter by key using the predicate.
-        Map<StringNode, Node> metadata = model.getMetadata().entrySet().stream()
-                .filter(entry -> metadataFilter.test(entry.getKey()))
-                .collect(Collectors.toMap(entry -> Node.from(entry.getKey()), Map.Entry::getValue));
+        Map<StringNode, Node> metadata = model.getMetadata()
+            .entrySet()
+            .stream()
+            .filter(entry -> metadataFilter.test(entry.getKey()))
+            .collect(Collectors.toMap(entry -> Node.from(entry.getKey()), Map.Entry::getValue));
         return metadata.isEmpty() ? Optional.empty() : Optional.of(new ObjectNode(metadata, SourceLocation.NONE));
     }
 
@@ -292,7 +285,7 @@ public final class ModelSerializer {
 
         private ObjectNode.Builder createTypedBuilder(Shape shape) {
             ObjectNode.Builder builder = Node.objectNodeBuilder()
-                    .withMember("type", Node.from(shape.getType().toString()));
+                .withMember("type", Node.from(shape.getType().toString()));
 
             if (!shape.getMixins().isEmpty()) {
                 List<Node> mixins = new ArrayList<>(shape.getMixins().size());
@@ -351,11 +344,14 @@ public final class ModelSerializer {
 
         @Override
         public Node operationShape(OperationShape shape) {
-            return serializeAllTraits(shape, createTypedBuilder(shape)
+            return serializeAllTraits(
+                shape,
+                createTypedBuilder(shape)
                     .withMember("input", serializeReference(shape.getInputShape()))
                     .withMember("output", serializeReference(shape.getOutputShape()))
-                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
-                    .build();
+                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors()))
+            )
+                .build();
         }
 
         @Override
@@ -364,18 +360,30 @@ public final class ModelSerializer {
             Optional<Node> properties = Optional.empty();
             if (shape.hasIdentifiers()) {
                 Stream<Map.Entry<String, ShapeId>> ids = shape.getIdentifiers().entrySet().stream();
-                identifiers = Optional.of(ids.collect(ObjectNode.collectStringKeys(
-                        Map.Entry::getKey,
-                        entry -> serializeReference(entry.getValue()))));
+                identifiers = Optional.of(
+                    ids.collect(
+                        ObjectNode.collectStringKeys(
+                            Map.Entry::getKey,
+                            entry -> serializeReference(entry.getValue())
+                        )
+                    )
+                );
             }
             if (shape.hasProperties()) {
                 Stream<Map.Entry<String, ShapeId>> props = shape.getProperties().entrySet().stream();
-                properties = Optional.of(props.collect(ObjectNode.collectStringKeys(
-                        Map.Entry::getKey,
-                        entry -> serializeReference(entry.getValue()))));
+                properties = Optional.of(
+                    props.collect(
+                        ObjectNode.collectStringKeys(
+                            Map.Entry::getKey,
+                            entry -> serializeReference(entry.getValue())
+                        )
+                    )
+                );
             }
 
-            return serializeAllTraits(shape, createTypedBuilder(shape)
+            return serializeAllTraits(
+                shape,
+                createTypedBuilder(shape)
                     .withOptionalMember("identifiers", identifiers)
                     .withOptionalMember("properties", properties)
                     .withOptionalMember("put", shape.getPut().map(this::serializeReference))
@@ -386,8 +394,9 @@ public final class ModelSerializer {
                     .withOptionalMember("list", shape.getList().map(this::serializeReference))
                     .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
                     .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
-                    .build();
+                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources()))
+            )
+                .build();
         }
 
         @Override
@@ -420,9 +429,9 @@ public final class ModelSerializer {
             }
 
             Node result = list.stream()
-                    .sorted()
-                    .map(this::serializeReference)
-                    .collect(ArrayNode.collect());
+                .sorted()
+                .map(this::serializeReference)
+                .collect(ArrayNode.collect());
             return Optional.of(result);
         }
 

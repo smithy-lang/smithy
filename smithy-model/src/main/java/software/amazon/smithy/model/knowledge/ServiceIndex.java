@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -66,9 +55,9 @@ public final class ServiceIndex implements KnowledgeIndex {
         return model.getKnowledge(ServiceIndex.class, ServiceIndex::new);
     }
 
-     /**
-     * Defines the type of auth schemes returned by {@link #getEffectiveAuthSchemes}.
-     */
+    /**
+    * Defines the type of auth schemes returned by {@link #getEffectiveAuthSchemes}.
+    */
     public enum AuthSchemeMode {
 
         /**
@@ -103,18 +92,18 @@ public final class ServiceIndex implements KnowledgeIndex {
 
     private Map<ShapeId, Trait> getTraitMapInSet(ToShapeId service, Set<ShapeId> haystack) {
         return getModel()
-                .getShape(service.toShapeId())
-                .flatMap(Shape::asServiceShape)
-                .map(shape -> {
-                    Map<ShapeId, Trait> result = new TreeMap<>();
-                    for (Trait trait : shape.getAllTraits().values()) {
-                        if (haystack.contains(trait.toShapeId())) {
-                            result.put(trait.toShapeId(), trait);
-                        }
+            .getShape(service.toShapeId())
+            .flatMap(Shape::asServiceShape)
+            .map(shape -> {
+                Map<ShapeId, Trait> result = new TreeMap<>();
+                for (Trait trait : shape.getAllTraits().values()) {
+                    if (haystack.contains(trait.toShapeId())) {
+                        result.put(trait.toShapeId(), trait);
                     }
-                    return result;
-                })
-                .orElse(Collections.emptyMap());
+                }
+                return result;
+            })
+            .orElse(Collections.emptyMap());
     }
 
     private Model getModel() {
@@ -161,21 +150,21 @@ public final class ServiceIndex implements KnowledgeIndex {
      */
     public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service) {
         return getModel()
-                .getShape(service.toShapeId())
-                .flatMap(Shape::asServiceShape)
-                .map(shape -> {
-                    Map<ShapeId, Trait> result = getAuthTraitValues(shape, shape);
-                    if (result == null) {
-                        result = new TreeMap<>();
-                        for (Map.Entry<ShapeId, Trait> traitEntry : shape.getAllTraits().entrySet()) {
-                            if (authTraits.contains(traitEntry.getKey())) {
-                                result.put(traitEntry.getKey(), traitEntry.getValue());
-                            }
+            .getShape(service.toShapeId())
+            .flatMap(Shape::asServiceShape)
+            .map(shape -> {
+                Map<ShapeId, Trait> result = getAuthTraitValues(shape, shape);
+                if (result == null) {
+                    result = new TreeMap<>();
+                    for (Map.Entry<ShapeId, Trait> traitEntry : shape.getAllTraits().entrySet()) {
+                        if (authTraits.contains(traitEntry.getKey())) {
+                            result.put(traitEntry.getKey(), traitEntry.getValue());
                         }
                     }
-                    return result;
-                })
-                .orElse(Collections.emptyMap());
+                }
+                return result;
+            })
+            .orElse(Collections.emptyMap());
     }
 
     /**
@@ -228,22 +217,22 @@ public final class ServiceIndex implements KnowledgeIndex {
      */
     public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service, ToShapeId operation) {
         Shape serviceShape = getModel()
-                .getShape(service.toShapeId())
-                .flatMap(Shape::asServiceShape)
-                .orElse(null);
+            .getShape(service.toShapeId())
+            .flatMap(Shape::asServiceShape)
+            .orElse(null);
 
         if (serviceShape == null) {
             return Collections.emptyMap();
         }
 
         return getModel()
-                .getShape(operation.toShapeId())
-                .flatMap(Shape::asOperationShape)
-                .map(operationShape -> {
-                    Map<ShapeId, Trait> result = getAuthTraitValues(serviceShape, operationShape);
-                    return result != null ? result : getEffectiveAuthSchemes(service);
-                })
-                .orElse(Collections.emptyMap());
+            .getShape(operation.toShapeId())
+            .flatMap(Shape::asOperationShape)
+            .map(operationShape -> {
+                Map<ShapeId, Trait> result = getAuthTraitValues(serviceShape, operationShape);
+                return result != null ? result : getEffectiveAuthSchemes(service);
+            })
+            .orElse(Collections.emptyMap());
     }
 
     /**
@@ -268,9 +257,11 @@ public final class ServiceIndex implements KnowledgeIndex {
      * @param authSchemeMode AuthSchemeMode to determine which authentication schemes to include.
      * @return Returns a map of the trait shape ID to the auth trait itself.
      */
-    public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service,
-                                                       ToShapeId operation,
-                                                       AuthSchemeMode authSchemeMode) {
+    public Map<ShapeId, Trait> getEffectiveAuthSchemes(
+        ToShapeId service,
+        ToShapeId operation,
+        AuthSchemeMode authSchemeMode
+    ) {
         Map<ShapeId, Trait> authSchemes = getEffectiveAuthSchemes(service, operation);
         if (authSchemeMode == AuthSchemeMode.NO_AUTH_AWARE) {
             if (authSchemes.isEmpty() || hasOptionalAuth(operation)) {
@@ -283,9 +274,9 @@ public final class ServiceIndex implements KnowledgeIndex {
 
     private boolean hasOptionalAuth(ToShapeId operation) {
         return getModel()
-                .getShape(operation.toShapeId())
-                .filter(shape -> shape.hasTrait(OptionalAuthTrait.class))
-                .isPresent();
+            .getShape(operation.toShapeId())
+            .filter(shape -> shape.hasTrait(OptionalAuthTrait.class))
+            .isPresent();
     }
 
     private static Map<ShapeId, Trait> getAuthTraitValues(Shape service, Shape subject) {

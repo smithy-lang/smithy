@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -58,7 +47,8 @@ public final class HostLabelTraitValidator extends AbstractValidator {
      * Match the expanded template to be a valid RFC 3896 host.
      */
     private static final java.util.regex.Pattern EXPANDED_PATTERN = java.util.regex.Pattern.compile(
-            "^[a-zA-Z0-9][a-zA-Z0-9-]{0,62}(?>\\.[a-zA-Z0-9-]{1,63})*\\.?$");
+        "^[a-zA-Z0-9][a-zA-Z0-9-]{0,62}(?>\\.[a-zA-Z0-9-]{1,63})*\\.?$"
+    );
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -76,9 +66,9 @@ public final class HostLabelTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(
-            Model model,
-            OperationShape operation,
-            EndpointTrait endpoint
+        Model model,
+        OperationShape operation,
+        EndpointTrait endpoint
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 
@@ -91,16 +81,16 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         // Only validate the bindings if the input is a structure. Typing
         // validation of the input is handled elsewhere.
         model.getShape(operation.getInputShape())
-                .flatMap(Shape::asStructureShape)
-                .ifPresent(input -> events.addAll(validateBindings(operation, endpoint, input)));
+            .flatMap(Shape::asStructureShape)
+            .ifPresent(input -> events.addAll(validateBindings(operation, endpoint, input)));
 
         return events;
     }
 
     private List<ValidationEvent> validateBindings(
-            OperationShape operation,
-            EndpointTrait endpoint,
-            StructureShape input
+        OperationShape operation,
+        EndpointTrait endpoint,
+        StructureShape input
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         SmithyPattern hostPrefix = endpoint.getHostPrefix();
@@ -108,45 +98,74 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         // Create a set of labels and remove from the set when a match is
         // found. If any labels remain after looking at all members, then
         // there are unmatched labels.
-        Set<String> labels = hostPrefix.getLabels().stream()
-                .map(SmithyPattern.Segment::getContent)
-                .collect(Collectors.toSet());
+        Set<String> labels = hostPrefix.getLabels()
+            .stream()
+            .map(SmithyPattern.Segment::getContent)
+            .collect(Collectors.toSet());
 
         for (MemberShape member : input.getAllMembers().values()) {
             if (member.hasTrait(HostLabelTrait.class)) {
                 HostLabelTrait trait = member.expectTrait(HostLabelTrait.class);
                 labels.remove(member.getMemberName());
                 if (!hostPrefix.getLabel(member.getMemberName()).isPresent()) {
-                    events.add(error(member, trait, format(
-                            "This `%s` structure member is marked with the `hostLabel` trait, but no "
-                            + "corresponding `endpoint` label could be found when used as the input of "
-                            + "the `%s` operation.", member.getMemberName(), operation.getId())));
+                    events.add(
+                        error(
+                            member,
+                            trait,
+                            format(
+                                "This `%s` structure member is marked with the `hostLabel` trait, but no "
+                                    + "corresponding `endpoint` label could be found when used as the input of "
+                                    + "the `%s` operation.",
+                                member.getMemberName(),
+                                operation.getId()
+                            )
+                        )
+                    );
                 }
             }
         }
 
         if (!labels.isEmpty()) {
-            events.add(error(operation, format(
-                    "This operation uses %s as input, but the following host labels found in the operation's "
-                    + "`endpoint` trait do not have a corresponding member marked with the `hostLabel` trait: %s",
-                    input.getId(), ValidationUtils.tickedList(labels))));
+            events.add(
+                error(
+                    operation,
+                    format(
+                        "This operation uses %s as input, but the following host labels found in the operation's "
+                            + "`endpoint` trait do not have a corresponding member marked with the `hostLabel` trait: %s",
+                        input.getId(),
+                        ValidationUtils.tickedList(labels)
+                    )
+                )
+            );
         }
 
         return events;
     }
 
     private Optional<ValidationEvent> validateExpandedPattern(
-            OperationShape operation,
-            EndpointTrait endpoint
+        OperationShape operation,
+        EndpointTrait endpoint
     ) {
         // Replace all label portions with stubs so the hostPrefix
         // can be validated.
-        String stubHostPrefix = endpoint.getHostPrefix().getSegments().stream()
-                .map(segment -> segment.isLabel() ? "foo" : segment.getContent())
-                .collect(Collectors.joining());
+        String stubHostPrefix = endpoint.getHostPrefix()
+            .getSegments()
+            .stream()
+            .map(segment -> segment.isLabel() ? "foo" : segment.getContent())
+            .collect(Collectors.joining());
         if (!EXPANDED_PATTERN.matcher(stubHostPrefix).matches()) {
-            return Optional.of(error(operation, endpoint, format("The `endpoint` trait hostPrefix, %s, could "
-                    + "not expand in to a valid RFC 3986 host: %s", endpoint.getHostPrefix(), stubHostPrefix)));
+            return Optional.of(
+                error(
+                    operation,
+                    endpoint,
+                    format(
+                        "The `endpoint` trait hostPrefix, %s, could "
+                            + "not expand in to a valid RFC 3986 host: %s",
+                        endpoint.getHostPrefix(),
+                        stubHostPrefix
+                    )
+                )
+            );
         }
         return Optional.empty();
     }
@@ -155,7 +174,7 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         SmithyPattern hostPrefix = trait.getHostPrefix();
         if (!hostPrefix.toString().endsWith(".") && !hostPrefix.getLabels().isEmpty()) {
             String message = "`endpoint` trait hostPrefix contains host labels and does not end in a period (`.`). "
-                    + "This can result in clients inadvertently sending data to domains you do not control.";
+                + "This can result in clients inadvertently sending data to domains you do not control.";
             return Optional.of(danger(operation, trait, message));
         }
         return Optional.empty();

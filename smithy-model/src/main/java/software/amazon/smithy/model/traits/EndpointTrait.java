@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import static java.lang.String.format;
@@ -50,7 +39,8 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
             if (token.equals("{")) {
                 if (!segments.isEmpty() && segments.get(segments.size() - 1).isLabel()) {
                     throw new InvalidPatternException(
-                            format("Host labels must not be adjacent in a pattern. Found %s", hostPrefix));
+                        format("Host labels must not be adjacent in a pattern. Found %s", hostPrefix)
+                    );
                 }
                 // If we found a label, grab the content and the close brace
                 for (int i = 0; i < 2; i++) {
@@ -68,10 +58,10 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         this.hostPrefix = SmithyPattern.builder()
-                .allowsGreedyLabels(false)
-                .segments(segments)
-                .pattern(hostPrefix)
-                .build();
+            .allowsGreedyLabels(false)
+            .segments(segments)
+            .pattern(hostPrefix)
+            .build();
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -108,7 +98,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
     @Override
     protected Node createNode() {
         return new ObjectNode(Collections.emptyMap(), getSourceLocation())
-                .withMember("hostPrefix", Node.from(hostPrefix.toString()));
+            .withMember("hostPrefix", Node.from(hostPrefix.toString()));
     }
 
     public static final class Builder extends AbstractTraitBuilder<EndpointTrait, Builder> {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.ArrayList;
@@ -55,9 +54,15 @@ public final class EndpointAuthUtils {
      * @return the updated endpoint builder.
      */
     public static Endpoint.Builder sigv4(Endpoint.Builder builder, Literal signingRegion, Literal signingService) {
-        return builder.addAuthScheme(SIGV4, MapUtils.of(
-                SIGNING_NAME, signingService,
-                SIGNING_REGION, signingRegion));
+        return builder.addAuthScheme(
+            SIGV4,
+            MapUtils.of(
+                SIGNING_NAME,
+                signingService,
+                SIGNING_REGION,
+                signingRegion
+            )
+        );
     }
 
     /**
@@ -69,13 +74,19 @@ public final class EndpointAuthUtils {
      * @return the updated endpoint builder.
      */
     public static Endpoint.Builder sigv4a(
-            Endpoint.Builder builder,
-            List<Literal> signingRegionSet,
-            Literal signingService
+        Endpoint.Builder builder,
+        List<Literal> signingRegionSet,
+        Literal signingService
     ) {
-        return builder.addAuthScheme(SIGV4A, MapUtils.of(
-                SIGNING_NAME, signingService,
-                SIGNING_REGION_SET, Literal.tupleLiteral(signingRegionSet)));
+        return builder.addAuthScheme(
+            SIGV4A,
+            MapUtils.of(
+                SIGNING_NAME,
+                signingService,
+                SIGNING_REGION_SET,
+                Literal.tupleLiteral(signingRegionSet)
+            )
+        );
     }
 
     /**
@@ -120,16 +131,22 @@ public final class EndpointAuthUtils {
 
         @Override
         public List<ValidationEvent> validateScheme(
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation,
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
         ) {
-            List<ValidationEvent> events = noExtraProperties(emitter, sourceLocation, authScheme,
-                    ListUtils.of(RuleSetAuthSchemesValidator.NAME,
-                            ID_SIGNING_NAME,
-                            ID_SIGNING_REGION,
-                            ID_DISABLE_DOUBLE_ENCODING,
-                            ID_DISABLE_NORMALIZE_PATH));
+            List<ValidationEvent> events = noExtraProperties(
+                emitter,
+                sourceLocation,
+                authScheme,
+                ListUtils.of(
+                    RuleSetAuthSchemesValidator.NAME,
+                    ID_SIGNING_NAME,
+                    ID_SIGNING_REGION,
+                    ID_DISABLE_DOUBLE_ENCODING,
+                    ID_DISABLE_NORMALIZE_PATH
+                )
+            );
 
             // Validate shared Sigv4 properties.
             events.addAll(SigV4SchemeValidator.validateOptionalSharedProperties(authScheme, emitter));
@@ -141,8 +158,8 @@ public final class EndpointAuthUtils {
         }
 
         private static List<ValidationEvent> validateOptionalSharedProperties(
-                Map<Identifier, Literal> authScheme,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+            Map<Identifier, Literal> authScheme,
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
         ) {
             List<ValidationEvent> events = new ArrayList<>();
             // The following properties are only type checked if present.
@@ -169,20 +186,31 @@ public final class EndpointAuthUtils {
 
         @Override
         public List<ValidationEvent> validateScheme(
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation,
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
         ) {
-            List<ValidationEvent> events = noExtraProperties(emitter, sourceLocation, authScheme,
-                    ListUtils.of(RuleSetAuthSchemesValidator.NAME,
-                            ID_SIGNING_NAME,
-                            ID_SIGNING_REGION_SET,
-                            ID_DISABLE_DOUBLE_ENCODING,
-                            ID_DISABLE_NORMALIZE_PATH));
+            List<ValidationEvent> events = noExtraProperties(
+                emitter,
+                sourceLocation,
+                authScheme,
+                ListUtils.of(
+                    RuleSetAuthSchemesValidator.NAME,
+                    ID_SIGNING_NAME,
+                    ID_SIGNING_REGION_SET,
+                    ID_DISABLE_DOUBLE_ENCODING,
+                    ID_DISABLE_NORMALIZE_PATH
+                )
+            );
 
             // The `signingRegionSet` property will always be present.
-            Optional<ValidationEvent> event = validatePropertyType(emitter, authScheme.get(ID_SIGNING_REGION_SET),
-                    ID_SIGNING_REGION_SET, Literal::asTupleLiteral, "an array<string>");
+            Optional<ValidationEvent> event = validatePropertyType(
+                emitter,
+                authScheme.get(ID_SIGNING_REGION_SET),
+                ID_SIGNING_REGION_SET,
+                Literal::asTupleLiteral,
+                "an array<string>"
+            );
             // If we don't have a tuple, that's our main error.
             // Otherwise, validate each entry is a string.
             if (event.isPresent()) {
@@ -190,12 +218,21 @@ public final class EndpointAuthUtils {
             } else {
                 List<Literal> signingRegionSet = authScheme.get(ID_SIGNING_REGION_SET).asTupleLiteral().get();
                 if (signingRegionSet.isEmpty()) {
-                    events.add(emitter.apply(authScheme.get(ID_SIGNING_REGION_SET),
-                            "The `signingRegionSet` property must not be an empty list."));
+                    events.add(
+                        emitter.apply(
+                            authScheme.get(ID_SIGNING_REGION_SET),
+                            "The `signingRegionSet` property must not be an empty list."
+                        )
+                    );
                 } else {
                     for (Literal signingRegion : signingRegionSet) {
-                        validatePropertyType(emitter, signingRegion, Identifier.of("signingRegionSet.Value"),
-                                Literal::asStringLiteral, "a string").ifPresent(events::add);
+                        validatePropertyType(
+                            emitter,
+                            signingRegion,
+                            Identifier.of("signingRegionSet.Value"),
+                            Literal::asStringLiteral,
+                            "a string"
+                        ).ifPresent(events::add);
                     }
                 }
             }
@@ -216,27 +253,33 @@ public final class EndpointAuthUtils {
 
         @Override
         public List<ValidationEvent> validateScheme(
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation,
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
         ) {
-            List<ValidationEvent> events = hasAllKeys(emitter, authScheme,
-                    ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME), sourceLocation);
+            List<ValidationEvent> events = hasAllKeys(
+                emitter,
+                authScheme,
+                ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME),
+                sourceLocation
+            );
             validateStringProperty(emitter, authScheme, ID_SIGNING_NAME).ifPresent(events::add);
 
             // Events are emitted by default as ERROR, but we want to make this viable with acknowledgement.
-            ValidationEvent event = emitter.apply(sourceLocation,
-                    "Requirements for `sigv4-` auth sub-scheme validation may change.");
+            ValidationEvent event = emitter.apply(
+                sourceLocation,
+                "Requirements for `sigv4-` auth sub-scheme validation may change."
+            );
             events.add(event.toBuilder().severity(Severity.DANGER).build());
 
             return events;
         }
 
         private List<ValidationEvent> hasAllKeys(
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-                Map<Identifier, Literal> authScheme,
-                List<Identifier> requiredKeys,
-                FromSourceLocation sourceLocation
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+            Map<Identifier, Literal> authScheme,
+            List<Identifier> requiredKeys,
+            FromSourceLocation sourceLocation
         ) {
             List<ValidationEvent> events = new ArrayList<>();
             for (Identifier key : requiredKeys) {
@@ -258,21 +301,25 @@ public final class EndpointAuthUtils {
 
         @Override
         public List<ValidationEvent> validateScheme(
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation,
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
         ) {
-            List<ValidationEvent> events = hasAllKeys(emitter, authScheme,
-                    ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME), sourceLocation);
+            List<ValidationEvent> events = hasAllKeys(
+                emitter,
+                authScheme,
+                ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME),
+                sourceLocation
+            );
             validateStringProperty(emitter, authScheme, ID_SIGNING_NAME).ifPresent(events::add);
             return events;
         }
 
         private List<ValidationEvent> hasAllKeys(
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-                Map<Identifier, Literal> authScheme,
-                List<Identifier> requiredKeys,
-                FromSourceLocation sourceLocation
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+            Map<Identifier, Literal> authScheme,
+            List<Identifier> requiredKeys,
+            FromSourceLocation sourceLocation
         ) {
             List<ValidationEvent> events = new ArrayList<>();
             for (Identifier key : requiredKeys) {
@@ -285,56 +332,89 @@ public final class EndpointAuthUtils {
     }
 
     private static List<ValidationEvent> noExtraProperties(
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-            FromSourceLocation sourceLocation,
-            Map<Identifier, Literal> properties,
-            List<Identifier> allowedProperties
+        BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+        FromSourceLocation sourceLocation,
+        Map<Identifier, Literal> properties,
+        List<Identifier> allowedProperties
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         for (Identifier propertyName : properties.keySet()) {
             if (!allowedProperties.contains(propertyName)) {
-                events.add(emitter.apply(sourceLocation, String.format("Unexpected key: `%s` (valid keys: %s)",
-                        propertyName, allowedProperties)));
+                events.add(
+                    emitter.apply(
+                        sourceLocation,
+                        String.format(
+                            "Unexpected key: `%s` (valid keys: %s)",
+                            propertyName,
+                            allowedProperties
+                        )
+                    )
+                );
             }
         }
         return events;
     }
 
     private static Optional<ValidationEvent> validateBooleanProperty(
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-            Map<Identifier, Literal> properties,
-            Identifier propertyName
+        BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+        Map<Identifier, Literal> properties,
+        Identifier propertyName
     ) {
-        return validatePropertyType(emitter, properties.get(propertyName), propertyName,
-                Literal::asBooleanLiteral, "a boolean");
+        return validatePropertyType(
+            emitter,
+            properties.get(propertyName),
+            propertyName,
+            Literal::asBooleanLiteral,
+            "a boolean"
+        );
     }
 
     private static Optional<ValidationEvent> validateStringProperty(
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-            Map<Identifier, Literal> properties,
-            Identifier propertyName
+        BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+        Map<Identifier, Literal> properties,
+        Identifier propertyName
     ) {
-        return validatePropertyType(emitter, properties.get(propertyName), propertyName,
-                Literal::asStringLiteral, "a string");
+        return validatePropertyType(
+            emitter,
+            properties.get(propertyName),
+            propertyName,
+            Literal::asStringLiteral,
+            "a string"
+        );
     }
 
     private static <U> Optional<ValidationEvent> validatePropertyType(
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
-            Literal value,
-            Identifier propertyName,
-            Function<Literal, Optional<U>> validator,
-            String expectedType
+        BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+        Literal value,
+        Identifier propertyName,
+        Function<Literal, Optional<U>> validator,
+        String expectedType
     ) {
         if (value == null) {
-            return Optional.of(emitter.apply(propertyName,
-                    String.format("Expected auth property `%s` of %s type but didn't find one",
-                            propertyName, expectedType)));
+            return Optional.of(
+                emitter.apply(
+                    propertyName,
+                    String.format(
+                        "Expected auth property `%s` of %s type but didn't find one",
+                        propertyName,
+                        expectedType
+                    )
+                )
+            );
         }
 
         if (!validator.apply(value).isPresent()) {
-            return Optional.of(emitter.apply(value,
-                    String.format("Unexpected type for auth property `%s`, found `%s` but expected %s value",
-                            propertyName, value, expectedType)));
+            return Optional.of(
+                emitter.apply(
+                    value,
+                    String.format(
+                        "Unexpected type for auth property `%s`, found `%s` but expected %s value",
+                        propertyName,
+                        value,
+                        expectedType
+                    )
+                )
+            );
         }
         return Optional.empty();
     }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,12 +40,14 @@ public class ModelTest {
     @Test
     public void buildsModel() {
         Model model = Model.builder()
-                .putMetadataProperty("name.name", Node.objectNode())
-                .addShape(StringShape.builder()
-                                  .id("smithy.example#String")
-                                  .addTrait(TraitDefinition.builder().build())
-                                  .build())
-                .build();
+            .putMetadataProperty("name.name", Node.objectNode())
+            .addShape(
+                StringShape.builder()
+                    .id("smithy.example#String")
+                    .addTrait(TraitDefinition.builder().build())
+                    .build()
+            )
+            .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
         assertThat(model.getShapesWithTrait(TraitDefinition.class), hasSize(1));
@@ -65,12 +56,12 @@ public class ModelTest {
     @Test
     public void modelEquality() {
         Model modelA = Model.builder()
-                .putMetadataProperty("foo", Node.from("baz"))
-                .addShape(StringShape.builder().id("ns.foo#baz").build())
-                .build();
+            .putMetadataProperty("foo", Node.from("baz"))
+            .addShape(StringShape.builder().id("ns.foo#baz").build())
+            .build();
         Model modelB = Model.builder()
-                .putMetadataProperty("foo", Node.from("baz"))
-                .build();
+            .putMetadataProperty("foo", Node.from("baz"))
+            .build();
 
         assertThat(modelA, equalTo(modelA));
         assertThat(modelA, not(equalTo(modelB)));
@@ -79,19 +70,29 @@ public class ModelTest {
 
     @Test
     public void modelEqualityExamples() {
-        StructureShape opInput = StructureShape.builder().id(ShapeId.fromParts("foo", "FooInput")).addMember("test", ShapeId.from("smithy.api#String")).build();
+        StructureShape opInput = StructureShape.builder()
+            .id(ShapeId.fromParts("foo", "FooInput"))
+            .addMember("test", ShapeId.from("smithy.api#String"))
+            .build();
         Supplier<OperationShape> op = () -> {
-            ExamplesTrait.Example example = ExamplesTrait.Example.builder().title("anything").input(ObjectNode.builder().withMember("test", StringNode.from("something")).build()).build();
+            ExamplesTrait.Example example = ExamplesTrait.Example.builder()
+                .title("anything")
+                .input(ObjectNode.builder().withMember("test", StringNode.from("something")).build())
+                .build();
             ExamplesTrait examples = ExamplesTrait.builder().addExample(example).build();
-            return OperationShape.builder().id(ShapeId.fromParts("foo", "Foo")).input(opInput).addTrait(examples).build();
+            return OperationShape.builder()
+                .id(ShapeId.fromParts("foo", "Foo"))
+                .input(opInput)
+                .addTrait(examples)
+                .build();
         };
 
         Model modelA = Model.builder()
-                .addShape(op.get())
-                .build();
+            .addShape(op.get())
+            .build();
         Model modelB = Model.builder()
-                .addShape(op.get())
-                .build();
+            .addShape(op.get())
+            .build();
 
         assertThat(modelA, equalTo(modelA));
         assertThat(modelA, equalTo(modelB));
@@ -130,10 +131,10 @@ public class ModelTest {
         StringShape b = StringShape.builder().id("ns.foo#b").build();
         TimestampShape c = TimestampShape.builder().id("ns.foo#c").build();
         Model model = Model.builder()
-                .addShape(a)
-                .addShape(b)
-                .addShape(c)
-                .build();
+            .addShape(a)
+            .addShape(b)
+            .addShape(c)
+            .build();
         List<StringShape> shapes = model.shapes(StringShape.class).collect(Collectors.toList());
 
         assertThat(shapes, hasSize(2));
@@ -160,9 +161,9 @@ public class ModelTest {
         StringShape a = StringShape.builder().id("ns.foo#a").build();
         StringShape b = StringShape.builder().id("ns.foo#b").build();
         Model model = Model.builder()
-                .addShapes(Arrays.asList(a, b))
-                .removeShape(ShapeId.from("ns.foo#a"))
-                .build();
+            .addShapes(Arrays.asList(a, b))
+            .removeShape(ShapeId.from("ns.foo#a"))
+            .build();
         List<Shape> shapes = model.shapes().collect(Collectors.toList());
 
         assertThat(shapes, hasSize(1));
@@ -238,9 +239,9 @@ public class ModelTest {
     public void addsMembersAutomatically() {
         StringShape string = StringShape.builder().id("ns.foo#a").build();
         ListShape list = ListShape.builder()
-                .id("ns.foo#list")
-                .member(ShapeId.from("ns.foo#a"))
-                .build();
+            .id("ns.foo#list")
+            .member(ShapeId.from("ns.foo#a"))
+            .build();
         Model model = Model.builder().addShapes(string, list).build();
         Set<Shape> shapes = model.toSet();
 
@@ -252,13 +253,13 @@ public class ModelTest {
     public void removesMembersAutomatically() {
         StringShape string = StringShape.builder().id("ns.foo#a").build();
         ListShape list = ListShape.builder()
-                .id("ns.foo#list")
-                .member(ShapeId.from("ns.foo#a"))
-                .build();
+            .id("ns.foo#list")
+            .member(ShapeId.from("ns.foo#a"))
+            .build();
         Model model = Model.builder()
-                .addShapes(string, list)
-                .removeShape(list.getId())
-                .build();
+            .addShapes(string, list)
+            .removeShape(list.getId())
+            .build();
         Set<Shape> shapes = model.toSet();
 
         assertThat(shapes, hasSize(1));
@@ -269,12 +270,12 @@ public class ModelTest {
     public void syntheticTraitsCanBeQueriedLikeNormalTraits() {
         ShapeId originalId = ShapeId.from("com.foo.nested#Str");
         StringShape stringShape = StringShape.builder()
-                .id("com.foo#Str")
-                .addTrait(new OriginalShapeIdTrait(originalId))
-                .build();
+            .id("com.foo#Str")
+            .addTrait(new OriginalShapeIdTrait(originalId))
+            .build();
         Model model = Model.builder()
-                .addShape(stringShape)
-                .build();
+            .addShape(stringShape)
+            .build();
 
         assertThat(model.getShapesWithTrait(OriginalShapeIdTrait.class), contains(stringShape));
     }

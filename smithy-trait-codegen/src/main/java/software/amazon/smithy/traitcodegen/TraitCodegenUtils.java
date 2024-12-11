@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.net.URL;
@@ -25,11 +24,11 @@ public final class TraitCodegenUtils {
     public static final Symbol JAVA_STRING_SYMBOL = TraitCodegenUtils.fromClass(String.class);
     public static final URL RESERVED_WORDS_FILE = TraitCodegenUtils.class.getResource("reserved-words.txt");
     public static final ReservedWords SHAPE_ESCAPER = new ReservedWordsBuilder()
-            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Shape")
-            .build();
+        .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Shape")
+        .build();
     public static final ReservedWords MEMBER_ESCAPER = new ReservedWordsBuilder()
-            .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Member")
-            .build();
+        .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Member")
+        .build();
 
     private TraitCodegenUtils() {}
 
@@ -40,9 +39,9 @@ public final class TraitCodegenUtils {
      * @return Symbol representing the provided class.
      */
     public static Symbol fromClass(Class<?> clazz) {
-        Symbol.Builder builder =  Symbol.builder()
-                .name(clazz.getSimpleName())
-                .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".");
+        Symbol.Builder builder = Symbol.builder()
+            .name(clazz.getSimpleName())
+            .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".");
 
         if (clazz.isPrimitive()) {
             builder.putProperty(SymbolProperties.IS_PRIMITIVE, true);
@@ -101,7 +100,7 @@ public final class TraitCodegenUtils {
     public static boolean isJavaString(Symbol symbol) {
         Symbol baseSymbol = symbol.getProperty(SymbolProperties.BASE_SYMBOL).orElse(symbol);
         return JAVA_STRING_SYMBOL.getName().equals(baseSymbol.getName())
-                && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
+            && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
     }
 
     /**
@@ -113,9 +112,12 @@ public final class TraitCodegenUtils {
      */
     public static boolean isJavaStringList(Shape shape, SymbolProvider symbolProvider) {
         return shape.isListShape()
-                && !shape.hasTrait(UniqueItemsTrait.class)
-                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
-                        shape.asListShape().get().getMember()));
+            && !shape.hasTrait(UniqueItemsTrait.class)
+            && TraitCodegenUtils.isJavaString(
+                symbolProvider.toSymbol(
+                    shape.asListShape().get().getMember()
+                )
+            );
     }
 
     /**
@@ -125,13 +127,16 @@ public final class TraitCodegenUtils {
      * @param shapeNamespace namespace of shape to map into package namespace.
      * @param packageNamespace Java package namespace for trait codegen.
      */
-    public static String mapNamespace(String rootSmithyNamespace,
-                                      String shapeNamespace,
-                                      String packageNamespace
+    public static String mapNamespace(
+        String rootSmithyNamespace,
+        String shapeNamespace,
+        String packageNamespace
     ) {
         if (!shapeNamespace.startsWith(rootSmithyNamespace)) {
-            throw new IllegalArgumentException("Cannot relativize non-nested namespaces "
-                    + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + ".");
+            throw new IllegalArgumentException(
+                "Cannot relativize non-nested namespaces "
+                    + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + "."
+            );
         }
         return shapeNamespace.replace(rootSmithyNamespace, packageNamespace);
     }

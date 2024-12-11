@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,7 +18,6 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -63,35 +51,37 @@ public class RemovedShapeTest {
 
     @Test
     public void emitsWarningsForScalarShapes() {
-        Shape[] scalarShapes = new Shape[] {
-                IntegerShape.builder().id("foo.baz#BazOne").build(),
-                BigDecimalShape.builder().id("foo.baz#BazTwo").build(),
-                BigIntegerShape.builder().id("foo.baz#BazThree").build(),
-                BlobShape.builder().id("foo.baz#BazFour").build(),
-                BooleanShape.builder().id("foo.baz#BazFive").build(),
-                ByteShape.builder().id("foo.baz#BazSix").build(),
-                DoubleShape.builder().id("foo.baz#BazSeven").build(),
-                FloatShape.builder().id("foo.baz#BazEight").build(),
-                ShortShape.builder().id("foo.baz#BazNine").build(),
-                TimestampShape.builder().id("foo.baz#BazTen").build(),
-                LongShape.builder().id("foo.baz#BazEleven").build(),
-                StringShape.builder().id("foo.baz#BazTwelve").build()
+        Shape[] scalarShapes = new Shape[]{
+            IntegerShape.builder().id("foo.baz#BazOne").build(),
+            BigDecimalShape.builder().id("foo.baz#BazTwo").build(),
+            BigIntegerShape.builder().id("foo.baz#BazThree").build(),
+            BlobShape.builder().id("foo.baz#BazFour").build(),
+            BooleanShape.builder().id("foo.baz#BazFive").build(),
+            ByteShape.builder().id("foo.baz#BazSix").build(),
+            DoubleShape.builder().id("foo.baz#BazSeven").build(),
+            FloatShape.builder().id("foo.baz#BazEight").build(),
+            ShortShape.builder().id("foo.baz#BazNine").build(),
+            TimestampShape.builder().id("foo.baz#BazTen").build(),
+            LongShape.builder().id("foo.baz#BazEleven").build(),
+            StringShape.builder().id("foo.baz#BazTwelve").build()
         };
         Model modelA = Model.assembler().addShapes(scalarShapes).assemble().unwrap();
         Model modelB = Model.assembler().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "RemovedShape.ScalarShape").size(), equalTo(12));
-        assertThat("Scalar removals should be WARNING severity",
-                events.stream().allMatch(event -> Severity.WARNING.equals(event.getSeverity())));
+        assertThat(
+            "Scalar removals should be WARNING severity",
+            events.stream().allMatch(event -> Severity.WARNING.equals(event.getSeverity()))
+        );
     }
 
     @Test
     public void emitsErrorForEnumString() {
         Shape shapeA1 = StringShape.builder()
-                .id("foo.baz#Baz")
-                .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("val").build()).build())
-                .build();
+            .id("foo.baz#Baz")
+            .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("val").build()).build())
+            .build();
         Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
         Model modelB = Model.assembler().addShapes().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -104,9 +94,9 @@ public class RemovedShapeTest {
     @Test
     public void emitsErrorForIntEnum() {
         Shape shapeA1 = IntEnumShape.builder()
-                .id("foo.baz#Baz")
-                .addMember("FOO", 1)
-                .build();
+            .id("foo.baz#Baz")
+            .addMember("FOO", 1)
+            .build();
         Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
         Model modelB = Model.assembler().addShapes().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);

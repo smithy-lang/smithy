@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,9 +19,9 @@ public class ListShapeTest {
     @Test
     public void returnsAppropriateType() {
         ListShape shape = ListShape.builder()
-                .id("ns.foo#bar")
-                .member(MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build())
-                .build();
+            .id("ns.foo#bar")
+            .member(MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build())
+            .build();
 
         assertEquals(shape.getType(), ShapeType.LIST);
     }
@@ -41,9 +30,9 @@ public class ListShapeTest {
     public void mustNotContainMembersInShapeId() {
         Assertions.assertThrows(SourceException.class, () -> {
             ListShape.builder()
-                    .id("ns.foo#bar$baz")
-                    .member(MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build())
-                    .build();
+                .id("ns.foo#bar$baz")
+                .member(MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build())
+                .build();
         });
     }
 
@@ -58,9 +47,9 @@ public class ListShapeTest {
     public void hasMember() {
         MemberShape member = MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build();
         ListShape shape = ListShape.builder()
-                .id("ns.foo#bar")
-                .member(member)
-                .build();
+            .id("ns.foo#bar")
+            .member(member)
+            .build();
 
         assertEquals(member, shape.getMember());
     }
@@ -115,27 +104,31 @@ public class ListShapeTest {
     @Test
     public void addMemberWithTarget() {
         ListShape shape = ListShape.builder()
-                .id("ns.foo#bar")
-                .member(ShapeId.from("ns.foo#bam"))
-                .build();
+            .id("ns.foo#bar")
+            .member(ShapeId.from("ns.foo#bam"))
+            .build();
 
-        assertEquals(shape.getMember(),
-                     MemberShape.builder().id(shape.getId().withMember("member")).target("ns.foo#bam").build());
+        assertEquals(
+            shape.getMember(),
+            MemberShape.builder().id(shape.getId().withMember("member")).target("ns.foo#bam").build()
+        );
     }
 
     @Test
     public void addMemberWithConsumer() {
         ListShape shape = ListShape.builder()
-                .id("ns.foo#bar")
-                .member(ShapeId.from("ns.foo#bam"), builder -> builder.addTrait(new SensitiveTrait()))
-                .build();
+            .id("ns.foo#bar")
+            .member(ShapeId.from("ns.foo#bam"), builder -> builder.addTrait(new SensitiveTrait()))
+            .build();
 
-        assertEquals(shape.getMember(),
-                     MemberShape.builder()
-                             .id(shape.getId().withMember("member"))
-                             .target("ns.foo#bam")
-                             .addTrait(new SensitiveTrait())
-                             .build());
+        assertEquals(
+            shape.getMember(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("member"))
+                .target("ns.foo#bam")
+                .addTrait(new SensitiveTrait())
+                .build()
+        );
     }
 
     @Test
@@ -148,10 +141,10 @@ public class ListShapeTest {
     @Test
     public void builderUpdatesMemberId() {
         ListShape shape = ListShape.builder()
-                .id("ns.foo#bar")
-                .member(ShapeId.from("ns.foo#bam"))
-                .id("ns.bar#bar")
-                .build();
+            .id("ns.foo#bar")
+            .member(ShapeId.from("ns.foo#bam"))
+            .id("ns.bar#bar")
+            .build();
         assertThat(shape.getMember().getId(), equalTo(ShapeId.from("ns.bar#bar$member")));
         assertThat(shape.getMember().getTarget(), equalTo(ShapeId.from("ns.foo#bam")));
     }

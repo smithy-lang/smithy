@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.testrunner;
 
 import java.io.IOException;
@@ -52,7 +51,6 @@ public final class SmithyDiffTestSuite {
         return new SmithyDiffTestSuite();
     }
 
-
     /**
      * Factory method used to easily create a JUnit 5 {@code ParameterizedTest}
      * {@code MethodSource} based on the given {@code Class}.
@@ -100,9 +98,9 @@ public final class SmithyDiffTestSuite {
         ClassLoader classLoader = contextClass.getClassLoader();
         ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
         return SmithyDiffTestSuite.runner()
-                .setModelAssemblerFactory(assembler::copy)
-                .addTestCasesFromUrl(contextClass.getResource(DEFAULT_TEST_CASE_LOCATION))
-                .parameterizedTestSource();
+            .setModelAssemblerFactory(assembler::copy)
+            .addTestCasesFromUrl(contextClass.getResource(DEFAULT_TEST_CASE_LOCATION))
+            .parameterizedTestSource();
     }
 
     /**
@@ -152,7 +150,7 @@ public final class SmithyDiffTestSuite {
         return cases.stream().map(testCase -> {
             Callable<SmithyDiffTestCase.Result> callable = createTestCaseCallable(testCase);
             Callable<SmithyDiffTestCase.Result> wrappedCallable = () -> callable.call().unwrap();
-            return new Object[] {testCase.getName(), wrappedCallable};
+            return new Object[]{testCase.getName(), wrappedCallable};
         });
     }
 
@@ -185,10 +183,13 @@ public final class SmithyDiffTestSuite {
             files
                 .filter(Files::isRegularFile)
                 .map(Path::toString)
-                .filter(fileName ->  fileName.endsWith(EVENTS))
-                .map(fileName -> SmithyDiffTestCase.from(
-                    modelDirectory,
-                    fileName.substring(modelDirectoryName.length() + 1, fileName.length() - EVENTS.length())))
+                .filter(fileName -> fileName.endsWith(EVENTS))
+                .map(
+                    fileName -> SmithyDiffTestCase.from(
+                        modelDirectory,
+                        fileName.substring(modelDirectoryName.length() + 1, fileName.length() - EVENTS.length())
+                    )
+                )
                 .forEach(this::addTestCase);
             return this;
         } catch (IOException e) {
@@ -216,17 +217,17 @@ public final class SmithyDiffTestSuite {
         }
     }
 
-     /**
-     * Sets a custom {@link ModelAssembler} factory to use to create a
-     * {@code ModelAssembler} for each test case.
-     *
-     * <p>The supplier must return a new instance of a Model assembler
-     * each time it is called. Model assemblers are mutated and execute
-     * in parallel.
-     *
-     * @param modelAssemblerFactory Model assembler factory to use.
-     * @return Returns the test suite.
-     */
+    /**
+    * Sets a custom {@link ModelAssembler} factory to use to create a
+    * {@code ModelAssembler} for each test case.
+    *
+    * <p>The supplier must return a new instance of a Model assembler
+    * each time it is called. Model assemblers are mutated and execute
+    * in parallel.
+    *
+    * @param modelAssemblerFactory Model assembler factory to use.
+    * @return Returns the test suite.
+    */
     public SmithyDiffTestSuite setModelAssemblerFactory(Supplier<ModelAssembler> modelAssemblerFactory) {
         this.modelAssemblerFactory = Objects.requireNonNull(modelAssemblerFactory);
         return this;
@@ -247,9 +248,12 @@ public final class SmithyDiffTestSuite {
     }
 
     private Callable<SmithyDiffTestCase.Result> createTestCaseCallable(SmithyDiffTestCase testCase) {
-        return () -> testCase.createResult(ModelDiff.compare(
-            getModel(testCase, modelAssemblerFactory.get(), MODEL_A),
-            getModel(testCase, modelAssemblerFactory.get(), MODEL_B)));
+        return () -> testCase.createResult(
+            ModelDiff.compare(
+                getModel(testCase, modelAssemblerFactory.get(), MODEL_A),
+                getModel(testCase, modelAssemblerFactory.get(), MODEL_B)
+            )
+        );
     }
 
     private static Model getModel(SmithyDiffTestCase testCase, ModelAssembler assembler, String infix) {
@@ -311,8 +315,9 @@ public final class SmithyDiffTestSuite {
         }
     }
 
-    private SmithyDiffTestCase.Result waitOnFuture(Future<SmithyDiffTestCase.Result> future)
-        throws InterruptedException {
+    private SmithyDiffTestCase.Result waitOnFuture(
+        Future<SmithyDiffTestCase.Result> future
+    ) throws InterruptedException {
         try {
             return future.get();
         } catch (ExecutionException e) {
@@ -354,9 +359,13 @@ public final class SmithyDiffTestSuite {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder(String.format(
+            StringBuilder builder = new StringBuilder(
+                String.format(
                     "Smithy diff test runner encountered %d successful result(s), and %d failed result(s)",
-                    successCount, failedResults.size()));
+                    successCount,
+                    failedResults.size()
+                )
+            );
             failedResults.forEach(failed -> builder.append('\n').append(failed.toString()).append('\n'));
             return builder.toString();
         }

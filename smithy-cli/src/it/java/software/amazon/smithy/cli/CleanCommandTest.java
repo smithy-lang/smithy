@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +15,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import software.amazon.smithy.utils.IoUtils;
@@ -20,6 +23,7 @@ import software.amazon.smithy.utils.ListUtils;
 @Isolated
 public class CleanCommandTest {
     private static final String PROJECT_NAME = "simple-config-sources";
+
     @Test
     public void exitNormallyIfBuildDirMissing() {
         IntegUtils.run(PROJECT_NAME, ListUtils.of("clean"), result -> {
@@ -48,8 +52,10 @@ public class CleanCommandTest {
         IntegUtils.clearCacheDirIfExists();
         try {
             Files.createDirectories(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH);
-            assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
-                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH));
+            assertTrue(
+                Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH)
+            );
             IntegUtils.run(PROJECT_NAME, ListUtils.of("clean"), result -> {
                 assertThat(result.getExitCode(), equalTo(0));
                 assertThat(result.getOutput(), hasLength(0));
@@ -65,8 +71,10 @@ public class CleanCommandTest {
         IntegUtils.clearCacheDirIfExists();
         try {
             Files.createDirectories(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH);
-            assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
-                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH));
+            assertTrue(
+                Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH)
+            );
 
             IntegUtils.withProject(PROJECT_NAME, root -> {
                 Path created = null;

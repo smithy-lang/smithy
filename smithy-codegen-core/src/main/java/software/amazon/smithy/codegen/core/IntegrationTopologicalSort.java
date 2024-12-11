@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.ArrayList;
@@ -44,8 +33,8 @@ final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
         // If priority is a tie, then sort based on insertion order of integrations.
         // This makes the order deterministic.
         return byteResult == 0
-               ? Integer.compare(insertionOrder.get(left), insertionOrder.get(right))
-               : byteResult;
+            ? Integer.compare(insertionOrder.get(left), insertionOrder.get(right))
+            : byteResult;
     });
 
     IntegrationTopologicalSort(Iterable<I> integrations) {
@@ -76,11 +65,14 @@ final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
         I previous = this.integrationLookup.put(integration.name(), integration);
         insertionOrder.put(integration.name(), insertionOrder.size());
         if (previous != null) {
-            throw new IllegalArgumentException(String.format(
+            throw new IllegalArgumentException(
+                String.format(
                     "Conflicting SmithyIntegration names detected for '%s': %s and %s",
                     integration.name(),
                     integration.getClass().getCanonicalName(),
-                    previous.getClass().getCanonicalName()));
+                    previous.getClass().getCanonicalName()
+                )
+            );
         }
     }
 
@@ -93,8 +85,10 @@ final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
                 if (integrationLookup.containsKey(value)) {
                     return false;
                 } else {
-                    LOGGER.warning(what  + " is supposed to run " + descriptor + " an integration that could "
-                                   + "not be found, '" + value + "'");
+                    LOGGER.warning(
+                        what + " is supposed to run " + descriptor + " an integration that could "
+                            + "not be found, '" + value + "'"
+                    );
                     return true;
                 }
             });
@@ -125,8 +119,10 @@ final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
         }
 
         if (!forwardDependencies.isEmpty()) {
-            throw new IllegalArgumentException("SmithyIntegration cycles detected among "
-                                               + forwardDependencies.keySet());
+            throw new IllegalArgumentException(
+                "SmithyIntegration cycles detected among "
+                    + forwardDependencies.keySet()
+            );
         }
 
         return result;

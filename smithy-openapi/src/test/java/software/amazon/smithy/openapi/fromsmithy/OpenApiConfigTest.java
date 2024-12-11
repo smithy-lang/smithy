@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,8 +43,8 @@ public class OpenApiConfigTest {
     @Test
     public void convertsExplicitlyMappedProperties() {
         Node mappedTest = Node.objectNode()
-                .withMember("openapi.tags", Node.from(true))
-                .withMember("openapi.ignoreUnsupportedTraits", Node.from(true));
+            .withMember("openapi.tags", Node.from(true))
+            .withMember("openapi.ignoreUnsupportedTraits", Node.from(true));
         OpenApiConfig config = OpenApiConfig.fromNode(mappedTest);
 
         assertThat(config.getTags(), equalTo(true));
@@ -50,8 +54,8 @@ public class OpenApiConfigTest {
     @Test
     public void putsAdditionalPropertiesInExtensions() {
         Node mappedTest = Node.objectNode()
-                .withMember("tags", true)
-                .withMember("apiGatewayType", "REST");
+            .withMember("tags", true)
+            .withMember("apiGatewayType", "REST");
         OpenApiConfig config = OpenApiConfig.fromNode(mappedTest);
 
         assertThat(config.getTags(), equalTo(true));

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,9 +34,9 @@ public class ServiceIndexTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(ServiceIndexTest.class.getResource("service-index-finds-auth-schemes.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(ServiceIndexTest.class.getResource("service-index-finds-auth-schemes.smithy"))
+            .assemble()
+            .unwrap();
     }
 
     @AfterAll
@@ -58,9 +47,9 @@ public class ServiceIndexTest {
     @Test
     public void protocolsOfService() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("service-index-loads-protocols.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("service-index-loads-protocols.smithy"))
+            .assemble()
+            .unwrap();
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> protocols = serviceIndex.getProtocols(ShapeId.from("smithy.example#TestService"));
 
@@ -73,7 +62,8 @@ public class ServiceIndexTest {
     public void authSchemesOfService() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithoutAuthTrait"));
+            ShapeId.from("smithy.example#ServiceWithoutAuthTrait")
+        );
         assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
     }
 
@@ -168,8 +158,9 @@ public class ServiceIndexTest {
     public void authSchemesOfOperationWithAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithAuthTrait"),
-                ShapeId.from("smithy.example#OperationWithAuthTrait"));
+            ShapeId.from("smithy.example#ServiceWithAuthTrait"),
+            ShapeId.from("smithy.example#OperationWithAuthTrait")
+        );
         assertAuthSchemes(auth, HttpDigestAuthTrait.ID);
     }
 
@@ -212,8 +203,14 @@ public class ServiceIndexTest {
         assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
 
         auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
-        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID,
-                NoAuthTrait.ID);
+        assertAuthSchemes(
+            auth,
+            HttpBasicAuthTrait.ID,
+            HttpBearerAuthTrait.ID,
+            HttpDigestAuthTrait.ID,
+            CUSTOM_AUTH_ID,
+            NoAuthTrait.ID
+        );
     }
 
     @Test

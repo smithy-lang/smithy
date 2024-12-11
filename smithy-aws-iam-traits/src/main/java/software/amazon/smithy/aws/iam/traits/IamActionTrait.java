@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.List;
@@ -34,7 +23,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Indicates properties of a Smithy operation as an IAM action.
  */
 public final class IamActionTrait extends AbstractTrait
-        implements ToSmithyBuilder<IamActionTrait> {
+    implements ToSmithyBuilder<IamActionTrait> {
     public static final ShapeId ID = ShapeId.from("aws.iam#iamAction");
 
     private final String name;
@@ -78,10 +67,13 @@ public final class IamActionTrait extends AbstractTrait
      */
     @SuppressWarnings("deprecation")
     public static String resolveActionName(OperationShape operation) {
-        return operation.getTrait(IamActionTrait.class).flatMap(IamActionTrait::getName)
-                .orElseGet(() -> operation.getTrait(ActionNameTrait.class)
-                        .map(ActionNameTrait::getValue)
-                        .orElseGet(() -> operation.getId().getName()));
+        return operation.getTrait(IamActionTrait.class)
+            .flatMap(IamActionTrait::getName)
+            .orElseGet(
+                () -> operation.getTrait(ActionNameTrait.class)
+                    .map(ActionNameTrait::getValue)
+                    .orElseGet(() -> operation.getId().getName())
+            );
     }
 
     /**
@@ -109,12 +101,17 @@ public final class IamActionTrait extends AbstractTrait
      */
     @SuppressWarnings("deprecation")
     public static String resolveActionDocumentation(OperationShape operation) {
-        return operation.getTrait(IamActionTrait.class).flatMap(IamActionTrait::getDocumentation)
-                .orElseGet(() -> operation.getTrait(ActionPermissionDescriptionTrait.class)
-                        .map(ActionPermissionDescriptionTrait::getValue)
-                        .orElseGet(() -> operation.getTrait(DocumentationTrait.class)
-                                .map(DocumentationTrait::getValue)
-                                .orElse(null)));
+        return operation.getTrait(IamActionTrait.class)
+            .flatMap(IamActionTrait::getDocumentation)
+            .orElseGet(
+                () -> operation.getTrait(ActionPermissionDescriptionTrait.class)
+                    .map(ActionPermissionDescriptionTrait::getValue)
+                    .orElseGet(
+                        () -> operation.getTrait(DocumentationTrait.class)
+                            .map(DocumentationTrait::getValue)
+                            .orElse(null)
+                    )
+            );
     }
 
     /**
@@ -152,11 +149,14 @@ public final class IamActionTrait extends AbstractTrait
      */
     @SuppressWarnings("deprecation")
     public static List<String> resolveRequiredActions(OperationShape operation) {
-        return operation.getTrait(IamActionTrait.class).map(IamActionTrait::getRequiredActions)
-                .filter(FunctionalUtils.not(List::isEmpty))
-                .orElseGet(() -> operation.getTrait(RequiredActionsTrait.class)
-                        .map(RequiredActionsTrait::getValues)
-                        .orElse(ListUtils.of()));
+        return operation.getTrait(IamActionTrait.class)
+            .map(IamActionTrait::getRequiredActions)
+            .filter(FunctionalUtils.not(List::isEmpty))
+            .orElseGet(
+                () -> operation.getTrait(RequiredActionsTrait.class)
+                    .map(RequiredActionsTrait::getValues)
+                    .orElse(ListUtils.of())
+            );
     }
 
     /**

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * and a single endpoint should resolve per partition.
  */
 public final class StandardPartitionalEndpointsTrait extends AbstractTrait
-        implements ToSmithyBuilder<StandardPartitionalEndpointsTrait> {
+    implements ToSmithyBuilder<StandardPartitionalEndpointsTrait> {
     public static final ShapeId ID = ShapeId.from("aws.endpoints#standardPartitionalEndpoints");
     public static final String PARTITION_ENDPOINT_SPECIAL_CASES = "partitionEndpointSpecialCases";
     public static final String ENDPOINT_PATTERN_TYPE = "endpointPatternType";
@@ -60,8 +59,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
     @Override
     protected Node createNode() {
         ObjectNode.Builder partitionEndpointSpecialCasesNodeBuilder = ObjectNode.objectNodeBuilder();
-        for (Map.Entry<String, List<PartitionEndpointSpecialCase>> entry
-                : partitionEndpointSpecialCases.entrySet()) {
+        for (Map.Entry<String, List<PartitionEndpointSpecialCase>> entry : partitionEndpointSpecialCases.entrySet()) {
             List<Node> nodes = new ArrayList<>();
             for (PartitionEndpointSpecialCase partitionEndpointSpecialCase : entry.getValue()) {
                 nodes.add(partitionEndpointSpecialCase.toNode());
@@ -70,17 +68,17 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
         }
 
         return ObjectNode.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withMember(PARTITION_ENDPOINT_SPECIAL_CASES, partitionEndpointSpecialCasesNodeBuilder.build())
-                .withMember(ENDPOINT_PATTERN_TYPE, endpointPatternType.getName())
-                .build();
+            .sourceLocation(getSourceLocation())
+            .withMember(PARTITION_ENDPOINT_SPECIAL_CASES, partitionEndpointSpecialCasesNodeBuilder.build())
+            .withMember(ENDPOINT_PATTERN_TYPE, endpointPatternType.getName())
+            .build();
     }
 
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .partitionEndpointSpecialCases(partitionEndpointSpecialCases)
-                .endpointPatternType(endpointPatternType);
+            .partitionEndpointSpecialCases(partitionEndpointSpecialCases)
+            .endpointPatternType(endpointPatternType);
     }
 
     public static Builder builder() {
@@ -100,18 +98,21 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
                 .fromNode(objectNode.expectStringMember(ENDPOINT_PATTERN_TYPE));
 
             StandardPartitionalEndpointsTrait.Builder builder = builder()
-                    .sourceLocation(value)
-                    .endpointPatternType(endpointPatternType);
+                .sourceLocation(value)
+                .endpointPatternType(endpointPatternType);
 
             if (objectNode.containsMember(PARTITION_ENDPOINT_SPECIAL_CASES)) {
-                for (Map.Entry<String, Node> entry
-                        : objectNode.expectObjectMember(PARTITION_ENDPOINT_SPECIAL_CASES).getStringMap().entrySet()) {
+                for (Map.Entry<String, Node> entry : objectNode.expectObjectMember(PARTITION_ENDPOINT_SPECIAL_CASES)
+                    .getStringMap()
+                    .entrySet()) {
                     List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases = new ArrayList<>();
-                    for (Node node: entry.getValue().expectArrayNode().getElements()) {
+                    for (Node node : entry.getValue().expectArrayNode().getElements()) {
                         partitionEndpointSpecialCases.add(PartitionEndpointSpecialCase.fromNode(node));
                     }
                     builder.putPartitionEndpointSpecialCase(
-                        entry.getKey(), Collections.unmodifiableList(partitionEndpointSpecialCases));
+                        entry.getKey(),
+                        Collections.unmodifiableList(partitionEndpointSpecialCases)
+                    );
                 }
             }
 
@@ -122,8 +123,8 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
     }
 
     public static final class Builder extends AbstractTraitBuilder<StandardPartitionalEndpointsTrait, Builder> {
-        private final BuilderRef<Map<String, List<PartitionEndpointSpecialCase>>> partitionEndpointSpecialCases =
-            BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, List<PartitionEndpointSpecialCase>>> partitionEndpointSpecialCases = BuilderRef
+            .forOrderedMap();
         private EndpointPatternType endpointPatternType;
 
         /**

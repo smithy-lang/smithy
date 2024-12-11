@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.Collections;
@@ -19,8 +18,8 @@ final class ConfigurationUtils {
     private static final int FNV_PRIME = 0x1000193;
     private static final Logger LOGGER = Logger.getLogger(ConfigurationUtils.class.getName());
     private static final MavenRepository CENTRAL = MavenRepository.builder()
-            .url("https://repo.maven.apache.org/maven2")
-            .build();
+        .url("https://repo.maven.apache.org/maven2")
+        .build();
 
     private ConfigurationUtils() {
         // Utility Class should not be instantiated
@@ -46,15 +45,19 @@ final class ConfigurationUtils {
         }
 
         Set<MavenRepository> configuredRepos = config.getMaven()
-                .map(MavenConfig::getRepositories)
-                .orElse(Collections.emptySet());
+            .map(MavenConfig::getRepositories)
+            .orElse(Collections.emptySet());
 
         if (!configuredRepos.isEmpty()) {
             repositories.addAll(configuredRepos);
         } else if (envRepos == null) {
-            LOGGER.finest(() -> String.format("maven.repositories is not defined in `smithy-build.json` and the %s "
-                            + "environment variable is not set. Defaulting to Maven Central.",
-                    EnvironmentVariable.SMITHY_MAVEN_REPOS));
+            LOGGER.finest(
+                () -> String.format(
+                    "maven.repositories is not defined in `smithy-build.json` and the %s "
+                        + "environment variable is not set. Defaulting to Maven Central.",
+                    EnvironmentVariable.SMITHY_MAVEN_REPOS
+                )
+            );
             repositories.add(CENTRAL);
         }
         return repositories;

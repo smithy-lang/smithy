@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.Collections;
@@ -130,20 +119,23 @@ final class MarkAndSweep {
         }
 
         private Stream<Relationship> findRelationshipsTo(Shape shape) {
-            return reverseProvider.getNeighbors(shape).stream()
-                    // We are only interested in references to this shape from
-                    // other shapes, not references to this shape that the shape
-                    // contains (like members).
-                    .filter(rel -> {
-                        RelationshipType type = rel.getRelationshipType();
-                        return type.getDirection() == RelationshipDirection.DIRECTED && !type.isMemberBinding();
-                    })
-                    // Don't allow recursive member references to exclude themselves.
-                    // This check ensures that recursive member references don't exclude
-                    // themselves from being marked by seeing if the relationship is a member
-                    // target (e.g., an aggregate shape that targets a member)
-                    .filter(rel -> rel.getRelationshipType() != RelationshipType.MEMBER_TARGET
-                                   || !rel.getShape().getId().withoutMember().equals(rel.getNeighborShapeId()));
+            return reverseProvider.getNeighbors(shape)
+                .stream()
+                // We are only interested in references to this shape from
+                // other shapes, not references to this shape that the shape
+                // contains (like members).
+                .filter(rel -> {
+                    RelationshipType type = rel.getRelationshipType();
+                    return type.getDirection() == RelationshipDirection.DIRECTED && !type.isMemberBinding();
+                })
+                // Don't allow recursive member references to exclude themselves.
+                // This check ensures that recursive member references don't exclude
+                // themselves from being marked by seeing if the relationship is a member
+                // target (e.g., an aggregate shape that targets a member)
+                .filter(
+                    rel -> rel.getRelationshipType() != RelationshipType.MEMBER_TARGET
+                        || !rel.getShape().getId().withoutMember().equals(rel.getNeighborShapeId())
+                );
         }
     }
 }

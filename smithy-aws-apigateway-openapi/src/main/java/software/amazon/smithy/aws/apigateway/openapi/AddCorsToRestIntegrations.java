@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.HashMap;
@@ -58,11 +47,11 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
 
     @Override
     public OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operationObject,
-            String httpMethod,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operationObject,
+        String httpMethod,
+        String path
     ) {
         CorsTrait cors = context.getService().getTrait(CorsTrait.class).orElse(null);
 
@@ -71,32 +60,37 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
         }
 
         return operationObject.getExtension(AddIntegrations.INTEGRATION_EXTENSION_NAME)
-                .flatMap(Node::asObjectNode)
-                .map(integrationObject -> updateOperation(context, shape, operationObject, cors, integrationObject))
-                .orElse(operationObject);
+            .flatMap(Node::asObjectNode)
+            .map(integrationObject -> updateOperation(context, shape, operationObject, cors, integrationObject))
+            .orElse(operationObject);
     }
 
     private OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operationObject,
-            CorsTrait cors,
-            ObjectNode integrationObject
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operationObject,
+        CorsTrait cors,
+        ObjectNode integrationObject
     ) {
         ObjectNode updated = updateIntegrationWithCors(
-                context, operationObject, shape, integrationObject, cors);
+            context,
+            operationObject,
+            shape,
+            integrationObject,
+            cors
+        );
 
         return operationObject.toBuilder()
-                .putExtension(AddIntegrations.INTEGRATION_EXTENSION_NAME, updated)
-                .build();
+            .putExtension(AddIntegrations.INTEGRATION_EXTENSION_NAME, updated)
+            .build();
     }
 
     private ObjectNode updateIntegrationWithCors(
-            Context<? extends Trait> context,
-            OperationObject operationObject,
-            OperationShape shape,
-            ObjectNode integrationNode,
-            CorsTrait cors
+        Context<? extends Trait> context,
+        OperationObject operationObject,
+        OperationShape shape,
+        ObjectNode integrationNode,
+        CorsTrait cors
     ) {
         ObjectNode responses = integrationNode.getObjectMember(RESPONSES_KEY).orElse(Node.objectNode());
 
@@ -111,28 +105,56 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
             corsHeaders.put(CorsHeader.ALLOW_CREDENTIALS, "true");
         }
 
-        LOGGER.finer(() -> String.format("Adding the following CORS headers to the API Gateway integration of %s: %s",
-                                         shape.getId(), corsHeaders));
+        LOGGER.finer(
+            () -> String.format(
+                "Adding the following CORS headers to the API Gateway integration of %s: %s",
+                shape.getId(),
+                corsHeaders
+            )
+        );
         Set<String> deducedHeaders = CorsHeader.deduceOperationResponseHeaders(context, operationObject, shape, cors);
-        LOGGER.fine(() -> String.format("Detected the following headers for operation %s: %s",
-                                        shape.getId(), deducedHeaders));
+        LOGGER.fine(
+            () -> String.format(
+                "Detected the following headers for operation %s: %s",
+                shape.getId(),
+                deducedHeaders
+            )
+        );
 
         // Update each response by adding CORS headers.
-        responses = responses.getMembers().entrySet().stream()
-                .peek(entry -> LOGGER.fine(() -> String.format(
-                        "Updating integration response %s for `%s` with CORS", entry.getKey(), shape.getId())))
-                .map(entry -> Pair.of(entry.getKey(), updateIntegrationResponse(
-                        shape, corsHeaders, deducedHeaders, entry.getValue().expectObjectNode())))
-                .collect(ObjectNode.collect(Pair::getLeft, Pair::getRight));
+        responses = responses.getMembers()
+            .entrySet()
+            .stream()
+            .peek(
+                entry -> LOGGER.fine(
+                    () -> String.format(
+                        "Updating integration response %s for `%s` with CORS",
+                        entry.getKey(),
+                        shape.getId()
+                    )
+                )
+            )
+            .map(
+                entry -> Pair.of(
+                    entry.getKey(),
+                    updateIntegrationResponse(
+                        shape,
+                        corsHeaders,
+                        deducedHeaders,
+                        entry.getValue().expectObjectNode()
+                    )
+                )
+            )
+            .collect(ObjectNode.collect(Pair::getLeft, Pair::getRight));
 
         return integrationNode.withMember(RESPONSES_KEY, responses);
     }
 
     private ObjectNode updateIntegrationResponse(
-            OperationShape shape,
-            Map<CorsHeader, String> corsHeaders,
-            Set<String> deduced,
-            ObjectNode response
+        OperationShape shape,
+        Map<CorsHeader, String> corsHeaders,
+        Set<String> deduced,
+        ObjectNode response
     ) {
         Map<CorsHeader, String> responseHeaders = new HashMap<>(corsHeaders);
         ObjectNode responseParams = response.getObjectMember(RESPONSE_PARAMETERS_KEY).orElseGet(Node::objectNode);
@@ -140,18 +162,26 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
         // Created a sorted set of all headers exposed in the integration.
         Set<String> headersToExpose = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         headersToExpose.addAll(deduced);
-        responseParams.getStringMap().keySet().stream()
-                .filter(parameterName -> parameterName.startsWith(HEADER_PREFIX))
-                .map(parameterName -> parameterName.substring(HEADER_PREFIX.length()))
-                .forEach(headersToExpose::add);
+        responseParams.getStringMap()
+            .keySet()
+            .stream()
+            .filter(parameterName -> parameterName.startsWith(HEADER_PREFIX))
+            .map(parameterName -> parameterName.substring(HEADER_PREFIX.length()))
+            .forEach(headersToExpose::add);
         String headersToExposeString = String.join(",", headersToExpose);
 
         // If there are exposed headers, then add a new header to the integration
         // that lists all of them. See https://fetch.spec.whatwg.org/#http-access-control-expose-headers.
         if (!headersToExposeString.isEmpty()) {
             responseHeaders.put(CorsHeader.EXPOSE_HEADERS, headersToExposeString);
-            LOGGER.fine(() -> String.format("Adding `%s` header to `%s` with value of `%s`",
-                                            CorsHeader.EXPOSE_HEADERS, shape.getId(), headersToExposeString));
+            LOGGER.fine(
+                () -> String.format(
+                    "Adding `%s` header to `%s` with value of `%s`",
+                    CorsHeader.EXPOSE_HEADERS,
+                    shape.getId(),
+                    headersToExposeString
+                )
+            );
         }
 
         if (responseHeaders.isEmpty()) {

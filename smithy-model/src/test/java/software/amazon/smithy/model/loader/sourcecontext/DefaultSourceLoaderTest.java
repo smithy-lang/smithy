@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader.sourcecontext;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,10 +46,14 @@ public class DefaultSourceLoaderTest {
     public void ignoresInvalidSourceLocations() {
         String file = getClass().getResource("context.smithy").getFile();
 
-        assertThat(SourceContextLoader.createLineBasedLoader(4).loadContext(new SourceLocation(file, -1, -1)),
-                   empty());
-        assertThat(SourceContextLoader.createLineBasedLoader(4).loadContext(new SourceLocation(file, 9999, -1)),
-                   empty());
+        assertThat(
+            SourceContextLoader.createLineBasedLoader(4).loadContext(new SourceLocation(file, -1, -1)),
+            empty()
+        );
+        assertThat(
+            SourceContextLoader.createLineBasedLoader(4).loadContext(new SourceLocation(file, 9999, -1)),
+            empty()
+        );
     }
 
     @Test
@@ -122,11 +115,11 @@ public class DefaultSourceLoaderTest {
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(model, 4);
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Baz"));
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(shape)
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(shape)
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
         Iterator<SourceContextLoader.Line> iter = context.iterator();
 
@@ -142,11 +135,11 @@ public class DefaultSourceLoaderTest {
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(model, 4);
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Baz$bam"));
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(shape)
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(shape)
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
         Iterator<SourceContextLoader.Line> iter = context.iterator();
 
@@ -161,17 +154,17 @@ public class DefaultSourceLoaderTest {
         MemberShape member = model.expectShape(ShapeId.from("example.smithy#Baz$bam"), MemberShape.class);
         // Create a modified member that is incorrectly above the container shape.
         MemberShape modified = member.toBuilder()
-                .addTrait(new SensitiveTrait()) // change it so the change takes effect
-                .source(new SourceLocation(member.getSourceLocation().getFilename(), 1, 1))
-                .build();
+            .addTrait(new SensitiveTrait()) // change it so the change takes effect
+            .source(new SourceLocation(member.getSourceLocation().getFilename(), 1, 1))
+            .build();
         Model updated = ModelTransformer.create().replaceShapes(model, Collections.singleton(modified));
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(updated, 4);
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(modified)
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(modified)
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
 
         assertThat(context, empty());
@@ -183,12 +176,12 @@ public class DefaultSourceLoaderTest {
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(model, 4);
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Baz$bam"));
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(shape)
-                .sourceLocation(shape.expectTrait(DocumentationTrait.class))
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(shape)
+            .sourceLocation(shape.expectTrait(DocumentationTrait.class))
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
         Iterator<SourceContextLoader.Line> iter = context.iterator();
 
@@ -203,12 +196,12 @@ public class DefaultSourceLoaderTest {
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(model, 4);
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Foo"));
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(shape)
-                .sourceLocation(shape.expectTrait(DocumentationTrait.class))
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(shape)
+            .sourceLocation(shape.expectTrait(DocumentationTrait.class))
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
         Iterator<SourceContextLoader.Line> iter = context.iterator();
 
@@ -222,12 +215,12 @@ public class DefaultSourceLoaderTest {
         SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(model, 4);
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Foo"));
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR)
-                .id("Foo")
-                .shape(shape)
-                .sourceLocation(shape.expectTrait(SensitiveTrait.class))
-                .message("Test")
-                .build();
+            .severity(Severity.ERROR)
+            .id("Foo")
+            .shape(shape)
+            .sourceLocation(shape.expectTrait(SensitiveTrait.class))
+            .message("Test")
+            .build();
         Collection<SourceContextLoader.Line> context = loader.loadContext(event);
         Iterator<SourceContextLoader.Line> iter = context.iterator();
 

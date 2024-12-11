@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
@@ -38,9 +37,12 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
             Validator validator = new Validator(serviceShape);
-            events.addAll(validator.visitRuleset(
-                    serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet())
-                                  .collect(Collectors.toList()));
+            events.addAll(
+                validator.visitRuleset(
+                    serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet()
+                )
+                    .collect(Collectors.toList())
+            );
         }
         return events;
     }
@@ -61,8 +63,12 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
                 BiFunction<FromSourceLocation, String, ValidationEvent> emitter = getEventEmitter();
                 Optional<List<Literal>> authSchemeList = authSchemes.asTupleLiteral();
                 if (!authSchemeList.isPresent()) {
-                    return Stream.of(emitter.apply(authSchemes,
-                            String.format("Expected `authSchemes` to be a list, found: `%s`", authSchemes)));
+                    return Stream.of(
+                        emitter.apply(
+                            authSchemes,
+                            String.format("Expected `authSchemes` to be a list, found: `%s`", authSchemes)
+                        )
+                    );
                 }
 
                 Set<String> authSchemeNames = new HashSet<>();
@@ -84,16 +90,30 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
 
                         events.addAll(validateAuthScheme(schemeName, authScheme, authSchemeEntry));
                     } else {
-                        events.add(emitter.apply(authSchemes,
-                                String.format("Expected `authSchemes` to be a list of objects, but found: `%s`",
-                                        authSchemeEntry)));
+                        events.add(
+                            emitter.apply(
+                                authSchemes,
+                                String.format(
+                                    "Expected `authSchemes` to be a list of objects, but found: `%s`",
+                                    authSchemeEntry
+                                )
+                            )
+                        );
                     }
                 }
 
                 // Emit events for each duplicated auth scheme name.
                 for (String duplicateAuthSchemeName : duplicateAuthSchemeNames) {
-                    events.add(emitter.apply(authSchemes, String.format("Found duplicate `name` of `%s` in the "
-                            + "`authSchemes` list", duplicateAuthSchemeName)));
+                    events.add(
+                        emitter.apply(
+                            authSchemes,
+                            String.format(
+                                "Found duplicate `name` of `%s` in the "
+                                    + "`authSchemes` list",
+                                duplicateAuthSchemeName
+                            )
+                        )
+                    );
                 }
             }
 
@@ -101,21 +121,29 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         }
 
         private Optional<ValidationEvent> validateAuthSchemeName(
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation
         ) {
             if (!authScheme.containsKey(NAME) || !authScheme.get(NAME).asStringLiteral().isPresent()) {
-                return Optional.of(error(serviceShape, sourceLocation,
-                        String.format("Expected `authSchemes` to have a `name` key with a string value but it did not: "
-                                + "`%s`", authScheme)));
+                return Optional.of(
+                    error(
+                        serviceShape,
+                        sourceLocation,
+                        String.format(
+                            "Expected `authSchemes` to have a `name` key with a string value but it did not: "
+                                + "`%s`",
+                            authScheme
+                        )
+                    )
+                );
             }
             return Optional.empty();
         }
 
         private List<ValidationEvent> validateAuthScheme(
-                String schemeName,
-                Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation
+            String schemeName,
+            Map<Identifier, Literal> authScheme,
+            FromSourceLocation sourceLocation
         ) {
             List<ValidationEvent> events = new ArrayList<>();
 
@@ -132,8 +160,16 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             if (validatedAuth) {
                 return events;
             }
-            return ListUtils.of(warning(serviceShape, String.format("Did not find a validator for the `%s` "
-                    + "auth scheme", schemeName)));
+            return ListUtils.of(
+                warning(
+                    serviceShape,
+                    String.format(
+                        "Did not find a validator for the `%s` "
+                            + "auth scheme",
+                        schemeName
+                    )
+                )
+            );
         }
 
         private BiFunction<FromSourceLocation, String, ValidationEvent> getEventEmitter() {

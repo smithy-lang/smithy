@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.ArrayList;
@@ -58,8 +57,12 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     public static Parameters fromNode(ObjectNode node) throws RuleError {
         Builder builder = new Builder(node);
         for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
-            builder.addParameter(Parameter.fromNode(entry.getKey(),
-                    RuleError.context("when parsing parameter", () -> entry.getValue().expectObjectNode())));
+            builder.addParameter(
+                Parameter.fromNode(
+                    entry.getKey(),
+                    RuleError.context("when parsing parameter", () -> entry.getValue().expectObjectNode())
+                )
+            );
         }
         return builder.build();
     }
@@ -71,8 +74,11 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
      */
     public void writeToScope(Scope<Type> scope) {
         for (Parameter parameter : parameters) {
-            RuleError.context(String.format("while typechecking par %s", parameter.getName()), parameter,
-                    () -> scope.insert(parameter.getName(), parameter.toType()));
+            RuleError.context(
+                String.format("while typechecking par %s", parameter.getName()),
+                parameter,
+                () -> scope.insert(parameter.getName(), parameter.toType())
+            );
         }
     }
 

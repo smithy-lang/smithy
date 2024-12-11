@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
@@ -75,8 +64,8 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
      */
     public BindingType getOperationBindingType(ToShapeId resource, ToShapeId operation) {
         return Optional.ofNullable(bindingTypes.get(resource.toShapeId()))
-                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
-                .orElse(BindingType.NONE);
+            .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
+            .orElse(BindingType.NONE);
     }
 
     /**
@@ -90,9 +79,9 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
      */
     public Map<String, String> getOperationInputBindings(ToShapeId resource, ToShapeId operation) {
         return Optional.ofNullable(inputBindings.get(resource.toShapeId()))
-                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
-                .map(Collections::unmodifiableMap)
-                .orElseGet(Collections::emptyMap);
+            .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
+            .map(Collections::unmodifiableMap)
+            .orElseGet(Collections::emptyMap);
     }
 
     /**
@@ -106,9 +95,9 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
      */
     public Map<String, String> getOperationOutputBindings(ToShapeId resource, ToShapeId operation) {
         return Optional.ofNullable(outputBindings.get(resource.toShapeId()))
-                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
-                .map(Collections::unmodifiableMap)
-                .orElseGet(Collections::emptyMap);
+            .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
+            .map(Collections::unmodifiableMap)
+            .orElseGet(Collections::emptyMap);
     }
 
     /**
@@ -134,33 +123,37 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
             Map<String, String> computedInputBindings = operationIndex.getInputShape(operationId)
-                    .map(inputShape -> computeBindings(resource, inputShape))
-                    .orElse(Collections.emptyMap());
+                .map(inputShape -> computeBindings(resource, inputShape))
+                .orElse(Collections.emptyMap());
             inputBindings.get(resource.getId()).put(operationId, computedInputBindings);
             allIdentifiers.addAll(computedInputBindings.keySet());
 
             Map<String, String> computedOutputBindings = operationIndex.getOutputShape(operationId)
-                    .map(outputShape -> computeBindings(resource, outputShape))
-                    .orElse(Collections.emptyMap());
+                .map(outputShape -> computeBindings(resource, outputShape))
+                .orElse(Collections.emptyMap());
             outputBindings.get(resource.getId()).put(operationId, computedOutputBindings);
             allIdentifiers.addAll(computedOutputBindings.keySet());
 
-            bindingTypes.get(resource.getId()).put(operationId, isCollection(resource, operationId)
-                    ? BindingType.COLLECTION
-                    : BindingType.INSTANCE);
+            bindingTypes.get(resource.getId())
+                .put(
+                    operationId,
+                    isCollection(resource, operationId)
+                        ? BindingType.COLLECTION
+                        : BindingType.INSTANCE
+                );
         });
     }
 
     private boolean isCollection(ResourceShape resource, ToShapeId operationId) {
         return resource.getCollectionOperations().contains(operationId.toShapeId())
-                || (resource.getCreate().isPresent() && resource.getCreate().get().toShapeId().equals(operationId))
-                || (resource.getList().isPresent() && resource.getList().get().toShapeId().equals(operationId));
+            || (resource.getCreate().isPresent() && resource.getCreate().get().toShapeId().equals(operationId))
+            || (resource.getList().isPresent() && resource.getList().get().toShapeId().equals(operationId));
     }
 
     private boolean isImplicitIdentifierBinding(MemberShape member, ResourceShape resource) {
         return resource.getIdentifiers().containsKey(member.getMemberName())
-                && member.getTrait(RequiredTrait.class).isPresent()
-                && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
+            && member.getTrait(RequiredTrait.class).isPresent()
+            && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
     }
 
     private Map<String, String> computeBindings(ResourceShape resource, StructureShape shape) {

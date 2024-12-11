@@ -1,4 +1,12 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.commands;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -7,21 +15,17 @@ import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.utils.ListUtils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ConfigurationUtilsTest {
     private static final MavenRepository CENTRAL = MavenRepository.builder()
-            .url("https://repo.maven.apache.org/maven2")
-            .build();
+        .url("https://repo.maven.apache.org/maven2")
+        .build();
 
     private static final MavenRepository TEST_REPO_1 = MavenRepository.builder()
-            .url("fake_fake_fake")
-            .build();
+        .url("fake_fake_fake")
+        .build();
     private static final MavenRepository TEST_REPO_2 = MavenRepository.builder()
-            .url("not_real")
-            .build();
+        .url("not_real")
+        .build();
 
     @Test
     public void returnsDefaultRepository() {
@@ -35,11 +39,13 @@ public class ConfigurationUtilsTest {
     @Test
     public void returnsCorrectRepositoriesInConfig() {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
-                .version("1.0")
-                .maven(MavenConfig.builder()
-                        .repositories(ListUtils.of(TEST_REPO_1, TEST_REPO_2))
-                        .build())
-                .build();
+            .version("1.0")
+            .maven(
+                MavenConfig.builder()
+                    .repositories(ListUtils.of(TEST_REPO_1, TEST_REPO_2))
+                    .build()
+            )
+            .build();
         Set<MavenRepository> repositorySet = ConfigurationUtils.getConfiguredMavenRepos(config);
 
         assertEquals(repositorySet.size(), 2);

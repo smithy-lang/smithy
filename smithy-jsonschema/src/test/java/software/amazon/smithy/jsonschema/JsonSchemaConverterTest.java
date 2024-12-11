@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,9 +62,9 @@ public class JsonSchemaConverterTest {
     @Test
     public void dealsWithRecursion() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("recursive.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("recursive.json"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convert();
         assertThat(document.getDefinitions().keySet(), not(empty()));
     }
@@ -83,15 +72,16 @@ public class JsonSchemaConverterTest {
     @Test
     public void integrationTestV07() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("test-service.json"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convert();
 
         assertThat(document.getDefinitions().keySet(), not(empty()));
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
@@ -106,31 +96,34 @@ public class JsonSchemaConverterTest {
         testConfig.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
         SchemaDocument document = JsonSchemaConverter.builder()
             .config(testConfig)
-            .model(model).build().convert();
+            .model(model)
+            .build()
+            .convert();
 
         assertThat(document.getDefinitions().keySet(), not(empty()));
 
         Node expected = Node.parse(
-            IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v2020.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v2020.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void canConvertShapesThatAreOnlyInTheClosureOfShape() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("multiple-closures.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("multiple-closures.json"))
+            .assemble()
+            .unwrap();
         SchemaDocument document1 = JsonSchemaConverter.builder()
-                .model(model)
-                .rootShape(ShapeId.from("com.foo#StructureA"))
-                .build()
-                .convert();
+            .model(model)
+            .rootShape(ShapeId.from("com.foo#StructureA"))
+            .build()
+            .convert();
         SchemaDocument document2 = JsonSchemaConverter.builder()
-                .model(model)
-                .rootShape(ShapeId.from("com.foo#StructureB"))
-                .build()
-                .convert();
+            .model(model)
+            .rootShape(ShapeId.from("com.foo#StructureB"))
+            .build()
+            .convert();
 
         assertThat(document1.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedA"));
         assertThat(document2.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedB"));
@@ -139,26 +132,26 @@ public class JsonSchemaConverterTest {
     @Test
     public void canConvertShapesThatHaveConflictsOutsideOfClosure() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("multiple-closures-with-conflicting-shapes.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("multiple-closures-with-conflicting-shapes.json"))
+            .assemble()
+            .unwrap();
         JsonSchemaConfig config1 = new JsonSchemaConfig();
         config1.setService(ShapeId.from("com.foo#ServiceA"));
         SchemaDocument document1 = JsonSchemaConverter.builder()
-                .model(model)
-                .rootShape(ShapeId.from("com.foo#ServiceA"))
-                .config(config1)
-                .build()
-                .convert();
+            .model(model)
+            .rootShape(ShapeId.from("com.foo#ServiceA"))
+            .config(config1)
+            .build()
+            .convert();
 
         JsonSchemaConfig config2 = new JsonSchemaConfig();
         config2.setService(ShapeId.from("com.bar#ServiceB"));
         SchemaDocument document2 = JsonSchemaConverter.builder()
-                .model(model)
-                .rootShape(ShapeId.from("com.bar#ServiceB"))
-                .config(config2)
-                .build()
-                .convert();
+            .model(model)
+            .rootShape(ShapeId.from("com.bar#ServiceB"))
+            .config(config2)
+            .build()
+            .convert();
 
         Schema string1Def = document1.getDefinitions().get("#/definitions/ConflictString");
         assertNotNull(string1Def);
@@ -173,14 +166,14 @@ public class JsonSchemaConverterTest {
     public void canFilterShapesWithCustomPredicate() {
         Predicate<Shape> predicate = shape -> !shape.getId().getName().equals("Foo");
         Model model = Model.builder()
-                .addShape(StructureShape.builder().id("smithy.example#Foo").build())
-                .addShape(StructureShape.builder().id("smithy.example#Baz").build())
-                .build();
+            .addShape(StructureShape.builder().id("smithy.example#Foo").build())
+            .addShape(StructureShape.builder().id("smithy.example#Baz").build())
+            .build();
         SchemaDocument doc = JsonSchemaConverter.builder()
-                .shapePredicate(predicate)
-                .model(model)
-                .build()
-                .convert();
+            .shapePredicate(predicate)
+            .model(model)
+            .build()
+            .convert();
 
         assertFalse(doc.getDefinition("#/definitions/Foo").isPresent());
         assertTrue(doc.getDefinition("#/definitions/Baz").isPresent());
@@ -191,21 +184,23 @@ public class JsonSchemaConverterTest {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         MemberShape member = MemberShape.builder().id("smithy.example#Foo$bar").target(string).build();
         StructureShape struct = StructureShape.builder()
-                .id("smithy.example#Foo")
-                .addMember(member)
-                .build();
+            .id("smithy.example#Foo")
+            .addMember(member)
+            .build();
         Model model = Model.builder().addShapes(struct, member, string).build();
         PropertyNamingStrategy strategy = (container, memberShape, conf) -> {
             return memberShape.getMemberName().toUpperCase(Locale.US);
         };
         SchemaDocument doc = JsonSchemaConverter.builder()
-                .propertyNamingStrategy(strategy)
-                .model(model)
-                .build()
-                .convert();
+            .propertyNamingStrategy(strategy)
+            .model(model)
+            .build()
+            .convert();
 
-        assertThat(doc.getDefinition("#/definitions/Foo").get().getProperties().keySet(),
-                   contains("BAR"));
+        assertThat(
+            doc.getDefinition("#/definitions/Foo").get().getProperties().keySet(),
+            contains("BAR")
+        );
     }
 
     @Test
@@ -245,8 +240,8 @@ public class JsonSchemaConverterTest {
     @Test
     public void excludesServiceShapes() {
         Model model = Model.builder()
-                .addShape(ServiceShape.builder().id("smithy.example#Service").version("X").build())
-                .build();
+            .addShape(ServiceShape.builder().id("smithy.example#Service").version("X").build())
+            .build();
         SchemaDocument doc = JsonSchemaConverter.builder().model(model).build().convert();
 
         assertThat(doc.getDefinitions().keySet(), empty());
@@ -255,8 +250,8 @@ public class JsonSchemaConverterTest {
     @Test
     public void excludesPrivateShapes() {
         Model model = Model.builder()
-                .addShape(StringShape.builder().id("smithy.example#String").addTrait(new PrivateTrait()).build())
-                .build();
+            .addShape(StringShape.builder().id("smithy.example#String").addTrait(new PrivateTrait()).build())
+            .build();
         SchemaDocument doc = JsonSchemaConverter.builder().model(model).build().convert();
 
         assertThat(doc.getDefinitions().keySet(), empty());
@@ -294,19 +289,22 @@ public class JsonSchemaConverterTest {
     @Test
     public void convertsNumbersToNumber() {
         List<Shape> shapes = ListUtils.of(
-                ByteShape.builder().id("smithy.example#Number").build(),
-                ShortShape.builder().id("smithy.example#Number").build(),
-                IntegerShape.builder().id("smithy.example#Number").build(),
-                LongShape.builder().id("smithy.example#Number").build(),
-                FloatShape.builder().id("smithy.example#Number").build(),
-                DoubleShape.builder().id("smithy.example#Number").build(),
-                BigIntegerShape.builder().id("smithy.example#Number").build(),
-                BigDecimalShape.builder().id("smithy.example#Number").build());
+            ByteShape.builder().id("smithy.example#Number").build(),
+            ShortShape.builder().id("smithy.example#Number").build(),
+            IntegerShape.builder().id("smithy.example#Number").build(),
+            LongShape.builder().id("smithy.example#Number").build(),
+            FloatShape.builder().id("smithy.example#Number").build(),
+            DoubleShape.builder().id("smithy.example#Number").build(),
+            BigIntegerShape.builder().id("smithy.example#Number").build(),
+            BigDecimalShape.builder().id("smithy.example#Number").build()
+        );
 
         for (Shape shape : shapes) {
             Model model = Model.builder().addShape(shape).build();
-            SchemaDocument document = JsonSchemaConverter.builder().model(model).build()
-                    .convertShape(shape);
+            SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convertShape(shape);
 
             assertThat(document.getRootSchema().getType().get(), equalTo("number"));
         }
@@ -317,29 +315,32 @@ public class JsonSchemaConverterTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setUseIntegerType(true);
         Model model = Model.assembler()
-                .addImport(getClass().getResource("integer-types.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("integer-types.smithy"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .config(config)
-                .build()
-                .convert();
+            .model(model)
+            .config(config)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void supportsRangeTrait() {
         IntegerShape shape = IntegerShape.builder()
-                .id("smithy.example#Number")
-                .addTrait(RangeTrait.builder().min(BigDecimal.valueOf(10)).max(BigDecimal.valueOf(100)).build())
-                .build();
+            .id("smithy.example#Number")
+            .addTrait(RangeTrait.builder().min(BigDecimal.valueOf(10)).max(BigDecimal.valueOf(100)).build())
+            .build();
         Model model = Model.builder().addShape(shape).build();
-        SchemaDocument document = JsonSchemaConverter.builder().model(model).build()
-                .convertShape(shape);
+        SchemaDocument document = JsonSchemaConverter.builder()
+            .model(model)
+            .build()
+            .convertShape(shape);
 
         assertThat(document.getRootSchema().getType().get(), equalTo("number"));
         assertThat(document.getRootSchema().getMinimum().get(), equalTo(BigDecimal.valueOf(10)));
@@ -358,9 +359,9 @@ public class JsonSchemaConverterTest {
     @Test
     public void supportsStringLengthTrait() {
         StringShape shape = StringShape.builder()
-                .id("smithy.example#String")
-                .addTrait(LengthTrait.builder().min(10L).max(100L).build())
-                .build();
+            .id("smithy.example#String")
+            .addTrait(LengthTrait.builder().min(10L).max(100L).build())
+            .build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(shape);
 
@@ -374,20 +375,21 @@ public class JsonSchemaConverterTest {
     public void supportsListAndSetLengthTrait() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         MemberShape member = MemberShape.builder()
-                .id("smithy.example#Collection$member")
-                .target("smithy.api#String")
-                .addTrait(LengthTrait.builder().min(10L).max(100L).build())
-                .build();
+            .id("smithy.example#Collection$member")
+            .target("smithy.api#String")
+            .addTrait(LengthTrait.builder().min(10L).max(100L).build())
+            .build();
         List<Shape> shapes = ListUtils.of(
-                ListShape.builder().id("smithy.example#Collection").addMember(member).build(),
-                SetShape.builder().id("smithy.example#Collection").addMember(member).build());
+            ListShape.builder().id("smithy.example#Collection").addMember(member).build(),
+            SetShape.builder().id("smithy.example#Collection").addMember(member).build()
+        );
 
         for (Shape shape : shapes) {
             Model model = Model.builder().addShapes(shape, string).build();
             SchemaDocument document = JsonSchemaConverter.builder()
-                    .model(model)
-                    .build()
-                    .convertShape(shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
             Schema def = document.getRootSchema();
 
@@ -405,11 +407,11 @@ public class JsonSchemaConverterTest {
         MemberShape key = MemberShape.builder().id("smithy.example#Map$key").target("smithy.api#String").build();
         MemberShape value = MemberShape.builder().id("smithy.example#Map$value").target("smithy.api#String").build();
         MapShape shape = MapShape.builder()
-                .id("smithy.example#Map")
-                .key(key)
-                .value(value)
-                .addTrait(LengthTrait.builder().min(10L).max(100L).build())
-                .build();
+            .id("smithy.example#Map")
+            .key(key)
+            .value(value)
+            .addTrait(LengthTrait.builder().min(10L).max(100L).build())
+            .build();
         Model model = Model.builder().addShapes(string, shape, key, value).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(shape);
         Schema schema = document.getRootSchema();
@@ -423,10 +425,10 @@ public class JsonSchemaConverterTest {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         MemberShape member = MemberShape.builder().id("smithy.example#List$member").target("smithy.api#String").build();
         ListShape shape = ListShape.builder()
-                .id("smithy.example#List")
-                .addMember(member)
-                .addTrait(new UniqueItemsTrait())
-                .build();
+            .id("smithy.example#List")
+            .addMember(member)
+            .addTrait(new UniqueItemsTrait())
+            .build();
 
         Model model = Model.builder().addShapes(string, shape, member).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(shape);
@@ -438,9 +440,9 @@ public class JsonSchemaConverterTest {
     public void supportsPatternTrait() {
         String pattern = "^[A-Z]+$";
         StringShape string = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(new PatternTrait(pattern))
-                .build();
+            .id("smithy.api#String")
+            .addTrait(new PatternTrait(pattern))
+            .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
         Schema schema = document.getRootSchema();
@@ -452,9 +454,9 @@ public class JsonSchemaConverterTest {
     public void supportsMediaType() {
         String mediaType = "application/json";
         StringShape string = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(new MediaTypeTrait(mediaType))
-                .build();
+            .id("smithy.api#String")
+            .addTrait(new MediaTypeTrait(mediaType))
+            .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
         Schema schema = document.getRootSchema();
@@ -466,9 +468,9 @@ public class JsonSchemaConverterTest {
     public void supportsTitle() {
         String title = "Hello";
         StringShape string = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(new TitleTrait(title))
-                .build();
+            .id("smithy.api#String")
+            .addTrait(new TitleTrait(title))
+            .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
         Schema schema = document.getRootSchema();
@@ -480,9 +482,9 @@ public class JsonSchemaConverterTest {
     public void supportsDocumentation() {
         String docs = "Hello";
         StringShape string = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(new DocumentationTrait(docs))
-                .build();
+            .id("smithy.api#String")
+            .addTrait(new DocumentationTrait(docs))
+            .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
         Schema schema = document.getRootSchema();
@@ -494,9 +496,9 @@ public class JsonSchemaConverterTest {
     @SuppressWarnings("deprecation")
     public void supportsEnum() {
         StringShape string = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("foo").build()).build())
-                .build();
+            .id("smithy.api#String")
+            .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("foo").build()).build())
+            .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
         Schema schema = document.getRootSchema();
@@ -527,10 +529,10 @@ public class JsonSchemaConverterTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setUnionStrategy(JsonSchemaConfig.UnionStrategy.OBJECT);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(union);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(union);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getOneOf(), empty());
@@ -547,10 +549,10 @@ public class JsonSchemaConverterTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setUnionStrategy(JsonSchemaConfig.UnionStrategy.STRUCTURE);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(union);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(union);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getOneOf(), empty());
@@ -583,10 +585,10 @@ public class JsonSchemaConverterTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setUseInlineMaps(true);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(container);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(container);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getProperties().containsKey("map"), equalTo(true));
@@ -604,17 +606,19 @@ public class JsonSchemaConverterTest {
         ShapeId shapeId = ShapeId.from("smithy.api#String");
         StringShape string = StringShape.builder().id(shapeId).build();
         String pattern = "[a-z]{1,16}";
-        StringShape key = StringShape.builder().id("a.b#Key")
-                .addTrait(new PatternTrait(pattern)).build();
+        StringShape key = StringShape.builder()
+            .id("a.b#Key")
+            .addTrait(new PatternTrait(pattern))
+            .build();
         MapShape map = MapShape.builder().id("a.b#Map").key(key.getId()).value(shapeId).build();
         Model model = Model.builder().addShapes(map, key, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(map);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(map);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getPatternProperties().size(), equalTo(1));
@@ -627,8 +631,10 @@ public class JsonSchemaConverterTest {
         ShapeId shapeId = ShapeId.from("smithy.api#String");
         StringShape string = StringShape.builder().id(shapeId).build();
         String pattern = "[a-z]{1,16}";
-        StringShape key = StringShape.builder().id("a.b#Key")
-                .addTrait(new PatternTrait(pattern)).build();
+        StringShape key = StringShape.builder()
+            .id("a.b#Key")
+            .addTrait(new PatternTrait(pattern))
+            .build();
         MapShape map = MapShape.builder().id("a.b#Map").key(key.getId()).value(shapeId).build();
         StructureShape container = StructureShape.builder().id("a.b#Container").addMember("map", map.getId()).build();
         Model model = Model.builder().addShapes(container, map, key, string).build();
@@ -636,10 +642,10 @@ public class JsonSchemaConverterTest {
         config.setUseInlineMaps(true);
         config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(container);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(container);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getProperties().containsKey("map"), equalTo(true));
@@ -660,10 +666,10 @@ public class JsonSchemaConverterTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convertShape(map);
+            .config(config)
+            .model(model)
+            .build()
+            .convertShape(map);
         Schema schema = document.getRootSchema();
 
         assertThat(schema.getPatternProperties().size(), equalTo(1));
@@ -674,15 +680,15 @@ public class JsonSchemaConverterTest {
     @Test
     public void sensitiveTraitHasNoImpact() {
         StringShape string1 = StringShape.builder()
-                .id("smithy.api#String")
-                .addTrait(new SensitiveTrait())
-                .build();
+            .id("smithy.api#String")
+            .addTrait(new SensitiveTrait())
+            .build();
         Model model1 = Model.builder().addShapes(string1).build();
         SchemaDocument document1 = JsonSchemaConverter.builder().model(model1).build().convertShape(string1);
 
         StringShape string2 = StringShape.builder()
-                .id("smithy.api#String")
-                .build();
+            .id("smithy.api#String")
+            .build();
         Model model2 = Model.builder().addShapes(string2).build();
         SchemaDocument document2 = JsonSchemaConverter.builder().model(model2).build().convertShape(string2);
 
@@ -692,13 +698,13 @@ public class JsonSchemaConverterTest {
     @Test
     public void convertingToBuilderGivesSameResult() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("test-service.json"))
+            .assemble()
+            .unwrap();
         JsonSchemaConverter converter = JsonSchemaConverter.builder()
-                .model(model)
-                .rootShape(ShapeId.from("example.rest#RestService"))
-                .build();
+            .model(model)
+            .rootShape(ShapeId.from("example.rest#RestService"))
+            .build();
 
         SchemaDocument document1 = converter.convert();
         SchemaDocument document2 = converter.toBuilder().build().convert();
@@ -748,12 +754,12 @@ public class JsonSchemaConverterTest {
     @Test
     public void removesMixins() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("model-with-mixins.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("model-with-mixins.smithy"))
+            .assemble()
+            .unwrap();
         JsonSchemaConverter converter = JsonSchemaConverter.builder()
-                .model(model)
-                .build();
+            .model(model)
+            .build();
 
         NodePointer mixin = NodePointer.parse("/definitions/Mixin");
         NodePointer properties = NodePointer.parse("/definitions/UsesMixin/properties");
@@ -763,77 +769,83 @@ public class JsonSchemaConverterTest {
         assertThat(mixin.getValue(document.toNode()), equalTo(Node.nullNode()));
 
         // The mixin was flattened.
-        assertThat(properties.getValue(document.toNode()).expectObjectNode().getStringMap().keySet(),
-                   containsInAnyOrder("foo", "baz"));
+        assertThat(
+            properties.getValue(document.toNode()).expectObjectNode().getStringMap().keySet(),
+            containsInAnyOrder("foo", "baz")
+        );
     }
 
     @Test
     public void appliesDefaultsByDefault() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("default-values.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("default-values.smithy"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .build()
-                .convert();
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void defaultsCanBeDisabled() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("default-values.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("default-values.smithy"))
+            .assemble()
+            .unwrap();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setDisableDefaultValues(true);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convert();
+            .config(config)
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values-disabled.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("default-values-disabled.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void supportsIntEnumsByDefault() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("int-enums.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("int-enums.smithy"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .build()
-                .convert();
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void intEnumsCanBeDisabled() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("int-enums.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("int-enums.smithy"))
+            .assemble()
+            .unwrap();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setDisableIntEnums(true);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convert();
+            .config(config)
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums-disabled.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums-disabled.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
@@ -841,50 +853,58 @@ public class JsonSchemaConverterTest {
     public void supportsDeprecatedTraitOnAStruct() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
-                .id(ShapeId.from("a.b#C"))
-                .addMember(MemberShape.builder()
-                        .id(ShapeId.from("a.b#C$member"))
-                        .target(string.getId())
-                        .build())
-                .addTrait(DeprecatedTrait.builder()
-                        .message("I'm deprecated")
-                        .since("sinceVersion")
-                        .build())
-                .build();
+            .id(ShapeId.from("a.b#C"))
+            .addMember(
+                MemberShape.builder()
+                    .id(ShapeId.from("a.b#C$member"))
+                    .target(string.getId())
+                    .build()
+            )
+            .addTrait(
+                DeprecatedTrait.builder()
+                    .message("I'm deprecated")
+                    .since("sinceVersion")
+                    .build()
+            )
+            .build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .config(config)
-                .build()
-                .convertShape(shape);
+            .model(model)
+            .config(config)
+            .build()
+            .convertShape(shape);
 
         assertThat(document.getRootSchema().isDeprecated(), equalTo(true));
     }
-    
+
     @Test
     public void dontAddDeprecatedTraitOnAStructWhenOldVersion() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
-                .id(ShapeId.from("a.b#C"))
-                .addMember(MemberShape.builder()
-                        .id(ShapeId.from("a.b#C$member"))
-                        .target(string.getId())
-                        .build())
-                .addTrait(DeprecatedTrait.builder()
-                        .message("I'm deprecated")
-                        .since("sinceVersion")
-                        .build())
-                .build();
+            .id(ShapeId.from("a.b#C"))
+            .addMember(
+                MemberShape.builder()
+                    .id(ShapeId.from("a.b#C$member"))
+                    .target(string.getId())
+                    .build()
+            )
+            .addTrait(
+                DeprecatedTrait.builder()
+                    .message("I'm deprecated")
+                    .since("sinceVersion")
+                    .build()
+            )
+            .build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT07);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .config(config)
-                .build()
-                .convertShape(shape);
+            .model(model)
+            .config(config)
+            .build()
+            .convertShape(shape);
 
         assertThat(document.getRootSchema().isDeprecated(), equalTo(false));
     }
@@ -893,24 +913,28 @@ public class JsonSchemaConverterTest {
     public void supportsDeprecatedTraitOnAMember() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
-                .id(ShapeId.from("a.b#C"))
-                .addMember(MemberShape.builder()
-                        .id(ShapeId.from("a.b#C$member"))
-                        .target(string.getId())
-                        .addTrait(DeprecatedTrait.builder()
-                                .message("I'm deprecated")
-                                .since("sinceVersion")
-                                .build())
-                        .build())
-                .build();
+            .id(ShapeId.from("a.b#C"))
+            .addMember(
+                MemberShape.builder()
+                    .id(ShapeId.from("a.b#C$member"))
+                    .target(string.getId())
+                    .addTrait(
+                        DeprecatedTrait.builder()
+                            .message("I'm deprecated")
+                            .since("sinceVersion")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .config(config)
-                .build()
-                .convertShape(shape);
+            .model(model)
+            .config(config)
+            .build()
+            .convertShape(shape);
 
         Schema memberSchema = document.getRootSchema().getProperties().get("member");
         assertThat(memberSchema.isDeprecated(), equalTo(true));
@@ -920,24 +944,28 @@ public class JsonSchemaConverterTest {
     public void dontAddDeprecatedTraitOnAMemberWhenOldVersion() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         StructureShape shape = StructureShape.builder()
-                .id(ShapeId.from("a.b#C"))
-                .addMember(MemberShape.builder()
-                        .id(ShapeId.from("a.b#C$member"))
-                        .target(string.getId())
-                        .addTrait(DeprecatedTrait.builder()
-                                .message("I'm deprecated")
-                                .since("sinceVersion")
-                                .build())
-                        .build())
-                .build();
+            .id(ShapeId.from("a.b#C"))
+            .addMember(
+                MemberShape.builder()
+                    .id(ShapeId.from("a.b#C$member"))
+                    .target(string.getId())
+                    .addTrait(
+                        DeprecatedTrait.builder()
+                            .message("I'm deprecated")
+                            .since("sinceVersion")
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
         Model model = Model.builder().addShapes(shape, string).build();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setJsonSchemaVersion(JsonSchemaVersion.DRAFT07);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .config(config)
-                .build()
-                .convertShape(shape);
+            .model(model)
+            .config(config)
+            .build()
+            .convertShape(shape);
 
         Schema memberSchema = document.getRootSchema().getProperties().get("member");
         assertThat(memberSchema.isDeprecated(), equalTo(false));
@@ -946,36 +974,38 @@ public class JsonSchemaConverterTest {
     @Test
     public void canAddMemberDocumentation() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("member-documentation.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("member-documentation.smithy"))
+            .assemble()
+            .unwrap();
 
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setAddReferenceDescriptions(true);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(config)
-                .model(model)
-                .build()
-                .convert();
+            .config(config)
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("member-documentation.jsonschema.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("member-documentation.jsonschema.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 
     @Test
     public void appliesTitlesCorrectly() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("title-added.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("title-added.smithy"))
+            .assemble()
+            .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .model(model)
-                .build()
-                .convert();
+            .model(model)
+            .build()
+            .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("title-added.jsonschema.v07.json")));
+            IoUtils.toUtf8String(getClass().getResourceAsStream("title-added.jsonschema.v07.json"))
+        );
         Node.assertEquals(document.toNode(), expected);
     }
 }

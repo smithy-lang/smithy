@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Map;
@@ -57,7 +56,7 @@ public final class ActionResources implements ToNode, ToSmithyBuilder<ActionReso
     public static ActionResources fromNode(Node value) {
         Builder builder = builder();
         ObjectNode node = value.expectObjectNode()
-                .warnIfAdditionalProperties(ListUtils.of(REQUIRED, OPTIONAL));
+            .warnIfAdditionalProperties(ListUtils.of(REQUIRED, OPTIONAL));
         if (node.containsMember(REQUIRED)) {
             for (Map.Entry<String, Node> entry : node.expectObjectMember(REQUIRED).getStringMap().entrySet()) {
                 builder.putRequired(entry.getKey(), ActionResource.fromNode(entry.getValue()));
@@ -105,7 +104,7 @@ public final class ActionResources implements ToNode, ToSmithyBuilder<ActionReso
         }
         ActionResources that = (ActionResources) o;
         return Objects.equals(required, that.required)
-                && Objects.equals(optional, that.optional);
+            && Objects.equals(optional, that.optional);
     }
 
     @Override

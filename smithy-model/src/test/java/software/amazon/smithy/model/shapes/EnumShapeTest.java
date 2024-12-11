@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,83 +50,96 @@ public class EnumShapeTest {
     public void addMember() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumShape shape = builder.addMember("foo", "bar").build();
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build()
-        ));
+                    .name("foo")
+                    .value("bar")
+                    .build()
+            )
+        );
     }
 
     @Test
     public void addMemberShape() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                .build();
+            .id("ns.foo#bar$foo")
+            .target(UnitTypeTrait.UNIT)
+            .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+            .build();
         EnumShape shape = builder.addMember(member).build();
         assertEquals(shape.getMember("foo").get(), member);
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build()
-        ));
+                    .name("foo")
+                    .value("bar")
+                    .build()
+            )
+        );
     }
 
     @Test
     public void memberValueIsAppliedIfNotPresent() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .build();
+            .id("ns.foo#bar$foo")
+            .target(UnitTypeTrait.UNIT)
+            .build();
         EnumShape shape = builder.addMember(member).build();
 
         MemberShape expected = member.toBuilder()
-                .addTrait(EnumValueTrait.builder().stringValue("foo").build())
-                .build();
+            .addTrait(EnumValueTrait.builder().stringValue("foo").build())
+            .build();
         assertEquals(shape.getMember("foo").get(), expected);
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("foo")
-                        .value("foo")
-                        .build()
-        ));
+                    .name("foo")
+                    .value("foo")
+                    .build()
+            )
+        );
     }
 
     @Test
     public void addMemberFromEnumTrait() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumDefinition enumDefinition = EnumDefinition.builder()
-                .name("foo")
-                .value("bar")
-                .tags(ListUtils.of("internal"))
-                .build();
+            .name("foo")
+            .value("bar")
+            .tags(ListUtils.of("internal"))
+            .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .addTrait(new InternalTrait())
-                        .addTrait(TagsTrait.builder().addValue("internal").build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .addTrait(new InternalTrait())
+                .addTrait(TagsTrait.builder().addValue("internal").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
@@ -148,19 +150,21 @@ public class EnumShapeTest {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         String docs = "docs";
         EnumDefinition enumDefinition = EnumDefinition.builder()
-                .name("foo")
-                .value("bar")
-                .documentation(docs)
-                .build();
+            .name("foo")
+            .value("bar")
+            .documentation(docs)
+            .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .addTrait(new DocumentationTrait(docs))
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .addTrait(new DocumentationTrait(docs))
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
@@ -171,19 +175,21 @@ public class EnumShapeTest {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         String tag = "tag";
         EnumDefinition enumDefinition = EnumDefinition.builder()
-                .name("foo")
-                .value("bar")
-                .addTag(tag)
-                .build();
+            .name("foo")
+            .value("bar")
+            .addTag(tag)
+            .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .addTrait(TagsTrait.builder().addValue(tag).build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .addTrait(TagsTrait.builder().addValue(tag).build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
@@ -193,19 +199,21 @@ public class EnumShapeTest {
     public void convertsDeprecatedFromEnumTrait() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumDefinition enumDefinition = EnumDefinition.builder()
-                .name("foo")
-                .value("bar")
-                .deprecated(true)
-                .build();
+            .name("foo")
+            .value("bar")
+            .deprecated(true)
+            .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .addTrait(DeprecatedTrait.builder().build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .addTrait(DeprecatedTrait.builder().build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
@@ -223,10 +231,12 @@ public class EnumShapeTest {
     public void givenEnumTraitMustUseNames() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("bar")
+                    .build()
+            )
+            .build();
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
             builder.setMembersFromEnumTrait(trait);
@@ -237,25 +247,29 @@ public class EnumShapeTest {
     public void givenEnumTraitMaySynthesizeNames() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("foo:bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("foo:bar")
+                    .build()
+            )
+            .build();
         EnumShape shape = builder.setMembersFromEnumTrait(trait, true).build();
 
-        assertEquals(shape.getMember("foo_bar").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo_bar"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo_bar").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo_bar"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
 
         EnumDefinition expectedDefinition = EnumDefinition.builder()
-                .name("foo_bar")
-                .value("foo:bar")
-                .build();
+            .name("foo_bar")
+            .value("foo:bar")
+            .build();
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(expectedDefinition));
     }
 
@@ -263,10 +277,12 @@ public class EnumShapeTest {
     public void givenEnumTraitMayOnlySynthesizeNamesFromValidValues() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("foo&bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("foo&bar")
+                    .build()
+            )
+            .build();
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
             builder.setMembersFromEnumTrait(trait, true);
@@ -277,81 +293,97 @@ public class EnumShapeTest {
     public void addMultipleMembers() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        EnumShape shape = builder.members(ListUtils.of(
+        EnumShape shape = builder.members(
+            ListUtils.of(
                 MemberShape.builder()
-                        .id("ns.foo#bar$foo")
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .build(),
+                    .id("ns.foo#bar$foo")
+                    .target(UnitTypeTrait.UNIT)
+                    .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                    .build(),
                 MemberShape.builder()
-                        .id("ns.foo#bar$baz")
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build()
-        )).build();
+                    .id("ns.foo#bar$baz")
+                    .target(UnitTypeTrait.UNIT)
+                    .addTrait(EnumValueTrait.builder().stringValue("bam").build())
+                    .build()
+            )
+        ).build();
 
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .build());
+        assertEquals(
+            shape.getMember("foo").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .build()
+        );
 
-        assertEquals(shape.getMember("baz").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("baz"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build());
+        assertEquals(
+            shape.getMember("baz").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("baz"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bam").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build(),
+                    .name("foo")
+                    .value("bar")
+                    .build(),
                 EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+                    .name("baz")
+                    .value("bam")
+                    .build()
+            )
+        );
     }
 
     @Test
     public void removeMember() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        builder.members(ListUtils.of(
+        builder.members(
+            ListUtils.of(
                 MemberShape.builder()
-                        .id("ns.foo#bar$foo")
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .build(),
+                    .id("ns.foo#bar$foo")
+                    .target(UnitTypeTrait.UNIT)
+                    .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                    .build(),
                 MemberShape.builder()
-                        .id("ns.foo#bar$baz")
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build()
-        ));
+                    .id("ns.foo#bar$baz")
+                    .target(UnitTypeTrait.UNIT)
+                    .addTrait(EnumValueTrait.builder().stringValue("bam").build())
+                    .build()
+            )
+        );
 
         EnumShape shape = builder.removeMember("foo").build();
 
         assertFalse(shape.getMember("foo").isPresent());
 
-        assertEquals(shape.getMember("baz").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("baz"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build());
+        assertEquals(
+            shape.getMember("baz").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("baz"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bam").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+                    .name("baz")
+                    .value("bam")
+                    .build()
+            )
+        );
     }
 
     @Test
@@ -359,36 +391,41 @@ public class EnumShapeTest {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
         EnumShape shape = builder.addMember("foo", "bar")
-                .clearMembers()
-                .addMember("baz", "bam")
-                .build();
+            .clearMembers()
+            .addMember("baz", "bam")
+            .build();
 
         assertEquals(1, shape.members().size());
 
-        assertEquals(shape.getMember("baz").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("baz"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build());
+        assertEquals(
+            shape.getMember("baz").get(),
+            MemberShape.builder()
+                .id(shape.getId().withMember("baz"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bam").build())
+                .build()
+        );
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+        assertEquals(
+            shape.expectTrait(EnumTrait.class).getValues(),
+            ListUtils.of(
                 EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+                    .name("baz")
+                    .value("bam")
+                    .build()
+            )
+        );
     }
 
     @Test
     public void membersMustTargetUnit() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target("smithy.api#String")
-                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                .build();
+            .id("ns.foo#bar$foo")
+            .target("smithy.api#String")
+            .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+            .build();
         Assertions.assertThrows(SourceException.class, () -> {
             builder.addMember(member);
         });
@@ -397,35 +434,39 @@ public class EnumShapeTest {
     @Test
     public void canConvertBaseString() {
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .name("foo")
+                    .value("bar")
+                    .build()
+            )
+            .build();
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(trait)
-                .source("bar.smithy", 1, 1)
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(trait)
+            .source("bar.smithy", 1, 1)
+            .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertTrue(optionalEnum.isPresent());
         SyntheticEnumTrait syntheticEnumTrait = optionalEnum.get().expectTrait(SyntheticEnumTrait.class);
         assertEquals(trait.getValues(), syntheticEnumTrait.getValues());
         assertNotNull(syntheticEnumTrait.getSourceLocation());
 
-        assertEquals(optionalEnum.get().getMember("foo").get(),
-                MemberShape.builder()
-                        .id(optionalEnum.get().getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                        .build());
+        assertEquals(
+            optionalEnum.get().getMember("foo").get(),
+            MemberShape.builder()
+                .id(optionalEnum.get().getId().withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .build()
+        );
     }
 
     @Test
     public void cantConvertBaseStringWithoutEnumTrait() {
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .build();
+            .id("ns.foo#bar")
+            .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertFalse(optionalEnum.isPresent());
     }
@@ -433,14 +474,16 @@ public class EnumShapeTest {
     @Test
     public void cantConvertBaseStringWithNamelessEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("bar")
+                    .build()
+            )
+            .build();
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(trait)
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(trait)
+            .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertFalse(optionalEnum.isPresent());
     }
@@ -457,15 +500,17 @@ public class EnumShapeTest {
     @Test
     public void canConvertToEnumWithNamedEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("foo&bar") // even if this value has invalid characters for a synthesized name
-                        .name("BAR")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("foo&bar") // even if this value has invalid characters for a synthesized name
+                    .name("BAR")
+                    .build()
+            )
+            .build();
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(trait)
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(trait)
+            .build();
         assertTrue(EnumShape.canConvertToEnum(string, false));
         assertTrue(EnumShape.canConvertToEnum(string, true));
     }
@@ -473,14 +518,16 @@ public class EnumShapeTest {
     @Test
     public void canConvertToEnumWithNamelessEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("bar")
+                    .build()
+            )
+            .build();
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(trait)
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(trait)
+            .build();
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertTrue(EnumShape.canConvertToEnum(string, true));
     }
@@ -488,14 +535,16 @@ public class EnumShapeTest {
     @Test
     public void canConvertToEnumWithNonConvertableNamelessEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .value("foo&bar")
-                        .build())
-                .build();
+            .addEnum(
+                EnumDefinition.builder()
+                    .value("foo&bar")
+                    .build()
+            )
+            .build();
         StringShape string = StringShape.builder()
-                .id("ns.foo#bar")
-                .addTrait(trait)
-                .build();
+            .id("ns.foo#bar")
+            .addTrait(trait)
+            .build();
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertFalse(EnumShape.canConvertToEnum(string, true));
     }
@@ -503,11 +552,11 @@ public class EnumShapeTest {
     @Test
     public void syntheticEnumSupportsDocumentation() {
         EnumShape shape = EnumShape.builder()
-                .id("com.example#DocumentedEnum")
-                .addMember("documented", "foo", builder -> {
-                    builder.addTrait(new DocumentationTrait("bar"));
-                })
-                .build();
+            .id("com.example#DocumentedEnum")
+            .addMember("documented", "foo", builder -> {
+                builder.addTrait(new DocumentationTrait("bar"));
+            })
+            .build();
 
         SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
         assertEquals("bar", trait.getValues().get(0).getDocumentation().get());
@@ -516,11 +565,11 @@ public class EnumShapeTest {
     @Test
     public void syntheticEnumSupportsDeprecated() {
         EnumShape shape = EnumShape.builder()
-                .id("com.example#DeprecatedEnum")
-                .addMember("deprecated", "foo", builder -> {
-                    builder.addTrait(DeprecatedTrait.builder().build());
-                })
-                .build();
+            .id("com.example#DeprecatedEnum")
+            .addMember("deprecated", "foo", builder -> {
+                builder.addTrait(DeprecatedTrait.builder().build());
+            })
+            .build();
 
         SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
         assertTrue(trait.getValues().get(0).isDeprecated());
@@ -529,11 +578,11 @@ public class EnumShapeTest {
     @Test
     public void syntheticEnumSupportsTags() {
         EnumShape shape = EnumShape.builder()
-                .id("com.example#TaggedEnum")
-                .addMember("tagged", "foo", builder -> {
-                    builder.addTrait(TagsTrait.builder().addValue("bar").build());
-                })
-                .build();
+            .id("com.example#TaggedEnum")
+            .addMember("tagged", "foo", builder -> {
+                builder.addTrait(TagsTrait.builder().addValue("bar").build());
+            })
+            .build();
 
         SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
         assertEquals(ListUtils.of("bar"), trait.getValues().get(0).getTags());
@@ -542,15 +591,15 @@ public class EnumShapeTest {
     @Test
     public void syntheticEnumSupportsInternal() {
         EnumShape shape = EnumShape.builder()
-                .id("com.example#InternalEnum")
-                .addMember("withoutTag", "foo", builder -> {
-                    builder.addTrait(new InternalTrait());
-                })
-                .addMember("withTag", "bar", builder -> {
-                    builder.addTrait(new InternalTrait());
-                    builder.addTrait(TagsTrait.builder().addValue("internal").build());
-                })
-                .build();
+            .id("com.example#InternalEnum")
+            .addMember("withoutTag", "foo", builder -> {
+                builder.addTrait(new InternalTrait());
+            })
+            .addMember("withTag", "bar", builder -> {
+                builder.addTrait(new InternalTrait());
+                builder.addTrait(TagsTrait.builder().addValue("internal").build());
+            })
+            .build();
 
         SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
         for (EnumDefinition definition : trait.getValues()) {

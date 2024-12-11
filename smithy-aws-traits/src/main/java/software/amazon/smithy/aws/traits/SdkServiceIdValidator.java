@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
@@ -51,21 +40,22 @@ public final class SdkServiceIdValidator extends AbstractValidator {
      * No new serviceId's should be added to this list in the future.
      */
     private static final Set<String> PREEXISTING_SERVICE_IDS = SetUtils.of(
-            "ACM PCA",
-            "ApiGatewayManagementApi",
-            "Config Service",
-            "Cost and Usage Report Service",
-            "Application Discovery Service",
-            "Database Migration Service",
-            "Directory Service",
-            "Elasticsearch Service",
-            "IoT 1Click Devices Service",
-            "IoTAnalytics",
-            "Lex Model Building Service",
-            "Lex Runtime Service",
-            "Marketplace Entitlement Service",
-            "mq",
-            "Resource Groups Tagging API");
+        "ACM PCA",
+        "ApiGatewayManagementApi",
+        "Config Service",
+        "Cost and Usage Report Service",
+        "Application Discovery Service",
+        "Database Migration Service",
+        "Directory Service",
+        "Elasticsearch Service",
+        "IoT 1Click Devices Service",
+        "IoTAnalytics",
+        "Lex Model Building Service",
+        "Lex Runtime Service",
+        "Marketplace Entitlement Service",
+        "mq",
+        "Resource Groups Tagging API"
+    );
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -105,9 +95,12 @@ public final class SdkServiceIdValidator extends AbstractValidator {
         }
 
         if (containsCompanyName(serviceId)) {
-            messages.add(String.format(
+            messages.add(
+                String.format(
                     "Must not contain any of the following company names: [%s]",
-                    ValidationUtils.tickedList(COMPANY_NAMES)));
+                    ValidationUtils.tickedList(COMPANY_NAMES)
+                )
+            );
         }
 
         endsWithForbiddenWord(serviceId).ifPresent(suffix -> {
@@ -119,10 +112,13 @@ public final class SdkServiceIdValidator extends AbstractValidator {
         }
 
         if (!messages.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
+            throw new IllegalArgumentException(
+                String.format(
                     "Invalid SDK service ID value, `%s`: %s",
                     serviceId,
-                    String.join(";", messages)));
+                    String.join(";", messages)
+                )
+            );
         }
     }
 
@@ -145,8 +141,8 @@ public final class SdkServiceIdValidator extends AbstractValidator {
         String lowercase = value.toLowerCase(Locale.US);
 
         return DISALLOWED_ENDINGS.stream()
-                .filter(lowercase::endsWith)
-                .findFirst();
+            .filter(lowercase::endsWith)
+            .findFirst();
     }
 
     private static boolean validForPattern(String value) {

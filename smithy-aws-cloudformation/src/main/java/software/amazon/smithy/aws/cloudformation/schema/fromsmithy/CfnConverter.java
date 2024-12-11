@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import java.util.ArrayList;
@@ -187,14 +176,14 @@ public final class CfnConverter {
     }
 
     private ConversionEnvironment createConversionEnvironment(
-            Model model,
-            ServiceShape serviceShape,
-            ResourceShape resourceShape
+        Model model,
+        ServiceShape serviceShape,
+        ResourceShape resourceShape
     ) {
         // Prepare the JSON Schema Converter.
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder()
-                .config(config)
-                .propertyNamingStrategy(getPropertyNamingStrategy());
+            .config(config)
+            .propertyNamingStrategy(getPropertyNamingStrategy());
 
         List<CfnMapper> mappers = new ArrayList<>();
         for (Smithy2CfnExtension extension : extensions) {
@@ -208,8 +197,12 @@ public final class CfnConverter {
 
         CfnResourceIndex resourceIndex = CfnResourceIndex.of(model);
         CfnResource cfnResource = resourceIndex.getResource(resourceShape)
-                .orElseThrow(() -> new CfnException("Attempted to generate a CloudFormation resource schema "
-                        + "not found to have resource data."));
+            .orElseThrow(
+                () -> new CfnException(
+                    "Attempted to generate a CloudFormation resource schema "
+                        + "not found to have resource data."
+                )
+            );
 
         // Prepare a structure representing the CFN resource to be created and
         // add that structure to a temporary model that's used for conversion.
@@ -220,8 +213,15 @@ public final class CfnConverter {
         Model updatedModel = model.toBuilder().addShape(pseudoResource).build();
         jsonSchemaConverterBuilder.model(updatedModel);
 
-        Context context = new Context(updatedModel, serviceShape, resourceShape, cfnResource,
-                pseudoResource, config, jsonSchemaConverterBuilder.build());
+        Context context = new Context(
+            updatedModel,
+            serviceShape,
+            resourceShape,
+            cfnResource,
+            pseudoResource,
+            config,
+            jsonSchemaConverterBuilder.build()
+        );
 
         return new ConversionEnvironment(context, mappers);
     }
@@ -237,17 +237,17 @@ public final class CfnConverter {
             Optional<PropertyTrait> propertyTrait = member.getTrait(PropertyTrait.class);
             if (propertyTrait.isPresent() && propertyTrait.flatMap(PropertyTrait::getName).isPresent()) {
                 return this.config.getDisableCapitalizedProperties()
-                        ? StringUtils.capitalize(propertyTrait.get().getName().get())
-                        : propertyTrait.get().getName().get();
+                    ? StringUtils.capitalize(propertyTrait.get().getName().get())
+                    : propertyTrait.get().getName().get();
             }
 
             // Otherwise, respect the property capitalization setting.
             String name = PropertyNamingStrategy.createMemberNameStrategy()
-                    .toPropertyName(containingShape, member, config);
+                .toPropertyName(containingShape, member, config);
 
             return this.config.getDisableCapitalizedProperties()
-                    ? name
-                    : StringUtils.capitalize(name);
+                ? name
+                : StringUtils.capitalize(name);
         };
     }
 
@@ -256,8 +256,9 @@ public final class CfnConverter {
         private final List<CfnMapper> mappers;
 
         private ConversionEnvironment(
-                Context context,
-                List<CfnMapper> mappers) {
+            Context context,
+            List<CfnMapper> mappers
+        ) {
             this.context = context;
             this.mappers = mappers;
         }
@@ -265,9 +266,10 @@ public final class CfnConverter {
 
     private ResourceSchema convertResource(ConversionEnvironment environment, ResourceShape resourceShape) {
         Context context = environment.context;
-        JsonSchemaConverter jsonSchemaConverter = context.getJsonSchemaConverter().toBuilder()
-                .rootShape(context.getResourceStructure())
-                .build();
+        JsonSchemaConverter jsonSchemaConverter = context.getJsonSchemaConverter()
+            .toBuilder()
+            .rootShape(context.getResourceStructure())
+            .build();
         SchemaDocument document = jsonSchemaConverter.convert();
 
         // Prepare the initial contents
@@ -277,9 +279,11 @@ public final class CfnConverter {
         builder.typeName(typeName);
 
         // Apply the resource's documentation if present, or default.
-        builder.description(resourceShape.getTrait(DocumentationTrait.class)
+        builder.description(
+            resourceShape.getTrait(DocumentationTrait.class)
                 .map(StringTrait::getValue)
-                .orElse("Definition of " + typeName + " Resource Type"));
+                .orElse("Definition of " + typeName + " Resource Type")
+        );
 
         // Apply all the mappers' before methods.
         for (CfnMapper mapper : environment.mappers) {
@@ -289,16 +293,16 @@ public final class CfnConverter {
         // Add the properties from the converted shape.
         document.getRootSchema().getProperties().forEach((name, schema) -> {
             Property property = Property.builder()
-                    .schema(schema)
-                    .build();
+                .schema(schema)
+                .build();
             builder.addProperty(name, property);
         });
 
         // Supply all the definitions that were created.
         for (Map.Entry<String, Schema> definition : document.getDefinitions().entrySet()) {
             String definitionName = definition.getKey()
-                    .replace(CfnConfig.SCHEMA_COMPONENTS_POINTER, "")
-                    .substring(1);
+                .replace(CfnConfig.SCHEMA_COMPONENTS_POINTER, "")
+                .substring(1);
             builder.addDefinition(definitionName, definition.getValue());
         }
 
@@ -312,8 +316,9 @@ public final class CfnConverter {
     }
 
     private String resolveResourceTypeName(
-            ConversionEnvironment environment,
-            CfnResourceTrait resourceTrait) {
+        ConversionEnvironment environment,
+        CfnResourceTrait resourceTrait
+    ) {
         CfnConfig config = environment.context.getConfig();
         ServiceShape serviceShape = environment.context.getModel().expectShape(config.getService(), ServiceShape.class);
         Optional<ServiceTrait> serviceTrait = serviceShape.getTrait(ServiceTrait.class);
@@ -323,9 +328,10 @@ public final class CfnConverter {
             // Services utilizing the AWS service trait default to being in the
             // "AWS" organization instead of requiring the configuration value.
             organizationName = serviceTrait
-                    .map(t -> "AWS")
-                    .orElseThrow(
-                            () -> new CfnException("cloudformation is missing required property, `organizationName`"));
+                .map(t -> "AWS")
+                .orElseThrow(
+                    () -> new CfnException("cloudformation is missing required property, `organizationName`")
+                );
         }
 
         String serviceName = config.getServiceName();
@@ -334,13 +340,13 @@ public final class CfnConverter {
             // member, so use that if present. Otherwise, default to the service
             // shape's name.
             serviceName = serviceTrait
-                    .map(ServiceTrait::getCloudFormationName)
-                    .orElse(serviceShape.getId().getName());
+                .map(ServiceTrait::getCloudFormationName)
+                .orElse(serviceShape.getId().getName());
         }
 
         // Use the trait's name if present, or default to the resource shape's name.
         String resourceName = resourceTrait.getName()
-                .orElse(environment.context.getResource().getId().getName());
+            .orElse(environment.context.getResource().getId().getName());
 
         return String.format("%s::%s::%s", organizationName, serviceName, resourceName);
     }

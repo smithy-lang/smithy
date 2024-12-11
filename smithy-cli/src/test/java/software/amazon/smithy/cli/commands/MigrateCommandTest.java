@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
@@ -63,14 +52,17 @@ public class MigrateCommandTest {
     public static Stream<Arguments> source() throws Exception {
         Path start = Paths.get(MigrateCommandTest.class.getResource("upgrade/cases").toURI());
         return Files.walk(start)
-                .filter(path -> path.getFileName().toString().endsWith(".v1.smithy"))
-                .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v1.smithy", "")));
+            .filter(path -> path.getFileName().toString().endsWith(".v1.smithy"))
+            .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v1.smithy", "")));
     }
 
     @Test
     public void testUpgradeDirectory() throws Exception {
-        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
-                "upgrade/directory-cases/all-local/v1").toURI()).toAbsolutePath();
+        Path baseDir = Paths.get(
+            MigrateCommandTest.class.getResource(
+                "upgrade/directory-cases/all-local/v1"
+            ).toURI()
+        ).toAbsolutePath();
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
         copyDir(baseDir, tempDir);
@@ -84,8 +76,11 @@ public class MigrateCommandTest {
 
     @Test
     public void testUpgradeDirectoryWithProjection() throws Exception {
-        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
-                "upgrade/directory-cases/ignores-projections/v1").toURI());
+        Path baseDir = Paths.get(
+            MigrateCommandTest.class.getResource(
+                "upgrade/directory-cases/ignores-projections/v1"
+            ).toURI()
+        );
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
         copyDir(baseDir, tempDir);
@@ -98,19 +93,24 @@ public class MigrateCommandTest {
 
     @Test
     public void testUpgradeDirectoryWithJar() throws Exception {
-        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
-                "upgrade/directory-cases/with-jar/v1").toURI());
+        Path baseDir = Paths.get(
+            MigrateCommandTest.class.getResource(
+                "upgrade/directory-cases/with-jar/v1"
+            ).toURI()
+        );
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
         copyDir(baseDir, tempDir);
 
         Path modelsDir = tempDir.resolve("model");
         Path config = tempDir.resolve("smithy-build.json");
-        SmithyCli.create().run(
+        SmithyCli.create()
+            .run(
                 "upgrade-1-to-2",
-                "--config", config.toString(),
+                "--config",
+                config.toString(),
                 modelsDir.toString()
-        );
+            );
         assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
     }
 
@@ -129,15 +129,15 @@ public class MigrateCommandTest {
     public static Stream<Arguments> noopSource() throws Exception {
         Path start = Paths.get(MigrateCommandTest.class.getResource("upgrade/no-op").toURI());
         return Files.walk(start)
-                .filter(path -> Files.isRegularFile(path))
-                .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v2.smithy", "")));
+            .filter(path -> Files.isRegularFile(path))
+            .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v2.smithy", "")));
     }
 
     private void assertDirEqual(Path actualDir, Path expectedDir) throws Exception {
         Set<Path> files = Files.walk(actualDir)
-                .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".smithy"))
-                .collect(Collectors.toSet());
+            .filter(Files::isRegularFile)
+            .filter(path -> path.toString().endsWith(".smithy"))
+            .collect(Collectors.toSet());
         for (Path actual : files) {
             Path expected = expectedDir.resolve(actualDir.relativize(actual));
             assertThat(IoUtils.readUtf8File(actual), equalTo(IoUtils.readUtf8File(expected)));

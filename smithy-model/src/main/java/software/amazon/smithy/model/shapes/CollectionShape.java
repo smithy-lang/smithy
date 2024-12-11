@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
@@ -74,7 +63,7 @@ public abstract class CollectionShape extends Shape {
      * @param <S> Shape type being created.
      */
     public abstract static class Builder<B extends Builder<B, S>, S extends CollectionShape>
-            extends AbstractShapeBuilder<B, S> {
+        extends AbstractShapeBuilder<B, S> {
 
         private MemberShape member;
 
@@ -105,8 +94,11 @@ public abstract class CollectionShape extends Shape {
         public B member(MemberShape member) {
             if (member != null && !member.getMemberName().equals("member")) {
                 String shapeTypeName = StringUtils.capitalize(this.getShapeType().toString());
-                String message = String.format("%s shapes may only have a `member` member, but found `%s`",
-                        shapeTypeName, member.getMemberName());
+                String message = String.format(
+                    "%s shapes may only have a `member` member, but found `%s`",
+                    shapeTypeName,
+                    member.getMemberName()
+                );
                 throw new SourceException(message, member);
             }
             this.member = Objects.requireNonNull(member);
@@ -135,8 +127,8 @@ public abstract class CollectionShape extends Shape {
             }
 
             MemberShape.Builder builder = MemberShape.builder()
-                    .target(target)
-                    .id(getId().withMember("member"));
+                .target(target)
+                .id(getId().withMember("member"));
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);
@@ -173,12 +165,12 @@ public abstract class CollectionShape extends Shape {
                     location = existing.getSourceLocation();
                 }
                 member = MemberShape.builder()
-                        .id(getId().withMember(mixinMember.getMemberName()))
-                        .target(mixinMember.getTarget())
-                        .addTraits(mixinMember.getAllTraits().values())
-                        .addTraits(localTraits)
-                        .source(location)
-                        .build();
+                    .id(getId().withMember(mixinMember.getMemberName()))
+                    .target(mixinMember.getTarget())
+                    .addTraits(mixinMember.getAllTraits().values())
+                    .addTraits(localTraits)
+                    .source(location)
+                    .build();
             }
             return super.flattenMixins();
         }

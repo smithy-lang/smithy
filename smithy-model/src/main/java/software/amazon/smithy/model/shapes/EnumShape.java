@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
@@ -50,7 +39,11 @@ public final class EnumShape extends StringShape {
     private EnumShape(Builder builder) {
         super(builder);
         members = NamedMemberUtils.computeMixinMembers(
-                builder.getMixins(), builder.members, getId(), getSourceLocation());
+            builder.getMixins(),
+            builder.members,
+            getId(),
+            getSourceLocation()
+        );
         validateMemberShapeIds();
         if (members.size() < 1) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
@@ -143,9 +136,11 @@ public final class EnumShape extends StringShape {
         Builder enumBuilder = EnumShape.builder();
         stringWithoutEnumTrait.updateBuilder(enumBuilder);
         try {
-            return Optional.of(enumBuilder
+            return Optional.of(
+                enumBuilder
                     .setMembersFromEnumTrait(shape.expectTrait(EnumTrait.class), synthesizeNames)
-                    .build());
+                    .build()
+            );
         } catch (IllegalStateException e) {
             LOGGER.info(String.format("Unable to convert `%s` to an enum: %s", shape.getId(), e));
             return Optional.empty();
@@ -178,30 +173,37 @@ public final class EnumShape extends StringShape {
         }
 
         if (!shape.hasTrait(EnumTrait.class)) {
-            LOGGER.info(String.format(
+            LOGGER.info(
+                String.format(
                     "Unable to convert string shape `%s` to enum shape because it doesn't have an enum trait.",
                     shape.getId()
-            ));
+                )
+            );
             return false;
         }
 
         EnumTrait trait = shape.expectTrait(EnumTrait.class);
         if (!trait.hasNames() && !synthesizeEnumNames) {
-            LOGGER.info(String.format(
+            LOGGER.info(
+                String.format(
                     "Unable to convert string shape `%s` to enum shape because it doesn't define names. The "
-                            + "`synthesizeNames` option may be able to synthesize the names for you.",
+                        + "`synthesizeNames` option may be able to synthesize the names for you.",
                     shape.getId()
-            ));
+                )
+            );
             return false;
         }
 
         for (EnumDefinition definition : trait.getValues()) {
             if (!canConvertEnumDefinitionToMember(definition, synthesizeEnumNames)) {
-                LOGGER.info(String.format(
+                LOGGER.info(
+                    String.format(
                         "Unable to convert string shape `%s` to enum shape because it has at least one value which "
-                                + "cannot be safely synthesized into a name: %s",
-                        shape.getId(), definition.getValue()
-                ));
+                            + "cannot be safely synthesized into a name: %s",
+                        shape.getId(),
+                        definition.getValue()
+                    )
+                );
                 return false;
             }
         }
@@ -224,9 +226,9 @@ public final class EnumShape extends StringShape {
      *         or empty if conversion is impossible.
      */
     static Optional<MemberShape> memberFromEnumDefinition(
-            EnumDefinition definition,
-            ShapeId parentId,
-            boolean synthesizeName
+        EnumDefinition definition,
+        ShapeId parentId,
+        boolean synthesizeName
     ) {
         String name;
         if (!definition.getName().isPresent()) {
@@ -241,9 +243,9 @@ public final class EnumShape extends StringShape {
 
         try {
             MemberShape.Builder builder = MemberShape.builder()
-                    .id(parentId.withMember(name))
-                    .target(UnitTypeTrait.UNIT)
-                    .addTrait(EnumValueTrait.builder().stringValue(definition.getValue()).build());
+                .id(parentId.withMember(name))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue(definition.getValue()).build());
 
             definition.getDocumentation().ifPresent(docs -> builder.addTrait(new DocumentationTrait(docs)));
             if (!definition.getTags().isEmpty()) {
@@ -270,7 +272,7 @@ public final class EnumShape extends StringShape {
      */
     static boolean canConvertEnumDefinitionToMember(EnumDefinition definition, boolean withSynthesizedNames) {
         return definition.getName().isPresent()
-                || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(definition.getValue()).find());
+            || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(definition.getValue()).find());
     }
 
     /**
@@ -283,16 +285,16 @@ public final class EnumShape extends StringShape {
         EnumDefinition.Builder builder = EnumDefinition.builder().name(member.getMemberName());
 
         String traitValue = member
-                .getTrait(EnumValueTrait.class)
-                .flatMap(EnumValueTrait::getStringValue)
-                .orElseThrow(() -> new IllegalStateException("Enum definitions can only be made for string enums."));
+            .getTrait(EnumValueTrait.class)
+            .flatMap(EnumValueTrait::getStringValue)
+            .orElseThrow(() -> new IllegalStateException("Enum definitions can only be made for string enums."));
         builder.value(traitValue);
         member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
         member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
 
         List<String> tags = member.getTrait(TagsTrait.class)
-                .map(StringListTrait::getValues)
-                .orElse(Collections.emptyList());
+            .map(StringListTrait::getValues)
+            .orElse(Collections.emptyList());
 
         builder.tags(tags);
         if (member.hasTrait(InternalTrait.class) && !tags.contains("internal")) {
@@ -312,8 +314,12 @@ public final class EnumShape extends StringShape {
         @Override
         public EnumShape build() {
             // Collect members from enum and mixins
-            Map<String, MemberShape> aggregatedMembers =
-                NamedMemberUtils.computeMixinMembers(getMixins(), members, getId(), getSourceLocation());
+            Map<String, MemberShape> aggregatedMembers = NamedMemberUtils.computeMixinMembers(
+                getMixins(),
+                members,
+                getId(),
+                getSourceLocation()
+            );
             addSyntheticEnumTrait(aggregatedMembers.values());
             return new EnumShape(this, aggregatedMembers);
         }
@@ -381,10 +387,13 @@ public final class EnumShape extends StringShape {
                 if (member.isPresent()) {
                     addMember(member.get());
                 } else {
-                    throw new IllegalStateException(String.format(
+                    throw new IllegalStateException(
+                        String.format(
                             "Unable to convert enum trait entry with name: `%s` and value `%s` to an enum member.",
-                            definition.getName().orElse(""), definition.getValue()
-                    ));
+                            definition.getName().orElse(""),
+                            definition.getValue()
+                        )
+                    );
                 }
             }
 
@@ -436,14 +445,18 @@ public final class EnumShape extends StringShape {
         @Override
         public Builder addMember(MemberShape member) {
             if (!member.getTarget().equals(UnitTypeTrait.UNIT)) {
-                throw new SourceException(String.format(
-                        "Enum members may only target `smithy.api#Unit`, but found `%s`", member.getTarget()
-                ), getSourceLocation());
+                throw new SourceException(
+                    String.format(
+                        "Enum members may only target `smithy.api#Unit`, but found `%s`",
+                        member.getTarget()
+                    ),
+                    getSourceLocation()
+                );
             }
             if (!member.hasTrait(EnumValueTrait.ID)) {
                 member = member.toBuilder()
-                        .addTrait(EnumValueTrait.builder().stringValue(member.getMemberName()).build())
-                        .build();
+                    .addTrait(EnumValueTrait.builder().stringValue(member.getMemberName()).build())
+                    .build();
             }
             members.get().put(member.getMemberName(), member);
 
@@ -475,9 +488,9 @@ public final class EnumShape extends StringShape {
             }
 
             MemberShape.Builder builder = MemberShape.builder()
-                    .target(UnitTypeTrait.UNIT)
-                    .id(getId().withMember(memberName))
-                    .addTrait(EnumValueTrait.builder().stringValue(enumValue).build());
+                .target(UnitTypeTrait.UNIT)
+                .id(getId().withMember(memberName))
+                .addTrait(EnumValueTrait.builder().stringValue(enumValue).build());
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);

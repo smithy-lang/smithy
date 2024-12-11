@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -93,12 +82,11 @@ public class NullableIndex implements KnowledgeIndex {
          * short, integer, long, float, double, and boolean. If a member is marked with addedDefault or with
          * clientOptional or is in an input structure, then the member is always considered nullable.
          */
-        @SmithyUnstableApi
-        CLIENT_ZERO_VALUE_V1 {
+        @SmithyUnstableApi CLIENT_ZERO_VALUE_V1 {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
                 return container.hasTrait(InputTrait.class)
-                       || CLIENT_ZERO_VALUE_V1_NO_INPUT.isStructureMemberOptional(container, member, target);
+                    || CLIENT_ZERO_VALUE_V1_NO_INPUT.isStructureMemberOptional(container, member, target);
             }
         },
 
@@ -108,8 +96,7 @@ public class NullableIndex implements KnowledgeIndex {
          * short, integer, long, float, double, and boolean. If a member is marked with addedDefault or with
          * clientOptional, then the member is always considered nullable.
          */
-        @SmithyUnstableApi
-        CLIENT_ZERO_VALUE_V1_NO_INPUT {
+        @SmithyUnstableApi CLIENT_ZERO_VALUE_V1_NO_INPUT {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
                 if (member.hasTrait(AddedDefaultTrait.class) || member.hasTrait(ClientOptionalTrait.class)) {
@@ -303,10 +290,10 @@ public class NullableIndex implements KnowledgeIndex {
         switch (targetType) {
             case BOOLEAN:
                 return defaultValue
-                        .asBooleanNode()
-                        .map(BooleanNode::getValue)
-                        .filter(value -> !value)
-                        .isPresent();
+                    .asBooleanNode()
+                    .map(BooleanNode::getValue)
+                    .filter(value -> !value)
+                    .isPresent();
             case BYTE:
             case SHORT:
             case INTEGER:

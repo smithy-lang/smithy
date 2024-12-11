@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import java.util.ArrayList;
@@ -48,7 +37,8 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
      * "class X cannot be cast to class Y ..."
      */
     private static final Pattern CAST_PATTERN_TYPE = Pattern.compile(
-            "^.* to(?: class)? software\\.amazon\\.smithy\\.model\\.node\\.([A-Za-z]+).*$");
+        "^.* to(?: class)? software\\.amazon\\.smithy\\.model\\.node\\.([A-Za-z]+).*$"
+    );
 
     private final List<Node> elements;
 
@@ -59,8 +49,8 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
     ArrayNode(List<Node> elements, SourceLocation sourceLocation, boolean defensiveCopy) {
         super(sourceLocation);
         this.elements = defensiveCopy
-                ? ListUtils.copyOf(elements)
-                : Collections.unmodifiableList(elements);
+            ? ListUtils.copyOf(elements)
+            : Collections.unmodifiableList(elements);
     }
 
     private ArrayNode(Builder builder) {
@@ -124,8 +114,8 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
      */
     public Optional<Node> get(int index) {
         return elements.size() > index && index > -1
-               ? Optional.of(elements.get(index))
-               : Optional.empty();
+            ? Optional.of(elements.get(index))
+            : Optional.empty();
     }
 
     /**
@@ -206,12 +196,18 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
                 String message = e.getMessage();
                 Matcher matcher = CAST_PATTERN_TYPE.matcher(message);
                 String formatted = matcher.matches()
-                        ? String.format("Expected array element %d to be a %s but found %s.", i,
-                                        nodeClassToSimpleTypeName(matcher.group(1)),
-                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()))
-                        : String.format("Array element at position %d is an invalid type `%s`: %s", i,
-                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()),
-                                        e.getMessage());
+                    ? String.format(
+                        "Expected array element %d to be a %s but found %s.",
+                        i,
+                        nodeClassToSimpleTypeName(matcher.group(1)),
+                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName())
+                    )
+                    : String.format(
+                        "Array element at position %d is an invalid type `%s`: %s",
+                        i,
+                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()),
+                        e.getMessage()
+                    );
                 throw new ExpectationNotMetException(formatted, elements.get(i));
             }
         }
@@ -237,9 +233,10 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
         List<Node> result = new ArrayList<>(elements);
         result.addAll(other.elements);
         return new ArrayNode(
-                result,
-                getSourceLocation() != SourceLocation.NONE ? getSourceLocation() : other.getSourceLocation(),
-                false);
+            result,
+            getSourceLocation() != SourceLocation.NONE ? getSourceLocation() : other.getSourceLocation(),
+            false
+        );
     }
 
     /**
@@ -257,13 +254,13 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
      */
     public static <T extends ToNode> Collector<T, List<Node>, ArrayNode> collect(SourceLocation sloc) {
         return Collector.of(
-                ArrayList::new,
-                (results, entry) -> results.add(entry.toNode()),
-                (left, right) -> {
-                    left.addAll(right);
-                    return left;
-                },
-                results -> new ArrayNode(results, sloc, false)
+            ArrayList::new,
+            (results, entry) -> results.add(entry.toNode()),
+            (left, right) -> {
+                left.addAll(right);
+                return left;
+            },
+            results -> new ArrayNode(results, sloc, false)
         );
     }
 

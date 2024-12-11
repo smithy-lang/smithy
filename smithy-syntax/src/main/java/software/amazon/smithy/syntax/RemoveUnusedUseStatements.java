@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import java.util.Collections;
@@ -40,7 +29,7 @@ final class RemoveUnusedUseStatements implements Function<TokenTree, TokenTree> 
 
         // SHAPE_SECTION is always present at this point if there are detected use statements.
         TreeCursor shapeStatements = Objects.requireNonNull(root.getFirstChild(TreeType.SHAPE_SECTION))
-                .getFirstChild(TreeType.SHAPE_STATEMENTS);
+            .getFirstChild(TreeType.SHAPE_STATEMENTS);
 
         if (shapeStatements == null) {
             return tree;
@@ -64,9 +53,12 @@ final class RemoveUnusedUseStatements implements Function<TokenTree, TokenTree> 
 
         // Anything left in the map needs to be removed from the tree.
         for (TreeCursor unused : useShapeNames.values()) {
-            LOGGER.fine(() -> "Removing unused use statement: "
-                              + unused.getFirstChild(TreeType.ABSOLUTE_ROOT_SHAPE_ID)
-                                      .getTree().concatTokens());
+            LOGGER.fine(
+                () -> "Removing unused use statement: "
+                    + unused.getFirstChild(TreeType.ABSOLUTE_ROOT_SHAPE_ID)
+                        .getTree()
+                        .concatTokens()
+            );
             unused.getParent().getTree().removeChild(unused.getTree());
         }
 
@@ -76,9 +68,9 @@ final class RemoveUnusedUseStatements implements Function<TokenTree, TokenTree> 
     // Create a map of shape name to the TreeCursor of the use statement.
     private Map<String, TreeCursor> parseShapeIds(TreeCursor root) {
         List<TreeCursor> useStatements = Optional.ofNullable(root.getFirstChild(TreeType.SHAPE_SECTION))
-                .flatMap(shapeSection -> Optional.ofNullable(shapeSection.getFirstChild(TreeType.USE_SECTION)))
-                .map(useSection -> useSection.getChildrenByType(TreeType.USE_STATEMENT))
-                .orElse(Collections.emptyList());
+            .flatMap(shapeSection -> Optional.ofNullable(shapeSection.getFirstChild(TreeType.USE_SECTION)))
+            .map(useSection -> useSection.getChildrenByType(TreeType.USE_STATEMENT))
+            .orElse(Collections.emptyList());
 
         Map<String, TreeCursor> result = new HashMap<>(useStatements.size());
         for (TreeCursor useStatement : useStatements) {

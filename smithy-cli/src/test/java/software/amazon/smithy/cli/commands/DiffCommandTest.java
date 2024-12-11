@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,10 +19,15 @@ public class DiffCommandTest {
     public void canOutputCsv() throws Exception {
         Path oldModel = Paths.get(getClass().getResource("diff/old.smithy").toURI());
         Path newModel = Paths.get(getClass().getResource("diff/new.smithy").toURI());
-        CliUtils.Result result = CliUtils.runSmithy("diff",
-                                                    "--old", oldModel.toString(),
-                                                    "--new", newModel.toString(),
-                                                    "--format", "csv");
+        CliUtils.Result result = CliUtils.runSmithy(
+            "diff",
+            "--old",
+            oldModel.toString(),
+            "--new",
+            newModel.toString(),
+            "--format",
+            "csv"
+        );
 
         assertThat(result.code(), not(0));
 

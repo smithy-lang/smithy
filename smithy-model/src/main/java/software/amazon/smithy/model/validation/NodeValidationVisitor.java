@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation;
 
 import java.util.ArrayList;
@@ -189,15 +178,15 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> blobShape(BlobShape shape) {
         return value.asStringNode()
-                .map(stringNode -> applyPlugins(shape))
-                .orElseGet(() -> invalidShape(shape, NodeType.STRING));
+            .map(stringNode -> applyPlugins(shape))
+            .orElseGet(() -> invalidShape(shape, NodeType.STRING));
     }
 
     @Override
     public List<ValidationEvent> booleanShape(BooleanShape shape) {
         return value.isBooleanNode()
-               ? applyPlugins(shape)
-               : invalidShape(shape, NodeType.BOOLEAN);
+            ? applyPlugins(shape)
+            : invalidShape(shape, NodeType.BOOLEAN);
     }
 
     @Override
@@ -227,32 +216,55 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> validateNaturalNumber(Shape shape, Long min, Long max) {
         return value.asNumberNode()
-                .map(number -> {
-                    if (number.isFloatingPointNumber()) {
-                        return ListUtils.of(event(String.format(
+            .map(number -> {
+                if (number.isFloatingPointNumber()) {
+                    return ListUtils.of(
+                        event(
+                            String.format(
                                 "%s shapes must not have floating point values, but found `%s` provided for `%s`",
-                                shape.getType(), number.getValue(), shape.getId())));
-                    }
+                                shape.getType(),
+                                number.getValue(),
+                                shape.getId()
+                            )
+                        )
+                    );
+                }
 
-                    Long numberValue = number.getValue().longValue();
-                    if (min != null && numberValue < min) {
-                        return ListUtils.of(event(String.format(
-                                "%s value must be > %d, but found %d", shape.getType(), min, numberValue)));
-                    } else if (max != null && numberValue > max) {
-                        return ListUtils.of(event(String.format(
-                                "%s value must be < %d, but found %d", shape.getType(), max, numberValue)));
-                    } else {
-                        return applyPlugins(shape);
-                    }
-                })
-                .orElseGet(() -> invalidShape(shape, NodeType.NUMBER));
+                Long numberValue = number.getValue().longValue();
+                if (min != null && numberValue < min) {
+                    return ListUtils.of(
+                        event(
+                            String.format(
+                                "%s value must be > %d, but found %d",
+                                shape.getType(),
+                                min,
+                                numberValue
+                            )
+                        )
+                    );
+                } else if (max != null && numberValue > max) {
+                    return ListUtils.of(
+                        event(
+                            String.format(
+                                "%s value must be < %d, but found %d",
+                                shape.getType(),
+                                max,
+                                numberValue
+                            )
+                        )
+                    );
+                } else {
+                    return applyPlugins(shape);
+                }
+            })
+            .orElseGet(() -> invalidShape(shape, NodeType.NUMBER));
     }
 
     @Override
     public List<ValidationEvent> floatShape(FloatShape shape) {
         return value.isNumberNode() || value.isStringNode()
-               ? applyPlugins(shape)
-               : invalidShape(shape, NodeType.NUMBER);
+            ? applyPlugins(shape)
+            : invalidShape(shape, NodeType.NUMBER);
     }
 
     @Override
@@ -264,22 +276,22 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> doubleShape(DoubleShape shape) {
         return value.isNumberNode() || value.isStringNode()
-               ? applyPlugins(shape)
-               : invalidShape(shape, NodeType.NUMBER);
+            ? applyPlugins(shape)
+            : invalidShape(shape, NodeType.NUMBER);
     }
 
     @Override
     public List<ValidationEvent> bigDecimalShape(BigDecimalShape shape) {
         return value.isNumberNode()
-               ? applyPlugins(shape)
-               : invalidShape(shape, NodeType.NUMBER);
+            ? applyPlugins(shape)
+            : invalidShape(shape, NodeType.NUMBER);
     }
 
     @Override
     public List<ValidationEvent> stringShape(StringShape shape) {
         return value.asStringNode()
-                .map(string -> applyPlugins(shape))
-                .orElseGet(() -> invalidShape(shape, NodeType.STRING));
+            .map(string -> applyPlugins(shape))
+            .orElseGet(() -> invalidShape(shape, NodeType.STRING));
     }
 
     @Override
@@ -290,89 +302,107 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> listShape(ListShape shape) {
         return value.asArrayNode()
-                .map(array -> {
-                    MemberShape member = shape.getMember();
-                    List<ValidationEvent> events = applyPlugins(shape);
-                    // Each element creates a context with a numeric index (e.g., "foo.0.baz", "foo.1.baz", etc.).
-                    for (int i = 0; i < array.getElements().size(); i++) {
-                        events.addAll(member.accept(traverse(String.valueOf(i), array.getElements().get(i))));
-                    }
-                    return events;
-                })
-                .orElseGet(() -> invalidShape(shape, NodeType.ARRAY));
+            .map(array -> {
+                MemberShape member = shape.getMember();
+                List<ValidationEvent> events = applyPlugins(shape);
+                // Each element creates a context with a numeric index (e.g., "foo.0.baz", "foo.1.baz", etc.).
+                for (int i = 0; i < array.getElements().size(); i++) {
+                    events.addAll(member.accept(traverse(String.valueOf(i), array.getElements().get(i))));
+                }
+                return events;
+            })
+            .orElseGet(() -> invalidShape(shape, NodeType.ARRAY));
     }
 
     @Override
     public List<ValidationEvent> mapShape(MapShape shape) {
         return value.asObjectNode()
-                .map(object -> {
-                    List<ValidationEvent> events = applyPlugins(shape);
-                    for (Map.Entry<StringNode, Node> entry : object.getMembers().entrySet()) {
-                        String key = entry.getKey().getValue();
-                        events.addAll(traverse(key + " (map-key)", entry.getKey()).memberShape(shape.getKey()));
-                        events.addAll(traverse(key, entry.getValue()).memberShape(shape.getValue()));
-                    }
-                    return events;
-                })
-                .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
+            .map(object -> {
+                List<ValidationEvent> events = applyPlugins(shape);
+                for (Map.Entry<StringNode, Node> entry : object.getMembers().entrySet()) {
+                    String key = entry.getKey().getValue();
+                    events.addAll(traverse(key + " (map-key)", entry.getKey()).memberShape(shape.getKey()));
+                    events.addAll(traverse(key, entry.getValue()).memberShape(shape.getValue()));
+                }
+                return events;
+            })
+            .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
     }
 
     @Override
     public List<ValidationEvent> structureShape(StructureShape shape) {
         return value.asObjectNode()
-                .map(object -> {
-                    List<ValidationEvent> events = applyPlugins(shape);
-                    Map<String, MemberShape> members = shape.getAllMembers();
+            .map(object -> {
+                List<ValidationEvent> events = applyPlugins(shape);
+                Map<String, MemberShape> members = shape.getAllMembers();
 
-                    for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
-                        String entryKey = entry.getKey();
-                        Node entryValue = entry.getValue();
-                        if (!members.containsKey(entryKey)) {
-                            String message = String.format(
-                                    "Invalid structure member `%s` found for `%s`", entryKey, shape.getId());
-                            events.add(event(message, Severity.WARNING, shape.getId().toString(), entryKey));
-                        } else {
-                            events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
-                        }
+                for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
+                    String entryKey = entry.getKey();
+                    Node entryValue = entry.getValue();
+                    if (!members.containsKey(entryKey)) {
+                        String message = String.format(
+                            "Invalid structure member `%s` found for `%s`",
+                            entryKey,
+                            shape.getId()
+                        );
+                        events.add(event(message, Severity.WARNING, shape.getId().toString(), entryKey));
+                    } else {
+                        events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                     }
+                }
 
-                    for (MemberShape member : members.values()) {
-                        if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
-                            Severity severity = this.validationContext.hasFeature(Feature.ALLOW_CONSTRAINT_ERRORS)
-                                    ? Severity.WARNING : Severity.ERROR;
-                            events.add(event(String.format(
+                for (MemberShape member : members.values()) {
+                    if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
+                        Severity severity = this.validationContext.hasFeature(Feature.ALLOW_CONSTRAINT_ERRORS)
+                            ? Severity.WARNING
+                            : Severity.ERROR;
+                        events.add(
+                            event(
+                                String.format(
                                     "Missing required structure member `%s` for `%s`",
-                                    member.getMemberName(), shape.getId()), severity));
-                        }
+                                    member.getMemberName(),
+                                    shape.getId()
+                                ),
+                                severity
+                            )
+                        );
                     }
-                    return events;
-                })
-                .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
+                }
+                return events;
+            })
+            .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
     }
 
     @Override
     public List<ValidationEvent> unionShape(UnionShape shape) {
         return value.asObjectNode()
-                .map(object -> {
-                    List<ValidationEvent> events = applyPlugins(shape);
-                    if (object.size() > 1) {
-                        events.add(event("union values can contain a value for only a single member"));
-                    } else {
-                        Map<String, MemberShape> members = shape.getAllMembers();
-                        for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
-                            String entryKey = entry.getKey();
-                            Node entryValue = entry.getValue();
-                            if (!members.containsKey(entryKey)) {
-                                events.add(event(String.format(
-                                        "Invalid union member `%s` found for `%s`", entryKey, shape.getId())));
-                            } else {
-                                events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
-                            }
+            .map(object -> {
+                List<ValidationEvent> events = applyPlugins(shape);
+                if (object.size() > 1) {
+                    events.add(event("union values can contain a value for only a single member"));
+                } else {
+                    Map<String, MemberShape> members = shape.getAllMembers();
+                    for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
+                        String entryKey = entry.getKey();
+                        Node entryValue = entry.getValue();
+                        if (!members.containsKey(entryKey)) {
+                            events.add(
+                                event(
+                                    String.format(
+                                        "Invalid union member `%s` found for `%s`",
+                                        entryKey,
+                                        shape.getId()
+                                    )
+                                )
+                            );
+                        } else {
+                            events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                         }
                     }
-                    return events;
-                })
-                .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
+                }
+                return events;
+            })
+            .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
     }
 
     @Override
@@ -395,17 +425,33 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         if (!nullableIndex.isMemberNullable(shape)) {
             switch (model.expectShape(shape.getContainer()).getType()) {
                 case LIST:
-                    return ListUtils.of(event(
+                    return ListUtils.of(
+                        event(
                             String.format(
-                                    "Non-sparse list shape `%s` cannot contain null values", shape.getContainer())));
+                                "Non-sparse list shape `%s` cannot contain null values",
+                                shape.getContainer()
+                            )
+                        )
+                    );
                 case MAP:
-                    return ListUtils.of(event(
+                    return ListUtils.of(
+                        event(
                             String.format(
-                                    "Non-sparse map shape `%s` cannot contain null values", shape.getContainer())));
+                                "Non-sparse map shape `%s` cannot contain null values",
+                                shape.getContainer()
+                            )
+                        )
+                    );
                 case STRUCTURE:
-                    return ListUtils.of(event(
-                            String.format("Required structure member `%s` for `%s` cannot be null",
-                                    shape.getMemberName(), shape.getContainer())));
+                    return ListUtils.of(
+                        event(
+                            String.format(
+                                "Required structure member `%s` for `%s` cannot be null",
+                                shape.getMemberName(),
+                                shape.getContainer()
+                            )
+                        )
+                    );
                 default:
                     break;
             }
@@ -438,8 +484,12 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         }
 
         String message = String.format(
-                "Expected %s value for %s shape, `%s`; found %s value",
-                expectedType, shape.getType(), shape.getId(), value.getType());
+            "Expected %s value for %s shape, `%s`; found %s value",
+            expectedType,
+            shape.getType(),
+            shape.getId(),
+            value.getType()
+        );
         if (value.isStringNode()) {
             message += ", `" + value.expectStringNode().getValue() + "`";
         } else if (value.isNumberNode()) {
@@ -463,31 +513,44 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private ValidationEvent event(
-            String message,
-            Severity severity,
-            SourceLocation sourceLocation,
-            String... additionalEventIdParts
+        String message,
+        Severity severity,
+        SourceLocation sourceLocation,
+        String... additionalEventIdParts
     ) {
         return ValidationEvent.builder()
-                .id(additionalEventIdParts.length > 0
-                        ? eventId + "." + String.join(".", additionalEventIdParts) : eventId)
-                .severity(severity)
-                .sourceLocation(sourceLocation)
-                .shapeId(eventShapeId)
-                .message(startingContext.isEmpty() ? message : startingContext + ": " + message)
-                .build();
+            .id(
+                additionalEventIdParts.length > 0
+                    ? eventId + "." + String.join(".", additionalEventIdParts)
+                    : eventId
+            )
+            .severity(severity)
+            .sourceLocation(sourceLocation)
+            .shapeId(eventShapeId)
+            .message(startingContext.isEmpty() ? message : startingContext + ": " + message)
+            .build();
     }
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         List<ValidationEvent> events = new ArrayList<>();
-        timestampValidationStrategy.apply(shape, value, validationContext,
-                (location, severity, message, additionalEventIdParts) ->
-                        events.add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
+        timestampValidationStrategy.apply(
+            shape,
+            value,
+            validationContext,
+            (location, severity, message, additionalEventIdParts) -> events.add(
+                event(message, severity, location.getSourceLocation(), additionalEventIdParts)
+            )
+        );
 
         for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape, value, validationContext,
-                    (location, severity, message, additionalEventIdParts) ->
-                            events.add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
+            plugin.apply(
+                shape,
+                value,
+                validationContext,
+                (location, severity, message, additionalEventIdParts) -> events.add(
+                    event(message, severity, location.getSourceLocation(), additionalEventIdParts)
+                )
+            );
         }
 
         return events;

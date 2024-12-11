@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.ArrayList;
@@ -83,16 +72,17 @@ public final class CorsHttpIntegration implements ApiGatewayMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
-        return context.getService().getTrait(CorsTrait.class)
-                .map(corsTrait -> addCors(context, openapi, corsTrait))
-                .orElse(openapi);
+        return context.getService()
+            .getTrait(CorsTrait.class)
+            .map(corsTrait -> addCors(context, openapi, corsTrait))
+            .orElse(openapi);
     }
 
     private OpenApi addCors(Context<? extends Trait> context, OpenApi openapi, CorsTrait trait) {
         // Use any existing x-amazon-apigateway-cors value, if present.
         Node alreadySetCorsValue = openapi.getExtension(CORS_HTTP_EXTENSION)
-                .flatMap(Node::asObjectNode)
-                .orElse(null);
+            .flatMap(Node::asObjectNode)
+            .orElse(null);
 
         if (alreadySetCorsValue != null) {
             return openapi;
@@ -103,19 +93,19 @@ public final class CorsHttpIntegration implements ApiGatewayMapper {
         Set<String> exposedHeaders = getExposedHeaders(context, trait, openapi);
 
         ObjectNode.Builder corsObjectBuilder = Node.objectNodeBuilder()
-                .withMember("allowOrigins", Node.fromStrings(trait.getOrigin()))
-                .withMember("maxAge", trait.getMaxAge())
-                .withMember("allowMethods", Node.fromStrings(allowedMethodsInService))
-                .withMember("exposeHeaders", Node.fromStrings(exposedHeaders))
-                .withMember("allowHeaders", Node.fromStrings(allowedRequestHeaders));
+            .withMember("allowOrigins", Node.fromStrings(trait.getOrigin()))
+            .withMember("maxAge", trait.getMaxAge())
+            .withMember("allowMethods", Node.fromStrings(allowedMethodsInService))
+            .withMember("exposeHeaders", Node.fromStrings(exposedHeaders))
+            .withMember("allowHeaders", Node.fromStrings(allowedRequestHeaders));
 
         if (context.usesHttpCredentials()) {
             corsObjectBuilder.withMember("allowCredentials", true);
         }
 
         return openapi.toBuilder()
-                .putExtension(CORS_HTTP_EXTENSION, corsObjectBuilder.build())
-                .build();
+            .putExtension(CORS_HTTP_EXTENSION, corsObjectBuilder.build())
+            .build();
     }
 
     private <T extends Trait> Set<String> getMethodsUsedInApi(Context<T> context, OpenApi openApi) {

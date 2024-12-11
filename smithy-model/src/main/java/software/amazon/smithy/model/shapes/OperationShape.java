@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
@@ -62,11 +51,15 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         }
 
         if (hasTrait(MixinTrait.ID) && (!input.equals(UnitTypeTrait.UNIT) || !output.equals(UnitTypeTrait.UNIT))) {
-            throw new SourceException(String.format(
+            throw new SourceException(
+                String.format(
                     "Operation shapes with the mixin trait MUST target `%s` for their input and output. Operation "
-                            + "mixin shape `%s` defines one or both of these properties.",
-                    UnitTypeTrait.UNIT, getId()
-            ), builder.getSourceLocation());
+                        + "mixin shape `%s` defines one or both of these properties.",
+                    UnitTypeTrait.UNIT,
+                    getId()
+                ),
+                builder.getSourceLocation()
+            );
         }
     }
 
@@ -77,9 +70,9 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     @Override
     public Builder toBuilder() {
         return updateBuilder(builder())
-                .input(input)
-                .output(output)
-                .errors(getIntroducedErrors());
+            .input(input)
+            .output(output)
+            .errors(getIntroducedErrors());
     }
 
     @Override
@@ -200,8 +193,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         } else {
             OperationShape otherShape = (OperationShape) other;
             return input.equals(otherShape.input)
-                   && output.equals(otherShape.output)
-                   && errors.equals(otherShape.errors);
+                && output.equals(otherShape.output)
+                && errors.equals(otherShape.errors);
         }
     }
 

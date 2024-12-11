@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.linters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,37 +27,37 @@ public class WildcardMatcherTest {
 
     public static Stream<Arguments> patternProvider() {
         return Stream.of(
-                // Can't match empty or null.
-                Arguments.of("", "foo", false),
-                Arguments.of(null, "foo", false),
+            // Can't match empty or null.
+            Arguments.of("", "foo", false),
+            Arguments.of(null, "foo", false),
 
-                // Not a contains match
-                Arguments.of("foo", "*hello*", false),
+            // Not a contains match
+            Arguments.of("foo", "*hello*", false),
 
-                // Good contains matches.
-                Arguments.of("__accessKeyId__", "*accesskeyid*", true),
-                Arguments.of("accessKeyId", "*accesskeyid*", true),
-                Arguments.of("hello", "*hello*", true),
-                Arguments.of("foo_hello_there", "*hello*", true),
+            // Good contains matches.
+            Arguments.of("__accessKeyId__", "*accesskeyid*", true),
+            Arguments.of("accessKeyId", "*accesskeyid*", true),
+            Arguments.of("hello", "*hello*", true),
+            Arguments.of("foo_hello_there", "*hello*", true),
 
-                // Not a prefix match.
-                Arguments.of("foo", "hello*", false),
+            // Not a prefix match.
+            Arguments.of("foo", "hello*", false),
 
-                // Good prefix matches.
-                Arguments.of("accessKeyId", "accesskeyid*", true),
-                Arguments.of("hello", "hello*", true),
-                Arguments.of("hello_there", "hello*", true),
+            // Good prefix matches.
+            Arguments.of("accessKeyId", "accesskeyid*", true),
+            Arguments.of("hello", "hello*", true),
+            Arguments.of("hello_there", "hello*", true),
 
-                // Not a suffix match.
-                Arguments.of("foo", "*hello", false),
+            // Not a suffix match.
+            Arguments.of("foo", "*hello", false),
 
-                // Good suffix matches.
-                Arguments.of("accessKeyId", "*accesskeyid", true),
-                Arguments.of("hello", "*hello", true),
-                Arguments.of("well_hello", "*hello", true),
+            // Good suffix matches.
+            Arguments.of("accessKeyId", "*accesskeyid", true),
+            Arguments.of("hello", "*hello", true),
+            Arguments.of("well_hello", "*hello", true),
 
-                // An exact match.
-                Arguments.of("string", "string", true)
+            // An exact match.
+            Arguments.of("string", "string", true)
         );
     }
 
@@ -62,9 +66,11 @@ public class WildcardMatcherTest {
     public void validatesSyntax(String invalidPattern) {
         WildcardMatcher matcher = new WildcardMatcher();
 
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-                                                             () -> matcher.addSearch(invalidPattern),
-                                                             invalidPattern);
+        IllegalArgumentException e = Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> matcher.addSearch(invalidPattern),
+            invalidPattern
+        );
 
         // All syntax errors should show the invalid pattern.
         assertThat(e.getMessage(), containsString(invalidPattern));
@@ -72,10 +78,10 @@ public class WildcardMatcherTest {
 
     public static Stream<Arguments> invalidPatternProvider() {
         return Stream.of(
-                Arguments.of("*"),
-                Arguments.of("**foo"),
-                Arguments.of("foo*bar"),
-                Arguments.of("")
+            Arguments.of("*"),
+            Arguments.of("**foo"),
+            Arguments.of("foo*bar"),
+            Arguments.of("")
         );
     }
 }

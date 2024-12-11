@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language.syntax.functions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,11 +33,15 @@ public class FunctionsTest {
     @Test
     public void getAttrOfExpressions() {
         GetAttr function = GetAttr.ofExpressions(
-                Expression.getReference(Identifier.of("a"), SourceLocation.none()), "b");
+            Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+            "b"
+        );
         assertThat(function, instanceOf(GetAttr.class));
 
         GetAttr function2 = GetAttr.ofExpressions(
-                Expression.getReference(Identifier.of("a"), SourceLocation.none()), Expression.of("b"));
+            Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+            Expression.of("b")
+        );
         assertThat(function2, instanceOf(GetAttr.class));
     }
 
@@ -75,10 +83,11 @@ public class FunctionsTest {
         assertThat(function, instanceOf(Substring.class));
 
         Substring function2 = Substring.ofExpressions(
-                Expression.of("foobar"),
-                Expression.of(1),
-                Expression.of(2),
-                Expression.of(false));
+            Expression.of("foobar"),
+            Expression.of(1),
+            Expression.of(2),
+            Expression.of(false)
+        );
         assertThat(function2, instanceOf(Substring.class));
     }
 

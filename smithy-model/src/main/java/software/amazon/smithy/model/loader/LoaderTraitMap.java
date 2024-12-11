@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
@@ -67,8 +56,8 @@ final class LoaderTraitMap {
             // will have already converted the built shape into a pending shape.
             boolean found = shapeMap.isShapePending(target);
             Iterable<LoadOperation.DefineShape> rootShapes = found
-                    ? shapeMap.get(root)
-                    : Collections::emptyIterator;
+                ? shapeMap.get(root)
+                : Collections::emptyIterator;
 
             for (Map.Entry<ShapeId, Node> traitEntry : entry.getValue().entrySet()) {
                 ShapeId traitId = traitEntry.getKey();
@@ -99,7 +88,7 @@ final class LoaderTraitMap {
                     // If the member wasn't found, then it might be a mixin member that is synthesized later.
                     if (!foundMember) {
                         unclaimed.computeIfAbsent(target.withMember(memberName), id -> new LinkedHashMap<>())
-                                .put(traitId, created);
+                            .put(traitId, created);
                     }
                 } else if (found) {
                     // Apply the trait to each shape contained in the shape map for the given target.
@@ -116,37 +105,55 @@ final class LoaderTraitMap {
     private Trait createTrait(ShapeId target, ShapeId traitId, Node traitValue) {
         try {
             return traitFactory.createTrait(traitId, target, traitValue)
-                    .orElseGet(() -> new DynamicTrait(traitId, traitValue));
+                .orElseGet(() -> new DynamicTrait(traitId, traitValue));
         } catch (SourceException e) {
             String message = format("Error creating trait `%s`: ", Trait.getIdiomaticTraitName(traitId));
             events.add(ValidationEvent.fromSourceException(e, message, target));
             return null;
         } catch (RuntimeException e) {
-            events.add(ValidationEvent.builder()
+            events.add(
+                ValidationEvent.builder()
                     .id(MODEL_ERROR)
                     .severity(ERROR)
                     .shapeId(target)
                     .sourceLocation(traitValue)
-                    .message(format("Error creating trait `%s`: %s",
-                                    Trait.getIdiomaticTraitName(traitId),
-                                    e.getMessage()))
-                    .build());
+                    .message(
+                        format(
+                            "Error creating trait `%s`: %s",
+                            Trait.getIdiomaticTraitName(traitId),
+                            e.getMessage()
+                        )
+                    )
+                    .build()
+            );
             return null;
         }
     }
 
-    private void validateTraitIsKnown(ShapeId target, ShapeId traitId, Trait trait,
-            SourceLocation sourceLocation, LoaderShapeMap shapeMap) {
+    private void validateTraitIsKnown(
+        ShapeId target,
+        ShapeId traitId,
+        Trait trait,
+        SourceLocation sourceLocation,
+        LoaderShapeMap shapeMap
+    ) {
         if (!shapeMap.isRootShapeDefined(traitId) && (trait == null || !trait.isSynthetic())) {
             Severity severity = allowUnknownTraits ? Severity.WARNING : Severity.ERROR;
-            events.add(ValidationEvent.builder()
+            events.add(
+                ValidationEvent.builder()
                     .id(Validator.MODEL_ERROR + UNRESOLVED_TRAIT_SUFFIX)
                     .severity(severity)
                     .sourceLocation(sourceLocation)
                     .shapeId(target)
-                    .message(String.format("Unable to resolve trait `%s`. If this is a custom trait, then it must be "
-                                           + "defined before it can be used in a model.", traitId))
-                    .build());
+                    .message(
+                        String.format(
+                            "Unable to resolve trait `%s`. If this is a custom trait, then it must be "
+                                + "defined before it can be used in a model.",
+                            traitId
+                        )
+                    )
+                    .build()
+            );
         }
     }
 
@@ -173,13 +180,20 @@ final class LoaderTraitMap {
                 continue;
             }
             for (Map.Entry<ShapeId, Trait> traitEntry : entry.getValue().entrySet()) {
-                events.add(ValidationEvent.builder()
+                events.add(
+                    ValidationEvent.builder()
                         .id(Validator.MODEL_ERROR)
                         .severity(Severity.ERROR)
                         .sourceLocation(traitEntry.getValue())
-                        .message(String.format("Trait `%s` applied to unknown shape `%s`",
-                                               Trait.getIdiomaticTraitName(traitEntry.getKey()), entry.getKey()))
-                        .build());
+                        .message(
+                            String.format(
+                                "Trait `%s` applied to unknown shape `%s`",
+                                Trait.getIdiomaticTraitName(traitEntry.getKey()),
+                                entry.getKey()
+                            )
+                        )
+                        .build()
+                );
             }
         }
     }
@@ -188,15 +202,18 @@ final class LoaderTraitMap {
         if (validateTraitVersion(operation)) {
             if (isAppliedToPreludeOutsidePrelude(operation)) {
                 String message = String.format(
-                        "Cannot apply `%s` to an immutable prelude shape defined in `smithy.api`.",
-                        operation.trait);
-                events.add(ValidationEvent.builder()
+                    "Cannot apply `%s` to an immutable prelude shape defined in `smithy.api`.",
+                    operation.trait
+                );
+                events.add(
+                    ValidationEvent.builder()
                         .severity(Severity.ERROR)
                         .id(Validator.MODEL_ERROR)
                         .sourceLocation(operation)
                         .shapeId(operation.target)
                         .message(message)
-                        .build());
+                        .build()
+                );
             } else {
                 Map<ShapeId, Node> current = traits.computeIfAbsent(operation.target, id -> new LinkedHashMap<>());
                 Node previous = current.get(operation.trait);
@@ -207,7 +224,10 @@ final class LoaderTraitMap {
 
     private boolean validateTraitVersion(LoadOperation.ApplyTrait operation) {
         ValidationEvent event = operation.version.validateVersionedTrait(
-                operation.target, operation.trait, operation.value);
+            operation.target,
+            operation.trait,
+            operation.value
+        );
         if (event != null) {
             events.add(event);
         }
@@ -216,7 +236,7 @@ final class LoaderTraitMap {
 
     private boolean isAppliedToPreludeOutsidePrelude(LoadOperation.ApplyTrait operation) {
         return !operation.namespace.equals(Prelude.NAMESPACE)
-               && operation.target.getNamespace().equals(Prelude.NAMESPACE);
+            && operation.target.getNamespace().equals(Prelude.NAMESPACE);
     }
 
     private Node mergeTraits(ShapeId target, ShapeId traitId, Node previous, Node updated) {
@@ -232,8 +252,13 @@ final class LoaderTraitMap {
             // through a ModelAssembler using model discovery, then the Model is
             // added to a subsequent ModelAssembler, and then model discovery is
             // performed again using the same classpath.
-            LOGGER.finest(() -> String.format("Ignoring duplicate %s trait value on %s at same exact location",
-                                              traitId, target));
+            LOGGER.finest(
+                () -> String.format(
+                    "Ignoring duplicate %s trait value on %s at same exact location",
+                    traitId,
+                    target
+                )
+            );
             return previous;
         }
 
@@ -244,15 +269,24 @@ final class LoaderTraitMap {
             LOGGER.fine(() -> String.format("Ignoring duplicate %s trait value on %s", traitId, target));
             return previous;
         } else {
-            events.add(ValidationEvent.builder()
+            events.add(
+                ValidationEvent.builder()
                     .id(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(updated)
                     .shapeId(target)
-                    .message(String.format("Conflicting `%s` trait found on shape `%s`. The previous trait was "
-                                           + "defined at `%s`, and a conflicting trait was defined at `%s`.",
-                                           traitId, target, previous.getSourceLocation(), updated.getSourceLocation()))
-                    .build());
+                    .message(
+                        String.format(
+                            "Conflicting `%s` trait found on shape `%s`. The previous trait was "
+                                + "defined at `%s`, and a conflicting trait was defined at `%s`.",
+                            traitId,
+                            target,
+                            previous.getSourceLocation(),
+                            updated.getSourceLocation()
+                        )
+                    )
+                    .build()
+            );
             return previous;
         }
     }

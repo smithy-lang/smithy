@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayDeque;
@@ -45,11 +34,11 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
     private final Map<String, Version> modelVersions = new HashMap<>();
 
     LoadOperationProcessor(
-            TraitFactory traitFactory,
-            Model prelude,
-            boolean allowUnknownTraits,
-            Consumer<ValidationEvent> validationEventListener,
-            ValidationEventDecorator decorator
+        TraitFactory traitFactory,
+        Model prelude,
+        boolean allowUnknownTraits,
+        Consumer<ValidationEvent> validationEventListener,
+        ValidationEventDecorator decorator
     ) {
         // Emit events as the come in.
         this.events = new ArrayList<ValidationEvent>() {
@@ -106,7 +95,7 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             public void modelVersion(LoadOperation.ModelVersion operation) {
                 // Don't attempt to assign versions based on N/A or "" source locations.
                 if (!operation.getSourceLocation().equals(SourceLocation.none())
-                        && !operation.getSourceLocation().getFilename().isEmpty()) {
+                    && !operation.getSourceLocation().getFilename().isEmpty()) {
                     modelVersions.put(operation.getSourceLocation().getFilename(), operation.version);
                 }
             }

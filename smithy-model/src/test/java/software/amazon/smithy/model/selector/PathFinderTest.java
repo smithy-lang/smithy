@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,23 +34,30 @@ public class PathFinderTest {
         MemberShape structMemberFoo = MemberShape.builder().id("a.b#Struct$foo").target(list).build();
         MemberShape structMemberBaz = MemberShape.builder().id("a.b#Struct$baz").target(string).build();
         StructureShape struct = StructureShape.builder()
-                .id("a.b#Struct")
-                .addMember(structMemberFoo)
-                .addMember(structMemberBaz)
-                .build();
+            .id("a.b#Struct")
+            .addMember(structMemberFoo)
+            .addMember(structMemberBaz)
+            .build();
         Model model = Model.builder()
-                .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
-                .build();
+            .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
+            .build();
 
         List<String> result1 = formatPaths(PathFinder.create(model).search(struct, "string"));
-        assertThat(result1, containsInAnyOrder(
+        assertThat(
+            result1,
+            containsInAnyOrder(
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$baz] > [id|a.b#String]",
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"
-        ));
+            )
+        );
 
         List<String> result2 = formatPaths(PathFinder.create(model).search(structMemberFoo, "string"));
-        assertThat(result2, contains(
-                "[id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"));
+        assertThat(
+            result2,
+            contains(
+                "[id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"
+            )
+        );
     }
 
     private static List<String> formatPaths(List<PathFinder.Path> rels) {
@@ -76,46 +72,52 @@ public class PathFinderTest {
         MemberShape structMemberFoo = MemberShape.builder().id("a.b#Struct$foo").target(list).build();
         MemberShape structMemberBaz = MemberShape.builder().id("a.b#Struct$baz").target(string).build();
         StructureShape struct = StructureShape.builder()
-                .id("a.b#Struct")
-                .addTrait(new SensitiveTrait())
-                .addMember(structMemberFoo)
-                .addMember(structMemberBaz)
-                .build();
+            .id("a.b#Struct")
+            .addTrait(new SensitiveTrait())
+            .addMember(structMemberFoo)
+            .addMember(structMemberBaz)
+            .build();
         Model model = Model.builder()
-                .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
-                .build();
+            .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
+            .build();
         List<String> result = formatPaths(PathFinder.create(model).search(struct, "[trait|sensitive]"));
 
-        assertThat(result, containsInAnyOrder(
+        assertThat(
+            result,
+            containsInAnyOrder(
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#Struct]",
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$baz] > [id|a.b#String]"
-        ));
+            )
+        );
     }
 
     @Test
     public void doesNotFailOnMoreComplexRecursion() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("path-finder-recursion.json"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("path-finder-recursion.json"))
+            .assemble()
+            .unwrap();
         PathFinder finder = PathFinder.create(model);
         ShapeId operation = ShapeId.from("smithy.example#Operation");
 
         List<PathFinder.Path> result = finder.search(operation, "[trait|deprecated]");
         List<String> resultStrings = result.stream().map(PathFinder.Path::toString).collect(Collectors.toList());
 
-        assertThat(resultStrings, containsInAnyOrder(
-            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
-            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]",
-            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
-            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
-            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]"
-        ));
+        assertThat(
+            resultStrings,
+            containsInAnyOrder(
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]",
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]"
+            )
+        );
     }
 
     @Test
@@ -142,8 +144,12 @@ public class PathFinderTest {
         Model model = Model.builder().addShapes(list, listMember).build();
         List<String> result = formatPaths(PathFinder.create(model).search(list, "list"));
 
-        assertThat(result, contains(
-                "[id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#List]"));
+        assertThat(
+            result,
+            contains(
+                "[id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#List]"
+            )
+        );
     }
 
     @Test
@@ -162,30 +168,38 @@ public class PathFinderTest {
     @Test
     public void createsPathToInputAndOutputMember() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("path-to-member.smithy"))
-                .assemble()
-                .unwrap();
+            .addImport(getClass().getResource("path-to-member.smithy"))
+            .assemble()
+            .unwrap();
         PathFinder finder = PathFinder.create(model);
         ShapeId operation = ShapeId.from("smithy.example#Operation");
 
         Optional<PathFinder.Path> input = finder.createPathToInputMember(operation, "foo");
         assertThat(input.isPresent(), is(true));
-        assertThat(input.get().toString(),
-                   equalTo("[id|smithy.example#Operation] -[input]-> [id|smithy.example#Input] -[member]-> [id|smithy.example#Input$foo] > [id|smithy.api#String]"));
+        assertThat(
+            input.get().toString(),
+            equalTo(
+                "[id|smithy.example#Operation] -[input]-> [id|smithy.example#Input] -[member]-> [id|smithy.example#Input$foo] > [id|smithy.api#String]"
+            )
+        );
 
         Optional<PathFinder.Path> output = finder.createPathToOutputMember(operation, "foo");
         assertThat(output.isPresent(), is(true));
-        assertThat(output.get().toString(),
-                   equalTo("[id|smithy.example#Operation] -[output]-> [id|smithy.example#Output] -[member]-> [id|smithy.example#Output$foo] > [id|smithy.api#String]"));
+        assertThat(
+            output.get().toString(),
+            equalTo(
+                "[id|smithy.example#Operation] -[output]-> [id|smithy.example#Output] -[member]-> [id|smithy.example#Output$foo] > [id|smithy.api#String]"
+            )
+        );
     }
 
     @Test
     public void createsPathToOtherShape() {
         MemberShape recursiveMember = MemberShape.builder().id("a.b#Struct$a").target("a.b#Struct").build();
         StructureShape struct = StructureShape.builder()
-                .id("a.b#Struct")
-                .addMember(recursiveMember)
-                .build();
+            .id("a.b#Struct")
+            .addMember(recursiveMember)
+            .build();
         Model model = Model.builder().addShapes(struct).build();
         PathFinder finder = PathFinder.create(model);
         List<PathFinder.Path> paths = finder.search(struct.getId(), Collections.singleton(struct));

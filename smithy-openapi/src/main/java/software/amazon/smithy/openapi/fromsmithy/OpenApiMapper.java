@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.ArrayList;
@@ -85,11 +74,11 @@ public interface OpenApiMapper {
      * @return Returns the updated operation object.
      */
     default OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String httpMethodName,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String httpMethodName,
+        String path
     ) {
         return operation;
     }
@@ -108,11 +97,11 @@ public interface OpenApiMapper {
      * @return Returns the updated operation object.
      */
     default OperationObject postProcessOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String httpMethodName,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String httpMethodName,
+        String path
     ) {
         return operation;
     }
@@ -140,11 +129,11 @@ public interface OpenApiMapper {
      * @return Returns the updated parameter.
      */
     default ParameterObject updateParameter(
-            Context<? extends Trait> context,
-            OperationShape operation,
-            String httpMethodName,
-            String path,
-            ParameterObject parameterObject
+        Context<? extends Trait> context,
+        OperationShape operation,
+        String httpMethodName,
+        String path,
+        ParameterObject parameterObject
     ) {
         return parameterObject;
     }
@@ -160,11 +149,11 @@ public interface OpenApiMapper {
      * @return Returns the updated request body.
      */
     default RequestBodyObject updateRequestBody(
-            Context<? extends Trait> context,
-            OperationShape operation,
-            String httpMethodName,
-            String path,
-            RequestBodyObject requestBody
+        Context<? extends Trait> context,
+        OperationShape operation,
+        String httpMethodName,
+        String path,
+        RequestBodyObject requestBody
     ) {
         return requestBody;
     }
@@ -181,12 +170,12 @@ public interface OpenApiMapper {
      * @return Returns the updated response object.
      */
     default ResponseObject updateResponse(
-            Context<? extends Trait> context,
-            OperationShape operation,
-            String status,
-            String httpMethodName,
-            String path,
-            ResponseObject response
+        Context<? extends Trait> context,
+        OperationShape operation,
+        String status,
+        String httpMethodName,
+        String path,
+        ResponseObject response
     ) {
         return response;
     }
@@ -209,9 +198,9 @@ public interface OpenApiMapper {
      * @return Returns the updated security scheme object. Return null to remove the scheme.
      */
     default SecurityScheme updateSecurityScheme(
-            Context<? extends Trait> context,
-            Trait authTrait,
-            SecurityScheme securityScheme
+        Context<? extends Trait> context,
+        Trait authTrait,
+        SecurityScheme securityScheme
     ) {
         return securityScheme;
     }
@@ -231,10 +220,10 @@ public interface OpenApiMapper {
      * @return Returns the updated security requirement, a mapping of scheme to requirements.
      */
     default Map<String, List<String>> updateSecurity(
-            Context<? extends Trait> context,
-            Shape shape,
-            SecuritySchemeConverter<? extends Trait> converter,
-            Map<String, List<String>> requirement
+        Context<? extends Trait> context,
+        Shape shape,
+        SecuritySchemeConverter<? extends Trait> converter,
+        Map<String, List<String>> requirement
     ) {
         return requirement;
     }
@@ -282,11 +271,11 @@ public interface OpenApiMapper {
 
             @Override
             public OperationObject updateOperation(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    OperationObject operation,
-                    String httpMethodName,
-                    String path
+                Context<? extends Trait> context,
+                OperationShape shape,
+                OperationObject operation,
+                String httpMethodName,
+                String path
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
@@ -299,11 +288,11 @@ public interface OpenApiMapper {
 
             @Override
             public OperationObject postProcessOperation(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    OperationObject operation,
-                    String httpMethodName,
-                    String path
+                Context<? extends Trait> context,
+                OperationShape shape,
+                OperationObject operation,
+                String httpMethodName,
+                String path
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
@@ -327,29 +316,34 @@ public interface OpenApiMapper {
 
             @Override
             public ParameterObject updateParameter(
-                    Context<? extends Trait> context,
-                    OperationShape operation,
-                    String httpMethodName,
-                    String path,
-                    ParameterObject parameterObject
+                Context<? extends Trait> context,
+                OperationShape operation,
+                String httpMethodName,
+                String path,
+                ParameterObject parameterObject
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (parameterObject == null) {
                         return null;
                     }
                     parameterObject = plugin.updateParameter(
-                            context, operation, httpMethodName, path, parameterObject);
+                        context,
+                        operation,
+                        httpMethodName,
+                        path,
+                        parameterObject
+                    );
                 }
                 return parameterObject;
             }
 
             @Override
             public RequestBodyObject updateRequestBody(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    String httpMethodName,
-                    String path,
-                    RequestBodyObject requestBody
+                Context<? extends Trait> context,
+                OperationShape shape,
+                String httpMethodName,
+                String path,
+                RequestBodyObject requestBody
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (requestBody == null) {
@@ -362,12 +356,12 @@ public interface OpenApiMapper {
 
             @Override
             public ResponseObject updateResponse(
-                    Context<? extends Trait> context,
-                    OperationShape shape,
-                    String status,
-                    String httpMethodName,
-                    String path,
-                    ResponseObject response
+                Context<? extends Trait> context,
+                OperationShape shape,
+                String status,
+                String httpMethodName,
+                String path,
+                ResponseObject response
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (response == null) {
@@ -380,9 +374,9 @@ public interface OpenApiMapper {
 
             @Override
             public SecurityScheme updateSecurityScheme(
-                    Context<? extends Trait> context,
-                    Trait authTrait,
-                    SecurityScheme securityScheme
+                Context<? extends Trait> context,
+                Trait authTrait,
+                SecurityScheme securityScheme
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (securityScheme == null) {
@@ -395,10 +389,10 @@ public interface OpenApiMapper {
 
             @Override
             public Map<String, List<String>> updateSecurity(
-                    Context<? extends Trait> context,
-                    Shape shape,
-                    SecuritySchemeConverter<? extends Trait> converter,
-                    Map<String, List<String>> requirement
+                Context<? extends Trait> context,
+                Shape shape,
+                SecuritySchemeConverter<? extends Trait> converter,
+                Map<String, List<String>> requirement
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (requirement == null || requirement.isEmpty()) {

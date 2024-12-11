@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.Collections;
@@ -77,9 +66,12 @@ public final class RemoveUnusedComponents implements OpenApiMapper {
     private OpenApi removalRound(Context<? extends Trait> context, OpenApi openapi) {
         // Create a set of every component pointer (currently just schemas).
         String schemaPointerPrefix = context.getConfig().getDefinitionPointer() + "/";
-        Set<String> pointers = openapi.getComponents().getSchemas().keySet().stream()
-                .map(key -> schemaPointerPrefix + key)
-                .collect(Collectors.toSet());
+        Set<String> pointers = openapi.getComponents()
+            .getSchemas()
+            .keySet()
+            .stream()
+            .map(key -> schemaPointerPrefix + key)
+            .collect(Collectors.toSet());
 
         // Remove all found "$ref" pointers from the set, leaving only unreferenced.
         pointers.removeAll(findAllRefs(openapi.toNode().expectObjectNode()));
@@ -124,9 +116,9 @@ public final class RemoveUnusedComponents implements OpenApiMapper {
 
                 if (node.getMember("$ref").isPresent()) {
                     node.getMember("$ref")
-                            .flatMap(Node::asStringNode)
-                            .map(StringNode::getValue)
-                            .ifPresent(result::add);
+                        .flatMap(Node::asStringNode)
+                        .map(StringNode::getValue)
+                        .ifPresent(result::add);
                 } else {
                     for (Node member : node.getMembers().values()) {
                         result.addAll(member.accept(this));
@@ -140,9 +132,10 @@ public final class RemoveUnusedComponents implements OpenApiMapper {
 
     private OpenApi removeUnusedSecuritySchemes(OpenApi openapi) {
         // Determine which security schemes were actually used.
-        Set<String> used = openapi.getSecurity().stream()
-                .flatMap(map -> map.keySet().stream())
-                .collect(Collectors.toSet());
+        Set<String> used = openapi.getSecurity()
+            .stream()
+            .flatMap(map -> map.keySet().stream())
+            .collect(Collectors.toSet());
 
         for (PathItem path : openapi.getPaths().values()) {
             for (OperationObject operation : path.getOperations().values()) {

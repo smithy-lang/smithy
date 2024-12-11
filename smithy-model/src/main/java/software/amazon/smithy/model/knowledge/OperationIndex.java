@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.util.ArrayList;
@@ -126,10 +115,13 @@ public final class OperationIndex implements KnowledgeIndex {
      * @throws ExpectationNotMetException if the operation shape cannot be found.
      */
     public StructureShape expectInputShape(ToShapeId operation) {
-        return getInputShape(operation).orElseThrow(() -> new ExpectationNotMetException(
+        return getInputShape(operation).orElseThrow(
+            () -> new ExpectationNotMetException(
                 "Cannot get the input of `" + operation.toShapeId() + "` because "
-                + "it is not an operation shape in the model.",
-                SourceLocation.NONE));
+                    + "it is not an operation shape in the model.",
+                SourceLocation.NONE
+            )
+        );
     }
 
     /**
@@ -144,8 +136,8 @@ public final class OperationIndex implements KnowledgeIndex {
      */
     public Map<String, MemberShape> getInputMembers(ToShapeId operation) {
         return getInputShape(operation)
-                .map(input -> input.getAllMembers())
-                .orElse(Collections.emptyMap());
+            .map(input -> input.getAllMembers())
+            .orElse(Collections.emptyMap());
     }
 
     /**
@@ -219,10 +211,13 @@ public final class OperationIndex implements KnowledgeIndex {
      * @throws ExpectationNotMetException if the operation shape cannot be found.
      */
     public StructureShape expectOutputShape(ToShapeId operation) {
-        return getOutputShape(operation).orElseThrow(() -> new ExpectationNotMetException(
+        return getOutputShape(operation).orElseThrow(
+            () -> new ExpectationNotMetException(
                 "Cannot get the output of `" + operation.toShapeId() + "` because "
-                + "it is not an operation shape in the model.",
-                SourceLocation.NONE));
+                    + "it is not an operation shape in the model.",
+                SourceLocation.NONE
+            )
+        );
     }
 
     /**
@@ -237,8 +232,8 @@ public final class OperationIndex implements KnowledgeIndex {
      */
     public Map<String, MemberShape> getOutputMembers(ToShapeId operation) {
         return getOutputShape(operation)
-                .map(output -> output.getAllMembers())
-                .orElse(Collections.emptyMap());
+            .map(output -> output.getAllMembers())
+            .orElse(Collections.emptyMap());
     }
 
     /**

@@ -1,8 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -23,8 +22,10 @@ public class SpecificationExtensionsMapper implements OpenApiMapper {
      */
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
-        openapi.getExtensions().putAll(
-            OpenApiUtils.getSpecificationExtensionsMap(context.getModel(), context.getService()));
+        openapi.getExtensions()
+            .putAll(
+                OpenApiUtils.getSpecificationExtensionsMap(context.getModel(), context.getService())
+            );
         return openapi;
     }
 
@@ -33,11 +34,11 @@ public class SpecificationExtensionsMapper implements OpenApiMapper {
      */
     @Override
     public OperationObject updateOperation(
-            Context<? extends Trait> context,
-            OperationShape shape,
-            OperationObject operation,
-            String httpMethodName,
-            String path
+        Context<? extends Trait> context,
+        OperationShape shape,
+        OperationObject operation,
+        String httpMethodName,
+        String path
     ) {
         operation.getExtensions().putAll(OpenApiUtils.getSpecificationExtensionsMap(context.getModel(), shape));
         return operation;

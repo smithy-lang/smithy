@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.traits;
 
 import java.util.HashMap;
@@ -59,8 +48,10 @@ public final class IntegrationTraitIndex implements KnowledgeIndex {
      * @return The integration trait or an empty optional if none set
      */
     public Optional<Trait> getIntegrationTrait(ToShapeId service, ToShapeId shape) {
-        return Optional.ofNullable(traits.getOrDefault(service.toShapeId(), MapUtils.of())
-                .get(shape.toShapeId()));
+        return Optional.ofNullable(
+            traits.getOrDefault(service.toShapeId(), MapUtils.of())
+                .get(shape.toShapeId())
+        );
     }
 
     /**
@@ -88,8 +79,8 @@ public final class IntegrationTraitIndex implements KnowledgeIndex {
 
         for (ShapeId resource : current.getResources()) {
             model.getShape(resource)
-                    .flatMap(Shape::asResourceShape)
-                    .ifPresent(resourceShape -> walk(model, service, resourceShape, updatedTrait));
+                .flatMap(Shape::asResourceShape)
+                .ifPresent(resourceShape -> walk(model, service, resourceShape, updatedTrait));
         }
 
         for (ShapeId operation : current.getAllOperations()) {
@@ -99,9 +90,11 @@ public final class IntegrationTraitIndex implements KnowledgeIndex {
 
     private static Trait extractTrait(Shape shape, Trait defaultValue) {
         return shape.getTrait(MockIntegrationTrait.class)
-                .map(trait -> (Trait) trait)
-                .orElseGet(() -> shape.getTrait(IntegrationTrait.class)
-                        .map(trait -> (Trait) trait)
-                        .orElse(defaultValue));
+            .map(trait -> (Trait) trait)
+            .orElseGet(
+                () -> shape.getTrait(IntegrationTrait.class)
+                    .map(trait -> (Trait) trait)
+                    .orElse(defaultValue)
+            );
     }
 }

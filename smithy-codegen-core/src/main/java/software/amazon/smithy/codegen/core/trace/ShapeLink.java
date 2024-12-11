@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
@@ -79,11 +68,11 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
     @Override
     public ObjectNode toNode() {
         ObjectNode.Builder builder = ObjectNode.objectNodeBuilder()
-                .withMember(ID_TEXT, id)
-                .withMember(TYPE_TEXT, type)
-                .withOptionalMember(FILE_TEXT, getFile().map(Node::from))
-                .withOptionalMember(LINE_TEXT, getLine().map(Node::from))
-                .withOptionalMember(COLUMN_TEXT, getColumn().map(Node::from));
+            .withMember(ID_TEXT, id)
+            .withMember(TYPE_TEXT, type)
+            .withOptionalMember(FILE_TEXT, getFile().map(Node::from))
+            .withOptionalMember(LINE_TEXT, getLine().map(Node::from))
+            .withOptionalMember(COLUMN_TEXT, getColumn().map(Node::from));
 
         if (!tags.isEmpty()) {
             builder.withMember(TAGS_TEXT, Node.fromStrings(tags));
@@ -167,12 +156,12 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
     @Override
     public Builder toBuilder() {
         return builder()
-                .id(id)
-                .column(column)
-                .type(type)
-                .tags(tags)
-                .line(line)
-                .file(file);
+            .id(id)
+            .column(column)
+            .type(type)
+            .tags(tags)
+            .line(line)
+            .file(file);
     }
 
     public static final class Builder implements SmithyBuilder<ShapeLink> {

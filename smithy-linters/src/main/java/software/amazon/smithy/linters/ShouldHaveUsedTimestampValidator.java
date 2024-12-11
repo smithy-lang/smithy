@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import java.util.ArrayList;
@@ -92,13 +81,13 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
     }
 
     private static final List<Pattern> DEFAULT_PATTERNS = ListUtils.of(
-            Pattern.compile("^.*[Tt]imestamp.*$"), // contains the string "timestamp"
-            Pattern.compile("^[Tt]ime([_A-Z].*)?$"), // begins with the word "time"
-            Pattern.compile("^[Dd]ate([_A-Z].*)?$"), // begins with the word "date"
-            Pattern.compile("^.*([a-z]T|_[Tt])ime$"), // ends with the word "time"
-            Pattern.compile("^.*([a-z]D|_[Dd])ate$"), // ends with the word "date"
-            Pattern.compile("^.*([a-z]A|_[Aa])t$"), // ends with the word "at"
-            Pattern.compile("^.*([a-z]O|_[Oo])n$") // ends with the word "on"
+        Pattern.compile("^.*[Tt]imestamp.*$"), // contains the string "timestamp"
+        Pattern.compile("^[Tt]ime([_A-Z].*)?$"), // begins with the word "time"
+        Pattern.compile("^[Dd]ate([_A-Z].*)?$"), // begins with the word "date"
+        Pattern.compile("^.*([a-z]T|_[Tt])ime$"), // ends with the word "time"
+        Pattern.compile("^.*([a-z]D|_[Dd])ate$"), // ends with the word "date"
+        Pattern.compile("^.*([a-z]A|_[Aa])t$"), // ends with the word "at"
+        Pattern.compile("^.*([a-z]O|_[Oo])n$") // ends with the word "on"
     );
 
     private final List<Pattern> patterns = new ArrayList<>(DEFAULT_PATTERNS);
@@ -139,56 +128,58 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(
-            StructureShape structure,
-            Model model
+        StructureShape structure,
+        Model model
     ) {
         return structure
-                .getAllMembers()
-                .entrySet()
-                .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
-                .collect(Collectors.toList());
+            .getAllMembers()
+            .entrySet()
+            .stream()
+            .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
+            .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateUnion(
-            UnionShape union,
-            Model model
+        UnionShape union,
+        Model model
     ) {
         return union
-                .getAllMembers()
-                .entrySet()
-                .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
-                .collect(Collectors.toList());
+            .getAllMembers()
+            .entrySet()
+            .stream()
+            .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model))
+            .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateTargetShape(
-            String name,
-            MemberShape memberShape,
-            Model model
+        String name,
+        MemberShape memberShape,
+        Model model
     ) {
-        return OptionalUtils.stream(model.getShape(memberShape.getTarget())
-                .flatMap(targetShape -> validateName(name, targetShape, memberShape, patterns, model)));
+        return OptionalUtils.stream(
+            model.getShape(memberShape.getTarget())
+                .flatMap(targetShape -> validateName(name, targetShape, memberShape, patterns, model))
+        );
     }
 
     private List<ValidationEvent> validateSimpleShape(
-            Shape shape
+        Shape shape
     ) {
         String name = shape.getId().getName();
 
         return patterns
-                .stream()
-                .filter(pattern -> pattern.matcher(name).matches())
-                .map(matcher -> buildEvent(shape, name, shape.getType()))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(pattern -> pattern.matcher(name).matches())
+            .map(matcher -> buildEvent(shape, name, shape.getType()))
+            .collect(Collectors.toList());
     }
 
     private Optional<ValidationEvent> validateName(
-            String name,
-            Shape targetShape,
-            Shape context,
-            List<Pattern> patterns,
-            Model model
+        String name,
+        Shape targetShape,
+        Shape context,
+        List<Pattern> patterns,
+        Model model
     ) {
         ShapeType type = targetShape.getType();
         if (type == ShapeType.TIMESTAMP || type == ShapeType.ENUM) {
@@ -199,25 +190,28 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             }
         }
         return patterns
-                .stream()
-                .filter(pattern -> pattern.matcher(name).matches())
-                .map(matcher -> buildEvent(context, name, type))
-                .findAny();
+            .stream()
+            .filter(pattern -> pattern.matcher(name).matches())
+            .map(matcher -> buildEvent(context, name, type))
+            .findAny();
     }
 
     private boolean onlyContainsTimestamps(Shape shape, Model model) {
         return shape.getAllMembers()
-                .values()
-                .stream()
-                .map(memberShape -> model.getShape(memberShape.getTarget()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .allMatch(Shape::isTimestampShape);
+            .values()
+            .stream()
+            .map(memberShape -> model.getShape(memberShape.getTarget()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .allMatch(Shape::isTimestampShape);
     }
 
     private ValidationEvent buildEvent(Shape context, String name, ShapeType type) {
-        return danger(context, context.isMemberShape()
+        return danger(
+            context,
+            context.isMemberShape()
                 ? String.format("Member `%s` is named like a timestamp but references a `%s` shape", name, type)
-                : String.format("Shape `%s` is named like a timestamp but is a `%s` shape.", name, type));
+                : String.format("Shape `%s` is named like a timestamp but is a `%s` shape.", name, type)
+        );
     }
 }

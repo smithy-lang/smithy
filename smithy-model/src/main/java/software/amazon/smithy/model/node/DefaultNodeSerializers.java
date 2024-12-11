@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static software.amazon.smithy.model.node.NodeMapper.Serializer;
@@ -198,8 +187,9 @@ final class DefaultNodeSerializers {
                     mappings.put((StringNode) key, mapper.serialize(entry.getValue(), serializedObjects));
                 } else {
                     throw new NodeSerializationException(
-                            "Unable to write Map key because it was not serialized as a string: "
-                            + entry.getKey() + " -> " + Node.printJson(key));
+                        "Unable to write Map key because it was not serialized as a string: "
+                            + entry.getKey() + " -> " + Node.printJson(key)
+                    );
                 }
             }
 
@@ -348,11 +338,12 @@ final class DefaultNodeSerializers {
                     // If this isn't done, I observed that the message of ReflectiveOperationException is null.
                     String causeMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
                     String message = String.format(
-                            "Error serializing `%s` field of %s using %s(): %s",
-                            entry.getKey(),
-                            value.getClass().getName(),
-                            entry.getValue().getName(),
-                            causeMessage);
+                        "Error serializing `%s` field of %s using %s(): %s",
+                        entry.getKey(),
+                        value.getClass().getName(),
+                        entry.getValue().getName(),
+                        causeMessage
+                    );
                     throw new NodeSerializationException(message, e);
                 }
             }
@@ -401,22 +392,22 @@ final class DefaultNodeSerializers {
     // If we ever open up the API, then we should consider making the priority
     // more explicit by adding it to the Serializer interface.
     static final List<Serializer> SERIALIZERS = ListUtils.of(
-            TO_NODE_SERIALIZER,
-            OPTIONAL_SERIALIZER,
-            STRING_SERIALIZER,
-            BOOLEAN_SERIALIZER,
-            NUMBER_SERIALIZER,
-            MAP_SERIALIZER,
-            ARRAY_SERIALIZER,
-            SHAPE_ID_SERIALIZER,
-            ENUM_SERIALIZER,
-            URL_SERIALIZER,
-            URI_SERIALIZER,
-            PATTERN_SERIALIZER,
-            PATH_SERIALIZER,
-            FILE_SERIALIZER,
-            // Lots of things implement iterable that have specialized serialization.
-            ITERABLE_SERIALIZER
+        TO_NODE_SERIALIZER,
+        OPTIONAL_SERIALIZER,
+        STRING_SERIALIZER,
+        BOOLEAN_SERIALIZER,
+        NUMBER_SERIALIZER,
+        MAP_SERIALIZER,
+        ARRAY_SERIALIZER,
+        SHAPE_ID_SERIALIZER,
+        ENUM_SERIALIZER,
+        URL_SERIALIZER,
+        URI_SERIALIZER,
+        PATTERN_SERIALIZER,
+        PATH_SERIALIZER,
+        FILE_SERIALIZER,
+        // Lots of things implement iterable that have specialized serialization.
+        ITERABLE_SERIALIZER
     );
 
     private DefaultNodeSerializers() {}
