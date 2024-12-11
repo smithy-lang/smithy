@@ -323,7 +323,7 @@ if (project.hasProperty("release.cli")) {
             replacements = mapOf(
                 "osx" to "darwin",
                 "aarch_64" to "aarch64",
-                "windows_x86_64" to "windows_x64"
+                "windows_x86_64" to "windows_x64",
             )
         }
 
