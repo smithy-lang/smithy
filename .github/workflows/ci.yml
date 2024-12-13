@@ -26,7 +26,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Clean, build, test, and javadoc
-        run: ./gradlew clean build javadoc -Plog-tests --stacktrace
+        run: ./gradlew clean build javadoc -PresolveImageJre -Plog-tests --stacktrace
 
       - name: Allow long file names in git for windows
         if: matrix.os == 'windows-latest'
