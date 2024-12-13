@@ -199,6 +199,10 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         return properties;
     }
 
+    public Set<String> getRequired() {
+        return required;
+    }
+
     public Set<String> getReadOnlyProperties() {
         return readOnlyProperties;
     }
@@ -233,6 +237,10 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
 
     public Tagging getTagging() {
         return tagging;
+    }
+
+    public Schema getAdditionalProperties() {
+        return additionalProperties;
     }
 
     public static final class Builder implements SmithyBuilder<ResourceSchema> {
