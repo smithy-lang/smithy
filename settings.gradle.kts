@@ -4,11 +4,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-
-    plugins {
-        val smithyGradleVersion : String by settings
-        id("software.amazon.smithy.gradle.smithy-jar") version smithyGradleVersion
-    }
 }
 
 rootProject.name = "smithy"
@@ -43,3 +38,5 @@ include(":smithy-aws-smoke-test-model")
 include(":smithy-protocol-traits")
 include(":smithy-protocol-tests")
 include(":smithy-trait-codegen")
+include(":smithy-docgen-core")
+include(":smithy-docgen-test")
