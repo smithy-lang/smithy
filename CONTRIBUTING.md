@@ -7,6 +7,11 @@ Please read through this document before submitting any issues or pull requests 
 information to effectively respond to your bug report or contribution.
 
 
+## Building the Project
+
+Building this project **requires having a JDK17+ installation**. However, for the time being, most modules will still 
+produce artifacts targeting JDK8, unless explicitly noted otherwise. 
+
 ## Reporting Bugs/Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
