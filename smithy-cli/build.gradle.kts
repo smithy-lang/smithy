@@ -25,14 +25,7 @@ description = "This module implements the Smithy command line interface."
 extra["displayName"] = "Smithy :: CLI"
 extra["moduleName"] = "software.amazon.smithy.cli"
 
-// If `resolveImageJre` is set, detect the current JVM version and use the same version for generating the runtime
-// This is mainly used in CI to generate a valid runtime image for integration tests
-val imageJreVersion = if (project.hasProperty("resolveImageJre")) {
-    JavaVersion.current().majorVersion
-} else {
-    // Otherwise, just use 17
-    "17"
-}
+val imageJreVersion = "17"
 val correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-$imageJreVersion"
 
 dependencies {
@@ -146,6 +139,13 @@ runtime {
 
     // Because we're using target-platforms, it will use this property as a prefix for each target zip
     imageZip = layout.buildDirectory.file("image/smithy-cli.zip")
+
+    // This is needed to ensure that jlink is available (jlink is Java 9+), we should use the JDK that
+    // is configured for the runtime
+    // NOTE: For the runtime task, you *must* have the right JDK set up in your environment (17 at the time of writing)
+    javaHome = javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
+    }.map { it.metadata.installationPath.asFile.path }
 }
 
 tasks {
