@@ -34,8 +34,8 @@ public final class RecommendedInterceptor implements CodeInterceptor<ShapeSubhea
         writer.putContext("reason", trait.getReason());
         writer.writeBadge(NoticeType.IMPORTANT, "RECOMMENDED");
         writer.write("""
-            ${?reason} ${reason:L}${/reason}
+                ${?reason} ${reason:L}${/reason}
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

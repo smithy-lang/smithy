@@ -23,20 +23,20 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class XmlFlattenedInterceptor implements CodeInterceptor<ProtocolSection, DocWriter> {
     private static final Pair<String, String> WRAPPED_LIST_REF = Pair.of(
-        "wrapped",
-        "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-list-serialization"
+            "wrapped",
+            "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-list-serialization"
     );
     private static final Pair<String, String> FLAT_LIST_REF = Pair.of(
-        "flat",
-        "https://smithy.io/2.0/spec/protocol-traits.html#flattened-list-serialization"
+            "flat",
+            "https://smithy.io/2.0/spec/protocol-traits.html#flattened-list-serialization"
     );
     private static final Pair<String, String> WRAPPED_MAP_REF = Pair.of(
-        "wrapped",
-        "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-map-serialization"
+            "wrapped",
+            "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-map-serialization"
     );
     private static final Pair<String, String> FLAT_MAP_REF = Pair.of(
-        "flat",
-        "https://smithy.io/2.0/spec/protocol-traits.html#flattened-map-serialization"
+            "flat",
+            "https://smithy.io/2.0/spec/protocol-traits.html#flattened-map-serialization"
     );
 
     @Override
@@ -63,9 +63,9 @@ public class XmlFlattenedInterceptor implements CodeInterceptor<ProtocolSection,
     @Override
     public void write(DocWriter writer, String previousText, ProtocolSection section) {
         writer.write("""
-            Serialization type: $R
+                Serialization type: $R
 
-            $L""", getRef(section.context(), section.shape()), previousText);
+                $L""", getRef(section.context(), section.shape()), previousText);
 
     }
 

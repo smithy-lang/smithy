@@ -34,19 +34,19 @@ public final class RangeInterceptor implements CodeInterceptor<ShapeSubheadingSe
         writer.putContext("max", trait.getMax());
 
         writer.write(
-            """
-                ${?min}
-                $1B ${min:L}
+                """
+                        ${?min}
+                        $1B ${min:L}
 
-                ${/min}
-                ${?max}
-                $2B ${max:L}
+                        ${/min}
+                        ${?max}
+                        $2B ${max:L}
 
-                ${/max}
-                $3L""",
-            "Minimum:",
-            "Maximum:",
-            previousText
+                        ${/max}
+                        $3L""",
+                "Minimum:",
+                "Maximum:",
+                previousText
         );
     }
 }

@@ -108,10 +108,10 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
             new MemberGenerator(context, writer, resource, MemberListingType.RESOURCE_PROPERTIES).run();
 
             var subResources = resource.getResources()
-                .stream()
-                .sorted()
-                .map(id -> context.model().expectShape(id, ResourceShape.class))
-                .toList();
+                    .stream()
+                    .sorted()
+                    .map(id -> context.model().expectShape(id, ResourceShape.class))
+                    .toList();
             GeneratorUtils.generateResourceListing(context, writer, resource, subResources);
 
             generateLifecycleDocs(context, writer, resource);
@@ -119,9 +119,9 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
             var operationIds = new HashSet<>(resource.getOperations());
             operationIds.addAll(resource.getCollectionOperations());
             var operations = operationIds.stream()
-                .sorted()
-                .map(id -> context.model().expectShape(id, OperationShape.class))
-                .toList();
+                    .sorted()
+                    .map(id -> context.model().expectShape(id, OperationShape.class))
+                    .toList();
             GeneratorUtils.generateOperationListing(context, writer, resource, operations);
 
             writer.closeHeading();
@@ -136,8 +136,8 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
             return;
         }
         var linkId = context.symbolProvider()
-            .toSymbol(resource)
-            .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
+                .toSymbol(resource)
+                .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         writer.openHeading("Lifecycle Operations", linkId + "-lifecycle-operations");
         writer.openDefinitionList();
 
@@ -178,27 +178,27 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
 
     private boolean hasLifecycleBindings(ResourceShape resource) {
         return resource.getPut().isPresent()
-            || resource.getCreate().isPresent()
-            || resource.getRead().isPresent()
-            || resource.getUpdate().isPresent()
-            || resource.getDelete().isPresent()
-            || resource.getList().isPresent();
+                || resource.getCreate().isPresent()
+                || resource.getRead().isPresent()
+                || resource.getUpdate().isPresent()
+                || resource.getDelete().isPresent()
+                || resource.getList().isPresent();
     }
 
     private void writeLifecycleListing(
-        DocGenerationContext context,
-        DocWriter writer,
-        ResourceShape resource,
-        OperationShape operation,
-        LifecycleType lifecycleType
+            DocGenerationContext context,
+            DocWriter writer,
+            ResourceShape resource,
+            OperationShape operation,
+            LifecycleType lifecycleType
     ) {
         writer.pushState(new LifecycleOperationSection(context, resource, operation, lifecycleType));
         var lifecycleName = StringUtils.capitalize(lifecycleType.name().toLowerCase(Locale.ENGLISH));
         var operationName = context.symbolProvider().toSymbol(operation).getName();
         var reference = SymbolReference.builder()
-            .symbol(context.symbolProvider().toSymbol(operation))
-            .alias(String.format("%s (%s)", lifecycleName, operationName))
-            .build();
+                .symbol(context.symbolProvider().toSymbol(operation))
+                .alias(String.format("%s (%s)", lifecycleName, operationName))
+                .build();
         writer.openDefinitionListItem(w -> w.writeInline("$R", reference));
         writer.writeShapeDocs(operation, context.model());
         writer.closeDefinitionListItem();

@@ -20,8 +20,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class LengthInterceptor implements CodeInterceptor<ShapeSubheadingSection, DocWriter> {
     private static final Pair<String, String> UNICODE_SCALAR_VALUE_REFERENCE = Pair.of(
-        "Unicode scalar values",
-        "https://www.unicode.org/glossary/#unicode_scalar_value"
+            "Unicode scalar values",
+            "https://www.unicode.org/glossary/#unicode_scalar_value"
     );
 
     @Override
@@ -41,24 +41,24 @@ public final class LengthInterceptor implements CodeInterceptor<ShapeSubheadingS
         writer.putContext("max", trait.getMax());
 
         var target = section.shape().isMemberShape()
-            ? section.context().model().expectShape(section.shape().asMemberShape().get().getTarget())
-            : section.shape();
+                ? section.context().model().expectShape(section.shape().asMemberShape().get().getTarget())
+                : section.shape();
 
         writer.write(
-            """
-                ${?min}
-                $1B ${min:L} $3C.
+                """
+                        ${?min}
+                        $1B ${min:L} $3C.
 
-                ${/min}
-                ${?max}
-                $2B ${max:L} $3C.
+                        ${/min}
+                        ${?max}
+                        $2B ${max:L} $3C.
 
-                ${/max}
-                $4L""",
-            "Minimum length:",
-            "Maximum length:",
-            writer.consumer(w -> writeUnit(w, target)),
-            previousText
+                        ${/max}
+                        $4L""",
+                "Minimum length:",
+                "Maximum length:",
+                writer.consumer(w -> writeUnit(w, target)),
+                previousText
         );
     }
 

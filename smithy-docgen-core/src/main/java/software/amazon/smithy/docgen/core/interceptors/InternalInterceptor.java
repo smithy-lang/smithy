@@ -35,14 +35,14 @@ public final class InternalInterceptor implements CodeInterceptor<ShapeSubheadin
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         // TODO: add a DANGER-level validator
         LOGGER.warning(
-            String.format(
-                """
-                    Internal shape %s found. Adding DANGER admonition to its documentation. \
-                    If this isn't meant to be documented, use a trait filter in your projection \
-                    to filter out internal shapes: \
-                    https://smithy.io/2.0/guides/building-models/build-config.html#excludeshapesbytrait""",
-                section.shape().getId()
-            )
+                String.format(
+                        """
+                                Internal shape %s found. Adding DANGER admonition to its documentation. \
+                                If this isn't meant to be documented, use a trait filter in your projection \
+                                to filter out internal shapes: \
+                                https://smithy.io/2.0/guides/building-models/build-config.html#excludeshapesbytrait""",
+                        section.shape().getId()
+                )
         );
         writer.openAdmonition(NoticeType.DANGER);
         writer.write("This is part of the internal API not available to external customers.");

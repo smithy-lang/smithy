@@ -19,8 +19,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class PatternInterceptor implements CodeInterceptor<ShapeSubheadingSection, DocWriter> {
     private static final Pair<String, String> REGEX_REF = Pair.of(
-        "ECMA 262 regular expression",
-        "https://262.ecma-international.org/8.0/#sec-patterns"
+            "ECMA 262 regular expression",
+            "https://262.ecma-international.org/8.0/#sec-patterns"
     );
 
     @Override
@@ -37,8 +37,8 @@ public final class PatternInterceptor implements CodeInterceptor<ShapeSubheading
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         var trait = section.shape().getMemberTrait(section.context().model(), PatternTrait.class).get();
         writer.write("""
-            This value must match the following $R: $`
+                This value must match the following $R: $`
 
-            $L""", REGEX_REF, trait.getValue(), previousText);
+                $L""", REGEX_REF, trait.getValue(), previousText);
     }
 }

@@ -98,12 +98,12 @@ public final class SphinxIntegration implements DocIntegration {
     private static final List<String> MARKDOWN_REQUIREMENTS = parseRequirements("requirements-markdown.txt");
 
     private static final List<String> BASE_EXTENSIONS = List.of(
-        "sphinx_inline_tabs",
-        "sphinx_copybutton",
-        "sphinx_design"
+            "sphinx_inline_tabs",
+            "sphinx_copybutton",
+            "sphinx_design"
     );
     private static final List<String> MARKDOWN_EXTENSIONS = List.of(
-        "myst_parser"
+            "myst_parser"
     );
 
     private SphinxSettings settings = SphinxSettings.fromNode(Node.objectNode());
@@ -111,8 +111,8 @@ public final class SphinxIntegration implements DocIntegration {
     private static List<String> parseRequirements(String filename) {
         String requirementsFile = IoUtils.readUtf8Resource(SphinxIntegration.class, "sphinx/" + filename);
         return requirementsFile.lines()
-            .filter(line -> !line.stripLeading().startsWith("#"))
-            .collect(Collectors.toList());
+                .filter(line -> !line.stripLeading().startsWith("#"))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -134,7 +134,7 @@ public final class SphinxIntegration implements DocIntegration {
     @Override
     public List<DocFormat> docFormats(DocSettings settings) {
         return List.of(
-            new DocFormat(MARKDOWN_FORMAT, ".md", new SphinxMarkdownWriter.Factory())
+                new DocFormat(MARKDOWN_FORMAT, ".md", new SphinxMarkdownWriter.Factory())
         );
     }
 
@@ -142,10 +142,10 @@ public final class SphinxIntegration implements DocIntegration {
     public void customize(DocGenerationContext context) {
         if (!FORMATS.contains(context.docFormat().name())) {
             LOGGER.finest(
-                format(
-                    "Format %s is not a Sphinx-compatible format, skipping Sphinx project setup.",
-                    context.docFormat().name()
-                )
+                    format(
+                            "Format %s is not a Sphinx-compatible format, skipping Sphinx project setup.",
+                            context.docFormat().name()
+                    )
             );
             return;
         }
@@ -191,43 +191,43 @@ public final class SphinxIntegration implements DocIntegration {
             writer.putContext("isMarkdown", context.docFormat().name().equals(MARKDOWN_FORMAT));
 
             writer.write(
-                """
-                    # Configuration file for the Sphinx documentation builder.
-                    # For the full list of built-in configuration values, see the documentation:
-                    # https://www.sphinx-doc.org/en/master/usage/configuration.html
-                    project = $1S
-                    version = $2S
-                    release = $2S
+                    """
+                            # Configuration file for the Sphinx documentation builder.
+                            # For the full list of built-in configuration values, see the documentation:
+                            # https://www.sphinx-doc.org/en/master/usage/configuration.html
+                            project = $1S
+                            version = $2S
+                            release = $2S
 
-                    extensions = [
-                    ${#extensions}
-                        ${value:S},
-                    ${/extensions}
-                    ]
-                    ${?isMarkdown}
-                    myst_enable_extensions = [
-                        # Makes bare links into actual links
-                        "linkify",
+                            extensions = [
+                            ${#extensions}
+                                ${value:S},
+                            ${/extensions}
+                            ]
+                            ${?isMarkdown}
+                            myst_enable_extensions = [
+                                # Makes bare links into actual links
+                                "linkify",
 
-                        # Used to write directives that can be parsed by normal parsers
-                        "colon_fence",
+                                # Used to write directives that can be parsed by normal parsers
+                                "colon_fence",
 
-                        # Used to create formatted member lists
-                        "deflist",
-                    ]
-                    ${/isMarkdown}
+                                # Used to create formatted member lists
+                                "deflist",
+                            ]
+                            ${/isMarkdown}
 
-                    templates_path = ["_templates"]
-                    html_static_path = ["_static"]
-                    html_theme = $3S
-                    html_title = $1S
+                            templates_path = ["_templates"]
+                            html_static_path = ["_static"]
+                            html_theme = $3S
+                            html_title = $1S
 
-                    pygments_style = "default"
-                    pygments_dark_style = "gruvbox-dark"
-                    """,
-                serviceSymbol.getName(),
-                service.getVersion(),
-                settings.theme()
+                            pygments_style = "default"
+                            pygments_dark_style = "gruvbox-dark"
+                            """,
+                    serviceSymbol.getName(),
+                    service.getVersion(),
+                    settings.theme()
             );
 
             writer.popState();
@@ -238,67 +238,67 @@ public final class SphinxIntegration implements DocIntegration {
         context.writerDelegator().useFileWriter("Makefile", writer -> {
             writer.pushState(new MakefileSection(context));
             writer.writeWithNoFormatting("""
-                # Minimal makefile for Sphinx documentation
-                # You can set these variables from the command line, and also
-                # from the environment for the first two.
-                SPHINXOPTS    ?=
-                SPHINXBUILD   ?= sphinx-build
-                SOURCEDIR     = content
-                BUILDDIR      = build
+                    # Minimal makefile for Sphinx documentation
+                    # You can set these variables from the command line, and also
+                    # from the environment for the first two.
+                    SPHINXOPTS    ?=
+                    SPHINXBUILD   ?= sphinx-build
+                    SOURCEDIR     = content
+                    BUILDDIR      = build
 
-                # Put it first so that "make" without argument is like "make help".
-                help:
-                \t@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+                    # Put it first so that "make" without argument is like "make help".
+                    help:
+                    \t@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-                .PHONY: help Makefile
+                    .PHONY: help Makefile
 
-                # Catch-all target: route all unknown targets to Sphinx using the new
-                # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-                %: Makefile
-                \t@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-                """);
+                    # Catch-all target: route all unknown targets to Sphinx using the new
+                    # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+                    %: Makefile
+                    \t@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+                    """);
             writer.popState();
         });
 
         context.writerDelegator().useFileWriter("make.bat", writer -> {
             writer.pushState(new WindowsMakeSection(context));
             writer.write("""
-                @ECHO OFF
+                    @ECHO OFF
 
-                pushd %~dp0
+                    pushd %~dp0
 
-                REM Command file for Sphinx documentation
+                    REM Command file for Sphinx documentation
 
-                if "%SPHINXBUILD%" == "" (
-                    set SPHINXBUILD=sphinx-build
-                )
-                set SOURCEDIR=content
-                set BUILDDIR=build
+                    if "%SPHINXBUILD%" == "" (
+                        set SPHINXBUILD=sphinx-build
+                    )
+                    set SOURCEDIR=content
+                    set BUILDDIR=build
 
-                %SPHINXBUILD% >NUL 2>NUL
-                if errorlevel 9009 (
-                    echo.
-                    echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
-                    echo.installed, then set the SPHINXBUILD environment variable to point
-                    echo.to the full path of the 'sphinx-build' executable. Alternatively you
-                    echo.may add the Sphinx directory to PATH.
-                    echo.
-                    echo.If you don't have Sphinx installed, grab it from
-                    echo.https://www.sphinx-doc.org/
-                    exit /b 1
-                )
+                    %SPHINXBUILD% >NUL 2>NUL
+                    if errorlevel 9009 (
+                        echo.
+                        echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
+                        echo.installed, then set the SPHINXBUILD environment variable to point
+                        echo.to the full path of the 'sphinx-build' executable. Alternatively you
+                        echo.may add the Sphinx directory to PATH.
+                        echo.
+                        echo.If you don't have Sphinx installed, grab it from
+                        echo.https://www.sphinx-doc.org/
+                        exit /b 1
+                    )
 
-                if "%1" == "" goto help
+                    if "%1" == "" goto help
 
-                %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-                goto end
+                    %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+                    goto end
 
-                :help
-                %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+                    :help
+                    %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
-                :end
-                popd
-                """);
+                    :end
+                    popd
+                    """);
             writer.popState();
         });
     }
@@ -340,31 +340,31 @@ public final class SphinxIntegration implements DocIntegration {
             runCommand("./venv/bin/sphinx-build -M " + settings.format() + " content build", baseDir);
 
             System.out.printf(
-                normalizeNewlines("""
-                    Successfully built HTML docs. They can be found in "%1$s".
+                    normalizeNewlines("""
+                            Successfully built HTML docs. They can be found in "%1$s".
 
-                    Other output formats can also be built. A python virtual environment \
-                    has been created at "%2$s" containing the build tools needed for \
-                    manually building the docs in other formats. See the virtual \
-                    environment docs for information on how to activate it: \
-                    https://docs.python.org/3/library/venv.html#how-venvs-work
+                            Other output formats can also be built. A python virtual environment \
+                            has been created at "%2$s" containing the build tools needed for \
+                            manually building the docs in other formats. See the virtual \
+                            environment docs for information on how to activate it: \
+                            https://docs.python.org/3/library/venv.html#how-venvs-work
 
-                    Once the environment is activated, run `make %4$s` from "%3$s" to \
-                    to build the docs, substituting %4$s for whatever format you wish \
-                    to build.
+                            Once the environment is activated, run `make %4$s` from "%3$s" to \
+                            to build the docs, substituting %4$s for whatever format you wish \
+                            to build.
 
-                    To build the docs without activating the virtual environment, simply \
-                    run `./venv/bin/sphinx-build -M %4$s content build` from "%3$s", \
-                    similarly substituting %4$s for your desired format.
+                            To build the docs without activating the virtual environment, simply \
+                            run `./venv/bin/sphinx-build -M %4$s content build` from "%3$s", \
+                            similarly substituting %4$s for your desired format.
 
-                    See sphinx docs for other output formats you can choose: \
-                    https://www.sphinx-doc.org/en/master/usage/builders/index.html
+                            See sphinx docs for other output formats you can choose: \
+                            https://www.sphinx-doc.org/en/master/usage/builders/index.html
 
-                    """),
-                baseDir.resolve("build/" + settings.format()),
-                baseDir.resolve("venv"),
-                baseDir,
-                settings.format()
+                            """),
+                    baseDir.resolve("build/" + settings.format()),
+                    baseDir.resolve("venv"),
+                    baseDir,
+                    settings.format()
             );
         } catch (CodegenException e) {
             LOGGER.warning("Unable to automatically build HTML docs: " + e);
@@ -375,22 +375,22 @@ public final class SphinxIntegration implements DocIntegration {
     private void logManualBuildInstructions(DocGenerationContext context) {
         // TODO: try to get this printed out in the projection section
         System.out.printf(
-            normalizeNewlines("""
-                To build the HTML docs manually, you need to first install the python \
-                dependencies. These can be found in the `requirements.txt` file in \
-                "%1$s". The easiest way to install these is by running `pip install \
-                -r requirements.txt`. Depending on your environment, you may need to \
-                instead install them from your system package manager, or another \
-                source.
+                normalizeNewlines("""
+                        To build the HTML docs manually, you need to first install the python \
+                        dependencies. These can be found in the `requirements.txt` file in \
+                        "%1$s". The easiest way to install these is by running `pip install \
+                        -r requirements.txt`. Depending on your environment, you may need to \
+                        instead install them from your system package manager, or another \
+                        source.
 
-                Once the dependencies are installed, run `make %2$s` from \
-                "%1$s". Other output formats can also be built. See sphinx docs for \
-                other output formats: \
-                https://www.sphinx-doc.org/en/master/usage/builders/index.html
+                        Once the dependencies are installed, run `make %2$s` from \
+                        "%1$s". Other output formats can also be built. See sphinx docs for \
+                        other output formats: \
+                        https://www.sphinx-doc.org/en/master/usage/builders/index.html
 
-                """),
-            context.fileManifest().getBaseDir(),
-            settings.format()
+                        """),
+                context.fileManifest().getBaseDir(),
+                settings.format()
         );
     }
 
@@ -401,8 +401,8 @@ public final class SphinxIntegration implements DocIntegration {
         }
 
         Map<Path, Set<Path>> directories = paths.stream()
-            .filter(path -> path.toString().endsWith(".md") || path.toString().endsWith(".rst"))
-            .collect(Collectors.groupingBy(Path::getParent, Collectors.toSet()));
+                .filter(path -> path.toString().endsWith(".md") || path.toString().endsWith(".rst"))
+                .collect(Collectors.groupingBy(Path::getParent, Collectors.toSet()));
 
         for (var directory : directories.entrySet()) {
             if (shouldGenerateIndex(directory.getValue())) {
@@ -414,26 +414,26 @@ public final class SphinxIntegration implements DocIntegration {
         var serviceSymbol = context.symbolProvider().toSymbol(service);
         var serivceDirectory = Paths.get(serviceSymbol.getDefinitionFile()).getParent();
         var sourceDirectories = directories.keySet()
-            .stream()
-            .filter(path -> !path.equals(context.fileManifest().resolvePath(serivceDirectory)))
-            .map(Path::getFileName)
-            .map(Object::toString)
-            .distinct()
-            .sorted()
-            .toList();
+                .stream()
+                .filter(path -> !path.equals(context.fileManifest().resolvePath(serivceDirectory)))
+                .map(Path::getFileName)
+                .map(Object::toString)
+                .distinct()
+                .sorted()
+                .toList();
 
         if (!sourceDirectories.isEmpty()) {
             context.writerDelegator().useShapeWriter(service, writer -> {
                 writer.putContext("sourceDirectories", sourceDirectories);
                 writer.write("""
-                    :::{toctree}
-                    :hidden: true
+                        :::{toctree}
+                        :hidden: true
 
-                    ${#sourceDirectories}
-                    ${value:L}/index
-                    ${/sourceDirectories}
-                    :::
-                    """);
+                        ${#sourceDirectories}
+                        ${value:L}/index
+                        ${/sourceDirectories}
+                        :::
+                        """);
             });
         }
     }
@@ -455,22 +455,22 @@ public final class SphinxIntegration implements DocIntegration {
     private void writeIndex(DocGenerationContext context, Path directory, Set<Path> contents) {
         context.writerDelegator().useFileWriter(directory.resolve("index.md").toString(), writer -> {
             var sourceFiles = contents.stream()
-                .map(Path::getFileName)
-                .map(Object::toString)
-                .distinct()
-                .sorted()
-                .toList();
+                    .map(Path::getFileName)
+                    .map(Object::toString)
+                    .distinct()
+                    .sorted()
+                    .toList();
 
             writer.pushState(new IndexSection(context, directory, contents));
             writer.putContext("sourceFiles", sourceFiles);
             writer.openHeading(StringUtils.capitalize(directory.getFileName().toString()));
             writer.write("""
-                :::{toctree}
-                ${#sourceFiles}
-                ${value:L}
-                ${/sourceFiles}
-                :::
-                """);
+                    :::{toctree}
+                    ${#sourceFiles}
+                    ${value:L}
+                    ${/sourceFiles}
+                    :::
+                    """);
             writer.closeHeading();
             writer.popState();
         });
@@ -525,11 +525,11 @@ public final class SphinxIntegration implements DocIntegration {
      */
     @SmithyUnstableApi
     public record SphinxSettings(
-        String format,
-        String theme,
-        List<String> extraDependencies,
-        List<String> extraExtensions,
-        boolean autoBuild
+            String format,
+            String theme,
+            List<String> extraDependencies,
+            List<String> extraExtensions,
+            boolean autoBuild
     ) {
         /**
          * Load the settings from an {@code ObjectNode}.
@@ -541,19 +541,19 @@ public final class SphinxIntegration implements DocIntegration {
             List<String> extraDependencies = List.of();
             if (node.containsMember("extraDependencies")) {
                 extraDependencies = node.expectArrayMember("extraDependencies")
-                    .getElementsAs(StringNode::getValue);
+                        .getElementsAs(StringNode::getValue);
             }
             List<String> extraExtensions = List.of();
             if (node.containsMember("extraExtensions")) {
                 extraExtensions = node.expectArrayMember("extraExtensions")
-                    .getElementsAs(StringNode::getValue);
+                        .getElementsAs(StringNode::getValue);
             }
             return new SphinxSettings(
-                node.getStringMemberOrDefault("format", "html"),
-                node.getStringMemberOrDefault("theme", "furo"),
-                extraDependencies,
-                extraExtensions,
-                node.getBooleanMemberOrDefault("autoBuild", true)
+                    node.getStringMemberOrDefault("format", "html"),
+                    node.getStringMemberOrDefault("theme", "furo"),
+                    extraDependencies,
+                    extraExtensions,
+                    node.getBooleanMemberOrDefault("autoBuild", true)
             );
         }
     }

@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public record ProtocolsSection(
-    DocGenerationContext context,
-    Shape shape
+        DocGenerationContext context,
+        Shape shape
 ) implements CodeSection {
 }

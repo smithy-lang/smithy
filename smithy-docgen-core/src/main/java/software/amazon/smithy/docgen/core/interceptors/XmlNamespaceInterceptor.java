@@ -38,8 +38,8 @@ public final class XmlNamespaceInterceptor extends ProtocolTraitInterceptor<XmlN
         namespace += "=\"" + trait.getUri() + "\"";
         writer.openAdmonition(NoticeType.IMPORTANT);
         writer.write("""
-            This tag must contain the following XML namespace $`
-            """, namespace);
+                This tag must contain the following XML namespace $`
+                """, namespace);
         writer.closeAdmonition();
     }
 }

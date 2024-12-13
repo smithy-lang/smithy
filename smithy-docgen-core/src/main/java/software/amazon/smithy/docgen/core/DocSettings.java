@@ -45,20 +45,20 @@ public record DocSettings(ShapeId service, String format, Map<ShapeId, String> r
      */
     public static DocSettings fromNode(ObjectNode pluginSettings) {
         var references = pluginSettings.getObjectMember("references")
-            .orElse(ObjectNode.objectNode())
-            .getMembers()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    e -> ShapeId.from(e.getKey().getValue()),
-                    e -> e.getValue().expectStringNode().getValue()
-                )
-            );
+                .orElse(ObjectNode.objectNode())
+                .getMembers()
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                e -> ShapeId.from(e.getKey().getValue()),
+                                e -> e.getValue().expectStringNode().getValue()
+                        )
+                );
         return new DocSettings(
-            pluginSettings.expectStringMember("service").expectShapeId(),
-            pluginSettings.getStringMemberOrDefault("format", "sphinx-markdown"),
-            references
+                pluginSettings.expectStringMember("service").expectShapeId(),
+                pluginSettings.getStringMemberOrDefault("format", "sphinx-markdown"),
+                references
         );
     }
 }

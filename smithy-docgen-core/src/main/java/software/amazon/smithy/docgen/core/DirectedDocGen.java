@@ -40,11 +40,11 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
     @Override
     public DocGenerationContext createContext(CreateContextDirective<DocSettings, DocIntegration> directive) {
         return new DocGenerationContext(
-            directive.model(),
-            directive.settings(),
-            directive.symbolProvider(),
-            directive.fileManifest(),
-            directive.integrations()
+                directive.model(),
+                directive.settings(),
+                directive.symbolProvider(),
+                directive.fileManifest(),
+                directive.integrations()
         );
     }
 
@@ -86,12 +86,12 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
     public void generateIntEnumShape(GenerateIntEnumDirective<DocGenerationContext, DocSettings> directive) {
         var shape = directive.shape();
         var intEnum = shape.asIntEnumShape()
-            .orElseThrow(
-                () -> new ExpectationNotMetException(
-                    "Expected an intEnum shape, but found " + shape,
-                    shape
-                )
-            );
+                .orElseThrow(
+                        () -> new ExpectationNotMetException(
+                                "Expected an intEnum shape, but found " + shape,
+                                shape
+                        )
+                );
         new StructuredShapeGenerator(directive.context()).accept(intEnum, MemberListingType.OPTIONS);
     }
 

@@ -40,11 +40,11 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
      * @param docIntegrations A list of integrations to apply during generation.
      */
     public DocGenerationContext(
-        Model model,
-        DocSettings docSettings,
-        SymbolProvider symbolProvider,
-        FileManifest fileManifest,
-        List<DocIntegration> docIntegrations
+            Model model,
+            DocSettings docSettings,
+            SymbolProvider symbolProvider,
+            FileManifest fileManifest,
+            List<DocIntegration> docIntegrations
     ) {
         this.model = model;
         this.docSettings = docSettings;
@@ -65,11 +65,11 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
         }
         if (resolvedFormat == null) {
             throw new CodegenException(
-                String.format(
-                    "Unknown doc format `%s`. You may be missing a dependency. Currently available formats: [%s]",
-                    docSettings.format(),
-                    String.join(", ", availableFormats)
-                )
+                    String.format(
+                            "Unknown doc format `%s`. You may be missing a dependency. Currently available formats: [%s]",
+                            docSettings.format(),
+                            String.join(", ", availableFormats)
+                    )
             );
         }
 

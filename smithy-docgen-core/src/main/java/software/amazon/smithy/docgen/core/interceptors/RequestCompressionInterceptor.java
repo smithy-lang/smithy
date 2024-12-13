@@ -36,18 +36,18 @@ public final class RequestCompressionInterceptor implements CodeInterceptor<Shap
 
         // Have particular support for single-element lists.
         writer.putContext(
-            "encoding",
-            trait.getEncodings().size() == 1
-                ? Optional.of(trait.getEncodings().get(0))
-                : Optional.empty()
+                "encoding",
+                trait.getEncodings().size() == 1
+                        ? Optional.of(trait.getEncodings().get(0))
+                        : Optional.empty()
         );
         writer.putContext("encodings", trait.getEncodings());
 
         writer.write("""
-            This operation supports optional request compression using \
-            ${?encoding}${encoding:L} encoding.${/encoding}\
-            ${^encoding}one of the following priority-ordered encodings: \
-            ${#encodings}${value:L}${^key.last}, ${/key.last}${/encodings}.${/encoding}""");
+                This operation supports optional request compression using \
+                ${?encoding}${encoding:L} encoding.${/encoding}\
+                ${^encoding}one of the following priority-ordered encodings: \
+                ${#encodings}${value:L}${^key.last}, ${/key.last}${/encodings}.${/encoding}""");
         writer.closeAdmonition();
         writer.writeWithNoFormatting(previousText);
     }

@@ -20,29 +20,14 @@ dependencies {
     implementation(project(":smithy-linters"))
 }
 
-// jdk {
-//    version = JavaVersion.VERSION_17
-// }
-
-jdk {
-    version = JavaLanguageVersion.of(17)
-}
-
 java {
     toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(17))
-//        sourceCompatibility = JavaVersion.VERSION_17
-//        targetCompatibility = JavaVersion.VERSION_17
+        println("currentToolchain: $toolchain")
+        println("compats: $sourceCompatibility , $targetCompatibility")
+        languageVersion.set(JavaLanguageVersion.of(17))
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         println("currentToolchain: $toolchain")
         println("compats: $sourceCompatibility , $targetCompatibility")
     }
 }
-
-// afterEvaluate {
-// java {
-//    jdk(project, JavaVersion.VERSION_17)
-
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(17))
-//    }
-// }

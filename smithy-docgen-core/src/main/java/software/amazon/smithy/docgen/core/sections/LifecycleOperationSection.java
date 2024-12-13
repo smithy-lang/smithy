@@ -29,10 +29,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public record LifecycleOperationSection(
-    DocGenerationContext context,
-    ResourceShape resource,
-    OperationShape operation,
-    LifecycleType lifecycleType
+        DocGenerationContext context,
+        ResourceShape resource,
+        OperationShape operation,
+        LifecycleType lifecycleType
 ) implements CodeSection {
 
     // smithy-model doesn't have a pared-down enum for these lifecycle types, instead

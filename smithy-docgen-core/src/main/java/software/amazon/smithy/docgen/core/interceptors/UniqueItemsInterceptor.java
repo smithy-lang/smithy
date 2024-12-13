@@ -30,8 +30,8 @@ public final class UniqueItemsInterceptor implements CodeInterceptor<ShapeSubhea
     @Override
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         writer.write("""
-            Items in this list MUST be unique.
+                Items in this list MUST be unique.
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

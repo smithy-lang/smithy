@@ -115,18 +115,18 @@ public final class ServiceGenerator implements Consumer<GenerateServiceDirective
 
         var index = ServiceIndex.of(context.model());
         writer.putContext(
-            "optional",
-            index.getEffectiveAuthSchemes(service, AuthSchemeMode.NO_AUTH_AWARE)
-                .containsKey(NoAuthTrait.ID)
+                "optional",
+                index.getEffectiveAuthSchemes(service, AuthSchemeMode.NO_AUTH_AWARE)
+                        .containsKey(NoAuthTrait.ID)
         );
         writer.putContext("multipleSchemes", authSchemes.size() > 1);
         writer.write("""
-            Operations on the service ${?optional}may optionally${/optional}${^optional}MUST${/optional} \
-            be called with ${?multipleSchemes}one of the following priority-ordered auth schemes${/multipleSchemes}\
-            ${^multipleSchemes}the following auth scheme${/multipleSchemes}. Additionally, authentication for \
-            individual operations may be optional${?multipleSchemes}, have a different priority order, support \
-            fewer schemes,${/multipleSchemes} or be disabled entirely.
-            """);
+                Operations on the service ${?optional}may optionally${/optional}${^optional}MUST${/optional} \
+                be called with ${?multipleSchemes}one of the following priority-ordered auth schemes${/multipleSchemes}\
+                ${^multipleSchemes}the following auth scheme${/multipleSchemes}. Additionally, authentication for \
+                individual operations may be optional${?multipleSchemes}, have a different priority order, support \
+                fewer schemes,${/multipleSchemes} or be disabled entirely.
+                """);
 
         writer.openDefinitionList();
 

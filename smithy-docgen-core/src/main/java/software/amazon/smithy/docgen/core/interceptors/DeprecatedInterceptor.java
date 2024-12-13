@@ -35,9 +35,9 @@ public final class DeprecatedInterceptor implements CodeInterceptor<ShapeSubhead
         });
         writer.putContext("message", trait.getMessage());
         writer.write("""
-            ${?message}${message:L}${/message}
-            ${^message}This has been deprecated${?since} since version ${since:L}${/since}.${/message}
-            """);
+                ${?message}${message:L}${/message}
+                ${^message}This has been deprecated${?since} since version ${since:L}${/since}.${/message}
+                """);
         writer.closeAdmonition();
         writer.writeWithNoFormatting(previousText);
     }

@@ -32,8 +32,8 @@ public final class SparseInterceptor implements CodeInterceptor<ShapeDetailsSect
     @Override
     public void write(DocWriter writer, String previousText, ShapeDetailsSection section) {
         var target = section.shape().isMemberShape()
-            ? section.context().model().expectShape(section.shape().asMemberShape().get().getTarget())
-            : section.shape();
+                ? section.context().model().expectShape(section.shape().asMemberShape().get().getTarget())
+                : section.shape();
         writer.writeWithNoFormatting(previousText);
         writer.openAdmonition(NoticeType.NOTE);
         writer.write("This $L may contain null values.", target.getType().toString().toLowerCase(Locale.ENGLISH));

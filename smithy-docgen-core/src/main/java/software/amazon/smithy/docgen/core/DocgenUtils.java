@@ -53,8 +53,8 @@ public final class DocgenUtils {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(finalizedCommand)
-            .redirectErrorStream(true)
-            .directory(directory.toFile());
+                .redirectErrorStream(true)
+                .directory(directory.toFile());
 
         try {
             Process process = processBuilder.start();
@@ -62,12 +62,12 @@ public final class DocgenUtils {
 
             // Capture output for reporting.
             try (
-                BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(
-                        process.getInputStream(),
-                        Charset.defaultCharset()
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(
+                                    process.getInputStream(),
+                                    Charset.defaultCharset()
+                            )
                     )
-                )
             ) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
@@ -82,11 +82,11 @@ public final class DocgenUtils {
             String joinedOutput = String.join(System.lineSeparator(), output);
             if (process.exitValue() != 0) {
                 throw new CodegenException(
-                    format(
-                        "Command `%s` failed with output:%n%n%s",
-                        command,
-                        joinedOutput
-                    )
+                        format(
+                                "Command `%s` failed with output:%n%n%s",
+                                command,
+                                joinedOutput
+                        )
                 );
             }
             return joinedOutput;
@@ -119,17 +119,17 @@ public final class DocgenUtils {
         Optional<String> linkId = symbol.getProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         var relativeToParent = relativeTo.getParent();
         if (StringUtils.isBlank(symbol.getDefinitionFile())
-            || linkId.isEmpty()
-            || StringUtils.isBlank(linkId.get())
-            || relativeToParent == null) {
+                || linkId.isEmpty()
+                || StringUtils.isBlank(linkId.get())
+                || relativeToParent == null) {
             return Optional.empty();
         }
         return Optional.of(
-            format(
-                "./%s#%s",
-                relativeToParent.relativize(Paths.get(symbol.getDefinitionFile())),
-                linkId.get()
-            )
+                format(
+                        "./%s#%s",
+                        relativeToParent.relativize(Paths.get(symbol.getDefinitionFile())),
+                        linkId.get()
+                )
         );
     }
 

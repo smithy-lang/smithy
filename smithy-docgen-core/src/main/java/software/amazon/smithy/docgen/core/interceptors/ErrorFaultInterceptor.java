@@ -30,9 +30,9 @@ public final class ErrorFaultInterceptor implements CodeInterceptor<ShapeSubhead
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         var fault = section.shape().expectTrait(ErrorTrait.class).getValue();
         writer.write("""
-            This is an error caused by the $L.
+                This is an error caused by the $L.
 
-            $L
-            """, fault, previousText);
+                $L
+                """, fault, previousText);
     }
 }

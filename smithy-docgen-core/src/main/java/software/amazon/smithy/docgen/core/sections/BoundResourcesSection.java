@@ -31,8 +31,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public record BoundResourcesSection(
-    DocGenerationContext context,
-    EntityShape container,
-    List<ResourceShape> resources
+        DocGenerationContext context,
+        EntityShape container,
+        List<ResourceShape> resources
 ) implements CodeSection {
 }

@@ -31,8 +31,8 @@ public final class JsonNameInterceptor extends ProtocolTraitInterceptor<JsonName
     public void write(DocWriter writer, String previousText, ProtocolSection section, JsonNameTrait trait) {
         writer.putContext("jsonKeyName", "JSON key name:");
         writer.write("""
-            ${jsonKeyName:B} $`
+                ${jsonKeyName:B} $`
 
-            $L""", trait.getValue(), previousText);
+                $L""", trait.getValue(), previousText);
     }
 }

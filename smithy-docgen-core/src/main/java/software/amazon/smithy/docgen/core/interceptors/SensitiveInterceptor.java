@@ -32,9 +32,9 @@ public final class SensitiveInterceptor implements CodeInterceptor<ShapeSubheadi
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         writer.openAdmonition(NoticeType.DANGER);
         writer.write("""
-            The data this contains is sensitive and MUST be handled with care. \
-            It MUST NOT be exposed in things like exception messages or log \
-            output, except for full wire logs.""");
+                The data this contains is sensitive and MUST be handled with care. \
+                It MUST NOT be exposed in things like exception messages or log \
+                output, except for full wire logs.""");
         writer.closeAdmonition();
         writer.writeWithNoFormatting(previousText);
     }

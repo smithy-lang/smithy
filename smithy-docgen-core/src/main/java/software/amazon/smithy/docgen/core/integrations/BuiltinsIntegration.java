@@ -82,63 +82,63 @@ public class BuiltinsIntegration implements DocIntegration {
     @Override
     public List<DocFormat> docFormats(DocSettings settings) {
         return List.of(
-            new DocFormat("markdown", ".md", new MarkdownWriter.Factory())
+                new DocFormat("markdown", ".md", new MarkdownWriter.Factory())
         );
     }
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, DocWriter>> interceptors(
-        DocGenerationContext context
+            DocGenerationContext context
     ) {
         // Due to the way that interceptors work, the elements at the bottom of the list will
         // be called last. Since most of these append data to their sections, that means that
         // the ones at the end will be at the top of the rendered pages. Therefore, interceptors
         // that provide more critical information should appear at the bottom of this list.
         return List.of(
-            new StreamingInterceptor(),
-            new ReferencesInterceptor(),
-            new MediaTypeInterceptor(),
-            new OperationAuthInterceptor(),
-            new ApiKeyAuthInterceptor(),
-            new TimestampFormatInterceptor(),
-            new JsonNameInterceptor(),
-            new XmlNamespaceInterceptor(),
-            new XmlAttributeInterceptor(),
-            new XmlNameInterceptor(),
-            new XmlFlattenedInterceptor(),
-            new HttpChecksumRequiredInterceptor(),
-            new HttpResponseCodeInterceptor(),
-            new HttpPayloadInterceptor(),
-            new HttpErrorInterceptor(),
-            new HttpHeaderInterceptor(),
-            new HttpPrefixHeadersInterceptor(),
-            new HttpQueryParamsInterceptor(),
-            new HttpQueryInterceptor(),
-            new HostLabelInterceptor(),
-            new EndpointInterceptor(),
-            new HttpLabelInterceptor(),
-            new HttpInterceptor(),
-            new PaginationInterceptor(),
-            new RequestCompressionInterceptor(),
-            new NoReplaceBindingInterceptor(),
-            new NoReplaceOperationInterceptor(),
-            new SparseInterceptor(),
-            new UniqueItemsInterceptor(),
-            new PatternInterceptor(),
-            new RangeInterceptor(),
-            new LengthInterceptor(),
-            new ExternalDocsInterceptor(),
-            new IdempotencyInterceptor(),
-            new ErrorFaultInterceptor(),
-            new RetryableInterceptor(),
-            new DefaultValueInterceptor(),
-            new SinceInterceptor(),
-            new InternalInterceptor(),
-            new UnstableInterceptor(),
-            new DeprecatedInterceptor(),
-            new RecommendedInterceptor(),
-            new NullabilityInterceptor(),
-            new SensitiveInterceptor()
+                new StreamingInterceptor(),
+                new ReferencesInterceptor(),
+                new MediaTypeInterceptor(),
+                new OperationAuthInterceptor(),
+                new ApiKeyAuthInterceptor(),
+                new TimestampFormatInterceptor(),
+                new JsonNameInterceptor(),
+                new XmlNamespaceInterceptor(),
+                new XmlAttributeInterceptor(),
+                new XmlNameInterceptor(),
+                new XmlFlattenedInterceptor(),
+                new HttpChecksumRequiredInterceptor(),
+                new HttpResponseCodeInterceptor(),
+                new HttpPayloadInterceptor(),
+                new HttpErrorInterceptor(),
+                new HttpHeaderInterceptor(),
+                new HttpPrefixHeadersInterceptor(),
+                new HttpQueryParamsInterceptor(),
+                new HttpQueryInterceptor(),
+                new HostLabelInterceptor(),
+                new EndpointInterceptor(),
+                new HttpLabelInterceptor(),
+                new HttpInterceptor(),
+                new PaginationInterceptor(),
+                new RequestCompressionInterceptor(),
+                new NoReplaceBindingInterceptor(),
+                new NoReplaceOperationInterceptor(),
+                new SparseInterceptor(),
+                new UniqueItemsInterceptor(),
+                new PatternInterceptor(),
+                new RangeInterceptor(),
+                new LengthInterceptor(),
+                new ExternalDocsInterceptor(),
+                new IdempotencyInterceptor(),
+                new ErrorFaultInterceptor(),
+                new RetryableInterceptor(),
+                new DefaultValueInterceptor(),
+                new SinceInterceptor(),
+                new InternalInterceptor(),
+                new UnstableInterceptor(),
+                new DeprecatedInterceptor(),
+                new RecommendedInterceptor(),
+                new NullabilityInterceptor(),
+                new SensitiveInterceptor()
         );
     }
 }

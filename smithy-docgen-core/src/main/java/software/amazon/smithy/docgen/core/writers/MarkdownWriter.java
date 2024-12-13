@@ -90,14 +90,14 @@ public class MarkdownWriter extends DocWriter {
                 ref = Optional.of(right);
             } else {
                 throw new CodegenException(
-                    "Invalid type provided to $R. Expected both key and vale of the Pair to be Strings, but "
-                        + "found " + value.getClass()
+                        "Invalid type provided to $R. Expected both key and vale of the Pair to be Strings, but "
+                                + "found " + value.getClass()
                 );
             }
         } else {
             throw new CodegenException(
-                "Invalid type provided to $R. Expected a Symbol, SymbolReference, or Pair<String, String>, but "
-                    + "found " + value.getClass()
+                    "Invalid type provided to $R. Expected a Symbol, SymbolReference, or Pair<String, String>, but "
+                            + "found " + value.getClass()
             );
         }
         return Pair.of(text, ref);

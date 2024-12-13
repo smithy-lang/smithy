@@ -32,21 +32,21 @@ public final class HttpInterceptor extends ProtocolTraitInterceptor<HttpTrait> {
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpTrait trait) {
         writer.putContext("hasLabels", !trait.getUri().getLabels().isEmpty());
         writer.putContext(
-            "greedyLabel",
-            trait.getUri().getGreedyLabel().map(Segment::getContent)
+                "greedyLabel",
+                trait.getUri().getGreedyLabel().map(Segment::getContent)
         );
         writer.write("""
-            $B $`
+                $B $`
 
-            $B $`
-            ${?hasLabels}
+                $B $`
+                ${?hasLabels}
 
-            To resolve the path segment of the URI, replace any segments surrounded with
-            braces with the URI-escaped value of the corresponding member.${?greedyLabel} \
-            When escaping the value of the ${greedyLabel:`} segment, do not escape any \
-            backslashes ($`).${/greedyLabel}
-            ${/hasLabels}
+                To resolve the path segment of the URI, replace any segments surrounded with
+                braces with the URI-escaped value of the corresponding member.${?greedyLabel} \
+                When escaping the value of the ${greedyLabel:`} segment, do not escape any \
+                backslashes ($`).${/greedyLabel}
+                ${/hasLabels}
 
-            $L""", "HTTP Method:", trait.getMethod(), "URI:", trait.getUri(), "/", previousText);
+                $L""", "HTTP Method:", trait.getMethod(), "URI:", trait.getUri(), "/", previousText);
     }
 }

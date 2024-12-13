@@ -30,8 +30,8 @@ public final class HttpResponseCodeInterceptor extends ProtocolTraitInterceptor<
     @Override
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpResponseCodeTrait trait) {
         writer.write("""
-            This value represents the HTTP response code for the operation invocation.
+                This value represents the HTTP response code for the operation invocation.
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

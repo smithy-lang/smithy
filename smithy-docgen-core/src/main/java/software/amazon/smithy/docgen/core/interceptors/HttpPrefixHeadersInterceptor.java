@@ -31,9 +31,9 @@ public final class HttpPrefixHeadersInterceptor extends ProtocolTraitInterceptor
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpPrefixHeadersTrait trait) {
         writer.putContext("prefix", trait.getValue());
         writer.write("""
-            Each pair in this map represents an HTTP header${?prefix} with the prefix \
-            ${prefix:`}${/prefix}.
+                Each pair in this map represents an HTTP header${?prefix} with the prefix \
+                ${prefix:`}${/prefix}.
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

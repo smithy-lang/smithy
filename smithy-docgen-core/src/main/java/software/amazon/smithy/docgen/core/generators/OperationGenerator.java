@@ -92,7 +92,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public final class OperationGenerator
-    implements Consumer<GenerateOperationDirective<DocGenerationContext, DocSettings>> {
+        implements Consumer<GenerateOperationDirective<DocGenerationContext, DocSettings>> {
     @Override
     public void accept(GenerateOperationDirective<DocGenerationContext, DocSettings> directive) {
         var operation = directive.shape();
@@ -121,11 +121,11 @@ public final class OperationGenerator
     }
 
     private void writeErrors(
-        DocGenerationContext context,
-        DocWriter writer,
-        ServiceShape service,
-        OperationShape operation,
-        String linkId
+            DocGenerationContext context,
+            DocWriter writer,
+            ServiceShape service,
+            OperationShape operation,
+            String linkId
     ) {
         var errors = operation.getErrors(service);
         writer.pushState(new ErrorsSection(context, operation));
@@ -147,11 +147,11 @@ public final class OperationGenerator
     }
 
     private void writeExamples(
-        DocGenerationContext context,
-        DocWriter writer,
-        OperationShape operation,
-        List<Example> examples,
-        String operationLinkId
+            DocGenerationContext context,
+            DocWriter writer,
+            OperationShape operation,
+            List<Example> examples,
+            String operationLinkId
     ) {
         writer.pushState(new ExamplesSection(context, operation, examples));
         if (examples.isEmpty()) {

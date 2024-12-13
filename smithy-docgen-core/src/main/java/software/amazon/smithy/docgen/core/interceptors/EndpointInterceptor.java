@@ -31,13 +31,13 @@ public final class EndpointInterceptor extends ProtocolTraitInterceptor<Endpoint
     void write(DocWriter writer, String previousText, ProtocolSection section, EndpointTrait trait) {
         writer.putContext("hasLabels", !trait.getHostPrefix().getLabels().isEmpty());
         writer.write("""
-            $B $`
-            ${?hasLabels}
+                $B $`
+                ${?hasLabels}
 
-            To resolve the endpoint prefix, replace any portions surrounded with braces with the \
-            URI-escaped value of the corresponding member.
-            ${/hasLabels}
+                To resolve the endpoint prefix, replace any portions surrounded with braces with the \
+                URI-escaped value of the corresponding member.
+                ${/hasLabels}
 
-            $L""", "Host prefix:", trait.getHostPrefix(), previousText);
+                $L""", "Host prefix:", trait.getHostPrefix(), previousText);
     }
 }

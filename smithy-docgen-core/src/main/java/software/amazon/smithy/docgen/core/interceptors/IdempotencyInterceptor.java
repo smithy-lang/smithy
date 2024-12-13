@@ -26,12 +26,12 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     private static final Pair<String, String> IDEMPOTENT_REF = Pair.of(
-        "idempotent",
-        "https://datatracker.ietf.org/doc/html/rfc7231.html#section-4.2.2"
+            "idempotent",
+            "https://datatracker.ietf.org/doc/html/rfc7231.html#section-4.2.2"
     );
     private static final Pair<String, String> UUID_REF = Pair.of(
-        "UUID",
-        "https://tools.ietf.org/html/rfc4122.html"
+            "UUID",
+            "https://tools.ietf.org/html/rfc4122.html"
     );
 
     @Override
@@ -46,21 +46,21 @@ public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetail
         var operationIndex = OperationIndex.of(model);
 
         if (shape.hasTrait(IdempotencyTokenTrait.class)
-            && operationIndex.isInputStructure(shape.asMemberShape().get().getContainer())) {
+                && operationIndex.isInputStructure(shape.asMemberShape().get().getContainer())) {
             return true;
         }
 
         var target = shape.isMemberShape()
-            ? model.expectShape(shape.asMemberShape().get().getTarget())
-            : shape;
+                ? model.expectShape(shape.asMemberShape().get().getTarget())
+                : shape;
 
         if (!target.isOperationShape()) {
             return false;
         }
 
         return shape.getMemberTrait(model, IdempotentTrait.class).isPresent()
-            || shape.getMemberTrait(model, ReadonlyTrait.class).isPresent()
-            || getIdempotencyToken(model, target.asOperationShape().get()).isPresent();
+                || shape.getMemberTrait(model, ReadonlyTrait.class).isPresent()
+                || getIdempotencyToken(model, target.asOperationShape().get()).isPresent();
     }
 
     private Optional<MemberShape> getIdempotencyToken(Model model, OperationShape operation) {
@@ -78,11 +78,11 @@ public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetail
         if (section.shape().isMemberShape()) {
             writer.openAdmonition(NoticeType.NOTE);
             writer.write("""
-                This value will be used by the service to ensure the request is $R. \
-                Clients SHOULD automatically populate this (typically with a $R) if \
-                it was not explicitly set.
+                    This value will be used by the service to ensure the request is $R. \
+                    Clients SHOULD automatically populate this (typically with a $R) if \
+                    it was not explicitly set.
 
-                """, IDEMPOTENT_REF, UUID_REF);
+                    """, IDEMPOTENT_REF, UUID_REF);
             writer.closeAdmonition();
             writer.writeWithNoFormatting(previousText);
             return;
@@ -90,19 +90,19 @@ public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetail
 
         var operation = section.shape().asOperationShape().get();
         var idempotencyToken = getIdempotencyToken(section.context().model(), operation)
-            .map(member -> section.context().symbolProvider().toSymbol(member))
-            .map(
-                symbol -> SymbolReference.builder()
-                    .alias(String.format("idempotency token (%s)", symbol.getName()))
-                    .symbol(symbol)
-                    .build()
-            );
+                .map(member -> section.context().symbolProvider().toSymbol(member))
+                .map(
+                        symbol -> SymbolReference.builder()
+                                .alias(String.format("idempotency token (%s)", symbol.getName()))
+                                .symbol(symbol)
+                                .build()
+                );
         writer.putContext("token", idempotencyToken);
         writer.openAdmonition(NoticeType.NOTE);
         writer.write("""
-            This operation is $R${?token} when the ${token:R} is set${/token}.
+                This operation is $R${?token} when the ${token:R} is set${/token}.
 
-            """, IDEMPOTENT_REF);
+                """, IDEMPOTENT_REF);
         writer.closeAdmonition();
         writer.writeWithNoFormatting(previousText);
     }

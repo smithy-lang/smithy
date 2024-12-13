@@ -32,8 +32,8 @@ public final class MediaTypeInterceptor implements CodeInterceptor.Prepender<Sha
     public void prepend(DocWriter writer, ShapeSubheadingSection section) {
         var trait = section.shape().getMemberTrait(section.context().model(), MediaTypeTrait.class).get();
         writer.write("""
-            $B $`
+                $B $`
 
-            """, "Media Type:", trait.getValue());
+                """, "Media Type:", trait.getValue());
     }
 }

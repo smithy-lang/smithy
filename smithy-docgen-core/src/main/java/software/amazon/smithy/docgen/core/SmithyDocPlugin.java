@@ -56,8 +56,8 @@ public final class SmithyDocPlugin implements SmithyBuildPlugin {
 
         // This will discover and apply suppressions from the model.
         Optional<ValidationEventDecorator> modelDecorator = new ModelBasedEventDecorator()
-            .createDecorator(model)
-            .getResult();
+                .createDecorator(model)
+                .getResult();
         if (modelDecorator.isPresent()) {
             eventDecorator = ValidationEventDecorator.compose(List.of(modelDecorator.get(), eventDecorator));
         }

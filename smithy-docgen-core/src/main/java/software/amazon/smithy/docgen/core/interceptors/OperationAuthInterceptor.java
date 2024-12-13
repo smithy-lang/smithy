@@ -58,7 +58,7 @@ public final class OperationAuthInterceptor implements CodeInterceptor<ShapeDeta
 
         var serviceAuth = DocgenUtils.getPrioritizedServiceAuth(section.context().model(), service);
         var operationAuth = List.copyOf(
-            index.getEffectiveAuthSchemes(service, operation, AuthSchemeMode.MODELED).keySet()
+                index.getEffectiveAuthSchemes(service, operation, AuthSchemeMode.MODELED).keySet()
         );
 
         if (serviceAuth.equals(operationAuth)) {
@@ -67,32 +67,32 @@ public final class OperationAuthInterceptor implements CodeInterceptor<ShapeDeta
             // return false otherwise. It would have been overly confusing to include this
             // case in the big text block below.
             writer.write("""
-                This operation may be optionally called without authentication.
-                """);
+                    This operation may be optionally called without authentication.
+                    """);
             writer.closeAdmonition();
             return;
         }
 
         var operationSchemes = operationAuth.stream()
-            .map(id -> section.context().symbolProvider().toSymbol(section.context().model().expectShape(id)))
-            .toList();
+                .map(id -> section.context().symbolProvider().toSymbol(section.context().model().expectShape(id)))
+                .toList();
 
         writer.putContext("optional", supportsNoAuth(index, service, section.shape()));
         writer.putContext("schemes", operationSchemes);
         writer.putContext("multipleSchemes", operationSchemes.size() > 1);
 
         writer.write("""
-            ${?schemes}This operation ${?optional}may optionally${/optional}${^optional}MUST${/optional} \
-            be called with ${?multipleSchemes}one of the following priority-ordered auth schemes${/multipleSchemes}\
-            ${^multipleSchemes}the following auth scheme${/multipleSchemes}: \
-            ${#schemes}${value:R}${^key.last}, ${/key.last}${/schemes}.${/schemes}\
-            ${^schemes}${?optional}This operation must be called without authentication.${/optional}${/schemes}
-            """);
+                ${?schemes}This operation ${?optional}may optionally${/optional}${^optional}MUST${/optional} \
+                be called with ${?multipleSchemes}one of the following priority-ordered auth schemes${/multipleSchemes}\
+                ${^multipleSchemes}the following auth scheme${/multipleSchemes}: \
+                ${#schemes}${value:R}${^key.last}, ${/key.last}${/schemes}.${/schemes}\
+                ${^schemes}${?optional}This operation must be called without authentication.${/optional}${/schemes}
+                """);
         writer.closeAdmonition();
     }
 
     private boolean supportsNoAuth(ServiceIndex index, ToShapeId service, ToShapeId operation) {
         return index.getEffectiveAuthSchemes(service, operation, AuthSchemeMode.NO_AUTH_AWARE)
-            .containsKey(NoAuthTrait.ID);
+                .containsKey(NoAuthTrait.ID);
     }
 }

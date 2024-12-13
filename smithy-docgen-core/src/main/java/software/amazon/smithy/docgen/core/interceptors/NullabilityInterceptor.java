@@ -37,6 +37,6 @@ public final class NullabilityInterceptor implements CodeInterceptor<ShapeSubhea
     @Override
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         writer.writeBadge(NoticeType.WARNING, "REQUIRED")
-            .write("\n\n$L", previousText);
+                .write("\n\n$L", previousText);
     }
 }

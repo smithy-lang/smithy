@@ -16,11 +16,11 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class DocValidationEventDecorator implements ValidationEventDecorator {
     private static final String REUSE_DOCUMENTATION_CONTEXT = """
-        Additionally, reusing your input and output structures can make your \
-        documentation confusing for customers, because they'll see those \
-        structures both as the inputs or outputs of your operation and as \
-        standalone structures. This can be particularly confusing if not all of \
-        your operation inputs and outputs do this.""";
+            Additionally, reusing your input and output structures can make your \
+            documentation confusing for customers, because they'll see those \
+            structures both as the inputs or outputs of your operation and as \
+            standalone structures. This can be particularly confusing if not all of \
+            your operation inputs and outputs do this.""";
 
     @Override
     public boolean canDecorate(ValidationEvent event) {
@@ -33,8 +33,8 @@ public class DocValidationEventDecorator implements ValidationEventDecorator {
             return event.toBuilder().severity(Severity.SUPPRESSED).build();
         }
         return event.toBuilder()
-            .message(event.getMessage() + " " + REUSE_DOCUMENTATION_CONTEXT)
-            .severity(Severity.DANGER)
-            .build();
+                .message(event.getMessage() + " " + REUSE_DOCUMENTATION_CONTEXT)
+                .severity(Severity.DANGER)
+                .build();
     }
 }

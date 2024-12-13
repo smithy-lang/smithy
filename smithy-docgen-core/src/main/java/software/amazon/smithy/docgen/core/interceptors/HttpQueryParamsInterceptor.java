@@ -35,10 +35,10 @@ public final class HttpQueryParamsInterceptor extends ProtocolTraitInterceptor<H
         var valueTarget = section.context().model().expectShape(map.getValue().getTarget());
         writer.putContext("list", valueTarget.isListShape());
         writer.write("""
-            Each pair in this map represents an HTTP query parameter.${?list} Each element in \
-            the value lists is represented by its own key-value pair, each instance using the \
-            same key.${/list}
+                Each pair in this map represents an HTTP query parameter.${?list} Each element in \
+                the value lists is represented by its own key-value pair, each instance using the \
+                same key.${/list}
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

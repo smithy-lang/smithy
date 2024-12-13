@@ -33,11 +33,11 @@ public final class HttpHeaderInterceptor extends ProtocolTraitInterceptor<HttpHe
         writer.putContext("key", trait.getValue());
         writer.putContext("list", target.isListShape());
         writer.write("""
-            This is bound to the HTTP header ${param:`}.${?list} Each element in \
-            the list should be sent as its own header using the same key for each \
-            value. The list may instead be concatenated with commas separating each \
-            value.${/list}
+                This is bound to the HTTP header ${param:`}.${?list} Each element in \
+                the list should be sent as its own header using the same key for each \
+                value. The list may instead be concatenated with commas separating each \
+                value.${/list}
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

@@ -29,8 +29,8 @@ public final class HttpErrorInterceptor extends ProtocolTraitInterceptor<HttpErr
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpErrorTrait trait) {
         writer.putContext("code", trait.getCode());
         writer.write("""
-            $B ${code:`}
+                $B ${code:`}
 
-            $L""", "HTTP Error Code:", previousText);
+                $L""", "HTTP Error Code:", previousText);
     }
 }

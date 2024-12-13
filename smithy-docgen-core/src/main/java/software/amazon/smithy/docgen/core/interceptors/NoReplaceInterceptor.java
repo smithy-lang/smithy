@@ -29,34 +29,34 @@ abstract class NoReplaceInterceptor<S extends CodeSection> implements CodeInterc
         var shape = getShape(section);
         var resource = getResource(getContext(section), shape);
         return resource.isPresent()
-            && resource.get().hasTrait(NoReplaceTrait.class)
-            && resource.get().getPut().map(put -> put.equals(shape.getId())).orElse(false);
+                && resource.get().hasTrait(NoReplaceTrait.class)
+                && resource.get().getPut().map(put -> put.equals(shape.getId())).orElse(false);
     }
 
     @Override
     public void write(
-        DocWriter writer,
-        String previousText,
-        S section
+            DocWriter writer,
+            String previousText,
+            S section
     ) {
         var context = getContext(section);
         var resource = getResource(context, getShape(section)).get();
         var resourceReference = SymbolReference.builder()
-            .alias("resource")
-            .symbol(context.symbolProvider().toSymbol(resource))
-            .build();
+                .alias("resource")
+                .symbol(context.symbolProvider().toSymbol(resource))
+                .build();
         var updateSymbolReference = resource.getUpdate()
-            .map(update -> context.model().expectShape(update))
-            .map(update -> context.symbolProvider().toSymbol(update))
-            .map(symbol -> SymbolReference.builder().alias("update lifecycle operation").symbol(symbol).build());
+                .map(update -> context.model().expectShape(update))
+                .map(update -> context.symbolProvider().toSymbol(update))
+                .map(symbol -> SymbolReference.builder().alias("update lifecycle operation").symbol(symbol).build());
         writer.putContext("update", updateSymbolReference);
         writer.writeWithNoFormatting(previousText);
         writer.openAdmonition(NoticeType.NOTE);
         writer.write(
-            """
-                This operation cannot be used to update the $1R.\
-                ${?update} To update the $1R, use the ${update:R}.${/update}""",
-            resourceReference
+                """
+                        This operation cannot be used to update the $1R.\
+                        ${?update} To update the $1R, use the ${update:R}.${/update}""",
+                resourceReference
         );
         writer.closeAdmonition();
     }

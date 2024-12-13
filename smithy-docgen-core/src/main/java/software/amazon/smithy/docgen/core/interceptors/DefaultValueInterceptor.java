@@ -30,8 +30,8 @@ public final class DefaultValueInterceptor implements CodeInterceptor<ShapeSubhe
     public void write(DocWriter writer, String previousText, ShapeSubheadingSection section) {
         var defaultValue = section.shape().getMemberTrait(section.context().model(), DefaultTrait.class).get().toNode();
         writer.write("""
-            $B $`
+                $B $`
 
-            $L""", "Default Value:", Node.printJson(defaultValue), previousText);
+                $L""", "Default Value:", Node.printJson(defaultValue), previousText);
     }
 }

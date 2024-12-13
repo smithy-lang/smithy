@@ -40,10 +40,10 @@ public final class HostLabelInterceptor extends ProtocolTraitInterceptor<HostLab
     void write(DocWriter writer, String previousText, ProtocolSection section, HostLabelTrait trait) {
         var segment = "{" + section.shape().getId().getName() + "}";
         writer.write("""
-            This is additionally bound to the host prefix. Its value should be URI-escaped and \
-            and inserted in place of the $` segment. It must also be serialized to its normal \
-            binding location.
+                This is additionally bound to the host prefix. Its value should be URI-escaped and \
+                and inserted in place of the $` segment. It must also be serialized to its normal \
+                binding location.
 
-            $L""", segment, previousText);
+                $L""", segment, previousText);
     }
 }

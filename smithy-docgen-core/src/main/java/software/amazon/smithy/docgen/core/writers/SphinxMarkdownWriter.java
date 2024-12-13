@@ -45,8 +45,8 @@ public final class SphinxMarkdownWriter extends MarkdownWriter {
     @Override
     public DocWriter openDefinitionListItem(Consumer<DocWriter> titleWriter) {
         writeInline("""
-            **$C**
-            :\s""", titleWriter);
+                **$C**
+                :\s""", titleWriter);
         indent();
         return this;
     }
@@ -97,10 +97,10 @@ public final class SphinxMarkdownWriter extends MarkdownWriter {
     @Override
     public DocWriter openAdmonition(NoticeType type, Consumer<DocWriter> titleWriter) {
         return write("""
-            :::{admonition} $C
-            :class: $L
+                :::{admonition} $C
+                :class: $L
 
-            """, titleWriter, getAdmonitionName(type));
+                """, titleWriter, getAdmonitionName(type));
     }
 
     @Override

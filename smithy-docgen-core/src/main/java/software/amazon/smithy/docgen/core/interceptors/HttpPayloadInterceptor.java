@@ -34,10 +34,10 @@ public final class HttpPayloadInterceptor extends ProtocolTraitInterceptor<HttpP
         writer.pushState();
         writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.class));
         writer.write("""
-            This is bound directly to the HTTP message body without wrapping.${?requiresLength} \
-            Its size must be sent as the value of the $` header.${/requiresLength}
+                This is bound directly to the HTTP message body without wrapping.${?requiresLength} \
+                Its size must be sent as the value of the $` header.${/requiresLength}
 
-            $L""", "Content-Length", previousText);
+                $L""", "Content-Length", previousText);
         writer.popState();
     }
 }

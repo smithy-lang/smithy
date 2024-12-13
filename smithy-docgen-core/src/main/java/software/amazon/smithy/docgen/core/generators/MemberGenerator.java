@@ -88,10 +88,10 @@ public final class MemberGenerator implements Runnable {
      * @param listingType The type of listing being generated.
      */
     public MemberGenerator(
-        DocGenerationContext context,
-        DocWriter writer,
-        Shape shape,
-        MemberListingType listingType
+            DocGenerationContext context,
+            DocWriter writer,
+            Shape shape,
+            MemberListingType listingType
     ) {
         this.context = context;
         this.writer = writer;
@@ -135,13 +135,13 @@ public final class MemberGenerator implements Runnable {
     private Collection<MemberShape> getMembers() {
         return switch (listingType) {
             case INPUT -> context.model()
-                .expectShape(shape.asOperationShape().get().getInputShape())
-                .getAllMembers()
-                .values();
+                    .expectShape(shape.asOperationShape().get().getInputShape())
+                    .getAllMembers()
+                    .values();
             case OUTPUT -> context.model()
-                .expectShape(shape.asOperationShape().get().getOutputShape())
-                .getAllMembers()
-                .values();
+                    .expectShape(shape.asOperationShape().get().getOutputShape())
+                    .getAllMembers()
+                    .values();
             case RESOURCE_IDENTIFIERS -> synthesizeResourceMembers(shape.asResourceShape().get().getIdentifiers());
             case RESOURCE_PROPERTIES -> synthesizeResourceMembers(shape.asResourceShape().get().getProperties());
             default -> shape.getAllMembers().values();
@@ -152,14 +152,14 @@ public final class MemberGenerator implements Runnable {
     // enough that we can treat them like they are for the purposes of the doc generator.
     private List<MemberShape> synthesizeResourceMembers(Map<String, ShapeId> properties) {
         return properties.entrySet()
-            .stream()
-            .map(
-                entry -> MemberShape.builder()
-                    .id(shape.getId().withMember(entry.getKey()))
-                    .target(entry.getValue())
-                    .build()
-            )
-            .toList();
+                .stream()
+                .map(
+                        entry -> MemberShape.builder()
+                                .id(shape.getId().withMember(entry.getKey()))
+                                .target(entry.getValue())
+                                .build()
+                )
+                .toList();
     }
 
     /**
@@ -236,11 +236,11 @@ public final class MemberGenerator implements Runnable {
         @Override
         protected Void getDefault(Shape shape) {
             throw new CodegenException(
-                String.format(
-                    "Unexpected member %s of type %s",
-                    shape.getId(),
-                    shape.getType()
-                )
+                    String.format(
+                            "Unexpected member %s of type %s",
+                            shape.getId(),
+                            shape.getType()
+                    )
             );
         }
 
@@ -388,9 +388,9 @@ public final class MemberGenerator implements Runnable {
                 // implementations can do something with the source symbol if
                 // necessary.
                 var reference = SymbolReference.builder()
-                    .symbol(symbol)
-                    .alias(StringUtils.capitalize(shape.getType().name().toLowerCase(Locale.ENGLISH)))
-                    .build();
+                        .symbol(symbol)
+                        .alias(StringUtils.capitalize(shape.getType().name().toLowerCase(Locale.ENGLISH)))
+                        .build();
                 writer.writeInline("$R", reference);
             }
         }

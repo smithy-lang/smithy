@@ -32,10 +32,10 @@ public final class ExternalDocsInterceptor implements CodeInterceptor<ShapeDetai
         var trait = section.shape().getMemberTrait(section.context().model(), ExternalDocumentationTrait.class).get();
         writer.openAdmonition(NoticeType.INFO);
         trait.getUrls()
-            .entrySet()
-            .stream()
-            .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
-            .forEach(pair -> writer.write("$R\n", pair));
+                .entrySet()
+                .stream()
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                .forEach(pair -> writer.write("$R\n", pair));
         writer.closeAdmonition();
         writer.writeWithNoFormatting(previousText);
     }

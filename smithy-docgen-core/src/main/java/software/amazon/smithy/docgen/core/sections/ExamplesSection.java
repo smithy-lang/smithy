@@ -27,8 +27,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public record ExamplesSection(
-    DocGenerationContext context,
-    OperationShape operation,
-    List<Example> examples
+        DocGenerationContext context,
+        OperationShape operation,
+        List<Example> examples
 ) implements CodeSection {
 }

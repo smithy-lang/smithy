@@ -32,9 +32,9 @@ public final class RetryableInterceptor implements CodeInterceptor.Prepender<Sha
         if (section.shape().expectTrait(RetryableTrait.class).getThrottling()) {
             writer.openAdmonition(NoticeType.NOTE);
             writer.write("""
-                This is a throttling error. Request retries in response to this error should use exponential
-                backoff with jitter. Clients should do this automatically.
-                """);
+                    This is a throttling error. Request retries in response to this error should use exponential
+                    backoff with jitter. Clients should do this automatically.
+                    """);
             writer.closeAdmonition();
         }
     }

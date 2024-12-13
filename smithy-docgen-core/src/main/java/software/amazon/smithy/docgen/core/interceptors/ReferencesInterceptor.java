@@ -58,10 +58,10 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
         var localRefs = getLocalReferences(section.context(), section.shape());
         var externalRefs = section.context().settings().references();
         var serviceResources = TopDownIndex.of(model)
-            .getContainedResources(section.context().settings().service())
-            .stream()
-            .map(Shape::getId)
-            .collect(Collectors.toSet());
+                .getContainedResources(section.context().settings().service())
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
 
         // This is a mapping of reference link to optional rel type. If `rel` isn't set,
         // it'll be an empty optional that won't get displayed.
@@ -81,14 +81,14 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
         writer.putContext("multipleRefs", references.size() > 1);
         writer.openAdmonition(NoticeType.INFO);
         writer.write("""
-            This references \
-            ${?multipleRefs}the following resources: ${/multipleRefs}\
-            ${^multipleRefs}the resource ${/multipleRefs}\
-            ${#refs}
-            ${key:R}${?value} (rel type: ${value:`})${/value}${^key.last}, ${/key.last}\
-            ${/refs}
-            .
-            """);
+                This references \
+                ${?multipleRefs}the following resources: ${/multipleRefs}\
+                ${^multipleRefs}the resource ${/multipleRefs}\
+                ${#refs}
+                ${key:R}${?value} (rel type: ${value:`})${/value}${^key.last}, ${/key.last}\
+                ${/refs}
+                .
+                """);
         writer.closeAdmonition();
         writer.popState();
     }
@@ -109,25 +109,25 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
         var shapeRefs = shape.getMemberTrait(model, ReferencesTrait.class);
         var externalsRefs = context.settings().references();
         var serviceResources = TopDownIndex.of(model)
-            .getContainedResources(context.settings().service())
-            .stream()
-            .map(Shape::getId)
-            .collect(Collectors.toSet());
+                .getContainedResources(context.settings().service())
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
 
         if (shapeRefs.isPresent()) {
             for (var reference : shapeRefs.get().getReferences()) {
                 if (serviceResources.contains(reference.getResource())
-                    || externalsRefs.containsKey(reference.getResource())) {
+                        || externalsRefs.containsKey(reference.getResource())) {
                     references.add(reference);
                 } else {
                     LOGGER.warning(
-                        String.format(
-                            """
-                                Unable to generate a reference link for `%s`, referenced by `%s`. Use the `references` \
-                                map in the generator settings to add a reference link.""",
-                            reference.getResource(),
-                            shape.getId()
-                        )
+                            String.format(
+                                    """
+                                            Unable to generate a reference link for `%s`, referenced by `%s`. Use the `references` \
+                                            map in the generator settings to add a reference link.""",
+                                    reference.getResource(),
+                                    shape.getId()
+                            )
                     );
                 }
             }

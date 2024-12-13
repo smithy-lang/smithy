@@ -33,10 +33,10 @@ public final class HttpQueryInterceptor extends ProtocolTraitInterceptor<HttpQue
         writer.putContext("param", trait.getValue());
         writer.putContext("list", target.isListShape());
         writer.write("""
-            This is bound to the HTTP query parameter ${param:`}.${?list} Each element in \
-            the list is represented by its own key-value pair, each instance using the \
-            same key.${/list}
+                This is bound to the HTTP query parameter ${param:`}.${?list} Each element in \
+                the list is represented by its own key-value pair, each instance using the \
+                same key.${/list}
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

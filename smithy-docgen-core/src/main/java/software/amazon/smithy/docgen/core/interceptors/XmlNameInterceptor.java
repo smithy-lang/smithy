@@ -36,8 +36,8 @@ public final class XmlNameInterceptor extends ProtocolTraitInterceptor<XmlNameTr
     void write(DocWriter writer, String previousText, ProtocolSection section, XmlNameTrait trait) {
         writer.putContext("xmlTagName", "XML tag name:");
         writer.write("""
-            ${xmlTagName:B} $`
+                ${xmlTagName:B} $`
 
-            $L""", trait.getValue(), previousText);
+                $L""", trait.getValue(), previousText);
     }
 }

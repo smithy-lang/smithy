@@ -37,10 +37,10 @@ final class GeneratorUtils {
     private GeneratorUtils() {}
 
     static void generateOperationListing(
-        DocGenerationContext context,
-        DocWriter writer,
-        EntityShape shape,
-        List<OperationShape> operations
+            DocGenerationContext context,
+            DocWriter writer,
+            EntityShape shape,
+            List<OperationShape> operations
     ) {
         writer.pushState(new BoundOperationsSection(context, shape, operations));
 
@@ -50,8 +50,8 @@ final class GeneratorUtils {
         }
 
         var parentLinkId = context.symbolProvider()
-            .toSymbol(shape)
-            .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
+                .toSymbol(shape)
+                .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         writer.openHeading("Operations", parentLinkId + "-operations");
         writer.openList(ListType.UNORDERED);
 
@@ -67,10 +67,10 @@ final class GeneratorUtils {
     }
 
     static void generateResourceListing(
-        DocGenerationContext context,
-        DocWriter writer,
-        EntityShape shape,
-        List<ResourceShape> resources
+            DocGenerationContext context,
+            DocWriter writer,
+            EntityShape shape,
+            List<ResourceShape> resources
     ) {
         writer.pushState(new BoundResourcesSection(context, shape, resources));
 
@@ -80,8 +80,8 @@ final class GeneratorUtils {
         }
 
         var parentLinkId = context.symbolProvider()
-            .toSymbol(shape)
-            .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
+                .toSymbol(shape)
+                .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         var heading = shape.isServiceShape() ? "Resources" : "Sub-Resources";
         writer.openHeading(heading, parentLinkId + "-" + heading.toLowerCase(Locale.ENGLISH));
         writer.openList(ListType.UNORDERED);
@@ -132,10 +132,10 @@ final class GeneratorUtils {
     }
 
     private static void writeProtocolSection(
-        DocGenerationContext context,
-        DocWriter writer,
-        Shape shape,
-        ShapeId protocol
+            DocGenerationContext context,
+            DocWriter writer,
+            Shape shape,
+            ShapeId protocol
     ) {
         var protocolSymbol = context.symbolProvider().toSymbol(context.model().expectShape(protocol));
 
@@ -143,12 +143,12 @@ final class GeneratorUtils {
         var tab = capture(writer, tabWriter -> {
             tabWriter.openTab(protocolSymbol.getName());
             tabContents.set(
-                capture(
-                    tabWriter,
-                    w2 -> tabWriter.injectSection(
-                        new ProtocolSection(context, shape, protocol)
+                    capture(
+                            tabWriter,
+                            w2 -> tabWriter.injectSection(
+                                    new ProtocolSection(context, shape, protocol)
+                            )
                     )
-                )
             );
             tabWriter.closeTab();
         });

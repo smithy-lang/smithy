@@ -22,8 +22,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public record IndexSection(
-    DocGenerationContext context,
-    Path directory,
-    Set<Path> sourceFiles
+        DocGenerationContext context,
+        Path directory,
+        Set<Path> sourceFiles
 ) implements CodeSection {
 }

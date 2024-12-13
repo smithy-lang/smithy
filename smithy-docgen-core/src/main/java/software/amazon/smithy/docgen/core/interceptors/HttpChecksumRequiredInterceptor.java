@@ -20,8 +20,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class HttpChecksumRequiredInterceptor extends ProtocolTraitInterceptor<HttpChecksumRequiredTrait> {
     private static final Pair<String, String> CONTENT_MD5 = Pair.of(
-        "Content-MD5",
-        "https://datatracker.ietf.org/doc/html/rfc1864.html"
+            "Content-MD5",
+            "https://datatracker.ietf.org/doc/html/rfc1864.html"
     );
 
     @Override

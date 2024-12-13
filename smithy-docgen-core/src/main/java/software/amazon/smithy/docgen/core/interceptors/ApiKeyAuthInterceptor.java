@@ -18,8 +18,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class ApiKeyAuthInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     private static final Pair<String, String> AUTH_HEADER_REF = Pair.of(
-        "Authorization header",
-        "https://datatracker.ietf.org/doc/html/rfc9110.html#section-11.4"
+            "Authorization header",
+            "https://datatracker.ietf.org/doc/html/rfc9110.html#section-11.4"
     );
 
     @Override
@@ -41,9 +41,9 @@ public final class ApiKeyAuthInterceptor implements CodeInterceptor<ShapeDetails
         writer.putContext("scheme", trait.getScheme());
         writer.putContext("authHeader", AUTH_HEADER_REF);
         writer.write("""
-            The API key must be bound to the ${location:L} using the key ${name:`}.${?scheme} \
-            Additionally, the scheme used in the ${authHeader:R} must be ${scheme:`}.${/scheme}
+                The API key must be bound to the ${location:L} using the key ${name:`}.${?scheme} \
+                Additionally, the scheme used in the ${authHeader:R} must be ${scheme:`}.${/scheme}
 
-            $L""", previousText);
+                $L""", previousText);
     }
 }

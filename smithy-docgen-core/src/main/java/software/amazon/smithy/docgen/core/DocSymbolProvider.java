@@ -160,11 +160,11 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
         var operationIndex = OperationIndex.of(model);
         for (var operation : model.getOperationShapes()) {
             operationIndex.getInputShape(operation)
-                .filter(i -> i.hasTrait(InputTrait.class))
-                .ifPresent(i -> operationIoMap.put(i.getId(), operation));
+                    .filter(i -> i.hasTrait(InputTrait.class))
+                    .ifPresent(i -> operationIoMap.put(i.getId(), operation));
             operationIndex.getOutputShape(operation)
-                .filter(i -> i.hasTrait(OutputTrait.class))
-                .ifPresent(i -> operationIoMap.put(i.getId(), operation));
+                    .filter(i -> i.hasTrait(OutputTrait.class))
+                    .ifPresent(i -> operationIoMap.put(i.getId(), operation));
         }
         return Map.copyOf(operationIoMap);
     }
@@ -179,8 +179,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     @Override
     public Symbol serviceShape(ServiceShape shape) {
         return getSymbolBuilder(shape)
-            .definitionFile(getDefinitionFile(SERVICE_FILE))
-            .build();
+                .definitionFile(getDefinitionFile(SERVICE_FILE))
+                .build();
     }
 
     @Override
@@ -231,11 +231,11 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     @Override
     public Symbol memberShape(MemberShape shape) {
         var builder = getSymbolBuilder(shape)
-            .definitionFile(getDefinitionFile(serviceShape, model.expectShape(shape.getId().withoutMember())));
+                .definitionFile(getDefinitionFile(serviceShape, model.expectShape(shape.getId().withoutMember())));
 
         Optional<String> containerLinkId = model.expectShape(shape.getContainer())
-            .accept(this)
-            .getProperty(LINK_ID_PROPERTY, String.class);
+                .accept(this)
+                .getProperty(LINK_ID_PROPERTY, String.class);
         if (containerLinkId.isPresent()) {
             var linkId = containerLinkId.get() + "-" + getLinkId(getShapeName(serviceShape, shape));
             builder.putProperty(LINK_ID_PROPERTY, linkId);
@@ -246,15 +246,15 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     private Symbol.Builder getSymbolBuilder(Shape shape) {
         var name = getShapeName(serviceShape, shape);
         return Symbol.builder()
-            .name(name)
-            .putProperty(SHAPE_PROPERTY, shape)
-            .putProperty(LINK_ID_PROPERTY, getLinkId(name))
-            .putProperty(ENABLE_DEFAULT_FILE_EXTENSION, true);
+                .name(name)
+                .putProperty(SHAPE_PROPERTY, shape)
+                .putProperty(LINK_ID_PROPERTY, getLinkId(name))
+                .putProperty(ENABLE_DEFAULT_FILE_EXTENSION, true);
     }
 
     private Symbol.Builder getSymbolBuilderWithFile(Shape shape) {
         return getSymbolBuilder(shape)
-            .definitionFile(getDefinitionFile(serviceShape, shape));
+                .definitionFile(getDefinitionFile(serviceShape, shape));
     }
 
     private String getDefinitionFile(ServiceShape serviceShape, Shape shape) {
@@ -276,8 +276,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     private String getShapeName(ServiceShape serviceShape, Shape shape) {
         if (shape.isServiceShape()) {
             return shape.getTrait(TitleTrait.class)
-                .map(StringTrait::getValue)
-                .orElse(shape.getId().getName());
+                    .map(StringTrait::getValue)
+                    .orElse(shape.getId().getName());
         }
         if (shape.isMemberShape()) {
             return toMemberName(shape.asMemberShape().get());
@@ -325,9 +325,9 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
                 return symbol;
             }
             return symbol.toBuilder()
-                .definitionFile(addExtension(symbol.getDefinitionFile()))
-                .declarationFile(addExtension(symbol.getDeclarationFile()))
-                .build();
+                    .definitionFile(addExtension(symbol.getDefinitionFile()))
+                    .declarationFile(addExtension(symbol.getDeclarationFile()))
+                    .build();
         }
 
         private String addExtension(String path) {

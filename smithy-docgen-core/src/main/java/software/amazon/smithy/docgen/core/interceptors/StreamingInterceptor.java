@@ -30,18 +30,18 @@ public class StreamingInterceptor implements CodeInterceptor.Appender<ShapeDetai
     @Override
     public void append(DocWriter writer, ShapeDetailsSection section) {
         var target = section.shape()
-            .asMemberShape()
-            .map(member -> section.context().model().expectShape(member.getTarget()))
-            .orElse(section.shape());
+                .asMemberShape()
+                .map(member -> section.context().model().expectShape(member.getTarget()))
+                .orElse(section.shape());
         if (target.isBlobShape()) {
             writer.pushState();
             writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.class));
             writer.openAdmonition(NoticeType.IMPORTANT);
             writer.write("""
-                The data in this member is potentially very large and therefore must be streamed and not \
-                stored in memory.${?requiresLength} The size of the data must be known ahead of time.\
-                ${/requiresLength}
-                """);
+                    The data in this member is potentially very large and therefore must be streamed and not \
+                    stored in memory.${?requiresLength} The size of the data must be known ahead of time.\
+                    ${/requiresLength}
+                    """);
             writer.closeAdmonition();
             writer.popState();
             return;

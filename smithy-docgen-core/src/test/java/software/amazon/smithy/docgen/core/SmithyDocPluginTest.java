@@ -24,19 +24,19 @@ public class SmithyDocPluginTest {
     public void assertDocumentationFiles() {
         MockManifest manifest = new MockManifest();
         Model model = Model.assembler()
-            .addImport(getClass().getResource("sample-service.smithy"))
-            .discoverModels(getClass().getClassLoader())
-            .assemble()
-            .unwrap();
+                .addImport(getClass().getResource("sample-service.smithy"))
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
         PluginContext context = PluginContext.builder()
-            .fileManifest(manifest)
-            .model(model)
-            .settings(
-                Node.objectNodeBuilder()
-                    .withMember("service", "smithy.example#SampleService")
-                    .build()
-            )
-            .build();
+                .fileManifest(manifest)
+                .model(model)
+                .settings(
+                        Node.objectNodeBuilder()
+                                .withMember("service", "smithy.example#SampleService")
+                                .build()
+                )
+                .build();
 
         SmithyBuildPlugin plugin = new SmithyDocPlugin();
         plugin.execute(context);
@@ -62,6 +62,6 @@ public class SmithyDocPluginTest {
         }
 
         return IoUtils.readUtf8File(Paths.get(uri))
-            .replace("\r\n", "\n");
+                .replace("\r\n", "\n");
     }
 }
