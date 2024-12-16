@@ -5,8 +5,8 @@
 
 package software.amazon.smithy.docgen.sections;
 
-import software.amazon.smithy.docgen.DocIntegration;
 import software.amazon.smithy.docgen.DocGenerationContext;
+import software.amazon.smithy.docgen.DocIntegration;
 import software.amazon.smithy.docgen.generators.OperationGenerator;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.CodeSection;

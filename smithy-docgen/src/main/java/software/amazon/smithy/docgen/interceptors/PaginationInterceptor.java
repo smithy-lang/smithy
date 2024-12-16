@@ -12,10 +12,12 @@ import software.amazon.smithy.docgen.writers.DocWriter.NoticeType;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * This adds pagination information to operation docs.
  */
+@SmithyInternalApi
 public final class PaginationInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     @Override
     public Class<ShapeDetailsSection> sectionType() {

@@ -6,14 +6,18 @@
 package software.amazon.smithy.docgen.generators;
 
 import java.util.function.BiConsumer;
-
 import software.amazon.smithy.docgen.DocFormat;
-import software.amazon.smithy.docgen.DocIntegration;
 import software.amazon.smithy.docgen.DocGenerationContext;
+import software.amazon.smithy.docgen.DocIntegration;
 import software.amazon.smithy.docgen.DocSymbolProvider;
 import software.amazon.smithy.docgen.generators.MemberGenerator.MemberListingType;
-import software.amazon.smithy.docgen.sections.*;
+import software.amazon.smithy.docgen.sections.MemberSection;
+import software.amazon.smithy.docgen.sections.ProtocolSection;
+import software.amazon.smithy.docgen.sections.ProtocolsSection;
+import software.amazon.smithy.docgen.sections.ShapeDetailsSection;
+import software.amazon.smithy.docgen.sections.ShapeMembersSection;
 import software.amazon.smithy.docgen.sections.ShapeSection;
+import software.amazon.smithy.docgen.sections.ShapeSubheadingSection;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SmithyInternalApi;
 

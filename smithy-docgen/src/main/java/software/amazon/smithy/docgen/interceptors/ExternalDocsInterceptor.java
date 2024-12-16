@@ -11,12 +11,14 @@ import software.amazon.smithy.docgen.writers.DocWriter.NoticeType;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Adds external doc links after a shape's modeled docs based on the
  * <a href="https://smithy.io/2.0/spec/documentation-traits.html#externaldocumentation-trait">
  * externalDocumentation</a> trait.
  */
+@SmithyInternalApi
 public final class ExternalDocsInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     @Override
     public Class<ShapeDetailsSection> sectionType() {

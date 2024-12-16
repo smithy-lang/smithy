@@ -5,9 +5,9 @@
 
 package software.amazon.smithy.docgen.sections;
 
+import software.amazon.smithy.docgen.DocGenerationContext;
 import software.amazon.smithy.docgen.DocIntegration;
 import software.amazon.smithy.docgen.DocSymbolProvider;
-import software.amazon.smithy.docgen.DocGenerationContext;
 import software.amazon.smithy.docgen.interceptors.ApiKeyAuthInterceptor;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.utils.CodeSection;
