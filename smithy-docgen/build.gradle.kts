@@ -13,11 +13,8 @@ extra["displayName"] = "Smithy :: DocGen"
 extra["moduleName"] = "software.amazon.smithy.docgen"
 
 dependencies {
-    implementation(project(":smithy-build"))
     implementation(project(":smithy-codegen-core"))
     implementation(project(":smithy-linters"))
-    implementation(project(":smithy-model"))
-    implementation(project(":smithy-utils"))
 
     itImplementation(project(":smithy-aws-traits"))
 }
