@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 plugins {
-    id("smithy.java-conventions")
+    id("smithy.module-conventions")
     alias(libs.plugins.smithy.jar)
 }
 
