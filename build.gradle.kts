@@ -25,6 +25,14 @@ plugins {
 val libraryVersion = project.file("VERSION").readText().trim()
 println("Smithy version: '$libraryVersion'")
 
+// Verify Java version is 17+
+// Since most plugins are not toolchain-aware, we can't rely on gradle toolchains, which means we'll have to enforce
+// that the global java version (i.e. whatever JAVA_HOME is set to and what Gradle uses) is set to 17+
+val javaVersion = JavaVersion.current()
+check(javaVersion.isCompatibleWith(JavaVersion.VERSION_17)) {
+    "Building this project requires Java 17 or later. You are currently running Java ${javaVersion.majorVersion}."
+}
+
 allprojects {
     group = "software.amazon.smithy"
     version = libraryVersion
@@ -40,11 +48,6 @@ afterEvaluate {
             classpath = files(subprojects.map { project(it.path).sourceSets.main.get().compileClasspath })
             (options as StandardJavadocDocletOptions).apply {
                 addStringOption("Xdoclint:-html", "-quiet")
-                // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
-                // --no-module-directories does not exist in JDK 8 and is removed in 13
-                if (JavaVersion.current().run { isJava9 || isJava10 || isJava11 }) {
-                    addBooleanOption("-no-module-directories", true)
-                }
             }
         }
     }
