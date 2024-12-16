@@ -17,8 +17,8 @@ Next, publish the generator to Maven local by running
 `./gradlew :smithy-docgen:publishToMavenLocal`.
 
 In `build.gradle.kts`, add
-`implementation("software.amazon.smithy.docgen:smithy-docgen:+")` under
-`implementation`.
+`implementation("software.amazon.smithy:smithy-docgen:+")` under
+`dependencies`.
 
 Next, add the `docgen` plugin to the
 [plugin configuration](https://smithy.io/2.0/guides/smithy-build-json.html) in
