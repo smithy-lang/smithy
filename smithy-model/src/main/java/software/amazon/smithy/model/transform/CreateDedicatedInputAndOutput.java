@@ -97,7 +97,8 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             OperationShape operation,
             StructureShape input,
-            NeighborProvider reverse) {
+            NeighborProvider reverse
+    ) {
         if (input.hasTrait(InputTrait.class)) {
             return renameShapeIfNeeded(model, input, operation, inputSuffix);
         } else if (isDedicatedHeuristic(operation, input, reverse)) {
@@ -113,7 +114,8 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             OperationShape operation,
             StructureShape output,
-            NeighborProvider reverse) {
+            NeighborProvider reverse
+    ) {
         if (output.hasTrait(OutputTrait.class)) {
             return renameShapeIfNeeded(model, output, operation, outputSuffix);
         } else if (isDedicatedHeuristic(operation, output, reverse)) {
@@ -129,7 +131,8 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             StructureShape struct,
             OperationShape operation,
-            String suffix) {
+            String suffix
+    ) {
         // Check if the shape already has the desired name.
         ShapeId expectedName = ShapeId.fromParts(operation.getId().getNamespace(),
                 operation.getId().getName() + suffix);
@@ -170,7 +173,8 @@ final class CreateDedicatedInputAndOutput {
             OperationShape operation,
             String suffix,
             StructureShape source,
-            Trait inputOutputTrait) {
+            Trait inputOutputTrait
+    ) {
         ShapeId newId = createSyntheticShapeId(model, operation, suffix);
 
         // Special handling for copying unit types (that, you don't copy unit types)
@@ -193,7 +197,8 @@ final class CreateDedicatedInputAndOutput {
     private static ShapeId createSyntheticShapeId(
             Model model,
             OperationShape operation,
-            String suffix) {
+            String suffix
+    ) {
         // Synthesize an input shape as a dedicated copy of the existing input.
         ShapeId newId = ShapeId.fromParts(operation.getId().getNamespace(),
                 operation.getId().getName() + suffix);

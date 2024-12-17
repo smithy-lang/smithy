@@ -81,7 +81,8 @@ public final class TraitTargetValidator extends AbstractValidator {
             Model model,
             List<ValidationEvent> events,
             Selector selector,
-            List<ShapeId> traits) {
+            List<ShapeId> traits
+    ) {
         Set<Shape> matches = selector.select(model);
 
         for (ShapeId traitId : traits) {

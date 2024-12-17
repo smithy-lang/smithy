@@ -91,7 +91,8 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
     private List<ValidationEvent> validateOperation(
             HttpBindingIndex bindingIndex,
             OperationShape shape,
-            HttpTrait trait) {
+            HttpTrait trait
+    ) {
         String method = trait.getMethod().toUpperCase(Locale.US);
 
         // We don't have a standard method, so we can't validate it.
@@ -185,7 +186,8 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
                 Boolean isReadonly,
                 Boolean isIdempotent,
                 Boolean allowsRequestPayload,
-                String warningWhenModeled) {
+                String warningWhenModeled
+        ) {
             this.isReadonly = isReadonly;
             this.isIdempotent = isIdempotent;
             this.allowsRequestPayload = allowsRequestPayload;

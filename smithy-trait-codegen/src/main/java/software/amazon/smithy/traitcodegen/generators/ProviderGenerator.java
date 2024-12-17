@@ -47,7 +47,8 @@ final class ProviderGenerator implements Runnable {
             Model model,
             Shape shape,
             SymbolProvider provider,
-            Symbol traitSymbol) {
+            Symbol traitSymbol
+    ) {
         this.writer = writer;
         this.model = model;
         this.shape = shape;

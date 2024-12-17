@@ -56,7 +56,8 @@ public final class OperationContextParamsChecker {
     public static LinterResult lint(
             OperationContextParamDefinition paramDefinition,
             OperationShape operationShape,
-            Model model) {
+            Model model
+    ) {
         JmespathExpression path = JmespathExpression.parse(paramDefinition.getPath());
         StructureShape input = OperationIndex.of(model).expectInputShape(operationShape);
         return path.lint(createCurrentNodeFromShape(input, model));
@@ -65,7 +66,8 @@ public final class OperationContextParamsChecker {
     public static Optional<ParameterType> inferParameterType(
             OperationContextParamDefinition paramDefinition,
             OperationShape operationShape,
-            Model model) {
+            Model model
+    ) {
         RuntimeType runtimeType = lint(paramDefinition, operationShape, model).getReturnType();
         switch (runtimeType) {
             case BOOLEAN:

@@ -31,7 +31,7 @@ sourceSets {
 
         spotless {
             java {
-                targetExclude("build/integ")
+                targetExclude("build/**/*.*")
             }
         }
     }

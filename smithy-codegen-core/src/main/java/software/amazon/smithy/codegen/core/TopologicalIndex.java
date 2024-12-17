@@ -82,7 +82,8 @@ public final class TopologicalIndex implements KnowledgeIndex {
             Shape shape,
             List<Relationship> path,
             Set<Shape> visited,
-            NeighborProvider provider) {
+            NeighborProvider provider
+    ) {
         if (visited.contains(shape)) {
             return Collections.singleton(new PathFinder.Path(path));
         }

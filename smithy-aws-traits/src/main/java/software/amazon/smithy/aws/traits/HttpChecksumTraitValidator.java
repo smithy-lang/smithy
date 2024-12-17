@@ -95,7 +95,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input) {
+            StructureShape input
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate the requestAlgorithmMember is set properly for request behavior.
@@ -111,7 +112,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input) {
+            StructureShape input
+    ) {
         // Validate that requestAlgorithmMember, if present, targets a properly configured member.
         if (trait.getRequestAlgorithmMember().isPresent()) {
             return validateEnumMember(model,
@@ -133,7 +135,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             OperationShape operation,
             StructureShape input,
             String memberName,
-            List<String> supportedValues) {
+            List<String> supportedValues
+    ) {
         Optional<MemberShape> member = input.getMember(memberName);
         // There's no member that matches the configured name.
         if (!member.isPresent()) {
@@ -229,7 +232,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input) {
+            StructureShape input
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate requestValidationModeMember is set properly for response behavior.
@@ -270,7 +274,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input) {
+            StructureShape input
+    ) {
         // Validate that requestValidationModeMember, which we've found already, targets a properly configured member.
         return validateEnumMember(model,
                 trait,

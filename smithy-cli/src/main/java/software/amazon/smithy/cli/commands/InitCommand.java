@@ -235,7 +235,8 @@ final class InitCommand implements Command {
             ObjectNode smithyTemplatesNode,
             Options options,
             StandardOptions standardOptions,
-            Env env) {
+            Env env
+    ) {
 
         String template = options.template;
         String directory = options.directory;
@@ -353,7 +354,8 @@ final class InitCommand implements Command {
             String dest,
             List<String> includedFiles,
             String templateName,
-            Env env) {
+            Env env
+    ) {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {

@@ -68,7 +68,8 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
             ResourceShape resource,
             OperationShape operation,
             String lifecycle,
-            boolean requireReadOnly) {
+            boolean requireReadOnly
+    ) {
         if (requireReadOnly == operation.hasTrait(ReadonlyTrait.class)) {
             return Optional.empty();
         }
@@ -86,7 +87,8 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
             ResourceShape resource,
             OperationShape operation,
             String lifecycle,
-            String additionalMessage) {
+            String additionalMessage
+    ) {
         if (operation.hasTrait(IdempotentTrait.class)) {
             return Optional.empty();
         }

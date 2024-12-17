@@ -78,7 +78,8 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                 Shape trait,
                 Shape targetShape,
                 TraitDefinition.BreakingChangeRule rule,
-                List<ValidationEvent> events) {
+                List<ValidationEvent> events
+        ) {
             this.model = model;
             this.trait = trait;
             this.targetShape = targetShape;
@@ -117,7 +118,8 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                 Shape currentShape,
                 int segmentPosition,
                 Node currentValue,
-                String path) {
+                String path
+        ) {
             // Don't keep crawling when a "" segment is hit or the last segment is hit.
             if (segmentPosition >= segements.size() || segements.get(segmentPosition).isEmpty()) {
                 result.put(path, currentValue);

@@ -53,7 +53,8 @@ final class ModelLoader {
             String filename,
             Consumer<LoadOperation> operationConsumer,
             Supplier<InputStream> contentSupplier,
-            Function<CharSequence, String> stringTable) {
+            Function<CharSequence, String> stringTable
+    ) {
         try {
             if (filename.endsWith(".smithy")) {
                 try (InputStream inputStream = contentSupplier.get()) {
@@ -110,7 +111,8 @@ final class ModelLoader {
             Map<String, Object> properties,
             String filename,
             Consumer<LoadOperation> operationConsumer,
-            Function<CharSequence, String> stringTable) {
+            Function<CharSequence, String> stringTable
+    ) {
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
 

@@ -31,7 +31,8 @@ public final class TagEnabledServiceValidator extends AbstractValidator {
     private List<ValidationEvent> validateService(
             ServiceShape service,
             AwsTagIndex tagIndex,
-            TopDownIndex topDownIndex) {
+            TopDownIndex topDownIndex
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         TagEnabledTrait trait = service.expectTrait(TagEnabledTrait.class);
 

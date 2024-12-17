@@ -113,7 +113,8 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
     private static Model createUpdatedModel(
             Model model,
             Shape rootShape,
-            Predicate<Shape> predicate) {
+            Predicate<Shape> predicate
+    ) {
         ModelTransformer transformer = ModelTransformer.create();
 
         if (rootShape != null) {

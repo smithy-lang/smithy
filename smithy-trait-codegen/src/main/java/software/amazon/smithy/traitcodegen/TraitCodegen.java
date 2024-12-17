@@ -64,7 +64,8 @@ final class TraitCodegen {
             Model model,
             TraitCodegenSettings settings,
             FileManifest fileManifest,
-            PluginContext pluginContext) {
+            PluginContext pluginContext
+    ) {
         this.model = Objects.requireNonNull(model);
         this.settings = Objects.requireNonNull(settings);
         this.fileManifest = Objects.requireNonNull(fileManifest);

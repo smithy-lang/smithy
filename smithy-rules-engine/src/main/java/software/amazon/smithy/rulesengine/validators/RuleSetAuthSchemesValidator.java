@@ -102,7 +102,8 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
 
         private Optional<ValidationEvent> validateAuthSchemeName(
                 Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation) {
+                FromSourceLocation sourceLocation
+        ) {
             if (!authScheme.containsKey(NAME) || !authScheme.get(NAME).asStringLiteral().isPresent()) {
                 return Optional.of(error(serviceShape,
                         sourceLocation,
@@ -115,7 +116,8 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         private List<ValidationEvent> validateAuthScheme(
                 String schemeName,
                 Map<Identifier, Literal> authScheme,
-                FromSourceLocation sourceLocation) {
+                FromSourceLocation sourceLocation
+        ) {
             List<ValidationEvent> events = new ArrayList<>();
 
             BiFunction<FromSourceLocation, String, ValidationEvent> emitter = getEventEmitter();

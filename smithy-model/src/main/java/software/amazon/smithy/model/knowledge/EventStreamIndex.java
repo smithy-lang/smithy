@@ -48,7 +48,8 @@ public final class EventStreamIndex implements KnowledgeIndex {
             Model model,
             OperationShape operation,
             StructureShape shape,
-            Map<ShapeId, EventStreamInfo> infoMap) {
+            Map<ShapeId, EventStreamInfo> infoMap
+    ) {
         for (MemberShape member : shape.getAllMembers().values()) {
             Shape target = model.expectShape(member.getTarget());
             if (target.hasTrait(StreamingTrait.class) && target.isUnionShape()) {
@@ -93,7 +94,8 @@ public final class EventStreamIndex implements KnowledgeIndex {
             Model model,
             OperationShape operation,
             StructureShape structure,
-            MemberShape member) {
+            MemberShape member
+    ) {
 
         Shape eventStreamTarget = model.expectShape(member.getTarget());
 

@@ -134,7 +134,8 @@ public interface NodeValidatorPlugin {
                 FromSourceLocation sourceLocation,
                 Severity severity,
                 String message,
-                String... additionalEventIdParts);
+                String... additionalEventIdParts
+        );
 
         default void accept(FromSourceLocation sourceLocation, String message) {
             accept(sourceLocation, Severity.ERROR, message, EMPTY_STRING_ARRAY);

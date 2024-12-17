@@ -81,7 +81,8 @@ abstract class LoadOperation implements FromSourceLocation {
                 String namespace,
                 ShapeId target,
                 ShapeId trait,
-                Node value) {
+                Node value
+        ) {
             super(version);
             this.namespace = namespace;
             this.target = target;

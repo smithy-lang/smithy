@@ -469,7 +469,8 @@ public final class NodeMapper {
     public <T extends Collection<?>, U, V extends Collection<? extends U>> V deserializeCollection(
             Node value,
             Class<T> into,
-            Class<U> members) {
+            Class<U> members
+    ) {
         ParameterizedType type = new ParameterizedType() {
             @Override
             public Type[] getActualTypeArguments() {
@@ -509,7 +510,8 @@ public final class NodeMapper {
     public <T extends Map<?, ?>, U, V extends Map<String, ? extends U>> V deserializeMap(
             Node value,
             Class<T> into,
-            Class<U> members) {
+            Class<U> members
+    ) {
         ParameterizedType type = new ParameterizedType() {
             @Override
             public Type[] getActualTypeArguments() {
@@ -571,7 +573,8 @@ public final class NodeMapper {
             String pointer,
             Node node,
             String message,
-            Throwable cause) {
+            Throwable cause
+    ) {
         String errorMessage = createErrorMessage(into, pointer, node, message);
         return new NodeDeserializationException(errorMessage, node.getSourceLocation(), cause);
     }

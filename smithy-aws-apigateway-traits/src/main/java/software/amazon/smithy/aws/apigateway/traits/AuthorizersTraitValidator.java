@@ -58,7 +58,8 @@ public final class AuthorizersTraitValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateAuthSchema(
             Map<String, AuthorizerDefinition> authorizers,
             Model model,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         Set<ShapeId> authSchemes = ServiceIndex.of(model).getAuthSchemes(service).keySet();
 
         String invalidMappings = authorizers.entrySet()
@@ -89,7 +90,8 @@ public final class AuthorizersTraitValidator extends AbstractValidator {
      */
     private Optional<ValidationEvent> validateEnableSimpleResponsesConfig(
             Map<String, AuthorizerDefinition> authorizers,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         String invalidConfigs = authorizers.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().getEnableSimpleResponses().isPresent())

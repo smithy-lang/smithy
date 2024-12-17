@@ -56,7 +56,8 @@ public interface EndpointComponentFactory {
     static EndpointComponentFactory createServiceFactory(
             Map<String, Parameter> builtIns,
             Map<String, FunctionDefinition> libraryFunctions,
-            List<AuthSchemeValidator> authSchemeValidators) {
+            List<AuthSchemeValidator> authSchemeValidators
+    ) {
         return new EndpointComponentFactory() {
             @Override
             public boolean hasBuiltIn(String name) {

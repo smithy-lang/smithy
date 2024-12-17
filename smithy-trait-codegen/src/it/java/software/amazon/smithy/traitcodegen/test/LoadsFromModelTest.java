@@ -377,7 +377,8 @@ public class LoadsFromModelTest {
     <T extends Trait> void executeTests(
             String resourceFile,
             Class<T> traitClass,
-            Map<String, Object> valueChecks) {
+            Map<String, Object> valueChecks
+    ) {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .addImport(Objects.requireNonNull(getClass().getResource(resourceFile)))

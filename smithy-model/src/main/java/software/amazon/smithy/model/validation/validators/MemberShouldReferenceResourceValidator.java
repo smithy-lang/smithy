@@ -103,7 +103,8 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
             Model model,
             MemberShape member,
             ResourceShape resource,
-            Set<ShapeId> resourcesToIgnore) {
+            Set<ShapeId> resourcesToIgnore
+    ) {
         // Exclude actually bound members via searching with a PathFinder.
         List<PathFinder.Path> resourceMemberPaths = PathFinder.create(model)
                 .search(resource, ListUtils.of(member));

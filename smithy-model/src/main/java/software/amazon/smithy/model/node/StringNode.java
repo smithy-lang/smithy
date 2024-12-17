@@ -55,7 +55,8 @@ public final class StringNode extends Node implements Comparable<StringNode> {
     @SmithyInternalApi
     public static Pair<StringNode, Consumer<String>> createLazyString(
             String placeholder,
-            SourceLocation sourceLocation) {
+            SourceLocation sourceLocation
+    ) {
         StringNode result = new StringNode(placeholder, sourceLocation);
         return Pair.of(result, result::updateValue);
     }

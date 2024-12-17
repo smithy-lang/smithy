@@ -38,7 +38,8 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             Model prelude,
             boolean allowUnknownTraits,
             Consumer<ValidationEvent> validationEventListener,
-            ValidationEventDecorator decorator) {
+            ValidationEventDecorator decorator
+    ) {
         // Emit events as the come in.
         this.events = new ArrayList<ValidationEvent>() {
             @Override

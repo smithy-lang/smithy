@@ -82,7 +82,8 @@ public final class DefaultTraitValidator extends AbstractValidator {
             Shape shape,
             DefaultTrait trait,
             NodeValidationVisitor visitor,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         Node value = trait.toNode();
         Shape shapeTarget = shape;
 
@@ -155,7 +156,8 @@ public final class DefaultTraitValidator extends AbstractValidator {
             Model model,
             NodeValidationVisitor visitor,
             Node value,
-            Shape shape) {
+            Shape shape
+    ) {
         if (visitor == null) {
             return NodeValidationVisitor
                     .builder()

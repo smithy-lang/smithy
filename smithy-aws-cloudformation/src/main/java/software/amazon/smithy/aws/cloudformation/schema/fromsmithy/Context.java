@@ -35,7 +35,8 @@ public final class Context {
             CfnResource cfnResource,
             StructureShape resourceStructure,
             CfnConfig config,
-            JsonSchemaConverter jsonSchemaConverter) {
+            JsonSchemaConverter jsonSchemaConverter
+    ) {
         this.model = model;
         this.service = service;
         this.resource = resource;

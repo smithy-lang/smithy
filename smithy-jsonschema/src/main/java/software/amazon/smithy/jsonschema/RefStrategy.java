@@ -67,7 +67,8 @@ interface RefStrategy {
             Model model,
             JsonSchemaConfig config,
             PropertyNamingStrategy propertyNamingStrategy,
-            Predicate<Shape> shapePredicate) {
+            Predicate<Shape> shapePredicate
+    ) {
         RefStrategy delegate = new DefaultRefStrategy(model, config, propertyNamingStrategy);
         return new DeconflictingStrategy(model, delegate, shapePredicate);
     }

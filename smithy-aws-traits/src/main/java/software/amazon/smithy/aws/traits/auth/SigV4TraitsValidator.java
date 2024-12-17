@@ -91,7 +91,8 @@ public final class SigV4TraitsValidator extends AbstractValidator {
             ShapeId member1,
             String value1,
             ShapeId member2,
-            String value2) {
+            String value2
+    ) {
         return warning(service,
                 String.format(
                         "Value for `%s` \"%s\" and value for `%s` \"%s\" SHOULD match.",

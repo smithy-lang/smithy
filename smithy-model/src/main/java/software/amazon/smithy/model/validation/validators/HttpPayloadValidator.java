@@ -56,7 +56,8 @@ public final class HttpPayloadValidator extends AbstractValidator {
     private List<ValidationEvent> validateOperation(
             HttpBindingIndex bindings,
             OperationIndex opIndex,
-            OperationShape shape) {
+            OperationShape shape
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         validatePayload(shape.getId(), opIndex.expectInputShape(shape), bindings, true).ifPresent(events::add);
         validatePayload(shape.getId(), opIndex.expectOutputShape(shape), bindings, false).ifPresent(events::add);
@@ -73,7 +74,8 @@ public final class HttpPayloadValidator extends AbstractValidator {
             ShapeId subject,
             StructureShape inputOrError,
             HttpBindingIndex bindings,
-            boolean request) {
+            boolean request
+    ) {
         Map<String, HttpBinding> resolved = request
                 ? bindings.getRequestBindings(subject)
                 : bindings.getResponseBindings(subject);

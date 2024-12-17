@@ -36,7 +36,8 @@ public final class PaginationInfo {
             MemberShape inputToken,
             List<MemberShape> outputToken,
             MemberShape pageSize,
-            List<MemberShape> items) {
+            List<MemberShape> items
+    ) {
         this.service = service;
         this.operation = operation;
         this.input = input;

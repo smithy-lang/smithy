@@ -178,7 +178,8 @@ public final class CfnConverter {
     private ConversionEnvironment createConversionEnvironment(
             Model model,
             ServiceShape serviceShape,
-            ResourceShape resourceShape) {
+            ResourceShape resourceShape
+    ) {
         // Prepare the JSON Schema Converter.
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder()
                 .config(config)
@@ -250,7 +251,8 @@ public final class CfnConverter {
 
         private ConversionEnvironment(
                 Context context,
-                List<CfnMapper> mappers) {
+                List<CfnMapper> mappers
+        ) {
             this.context = context;
             this.mappers = mappers;
         }
@@ -307,7 +309,8 @@ public final class CfnConverter {
 
     private String resolveResourceTypeName(
             ConversionEnvironment environment,
-            CfnResourceTrait resourceTrait) {
+            CfnResourceTrait resourceTrait
+    ) {
         CfnConfig config = environment.context.getConfig();
         ServiceShape serviceShape = environment.context.getModel().expectShape(config.getService(), ServiceShape.class);
         Optional<ServiceTrait> serviceTrait = serviceShape.getTrait(ServiceTrait.class);

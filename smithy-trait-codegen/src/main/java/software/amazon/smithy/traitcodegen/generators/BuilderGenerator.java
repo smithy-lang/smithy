@@ -65,7 +65,8 @@ final class BuilderGenerator implements Runnable {
             Symbol symbol,
             SymbolProvider symbolProvider,
             Shape baseShape,
-            Model model) {
+            Model model
+    ) {
         this.writer = writer;
         this.symbol = symbol;
         this.symbolProvider = symbolProvider;
@@ -386,7 +387,8 @@ final class BuilderGenerator implements Runnable {
                 TraitCodegenWriter writer,
                 Model model,
                 SymbolProvider symbolProvider,
-                MemberShape member) {
+                MemberShape member
+        ) {
             this.writer = writer;
             this.model = model;
             this.symbolProvider = symbolProvider;

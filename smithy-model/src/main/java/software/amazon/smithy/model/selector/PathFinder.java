@@ -358,7 +358,8 @@ public final class PathFinder {
                 NeighborProvider provider,
                 Shape startingShape,
                 Collection<Shape> candidates,
-                Predicate<Relationship> filter) {
+                Predicate<Relationship> filter
+        ) {
             this.startingShape = startingShape;
             this.candidates = candidates;
             this.provider = provider;

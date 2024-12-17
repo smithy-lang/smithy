@@ -67,7 +67,8 @@ public final class HostLabelTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateStructure(
             Model model,
             OperationShape operation,
-            EndpointTrait endpoint) {
+            EndpointTrait endpoint
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate the host can become a valid RFC 3986 Section 3.2.2 host.
@@ -88,7 +89,8 @@ public final class HostLabelTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateBindings(
             OperationShape operation,
             EndpointTrait endpoint,
-            StructureShape input) {
+            StructureShape input
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         SmithyPattern hostPrefix = endpoint.getHostPrefix();
 
@@ -131,7 +133,8 @@ public final class HostLabelTraitValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> validateExpandedPattern(
             OperationShape operation,
-            EndpointTrait endpoint) {
+            EndpointTrait endpoint
+    ) {
         // Replace all label portions with stubs so the hostPrefix
         // can be validated.
         String stubHostPrefix = endpoint.getHostPrefix()

@@ -985,7 +985,8 @@ final class IdlModelLoader {
             IdlToken token,
             String suffix,
             Consumer<ShapeId> consumer,
-            IdlTraitParser.Result defaultTrait) {
+            IdlTraitParser.Result defaultTrait
+    ) {
         if (token == IdlToken.WALRUS) {
             if (!modelVersion.supportsInlineOperationIO()) {
                 throw syntax(id,

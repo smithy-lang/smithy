@@ -69,7 +69,8 @@ public final class HttpUriConflictValidator extends AbstractValidator {
             Model model,
             OperationShape operation,
             HttpTrait httpTrait,
-            List<OperationShape> operations) {
+            List<OperationShape> operations
+    ) {
         String method = httpTrait.getMethod();
         UriPattern pattern = httpTrait.getUri();
 
@@ -153,7 +154,8 @@ public final class HttpUriConflictValidator extends AbstractValidator {
             OperationShape operation,
             SmithyPattern otherPattern,
             OperationShape otherOperation,
-            BiFunction<Model, OperationShape, Map<String, Pattern>> getLabelPatterns) {
+            BiFunction<Model, OperationShape, Map<String, Pattern>> getLabelPatterns
+    ) {
 
         Map<Segment, Segment> conflictingLabelSegments = pattern.getConflictingLabelSegmentsMap(otherPattern);
 

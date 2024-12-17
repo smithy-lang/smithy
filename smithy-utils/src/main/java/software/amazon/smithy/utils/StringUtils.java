@@ -1181,7 +1181,8 @@ public final class StringUtils {
             final String str,
             final int wrapLength,
             final String newLineStr,
-            final boolean wrapLongWords) {
+            final boolean wrapLongWords
+    ) {
         return wrap(str, wrapLength, newLineStr, wrapLongWords, " ");
     }
 
@@ -1283,7 +1284,8 @@ public final class StringUtils {
             int wrapLength,
             String newLineStr,
             final boolean wrapLongWords,
-            String wrapOn) {
+            String wrapOn
+    ) {
         if (str == null) {
             return null;
         }

@@ -696,7 +696,8 @@ final class FormatVisitor {
     private static Doc formatNodeObjectKvp(
             TreeCursor cursor,
             Function<TreeCursor, Doc> keyVisitor,
-            Function<TreeCursor, Doc> valueVisitor) {
+            Function<TreeCursor, Doc> valueVisitor
+    ) {
         // Since text blocks span multiple lines, when they are the NODE_VALUE for NODE_OBJECT_KVP,
         // they have to be indented. Since we only format valid models, NODE_OBJECT_KVP is guaranteed to
         // have a NODE_VALUE child.

@@ -101,7 +101,8 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
             StructureShape containerShape,
             MemberShape memberShape,
             Map<ShapeId, Trait> traits,
-            NeighborProvider reverse) {
+            NeighborProvider reverse
+    ) {
         // Prepare which traits need relationship tracking for.
         Set<ShapeId> ignoredOutsideInputTraits = new HashSet<>(traits.keySet());
         ignoredOutsideInputTraits.retainAll(IGNORED_OUTSIDE_INPUT);
@@ -183,7 +184,8 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
             MemberShape memberShape,
             Trait trait,
             int checkedRelationshipCount,
-            Map<RelationshipType, List<ShapeId>> ignoredRelationships) {
+            Map<RelationshipType, List<ShapeId>> ignoredRelationships
+    ) {
         String mixedIn = memberShape.getMixins().isEmpty() ? "" : " mixed in";
         String message = "The `%s` trait applied to this%s member is ";
         if (checkedRelationshipCount == ignoredRelationships.size()) {

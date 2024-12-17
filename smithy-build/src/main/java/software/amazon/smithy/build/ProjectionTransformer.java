@@ -64,7 +64,8 @@ public interface ProjectionTransformer {
      * @return Returns the created factory.
      */
     static Function<String, Optional<ProjectionTransformer>> createServiceFactory(
-            Iterable<ProjectionTransformer> transformers) {
+            Iterable<ProjectionTransformer> transformers
+    ) {
         Map<String, ProjectionTransformer> map = new HashMap<>();
         for (ProjectionTransformer transformer : transformers) {
             map.put(transformer.getName(), transformer);

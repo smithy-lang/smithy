@@ -256,7 +256,8 @@ public final class IoUtils {
             Path directory,
             InputStream input,
             Appendable output,
-            Map<String, String> env) {
+            Map<String, String> env
+    ) {
         ProcessBuilder processBuilder = new ProcessBuilder(args)
                 .directory(Objects.requireNonNull(directory.toFile(), "Process directory cannot be null"))
                 .redirectErrorStream(true);

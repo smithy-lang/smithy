@@ -260,7 +260,8 @@ public final class ServiceIndex implements KnowledgeIndex {
     public Map<ShapeId, Trait> getEffectiveAuthSchemes(
             ToShapeId service,
             ToShapeId operation,
-            AuthSchemeMode authSchemeMode) {
+            AuthSchemeMode authSchemeMode
+    ) {
         Map<ShapeId, Trait> authSchemes = getEffectiveAuthSchemes(service, operation);
         if (authSchemeMode == AuthSchemeMode.NO_AUTH_AWARE) {
             if (authSchemes.isEmpty() || hasOptionalAuth(operation)) {

@@ -113,7 +113,8 @@ public final class SigV4Migration extends AbstractDiffEvaluator {
             Shape shape,
             List<ShapeId> oldAuthSchemes,
             List<ShapeId> newAuthSchemes,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         boolean isOldSigV4Present = oldAuthSchemes.contains(SigV4Trait.ID);
         boolean isOldSigV4APresent = oldAuthSchemes.contains(SigV4ATrait.ID);
         boolean isNewSigV4Present = newAuthSchemes.contains(SigV4Trait.ID);

@@ -722,7 +722,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collect(
             Function<T, StringNode> keyMapper,
-            Function<T, ToNode> valueMapper) {
+            Function<T, ToNode> valueMapper
+    ) {
         return Collector.of(
                 LinkedHashMap::new,
                 (results, entry) -> results.put(keyMapper.apply(entry), valueMapper.apply(entry).toNode()),
@@ -744,7 +745,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collectStringKeys(
             Function<T, String> keyMapper,
-            Function<T, ToNode> valueMapper) {
+            Function<T, ToNode> valueMapper
+    ) {
         return collect(entry -> from(keyMapper.apply(entry)), valueMapper);
     }
 

@@ -113,7 +113,8 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
             Model model,
             Collection<Shape> removed,
             Function<Shape, Optional<S>> containerShapeMapper,
-            Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory) {
+            Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory
+    ) {
         return removed.stream()
                 .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
                 .flatMap(member -> OptionalUtils.stream(model.getShape(member.getContainer())

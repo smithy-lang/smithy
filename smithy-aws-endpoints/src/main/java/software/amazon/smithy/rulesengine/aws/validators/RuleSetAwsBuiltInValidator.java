@@ -54,7 +54,8 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateBuiltIn(
             ServiceShape serviceShape,
             String builtInName,
-            FromSourceLocation source) {
+            FromSourceLocation source
+    ) {
         if (ADDITIONAL_CONSIDERATION_BUILT_INS.contains(builtInName)) {
             return Optional.of(danger(
                     serviceShape,

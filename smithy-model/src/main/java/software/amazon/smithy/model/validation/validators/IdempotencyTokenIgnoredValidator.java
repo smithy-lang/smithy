@@ -57,7 +57,8 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
             MemberShape memberShape,
             Trait trait,
             NeighborProvider reverse,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
 
         // Store relationships so we can emit one event per ignored binding.
         Map<RelationshipType, List<ShapeId>> ignoredRelationships = new TreeMap<>();
@@ -82,7 +83,8 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
     private ValidationEvent emit(
             MemberShape memberShape,
             Trait trait,
-            Map<RelationshipType, List<ShapeId>> ignoredRelationships) {
+            Map<RelationshipType, List<ShapeId>> ignoredRelationships
+    ) {
         String message =
                 "The `idempotencyToken` trait only has an effect when applied to a top-level operation input member, "
                         + "but it was applied and ignored in the following contexts: "

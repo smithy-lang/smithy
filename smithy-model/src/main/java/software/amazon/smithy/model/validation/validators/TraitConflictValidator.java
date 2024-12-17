@@ -53,7 +53,8 @@ public final class TraitConflictValidator extends AbstractValidator {
             Model model,
             ShapeId trait,
             List<ShapeId> conflicts,
-            Map<Shape, Map<ShapeId, List<ShapeId>>> shapeToTraitConflicts) {
+            Map<Shape, Map<ShapeId, List<ShapeId>>> shapeToTraitConflicts
+    ) {
         for (Shape shape : model.getShapesWithTrait(trait)) {
             for (ShapeId conflict : conflicts) {
                 if (shape.hasTrait(conflict)) {

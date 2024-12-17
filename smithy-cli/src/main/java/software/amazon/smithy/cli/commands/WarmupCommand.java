@@ -182,7 +182,8 @@ final class WarmupCommand implements Command {
             CliPrinter printer,
             Path baseDir,
             List<String> baseArgs,
-            String... args) {
+            String... args
+    ) {
         List<String> resolved = new ArrayList<>(baseArgs);
         Collections.addAll(resolved, args);
 

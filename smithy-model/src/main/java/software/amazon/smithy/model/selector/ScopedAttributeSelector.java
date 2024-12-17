@@ -25,7 +25,8 @@ final class ScopedAttributeSelector implements InternalSelector {
                 ScopedFactory lhs,
                 AttributeComparator comparator,
                 List<ScopedFactory> rhs,
-                boolean caseInsensitive) {
+                boolean caseInsensitive
+        ) {
             this.lhs = lhs;
             this.comparator = comparator;
             this.rhs = rhs;

@@ -44,7 +44,8 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operation,
             String method,
-            String path) {
+            String path
+    ) {
         return context.getService()
                 .getTrait(CorsTrait.class)
                 .map(trait -> addCorsHeadersToResponses(context, shape, operation, method, trait))
@@ -56,7 +57,8 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operationObject,
             String method,
-            CorsTrait trait) {
+            CorsTrait trait
+    ) {
         OperationObject.Builder builder = operationObject.toBuilder();
 
         for (Map.Entry<String, ResponseObject> entry : operationObject.getResponses().entrySet()) {
@@ -79,7 +81,8 @@ final class AddCorsResponseHeaders implements ApiGatewayMapper {
             OperationObject operationObject,
             String method,
             CorsTrait trait,
-            ResponseObject response) {
+            ResponseObject response
+    ) {
         // Determine which headers have been added to the response.
         List<String> headers = new ArrayList<>();
 

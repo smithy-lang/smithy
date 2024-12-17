@@ -26,7 +26,8 @@ public final class ClientEndpointDiscoveryInfo {
             OperationShape discoveryOperation,
             StructureShape error,
             List<MemberShape> discoveryIds,
-            boolean required) {
+            boolean required
+    ) {
         this.service = service;
         this.operation = operation;
         this.discoveryOperation = discoveryOperation;

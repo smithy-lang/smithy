@@ -47,7 +47,8 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
             Shape enumShape,
             SymbolProvider provider,
             TraitCodegenWriter writer,
-            Model model) {
+            Model model
+    ) {
         writeEnum(enumShape, provider, writer, model, true);
     }
 
@@ -65,7 +66,8 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
             SymbolProvider provider,
             TraitCodegenWriter writer,
             Model model,
-            boolean isStandaloneClass) {
+            boolean isStandaloneClass
+    ) {
         Symbol enumSymbol = provider.toSymbol(enumShape);
         writer.pushState(new ClassSection(enumShape))
                 .putContext("standalone", isStandaloneClass)

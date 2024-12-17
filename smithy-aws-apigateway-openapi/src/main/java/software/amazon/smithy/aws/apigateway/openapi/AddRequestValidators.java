@@ -57,7 +57,8 @@ final class AddRequestValidators implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethod,
-            String path) {
+            String path
+    ) {
         return shape.getTrait(RequestValidatorTrait.class)
                 .map(RequestValidatorTrait::getValue)
                 .map(value -> operation.toBuilder().putExtension(REQUEST_VALIDATOR, value).build())

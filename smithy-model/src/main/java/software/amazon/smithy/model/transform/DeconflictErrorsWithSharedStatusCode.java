@@ -88,7 +88,8 @@ final class DeconflictErrorsWithSharedStatusCode {
     private Pair<Shape, List<Shape>> synthesizeErrorUnion(
             String operationName,
             Integer statusCode,
-            List<StructureShape> errors) {
+            List<StructureShape> errors
+    ) {
         List<Shape> replacementShapes = new ArrayList<>();
         StructureShape.Builder errorResponse = StructureShape.builder();
         ShapeId errorResponseId = ShapeId.fromParts(forService.getId().getNamespace(),

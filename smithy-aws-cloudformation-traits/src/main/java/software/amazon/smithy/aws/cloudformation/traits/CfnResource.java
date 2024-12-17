@@ -222,7 +222,8 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
 
         public Builder updatePropertyDefinition(
                 String propertyName,
-                Function<CfnResourceProperty, CfnResourceProperty> updater) {
+                Function<CfnResourceProperty, CfnResourceProperty> updater
+        ) {
             CfnResourceProperty definition = propertyDefinitions.get(propertyName);
 
             // Don't update if we don't have a property or it's already locked.

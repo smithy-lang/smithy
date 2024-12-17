@@ -207,7 +207,8 @@ public class AwsRestJson1ProtocolTest {
     public void assertProtocolHeaders(
             String operationId,
             Set<String> expectedRequestHeaders,
-            Set<String> expectedResponseHeaders) {
+            Set<String> expectedResponseHeaders
+    ) {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("rest-json-protocol-headers.smithy"))
                 .discoverModels()
@@ -252,7 +253,8 @@ public class AwsRestJson1ProtocolTest {
                 OperationShape shape,
                 OperationObject operation,
                 String httpMethodName,
-                String path) {
+                String path
+        ) {
             this.capturedContext = context;
             return OpenApiMapper.super.updateOperation(context, shape, operation, httpMethodName, path);
         }

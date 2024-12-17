@@ -82,7 +82,8 @@ public final class RuleError extends RuntimeException {
     public static <T> T context(
             String message,
             FromSourceLocation sourceLocation,
-            Evaluator<T> runnable) throws RuleError {
+            Evaluator<T> runnable
+    ) throws RuleError {
         try {
             return runnable.call();
         } catch (SourceException ex) {

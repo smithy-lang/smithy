@@ -368,7 +368,8 @@ final class DefaultNodeDeserializers {
                 Node node,
                 Type target,
                 String pointer,
-                NodeMapper mapper) throws ReflectiveOperationException {
+                NodeMapper mapper
+        ) throws ReflectiveOperationException {
             for (Map.Entry<String, Node> entry : node.expectObjectNode().getStringMap().entrySet()) {
                 Method setter = findSetter(target, entry.getKey());
                 if (setter == null) {

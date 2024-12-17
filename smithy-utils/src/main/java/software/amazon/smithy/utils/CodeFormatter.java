@@ -90,7 +90,8 @@ final class CodeFormatter {
         static Operation formatted(
                 Function<AbstractCodeWriter<?>, Object> valueGetter,
                 char formatter,
-                Supplier<String> errorMessage) {
+                Supplier<String> errorMessage
+        ) {
             return (sink, writer) -> {
                 Object value = valueGetter.apply(writer);
                 String result = writer.applyFormatter(formatter, value);

@@ -214,7 +214,8 @@ public final class AwsTagIndex implements KnowledgeIndex {
     private void calculateTagApi(
             Model model,
             ServiceShape service,
-            Map<String, ShapeId> operationMap) {
+            Map<String, ShapeId> operationMap
+    ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
 
@@ -238,7 +239,8 @@ public final class AwsTagIndex implements KnowledgeIndex {
     private void calculateUntagApi(
             Model model,
             ServiceShape service,
-            Map<String, ShapeId> operationMap) {
+            Map<String, ShapeId> operationMap
+    ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
 
@@ -262,7 +264,8 @@ public final class AwsTagIndex implements KnowledgeIndex {
     private void calculateListTagsApi(
             Model model,
             ServiceShape service,
-            Map<String, ShapeId> operationMap) {
+            Map<String, ShapeId> operationMap
+    ) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
 

@@ -37,7 +37,8 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
             ServiceShape service,
             SymbolProvider symbolProvider,
             FileManifest fileManifest,
-            List<I> integrations) {
+            List<I> integrations
+    ) {
         super(model, settings, service);
         this.symbolProvider = symbolProvider;
         this.fileManifest = fileManifest;

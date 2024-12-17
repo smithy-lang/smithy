@@ -44,7 +44,8 @@ public final class Context<T extends Trait> {
             JsonSchemaConverter jsonSchemaConverter,
             OpenApiProtocol<T> openApiProtocol,
             SchemaDocument schemas,
-            List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters) {
+            List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters
+    ) {
         this.model = model;
         this.service = service;
         this.config = config;
@@ -218,14 +219,16 @@ public final class Context<T extends Trait> {
 
     private static <T extends Trait> Set<String> getSecuritySchemeRequestHeaders(
             Context<? extends Trait> context,
-            SecuritySchemeConverter<T> converter) {
+            SecuritySchemeConverter<T> converter
+    ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
         return converter.getAuthRequestHeaders(context, t);
     }
 
     private static <T extends Trait> Set<String> getSecuritySchemeResponseHeaders(
             Context<? extends Trait> context,
-            SecuritySchemeConverter<T> converter) {
+            SecuritySchemeConverter<T> converter
+    ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
         return converter.getAuthResponseHeaders(context, t);
     }

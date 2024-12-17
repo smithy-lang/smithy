@@ -31,5 +31,6 @@ public interface AuthSchemeValidator extends Predicate<String> {
     List<ValidationEvent> validateScheme(
             Map<Identifier, Literal> authScheme,
             FromSourceLocation sourceLocation,
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter);
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+    );
 }

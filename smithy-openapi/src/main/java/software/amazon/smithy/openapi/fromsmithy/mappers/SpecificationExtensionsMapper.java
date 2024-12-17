@@ -37,7 +37,8 @@ public class SpecificationExtensionsMapper implements OpenApiMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethodName,
-            String path) {
+            String path
+    ) {
         operation.getExtensions().putAll(OpenApiUtils.getSpecificationExtensionsMap(context.getModel(), shape));
         return operation;
     }

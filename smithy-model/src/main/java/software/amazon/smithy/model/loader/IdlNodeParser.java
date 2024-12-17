@@ -134,7 +134,8 @@ final class IdlNodeParser {
     private static Node createSyntacticShapeId(
             IdlModelLoader loader,
             String identifier,
-            SourceLocation location) {
+            SourceLocation location
+    ) {
         // Unquoted node values syntactically are assumed to be references to shapes. A lazy string node is
         // used because the shape ID may not be able to be resolved until after the entire model is loaded.
         Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(identifier, location);

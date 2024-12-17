@@ -98,7 +98,8 @@ public class SmokeTestCaseValidator extends AbstractValidator {
             Model model,
             Shape shape,
             String caseId,
-            String contextSuffix) {
+            String contextSuffix
+    ) {
         return NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())

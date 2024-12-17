@@ -40,7 +40,8 @@ final class ApplyResourceBasedTargets implements ShapeModifier {
             AbstractShapeBuilder<?, ?> shapeBuilder,
             MemberShape.Builder memberBuilder,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap) {
+            Function<ShapeId, Shape> shapeMap
+    ) {
         // Fast-fail the common case of the target having already been set.
         if (memberBuilder.getTarget() != null) {
             return;

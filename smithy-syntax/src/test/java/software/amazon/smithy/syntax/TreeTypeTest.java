@@ -1842,7 +1842,8 @@ public class TreeTypeTest {
     private static void rootAndChildTypesEqual(
             TokenTree actualTree,
             TreeType expectedRoot,
-            TreeType... expectedChildren) {
+            TreeType... expectedChildren
+    ) {
         assertEquals(expectedRoot, actualTree.getType());
         String actual =
                 actualTree.getChildren().stream().map(t -> t.getType().toString()).collect(Collectors.joining(","));

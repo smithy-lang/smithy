@@ -59,7 +59,8 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateBindings(
             Map<StructureShape, Map<String, Set<String>>> queryBindings,
-            Map<StructureShape, List<OperationShape>> structureToOperations) {
+            Map<StructureShape, List<OperationShape>> structureToOperations
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Map.Entry<StructureShape, Map<String, Set<String>>> entry : queryBindings.entrySet()) {

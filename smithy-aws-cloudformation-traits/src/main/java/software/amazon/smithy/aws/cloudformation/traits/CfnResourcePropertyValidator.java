@@ -38,7 +38,8 @@ public final class CfnResourcePropertyValidator extends AbstractValidator {
     private List<ValidationEvent> validateResource(
             Model model,
             CfnResourceIndex cfnResourceIndex,
-            ResourceShape resource) {
+            ResourceShape resource
+    ) {
         CfnResourceTrait trait = resource.expectTrait(CfnResourceTrait.class);
         List<ValidationEvent> events = new ArrayList<>();
         String resourceName = trait.getName().orElse(resource.getId().getName());
@@ -58,7 +59,8 @@ public final class CfnResourcePropertyValidator extends AbstractValidator {
             Model model,
             ResourceShape resource,
             String resourceName,
-            Map.Entry<String, CfnResourceProperty> property) {
+            Map.Entry<String, CfnResourceProperty> property
+    ) {
         Set<ShapeId> propertyTargets = new TreeSet<>();
         for (ShapeId shapeId : property.getValue().getShapeIds()) {
             model.getShape(shapeId).ifPresent(shape ->

@@ -425,7 +425,8 @@ public final class BuildParameterBuilder {
                 BuildParameterBuilder builder,
                 String discoveryClasspath,
                 String classpath,
-                Set<String> sources) {
+                Set<String> sources
+        ) {
             this.classpath = classpath;
             this.sources = new LinkedHashSet<>(sources);
 

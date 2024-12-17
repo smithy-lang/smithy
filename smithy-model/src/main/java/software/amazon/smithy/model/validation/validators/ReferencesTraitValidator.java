@@ -82,7 +82,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait.Reference reference,
             Shape shape,
             ReferencesTrait trait,
-            ResourceShape target) {
+            ResourceShape target
+    ) {
         if (shape.asStructureShape().isPresent()) {
             return validateStructureRef(model, reference, shape.asStructureShape().get(), trait, target);
         } else if (shape.asStringShape().isPresent()) {
@@ -96,7 +97,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait.Reference reference,
             StringShape shape,
             ReferencesTrait trait,
-            ResourceShape target) {
+            ResourceShape target
+    ) {
         // You can only reference a resource with a single ID on a string shape.
         if (target.getIdentifiers().size() != 1) {
             return ListUtils.of(error(shape,
@@ -122,7 +124,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait.Reference reference,
             StructureShape shape,
             ReferencesTrait trait,
-            ResourceShape target) {
+            ResourceShape target
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         Map<String, String> resolvedIds = resolveIds(reference, target);
         boolean implicit = !resolvedIds.equals(reference.getIds());
@@ -166,7 +169,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait trait,
             ResourceShape target,
             Map<String, String> resolvedIds,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         // References require the exact number of entries as the identifiers of the resource.
         if (resolvedIds.size() != target.getIdentifiers().size()) {
             events.add(wrongNumberOfIdentifiers(shape, trait, reference, target.getIdentifiers().keySet()));
@@ -184,7 +188,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             Shape shape,
             ReferencesTrait trait,
             ReferencesTrait.Reference reference,
-            Collection<String> expectedNames) {
+            Collection<String> expectedNames
+    ) {
         String prefix = expectedNames.size() < reference.getIds().size()
                 ? "Too many identifiers"
                 : "Not enough identifiers";
@@ -205,7 +210,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait trait,
             ReferencesTrait.Reference reference,
             ResourceShape resource,
-            Collection<String> extraneousKeys) {
+            Collection<String> extraneousKeys
+    ) {
         return error(shape,
                 trait,
                 String.format(
@@ -223,7 +229,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait trait,
             ReferencesTrait.Reference reference,
             boolean implicit,
-            Map<String, ErrorReason> errors) {
+            Map<String, ErrorReason> errors
+    ) {
         List<String> messages = new ArrayList<>();
         errors.forEach((name, reason) -> {
             switch (reason) {

@@ -78,7 +78,8 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
             ServiceShape service,
             Set<OperationShape> operations,
             Severity severity,
-            String reason) {
+            String reason
+    ) {
         return operations.stream()
                 .filter(operation -> !operation.getTrait(HttpTrait.class).isPresent())
                 .map(operation -> createEvent(severity,

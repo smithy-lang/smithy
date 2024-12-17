@@ -176,7 +176,8 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateShape(
             Model model,
             OperationIndex operationIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<String> words = ValidationUtils.splitCamelCaseWord(operation.getId().getName());
         String verb = words.get(0).toLowerCase(Locale.US);
 
@@ -218,7 +219,8 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
             String verb,
             OperationShape operation,
             StructureShape output,
-            Model model) {
+            Model model
+    ) {
         if (!config.getVerbsSuggestPagination().contains(verb)) {
             return Stream.empty();
         }

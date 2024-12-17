@@ -106,7 +106,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             Shape operationOrError,
             List<HttpBinding> bindings,
-            MessageType messageType);
+            MessageType messageType
+    );
 
     /**
      * Converts Smithy values in Node form to a data exchange format used by a protocol (e.g., XML).
@@ -221,7 +222,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Shape operationOrError,
             HttpBinding binding,
             MessageType type,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         if (operation == null && type == MessageType.ERROR) {
             return Collections.emptyMap();
         }
@@ -264,7 +266,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Map<String, Node> createErrorExamplesForMembersWithHttpTraits(
             Shape error,
             HttpBinding binding,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         Map<String, Node> examples = new TreeMap<>();
 
         // unique numbering for unique example names in OpenAPI.
@@ -302,7 +305,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Shape operationOrError,
             List<HttpBinding> bindings,
             MessageType type,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         if (operation == null && type == MessageType.ERROR) {
             return Collections.emptyMap();
         }
@@ -340,7 +344,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Map<String, Node> createErrorBodyExamples(
             Shape error,
             List<HttpBinding> bindings,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         Map<String, Node> examples = new TreeMap<>();
         // unique numbering for unique example names in OpenAPI.
         int uniqueNum = 1;
@@ -476,7 +481,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             List<HttpBinding> bindings,
             MessageType messageType,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         Map<String, ParameterObject> result = new TreeMap<>();
 
         for (HttpBinding binding : bindings) {
@@ -508,7 +514,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             HttpBindingIndex bindingIndex,
             EventStreamIndex eventStreamIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(
                 operation,
                 HttpBinding.Location.PAYLOAD);
@@ -548,7 +555,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String mediaTypeRange,
             Context<T> context,
             HttpBinding binding,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         // API Gateway validation requires that in-line schemas must be objects
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
@@ -574,7 +582,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String mediaType,
             Context<T> context,
             HttpBindingIndex bindingIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<HttpBinding> bindings = bindingIndex.getRequestBindings(operation, HttpBinding.Location.DOCUMENT);
 
         // If nothing is bound to the document, then no schema needs to be synthesized.
@@ -611,7 +620,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             HttpBindingIndex bindingIndex,
             EventStreamIndex eventStreamIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         Map<String, ResponseObject> result = new TreeMap<>();
         OperationIndex operationIndex = OperationIndex.of(context.getModel());
         StructureShape output = operationIndex.expectOutputShape(operation);
@@ -641,7 +651,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             EventStreamIndex eventStreamIndex,
             OperationShape operation,
             StructureShape shape,
-            Map<String, ResponseObject> responses) {
+            Map<String, ResponseObject> responses
+    ) {
         Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
         String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
         ResponseObject response = createResponse(
@@ -660,7 +671,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             EventStreamIndex eventStreamIndex,
             String statusCode,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
         String contextName = context.getService().getContextualName(operationOrError);
         String responseName = stripNonAlphaNumericCharsIfNecessary(context, contextName);
@@ -674,7 +686,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Map<String, ParameterObject> createResponseHeaderParameters(
             Context<T> context,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<HttpBinding> bindings = HttpBindingIndex.of(context.getModel())
                 .getResponseBindings(operationOrError, HttpBinding.Location.HEADER);
         MessageType type = !operationOrError.hasTrait(ErrorTrait.class) ? MessageType.RESPONSE : MessageType.ERROR;
@@ -687,7 +700,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             EventStreamIndex eventStreamIndex,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
                 operationOrError,
                 HttpBinding.Location.PAYLOAD);
@@ -727,7 +741,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBinding binding,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         Objects.requireNonNull(mediaType, "Unable to determine response media type for " + operationOrError);
 
         // API Gateway validation requires that in-line schemas must be objects
@@ -758,7 +773,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             Schema schema,
             Shape shape,
-            Function<Shape, String> createSynthesizedName) {
+            Function<Shape, String> createSynthesizedName
+    ) {
         if (!schema.getType().isPresent() && schema.getRef().isPresent()) {
             return MediaTypeObject.builder()
                     .schema(Schema.builder().ref(schema.getRef().get()).build())
@@ -778,7 +794,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBindingIndex bindingIndex,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<HttpBinding> bindings = bindingIndex.getResponseBindings(
                 operationOrError,
                 HttpBinding.Location.DOCUMENT);

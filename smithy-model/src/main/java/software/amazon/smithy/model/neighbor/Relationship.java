@@ -28,7 +28,8 @@ public final class Relationship {
             Shape shape,
             RelationshipType relationshipType,
             ShapeId neighborShapeId,
-            Shape neighborShape) {
+            Shape neighborShape
+    ) {
         this.shape = Objects.requireNonNull(shape);
         this.relationshipType = Objects.requireNonNull(relationshipType);
         this.neighborShapeId = Objects.requireNonNull(neighborShapeId);

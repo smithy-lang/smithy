@@ -201,7 +201,8 @@ public final class SmithyTestCase {
         Result(
                 String modelLocation,
                 Collection<ValidationEvent> unmatchedEvents,
-                Collection<ValidationEvent> extraEvents) {
+                Collection<ValidationEvent> extraEvents
+        ) {
             this.modelLocation = modelLocation;
             this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
             this.extraEvents = Collections.unmodifiableCollection(new TreeSet<>(extraEvents));

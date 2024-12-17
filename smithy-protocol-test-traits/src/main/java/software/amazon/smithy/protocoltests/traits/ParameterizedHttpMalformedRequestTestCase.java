@@ -129,7 +129,8 @@ final class ParameterizedHttpMalformedRequestTestCase
 
     private static HttpMalformedResponseDefinition interpolateResponse(
             HttpMalformedResponseDefinition response,
-            SimpleCodeWriter writer) {
+            SimpleCodeWriter writer
+    ) {
         HttpMalformedResponseDefinition.Builder responseBuilder =
                 response.toBuilder().headers(formatHeaders(writer, response.getHeaders()));
         response.getBody()
@@ -146,7 +147,8 @@ final class ParameterizedHttpMalformedRequestTestCase
 
     private static HttpMalformedRequestDefinition interpolateRequest(
             HttpMalformedRequestDefinition request,
-            SimpleCodeWriter writer) {
+            SimpleCodeWriter writer
+    ) {
         HttpMalformedRequestDefinition.Builder requestBuilder = request.toBuilder()
                 .headers(formatHeaders(writer, request.getHeaders()))
                 .queryParams(request.getQueryParams().stream().map(writer::format).collect(Collectors.toList()));

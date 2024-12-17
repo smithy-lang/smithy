@@ -78,7 +78,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             TopDownIndex topDownIndex,
             OperationIndex opIndex,
             OperationShape operation,
-            PaginatedTrait trait) {
+            PaginatedTrait trait
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate input.
@@ -123,7 +124,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             ServiceShape service,
             OperationShape operation,
             PaginatedTrait trait,
-            PropertyValidator validator) {
+            PropertyValidator validator
+    ) {
         String prefix = service != null ? "When bound within the `" + service.getId() + "` service, " : "";
         String memberPath = validator.getMemberPath(opIndex, operation, trait).orElse(null);
 
@@ -238,7 +240,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 Model model,
                 OperationIndex opIndex,
                 OperationShape operation,
-                PaginatedTrait trait);
+                PaginatedTrait trait
+        );
 
         boolean pathsAllowed() {
             return false;
@@ -256,7 +259,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 Model model,
                 OperationIndex opIndex,
                 OperationShape operation,
-                PaginatedTrait trait) {
+                PaginatedTrait trait
+        ) {
             StructureShape outputShape = opIndex.expectOutputShape(operation);
             return getMemberPath(opIndex, operation, trait)
                     .map(path -> PaginatedTrait.resolveFullPath(path, model, outputShape))
@@ -298,7 +302,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 Model model,
                 OperationIndex opIndex,
                 OperationShape operation,
-                PaginatedTrait trait) {
+                PaginatedTrait trait
+        ) {
             StructureShape input = opIndex.expectInputShape(operation);
             return getMemberPath(opIndex, operation, trait).flatMap(input::getMember);
         }
@@ -359,7 +364,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 Model model,
                 OperationIndex opIndex,
                 OperationShape operation,
-                PaginatedTrait trait) {
+                PaginatedTrait trait
+        ) {
             StructureShape input = opIndex.expectInputShape(operation);
             return getMemberPath(opIndex, operation, trait).flatMap(input::getMember);
         }

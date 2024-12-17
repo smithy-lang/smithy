@@ -1512,7 +1512,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             String textAfterNewline,
             Object arg1,
             Object arg2,
-            Runnable f) {
+            Runnable f
+    ) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2}, f);
     }
 
@@ -1535,7 +1536,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             Object arg1,
             Object arg2,
             Object arg3,
-            Runnable f) {
+            Runnable f
+    ) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3}, f);
     }
 
@@ -1560,7 +1562,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             Object arg2,
             Object arg3,
             Object arg4,
-            Runnable f) {
+            Runnable f
+    ) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3, arg4}, f);
     }
 
@@ -1587,7 +1590,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             Object arg3,
             Object arg4,
             Object arg5,
-            Runnable f) {
+            Runnable f
+    ) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3, arg4, arg5}, f);
     }
 

@@ -37,7 +37,8 @@ enum CorsHeader {
             Context<T> context,
             OperationObject operationObject,
             OperationShape shape,
-            CorsTrait cors) {
+            CorsTrait cors
+    ) {
         // The deduced response headers of an operation consist of any headers
         // returned by security schemes, any headers returned by the protocol,
         // and any headers explicitly modeled on the operation.

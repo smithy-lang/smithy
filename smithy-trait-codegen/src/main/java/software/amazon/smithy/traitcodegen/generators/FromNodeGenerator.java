@@ -55,7 +55,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             Symbol symbol,
             Shape shape,
             SymbolProvider symbolProvider,
-            Model model) {
+            Model model
+    ) {
         this.writer = writer;
         this.symbol = symbol;
         this.shape = shape;

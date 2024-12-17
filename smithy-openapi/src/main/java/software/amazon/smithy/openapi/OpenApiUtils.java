@@ -28,7 +28,8 @@ public final class OpenApiUtils {
      */
     public static String getSpecificationExtensionName(
             ShapeId metaTraitId,
-            SpecificationExtensionTrait specificationExtensionTrait) {
+            SpecificationExtensionTrait specificationExtensionTrait
+    ) {
         return specificationExtensionTrait.getAs()
                 .orElse("x-" + metaTraitId.toString().replaceAll("[.#]", "-"));
     }

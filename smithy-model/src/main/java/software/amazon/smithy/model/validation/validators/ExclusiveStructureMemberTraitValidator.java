@@ -50,7 +50,8 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
     private void validateExclusiveMembers(
             Shape shape,
             Set<ShapeId> exclusiveMemberTraits,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         for (ShapeId traitId : exclusiveMemberTraits) {
             List<String> matches = new ArrayList<>();
             for (MemberShape member : shape.members()) {
@@ -74,7 +75,8 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
             Model model,
             Shape shape,
             Set<ShapeId> exclusiveTargets,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         // Find all member targets that violate the exclusion rule (e.g., streaming trait).
         for (ShapeId id : exclusiveTargets) {
             List<String> matches = new ArrayList<>();

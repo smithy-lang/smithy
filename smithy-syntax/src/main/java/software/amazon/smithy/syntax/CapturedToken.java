@@ -47,7 +47,8 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             CharSequence lexeme,
             String stringContents,
             Number numberValue,
-            String errorMessage) {
+            String errorMessage
+    ) {
         this.token = Objects.requireNonNull(token, "Missing required token");
         this.lexeme = Objects.requireNonNull(lexeme, "Missing required lexeme");
         this.filename = filename == null ? SourceLocation.none().getFilename() : filename;

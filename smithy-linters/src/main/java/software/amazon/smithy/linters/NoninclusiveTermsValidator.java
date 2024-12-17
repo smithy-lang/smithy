@@ -136,7 +136,8 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
     private ValidationEvent constructValidationEvent(
             TextInstance instance,
             List<String> replacements,
-            String matchedText) {
+            String matchedText
+    ) {
         String replacementAddendum = getReplacementAddendum(matchedText, replacements);
         switch (instance.getLocationType()) {
             case NAMESPACE:

@@ -48,7 +48,8 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
             SymbolProvider symbolProvider,
             FileManifest fileManifest,
             WriterDelegator<TestWriter> delegator,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         this.model = model;
         this.settings = settings;
         this.symbolProvider = symbolProvider;

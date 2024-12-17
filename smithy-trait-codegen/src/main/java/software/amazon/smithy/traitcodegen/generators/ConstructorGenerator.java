@@ -52,7 +52,8 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
             TraitCodegenWriter writer,
             Symbol symbol,
             Shape shape,
-            SymbolProvider symbolProvider) {
+            SymbolProvider symbolProvider
+    ) {
         this.writer = writer;
         this.symbol = symbol;
         this.shape = shape;

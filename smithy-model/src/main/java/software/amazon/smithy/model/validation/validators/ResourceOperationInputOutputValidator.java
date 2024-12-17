@@ -109,7 +109,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             Optional<ShapeId> operationShapeId,
             PropertyBindingIndex propertyBindingIndex,
             Set<String> propertiesInOperations,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         operationShapeId.flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             propertiesInOperations.addAll(getAllOperationProperties(propertyBindingIndex, operation));
             validateOperationInputOutput(model,
@@ -123,7 +124,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
     private List<String> getAllOperationProperties(
             PropertyBindingIndex propertyBindingIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<String> properties = new ArrayList<>();
         for (MemberShape member : propertyBindingIndex.getInputPropertiesShape(operation).members()) {
             if (propertyBindingIndex.isMemberShapeProperty(member)) {
@@ -144,7 +146,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ResourceShape resource,
             OperationShape operation,
             String lifecycleOperationName,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         validateOperationInput(model, propertyBindingIndex, resource, operation, lifecycleOperationName, events);
         validateOperationOutput(model, propertyBindingIndex, resource, operation, lifecycleOperationName, events);
     }
@@ -155,7 +158,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ResourceShape resource,
             OperationShape operation,
             String lifecycleOperationName,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         Map<String, ShapeId> properties = resource.getProperties();
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
         IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
@@ -185,7 +189,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ResourceShape resource,
             OperationShape operation,
             String lifecycleOperationName,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         Map<String, ShapeId> properties = resource.getProperties();
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
         IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
@@ -212,7 +217,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
     private void validateConflictingProperties(
             List<ValidationEvent> events,
             Shape shape,
-            Map<String, Set<MemberShape>> propertyToMemberMappings) {
+            Map<String, Set<MemberShape>> propertyToMemberMappings
+    ) {
         for (Map.Entry<String, Set<MemberShape>> entry : propertyToMemberMappings.entrySet()) {
             if (entry.getValue().size() > 1) {
                 events.add(error(shape,
@@ -235,7 +241,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             MemberShape member,
             Set<String> identifierMembers,
             Map<String, ShapeId> properties,
-            Map<String, Set<MemberShape>> propertyToMemberMappings) {
+            Map<String, Set<MemberShape>> propertyToMemberMappings
+    ) {
         String propertyName = propertyBindingIndex.getPropertyName(member.getId()).get();
         propertyToMemberMappings.computeIfAbsent(propertyName, m -> new TreeSet<>()).add(member);
         if (properties.containsKey(propertyName)) {

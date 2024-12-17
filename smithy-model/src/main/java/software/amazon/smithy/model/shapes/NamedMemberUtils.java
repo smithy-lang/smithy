@@ -23,7 +23,8 @@ final class NamedMemberUtils {
             Map<ShapeId, Shape> mixins,
             BuilderRef<Map<String, MemberShape>> members,
             ShapeId shapeId,
-            SourceLocation sourceLocation) {
+            SourceLocation sourceLocation
+    ) {
         if (mixins.isEmpty()) {
             return members.copy();
         }
@@ -87,7 +88,8 @@ final class NamedMemberUtils {
             Map<String, MemberShape> members,
             Map<ShapeId, Shape> mixins,
             ShapeId shapeId,
-            SourceLocation sourceLocation) {
+            SourceLocation sourceLocation
+    ) {
         // Ensure that the members are ordered, mixin members first, followed by local members.
         Map<String, MemberShape> orderedMembers = new LinkedHashMap<>();
         Map<String, MemberShape> pendingMembers = new LinkedHashMap<>();

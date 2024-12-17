@@ -56,7 +56,8 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             Model model,
             Shape traitWithValidators,
             Shape appliedShape,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         Selector.StartingContext startingEnv = new Selector.StartingContext(Collections.singleton(appliedShape));
         TraitValidatorsTrait trait = traitWithValidators.expectTrait(TraitValidatorsTrait.class);
 
@@ -81,7 +82,8 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             String eventId,
             Shape shape,
             Severity severity,
-            String suffix) {
+            String suffix
+    ) {
         String suffixMessage = suffix == null ? "" : ": " + suffix;
         String message = String.format(
                 "Found an incompatible shape when validating the constraints of the `%s` trait "

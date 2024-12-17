@@ -91,7 +91,8 @@ public class ModifiedTraitTest {
             String newValue,
             String diffType,
             String tag,
-            String searchString) {
+            String searchString
+    ) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
 
         Model modelA = Model.assembler().addShape(data.oldShape).assemble().unwrap();

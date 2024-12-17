@@ -132,7 +132,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
      */
     public Map<String, ConditionKeyDefinition> getDefinedConditionKeys(
             ToShapeId service,
-            ToShapeId resourceOrOperation) {
+            ToShapeId resourceOrOperation
+    ) {
         Map<String, ConditionKeyDefinition> serviceDefinitions = getDefinedConditionKeys(service);
         Map<String, ConditionKeyDefinition> definitions = new HashMap<>();
 
@@ -150,7 +151,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ServiceShape service,
             String arnRoot,
             Shape subject,
-            ResourceShape parent) {
+            ResourceShape parent
+    ) {
         compute(model, service, arnRoot, subject, parent, SetUtils.of());
     }
 
@@ -160,7 +162,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             String arnRoot,
             Shape subject,
             ResourceShape parent,
-            Set<String> parentDefinitions) {
+            Set<String> parentDefinitions
+    ) {
         Set<String> definitions = new HashSet<>();
         if (!subject.hasTrait(IamResourceTrait.ID)
                 || !subject.expectTrait(IamResourceTrait.class).isDisableConditionKeyInheritance()) {
@@ -200,7 +203,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ShapeId service,
             String arnRoot,
             ResourceShape resource,
-            ResourceShape parent) {
+            ResourceShape parent
+    ) {
         Map<String, String> result = new HashMap<>();
 
         // We want child resources to reuse parent resource context keys, so

@@ -129,7 +129,8 @@ final class LoaderTraitMap {
             ShapeId traitId,
             Trait trait,
             SourceLocation sourceLocation,
-            LoaderShapeMap shapeMap) {
+            LoaderShapeMap shapeMap
+    ) {
         if (!shapeMap.isRootShapeDefined(traitId) && (trait == null || !trait.isSynthetic())) {
             Severity severity = allowUnknownTraits ? Severity.WARNING : Severity.ERROR;
             events.add(ValidationEvent.builder()

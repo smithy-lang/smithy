@@ -51,7 +51,8 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operationObject,
             String httpMethod,
-            String path) {
+            String path
+    ) {
         CorsTrait cors = context.getService().getTrait(CorsTrait.class).orElse(null);
 
         if (cors == null) {
@@ -69,7 +70,8 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operationObject,
             CorsTrait cors,
-            ObjectNode integrationObject) {
+            ObjectNode integrationObject
+    ) {
         ObjectNode updated = updateIntegrationWithCors(
                 context,
                 operationObject,
@@ -87,7 +89,8 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
             OperationObject operationObject,
             OperationShape shape,
             ObjectNode integrationNode,
-            CorsTrait cors) {
+            CorsTrait cors
+    ) {
         ObjectNode responses = integrationNode.getObjectMember(RESPONSES_KEY).orElse(Node.objectNode());
 
         // Always include a "default" response that has the same HTTP response code.
@@ -132,7 +135,8 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
             OperationShape shape,
             Map<CorsHeader, String> corsHeaders,
             Set<String> deduced,
-            ObjectNode response) {
+            ObjectNode response
+    ) {
         Map<CorsHeader, String> responseHeaders = new HashMap<>(corsHeaders);
         ObjectNode responseParams = response.getObjectMember(RESPONSE_PARAMETERS_KEY).orElseGet(Node::objectNode);
 

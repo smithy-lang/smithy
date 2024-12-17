@@ -49,7 +49,8 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
             Model model,
             ChangedShape<Shape> change,
             DefaultTrait oldTrait,
-            DefaultTrait newTrait) {
+            DefaultTrait newTrait
+    ) {
         if (newTrait == null) {
             if (!isInconsequentialRemovalOfDefaultTrait(model, oldTrait, change.getNewShape())) {
                 events.add(error(change.getNewShape(),
@@ -107,7 +108,8 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
             MemberShape member,
             DefaultTrait oldTrait,
             DefaultTrait newTrait,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         Shape target = model.expectShape(member.getTarget());
         Node oldValue = oldTrait.toNode();
         Node newValue = newTrait.toNode();

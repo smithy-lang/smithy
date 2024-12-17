@@ -41,7 +41,8 @@ final class AddIntegrations implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethod,
-            String path) {
+            String path
+    ) {
         IntegrationTraitIndex index = IntegrationTraitIndex.of(context.getModel());
         return index.getIntegrationTrait(context.getService(), shape)
                 .map(trait -> operation.toBuilder()
@@ -62,7 +63,8 @@ final class AddIntegrations implements ApiGatewayMapper {
     private static ObjectNode createIntegration(
             Context<? extends Trait> context,
             OperationShape shape,
-            Trait integration) {
+            Trait integration
+    ) {
         ObjectNode integrationNode;
         if (integration instanceof MockIntegrationTrait) {
             integrationNode = integration.toNode().expectObjectNode().withMember("type", Node.from("mock"));
@@ -86,7 +88,8 @@ final class AddIntegrations implements ApiGatewayMapper {
     private static void validateTraitConfiguration(
             IntegrationTrait trait,
             Context<? extends Trait> context,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         // For HTTP APIs, API Gateway requires that the payloadFormatVersion is set on integrations.
         // https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
         // If the payloadFormatVersion has not been set on an integration and the apiGatewayType has been set to "HTTP",

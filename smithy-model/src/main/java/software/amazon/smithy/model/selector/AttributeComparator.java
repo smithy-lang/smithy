@@ -138,7 +138,8 @@ interface AttributeComparator {
     static boolean isSubset(
             Collection<? extends AttributeValue> aValues,
             Collection<? extends AttributeValue> bValues,
-            boolean caseInsensitive) {
+            boolean caseInsensitive
+    ) {
         for (AttributeValue aValue : aValues) {
             boolean foundMatch = false;
             for (AttributeValue bValue : bValues) {

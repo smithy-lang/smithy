@@ -936,7 +936,8 @@ public class SelectorTest {
     private void checkMatches(
             Iterable<Pair<Shape, Map<String, Set<Shape>>>> matches,
             String message,
-            BiPredicate<Shape, Map<String, Set<Shape>>> test) {
+            BiPredicate<Shape, Map<String, Set<Shape>>> test
+    ) {
         for (Pair<Shape, Map<String, Set<Shape>>> match : matches) {
             if (test.test(match.left, match.right)) {
                 return;

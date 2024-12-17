@@ -135,7 +135,8 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     private Stream<ValidationEvent> validateResource(
             Model model,
             ResourceShape parent,
-            IdentifierBindingIndex bindingIndex) {
+            IdentifierBindingIndex bindingIndex
+    ) {
         return parent.getResources()
                 .stream()
                 .flatMap(childId -> OptionalUtils.stream(model.getShape(childId).flatMap(Shape::asResourceShape)))
@@ -151,7 +152,8 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             ResourceShape parent,
             ResourceShape child,
             OperationShape operation,
-            IdentifierBindingIndex bindingIndex) {
+            IdentifierBindingIndex bindingIndex
+    ) {
         if (bindingIndex.getOperationBindingType(child, operation) != IdentifierBindingIndex.BindingType.NONE) {
             Set<String> bindings = bindingIndex.getOperationInputBindings(child, operation).keySet();
             Set<String> missing = parent.getIdentifiers()
@@ -177,7 +179,8 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     private Stream<ValidationEvent> validateCollectionBindings(
             Model model,
             ResourceShape resource,
-            IdentifierBindingIndex identifierIndex) {
+            IdentifierBindingIndex identifierIndex
+    ) {
         return resource.getAllOperations()
                 .stream()
                 // Find all collection operations bound to the resource.
@@ -197,7 +200,8 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     private Stream<ValidationEvent> validateInstanceBindings(
             Model model,
             ResourceShape resource,
-            IdentifierBindingIndex bindingIndex) {
+            IdentifierBindingIndex bindingIndex
+    ) {
         return resource.getAllOperations()
                 .stream()
                 // Find all instance operations bound to the resource.
@@ -225,7 +229,8 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     private boolean hasAllIdentifiersBound(
             ResourceShape resource,
             OperationShape operation,
-            IdentifierBindingIndex bindingIndex) {
+            IdentifierBindingIndex bindingIndex
+    ) {
         return bindingIndex.getOperationInputBindings(resource, operation)
                 .keySet()
                 .containsAll(resource.getIdentifiers().keySet());

@@ -268,7 +268,8 @@ public class ShapeIdTest {
             final String namespace,
             final String name,
             final String member,
-            final String expectedResult) {
+            final String expectedResult
+    ) {
         ShapeId shapeId = ShapeId.fromParts(namespace, name, member);
 
         assertEquals(expectedResult, shapeId.toString());

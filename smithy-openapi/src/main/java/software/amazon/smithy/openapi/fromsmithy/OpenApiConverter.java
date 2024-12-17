@@ -251,7 +251,8 @@ public final class OpenApiConverter {
 
     private static OpenApiMapper createComposedMapper(
             List<Smithy2OpenApiExtension> extensions,
-            List<OpenApiMapper> mappers) {
+            List<OpenApiMapper> mappers
+    ) {
         return OpenApiMapper.compose(Stream.concat(
                 extensions.stream().flatMap(extension -> extension.getOpenApiMappers().stream()),
                 mappers.stream()).collect(Collectors.toList()));
@@ -303,7 +304,8 @@ public final class OpenApiConverter {
                 Context<T> context,
                 List<Smithy2OpenApiExtension> extensions,
                 ComponentsObject.Builder components,
-                OpenApiMapper composedMapper) {
+                OpenApiMapper composedMapper
+        ) {
             this.context = context;
             this.extensions = extensions;
             this.components = components;
@@ -351,7 +353,8 @@ public final class OpenApiConverter {
     private <T extends Trait> OpenApiProtocol<T> loadOpenApiProtocol(
             ServiceShape service,
             T protocolTrait,
-            List<Smithy2OpenApiExtension> extensions) {
+            List<Smithy2OpenApiExtension> extensions
+    ) {
         // Collect into a list so that a better error message can be presented if the
         // protocol converter can't be found.
         List<OpenApiProtocol> protocolProviders = extensions.stream()
@@ -379,7 +382,8 @@ public final class OpenApiConverter {
     private List<SecuritySchemeConverter<? extends Trait>> loadSecuritySchemes(
             Model model,
             ServiceShape service,
-            List<Smithy2OpenApiExtension> extensions) {
+            List<Smithy2OpenApiExtension> extensions
+    ) {
         // Note: Using a LinkedHashSet here in case order is ever important.
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Set<Class<? extends Trait>> schemes = getTraitMapTypes(serviceIndex.getAuthSchemes(service));
@@ -434,7 +438,8 @@ public final class OpenApiConverter {
             Context<T> context,
             OpenApi.Builder openApiBuilder,
             OpenApiProtocol<T> protocolService,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
         Map<String, PathItem.Builder> paths = new HashMap<>();
 
@@ -529,7 +534,8 @@ public final class OpenApiConverter {
             Context<T> context,
             OperationObject.Builder builder,
             OperationShape shape,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         ServiceShape service = context.getService();
         ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
         Map<ShapeId, Trait> serviceSchemes = serviceIndex.getEffectiveAuthSchemes(service);
@@ -566,7 +572,8 @@ public final class OpenApiConverter {
     private <P extends Trait, A extends Trait> List<String> createSecurityRequirements(
             Context<P> context,
             SecuritySchemeConverter<A> converter,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         return converter.createSecurityRequirements(
                 context,
                 service.expectTrait(converter.getAuthSchemeType()),
@@ -576,7 +583,8 @@ public final class OpenApiConverter {
     private OperationObject addOperationTags(
             Context<? extends Trait> context,
             Shape shape,
-            OperationObject operation) {
+            OperationObject operation
+    ) {
         // Include @tags trait tags of the operation that are compatible with OpenAPI settings.
         if (context.getConfig().getTags()) {
             return operation.toBuilder().tags(getSupportedTags(shape)).build();
@@ -592,7 +600,8 @@ public final class OpenApiConverter {
             OperationObject operation,
             String method,
             String path,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         List<ParameterObject> parameters = new ArrayList<>();
         for (ParameterObject parameter : operation.getParameters()) {
             parameters.add(plugin.updateParameter(context, shape, method, path, parameter));
@@ -610,7 +619,8 @@ public final class OpenApiConverter {
             OperationObject operation,
             String method,
             String path,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         return operation.getRequestBody()
                 .map(body -> {
                     RequestBodyObject updatedBody = plugin.updateRequestBody(context, shape, method, path, body);
@@ -629,7 +639,8 @@ public final class OpenApiConverter {
             OperationObject operation,
             String methodName,
             String path,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
         for (Map.Entry<String, ResponseObject> entry : operation.getResponses().entrySet()) {
             String status = entry.getKey();
@@ -654,7 +665,8 @@ public final class OpenApiConverter {
             Context<T> context,
             OpenApi.Builder openApiBuilder,
             ComponentsObject.Builder components,
-            OpenApiMapper plugin) {
+            OpenApiMapper plugin
+    ) {
         ServiceShape service = context.getService();
         ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
 
@@ -696,7 +708,8 @@ public final class OpenApiConverter {
             Context<P> context,
             OpenApiMapper plugin,
             SecuritySchemeConverter<A> converter,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         A authTrait = service.expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         return plugin.updateSecurityScheme(context, authTrait, createdScheme);
@@ -705,7 +718,8 @@ public final class OpenApiConverter {
     @SuppressWarnings("unchecked")
     private Collection<SecuritySchemeConverter<? extends Trait>> findMatchingConverters(
             Context<? extends Trait> context,
-            Collection<Class<? extends Trait>> schemes) {
+            Collection<Class<? extends Trait>> schemes
+    ) {
         return context.getSecuritySchemeConverters()
                 .stream()
                 .filter(converter -> schemes.contains(converter.getAuthSchemeType()))

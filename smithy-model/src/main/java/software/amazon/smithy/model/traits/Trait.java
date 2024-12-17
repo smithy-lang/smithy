@@ -83,7 +83,8 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
     @Deprecated
     static <S extends Shape, T extends Trait> Stream<Pair<S, T>> flatMapStream(
             S shape,
-            Class<T> traitClass) {
+            Class<T> traitClass
+    ) {
         return OptionalUtils.stream(shape.getTrait(traitClass).map(t -> Pair.of(shape, t)));
     }
 

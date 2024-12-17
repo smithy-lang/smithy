@@ -182,7 +182,8 @@ final class ModelInteropTransformer {
     static void patchShapeBeforeBuilding(
             LoadOperation.DefineShape defineShape,
             AbstractShapeBuilder<?, ?> builder,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         handleBoxing(defineShape, builder);
     }
 

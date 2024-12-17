@@ -18,7 +18,8 @@ public class JsonSchemaMapperContext {
     JsonSchemaMapperContext(
             Model model,
             Shape shape,
-            JsonSchemaConfig config) {
+            JsonSchemaConfig config
+    ) {
         this.model = model;
         this.shape = shape;
         this.config = config;

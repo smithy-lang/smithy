@@ -52,7 +52,8 @@ public final class CoreIntegration implements TraitCodegenIntegration {
     public SymbolProvider decorateSymbolProvider(
             Model model,
             TraitCodegenSettings settings,
-            SymbolProvider symbolProvider) {
+            SymbolProvider symbolProvider
+    ) {
         return new SymbolProvider() {
             @Override
             public Symbol toSymbol(Shape shape) {
@@ -72,7 +73,8 @@ public final class CoreIntegration implements TraitCodegenIntegration {
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
-            TraitCodegenContext codegenContext) {
+            TraitCodegenContext codegenContext
+    ) {
         return ListUtils.of(new JavadocFormatterInterceptor());
     }
 

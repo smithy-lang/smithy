@@ -38,7 +38,8 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
             Class<S> shapeType,
             ValidatedResult<Model> result,
             String description,
-            List<Pair<Predicate<S>, Function<S, String>>> assertions) {
+            List<Pair<Predicate<S>, Function<S, String>>> assertions
+    ) {
         this.shapeType = shapeType;
         this.result = result;
         this.description = description;
@@ -71,7 +72,8 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
             ValidatedResult<Model> result,
             String eventId,
             Severity severity,
-            String messageContains) {
+            String messageContains
+    ) {
         return builderFor(Shape.class, result).addEventAssertion(eventId, severity, messageContains).build();
     }
 
@@ -99,7 +101,8 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
             String eventId,
             ToShapeId id,
             Severity severity,
-            String contains) {
+            String contains
+    ) {
         for (ValidationEvent event : result.getValidationEvents()) {
             if (event.getShapeId().filter(sid -> sid.equals(id.toShapeId())).isPresent()
                     && event.getSeverity() == severity

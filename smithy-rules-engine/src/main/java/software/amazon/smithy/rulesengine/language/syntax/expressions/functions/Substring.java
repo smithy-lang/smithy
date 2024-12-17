@@ -47,7 +47,8 @@ public final class Substring extends LibraryFunction {
             ToExpression expression,
             ToExpression startIndex,
             ToExpression stopIndex,
-            ToExpression reverse) {
+            ToExpression reverse
+    ) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, expression, startIndex, stopIndex, reverse));
     }
 

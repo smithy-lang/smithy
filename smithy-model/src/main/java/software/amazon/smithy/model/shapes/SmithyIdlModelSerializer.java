@@ -224,7 +224,8 @@ public final class SmithyIdlModelSerializer {
             Model fullModel,
             Collection<Shape> shapes,
             String inputSuffix,
-            String outputSuffix) {
+            String outputSuffix
+    ) {
         OperationIndex operationIndex = OperationIndex.of(fullModel);
         Set<ShapeId> inlineableShapes = new HashSet<>();
         for (Shape shape : shapes) {
@@ -310,7 +311,8 @@ public final class SmithyIdlModelSerializer {
             Collection<Shape> shapes,
             String inputSuffix,
             String outputSuffix,
-            boolean addMetadata) {
+            boolean addMetadata
+    ) {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
 
@@ -562,7 +564,8 @@ public final class SmithyIdlModelSerializer {
                 Predicate<Trait> traitFilter,
                 Model model,
                 Set<ShapeId> inlineableShapes,
-                SmithyIdlComponentOrder componentOrder) {
+                SmithyIdlComponentOrder componentOrder
+        ) {
             this.codeWriter = codeWriter;
             this.nodeSerializer = nodeSerializer;
             this.traitFilter = traitFilter;

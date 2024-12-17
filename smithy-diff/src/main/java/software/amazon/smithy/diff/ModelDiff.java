@@ -82,7 +82,8 @@ public final class ModelDiff {
                 Differences differences,
                 List<ValidationEvent> diffEvents,
                 List<ValidationEvent> oldModelEvents,
-                List<ValidationEvent> newModelEvents) {
+                List<ValidationEvent> newModelEvents
+        ) {
             this.differences = Objects.requireNonNull(differences);
             this.diffEvents = Objects.requireNonNull(diffEvents);
             this.oldModelEvents = Objects.requireNonNull(oldModelEvents);

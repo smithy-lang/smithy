@@ -216,7 +216,8 @@ public final class EnumShape extends StringShape {
     static Optional<MemberShape> memberFromEnumDefinition(
             EnumDefinition definition,
             ShapeId parentId,
-            boolean synthesizeName) {
+            boolean synthesizeName
+    ) {
         String name;
         if (!definition.getName().isPresent()) {
             if (canConvertEnumDefinitionToMember(definition, synthesizeName)) {

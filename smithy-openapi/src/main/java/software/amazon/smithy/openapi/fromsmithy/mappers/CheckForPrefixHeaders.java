@@ -50,7 +50,8 @@ public class CheckForPrefixHeaders implements OpenApiMapper {
     private void checkForResponseHeaders(
             Context<? extends Trait> context,
             HttpBindingIndex bindingIndex,
-            ToShapeId shapeId) {
+            ToShapeId shapeId
+    ) {
         check(context, bindingIndex.getResponseBindings(shapeId, HttpBinding.Location.PREFIX_HEADERS));
     }
 

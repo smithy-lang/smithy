@@ -62,7 +62,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
             ServiceShape service,
             OperationIndex opIndex,
             OperationShape operation,
-            PaginatedTrait trait) {
+            PaginatedTrait trait
+    ) {
         StructureShape input = opIndex.expectInputShape(operation.getId());
         StructureShape output = opIndex.expectOutputShape(operation.getId());
 

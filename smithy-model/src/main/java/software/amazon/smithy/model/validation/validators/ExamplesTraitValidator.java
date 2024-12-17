@@ -131,7 +131,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             ObjectNode value,
             Model model,
             Shape shape,
-            ExamplesTrait.Example example) {
+            ExamplesTrait.Example example
+    ) {
         NodeValidationVisitor.Builder builder = NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())

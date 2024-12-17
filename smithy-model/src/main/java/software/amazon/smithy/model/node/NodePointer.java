@@ -239,7 +239,8 @@ public final class NodePointer {
             ObjectNode container,
             Node value,
             int partPosition,
-            boolean intermediate) {
+            boolean intermediate
+    ) {
         if (isLast) {
             return container.withMember(part, value);
         } else if (container.getMember(part).isPresent()) {
@@ -268,7 +269,8 @@ public final class NodePointer {
             ArrayNode container,
             Node value,
             int partPosition,
-            boolean intermediate) {
+            boolean intermediate
+    ) {
         if (!isLast) {
             // "-" is a special case for the last element.
             int partInt = part.equals("-") ? container.size() - 1 : parseIntPart(part);

@@ -50,7 +50,8 @@ public final class IntegUtils {
             String projectName,
             List<String> args,
             Map<String, String> env,
-            Consumer<RunResult> consumer) {
+            Consumer<RunResult> consumer
+    ) {
         withProject(projectName, path -> consumer.accept(run(path, args, env)));
     }
 
@@ -58,7 +59,8 @@ public final class IntegUtils {
             String projectName,
             List<String> args,
             Map<String, String> env,
-            Consumer<RunResult> consumer) {
+            Consumer<RunResult> consumer
+    ) {
         try {
             String cacheDir = Files.createTempDirectory("foo").toString();
             Map<String, String> actualEnv = new HashMap<>(env);

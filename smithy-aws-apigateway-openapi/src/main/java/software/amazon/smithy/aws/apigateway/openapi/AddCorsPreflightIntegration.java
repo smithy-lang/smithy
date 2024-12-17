@@ -81,7 +81,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             Context<? extends Trait> context,
             String path,
             PathItem pathItem,
-            CorsTrait corsTrait) {
+            CorsTrait corsTrait
+    ) {
         // Filter out any path for which an OPTIONS handler has already been defined
         if (pathItem.getOptions().isPresent()) {
             LOGGER.fine(() -> path + " already defines an OPTIONS request, so no need to generate CORS-preflight");
@@ -99,7 +100,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             Context<T> context,
             String path,
             PathItem pathItem,
-            CorsTrait corsTrait) {
+            CorsTrait corsTrait
+    ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
         corsHeaders.put(CorsHeader.MAX_AGE, String.valueOf(corsTrait.getMaxAge()));
         corsHeaders.put(CorsHeader.ALLOW_ORIGIN, corsTrait.getOrigin());
@@ -153,7 +155,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
 
     private static <T extends Trait> Set<String> getSecuritySchemeRequestHeaders(
             Context<? extends Trait> context,
-            SecuritySchemeConverter<T> converter) {
+            SecuritySchemeConverter<T> converter
+    ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
         return converter.getAuthRequestHeaders(context, t);
     }
@@ -179,7 +182,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             Context<? extends Trait> context,
             String path,
             PathItem pathItem,
-            Map<CorsHeader, String> headers) {
+            Map<CorsHeader, String> headers
+    ) {
         return OperationObject.builder()
                 .tags(ListUtils.of("CORS"))
                 .security(Collections.emptyList())
@@ -226,7 +230,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     private static ObjectNode createPreflightIntegration(
             Context<? extends Trait> context,
             Map<CorsHeader, String> headers,
-            PathItem pathItem) {
+            PathItem pathItem
+    ) {
         IntegrationResponse.Builder responseBuilder = IntegrationResponse.builder().statusCode("200");
 
         // Add each CORS header to the mock integration response.

@@ -60,7 +60,8 @@ public final class TaggableResourceValidator extends AbstractValidator {
             Model model,
             ResourceShape resource,
             ServiceShape service,
-            AwsTagIndex awsTagIndex) {
+            AwsTagIndex awsTagIndex
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
@@ -157,7 +158,8 @@ public final class TaggableResourceValidator extends AbstractValidator {
 
     private boolean exactlyOne(
             Collection<Map.Entry<MemberShape, Shape>> collection,
-            Predicate<Map.Entry<MemberShape, Shape>> test) {
+            Predicate<Map.Entry<MemberShape, Shape>> test
+    ) {
         int count = 0;
         for (Map.Entry<MemberShape, Shape> entry : collection) {
             if (test.test(entry)) {

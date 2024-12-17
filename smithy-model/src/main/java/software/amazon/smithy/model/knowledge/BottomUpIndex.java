@@ -44,7 +44,8 @@ public final class BottomUpIndex implements KnowledgeIndex {
             Map<ShapeId, List<EntityShape>> paths,
             Deque<EntityShape> path,
             Shape current,
-            NeighborProvider neighborProvider) {
+            NeighborProvider neighborProvider
+    ) {
         for (Relationship relationship : neighborProvider.getNeighbors(current)) {
             Shape neighbor = relationship.expectNeighborShape();
             if (!neighbor.isOperationShape() && !neighbor.isResourceShape()) {

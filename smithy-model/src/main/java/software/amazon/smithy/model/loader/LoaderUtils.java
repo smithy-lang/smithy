@@ -35,7 +35,8 @@ final class LoaderUtils {
     static Optional<ValidationEvent> checkForAdditionalProperties(
             ObjectNode node,
             ShapeId shape,
-            Collection<String> properties) {
+            Collection<String> properties
+    ) {
         try {
             node.expectNoAdditionalProperties(properties);
             return Optional.empty();

@@ -176,7 +176,8 @@ public class NullableIndexTest {
             boolean bar,
             boolean baz,
             boolean bam,
-            boolean boo) {
+            boolean boo
+    ) {
         StringShape str = StringShape.builder().id("smithy.example#Str").build();
         StructureShape struct = StructureShape.builder()
                 .id("smithy.example#Struct")

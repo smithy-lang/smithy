@@ -148,5 +148,6 @@ public enum RuntimeType {
     public abstract LiteralExpression compare(
             LiteralExpression left,
             LiteralExpression right,
-            ComparatorType comparator);
+            ComparatorType comparator
+    );
 }

@@ -62,7 +62,8 @@ public final class TopicBinding<T extends Trait> {
             T mqttTrait,
             Topic topic,
             Shape payloadShape,
-            StructureShape input) {
+            StructureShape input
+    ) {
         this.operation = operation;
         this.mqttTrait = mqttTrait;
         this.topic = topic;

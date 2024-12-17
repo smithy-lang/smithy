@@ -81,7 +81,8 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
             Model model,
             ServiceShape serviceShape,
             StructureShape inputShape,
-            EndpointTestOperationInput testOperationInput) {
+            EndpointTestOperationInput testOperationInput
+    ) {
         NodeValidationVisitor validator = NodeValidationVisitor.builder()
                 .model(model)
                 .value(testOperationInput.getOperationParams())

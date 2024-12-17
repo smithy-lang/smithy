@@ -134,7 +134,8 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
             ShapeType oldShapeType,
             List<String> results,
             MemberShape oldMember,
-            MemberShape newMember) {
+            MemberShape newMember
+    ) {
         String memberSlug = oldShapeType == ShapeType.MAP ? oldMember.getMemberName() + " " : "";
         if (!oldMember.getTarget().equals(newMember.getTarget())) {
             results.add(String.format("Both the old and new shapes are a %s, but the old shape %stargeted "

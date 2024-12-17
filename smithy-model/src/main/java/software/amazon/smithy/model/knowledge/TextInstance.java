@@ -27,7 +27,8 @@ public final class TextInstance {
             final String text,
             final Shape shape,
             final Trait trait,
-            final Deque<String> traitPropertyPath) {
+            final Deque<String> traitPropertyPath
+    ) {
         this.locationType = locationType;
         this.text = text;
         this.shape = shape;

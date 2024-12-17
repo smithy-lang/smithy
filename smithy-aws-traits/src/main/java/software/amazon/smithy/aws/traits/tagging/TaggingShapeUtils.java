@@ -126,7 +126,8 @@ final class TaggingShapeUtils {
     static boolean verifyTagResourceOperation(
             Model model,
             OperationShape tagResourceOperation,
-            OperationIndex operationIndex) {
+            OperationIndex operationIndex
+    ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
         int taglistMemberCount = 0;
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
@@ -141,7 +142,8 @@ final class TaggingShapeUtils {
     static boolean verifyUntagResourceOperation(
             Model model,
             OperationShape untagResourceOperation,
-            OperationIndex operationIndex) {
+            OperationIndex operationIndex
+    ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
         int untagKeyMemberCount = 0;
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
@@ -156,7 +158,8 @@ final class TaggingShapeUtils {
     static boolean verifyListTagsOperation(
             Model model,
             OperationShape listTagsResourceOperation,
-            OperationIndex operationIndex) {
+            OperationIndex operationIndex
+    ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
         Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
         int taglistMemberCount = 0;
@@ -172,7 +175,8 @@ final class TaggingShapeUtils {
     static boolean isTagPropertyInInput(
             Optional<ShapeId> operationId,
             Model model,
-            ResourceShape resource) {
+            ResourceShape resource
+    ) {
         if (operationId.isPresent()) {
             PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
             Optional<String> property = resource.expectTrait(TaggableTrait.class).getProperty();
@@ -188,7 +192,8 @@ final class TaggingShapeUtils {
     static boolean isTagPropertyInShape(
             String tagPropertyName,
             Shape shape,
-            PropertyBindingIndex propertyBindingIndex) {
+            PropertyBindingIndex propertyBindingIndex
+    ) {
         for (MemberShape member : shape.members()) {
             Optional<String> propertyName = propertyBindingIndex.getPropertyName(member.getId());
             if (propertyName.isPresent() && propertyName.get().equals(tagPropertyName)) {

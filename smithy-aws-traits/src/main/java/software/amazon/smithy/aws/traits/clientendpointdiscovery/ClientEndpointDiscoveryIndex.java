@@ -64,7 +64,8 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
             OperationShape endpointOperation,
             StructureShape endpointError,
             TopDownIndex topDownIndex,
-            OperationIndex opIndex) {
+            OperationIndex opIndex
+    ) {
         Map<ShapeId, ClientEndpointDiscoveryInfo> result = new HashMap<>();
         for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
             operation.getTrait(ClientDiscoveredEndpointTrait.class).ifPresent(trait -> {

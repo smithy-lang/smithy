@@ -32,7 +32,8 @@ public enum OpenApiVersion {
             String version,
             boolean supportsContentEncodingKeyword,
             JsonSchemaVersion jsonSchemaVersion,
-            Set<String> unsupportedKeywords) {
+            Set<String> unsupportedKeywords
+    ) {
         this.version = version;
         this.supportsContentEncodingKeyword = supportsContentEncodingKeyword;
         this.jsonSchemaVersion = jsonSchemaVersion;

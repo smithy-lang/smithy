@@ -61,7 +61,8 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
             Model model,
             OperationShape operation,
             HttpTrait http,
-            StructureShape input) {
+            StructureShape input
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Create a set of labels and remove from the set when a match is

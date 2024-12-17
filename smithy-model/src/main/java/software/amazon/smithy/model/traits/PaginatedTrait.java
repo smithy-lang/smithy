@@ -88,7 +88,8 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     public static Optional<MemberShape> resolvePath(
             String path,
             Model model,
-            StructureShape shape) {
+            StructureShape shape
+    ) {
         List<MemberShape> memberShapes = resolveFullPath(path, model, shape);
         if (memberShapes.size() == 0) {
             return Optional.empty();
@@ -112,7 +113,8 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     public static List<MemberShape> resolveFullPath(
             String path,
             Model model,
-            StructureShape shape) {
+            StructureShape shape
+    ) {
         List<MemberShape> memberShapes = new ArrayList<>();
 
         // For each member name in the path, try to find that member in the previous structure

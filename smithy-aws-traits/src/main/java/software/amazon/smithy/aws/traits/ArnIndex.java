@@ -75,7 +75,8 @@ public final class ArnIndex implements KnowledgeIndex {
     private void compileEffectiveArns(
             TopDownIndex index,
             IdentifierBindingIndex bindings,
-            ServiceShape service) {
+            ServiceShape service
+    ) {
         Map<ShapeId, ArnTrait> operationMappings = new HashMap<>();
         effectiveArns.put(service.getId(), operationMappings);
 

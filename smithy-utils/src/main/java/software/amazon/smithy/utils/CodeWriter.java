@@ -242,7 +242,8 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
             String textAfterNewline,
             Object arg1,
             Object arg2,
-            Runnable f) {
+            Runnable f
+    ) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, f);
         return this;
     }
@@ -254,7 +255,8 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
             Object arg1,
             Object arg2,
             Object arg3,
-            Runnable f) {
+            Runnable f
+    ) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, f);
         return this;
     }
@@ -267,7 +269,8 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
             Object arg2,
             Object arg3,
             Object arg4,
-            Runnable f) {
+            Runnable f
+    ) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, arg4, f);
         return this;
     }
@@ -281,7 +284,8 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
             Object arg3,
             Object arg4,
             Object arg5,
-            Runnable f) {
+            Runnable f
+    ) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, arg4, arg5, f);
         return this;
     }

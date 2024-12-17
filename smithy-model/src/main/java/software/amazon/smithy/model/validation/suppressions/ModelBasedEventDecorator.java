@@ -95,7 +95,8 @@ public final class ModelBasedEventDecorator {
     private static void loadMetadataSeverityOverrides(
             Model model,
             List<SeverityOverride> severityOverrides,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         model.getMetadataProperty(SEVERITY_OVERRIDES).ifPresent(value -> {
             try {
                 List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
@@ -115,7 +116,8 @@ public final class ModelBasedEventDecorator {
     private static void loadMetadataSuppressions(
             Model model,
             List<Suppression> suppressions,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         model.getMetadataProperty(SUPPRESSIONS).ifPresent(value -> {
             try {
                 List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
@@ -136,7 +138,8 @@ public final class ModelBasedEventDecorator {
             Model model,
             ValidationEvent event,
             List<Suppression> suppressions,
-            List<SeverityOverride> severityOverrides) {
+            List<SeverityOverride> severityOverrides
+    ) {
         // ERROR and SUPPRESSED events cannot be suppressed.
         if (!event.getSeverity().canSuppress()) {
             return event;

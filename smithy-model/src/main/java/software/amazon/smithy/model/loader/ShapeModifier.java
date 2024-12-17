@@ -32,7 +32,8 @@ interface ShapeModifier {
             AbstractShapeBuilder<?, ?> shapeBuilder,
             MemberShape.Builder memberBuilder,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap) {}
+            Function<ShapeId, Shape> shapeMap
+    ) {}
 
     /**
      * Modify the pending shape after its local members have been built.
@@ -48,7 +49,8 @@ interface ShapeModifier {
             AbstractShapeBuilder<?, ?> builder,
             Map<String, MemberShape.Builder> memberBuilders,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap) {}
+            Function<ShapeId, Shape> shapeMap
+    ) {}
 
     /**
      * @return Returns any events emitted by the modifier.

@@ -19,14 +19,16 @@ public abstract class AbstractValidator implements Validator {
 
     protected final ValidationEvent error(
             Shape shape,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent error(
             Shape shape,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1);
     }
 
@@ -34,7 +36,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -43,7 +46,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.ERROR,
                 shape,
                 shape.getSourceLocation(),
@@ -56,7 +60,8 @@ public abstract class AbstractValidator implements Validator {
     protected final ValidationEvent error(
             Shape shape,
             FromSourceLocation location,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.ERROR, shape, location, message);
     }
 
@@ -64,7 +69,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             FromSourceLocation location,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1);
     }
 
@@ -73,7 +79,8 @@ public abstract class AbstractValidator implements Validator {
             FromSourceLocation location,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -83,20 +90,23 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3);
     }
 
     protected final ValidationEvent danger(
             Shape shape,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent danger(
             Shape shape,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, eventIdSubpart1);
     }
 
@@ -104,7 +114,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.DANGER,
                 shape,
                 shape.getSourceLocation(),
@@ -118,7 +129,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.DANGER,
                 shape,
                 shape.getSourceLocation(),
@@ -131,7 +143,8 @@ public abstract class AbstractValidator implements Validator {
     protected final ValidationEvent danger(
             Shape shape,
             FromSourceLocation location,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.DANGER, shape, location, message);
     }
 
@@ -139,7 +152,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             FromSourceLocation location,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1);
     }
 
@@ -148,7 +162,8 @@ public abstract class AbstractValidator implements Validator {
             FromSourceLocation location,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -158,7 +173,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.DANGER,
                 shape,
                 location,
@@ -170,14 +186,16 @@ public abstract class AbstractValidator implements Validator {
 
     protected final ValidationEvent warning(
             Shape shape,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent warning(
             Shape shape,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, eventIdSubpart1);
     }
 
@@ -185,7 +203,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.WARNING,
                 shape,
                 shape.getSourceLocation(),
@@ -199,7 +218,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.WARNING,
                 shape,
                 shape.getSourceLocation(),
@@ -212,7 +232,8 @@ public abstract class AbstractValidator implements Validator {
     protected final ValidationEvent warning(
             Shape shape,
             FromSourceLocation location,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.WARNING, shape, location, message);
     }
 
@@ -220,7 +241,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             FromSourceLocation location,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1);
     }
 
@@ -229,7 +251,8 @@ public abstract class AbstractValidator implements Validator {
             FromSourceLocation location,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -239,7 +262,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.WARNING,
                 shape,
                 location,
@@ -251,14 +275,16 @@ public abstract class AbstractValidator implements Validator {
 
     protected final ValidationEvent note(
             Shape shape,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent note(
             Shape shape,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1);
     }
 
@@ -266,7 +292,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -275,7 +302,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.NOTE,
                 shape,
                 shape.getSourceLocation(),
@@ -288,7 +316,8 @@ public abstract class AbstractValidator implements Validator {
     protected final ValidationEvent note(
             Shape shape,
             FromSourceLocation location,
-            String message) {
+            String message
+    ) {
         return createEvent(Severity.NOTE, shape, location, message);
     }
 
@@ -296,7 +325,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             FromSourceLocation location,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1);
     }
 
@@ -305,7 +335,8 @@ public abstract class AbstractValidator implements Validator {
             FromSourceLocation location,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1, eventIdSubpart2);
     }
 
@@ -315,7 +346,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3);
     }
 
@@ -323,7 +355,8 @@ public abstract class AbstractValidator implements Validator {
             Severity severity,
             Shape shape,
             FromSourceLocation loc,
-            String message) {
+            String message
+    ) {
         return ValidationEvent.builder()
                 .severity(severity)
                 .message(message)
@@ -338,7 +371,8 @@ public abstract class AbstractValidator implements Validator {
             Shape shape,
             FromSourceLocation loc,
             String message,
-            String eventIdSubpart1) {
+            String eventIdSubpart1
+    ) {
         return ValidationEvent.builder()
                 .severity(severity)
                 .message(message)
@@ -354,7 +388,8 @@ public abstract class AbstractValidator implements Validator {
             FromSourceLocation loc,
             String message,
             String eventIdSubpart1,
-            String eventIdSubpart2) {
+            String eventIdSubpart2
+    ) {
         return ValidationEvent.builder()
                 .severity(severity)
                 .message(message)
@@ -371,7 +406,8 @@ public abstract class AbstractValidator implements Validator {
             String message,
             String eventIdSubpart1,
             String eventIdSubpart2,
-            String eventIdSubpart3) {
+            String eventIdSubpart3
+    ) {
         return ValidationEvent.builder()
                 .severity(severity)
                 .message(message)

@@ -29,7 +29,8 @@ final class AttributeSelector implements InternalSelector {
             List<String> path,
             List<String> expected,
             AttributeComparator comparator,
-            boolean caseInsensitive) {
+            boolean caseInsensitive
+    ) {
         this.path = path;
         this.caseInsensitive = caseInsensitive;
         this.comparator = comparator;

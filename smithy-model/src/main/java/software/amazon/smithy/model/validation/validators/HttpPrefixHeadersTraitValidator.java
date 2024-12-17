@@ -37,7 +37,8 @@ public final class HttpPrefixHeadersTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateMember(
             StructureShape structure,
             MemberShape member,
-            HttpPrefixHeadersTrait prefixTrait) {
+            HttpPrefixHeadersTrait prefixTrait
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         String prefix = prefixTrait.getValue().toLowerCase(Locale.ENGLISH);
 

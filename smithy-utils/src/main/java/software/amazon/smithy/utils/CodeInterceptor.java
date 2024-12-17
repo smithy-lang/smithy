@@ -78,7 +78,8 @@ public interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWr
      */
     static <S extends CodeSection, W extends AbstractCodeWriter<W>> CodeInterceptor<S, W> appender(
             Class<S> type,
-            BiConsumer<W, S> appender) {
+            BiConsumer<W, S> appender
+    ) {
         return new Appender<S, W>() {
             @Override
             public void append(W writer, S section) {
@@ -156,7 +157,8 @@ public interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWr
      */
     static <W extends AbstractCodeWriter<W>> CodeInterceptor<CodeSection, W> forName(
             String sectionName,
-            BiConsumer<W, String> consumer) {
+            BiConsumer<W, String> consumer
+    ) {
         return new CodeInterceptor<CodeSection, W>() {
             @Override
             public Class<CodeSection> sectionType() {

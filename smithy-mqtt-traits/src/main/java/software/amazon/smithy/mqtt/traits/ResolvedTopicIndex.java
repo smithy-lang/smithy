@@ -126,7 +126,8 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
     private void createPublishBindings(
             OperationIndex operationIndex,
             OperationShape operation,
-            PublishTrait trait) {
+            PublishTrait trait
+    ) {
         StructureShape input = operationIndex.expectInputShape(operation);
         TopicBinding<PublishTrait> topicBinding = new TopicBinding<>(operation, trait, trait.getTopic(), input, input);
         publishBindings.put(operation.getId(), topicBinding);
@@ -136,7 +137,8 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
             StructureShape input,
             EventStreamIndex eventStreamIndex,
             OperationShape operation,
-            SubscribeTrait trait) {
+            SubscribeTrait trait
+    ) {
         EventStreamInfo outputInfo = eventStreamIndex.getOutputInfo(operation).orElse(null);
 
         // Subscribe operations must have an event stream. Omit the bindings

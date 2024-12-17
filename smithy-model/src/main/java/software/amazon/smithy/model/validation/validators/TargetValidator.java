@@ -82,7 +82,8 @@ public final class TargetValidator extends AbstractValidator {
             Model model,
             Shape shape,
             List<Relationship> relationships,
-            List<ValidationEvent> mutableEvents) {
+            List<ValidationEvent> mutableEvents
+    ) {
         for (Relationship relationship : relationships) {
             if (relationship.getNeighborShape().isPresent()) {
                 validateTarget(model, shape, relationship.getNeighborShape().get(), relationship, mutableEvents);
@@ -97,7 +98,8 @@ public final class TargetValidator extends AbstractValidator {
             Shape shape,
             Shape target,
             Relationship rel,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         RelationshipType relType = rel.getRelationshipType();
 
         if (relType != RelationshipType.MIXIN && relType.getDirection() == RelationshipDirection.DIRECTED) {
@@ -201,7 +203,8 @@ public final class TargetValidator extends AbstractValidator {
             Shape shape,
             Shape target,
             RelationshipType relType,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         if (!target.hasTrait(DeprecatedTrait.class)) {
             return;
         }

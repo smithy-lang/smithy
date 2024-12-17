@@ -73,7 +73,8 @@ public final class EndpointAuthUtils {
     public static Endpoint.Builder sigv4a(
             Endpoint.Builder builder,
             List<Literal> signingRegionSet,
-            Literal signingService) {
+            Literal signingService
+    ) {
         return builder.addAuthScheme(SIGV4A,
                 MapUtils.of(
                         SIGNING_NAME,
@@ -126,7 +127,8 @@ public final class EndpointAuthUtils {
         public List<ValidationEvent> validateScheme(
                 Map<Identifier, Literal> authScheme,
                 FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter) {
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
             List<ValidationEvent> events = noExtraProperties(emitter,
                     sourceLocation,
                     authScheme,
@@ -147,7 +149,8 @@ public final class EndpointAuthUtils {
 
         private static List<ValidationEvent> validateOptionalSharedProperties(
                 Map<Identifier, Literal> authScheme,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter) {
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
             List<ValidationEvent> events = new ArrayList<>();
             // The following properties are only type checked if present.
             if (authScheme.containsKey(ID_SIGNING_NAME)) {
@@ -175,7 +178,8 @@ public final class EndpointAuthUtils {
         public List<ValidationEvent> validateScheme(
                 Map<Identifier, Literal> authScheme,
                 FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter) {
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
             List<ValidationEvent> events = noExtraProperties(emitter,
                     sourceLocation,
                     authScheme,
@@ -229,7 +233,8 @@ public final class EndpointAuthUtils {
         public List<ValidationEvent> validateScheme(
                 Map<Identifier, Literal> authScheme,
                 FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter) {
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
             List<ValidationEvent> events = hasAllKeys(emitter,
                     authScheme,
                     ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME),
@@ -248,7 +253,8 @@ public final class EndpointAuthUtils {
                 BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
                 Map<Identifier, Literal> authScheme,
                 List<Identifier> requiredKeys,
-                FromSourceLocation sourceLocation) {
+                FromSourceLocation sourceLocation
+        ) {
             List<ValidationEvent> events = new ArrayList<>();
             for (Identifier key : requiredKeys) {
                 if (!authScheme.containsKey(key)) {
@@ -271,7 +277,8 @@ public final class EndpointAuthUtils {
         public List<ValidationEvent> validateScheme(
                 Map<Identifier, Literal> authScheme,
                 FromSourceLocation sourceLocation,
-                BiFunction<FromSourceLocation, String, ValidationEvent> emitter) {
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
             List<ValidationEvent> events = hasAllKeys(emitter,
                     authScheme,
                     ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME),
@@ -284,7 +291,8 @@ public final class EndpointAuthUtils {
                 BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
                 Map<Identifier, Literal> authScheme,
                 List<Identifier> requiredKeys,
-                FromSourceLocation sourceLocation) {
+                FromSourceLocation sourceLocation
+        ) {
             List<ValidationEvent> events = new ArrayList<>();
             for (Identifier key : requiredKeys) {
                 if (!authScheme.containsKey(key)) {
@@ -299,7 +307,8 @@ public final class EndpointAuthUtils {
             BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
             FromSourceLocation sourceLocation,
             Map<Identifier, Literal> properties,
-            List<Identifier> allowedProperties) {
+            List<Identifier> allowedProperties
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         for (Identifier propertyName : properties.keySet()) {
             if (!allowedProperties.contains(propertyName)) {
@@ -315,7 +324,8 @@ public final class EndpointAuthUtils {
     private static Optional<ValidationEvent> validateBooleanProperty(
             BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
             Map<Identifier, Literal> properties,
-            Identifier propertyName) {
+            Identifier propertyName
+    ) {
         return validatePropertyType(emitter,
                 properties.get(propertyName),
                 propertyName,
@@ -326,7 +336,8 @@ public final class EndpointAuthUtils {
     private static Optional<ValidationEvent> validateStringProperty(
             BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
             Map<Identifier, Literal> properties,
-            Identifier propertyName) {
+            Identifier propertyName
+    ) {
         return validatePropertyType(emitter,
                 properties.get(propertyName),
                 propertyName,
@@ -339,7 +350,8 @@ public final class EndpointAuthUtils {
             Literal value,
             Identifier propertyName,
             Function<Literal, Optional<U>> validator,
-            String expectedType) {
+            String expectedType
+    ) {
         if (value == null) {
             return Optional.of(emitter.apply(propertyName,
                     String.format("Expected auth property `%s` of %s type but didn't find one",

@@ -73,7 +73,8 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
     public CodegenWriterDelegator(
             FileManifest fileManifest,
             SymbolProvider symbolProvider,
-            CodegenWriterFactory<T> codegenWriterFactory) {
+            CodegenWriterFactory<T> codegenWriterFactory
+    ) {
         this.fileManifest = fileManifest;
         this.symbolProvider = symbolProvider;
         this.codegenWriterFactory = codegenWriterFactory;

@@ -78,7 +78,8 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             ServiceShape serviceShape,
             String builtInName,
             FromSourceLocation source,
-            String... eventIdSuffixes) {
+            String... eventIdSuffixes
+    ) {
         if (!EndpointRuleSet.hasBuiltIn(builtInName)) {
             return Optional.of(error(serviceShape,
                     source,

@@ -144,7 +144,8 @@ final class WrappedSelector implements Selector {
             Model model,
             NeighborProviderIndex index,
             InternalSelector selector,
-            List<Set<Shape>> results) {
+            List<Set<Shape>> results
+    ) {
         Collection<? extends Shape> shapesToEmit = selector.getStartingShapes(model);
         Context isolatedContext = new Context(model, index, results);
         Set<Shape> captures = new HashSet<>();
@@ -162,7 +163,8 @@ final class WrappedSelector implements Selector {
     private void pushShapes(
             Model model,
             Collection<? extends Shape> startingShapes,
-            InternalSelector.Receiver acceptor) {
+            InternalSelector.Receiver acceptor
+    ) {
         Objects.requireNonNull(startingShapes);
         Context context = new Context(model, NeighborProviderIndex.of(model), computeRoots(model));
         for (Shape shape : startingShapes) {

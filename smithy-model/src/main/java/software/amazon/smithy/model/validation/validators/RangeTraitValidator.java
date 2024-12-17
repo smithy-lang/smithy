@@ -61,7 +61,8 @@ public final class RangeTraitValidator extends AbstractValidator {
             Shape shape,
             RangeTrait trait,
             BigDecimal property,
-            String name) {
+            String name
+    ) {
         if (!property.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO)) {
             if (shape.isMemberShape()) {
                 MemberShape member = shape.asMemberShape().get();

@@ -475,7 +475,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
             String message,
             Severity severity,
             SourceLocation sourceLocation,
-            String... additionalEventIdParts) {
+            String... additionalEventIdParts
+    ) {
         return ValidationEvent.builder()
                 .id(additionalEventIdParts.length > 0
                         ? eventId + "." + String.join(".", additionalEventIdParts)

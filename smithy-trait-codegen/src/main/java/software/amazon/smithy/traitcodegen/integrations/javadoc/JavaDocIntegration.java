@@ -30,7 +30,8 @@ public final class JavaDocIntegration implements TraitCodegenIntegration {
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
-            TraitCodegenContext codegenContext) {
+            TraitCodegenContext codegenContext
+    ) {
         return ListUtils.of(
                 new JavaDocInjectorInterceptor(),
                 new ExternalDocumentationInterceptor(),

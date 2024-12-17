@@ -147,7 +147,8 @@ final class ModelValidator implements Validator {
          */
         public Builder validatorFactory(
                 ValidatorFactory validatorFactory,
-                ValidationEventDecorator validationEventDecorator) {
+                ValidationEventDecorator validationEventDecorator
+        ) {
             this.validatorFactory = Objects.requireNonNull(validatorFactory);
             this.validationEventDecorator = validationEventDecorator;
             return this;

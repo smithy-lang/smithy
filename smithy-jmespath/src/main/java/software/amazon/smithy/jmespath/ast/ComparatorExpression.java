@@ -27,7 +27,8 @@ public final class ComparatorExpression extends BinaryExpression {
             JmespathExpression left,
             JmespathExpression right,
             int line,
-            int column) {
+            int column
+    ) {
         super(left, right, line, column);
         this.comparator = comparator;
     }

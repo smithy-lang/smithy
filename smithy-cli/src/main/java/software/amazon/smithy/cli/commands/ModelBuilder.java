@@ -218,7 +218,8 @@ final class ModelBuilder {
             StandardOptions standardOptions,
             ColorFormatter colors,
             CliPrinter stderr,
-            AtomicInteger issueCount) {
+            AtomicInteger issueCount
+    ) {
         // Only show the status if not quiet and the terminal supports ANSI.
         if (standardOptions.quiet() || !colors.isColorEnabled()) {
             return null;

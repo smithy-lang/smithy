@@ -43,7 +43,8 @@ public class TraitBreakingChangeTest {
     private void validate(
             String modelFile,
             Function<StringShape.Builder, Shape> mapper,
-            Consumer<List<ValidationEvent>> consumer) {
+            Consumer<List<ValidationEvent>> consumer
+    ) {
         Model modelA = Model.assembler()
                 .addImport(getClass().getResource("trait-breaking-change/" + modelFile))
                 .assemble()

@@ -29,7 +29,8 @@ public final class HttpMalformedRequestTestsTrait extends AbstractTrait {
 
     public HttpMalformedRequestTestsTrait(
             SourceLocation sourceLocation,
-            List<ParameterizedHttpMalformedRequestTestCase> testCases) {
+            List<ParameterizedHttpMalformedRequestTestCase> testCases
+    ) {
         super(ID, sourceLocation);
         this.testCases = ListUtils.copyOf(testCases);
     }

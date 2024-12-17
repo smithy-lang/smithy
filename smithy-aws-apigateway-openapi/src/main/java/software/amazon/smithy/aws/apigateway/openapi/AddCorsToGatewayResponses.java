@@ -88,7 +88,8 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
     private Node updateGatewayResponses(
             Context<? extends Trait> context,
             CorsTrait trait,
-            ObjectNode gatewayResponses) {
+            ObjectNode gatewayResponses
+    ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
         corsHeaders.put(CorsHeader.ALLOW_ORIGIN, trait.getOrigin());
 
@@ -110,7 +111,8 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
             Context<? extends Trait> context,
             CorsTrait trait,
             Map<CorsHeader, String> sharedHeaders,
-            ObjectNode gatewayResponse) {
+            ObjectNode gatewayResponse
+    ) {
         ObjectNode responseParameters = gatewayResponse
                 .getObjectMember(RESPONSE_PARAMETERS_KEY)
                 .orElse(Node.objectNode());

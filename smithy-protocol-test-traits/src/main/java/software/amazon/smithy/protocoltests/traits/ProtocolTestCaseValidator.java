@@ -92,7 +92,8 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
             Model model,
             OperationIndex operationIndex,
             Shape shape,
-            T trait) {
+            T trait
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         List<? extends HttpMessageTestCase> testCases = getTestCases(trait);
 
@@ -147,7 +148,8 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
             Model model,
             Shape shape,
             int position,
-            String contextSuffix) {
+            String contextSuffix
+    ) {
         return NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())

@@ -143,7 +143,8 @@ public final class ModelTransformer {
      */
     public Model renameShapes(
             Model model,
-            Map<ShapeId, ShapeId> renamed) {
+            Map<ShapeId, ShapeId> renamed
+    ) {
         return this.renameShapes(model, renamed, () -> Model.assembler().disableValidation());
     }
 
@@ -162,7 +163,8 @@ public final class ModelTransformer {
     public Model renameShapes(
             Model model,
             Map<ShapeId, ShapeId> renamed,
-            Supplier<ModelAssembler> modelAssemblerSupplier) {
+            Supplier<ModelAssembler> modelAssemblerSupplier
+    ) {
         return new RenameShapes(renamed, modelAssemblerSupplier).transform(this, model);
     }
 
@@ -492,7 +494,8 @@ public final class ModelTransformer {
     public Model changeShapeType(
             Model model,
             Map<ShapeId, ShapeType> shapeToType,
-            ChangeShapeTypeOption... changeShapeTypeOptions) {
+            ChangeShapeTypeOption... changeShapeTypeOptions
+    ) {
         boolean synthesizeNames = ChangeShapeTypeOption.SYNTHESIZE_ENUM_NAMES.hasFeature(changeShapeTypeOptions);
         return new ChangeShapeType(shapeToType, synthesizeNames).transform(this, model);
     }

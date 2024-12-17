@@ -129,7 +129,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateStructure(
             StructureShape structure,
-            Model model) {
+            Model model
+    ) {
         return structure
                 .getAllMembers()
                 .entrySet()
@@ -140,7 +141,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateUnion(
             UnionShape union,
-            Model model) {
+            Model model
+    ) {
         return union
                 .getAllMembers()
                 .entrySet()
@@ -152,13 +154,15 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateTargetShape(
             String name,
             MemberShape memberShape,
-            Model model) {
+            Model model
+    ) {
         return OptionalUtils.stream(model.getShape(memberShape.getTarget())
                 .flatMap(targetShape -> validateName(name, targetShape, memberShape, patterns, model)));
     }
 
     private List<ValidationEvent> validateSimpleShape(
-            Shape shape) {
+            Shape shape
+    ) {
         String name = shape.getId().getName();
 
         return patterns
@@ -173,7 +177,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             Shape targetShape,
             Shape context,
             List<Pattern> patterns,
-            Model model) {
+            Model model
+    ) {
         ShapeType type = targetShape.getType();
         if (type == ShapeType.TIMESTAMP || type == ShapeType.ENUM) {
             return Optional.empty();

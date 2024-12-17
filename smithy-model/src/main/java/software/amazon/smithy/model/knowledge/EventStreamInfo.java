@@ -34,7 +34,8 @@ public final class EventStreamInfo {
             Shape eventStreamTarget,
             Map<String, MemberShape> initialMembers,
             Map<String, Shape> initialTargets,
-            Map<String, StructureShape> events) {
+            Map<String, StructureShape> events
+    ) {
         this.operation = operation;
         this.streamingTrait = streamingTrait;
         this.structure = structure;

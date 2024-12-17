@@ -200,7 +200,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
     private void setIdentifierMutabilities(
             CfnResource.Builder builder,
             ResourceShape resource,
-            Set<ResourceShape> parentResources) {
+            Set<ResourceShape> parentResources
+    ) {
         Set<Mutability> defaultIdentifierMutability = getDefaultIdentifierMutabilities(resource);
 
         resource.getIdentifiers().forEach((name, shape) -> {
@@ -239,7 +240,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private void addAdditionalIdentifiers(
             CfnResource.Builder builder,
-            List<Map<String, ShapeId>> addedIdentifiers) {
+            List<Map<String, ShapeId>> addedIdentifiers
+    ) {
         if (addedIdentifiers.isEmpty()) {
             return;
         }
@@ -264,7 +266,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             ShapeId operationId,
             StructureShape propertyContainer,
             Set<Mutability> defaultMutabilities,
-            Function<Set<Mutability>, Set<Mutability>> updater) {
+            Function<Set<Mutability>, Set<Mutability>> updater
+    ) {
         // Handle the @excludeProperty trait.
         propertyContainer.accept(new ExcludedPropertiesVisitor(model))
                 .forEach(builder::addExcludedProperty);
@@ -301,7 +304,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
     private Function<CfnResourceProperty, CfnResourceProperty> getCfnResourcePropertyUpdater(
             MemberShape member,
             Set<Mutability> explicitMutability,
-            Function<Set<Mutability>, Set<Mutability>> updater) {
+            Function<Set<Mutability>, Set<Mutability>> updater
+    ) {
         return definition -> {
             CfnResourceProperty.Builder builder = definition.toBuilder().addShapeId(member.getId());
 
@@ -322,7 +326,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             Model model,
             ShapeId resourceId,
             ShapeId operationId,
-            MemberShape member) {
+            MemberShape member
+    ) {
         // The operationId will be null in the case of additionalSchemas, so
         // we shouldn't worry if these are bound to operation identifiers.
         if (operationId == null) {
@@ -344,7 +349,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private Set<Mutability> getExplicitMutability(
             Model model,
-            MemberShape member) {
+            MemberShape member
+    ) {
         Optional<CfnMutabilityTrait> traitOptional = member.getMemberTrait(model, CfnMutabilityTrait.class);
         if (!traitOptional.isPresent()) {
             return SetUtils.of();

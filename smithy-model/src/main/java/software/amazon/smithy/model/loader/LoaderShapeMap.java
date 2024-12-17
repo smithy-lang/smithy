@@ -160,7 +160,8 @@ final class LoaderShapeMap {
 
     void buildShapesAndClaimMixinTraits(
             Model.Builder modelBuilder,
-            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits) {
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits
+    ) {
         Function<ShapeId, Shape> createdShapeMap = id -> modelBuilder.getCurrentShapes().get(id);
 
         for (Shape shape : createdShapes.values()) {
@@ -179,7 +180,8 @@ final class LoaderShapeMap {
             ShapeWrapper wrapper,
             Model.Builder builder,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> createdShapeMap) {
+            Function<ShapeId, Shape> createdShapeMap
+    ) {
         Shape built = null;
         for (LoadOperation.DefineShape shape : wrapper) {
             if (validateShapeVersion(shape)) {
@@ -263,7 +265,8 @@ final class LoaderShapeMap {
             ShapeId current,
             List<ShapeId> resolved,
             Set<ShapeId> unresolved,
-            Set<ShapeId> visited) {
+            Set<ShapeId> visited
+    ) {
         if (resolved.contains(current)) {
             return false;
         } else if (!unresolved.contains(current)) {
@@ -353,7 +356,8 @@ final class LoaderShapeMap {
     private Shape buildShape(
             LoadOperation.DefineShape defineShape,
             Function<ShapeId, Map<ShapeId, Trait>> traitClaimer,
-            Function<ShapeId, Shape> createdShapeMap) {
+            Function<ShapeId, Shape> createdShapeMap
+    ) {
         try {
             AbstractShapeBuilder<?, ?> builder = defineShape.builder();
             ModelInteropTransformer.patchShapeBeforeBuilding(defineShape, builder, events);

@@ -81,7 +81,8 @@ final class RenameShapes {
             ModelTransformer transformer,
             Model model,
             Set<SetShape> sets,
-            Map<ShapeId, ShapeId> renamed) {
+            Map<ShapeId, ShapeId> renamed
+    ) {
         if (sets.isEmpty()) {
             return model;
         }

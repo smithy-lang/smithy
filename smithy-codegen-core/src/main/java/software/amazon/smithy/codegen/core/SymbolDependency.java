@@ -93,7 +93,8 @@ public final class SymbolDependency extends TypedPropertiesBag
      * @throws CodegenException when two package versions conflict.
      */
     public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
-            Stream<SymbolDependency> symbolStream) {
+            Stream<SymbolDependency> symbolStream
+    ) {
         return gatherDependencies(symbolStream, (a, b) -> {
             throw new CodegenException(String.format(
                     "Found a conflicting `%s` dependency for `%s`: `%s` conflicts with `%s`",
@@ -129,7 +130,8 @@ public final class SymbolDependency extends TypedPropertiesBag
      */
     public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
             Stream<SymbolDependency> symbolStream,
-            BinaryOperator<SymbolDependency> versionMergeFunction) {
+            BinaryOperator<SymbolDependency> versionMergeFunction
+    ) {
         return symbolStream
                 .sorted()
                 .collect(Collectors.groupingBy(

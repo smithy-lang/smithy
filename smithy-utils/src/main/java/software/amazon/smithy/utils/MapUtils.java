@@ -199,7 +199,8 @@ public final class MapUtils {
             K k5,
             V v5,
             K k6,
-            V v6) {
+            V v6
+    ) {
         Map<K, V> result = new HashMap<>(6);
         result.put(k1, v1);
         result.put(k2, v2);
@@ -247,7 +248,8 @@ public final class MapUtils {
             K k6,
             V v6,
             K k7,
-            V v7) {
+            V v7
+    ) {
         Map<K, V> result = new HashMap<>(7);
         result.put(k1, v1);
         result.put(k2, v2);
@@ -300,7 +302,8 @@ public final class MapUtils {
             K k7,
             V v7,
             K k8,
-            V v8) {
+            V v8
+    ) {
         Map<K, V> result = new HashMap<>(8);
         result.put(k1, v1);
         result.put(k2, v2);
@@ -358,7 +361,8 @@ public final class MapUtils {
             K k8,
             V v8,
             K k9,
-            V v9) {
+            V v9
+    ) {
         Map<K, V> result = new HashMap<>(9);
         result.put(k1, v1);
         result.put(k2, v2);
@@ -421,7 +425,8 @@ public final class MapUtils {
             K k9,
             V v9,
             K k10,
-            V v10) {
+            V v10
+    ) {
         Map<K, V> result = new HashMap<>(10);
         result.put(k1, v1);
         result.put(k2, v2);
@@ -490,7 +495,8 @@ public final class MapUtils {
     @SuppressWarnings("unchecked")
     public static <T, K, U> Collector<T, ?, Map<K, U>> toUnmodifiableMap(
             Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends U> valueMapper
+    ) {
         return Collectors.collectingAndThen(
                 Collectors.toMap(
                         Objects.requireNonNull(keyMapper, "keyMapper"),

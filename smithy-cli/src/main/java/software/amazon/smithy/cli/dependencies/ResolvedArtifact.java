@@ -40,7 +40,8 @@ public final class ResolvedArtifact implements ToNode {
             String groupId,
             String artifactId,
             String version,
-            String shaSum) {
+            String shaSum
+    ) {
         this.coordinates = Objects.requireNonNull(coordinates);
         this.path = Objects.requireNonNull(path);
         this.groupId = groupId;

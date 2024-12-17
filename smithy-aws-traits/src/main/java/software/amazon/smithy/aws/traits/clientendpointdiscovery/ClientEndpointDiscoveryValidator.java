@@ -77,7 +77,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateServices(
             ClientEndpointDiscoveryIndex discoveryIndex,
-            Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices) {
+            Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices
+    ) {
         List<ValidationEvent> validationEvents = endpointDiscoveryServices.entrySet()
                 .stream()
                 .filter(pair -> !pair.getKey().getAllOperations().contains(pair.getValue().getOperation()))
@@ -107,7 +108,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private List<ValidationEvent> validateOperations(
             Model model,
             ClientEndpointDiscoveryIndex discoveryIndex,
-            Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices) {
+            Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices
+    ) {
         return model.shapes(OperationShape.class)
                 .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
                 .map(operation -> {
@@ -153,7 +155,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private List<ValidationEvent> validateEndpointOperation(
             Model model,
             OperationIndex opIndex,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         events.addAll(validateEndpointOperationInput(model, opIndex.expectInputShape(operation), operation));
         StructureShape output = opIndex.expectOutputShape(operation);
@@ -219,7 +222,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private List<ValidationEvent> validateEndpointOperationInput(
             Model model,
             StructureShape input,
-            OperationShape operation) {
+            OperationShape operation
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         Set<String> memberNames = SetUtils.copyOf(input.getMemberNames());
         if (!VALID_INPUT_MEMBERS.containsAll(memberNames)) {

@@ -165,7 +165,8 @@ final class SmithyBuildImpl {
 
     void applyAllProjections(
             Consumer<ProjectionResult> projectionResultConsumer,
-            BiConsumer<String, Throwable> projectionExceptionConsumer) {
+            BiConsumer<String, Throwable> projectionExceptionConsumer
+    ) {
         ValidatedResult<Model> resolvedModel = createBaseModel();
 
         // Some plugins need things like file locks and can't be run in parallel with other plugins.
@@ -271,7 +272,8 @@ final class SmithyBuildImpl {
             ProjectionConfig config,
             List<ResolvedPlugin> resolvedPlugins,
             Consumer<ProjectionResult> projectionResultConsumer,
-            BiConsumer<String, Throwable> projectionExceptionConsumer) {
+            BiConsumer<String, Throwable> projectionExceptionConsumer
+    ) {
         // Errors that occur while invoking the result callback must not
         // cause the exception callback to be invoked.
         ProjectionResult result = null;
@@ -301,7 +303,8 @@ final class SmithyBuildImpl {
             String projectionName,
             ProjectionConfig projection,
             ValidatedResult<Model> baseModel,
-            List<ResolvedPlugin> resolvedPlugins) throws Throwable {
+            List<ResolvedPlugin> resolvedPlugins
+    ) throws Throwable {
         Model resolvedModel = baseModel.unwrap();
         LOGGER.fine(() -> String.format("Creating the `%s` projection", projectionName));
 
@@ -394,7 +397,8 @@ final class SmithyBuildImpl {
             ValidatedResult<Model> baseModel,
             Model currentModel,
             String projectionName,
-            Set<String> visited) {
+            Set<String> visited
+    ) {
         Model originalModel = baseModel.unwrap();
 
         for (Pair<ObjectNode, ProjectionTransformer> transformerBinding : transformers.get(projectionName)) {
@@ -423,7 +427,8 @@ final class SmithyBuildImpl {
             Model projectedModel,
             Model resolvedModel,
             ValidatedResult<Model> modelResult,
-            ProjectionResult.Builder resultBuilder) {
+            ProjectionResult.Builder resultBuilder
+    ) {
         PluginId id = resolvedPlugin.id;
 
         // Create the manifest where plugin artifacts are stored.
@@ -456,7 +461,8 @@ final class SmithyBuildImpl {
     // transformer, and the right value is the instantiated transformer.
     private List<Pair<ObjectNode, ProjectionTransformer>> createTransformers(
             String projectionName,
-            ProjectionConfig config) {
+            ProjectionConfig config
+    ) {
         List<Pair<ObjectNode, ProjectionTransformer>> resolved = new ArrayList<>(config.getTransforms().size());
 
         for (TransformConfig transformConfig : config.getTransforms()) {
@@ -477,7 +483,8 @@ final class SmithyBuildImpl {
             Collection<String> queuedProjections,
             TransformContext context,
             Model currentModel,
-            Set<String> visited) {
+            Set<String> visited
+    ) {
         LOGGER.fine(() -> String.format("Applying queued projections: %s", queuedProjections));
         for (String projectionTarget : queuedProjections) {
             Set<String> updatedVisited = new LinkedHashSet<>(visited);

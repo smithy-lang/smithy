@@ -32,7 +32,8 @@ final class TagUtils {
             ModelTransformer transformer,
             Model model,
             Set<String> tags,
-            boolean exclude) {
+            boolean exclude
+    ) {
         return transformer.mapShapes(model,
                 shape -> intersectIfChanged(shape.getTags(), tags, exclude)
                         .map(intersection -> {
@@ -46,7 +47,8 @@ final class TagUtils {
     private static Optional<Set<String>> intersectIfChanged(
             Collection<String> subject,
             Collection<String> other,
-            boolean exclude) {
+            boolean exclude
+    ) {
         Set<String> temp = new HashSet<>(subject);
         if (exclude) {
             temp.removeAll(other);

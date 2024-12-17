@@ -76,7 +76,8 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             Differences differences,
             ChangedShape<MemberShape> change,
             boolean wasNullable,
-            Collection<ValidationEvent> events) {
+            Collection<ValidationEvent> events
+    ) {
         MemberShape oldMember = change.getOldShape();
         MemberShape newMember = change.getNewShape();
         String message = String.format("Member `%s` changed from %s to %s: ",
@@ -183,7 +184,8 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             ShapeId shape,
             SourceLocation sourceLocation,
             String prefixMessage,
-            String message) {
+            String message
+    ) {
         String actualId = eventIdSuffix == null ? getEventId() : (getEventId() + '.' + eventIdSuffix);
         String actualMessage = prefixMessage == null ? message : (prefixMessage + "; " + message);
         return ValidationEvent.builder()

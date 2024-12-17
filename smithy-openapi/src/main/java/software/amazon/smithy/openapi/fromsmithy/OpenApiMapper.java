@@ -77,7 +77,8 @@ public interface OpenApiMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethodName,
-            String path) {
+            String path
+    ) {
         return operation;
     }
 
@@ -99,7 +100,8 @@ public interface OpenApiMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethodName,
-            String path) {
+            String path
+    ) {
         return operation;
     }
 
@@ -130,7 +132,8 @@ public interface OpenApiMapper {
             OperationShape operation,
             String httpMethodName,
             String path,
-            ParameterObject parameterObject) {
+            ParameterObject parameterObject
+    ) {
         return parameterObject;
     }
 
@@ -149,7 +152,8 @@ public interface OpenApiMapper {
             OperationShape operation,
             String httpMethodName,
             String path,
-            RequestBodyObject requestBody) {
+            RequestBodyObject requestBody
+    ) {
         return requestBody;
     }
 
@@ -170,7 +174,8 @@ public interface OpenApiMapper {
             String status,
             String httpMethodName,
             String path,
-            ResponseObject response) {
+            ResponseObject response
+    ) {
         return response;
     }
 
@@ -193,7 +198,8 @@ public interface OpenApiMapper {
     default SecurityScheme updateSecurityScheme(
             Context<? extends Trait> context,
             Trait authTrait,
-            SecurityScheme securityScheme) {
+            SecurityScheme securityScheme
+    ) {
         return securityScheme;
     }
 
@@ -215,7 +221,8 @@ public interface OpenApiMapper {
             Context<? extends Trait> context,
             Shape shape,
             SecuritySchemeConverter<? extends Trait> converter,
-            Map<String, List<String>> requirement) {
+            Map<String, List<String>> requirement
+    ) {
         return requirement;
     }
 
@@ -266,7 +273,8 @@ public interface OpenApiMapper {
                     OperationShape shape,
                     OperationObject operation,
                     String httpMethodName,
-                    String path) {
+                    String path
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
                         return null;
@@ -282,7 +290,8 @@ public interface OpenApiMapper {
                     OperationShape shape,
                     OperationObject operation,
                     String httpMethodName,
-                    String path) {
+                    String path
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
                         return null;
@@ -309,7 +318,8 @@ public interface OpenApiMapper {
                     OperationShape operation,
                     String httpMethodName,
                     String path,
-                    ParameterObject parameterObject) {
+                    ParameterObject parameterObject
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (parameterObject == null) {
                         return null;
@@ -330,7 +340,8 @@ public interface OpenApiMapper {
                     OperationShape shape,
                     String httpMethodName,
                     String path,
-                    RequestBodyObject requestBody) {
+                    RequestBodyObject requestBody
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (requestBody == null) {
                         return null;
@@ -347,7 +358,8 @@ public interface OpenApiMapper {
                     String status,
                     String httpMethodName,
                     String path,
-                    ResponseObject response) {
+                    ResponseObject response
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (response == null) {
                         return null;
@@ -361,7 +373,8 @@ public interface OpenApiMapper {
             public SecurityScheme updateSecurityScheme(
                     Context<? extends Trait> context,
                     Trait authTrait,
-                    SecurityScheme securityScheme) {
+                    SecurityScheme securityScheme
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (securityScheme == null) {
                         return null;
@@ -376,7 +389,8 @@ public interface OpenApiMapper {
                     Context<? extends Trait> context,
                     Shape shape,
                     SecuritySchemeConverter<? extends Trait> converter,
-                    Map<String, List<String>> requirement) {
+                    Map<String, List<String>> requirement
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (requirement == null || requirement.isEmpty()) {
                         return null;

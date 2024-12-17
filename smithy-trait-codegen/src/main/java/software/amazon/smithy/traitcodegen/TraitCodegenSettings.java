@@ -52,7 +52,8 @@ public final class TraitCodegenSettings {
             String packageName,
             String smithyNamespace,
             List<String> headerLines,
-            List<String> excludeTags) {
+            List<String> excludeTags
+    ) {
         this.packageName = Objects.requireNonNull(packageName);
         if (packageName.startsWith(SMITHY_MODEL_NAMESPACE)) {
             throw new IllegalArgumentException("The `software.amazon.smithy` package namespace is reserved.");

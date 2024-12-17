@@ -89,7 +89,8 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
             Context<RestJson1Trait> context,
             Shape operationOrError,
             List<HttpBinding> bindings,
-            MessageType message) {
+            MessageType message
+    ) {
         if (bindings.isEmpty()) {
             return Schema.builder().type("object").build();
         }

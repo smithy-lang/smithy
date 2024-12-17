@@ -68,7 +68,8 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
     public static FunctionNode ofExpressions(
             String functionName,
             FromSourceLocation sourceLocation,
-            ToExpression... arguments) {
+            ToExpression... arguments
+    ) {
         return builder()
                 .sourceLocation(sourceLocation)
                 .name(StringNode.from(functionName))

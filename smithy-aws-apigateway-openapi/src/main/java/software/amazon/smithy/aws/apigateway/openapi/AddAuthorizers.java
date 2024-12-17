@@ -64,7 +64,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
             Context<? extends Trait> context,
             Shape shape,
             SecuritySchemeConverter<? extends Trait> converter,
-            Map<String, List<String>> requirement) {
+            Map<String, List<String>> requirement
+    ) {
         // Only modify requirements that exactly match the updated scheme.
         if (requirement.size() != 1
                 || !requirement.keySet().iterator().next().equals(converter.getOpenApiAuthSchemeName())) {
@@ -87,7 +88,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethodName,
-            String path) {
+            String path
+    ) {
         ServiceShape service = context.getService();
         AuthorizerIndex authorizerIndex = AuthorizerIndex.of(context.getModel());
 
@@ -142,7 +144,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
     private OpenApi addComputedAuthorizers(
             Context<? extends Trait> context,
             OpenApi openApi,
-            AuthorizersTrait trait) {
+            AuthorizersTrait trait
+    ) {
         OpenApi.Builder builder = openApi.toBuilder();
         ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
@@ -167,7 +170,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
     private boolean isAuthConverterMatched(
             Context<? extends Trait> context,
             SecuritySchemeConverter<? extends Trait> converter,
-            ShapeId scheme) {
+            ShapeId scheme
+    ) {
         return converter.getAuthSchemeId().equals(scheme)
                 && context.getService().hasTrait(converter.getAuthSchemeType());
     }
@@ -176,7 +180,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
             Context<? extends Trait> context,
             SecuritySchemeConverter<T> converter,
             AuthorizerDefinition authorizer,
-            String authorizerName) {
+            String authorizerName
+    ) {
         T authTrait = context.getService().expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();

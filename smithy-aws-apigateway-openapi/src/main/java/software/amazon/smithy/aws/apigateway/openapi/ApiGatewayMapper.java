@@ -95,7 +95,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     OperationShape shape,
                     OperationObject operation,
                     String httpMethodName,
-                    String path) {
+                    String path
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateOperation(context, shape, operation, httpMethodName, path)
                         : operation;
@@ -107,7 +108,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     OperationShape shape,
                     OperationObject operation,
                     String httpMethodName,
-                    String path) {
+                    String path
+            ) {
                 return matchesApiType(context)
                         ? delegate.postProcessOperation(context, shape, operation, httpMethodName, path)
                         : operation;
@@ -126,7 +128,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     OperationShape operation,
                     String httpMethodName,
                     String path,
-                    ParameterObject parameterObject) {
+                    ParameterObject parameterObject
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateParameter(context, operation, httpMethodName, path, parameterObject)
                         : parameterObject;
@@ -138,7 +141,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     OperationShape operation,
                     String httpMethodName,
                     String path,
-                    RequestBodyObject requestBody) {
+                    RequestBodyObject requestBody
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateRequestBody(context, operation, httpMethodName, path, requestBody)
                         : requestBody;
@@ -151,7 +155,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     String status,
                     String httpMethodName,
                     String path,
-                    ResponseObject response) {
+                    ResponseObject response
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateResponse(context, operation, status, httpMethodName, path, response)
                         : response;
@@ -168,7 +173,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
             public SecurityScheme updateSecurityScheme(
                     Context<? extends Trait> context,
                     Trait authTrait,
-                    SecurityScheme securityScheme) {
+                    SecurityScheme securityScheme
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateSecurityScheme(context, authTrait, securityScheme)
                         : securityScheme;
@@ -179,7 +185,8 @@ public interface ApiGatewayMapper extends OpenApiMapper {
                     Context<? extends Trait> context,
                     Shape shape,
                     SecuritySchemeConverter<? extends Trait> converter,
-                    Map<String, List<String>> requirement) {
+                    Map<String, List<String>> requirement
+            ) {
                 return matchesApiType(context)
                         ? delegate.updateSecurity(context, shape, converter, requirement)
                         : requirement;

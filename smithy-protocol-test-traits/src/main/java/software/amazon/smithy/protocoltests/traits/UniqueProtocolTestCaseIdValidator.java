@@ -55,7 +55,8 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     private void addTestCaseIdsToMap(
             Shape shape,
             List<? extends HttpMessageTestCase> testCases,
-            Map<String, List<Shape>> map) {
+            Map<String, List<Shape>> map
+    ) {
         for (HttpMessageTestCase testCase : testCases) {
             map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
         }
@@ -64,7 +65,8 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     private void addMalformedRequestTestCaseIdsToMap(
             Shape shape,
             List<HttpMalformedRequestTestCase> testCases,
-            Map<String, List<Shape>> map) {
+            Map<String, List<Shape>> map
+    ) {
         for (HttpMalformedRequestTestCase testCase : testCases) {
             map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
         }
@@ -77,7 +79,8 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     private List<ValidationEvent> collectEvents(
             Map<String, List<Shape>> requestIdsToTraits,
             Map<String, List<Shape>> responseIdsToTraits,
-            Map<String, List<Shape>> malformedRequestIdsToTraits) {
+            Map<String, List<Shape>> malformedRequestIdsToTraits
+    ) {
         if (requestIdsToTraits.isEmpty() && responseIdsToTraits.isEmpty() && malformedRequestIdsToTraits.isEmpty()) {
             return Collections.emptyList();
         }
@@ -92,7 +95,8 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     private void addValidationEvents(
             Map<String, List<Shape>> conflicts,
             List<ValidationEvent> mutableEvents,
-            ShapeId trait) {
+            ShapeId trait
+    ) {
         for (Map.Entry<String, List<Shape>> entry : conflicts.entrySet()) {
             for (Shape shape : entry.getValue()) {
                 mutableEvents.add(error(shape,

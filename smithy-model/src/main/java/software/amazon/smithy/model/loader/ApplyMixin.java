@@ -39,7 +39,8 @@ final class ApplyMixin implements ShapeModifier {
             AbstractShapeBuilder<?, ?> shapeBuilder,
             MemberShape.Builder memberBuilder,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap) {
+            Function<ShapeId, Shape> shapeMap
+    ) {
         // The target could have been set by resource based properties.
         if (memberBuilder.getTarget() != null) {
             return;
@@ -61,7 +62,8 @@ final class ApplyMixin implements ShapeModifier {
             AbstractShapeBuilder<?, ?> builder,
             Map<String, MemberShape.Builder> memberBuilders,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> shapeMap) {
+            Function<ShapeId, Shape> shapeMap
+    ) {
         Shape mixinShape = shapeMap.apply(mixin);
         if (mixinShape == null) {
             throw new SourceException("Cannot apply mixin to " + builder.getId() + ": " + mixin + " not found",

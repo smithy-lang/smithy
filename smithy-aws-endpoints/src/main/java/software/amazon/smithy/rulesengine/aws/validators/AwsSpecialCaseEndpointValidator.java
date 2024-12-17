@@ -53,7 +53,8 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateRegionalEndpointPatterns(
             ServiceShape serviceShape,
-            StandardRegionalEndpointsTrait regionalEndpoints) {
+            StandardRegionalEndpointsTrait regionalEndpoints
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (List<RegionSpecialCase> specialCases : regionalEndpoints.getRegionSpecialCases().values()) {
@@ -79,7 +80,8 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
     private List<ValidationEvent> validatePartitionalEndpointPatterns(
             ServiceShape serviceShape,
-            StandardPartitionalEndpointsTrait partitionalEndpoints) {
+            StandardPartitionalEndpointsTrait partitionalEndpoints
+    ) {
 
         List<ValidationEvent> events = new ArrayList<>();
 
@@ -99,7 +101,8 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
     private List<ValidationEvent> validateEndpointPatterns(
             ServiceShape serviceShape,
             FromSourceLocation location,
-            String endpoint) {
+            String endpoint
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         Matcher m = PATTERN.matcher(endpoint);

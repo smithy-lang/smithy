@@ -65,7 +65,8 @@ public final class ProtocolHttpPayloadValidator extends AbstractValidator {
             Model model,
             ServiceShape service,
             HttpBindingIndex bindingIndex,
-            TopDownIndex topDownIndex) {
+            TopDownIndex topDownIndex
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (OperationShape operation : topDownIndex.getContainedOperations(service)) {

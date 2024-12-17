@@ -81,7 +81,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     private Pair<List<ValidationEvent>, Map<String, Parameter>> validateAndExtractParameters(
             Model model,
             ServiceShape serviceShape,
-            Set<OperationShape> containedOperations) {
+            Set<OperationShape> containedOperations
+    ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Map<String, Parameter> endpointParams = new HashMap<>();
 
@@ -180,7 +181,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     private List<ValidationEvent> validateParametersMatching(
             ServiceShape serviceShape,
             Parameters ruleSetParams,
-            Map<String, Parameter> modelParams) {
+            Map<String, Parameter> modelParams
+    ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> matchedParams = new HashSet<>();
         for (Parameter parameter : ruleSetParams) {
@@ -229,7 +231,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             TopDownIndex topDownIndex,
             ServiceShape serviceShape,
             EndpointTestsTrait trait,
-            EndpointRuleSet ruleSet) {
+            EndpointRuleSet ruleSet
+    ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> rulesetParamNames = new HashSet<>();
         Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(model,
@@ -292,7 +295,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             TopDownIndex topDownIndex,
             ServiceShape serviceShape,
             EndpointRuleSet ruleSet,
-            EndpointTestsTrait trait) {
+            EndpointTestsTrait trait
+    ) {
         Map<String, List<Parameter>> params = new HashMap<>();
         for (EndpointTestCase testCase : trait.getTestCases()) {
             List<Parameter> testParams = new ArrayList<>();
@@ -371,7 +375,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             Shape shape,
             FromSourceLocation sourceLocation,
             String id,
-            String message) {
+            String message
+    ) {
         return error(shape, sourceLocation, message).toBuilder().id(getName() + "." + id).build();
     }
 }

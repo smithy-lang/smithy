@@ -25,14 +25,16 @@ final class BracketFormatter {
 
     static Function<TreeCursor, Stream<Doc>> extractor(
             Function<TreeCursor, Doc> visitor,
-            Function<TreeCursor, Stream<TreeCursor>> mapper) {
+            Function<TreeCursor, Stream<TreeCursor>> mapper
+    ) {
         return extractor(visitor, mapper, TreeCursor::children);
     }
 
     static Function<TreeCursor, Stream<Doc>> extractor(
             Function<TreeCursor, Doc> visitor,
             Function<TreeCursor, Stream<TreeCursor>> mapper,
-            Function<TreeCursor, Stream<TreeCursor>> childrenSupplier) {
+            Function<TreeCursor, Stream<TreeCursor>> childrenSupplier
+    ) {
         return (cursor) -> childrenSupplier.apply(cursor)
                 .flatMap(c -> {
                     TreeType type = c.getTree().getType();
@@ -62,7 +64,8 @@ final class BracketFormatter {
     // on a single line, they are comma separated. If not, they are split onto multiple lines with no commas.
     static Function<TreeCursor, Stream<Doc>> extractByType(
             TreeType childType,
-            Function<TreeCursor, Doc> visitor) {
+            Function<TreeCursor, Doc> visitor
+    ) {
         return extractor(visitor, byTypeMapper(childType));
     }
 

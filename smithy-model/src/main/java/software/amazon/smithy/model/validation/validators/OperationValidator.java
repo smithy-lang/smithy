@@ -69,7 +69,8 @@ public final class OperationValidator extends AbstractValidator {
             NeighborProvider reverseProvider,
             List<ValidationEvent> events,
             String descriptor,
-            String invalid) {
+            String invalid
+    ) {
         for (Shape shape : shapes) {
             Set<ShapeId> operations = new HashSet<>();
             for (Relationship rel : reverseProvider.getNeighbors(shape)) {
@@ -101,7 +102,8 @@ public final class OperationValidator extends AbstractValidator {
             Shape operation,
             Shape target,
             String property,
-            String invalid) {
+            String invalid
+    ) {
         return ValidationEvent.builder()
                 .id(OPERATION_INPUT_OUTPUT_MISUSE)
                 .severity(Severity.ERROR)
@@ -173,7 +175,8 @@ public final class OperationValidator extends AbstractValidator {
             Shape ambiguousShape,
             OperationShape operation,
             ShapeId ioShape,
-            String descriptor) {
+            String descriptor
+    ) {
         return ValidationEvent.builder()
                 .id(OPERATION_NAME_AMBIGUITY)
                 .shape(ambiguousShape)

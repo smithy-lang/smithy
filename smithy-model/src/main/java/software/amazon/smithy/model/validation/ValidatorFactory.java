@@ -100,7 +100,8 @@ public interface ValidatorFactory {
     static ValidatorFactory createServiceFactory(
             Iterable<Validator> validators,
             Iterable<ValidatorService> services,
-            Iterable<ValidationEventDecorator> decorators) {
+            Iterable<ValidationEventDecorator> decorators
+    ) {
         List<ValidatorService> serviceList = new ArrayList<>();
         services.forEach(serviceList::add);
         List<Validator> validatorsList = new ArrayList<>();

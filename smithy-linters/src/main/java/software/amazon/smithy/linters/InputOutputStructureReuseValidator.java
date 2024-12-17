@@ -47,7 +47,8 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
             OperationShape operation,
             StructureShape input,
             StructureShape output,
-            List<ValidationEvent> events) {
+            List<ValidationEvent> events
+    ) {
         if (!input.hasTrait(InputTrait.class)) {
             events.add(warning(input,
                     String.format(

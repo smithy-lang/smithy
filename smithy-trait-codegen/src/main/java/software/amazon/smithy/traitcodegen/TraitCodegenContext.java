@@ -32,7 +32,8 @@ public final class TraitCodegenContext implements CodegenContext<TraitCodegenSet
             TraitCodegenSettings settings,
             SymbolProvider symbolProvider,
             FileManifest fileManifest,
-            List<TraitCodegenIntegration> integrations) {
+            List<TraitCodegenIntegration> integrations
+    ) {
         this.model = model;
         this.settings = settings;
         this.symbolProvider = symbolProvider;

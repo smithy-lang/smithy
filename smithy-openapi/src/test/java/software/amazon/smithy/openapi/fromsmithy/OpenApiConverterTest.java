@@ -332,7 +332,8 @@ public class OpenApiConverterTest {
                 Context<? extends Trait> context,
                 Shape shape,
                 SecuritySchemeConverter<? extends Trait> converter,
-                Map<String, List<String>> requirement) {
+                Map<String, List<String>> requirement
+        ) {
             return null;
         }
     }
@@ -361,7 +362,8 @@ public class OpenApiConverterTest {
                 Context<? extends Trait> context,
                 Shape shape,
                 SecuritySchemeConverter<? extends Trait> converter,
-                Map<String, List<String>> requirement) {
+                Map<String, List<String>> requirement
+        ) {
             return MapUtils.of("foo_baz", ListUtils.of());
         }
     }

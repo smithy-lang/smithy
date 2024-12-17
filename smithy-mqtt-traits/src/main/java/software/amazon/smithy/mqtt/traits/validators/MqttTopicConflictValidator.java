@@ -42,7 +42,8 @@ public final class MqttTopicConflictValidator extends AbstractValidator {
 
     private ValidationEvent invalidBindings(
             TopicBinding<? extends Trait> binding,
-            List<TopicBinding<?>> conflicts) {
+            List<TopicBinding<?>> conflicts
+    ) {
         String payloadShape = binding.getPayloadShape()
                 .map(shape -> shape.getId().toString())
                 .orElse("N/A");

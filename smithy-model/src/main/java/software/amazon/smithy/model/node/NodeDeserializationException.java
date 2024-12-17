@@ -35,7 +35,8 @@ public class NodeDeserializationException extends SourceException {
             String pointer,
             Node node,
             ReflectiveOperationException previous,
-            String message) {
+            String message
+    ) {
         if (previous.getCause() instanceof NodeDeserializationException) {
             return (NodeDeserializationException) previous.getCause();
         } else {
@@ -58,7 +59,8 @@ public class NodeDeserializationException extends SourceException {
             String pointer,
             Node node,
             Throwable previous,
-            String message) {
+            String message
+    ) {
         String formattedMessage = NodeMapper.createErrorMessage(into, pointer, node, message);
         return new NodeDeserializationException(formattedMessage, node.getSourceLocation(), previous);
     }

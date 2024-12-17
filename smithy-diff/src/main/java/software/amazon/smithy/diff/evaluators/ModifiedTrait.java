@@ -214,7 +214,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity) {
+                    Severity severity
+            ) {
                 if (left != null) {
                     return Collections.emptyList();
                 }
@@ -249,7 +250,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity) {
+                    Severity severity
+            ) {
                 if (right != null) {
                     return Collections.emptyList();
                 }
@@ -284,7 +286,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity) {
+                    Severity severity
+            ) {
                 if (left == null || right == null || Objects.equals(left, right)) {
                     return Collections.emptyList();
                 }
@@ -320,7 +323,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity) {
+                    Severity severity
+            ) {
                 List<ValidationEvent> events = new ArrayList<>();
                 events.addAll(ADD.validate(model, path, shape, trait, left, right, severity));
                 events.addAll(REMOVE.validate(model, path, shape, trait, left, right, severity));
@@ -338,7 +342,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity) {
+                    Severity severity
+            ) {
                 // The trait needs to exist in both models to perform this check.
                 if (left == null || right == null) {
                     return Collections.emptyList();
@@ -365,7 +370,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 ShapeId trait,
                 Node left,
                 Node right,
-                Severity severity);
+                Severity severity
+        );
 
         private static String getValidationEventId(DiffType diffType, ShapeId trait) {
             return String.format("%s.%s.%s",
@@ -383,7 +389,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             Node leftValue,
             Node rightValue,
             List<ValidationEvent> events,
-            String path) {
+            String path
+    ) {
         currentTraitShape.accept(new DiffCrawler(model, startingShape, trait, leftValue, rightValue, events, path));
     }
 
@@ -404,7 +411,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 Node leftValue,
                 Node rightValue,
                 List<ValidationEvent> events,
-                String path) {
+                String path
+        ) {
             this.model = model;
             this.startingShape = startingShape;
             this.trait = trait;

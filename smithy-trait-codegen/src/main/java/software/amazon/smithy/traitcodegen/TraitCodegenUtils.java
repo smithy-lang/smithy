@@ -127,7 +127,8 @@ public final class TraitCodegenUtils {
     public static String mapNamespace(
             String rootSmithyNamespace,
             String shapeNamespace,
-            String packageNamespace) {
+            String packageNamespace
+    ) {
         if (!shapeNamespace.startsWith(rootSmithyNamespace)) {
             throw new IllegalArgumentException("Cannot relativize non-nested namespaces "
                     + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + ".");

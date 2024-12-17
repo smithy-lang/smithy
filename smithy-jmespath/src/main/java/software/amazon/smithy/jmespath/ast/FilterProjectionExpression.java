@@ -29,7 +29,8 @@ public final class FilterProjectionExpression extends BinaryExpression {
     public FilterProjectionExpression(
             JmespathExpression left,
             JmespathExpression comparison,
-            JmespathExpression right) {
+            JmespathExpression right
+    ) {
         this(left, comparison, right, 1, 1);
     }
 
@@ -38,7 +39,8 @@ public final class FilterProjectionExpression extends BinaryExpression {
             JmespathExpression comparison,
             JmespathExpression right,
             int line,
-            int column) {
+            int column
+    ) {
         super(left, right, line, column);
         this.comparison = comparison;
     }

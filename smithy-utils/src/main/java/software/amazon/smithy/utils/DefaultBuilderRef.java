@@ -30,7 +30,8 @@ final class DefaultBuilderRef<T> implements BuilderRef<T> {
             Supplier<T> ctor,
             Function<T, T> copyCtor,
             Function<T, T> immutableWrapper,
-            Supplier<T> emptyCtorOptimization) {
+            Supplier<T> emptyCtorOptimization
+    ) {
         this.ctor = ctor;
         this.copyCtor = copyCtor;
         this.immutableWrapper = immutableWrapper;

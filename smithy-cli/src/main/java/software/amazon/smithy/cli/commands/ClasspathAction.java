@@ -63,7 +63,8 @@ class ClasspathAction implements CommandAction {
             BuildOptions buildOptions,
             SmithyBuildConfig smithyBuildConfig,
             Command.Env env,
-            Consumer<ClassLoader> consumer) {
+            Consumer<ClassLoader> consumer
+    ) {
         Set<String> dependencies = smithyBuildConfig.getMaven()
                 .map(MavenConfig::getDependencies)
                 .orElse(Collections.emptySet());
@@ -118,7 +119,8 @@ class ClasspathAction implements CommandAction {
             BuildOptions buildOptions,
             SmithyBuildConfig smithyBuildConfig,
             Command.Env env,
-            MavenConfig maven) {
+            MavenConfig maven
+    ) {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);

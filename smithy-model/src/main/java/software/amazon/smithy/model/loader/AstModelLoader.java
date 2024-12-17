@@ -249,7 +249,8 @@ final class AstModelLoader {
     private LoadOperation.DefineShape loadCollection(
             ShapeId id,
             ObjectNode node,
-            CollectionShape.Builder<?, ?> builder) {
+            CollectionShape.Builder<?, ?> builder
+    ) {
         LoaderUtils.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES).ifPresent(this::emit);
         applyShapeTraits(id, node);
         // Add the container before members to ensure sets are rejected before adding unreferenced members.
@@ -362,7 +363,8 @@ final class AstModelLoader {
     private LoadOperation.DefineShape loadSimpleShape(
             ShapeId id,
             ObjectNode node,
-            AbstractShapeBuilder<?, ?> builder) {
+            AbstractShapeBuilder<?, ?> builder
+    ) {
         LoaderUtils.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES).ifPresent(this::emit);
         applyShapeTraits(id, node);
         builder.id(id).source(node.getSourceLocation());
@@ -374,7 +376,8 @@ final class AstModelLoader {
     private LoadOperation.DefineShape loadNamedMemberShape(
             ShapeId id,
             ObjectNode node,
-            AbstractShapeBuilder<?, ?> builder) {
+            AbstractShapeBuilder<?, ?> builder
+    ) {
         LoaderUtils.checkForAdditionalProperties(node, id, NAMED_MEMBER_SHAPE_PROPERTY_NAMES).ifPresent(this::emit);
         builder.id(id).source(node.getSourceLocation());
         LoadOperation.DefineShape operation = createShape(builder);

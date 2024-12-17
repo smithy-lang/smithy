@@ -32,7 +32,8 @@ final class HelpActionWrapper implements CommandAction {
             String parentCommandName,
             String summary,
             Function<ColorFormatter, String> documentationProvider,
-            CommandAction delegate) {
+            CommandAction delegate
+    ) {
         this.name = name;
         this.parentCommandName = parentCommandName;
         this.summary = summary;
@@ -48,7 +49,8 @@ final class HelpActionWrapper implements CommandAction {
             Command command,
             String parentCommandName,
             Function<ColorFormatter, String> documentationProvider,
-            CommandAction delegate) {
+            CommandAction delegate
+    ) {
         return new HelpActionWrapper(
                 command.getName(),
                 parentCommandName,

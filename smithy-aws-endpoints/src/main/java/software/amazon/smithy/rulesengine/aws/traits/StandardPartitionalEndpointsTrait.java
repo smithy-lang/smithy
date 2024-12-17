@@ -133,7 +133,8 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
          * @return Returns the builder.
          */
         public Builder partitionEndpointSpecialCases(
-                Map<String, List<PartitionEndpointSpecialCase>> partitionEndpointSpecialCases) {
+                Map<String, List<PartitionEndpointSpecialCase>> partitionEndpointSpecialCases
+        ) {
             this.partitionEndpointSpecialCases.clear();
             this.partitionEndpointSpecialCases.get().putAll(partitionEndpointSpecialCases);
             return this;
@@ -148,7 +149,8 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
          */
         public Builder putPartitionEndpointSpecialCase(
                 String partition,
-                List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases) {
+                List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases
+        ) {
             this.partitionEndpointSpecialCases.get().put(partition, partitionEndpointSpecialCases);
             return this;
         }

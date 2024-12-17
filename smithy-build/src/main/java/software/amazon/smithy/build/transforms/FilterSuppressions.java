@@ -265,7 +265,8 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             Model model,
             Config config,
             List<ValidationEvent> suppressedEvents,
-            ModelTransformer transformer) {
+            ModelTransformer transformer
+    ) {
 
         List<Shape> replacementShapes = new ArrayList<>();
         // First filter and '@suppress' traits that didn't suppress anything.
@@ -296,7 +297,8 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             Model model,
             Config config,
             List<ValidationEvent> suppressedEvents,
-            Set<String> removedValidators) {
+            Set<String> removedValidators
+    ) {
         // Next remove metadata suppressions that didn't suppress anything.
         ArrayNode suppressionsNode = model.getMetadata()
                 .getOrDefault("suppressions", Node.arrayNode())

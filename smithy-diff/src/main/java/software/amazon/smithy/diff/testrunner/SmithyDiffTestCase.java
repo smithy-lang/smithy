@@ -48,7 +48,8 @@ public final class SmithyDiffTestCase {
     public SmithyDiffTestCase(
             Path path,
             String name,
-            List<ValidationEvent> expectedEvents) {
+            List<ValidationEvent> expectedEvents
+    ) {
         this.path = Objects.requireNonNull(path);
         this.name = Objects.requireNonNull(name);
         this.expectedEvents = Collections.unmodifiableList(expectedEvents);
@@ -200,7 +201,8 @@ public final class SmithyDiffTestCase {
         Result(
                 String name,
                 Collection<ValidationEvent> unmatchedEvents,
-                Collection<ValidationEvent> extraEvents) {
+                Collection<ValidationEvent> extraEvents
+        ) {
             this.name = name;
             this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
             this.extraEvents = Collections.unmodifiableCollection(new TreeSet<>(extraEvents));

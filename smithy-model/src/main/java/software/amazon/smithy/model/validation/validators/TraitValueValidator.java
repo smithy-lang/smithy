@@ -51,7 +51,8 @@ public final class TraitValueValidator implements Validator {
             NodeValidationVisitor validator,
             Shape targetShape,
             Trait trait,
-            boolean validatePrelude) {
+            boolean validatePrelude
+    ) {
         ShapeId shape = trait.toShapeId();
 
         if (!model.getShape(shape).isPresent()) {

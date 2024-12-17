@@ -77,7 +77,8 @@ public final class ServiceTaggingValidator extends AbstractValidator {
             ServiceShape service,
             FromSourceLocation location,
             ShapeId opId,
-            String opName) {
+            String opName
+    ) {
         return danger(service,
                 location,
                 String.format("Shape `%s` does not satisfy '%s' operation requirements.",
