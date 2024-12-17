@@ -1,1 +1,1 @@
-[ERROR] com.example#CreateResourceOutput$id: Member `id` does not target a property or identifier for resource `com.example#Resource1` | ResourceOperationInputOutput
+[ERROR] com.example#CreateResourceOutput$id: Member `id` does not target a property or identifier for resource `com.example#Resource1`. If it is an identifier, apply the `smithy.api#resourceIdentifier` trait. If it is a property, apply the `smithy.api#property` trait. If it is neither, apply the `smithy.api#notProperty` trait. | ResourceOperationInputOutput
