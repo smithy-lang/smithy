@@ -89,11 +89,12 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 }
 
 // This is needed in order for integration tests to find the CLI runtime image
-val smithyBinary = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy.bat").get().asFile.path
-} else {
-    layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy").get().asFile.path
-}
+val smithyBinary =
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy.bat").get().asFile.path
+    } else {
+        layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy").get().asFile.path
+    }
 System.setProperty("SMITHY_BINARY", smithyBinary)
 
 runtime {
@@ -143,9 +144,10 @@ runtime {
     // This is needed to ensure that jlink is available (jlink is Java 9+), we should use the JDK that
     // is configured for the runtime
     // NOTE: For the runtime task, you *must* have the right JDK set up in your environment (17 at the time of writing)
-    javaHome = javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
-    }.map { it.metadata.installationPath.asFile.path }
+    javaHome =
+        javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
+        }.map { it.metadata.installationPath.asFile.path }
 }
 
 tasks {
@@ -156,10 +158,11 @@ tasks {
     }
 
     register("generateVersionFile") {
-        val versionFile = sourceSets.main.map { sourceSet ->
-            sourceSet.output.resourcesDir?.resolve("software/amazon/smithy/cli/cli-version")
-                ?: throw GradleException("Resources directory not found for main sourceSet")
-        }
+        val versionFile =
+            sourceSets.main.map { sourceSet ->
+                sourceSet.output.resourcesDir?.resolve("software/amazon/smithy/cli/cli-version")
+                    ?: throw GradleException("Resources directory not found for main sourceSet")
+            }
 
         outputs.file(versionFile)
 
@@ -320,11 +323,12 @@ if (project.hasProperty("release.cli")) {
 
         platform {
             // These replacements are for the names of files that are released, *not* for names within this build config
-            replacements = mapOf(
-                "osx" to "darwin",
-                "aarch_64" to "aarch64",
-                "windows_x86_64" to "windows_x64"
-            )
+            replacements =
+                mapOf(
+                    "osx" to "darwin",
+                    "aarch_64" to "aarch64",
+                    "windows_x86_64" to "windows_x64",
+                )
         }
 
         distributions {

@@ -1,7 +1,6 @@
 import java.util.regex.Pattern
 
 plugins {
-    checkstyle
     id("com.diffplug.spotless")
 }
 
@@ -17,20 +16,16 @@ spotless {
             .onlyIfContentMatches("^((?!SKIPLICENSECHECK)[\\s\\S])*\$")
         indentWithSpaces()
         endWithNewline()
-
         eclipse().configFile("${project.rootDir}/config/spotless/formatting.xml")
-
         // Fixes for some strange formatting applied by eclipse:
         // see: https://github.com/kamkie/demo-spring-jsf/blob/bcacb9dc90273a5f8d2569470c5bf67b171c7d62/build.gradle.kts#L159
         custom("Lambda fix") { it.replace("} )", "})").replace("} ,", "},") }
         custom("Long literal fix") { Pattern.compile("([0-9_]+) [Ll]").matcher(it).replaceAll("\$1L") }
-
         // Static first, then everything else alphabetically
         removeUnusedImports()
         importOrder("\\#", "")
-
         // Ignore generated code for formatter check
-        targetExclude("**/build/**/*.*")
+        targetExclude("*/build/**/*.*")
     }
 
     // Formatting for build.gradle.kts files
