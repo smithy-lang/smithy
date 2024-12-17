@@ -33,6 +33,9 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.NotPropertyTrait;
+import software.amazon.smithy.model.traits.PropertyTrait;
+import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -214,8 +217,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                         resource.getId(), propertyName)));
             }
         } else if (!identifierMembers.contains(member.getMemberName())) {
-            events.add(error(member, String.format("Member `%s` does not target a property or identifier"
-                    + " for resource `%s`", member.getMemberName(), resource.getId().toString())));
+            events.add(error(member, String.format("Member `%s` does not target a property or identifier for resource "
+                    + "`%s`. If it is an identifier, apply the `%s` trait. If it is a property, apply the `%s` trait. "
+                    + "If it is neither, apply the `%s` trait.", member.getMemberName(), resource.getId().toString(),
+                    ResourceIdentifierTrait.ID, PropertyTrait.ID, NotPropertyTrait.ID)));
         }
     }
 }
