@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.auth;
 
 import java.util.ArrayList;
@@ -51,9 +50,11 @@ public final class SigV4TraitsValidator extends AbstractValidator {
                 String sigv4Name = sigv4TraitOptional.get().getName();
                 if (!serviceArnNamespace.equals(sigv4Name)) {
                     events.add(createValuesShouldMatchWarning(
-                        service,
-                        SERVICE_ARN_NAMESPACE, serviceArnNamespace,
-                        SIGV4_NAME, sigv4Name));
+                            service,
+                            SERVICE_ARN_NAMESPACE,
+                            serviceArnNamespace,
+                            SIGV4_NAME,
+                            sigv4Name));
                 }
             }
             // Check service$arnNamespace with sigv4a$name
@@ -61,9 +62,11 @@ public final class SigV4TraitsValidator extends AbstractValidator {
                 String sigv4aName = sigv4aTraitOptional.get().getName();
                 if (!serviceArnNamespace.equals(sigv4aName)) {
                     events.add(createValuesShouldMatchWarning(
-                        service,
-                        SERVICE_ARN_NAMESPACE, serviceArnNamespace,
-                        SIGV4A_NAME, sigv4aName));
+                            service,
+                            SERVICE_ARN_NAMESPACE,
+                            serviceArnNamespace,
+                            SIGV4A_NAME,
+                            sigv4aName));
                 }
             }
         }
@@ -73,23 +76,28 @@ public final class SigV4TraitsValidator extends AbstractValidator {
             String sigv4aName = sigv4aTraitOptional.get().getName();
             if (!sigv4Name.equals(sigv4aName)) {
                 events.add(createValuesShouldMatchWarning(
-                    service,
-                    SIGV4_NAME, sigv4Name,
-                    SIGV4A_NAME, sigv4aName));
+                        service,
+                        SIGV4_NAME,
+                        sigv4Name,
+                        SIGV4A_NAME,
+                        sigv4aName));
             }
         }
         return events;
     }
 
     private ValidationEvent createValuesShouldMatchWarning(
-        ServiceShape service,
-        ShapeId member1,
-        String value1,
-        ShapeId member2,
-        String value2
-    ) {
-        return warning(service, String.format(
-            "Value for `%s` \"%s\" and value for `%s` \"%s\" SHOULD match.",
-            member1.toString(), value1, member2.toString(), value2));
+            ServiceShape service,
+            ShapeId member1,
+            String value1,
+            ShapeId member2,
+            String value2) {
+        return warning(service,
+                String.format(
+                        "Value for `%s` \"%s\" and value for `%s` \"%s\" SHOULD match.",
+                        member1.toString(),
+                        value1,
+                        member2.toString(),
+                        value2));
     }
 }

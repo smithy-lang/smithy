@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,12 +112,12 @@ public class DowngradeToV1Test {
         Model downgraded = ModelTransformer.create().downgradeToV1(model);
 
         assertThat(downgraded.expectShape(resource.getId(), ResourceShape.class).getProperties(),
-                   Matchers.anEmptyMap());
+                Matchers.anEmptyMap());
 
         assertThat(downgraded.expectShape(input.getMember("foo").get().getId()).hasTrait(PropertyTrait.class),
-                   Matchers.is(false));
+                Matchers.is(false));
         assertThat(downgraded.expectShape(input.getMember("baz").get().getId()).hasTrait(NotPropertyTrait.class),
-                   Matchers.is(false));
+                Matchers.is(false));
     }
 
     @Test
@@ -188,8 +192,11 @@ public class DowngradeToV1Test {
         // A Root level shape with a 1.0 zero value keeps the default value
         ShapeId zeroIntegerShape = ShapeId.from("smithy.example#ZeroInteger");
         assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(DefaultTrait.class), Matchers.is(true));
-        assertThat(downgraded.expectShape(zeroIntegerShape).expectTrait(DefaultTrait.class).toNode()
-                        .expectNumberNode().getValue(),
+        assertThat(downgraded.expectShape(zeroIntegerShape)
+                .expectTrait(DefaultTrait.class)
+                .toNode()
+                .expectNumberNode()
+                .getValue(),
                 Matchers.is(0L));
         assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(AddedDefaultTrait.class), Matchers.is(false));
         assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(BoxTrait.class), Matchers.is(false));
@@ -210,40 +217,67 @@ public class DowngradeToV1Test {
 
         // A Member that targets a shape with a matching default 1.0 zero value keeps the default value
         assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(DefaultTrait.class), Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").expectTrait(DefaultTrait.class).toNode()
-                        .expectNumberNode().getValue(),
+        assertThat(dStruct.getAllMembers()
+                .get("zeroTargetZeroMember")
+                .expectTrait(DefaultTrait.class)
+                .toNode()
+                .expectNumberNode()
+                .getValue(),
                 Matchers.is(0L));
-        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
         assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(BoxTrait.class), Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(DefaultTrait.class), Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").expectTrait(DefaultTrait.class).toNode().isNullNode(),
+        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(DefaultTrait.class),
                 Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
+        assertThat(
+                dStruct.getAllMembers()
+                        .get("zeroTargetBoxedMember")
+                        .expectTrait(DefaultTrait.class)
+                        .toNode()
+                        .isNullNode(),
+                Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
         assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(BoxTrait.class), Matchers.is(true));
 
         // A Member that has a target shape with no default value drops the default value
-        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(DefaultTrait.class),
+                Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
         assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(BoxTrait.class), Matchers.is(false));
 
         // A Member that has a target shape with no default value drops the default value
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(DefaultTrait.class),
+                Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(BoxTrait.class),
+                Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(DefaultTrait.class), Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").expectTrait(DefaultTrait.class).toNode().isNullNode(),
+        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(DefaultTrait.class),
                 Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
+        assertThat(
+                dStruct.getAllMembers()
+                        .get("boxedTargetBoxedMember")
+                        .expectTrait(DefaultTrait.class)
+                        .toNode()
+                        .isNullNode(),
+                Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
         assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(BoxTrait.class), Matchers.is(true));
 
         // A Member that has no default value has no default trait and the member is not boxed
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(DefaultTrait.class),
+                Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(AddedDefaultTrait.class),
+                Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(BoxTrait.class),
+                Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
         assertThat(dStruct.getAllMembers().get("baz").hasTrait(DefaultTrait.class), Matchers.is(true));

@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import java.math.BigDecimal;
@@ -58,8 +47,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             CharSequence lexeme,
             String stringContents,
             Number numberValue,
-            String errorMessage
-    ) {
+            String errorMessage) {
         this.token = Objects.requireNonNull(token, "Missing required token");
         this.lexeme = Objects.requireNonNull(lexeme, "Missing required lexeme");
         this.filename = filename == null ? SourceLocation.none().getFilename() : filename;
@@ -111,18 +99,17 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         @Override
         public CapturedToken build() {
             return new CapturedToken(
-                token,
-                filename,
-                position,
-                startLine,
-                startColumn,
-                endLine,
-                endColumn,
-                lexeme,
-                stringContents,
-                numberValue,
-                errorMessage
-            );
+                    token,
+                    filename,
+                    position,
+                    startLine,
+                    startColumn,
+                    endLine,
+                    endColumn,
+                    lexeme,
+                    stringContents,
+                    numberValue,
+                    errorMessage);
         }
 
         public Builder token(IdlToken token) {
@@ -210,8 +197,8 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .endColumn(tokenizer.getColumn())
                 .lexeme(tokenizer.getCurrentTokenLexeme())
                 .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
-                                ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
-                                : null)
+                        ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
+                        : null)
                 .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
                 .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
                 .build();

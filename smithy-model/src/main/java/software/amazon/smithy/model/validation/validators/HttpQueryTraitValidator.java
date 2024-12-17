@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -69,32 +58,36 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateBindings(
-        Map<StructureShape, Map<String, Set<String>>> queryBindings,
-        Map<StructureShape, List<OperationShape>> structureToOperations
-    ) {
+            Map<StructureShape, Map<String, Set<String>>> queryBindings,
+            Map<StructureShape, List<OperationShape>> structureToOperations) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Map.Entry<StructureShape, Map<String, Set<String>>> entry : queryBindings.entrySet()) {
             for (Map.Entry<String, Set<String>> paramsToMembers : entry.getValue().entrySet()) {
                 // Emit if there are bindings on this shape for the same query string parameter.
                 if (paramsToMembers.getValue().size() > 1) {
-                    events.add(error(entry.getKey(), String.format(
-                            "`httpQuery` parameter name binding conflicts found for the `%s` parameter in the "
-                            + "following structure members: %s",
-                            paramsToMembers.getKey(), ValidationUtils.tickedList(paramsToMembers.getValue()))));
+                    events.add(error(entry.getKey(),
+                            String.format(
+                                    "`httpQuery` parameter name binding conflicts found for the `%s` parameter in the "
+                                            + "following structure members: %s",
+                                    paramsToMembers.getKey(),
+                                    ValidationUtils.tickedList(paramsToMembers.getValue()))));
                 }
             }
 
             List<OperationShape> operations = structureToOperations.getOrDefault(entry.getKey(),
-                                                                                 Collections.emptyList());
+                    Collections.emptyList());
             for (OperationShape operation : operations) {
                 UriPattern pattern = operation.expectTrait(HttpTrait.class).getUri();
                 for (Map.Entry<String, String> literalEntry : pattern.getQueryLiterals().entrySet()) {
                     String literalKey = literalEntry.getKey();
                     if (entry.getValue().containsKey(literalKey)) {
-                        events.add(error(entry.getKey(), String.format(
-                            "`httpQuery` name `%s` conflicts with the `http` trait of the `%s` operation: `%s`",
-                            literalKey, operation.getId(), pattern)));
+                        events.add(error(entry.getKey(),
+                                String.format(
+                                        "`httpQuery` name `%s` conflicts with the `http` trait of the `%s` operation: `%s`",
+                                        literalKey,
+                                        operation.getId(),
+                                        pattern)));
                     }
                 }
             }
@@ -108,9 +101,9 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
         Map<StructureShape, List<OperationShape>> structureToOperations = new HashMap<>();
         for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
             index.getInput(operation)
-                 .ifPresent(structure -> structureToOperations
-                     .computeIfAbsent(structure, key -> new ArrayList<>())
-                     .add(operation));
+                    .ifPresent(structure -> structureToOperations
+                            .computeIfAbsent(structure, key -> new ArrayList<>())
+                            .add(operation));
         }
         return structureToOperations;
     }

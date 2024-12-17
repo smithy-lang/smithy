@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.ArrayList;
@@ -57,8 +56,7 @@ public interface EndpointComponentFactory {
     static EndpointComponentFactory createServiceFactory(
             Map<String, Parameter> builtIns,
             Map<String, FunctionDefinition> libraryFunctions,
-            List<AuthSchemeValidator> authSchemeValidators
-    ) {
+            List<AuthSchemeValidator> authSchemeValidators) {
         return new EndpointComponentFactory() {
             @Override
             public boolean hasBuiltIn(String name) {

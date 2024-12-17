@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.plugins;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,9 +24,9 @@ public class ConfigurableSmithyBuildPluginTest {
         MockManifest manifest = new MockManifest();
         PluginContext context = PluginContext.builder()
                 .settings(Node.objectNode()
-                                  .withMember("foo", "hello")
-                                  .withMember("bar", 10)
-                                  .withMember("baz", true))
+                        .withMember("foo", "hello")
+                        .withMember("bar", 10)
+                        .withMember("baz", true))
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)

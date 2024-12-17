@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -181,7 +180,8 @@ public final class GetAttr extends LibraryFunction {
         // Synthesize an fn-node:
         return ObjectNode.builder()
                 .withMember("fn", GetAttr.ID)
-                .withMember("argv", ArrayNode.arrayNode(target.toNode(), StringNode.from(unparsedPath))).build();
+                .withMember("argv", ArrayNode.arrayNode(target.toNode(), StringNode.from(unparsedPath)))
+                .build();
     }
 
     @Override
@@ -259,8 +259,9 @@ public final class GetAttr extends LibraryFunction {
             public Type typeCheck(Type container) throws InnerParseError {
                 RecordType record = container.expectRecordType(String.format("cannot index into %s, expected object",
                         container));
-                return record.get(key).orElseThrow(() ->
-                        new InnerParseError(String.format("%s does not contain field %s", container, key)));
+                return record.get(key)
+                        .orElseThrow(() -> new InnerParseError(
+                                String.format("%s does not contain field %s", container, key)));
             }
 
             @Override

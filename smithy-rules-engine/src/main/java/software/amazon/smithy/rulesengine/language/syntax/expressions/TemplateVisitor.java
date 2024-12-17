@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import software.amazon.smithy.utils.SmithyUnstableApi;

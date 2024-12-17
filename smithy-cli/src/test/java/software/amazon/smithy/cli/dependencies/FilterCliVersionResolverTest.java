@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,18 +56,23 @@ public class FilterCliVersionResolverTest {
             @Override
             public List<ResolvedArtifact> resolve() {
                 return Arrays.asList(
-                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.25.0", getNodeForPath("/a")),
-                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-utils:1.25.0", getNodeForPath("/b")),
-                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
-                    ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
-                );
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.25.0",
+                                getNodeForPath("/a")),
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-utils:1.25.0",
+                                getNodeForPath("/b")),
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0",
+                                getNodeForPath("/c")),
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0",
+                                getNodeForPath("/d")));
             }
         });
 
-        assertThat(filter.resolve(), contains(
-            ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
-            ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
-        ));
+        assertThat(filter.resolve(),
+                contains(
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0",
+                                getNodeForPath("/c")),
+                        ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0",
+                                getNodeForPath("/d"))));
     }
 
     @Test
@@ -81,7 +90,8 @@ public class FilterCliVersionResolverTest {
 
             @Override
             public List<ResolvedArtifact> resolve() {
-                return ListUtils.of(ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.27.0", getNodeForPath("/a")));
+                return ListUtils.of(ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.27.0",
+                        getNodeForPath("/a")));
             }
         });
 

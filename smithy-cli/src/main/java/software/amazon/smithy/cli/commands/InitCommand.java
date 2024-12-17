@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
@@ -42,7 +31,6 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
-
 
 final class InitCommand implements Command {
     private static final int LINE_LENGTH = 100;
@@ -97,13 +85,17 @@ final class InitCommand implements Command {
         if (!Files.exists(templateRepoDirPath)) {
             try (ProgressTracker t = new ProgressTracker(env,
                     ProgressStyle.dots("cloning template repo", "template repo cloned"),
-                    standardOptions.quiet()
-            )) {
+                    standardOptions.quiet())) {
                 Path templateCachePath = CliCache.getTemplateCache().get();
                 String relativeTemplateDir = templateCachePath.relativize(templateRepoDirPath).toString();
                 // Only clone the latest commit from HEAD. Do not include history
-                exec(ListUtils.of("git", "clone", "--depth", "1", "--single-branch",
-                        options.repositoryUrl, relativeTemplateDir), templateCachePath);
+                exec(ListUtils.of("git",
+                        "clone",
+                        "--depth",
+                        "1",
+                        "--single-branch",
+                        options.repositoryUrl,
+                        relativeTemplateDir), templateCachePath);
             }
         }
 
@@ -118,14 +110,12 @@ final class InitCommand implements Command {
             if (!StringUtils.isEmpty(response)) {
                 try (ProgressTracker t = new ProgressTracker(env,
                         ProgressStyle.dots("updating template cache", "template repo updated"),
-                        standardOptions.quiet()
-                )) {
+                        standardOptions.quiet())) {
                     exec(ListUtils.of("git", "reset", "--hard", "origin/main"), templateRepoDirPath);
                     exec(ListUtils.of("git", "clean", "-dfx"), templateRepoDirPath);
                 }
             }
         }
-
 
         ObjectNode smithyTemplatesNode = readJsonFileAsNode(templateRepoDirPath.resolve(SMITHY_TEMPLATE_JSON))
                 .expectObjectNode();
@@ -174,7 +164,7 @@ final class InitCommand implements Command {
     }
 
     private boolean isLocalRepo(String repoPath) {
-        try  {
+        try {
             Path localPath = Paths.get(repoPath);
             return Files.exists(localPath);
         } catch (InvalidPathException exc) {
@@ -190,8 +180,11 @@ final class InitCommand implements Command {
             String template = entry.getKey().getValue();
             String documentation = entry.getValue()
                     .expectObjectNode()
-                    .expectMember(DOCUMENTATION, String.format(
-                            "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
+                    .expectMember(DOCUMENTATION,
+                            String.format(
+                                    "Missing expected member `%s` from `%s` object",
+                                    DOCUMENTATION,
+                                    template))
                     .expectStringNode()
                     .getValue();
 
@@ -226,7 +219,6 @@ final class InitCommand implements Command {
         return builder.toString();
     }
 
-
     private static void writeTemplateBorder(ColorBuffer writer, int maxNameLength, int maxDocLength) {
         writer.print(pad("", maxNameLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
                 .print(COLUMN_SEPARATOR)
@@ -238,8 +230,12 @@ final class InitCommand implements Command {
         return StringUtils.wrap(doc, maxLength, System.lineSeparator() + pad("", offset), false);
     }
 
-    private void cloneTemplate(Path templateRepoDirPath, ObjectNode smithyTemplatesNode, Options options,
-                               StandardOptions standardOptions, Env env) {
+    private void cloneTemplate(
+            Path templateRepoDirPath,
+            ObjectNode smithyTemplatesNode,
+            Options options,
+            StandardOptions standardOptions,
+            Env env) {
 
         String template = options.template;
         String directory = options.directory;
@@ -261,7 +257,9 @@ final class InitCommand implements Command {
         if (!templatesNode.containsMember(template)) {
             throw new IllegalArgumentException(String.format(
                     "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
-                    template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
+                    template,
+                    getTemplatesName(smithyTemplatesNode),
+                    getTemplateList(smithyTemplatesNode, env)));
         }
         ObjectNode templateNode = templatesNode.expectObjectMember(template).expectObjectNode();
 
@@ -280,7 +278,8 @@ final class InitCommand implements Command {
 
         if (!Files.exists(stagingPath.resolve(templatePath))) {
             throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
-                    templatePath, template));
+                    templatePath,
+                    template));
         }
         IoUtils.copyDir(Paths.get(stagingPath.toString(), templatePath), dest);
         copyIncludedFiles(stagingPath.toString(), dest.toString(), includedFiles, template, env);
@@ -299,8 +298,14 @@ final class InitCommand implements Command {
         } catch (IOException exc) {
             throw new CliError("Unable to create staging directory for template.");
         }
-        exec(ListUtils.of("git", "clone", "--no-checkout", "--depth", "1", "--sparse",
-                "file://" + repoPath.toString(), temp.toString()), Paths.get("."));
+        exec(ListUtils.of("git",
+                "clone",
+                "--no-checkout",
+                "--depth",
+                "1",
+                "--sparse",
+                "file://" + repoPath.toString(),
+                temp.toString()), Paths.get("."));
 
         return temp;
     }
@@ -311,15 +316,21 @@ final class InitCommand implements Command {
 
     private static ObjectNode getTemplatesNode(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-                .expectMember(TEMPLATES, String.format(
-                        "Missing expected member `%s` from %s", TEMPLATES, SMITHY_TEMPLATE_JSON))
+                .expectMember(TEMPLATES,
+                        String.format(
+                                "Missing expected member `%s` from %s",
+                                TEMPLATES,
+                                SMITHY_TEMPLATE_JSON))
                 .expectObjectNode();
     }
 
     private static String getTemplatesName(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-                .expectMember(NAME, String.format(
-                        "Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
+                .expectMember(NAME,
+                        String.format(
+                                "Missing expected member `%s` from %s",
+                                NAME,
+                                SMITHY_TEMPLATE_JSON))
                 .expectStringNode()
                 .getValue();
     }
@@ -337,14 +348,19 @@ final class InitCommand implements Command {
         return includedPaths;
     }
 
-    private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
-                                          String templateName, Env env) {
+    private static void copyIncludedFiles(
+            String temp,
+            String dest,
+            List<String> includedFiles,
+            String templateName,
+            Env env) {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
                 throw new CliError(String.format(
                         "File or directory `%s` is marked for inclusion in template \"%s\", but was not found",
-                        included, templateName));
+                        included,
+                        templateName));
             }
 
             Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
@@ -416,14 +432,21 @@ final class InitCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--template", "-t", "quickstart-cli",
+            printer.param("--template",
+                    "-t",
+                    "quickstart-cli",
                     "Specify the template to be used in the Smithy project");
-            printer.param("--url", null,
+            printer.param("--url",
+                    null,
                     "https://github.com/smithy-lang/smithy-examples.git",
                     "Smithy templates repository url");
-            printer.param("--output", "-o", "new-smithy-project",
+            printer.param("--output",
+                    "-o",
+                    "new-smithy-project",
                     "Smithy project directory");
-            printer.param("--list", "-l", null,
+            printer.param("--list",
+                    "-l",
+                    null,
                     "List available templates");
         }
     }

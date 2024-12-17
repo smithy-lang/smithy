@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
@@ -389,13 +378,17 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 .withOptionalMember("contentMediaType", getContentMediaType().map(Node::from));
 
         if (!properties.isEmpty()) {
-            result.withMember("properties", properties.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
+            result.withMember("properties",
+                    properties.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
         }
 
         if (!patternProperties.isEmpty()) {
-            result.withMember("patternProperties", patternProperties.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
+            result.withMember("patternProperties",
+                    patternProperties.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
         }
 
         if (!required.isEmpty()) {
@@ -474,8 +467,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             case "properties":
                 // Grab the property name if present, and skip 2 segments.
                 return segments.length == 1
-                       ? Optional.empty()
-                       : getRecursiveSchema(getProperty(segments[1]), segments, 2);
+                        ? Optional.empty()
+                        : getRecursiveSchema(getProperty(segments[1]), segments, 2);
             case "allOf":
                 return getSchemaFromArray(allOf, segments);
             case "anyOf":
@@ -511,8 +504,8 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         try {
             int position = segments[1].equals("-") ? schemaArray.size() - 1 : Integer.parseInt(segments[1]);
             return position > -1 && position < schemaArray.size()
-                   ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
-                   : Optional.empty();
+                    ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
+                    : Optional.empty();
         } catch (NumberFormatException e) {
             throw new SmithyJsonSchemaException("Invalid JSON pointer number: " + e.getMessage());
         }

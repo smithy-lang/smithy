@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Test;
@@ -98,13 +102,20 @@ public class CorsTest {
                     public OpenApi after(Context context, OpenApi openapi) {
                         // Inject a gateway response into the model.
                         return openapi.toBuilder()
-                                .putExtension("x-amazon-apigateway-gateway-responses", Node.objectNodeBuilder()
-                                        .withMember("ACCESS_DENIED", Node.objectNode()
-                                                .withMember("statusCode", 403)
-                                                .withMember("responseParameters", Node.objectNode()
-                                                        .withMember("gatewayresponse.header.Access-Control-Allow-Origin", "'domain.com'")
-                                                        .withMember("gatewayresponse.header.Foo", "'baz'")))
-                                        .build())
+                                .putExtension("x-amazon-apigateway-gateway-responses",
+                                        Node.objectNodeBuilder()
+                                                .withMember("ACCESS_DENIED",
+                                                        Node.objectNode()
+                                                                .withMember("statusCode", 403)
+                                                                .withMember("responseParameters",
+                                                                        Node.objectNode()
+                                                                                .withMember(
+                                                                                        "gatewayresponse.header.Access-Control-Allow-Origin",
+                                                                                        "'domain.com'")
+                                                                                .withMember(
+                                                                                        "gatewayresponse.header.Foo",
+                                                                                        "'baz'")))
+                                                .build())
                                 .build();
                     }
                 })

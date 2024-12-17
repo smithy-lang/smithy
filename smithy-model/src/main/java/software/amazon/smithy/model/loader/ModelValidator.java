@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -71,9 +60,10 @@ final class ModelValidator implements Validator {
 
     /** If these validators fail, then many others will too. Validate these first. */
     private static final Map<Class<?>, Validator> CORRECTNESS_VALIDATORS = MapUtils.of(
-            TargetValidator.class, new TargetValidator(),
-            ResourceCycleValidator.class, new ResourceCycleValidator()
-    );
+            TargetValidator.class,
+            new TargetValidator(),
+            ResourceCycleValidator.class,
+            new ResourceCycleValidator());
 
     private final ValidatorFactory validatorFactory;
     private final List<ValidationEvent> events;
@@ -112,7 +102,7 @@ final class ModelValidator implements Validator {
         private final BuilderRef<List<Validator>> criticalValidators = BuilderRef.forList();
         private final BuilderRef<List<ValidationEvent>> includeEvents = BuilderRef.forList();
         private ValidatorFactory validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
-        private Consumer<ValidationEvent> eventListener = event -> { };
+        private Consumer<ValidationEvent> eventListener = event -> {};
         private ValidationEventDecorator validationEventDecorator;
         private boolean legacyValidationMode = false;
 
@@ -157,8 +147,7 @@ final class ModelValidator implements Validator {
          */
         public Builder validatorFactory(
                 ValidatorFactory validatorFactory,
-                ValidationEventDecorator validationEventDecorator
-        ) {
+                ValidationEventDecorator validationEventDecorator) {
             this.validatorFactory = Objects.requireNonNull(validatorFactory);
             this.validationEventDecorator = validationEventDecorator;
             return this;

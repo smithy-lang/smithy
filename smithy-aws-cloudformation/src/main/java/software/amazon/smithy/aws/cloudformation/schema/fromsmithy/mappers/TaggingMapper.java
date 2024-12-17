@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import static software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers.HandlerPermissionMapper.getPermissionsEntriesForOperation;
@@ -41,8 +40,7 @@ public final class TaggingMapper implements CfnMapper {
             CfnConfig config,
             Model model,
             ResourceShape resource,
-            StructureShape.Builder builder
-    ) {
+            StructureShape.Builder builder) {
         String tagMemberName = getTagMemberName(config, resource);
         if (resource.hasTrait(TaggableTrait.class)) {
             AwsTagIndex tagIndex = AwsTagIndex.of(model);

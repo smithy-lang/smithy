@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
@@ -74,10 +73,10 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
     @Override
     public Builder toBuilder() {
         return new Builder()
-            .dualStack(dualStack)
-            .endpoint(endpoint)
-            .fips(fips)
-            .sourceLocation(sourceLocation);
+                .dualStack(dualStack)
+                .endpoint(endpoint)
+                .fips(fips)
+                .sourceLocation(sourceLocation);
     }
 
     @Override
@@ -94,11 +93,11 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
     public static PartitionSpecialCase fromNode(Node node) {
         ObjectNode objectNode = node.expectObjectNode();
         return builder()
-            .sourceLocation(objectNode.getSourceLocation())
-            .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
-            .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
-            .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
-            .build();
+                .sourceLocation(objectNode.getSourceLocation())
+                .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
+                .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
+                .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
+                .build();
     }
 
     public static Builder builder() {

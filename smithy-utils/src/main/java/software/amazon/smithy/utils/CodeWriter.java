@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.util.Map;
@@ -74,7 +63,7 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
      * @param writeAfter A runnable that appends to a section by mutating the writer.
      * @return Returns the CodeWriter.
      * @see AbstractCodeWriter#onSection(CodeInterceptor) as an alternative
- *          that allows more explicit whitespace handling.
+    *          that allows more explicit whitespace handling.
      */
     @Deprecated
     public CodeWriter onSectionAppend(String sectionName, Runnable writeAfter) {
@@ -121,20 +110,17 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
         return this;
     }
 
-
     @Override
     public CodeWriter popState() {
         super.popState();
         return this;
     }
 
-
     @Override
     public CodeWriter onSection(String sectionName, Consumer<Object> interceptor) {
         super.onSection(sectionName, interceptor);
         return this;
     }
-
 
     @Override
     public CodeWriter disableNewlines() {
@@ -251,32 +237,51 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
     }
 
     @Override
-    public CodeWriter openBlock(String textBeforeNewline, String textAfterNewline, Object arg1, Object arg2,
-                                Runnable f) {
+    public CodeWriter openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Runnable f) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, f);
         return this;
     }
 
     @Override
-    public CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
-                                Object arg1, Object arg2, Object arg3,
-                                Runnable f) {
+    public CodeWriter openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Runnable f) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, f);
         return this;
     }
 
     @Override
-    public CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
-                                Object arg1, Object arg2, Object arg3, Object arg4,
-                                Runnable f) {
+    public CodeWriter openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Object arg4,
+            Runnable f) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, arg4, f);
         return this;
     }
 
     @Override
-    public CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
-                                Object arg1, Object arg2, Object arg3, Object arg4, Object arg5,
-                                Runnable f) {
+    public CodeWriter openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Object arg4,
+            Object arg5,
+            Runnable f) {
         super.openBlock(textBeforeNewline, textAfterNewline, arg1, arg2, arg3, arg4, arg5, f);
         return this;
     }
@@ -334,7 +339,6 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
         super.unwrite(content, args);
         return this;
     }
-
 
     @Override
     public CodeWriter putContext(String key, Object value) {

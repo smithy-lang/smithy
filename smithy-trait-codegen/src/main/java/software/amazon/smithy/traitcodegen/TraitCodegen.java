@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.util.ArrayList;
@@ -61,11 +60,11 @@ final class TraitCodegen {
     private List<TraitCodegenIntegration> integrations;
     private TraitCodegenContext codegenContext;
 
-    private TraitCodegen(Model model,
-                         TraitCodegenSettings settings,
-                         FileManifest fileManifest,
-                         PluginContext pluginContext
-    ) {
+    private TraitCodegen(
+            Model model,
+            TraitCodegenSettings settings,
+            FileManifest fileManifest,
+            PluginContext pluginContext) {
         this.model = Objects.requireNonNull(model);
         this.settings = Objects.requireNonNull(settings);
         this.fileManifest = Objects.requireNonNull(fileManifest);
@@ -82,8 +81,7 @@ final class TraitCodegen {
                 context.getModel(),
                 TraitCodegenSettings.fromNode(context.getSettings()),
                 context.getFileManifest(),
-                context
-        );
+                context);
     }
 
     public void initialize() {
@@ -162,7 +160,8 @@ final class TraitCodegen {
         // Get all trait shapes within the specified namespace, but filter out
         // any trait shapes for which a provider is already defined or which have
         // excluded tags
-        Set<Shape> traitClosure = traitSelector.select(model).stream()
+        Set<Shape> traitClosure = traitSelector.select(model)
+                .stream()
                 .filter(pluginContext::isSourceShape)
                 .filter(shape -> !existingProviders.contains(shape.getId()))
                 .filter(shape -> !this.hasExcludeTag(shape))
@@ -179,7 +178,8 @@ final class TraitCodegen {
         Set<Shape> nested = new HashSet<>();
         Walker walker = new Walker(model);
         for (Shape traitShape : traitClosure) {
-            nested.addAll(walker.walkShapes(traitShape).stream()
+            nested.addAll(walker.walkShapes(traitShape)
+                    .stream()
                     .filter(shape -> !shape.isMemberShape())
                     .filter(shape -> !Prelude.isPreludeShape(shape))
                     .collect(Collectors.toSet()));

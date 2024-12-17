@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import java.util.ArrayList;
@@ -54,7 +43,11 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
 
             if (endpointOperation.isPresent()) {
                 Map<ShapeId, ClientEndpointDiscoveryInfo> serviceInfo = getOperations(
-                        service, endpointOperation.get(), endpointError.orElse(null), topDownIndex, opIndex);
+                        service,
+                        endpointOperation.get(),
+                        endpointError.orElse(null),
+                        topDownIndex,
+                        opIndex);
                 if (!serviceInfo.isEmpty()) {
                     endpointDiscoveryInfo.put(service.getId(), serviceInfo);
                 }
@@ -71,8 +64,7 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
             OperationShape endpointOperation,
             StructureShape endpointError,
             TopDownIndex topDownIndex,
-            OperationIndex opIndex
-    ) {
+            OperationIndex opIndex) {
         Map<ShapeId, ClientEndpointDiscoveryInfo> result = new HashMap<>();
         for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
             operation.getTrait(ClientDiscoveredEndpointTrait.class).ifPresent(trait -> {
@@ -83,8 +75,7 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
                         endpointOperation,
                         endpointError,
                         discoveryIds,
-                        trait.isRequired()
-                );
+                        trait.isRequired());
                 result.put(operation.getId(), info);
             });
         }

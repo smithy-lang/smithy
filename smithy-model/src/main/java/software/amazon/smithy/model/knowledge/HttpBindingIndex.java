@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -223,8 +212,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public TimestampFormatTrait.Format determineTimestampFormat(
             ToShapeId member,
             HttpBinding.Location location,
-            TimestampFormatTrait.Format defaultFormat
-    ) {
+            TimestampFormatTrait.Format defaultFormat) {
         Model model = getModel();
         return model.getShape(member.toShapeId())
                 // Use the timestampFormat trait on the member or target if present.
@@ -290,8 +278,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public Optional<String> determineRequestContentType(
             ToShapeId operation,
             String documentContentType,
-            String eventStreamContentType
-    ) {
+            String eventStreamContentType) {
         Collection<HttpBinding> bindings = getRequestBindings(operation).values();
         return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
     }
@@ -343,8 +330,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     public Optional<String> determineResponseContentType(
             ToShapeId operationOrError,
             String documentContentType,
-            String eventStreamContentType
-    ) {
+            String eventStreamContentType) {
         Collection<HttpBinding> bindings = getResponseBindings(operationOrError).values();
         return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
     }
@@ -352,8 +338,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     private String determineContentType(
             Collection<HttpBinding> bindings,
             String documentContentType,
-            String eventStreamContentType
-    ) {
+            String eventStreamContentType) {
         Model model = getModel();
 
         for (HttpBinding binding : bindings) {
@@ -369,8 +354,10 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                     break;
                 } else if (StreamingTrait.isEventStream(target)) {
                     return eventStreamContentType;
-                } else if (target.isDocumentShape() || target.isStructureShape() || target.isUnionShape()
-                        || target.isListShape() || target.isMapShape()) {
+                } else if (target.isDocumentShape() || target.isStructureShape()
+                        || target.isUnionShape()
+                        || target.isListShape()
+                        || target.isMapShape()) {
                     // Document type and structure targets are always the document content-type.
                     return documentContentType;
                 } else if (target.getTrait(MediaTypeTrait.class).isPresent()) {
@@ -453,7 +440,10 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             } else if (!isRequest && member.getTrait(HttpResponseCodeTrait.class).isPresent()) {
                 HttpResponseCodeTrait trait = member.getTrait(HttpResponseCodeTrait.class).get();
                 bindings.add(new HttpBinding(
-                        member, HttpBinding.Location.RESPONSE_CODE, member.getMemberName(), trait));
+                        member,
+                        HttpBinding.Location.RESPONSE_CODE,
+                        member.getMemberName(),
+                        trait));
             } else {
                 unbound.add(member);
             }

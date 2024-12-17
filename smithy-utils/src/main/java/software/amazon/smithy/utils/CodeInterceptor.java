@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.util.function.BiConsumer;
@@ -34,8 +23,7 @@ import java.util.function.BiConsumer;
  * @param <S> Type of CodeSection to intercept.
  * @param <W> Type of CodeWriter to expect.
  */
-public
-interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>> {
+public interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>> {
 
     /**
      * Get the strongly typed {@link CodeSection} this interceptor is used
@@ -90,8 +78,7 @@ interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>
      */
     static <S extends CodeSection, W extends AbstractCodeWriter<W>> CodeInterceptor<S, W> appender(
             Class<S> type,
-            BiConsumer<W, S> appender
-    ) {
+            BiConsumer<W, S> appender) {
         return new Appender<S, W>() {
             @Override
             public void append(W writer, S section) {
@@ -169,8 +156,7 @@ interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>
      */
     static <W extends AbstractCodeWriter<W>> CodeInterceptor<CodeSection, W> forName(
             String sectionName,
-            BiConsumer<W, String> consumer
-    ) {
+            BiConsumer<W, String> consumer) {
         return new CodeInterceptor<CodeSection, W>() {
             @Override
             public Class<CodeSection> sectionType() {

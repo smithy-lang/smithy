@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.Locale;
@@ -53,7 +42,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         this.arnNamespace = SmithyBuilder.requiredState("arnNamespace", builder.arnNamespace);
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
         this.cloudTrailEventSource = SmithyBuilder.requiredState(
-                "cloudTrailEventSource", builder.cloudTrailEventSource);
+                "cloudTrailEventSource",
+                builder.cloudTrailEventSource);
         this.docId = builder.docId;
         this.endpointPrefix = SmithyBuilder.requiredState("endpointPrefix", builder.endpointPrefix);
     }
@@ -79,9 +69,11 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             objectNode.getStringMember("cloudFormationName")
                     .map(StringNode::getValue)
                     .ifPresent(builder::cloudFormationName);
-            objectNode.getStringMember("cloudTrailEventSource").map(StringNode::getValue)
+            objectNode.getStringMember("cloudTrailEventSource")
+                    .map(StringNode::getValue)
                     .ifPresent(builder::cloudTrailEventSource);
-            objectNode.getStringMember("docId").map(StringNode::getValue)
+            objectNode.getStringMember("docId")
+                    .map(StringNode::getValue)
                     .ifPresent(builder::docId);
             objectNode.getStringMember("endpointPrefix")
                     .map(StringNode::getValue)
@@ -168,7 +160,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     private String buildDefaultDocId(ServiceShape serviceShape) {
         if (!serviceShape.expectTrait(ServiceTrait.class).equals(this)) {
             throw new ExpectationNotMetException(String.format(
-                    "Provided service shape `%s` is not the target of this trait.", serviceShape.getId()), this);
+                    "Provided service shape `%s` is not the target of this trait.",
+                    serviceShape.getId()), this);
         }
 
         return sdkId.replace(" ", "-").toLowerCase(Locale.US) + "-" + serviceShape.getVersion();
@@ -239,8 +232,13 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
     @Override
     public int hashCode() {
-        return Objects.hash(toShapeId(), sdkId, arnNamespace, cloudFormationName,
-                            cloudTrailEventSource, docId, endpointPrefix);
+        return Objects.hash(toShapeId(),
+                sdkId,
+                arnNamespace,
+                cloudFormationName,
+                cloudTrailEventSource,
+                docId,
+                endpointPrefix);
     }
 
     /** Builder for {@link ServiceTrait}. */

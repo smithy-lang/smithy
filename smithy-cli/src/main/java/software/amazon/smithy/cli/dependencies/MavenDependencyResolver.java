@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.dependencies;
 
 import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
@@ -115,15 +104,14 @@ public final class MavenDependencyResolver implements DependencyResolver {
             remoteRepositories.add(builder.build());
         } catch (URISyntaxException e) {
             throw new DependencyResolverException("Invalid Maven repository URL: " + repository.getUrl()
-                                                  + ": " + e.getMessage());
+                    + ": " + e.getMessage());
         }
     }
 
     private void addProxyInfo(MavenRepository repository, RemoteRepository.Builder builder) {
         if (repository.getProxyHost().isPresent()) {
             builder.setProxy(
-                    getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null))
-            );
+                    getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null)));
         } else if (commonProxy != null) {
             builder.setProxy(commonProxy);
         }
@@ -161,8 +149,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
             return new URL(value);
         } catch (MalformedURLException exc) {
             throw new DependencyResolverException("Expected a valid URL for "
-                + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value
-            );
+                    + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value);
         }
     }
 
@@ -172,11 +159,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
             throw new DependencyResolverException("Invalid credentials provided for " + uri);
         }
         builder.setAuthentication(
-            new AuthenticationBuilder()
-                .addUsername(parts[0])
-                .addPassword(parts[1])
-                .build()
-        );
+                new AuthenticationBuilder()
+                        .addUsername(parts[0])
+                        .addPassword(parts[1])
+                        .build());
     }
 
     @Override
@@ -194,8 +180,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
         final List<ResolvedArtifact> artifacts = new ArrayList<>(results.size());
         for (ArtifactResult result : results) {
             Artifact artifact = result.getArtifact();
-            artifacts.add(new ResolvedArtifact(artifact.getFile().toPath(), artifact.getGroupId(),
-                    artifact.getArtifactId(), artifact.getVersion()));
+            artifacts.add(new ResolvedArtifact(artifact.getFile().toPath(),
+                    artifact.getGroupId(),
+                    artifact.getArtifactId(),
+                    artifact.getVersion()));
         }
         return artifacts;
     }
@@ -226,7 +214,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
 
     private List<ArtifactResult> resolveMavenArtifacts() {
         LOGGER.fine(() -> "Resolving Maven dependencies for Smithy CLI; repos: "
-                          + remoteRepositories + "; dependencies: " + dependencies);
+                + remoteRepositories + "; dependencies: " + dependencies);
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRepositories(remoteRepositories);
         collectRequest.setDependencies(dependencies);

@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
@@ -68,7 +57,9 @@ final class CreateDedicatedInputAndOutput {
             OperationShape.Builder builder = operation.toBuilder();
             if (inputChanged) {
                 LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
-                        operation.getId(), input.getId(), updatedInput.getId()));
+                        operation.getId(),
+                        input.getId(),
+                        updatedInput.getId()));
                 updates.add(updatedInput);
                 builder.input(updatedInput);
                 // If the ID changed and the original is no longer referenced, then remove it.
@@ -80,7 +71,9 @@ final class CreateDedicatedInputAndOutput {
             }
             if (outputChanged) {
                 LOGGER.fine(() -> String.format("Updating operation output of %s from %s to %s",
-                        operation.getId(), output.getId(), updatedOutput.getId()));
+                        operation.getId(),
+                        output.getId(),
+                        updatedOutput.getId()));
                 updates.add(updatedOutput);
                 builder.output(updatedOutput);
                 // If the ID changed and the original is no longer referenced, then remove it.
@@ -104,8 +97,7 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             OperationShape operation,
             StructureShape input,
-            NeighborProvider reverse
-    ) {
+            NeighborProvider reverse) {
         if (input.hasTrait(InputTrait.class)) {
             return renameShapeIfNeeded(model, input, operation, inputSuffix);
         } else if (isDedicatedHeuristic(operation, input, reverse)) {
@@ -121,8 +113,7 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             OperationShape operation,
             StructureShape output,
-            NeighborProvider reverse
-    ) {
+            NeighborProvider reverse) {
         if (output.hasTrait(OutputTrait.class)) {
             return renameShapeIfNeeded(model, output, operation, outputSuffix);
         } else if (isDedicatedHeuristic(operation, output, reverse)) {
@@ -138,11 +129,10 @@ final class CreateDedicatedInputAndOutput {
             Model model,
             StructureShape struct,
             OperationShape operation,
-            String suffix
-    ) {
+            String suffix) {
         // Check if the shape already has the desired name.
         ShapeId expectedName = ShapeId.fromParts(operation.getId().getNamespace(),
-                                                 operation.getId().getName() + suffix);
+                operation.getId().getName() + suffix);
         if (struct.getId().equals(expectedName)) {
             return struct;
         }
@@ -169,7 +159,8 @@ final class CreateDedicatedInputAndOutput {
     private boolean isSingularReference(NeighborProvider reverse, Shape shape, Shape expectedReferencingShape) {
         // We need to exclude inverted edges like MEMBER_CONTAINER, and only look for directed
         // edges to the expected shape.
-        return reverse.getNeighbors(shape).stream()
+        return reverse.getNeighbors(shape)
+                .stream()
                 .filter(relationship -> relationship.getDirection() == RelationshipDirection.DIRECTED)
                 .allMatch(relationship -> relationship.getShape().equals(expectedReferencingShape));
     }
@@ -179,8 +170,7 @@ final class CreateDedicatedInputAndOutput {
             OperationShape operation,
             String suffix,
             StructureShape source,
-            Trait inputOutputTrait
-    ) {
+            Trait inputOutputTrait) {
         ShapeId newId = createSyntheticShapeId(model, operation, suffix);
 
         // Special handling for copying unit types (that, you don't copy unit types)
@@ -203,18 +193,17 @@ final class CreateDedicatedInputAndOutput {
     private static ShapeId createSyntheticShapeId(
             Model model,
             OperationShape operation,
-            String suffix
-    ) {
+            String suffix) {
         // Synthesize an input shape as a dedicated copy of the existing input.
         ShapeId newId = ShapeId.fromParts(operation.getId().getNamespace(),
-                                          operation.getId().getName() + suffix);
+                operation.getId().getName() + suffix);
 
         if (model.getShapeIds().contains(newId)) {
             ShapeId deconflicted = resolveConflict(newId, suffix);
             if (model.getShapeIds().contains(deconflicted)) {
                 throw new ModelTransformException(String.format(
                         "Unable to generate a synthetic %s shape for the %s operation. The %s shape already exists "
-                        + "in the model, and the conflict resolver also returned a shape ID that already exists: %s",
+                                + "in the model, and the conflict resolver also returned a shape ID that already exists: %s",
                         suffix,
                         operation.getId(),
                         newId,

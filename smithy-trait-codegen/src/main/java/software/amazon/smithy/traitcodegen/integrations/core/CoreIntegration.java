@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.integrations.core;
 
 import java.util.List;
@@ -50,10 +49,10 @@ public final class CoreIntegration implements TraitCodegenIntegration {
     }
 
     @Override
-    public SymbolProvider decorateSymbolProvider(Model model,
-                                                 TraitCodegenSettings settings,
-                                                 SymbolProvider symbolProvider
-    ) {
+    public SymbolProvider decorateSymbolProvider(
+            Model model,
+            TraitCodegenSettings settings,
+            SymbolProvider symbolProvider) {
         return new SymbolProvider() {
             @Override
             public Symbol toSymbol(Shape shape) {
@@ -73,14 +72,14 @@ public final class CoreIntegration implements TraitCodegenIntegration {
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
-            TraitCodegenContext codegenContext
-    ) {
+            TraitCodegenContext codegenContext) {
         return ListUtils.of(new JavadocFormatterInterceptor());
     }
 
     private Symbol getTraitSymbol(TraitCodegenSettings settings, Shape shape, Symbol baseSymbol) {
         String relativeNamespace = TraitCodegenUtils.mapNamespace(settings.smithyNamespace(),
-                shape.getId().getNamespace(), settings.packageName());
+                shape.getId().getNamespace(),
+                settings.packageName());
         String name = TraitCodegenUtils.getDefaultTraitName(shape);
 
         // If the base symbol has an unboxed version, use that as the base symbol
@@ -93,11 +92,11 @@ public final class CoreIntegration implements TraitCodegenIntegration {
         // and add the base symbol as a property. The references need to be set to empty list
         // to prevent writing as parameterized classes.
         return baseSymbol.toBuilder()
-            .name(name)
-            .references(ListUtils.of())
-            .namespace(relativeNamespace, ".")
-            .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
-            .definitionFile("./" + relativeNamespace.replace(".", "/") + "/" + name + ".java")
-            .build();
+                .name(name)
+                .references(ListUtils.of())
+                .namespace(relativeNamespace, ".")
+                .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
+                .definitionFile("./" + relativeNamespace.replace(".", "/") + "/" + name + ".java")
+                .build();
     }
 }

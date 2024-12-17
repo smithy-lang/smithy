@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.List;
@@ -38,7 +37,11 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
     public static final String DEFAULT = "default";
     private static final String BUILT_IN = "builtIn";
     private static final String REQUIRED = "required";
-    private static final List<String> PROPERTIES = ListUtils.of(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
+    private static final List<String> PROPERTIES = ListUtils.of(BUILT_IN,
+            REQUIRED,
+            TYPE,
+            DEPRECATED,
+            DOCUMENTATION,
             DEFAULT);
 
     private final ParameterType type;
@@ -85,7 +88,8 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
             objectNode.getObjectMember(DEPRECATED, node -> builder.deprecated(Deprecated.fromNode(node)));
 
             objectNode.getMember(DEFAULT).map(Value::fromNode).ifPresent(builder::defaultValue);
-            builder.type(RuleError.context("while parsing the parameter type", objectNode,
+            builder.type(RuleError.context("while parsing the parameter type",
+                    objectNode,
                     () -> ParameterType.fromNode(objectNode.expectStringMember(TYPE))));
             return builder.build();
         });

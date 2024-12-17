@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.neighbor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -159,10 +163,12 @@ public class NodeQueryTest {
         Node element1 = Node.from(0);
         Node element2 = Node.from("{}");
         Node element3 = Node.from("element3");
-        Node obj = Node.objectNode().withMember("foo", Node.objectNode()
-                .withMember("arr1", Node.arrayNode(element1))
-                .withMember("arr2", Node.arrayNode(element2))
-                .withMember("arr3", Node.arrayNode(element3)));
+        Node obj = Node.objectNode()
+                .withMember("foo",
+                        Node.objectNode()
+                                .withMember("arr1", Node.arrayNode(element1))
+                                .withMember("arr2", Node.arrayNode(element2))
+                                .withMember("arr3", Node.arrayNode(element3)));
         Node node = Node.arrayNode(obj, obj);
 
         Collection<Node> result = new NodeQuery()
@@ -172,12 +178,13 @@ public class NodeQueryTest {
                 .anyElement()
                 .execute(node);
 
-        assertThat(result, containsInAnyOrder(
-                element1,
-                element2,
-                element3,
-                element1,
-                element2,
-                element3));
+        assertThat(result,
+                containsInAnyOrder(
+                        element1,
+                        element2,
+                        element3,
+                        element1,
+                        element2,
+                        element3));
     }
 }

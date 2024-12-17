@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath.ast;
 
 import java.util.Objects;
@@ -40,8 +29,7 @@ public final class FilterProjectionExpression extends BinaryExpression {
     public FilterProjectionExpression(
             JmespathExpression left,
             JmespathExpression comparison,
-            JmespathExpression right
-    ) {
+            JmespathExpression right) {
         this(left, comparison, right, 1, 1);
     }
 
@@ -50,8 +38,7 @@ public final class FilterProjectionExpression extends BinaryExpression {
             JmespathExpression comparison,
             JmespathExpression right,
             int line,
-            int column
-    ) {
+            int column) {
         super(left, right, line, column);
         this.comparison = comparison;
     }
@@ -74,8 +61,8 @@ public final class FilterProjectionExpression extends BinaryExpression {
         }
         FilterProjectionExpression that = (FilterProjectionExpression) o;
         return getComparison().equals(that.getComparison())
-               && getLeft().equals(that.getLeft())
-               && getRight().equals(that.getRight());
+                && getLeft().equals(that.getLeft())
+                && getRight().equals(that.getRight());
     }
 
     @Override
@@ -86,8 +73,8 @@ public final class FilterProjectionExpression extends BinaryExpression {
     @Override
     public String toString() {
         return "FilterProjectionExpression{"
-               + "comparison=" + comparison
-               + ", left=" + getLeft()
-               + ", right=" + getRight() + '}';
+                + "comparison=" + comparison
+                + ", left=" + getLeft()
+                + ", right=" + getRight() + '}';
     }
 }

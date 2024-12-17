@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -55,8 +54,7 @@ public final class StaticContextParamDefinition implements ToSmithyBuilder<Stati
     public static final class Builder implements SmithyBuilder<StaticContextParamDefinition> {
         private Node value;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder value(Node value) {
             this.value = value;

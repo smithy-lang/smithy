@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
@@ -75,10 +64,25 @@ final class IdlModelLoader {
     private static final int MAX_NESTING_LEVEL = 64;
 
     static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
-            TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
-            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, PROPERTIES_KEY, COLLECTION_OPERATIONS_KEY);
+            TYPE_KEY,
+            CREATE_KEY,
+            READ_KEY,
+            UPDATE_KEY,
+            DELETE_KEY,
+            LIST_KEY,
+            IDENTIFIERS_KEY,
+            RESOURCES_KEY,
+            OPERATIONS_KEY,
+            PUT_KEY,
+            PROPERTIES_KEY,
+            COLLECTION_OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
-            TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY, RENAME_KEY, ERRORS_KEY);
+            TYPE_KEY,
+            VERSION_KEY,
+            OPERATIONS_KEY,
+            RESOURCES_KEY,
+            RENAME_KEY,
+            ERRORS_KEY);
     private static final Set<String> SHAPE_TYPES = new HashSet<>();
 
     static {
@@ -146,7 +150,7 @@ final class IdlModelLoader {
     void increaseNestingLevel() {
         if (++nesting > MAX_NESTING_LEVEL) {
             throw LoaderUtils.idlSyntaxError("Parser exceeded maximum allowed depth of " + MAX_NESTING_LEVEL,
-                                             tokenizer.getCurrentTokenLocation());
+                    tokenizer.getCurrentTokenLocation());
         }
     }
 
@@ -164,9 +168,8 @@ final class IdlModelLoader {
         // Check for members by removing the member and checking for the root shape.
         if (memberPosition > 0 && memberPosition < id.length() - 1) {
             addForwardReference(
-                id.substring(0, memberPosition),
-                (resolved, type) -> receiver.apply(resolved.withMember(id.substring(memberPosition + 1)), type)
-            );
+                    id.substring(0, memberPosition),
+                    (resolved, type) -> receiver.apply(resolved.withMember(id.substring(memberPosition + 1)), type));
         } else {
             String resolved = useShapes.containsKey(id) ? useShapes.get(id).toString() : id;
             addOperation(new LoadOperation.ForwardReference(namespace, resolved, receiver));
@@ -203,13 +206,12 @@ final class IdlModelLoader {
         addForwardReference(traitName, (traitId, type) -> {
             Node coerced = coerceTraitValue(traitValue, isAnnotation, type);
             addOperation(new LoadOperation.ApplyTrait(
-                modelVersion,
-                traitValue.getSourceLocation(),
-                expectNamespace(),
-                target,
-                traitId,
-                coerced
-            ));
+                    modelVersion,
+                    traitValue.getSourceLocation(),
+                    expectNamespace(),
+                    target,
+                    traitId,
+                    coerced));
             return null;
         });
     }
@@ -269,12 +271,13 @@ final class IdlModelLoader {
                         break;
                     default:
                         emit(ValidationEvent.builder()
-                                     .id(Validator.MODEL_ERROR)
-                                     .sourceLocation(value)
-                                     .severity(Severity.WARNING)
-                                     .message(format("Unknown control statement `%s` with value `%s",
-                                                     key, Node.printJson(value)))
-                                     .build());
+                                .id(Validator.MODEL_ERROR)
+                                .sourceLocation(value)
+                                .severity(Severity.WARNING)
+                                .message(format("Unknown control statement `%s` with value `%s",
+                                        key,
+                                        Node.printJson(value)))
+                                .build());
                         break;
                 }
 
@@ -288,7 +291,7 @@ final class IdlModelLoader {
     private void onVersion(Node value) {
         if (!value.isStringNode()) {
             value.expectStringNode(() -> "The $version control statement must have a string value, but found "
-                                         + Node.printJson(value));
+                    + Node.printJson(value));
         }
 
         String parsedVersion = value.expectStringNode().getValue();
@@ -345,7 +348,7 @@ final class IdlModelLoader {
             parseSubsequentShapeStatements();
         } else if (tokenizer.hasNext()) {
             throw syntax("Expected a namespace definition but found "
-                         + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()));
+                    + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()));
         }
     }
 
@@ -435,8 +438,10 @@ final class IdlModelLoader {
         addForwardReference(target, id -> {
             for (IdlTraitParser.Result trait : traitsToApply) {
                 String traitNameString = internString(trait.getTraitName());
-                onDeferredTrait(id, traitNameString, trait.getValue(),
-                                trait.getTraitType() == IdlTraitParser.TraitType.ANNOTATION);
+                onDeferredTrait(id,
+                        traitNameString,
+                        trait.getValue(),
+                        trait.getTraitType() == IdlTraitParser.TraitType.ANNOTATION);
             }
         });
 
@@ -451,8 +456,8 @@ final class IdlModelLoader {
                 List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(this, false);
                 if (docLines != null) {
                     traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
-                                                         new StringNode(docLines, possibleDocCommentLocation),
-                                                         IdlTraitParser.TraitType.DOC_COMMENT));
+                            new StringNode(docLines, possibleDocCommentLocation),
+                            IdlTraitParser.TraitType.DOC_COMMENT));
                 }
                 if (parseShapeDefinition(traits, docLines != null)) {
                     parseShapeOrApply(traits);
@@ -520,7 +525,7 @@ final class IdlModelLoader {
             // but don't fail.
             if (traits.size() == 1) {
                 emit(LoaderUtils.emitBadDocComment(tokenizer.getCurrentTokenLocation(),
-                                                   traits.get(0).getValue().expectStringNode().getValue()));
+                        traits.get(0).getValue().expectStringNode().getValue()));
                 return false;
             } else {
                 // If more than 1 trait is present when hasDocComment is true, then other traits were defined, and
@@ -598,8 +603,10 @@ final class IdlModelLoader {
     private void addTraits(ShapeId id, List<IdlTraitParser.Result> traits) {
         for (IdlTraitParser.Result result : traits) {
             String traitName = internString(result.getTraitName());
-            onDeferredTrait(id, traitName, result.getValue(),
-                            result.getTraitType() == IdlTraitParser.TraitType.ANNOTATION);
+            onDeferredTrait(id,
+                    traitName,
+                    result.getValue(),
+                    result.getTraitType() == IdlTraitParser.TraitType.ANNOTATION);
         }
     }
 
@@ -638,8 +645,9 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.IDENTIFIER);
 
         if (!modelVersion.supportsMixins()) {
-            throw syntax(operation.toShapeId(), "Mixins can only be used with Smithy version 2 or later. "
-                                                + "Attempted to use mixins with version `" + modelVersion + "`.");
+            throw syntax(operation.toShapeId(),
+                    "Mixins can only be used with Smithy version 2 or later. "
+                            + "Attempted to use mixins with version `" + modelVersion + "`.");
         }
 
         tokenizer.next();
@@ -825,9 +833,10 @@ final class IdlModelLoader {
         }
 
         if (!modelVersion.supportsTargetElision()) {
-            throw syntax(operation.toShapeId(), "Structures can only be bound to resources with Smithy version 2 or "
-                                                + "later. Attempted to bind a structure to a resource with version `"
-                                                + modelVersion + "`.");
+            throw syntax(operation.toShapeId(),
+                    "Structures can only be bound to resources with Smithy version 2 or "
+                            + "later. Attempted to bind a structure to a resource with version `"
+                            + modelVersion + "`.");
         }
 
         tokenizer.next();
@@ -902,8 +911,9 @@ final class IdlModelLoader {
         // Load properties and resolve forward references.
         shapeNode.getObjectMember(PROPERTIES_KEY).ifPresent(properties -> {
             if (!modelVersion.supportsResourceProperties()) {
-                throw syntax(id, "Resource properties can only be used with Smithy version 2 or later. "
-                                 + "Attempted to use resource properties with version `" + modelVersion + "`.");
+                throw syntax(id,
+                        "Resource properties can only be used with Smithy version 2 or later. "
+                                + "Attempted to use resource properties with version `" + modelVersion + "`.");
             }
             for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
@@ -939,14 +949,18 @@ final class IdlModelLoader {
                     IdlToken nextInput = tokenizer.expect(IdlToken.COLON, IdlToken.WALRUS);
                     tokenizer.next();
                     IdlTraitParser.Result inputTrait = new IdlTraitParser.Result(
-                            InputTrait.ID.toString(), Node.objectNode(), IdlTraitParser.TraitType.ANNOTATION);
+                            InputTrait.ID.toString(),
+                            Node.objectNode(),
+                            IdlTraitParser.TraitType.ANNOTATION);
                     parseInlineableOperationMember(id, nextInput, operationInputSuffix, builder::input, inputTrait);
                     break;
                 case "output":
                     IdlToken nextOutput = tokenizer.expect(IdlToken.COLON, IdlToken.WALRUS);
                     tokenizer.next();
                     IdlTraitParser.Result outputTrait = new IdlTraitParser.Result(
-                            OutputTrait.ID.toString(), Node.objectNode(), IdlTraitParser.TraitType.ANNOTATION);
+                            OutputTrait.ID.toString(),
+                            Node.objectNode(),
+                            IdlTraitParser.TraitType.ANNOTATION);
                     parseInlineableOperationMember(id, nextOutput, operationOutputSuffix, builder::output, outputTrait);
                     break;
                 case "errors":
@@ -971,12 +985,12 @@ final class IdlModelLoader {
             IdlToken token,
             String suffix,
             Consumer<ShapeId> consumer,
-            IdlTraitParser.Result defaultTrait
-    ) {
+            IdlTraitParser.Result defaultTrait) {
         if (token == IdlToken.WALRUS) {
             if (!modelVersion.supportsInlineOperationIO()) {
-                throw syntax(id, "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
-                                 + "later. Attempted to use inlined IO with version `" + modelVersion + "`.");
+                throw syntax(id,
+                        "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
+                                + "later. Attempted to use inlined IO with version `" + modelVersion + "`.");
             }
             // Remove any pending, invalid docs that may have come before the inline shape.
             tokenizer.removePendingDocCommentLines();

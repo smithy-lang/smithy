@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,8 +71,9 @@ public class CleanEndpointTestOperationInputTest {
         // Hack out the test case without operation input.
         ModelTransformer modelTransformer = ModelTransformer.create();
         replacementTrait = replacementTrait.toBuilder().removeTestCase(replacementTrait.getTestCases().get(0)).build();
-        Model transformed = modelTransformer.replaceShapes(model, ListUtils.of(
-                serviceShape.toBuilder().addTrait(replacementTrait).build()));
+        Model transformed = modelTransformer.replaceShapes(model,
+                ListUtils.of(
+                        serviceShape.toBuilder().addTrait(replacementTrait).build()));
 
         // Then do the filtering.
         transformed = modelTransformer.filterShapes(transformed, shape -> !shape.getId().equals(GET_THING));

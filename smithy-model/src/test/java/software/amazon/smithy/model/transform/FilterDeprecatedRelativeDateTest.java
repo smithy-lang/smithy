@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.List;
@@ -23,12 +22,14 @@ public class FilterDeprecatedRelativeDateTest {
     @MethodSource("fileSource")
     void compareTransform(String prefix) {
         Model before = Model.assembler()
-                .addImport(FilterDeprecatedRelativeDate.class.getResource("deprecated-date/" + prefix + "-before.smithy"))
+                .addImport(
+                        FilterDeprecatedRelativeDate.class.getResource("deprecated-date/" + prefix + "-before.smithy"))
                 .assemble()
                 .unwrap();
         Model actualResult = ModelTransformer.create().filterDeprecatedRelativeDate(before, "2024-10-10");
         Model expectedResult = Model.assembler()
-                .addImport(FilterDeprecatedRelativeDate.class.getResource("deprecated-date/" + prefix + "-after.smithy"))
+                .addImport(
+                        FilterDeprecatedRelativeDate.class.getResource("deprecated-date/" + prefix + "-after.smithy"))
                 .assemble()
                 .unwrap();
 

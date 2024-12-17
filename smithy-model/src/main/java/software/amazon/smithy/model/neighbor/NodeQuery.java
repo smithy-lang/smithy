@@ -1,8 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.neighbor;
 
 import java.util.ArrayDeque;
@@ -43,8 +42,7 @@ final class NodeQuery {
 
     private final List<Query> queries = new ArrayList<>();
 
-    NodeQuery() {
-    }
+    NodeQuery() {}
 
     NodeQuery self() {
         queries.add(SELF);

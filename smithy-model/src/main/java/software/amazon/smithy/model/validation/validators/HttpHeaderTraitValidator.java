@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -42,16 +31,86 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
     /** Gather the allowed characters for HTTP headers (tchar from RFC 9110 section 5.6.2). **/
     private static final Set<Character> TCHAR = SetUtils.of(
             // "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
-            '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~',
+            '!',
+            '#',
+            '$',
+            '%',
+            '&',
+            '\'',
+            '*',
+            '+',
+            '-',
+            '.',
+            '^',
+            '_',
+            '`',
+            '|',
+            '~',
             // DIGIT (0-9)
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
             // ALPHA (A-Z)
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
             // ALPHA (a-z)
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    );
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z');
 
     private static final Set<String> BLOCKLIST = SetUtils.of(
             "authorization",
@@ -94,14 +153,20 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
         String header = trait.getValue();
 
         if (BLOCKLIST.contains(header.toLowerCase(Locale.ENGLISH))) {
-            return Optional.of(danger(member, trait, String.format(
-                    "`%s` is not an allowed HTTP header binding", header)));
+            return Optional.of(danger(member,
+                    trait,
+                    String.format(
+                            "`%s` is not an allowed HTTP header binding",
+                            header)));
         }
 
         for (int i = 0; i < header.length(); i++) {
             if (!TCHAR.contains(header.charAt(i))) {
-                return Optional.of(danger(member, trait, String.format(
-                        "`%s` is not a valid HTTP header field name according to section 5.6.2 of RFC 9110", header)));
+                return Optional.of(danger(member,
+                        trait,
+                        String.format(
+                                "`%s` is not a valid HTTP header field name according to section 5.6.2 of RFC 9110",
+                                header)));
             }
         }
 
@@ -109,17 +174,21 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(StructureShape structure) {
-        return structure.getAllMembers().values().stream()
+        return structure.getAllMembers()
+                .values()
+                .stream()
                 .filter(member -> member.hasTrait(HttpHeaderTrait.class))
                 .collect(groupingBy(shape -> shape.expectTrait(HttpHeaderTrait.class).getValue().toLowerCase(Locale.US),
-                                    mapping(MemberShape::getMemberName, toList())))
+                        mapping(MemberShape::getMemberName, toList())))
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)
-                .map(entry -> error(structure, String.format(
-                        "`httpHeader` field name binding conflicts found for the `%s` header in the "
-                        + "following structure members: %s",
-                        entry.getKey(), ValidationUtils.tickedList(entry.getValue()))))
+                .map(entry -> error(structure,
+                        String.format(
+                                "`httpHeader` field name binding conflicts found for the `%s` header in the "
+                                        + "following structure members: %s",
+                                entry.getKey(),
+                                ValidationUtils.tickedList(entry.getValue()))))
                 .collect(toList());
     }
 }

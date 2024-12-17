@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashMap;
@@ -59,7 +48,8 @@ final class RenameShapes {
         }
 
         // Creates a set that will be used for checking if a string value needs to be renamed or not.
-        Set<String> toRename = renamed.keySet().stream()
+        Set<String> toRename = renamed.keySet()
+                .stream()
                 .map(ShapeId::toString)
                 .collect(Collectors.toSet());
 
@@ -91,8 +81,7 @@ final class RenameShapes {
             ModelTransformer transformer,
             Model model,
             Set<SetShape> sets,
-            Map<ShapeId, ShapeId> renamed
-    ) {
+            Map<ShapeId, ShapeId> renamed) {
         if (sets.isEmpty()) {
             return model;
         }
@@ -123,14 +112,17 @@ final class RenameShapes {
 
         @Override
         public Node arrayNode(ArrayNode node) {
-            return node.getElements().stream()
+            return node.getElements()
+                    .stream()
                     .map(element -> element.accept(this))
                     .collect(ArrayNode.collect());
         }
 
         @Override
         public Node objectNode(ObjectNode node) {
-            return node.getMembers().entrySet().stream()
+            return node.getMembers()
+                    .entrySet()
+                    .stream()
                     .map(entry -> Pair.of(entry.getKey().accept(this), entry.getValue().accept(this)))
                     .collect(ObjectNode.collect(pair -> pair.getLeft().expectStringNode(), Pair::getRight));
         }

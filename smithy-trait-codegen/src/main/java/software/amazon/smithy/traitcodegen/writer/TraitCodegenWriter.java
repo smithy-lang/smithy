@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.HashMap;
@@ -52,10 +51,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final TraitCodegenSettings settings;
     private final Map<String, Set<Symbol>> symbolNames = new HashMap<>();
 
-    public TraitCodegenWriter(String fileName,
-                              String namespace,
-                              TraitCodegenSettings settings
-    ) {
+    public TraitCodegenWriter(
+            String fileName,
+            String namespace,
+            TraitCodegenSettings settings) {
         super(new TraitCodegenImportContainer(namespace));
         this.namespace = namespace;
         this.fileName = fileName;
@@ -69,7 +68,6 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         putFormatter('B', new BaseTypeFormatter());
         putFormatter('U', new CapitalizingFormatter());
     }
-
 
     private void addImport(Symbol symbol) {
         addImport(symbol, symbol.getName());
@@ -277,8 +275,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             }
             throw new IllegalArgumentException(
                     "Invalid type provided for $U. Expected a String but found: `"
-                            + type + "`."
-            );
+                            + type + "`.");
         }
     }
 

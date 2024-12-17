@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation;
 
 import java.util.ArrayList;
@@ -109,13 +108,15 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
     @Override
     public Value visitBoolEquals(Expression left, Expression right) {
-        return Value.booleanValue(left.accept(this).expectBooleanValue()
+        return Value.booleanValue(left.accept(this)
+                .expectBooleanValue()
                 .equals(right.accept(this).expectBooleanValue()));
     }
 
     @Override
     public Value visitStringEquals(Expression left, Expression right) {
-        return Value.booleanValue(left.accept(this).expectStringValue()
+        return Value.booleanValue(left.accept(this)
+                .expectStringValue()
                 .equals(right.accept(this).expectStringValue()));
     }
 

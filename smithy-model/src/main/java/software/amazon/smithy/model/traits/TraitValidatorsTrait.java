@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.Map;
@@ -119,8 +118,8 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
             }
             Validator validator = (Validator) o;
             return selector.equals(validator.selector)
-                   && Objects.equals(message, validator.message)
-                   && severity == validator.severity;
+                    && Objects.equals(message, validator.message)
+                    && severity == validator.severity;
         }
 
         @Override

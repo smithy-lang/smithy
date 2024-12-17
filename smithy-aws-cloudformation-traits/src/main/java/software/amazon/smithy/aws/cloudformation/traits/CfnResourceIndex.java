@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import java.util.ArrayList;
@@ -50,9 +39,12 @@ import software.amazon.smithy.utils.SetUtils;
 public final class CfnResourceIndex implements KnowledgeIndex {
 
     static final Set<Mutability> FULLY_MUTABLE = SetUtils.of(
-            Mutability.CREATE, Mutability.READ, Mutability.WRITE);
+            Mutability.CREATE,
+            Mutability.READ,
+            Mutability.WRITE);
     static final Set<Mutability> INHERITED_MUTABILITY = SetUtils.of(
-            Mutability.CREATE, Mutability.READ);
+            Mutability.CREATE,
+            Mutability.READ);
 
     private final Map<ShapeId, CfnResource> resourceDefinitions = new HashMap<>();
 
@@ -115,32 +107,52 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                         addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(input));
 
                         StructureShape output = propertyIndex.getOutputPropertiesShape(operation);
-                        updatePropertyMutabilities(builder, model, resourceId, operationId, output,
-                                SetUtils.of(Mutability.READ), this::addReadMutability);
+                        updatePropertyMutabilities(builder,
+                                model,
+                                resourceId,
+                                operationId,
+                                output,
+                                SetUtils.of(Mutability.READ),
+                                this::addReadMutability);
                     });
 
                     // Use the put lifecycle's input to collect put-able properties.
                     resource.getPut().ifPresent(operationId -> {
                         OperationShape operation = model.expectShape(operationId, OperationShape.class);
                         StructureShape input = propertyIndex.getInputPropertiesShape(operation);
-                        updatePropertyMutabilities(builder, model, resourceId, operationId, input,
-                                SetUtils.of(Mutability.CREATE, Mutability.WRITE), this::addPutMutability);
+                        updatePropertyMutabilities(builder,
+                                model,
+                                resourceId,
+                                operationId,
+                                input,
+                                SetUtils.of(Mutability.CREATE, Mutability.WRITE),
+                                this::addPutMutability);
                     });
 
                     // Use the create lifecycle's input to collect creatable properties.
                     resource.getCreate().ifPresent(operationId -> {
                         OperationShape operation = model.expectShape(operationId, OperationShape.class);
                         StructureShape input = propertyIndex.getInputPropertiesShape(operation);
-                        updatePropertyMutabilities(builder, model, resourceId, operationId, input,
-                                SetUtils.of(Mutability.CREATE), this::addCreateMutability);
+                        updatePropertyMutabilities(builder,
+                                model,
+                                resourceId,
+                                operationId,
+                                input,
+                                SetUtils.of(Mutability.CREATE),
+                                this::addCreateMutability);
                     });
 
                     // Use the update lifecycle's input to collect writeable properties.
                     resource.getUpdate().ifPresent(operationId -> {
                         OperationShape operation = model.expectShape(operationId, OperationShape.class);
                         StructureShape input = propertyIndex.getInputPropertiesShape(operation);
-                        updatePropertyMutabilities(builder, model, resourceId, operationId, input,
-                                SetUtils.of(Mutability.WRITE), this::addWriteMutability);
+                        updatePropertyMutabilities(builder,
+                                model,
+                                resourceId,
+                                operationId,
+                                input,
+                                SetUtils.of(Mutability.WRITE),
+                                this::addWriteMutability);
                     });
 
                     // Apply any members found through the trait's additionalSchemas property.
@@ -152,8 +164,13 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                                 .flatMap(Shape::asStructureShape)
                                 .ifPresent(shape -> {
                                     addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
-                                    updatePropertyMutabilities(builder, model, resourceId, null, shape,
-                                            SetUtils.of(), Function.identity());
+                                    updatePropertyMutabilities(builder,
+                                            model,
+                                            resourceId,
+                                            null,
+                                            shape,
+                                            SetUtils.of(),
+                                            Function.identity());
                                 });
                     }
 
@@ -187,12 +204,14 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         Set<Mutability> defaultIdentifierMutability = getDefaultIdentifierMutabilities(resource);
 
         resource.getIdentifiers().forEach((name, shape) -> {
-            builder.putPropertyDefinition(name, CfnResourceProperty.builder()
-                    .hasExplicitMutability(true)
-                    .mutabilities(identifierIsInherited(name, parentResources)
-                            ? INHERITED_MUTABILITY : defaultIdentifierMutability)
-                    .addShapeId(shape)
-                    .build());
+            builder.putPropertyDefinition(name,
+                    CfnResourceProperty.builder()
+                            .hasExplicitMutability(true)
+                            .mutabilities(identifierIsInherited(name, parentResources)
+                                    ? INHERITED_MUTABILITY
+                                    : defaultIdentifierMutability)
+                            .addShapeId(shape)
+                            .build());
         });
     }
 
@@ -220,8 +239,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private void addAdditionalIdentifiers(
             CfnResource.Builder builder,
-            List<Map<String, ShapeId>> addedIdentifiers
-    ) {
+            List<Map<String, ShapeId>> addedIdentifiers) {
         if (addedIdentifiers.isEmpty()) {
             return;
         }
@@ -229,10 +247,11 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         // Make sure we have properties entries for the additional identifiers.
         for (Map<String, ShapeId> addedIdentifier : addedIdentifiers) {
             for (Map.Entry<String, ShapeId> idEntry : addedIdentifier.entrySet()) {
-                builder.putPropertyDefinition(idEntry.getKey(), CfnResourceProperty.builder()
-                        .mutabilities(SetUtils.of(Mutability.READ))
-                        .addShapeId(idEntry.getValue())
-                        .build());
+                builder.putPropertyDefinition(idEntry.getKey(),
+                        CfnResourceProperty.builder()
+                                .mutabilities(SetUtils.of(Mutability.READ))
+                                .addShapeId(idEntry.getValue())
+                                .build());
             }
             builder.addAdditionalIdentifier(addedIdentifier.keySet());
         }
@@ -245,8 +264,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             ShapeId operationId,
             StructureShape propertyContainer,
             Set<Mutability> defaultMutabilities,
-            Function<Set<Mutability>, Set<Mutability>> updater
-    ) {
+            Function<Set<Mutability>, Set<Mutability>> updater) {
         // Handle the @excludeProperty trait.
         propertyContainer.accept(new ExcludedPropertiesVisitor(model))
                 .forEach(builder::addExcludedProperty);
@@ -283,8 +301,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
     private Function<CfnResourceProperty, CfnResourceProperty> getCfnResourcePropertyUpdater(
             MemberShape member,
             Set<Mutability> explicitMutability,
-            Function<Set<Mutability>, Set<Mutability>> updater
-    ) {
+            Function<Set<Mutability>, Set<Mutability>> updater) {
         return definition -> {
             CfnResourceProperty.Builder builder = definition.toBuilder().addShapeId(member.getId());
 
@@ -305,8 +322,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             Model model,
             ShapeId resourceId,
             ShapeId operationId,
-            MemberShape member
-    ) {
+            MemberShape member) {
         // The operationId will be null in the case of additionalSchemas, so
         // we shouldn't worry if these are bound to operation identifiers.
         if (operationId == null) {
@@ -328,8 +344,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private Set<Mutability> getExplicitMutability(
             Model model,
-            MemberShape member
-    ) {
+            MemberShape member) {
         Optional<CfnMutabilityTrait> traitOptional = member.getMemberTrait(model, CfnMutabilityTrait.class);
         if (!traitOptional.isPresent()) {
             return SetUtils.of();

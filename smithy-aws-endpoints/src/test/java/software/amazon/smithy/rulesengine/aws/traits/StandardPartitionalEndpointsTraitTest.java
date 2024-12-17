@@ -1,13 +1,16 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.traits;
-
-import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ShapeId;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 class StandardPartitionalEndpointsTraitTest {
     @Test
@@ -47,8 +50,10 @@ class StandardPartitionalEndpointsTraitTest {
 
     private StandardPartitionalEndpointsTrait getTraitFromService(Model model, String service) {
         return model
-            .expectShape(ShapeId.from(service))
-            .asServiceShape().get()
-            .getTrait(StandardPartitionalEndpointsTrait.class).get();
+                .expectShape(ShapeId.from(service))
+                .asServiceShape()
+                .get()
+                .getTrait(StandardPartitionalEndpointsTrait.class)
+                .get();
     }
 }

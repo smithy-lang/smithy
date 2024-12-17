@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.ArrayList;
@@ -69,8 +68,7 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
     public static FunctionNode ofExpressions(
             String functionName,
             FromSourceLocation sourceLocation,
-            ToExpression... arguments
-    ) {
+            ToExpression... arguments) {
         return builder()
                 .sourceLocation(sourceLocation)
                 .name(StringNode.from(functionName))
@@ -111,9 +109,11 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return this function as an expression.
      */
     public Expression createFunction() {
-        return EndpointRuleSet.createFunctionFactory().apply(this)
+        return EndpointRuleSet.createFunctionFactory()
+                .apply(this)
                 .orElseThrow(() -> new RuleError(new SourceException(
-                        String.format("`%s` is not a valid function", name), name)));
+                        String.format("`%s` is not a valid function", name),
+                        name)));
     }
 
     /**

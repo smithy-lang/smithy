@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -58,10 +47,11 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
 
         if (trait.getCode() == 204 || trait.getCode() == 205) {
             if (HttpBindingIndex.of(model).hasResponseBody(operation)) {
-                return Optional.of(warning(operation, String.format(
-                        "The HTTP %d status code does not allow a response body. To use this status code, all output "
-                        + "members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc.",
-                        trait.getCode())));
+                return Optional.of(warning(operation,
+                        String.format(
+                                "The HTTP %d status code does not allow a response body. To use this status code, all output "
+                                        + "members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc.",
+                                trait.getCode())));
             }
         }
 
@@ -87,8 +77,12 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
     }
 
     private ValidationEvent invalidError(Shape shape, Trait trait, int code, String range, String errorValue) {
-        return danger(shape, trait, String.format(
-                "Expected an `httpError` code in the %s range for a `%s` error, but found %s",
-                range, errorValue, code));
+        return danger(shape,
+                trait,
+                String.format(
+                        "Expected an `httpError` code in the %s range for a `%s` error, but found %s",
+                        range,
+                        errorValue,
+                        code));
     }
 }

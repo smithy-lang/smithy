@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.Collections;
@@ -108,7 +97,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
      */
     public Set<String> getConditionKeyNames(ToShapeId service) {
         return resourceConditionKeys.getOrDefault(service.toShapeId(), MapUtils.of())
-                .values().stream()
+                .values()
+                .stream()
                 .flatMap(Set::stream)
                 .collect(SetUtils.toUnmodifiableSet());
     }
@@ -142,8 +132,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
      */
     public Map<String, ConditionKeyDefinition> getDefinedConditionKeys(
             ToShapeId service,
-            ToShapeId resourceOrOperation
-    ) {
+            ToShapeId resourceOrOperation) {
         Map<String, ConditionKeyDefinition> serviceDefinitions = getDefinedConditionKeys(service);
         Map<String, ConditionKeyDefinition> definitions = new HashMap<>();
 
@@ -161,8 +150,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ServiceShape service,
             String arnRoot,
             Shape subject,
-            ResourceShape parent
-    ) {
+            ResourceShape parent) {
         compute(model, service, arnRoot, subject, parent, SetUtils.of());
     }
 
@@ -172,12 +160,10 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             String arnRoot,
             Shape subject,
             ResourceShape parent,
-            Set<String> parentDefinitions
-    ) {
+            Set<String> parentDefinitions) {
         Set<String> definitions = new HashSet<>();
         if (!subject.hasTrait(IamResourceTrait.ID)
-                || !subject.expectTrait(IamResourceTrait.class).isDisableConditionKeyInheritance()
-        ) {
+                || !subject.expectTrait(IamResourceTrait.class).isDisableConditionKeyInheritance()) {
             definitions.addAll(parentDefinitions);
         }
         resourceConditionKeys.get(service.getId()).put(subject.getId(), definitions);
@@ -186,7 +172,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         // Continue recursing into resources and computing keys.
         subject.asResourceShape().ifPresent(resource -> {
             boolean disableConditionKeyInference = resource.hasTrait(DisableConditionKeyInferenceTrait.class)
-                        || service.hasTrait(DisableConditionKeyInferenceTrait.class);
+                    || service.hasTrait(DisableConditionKeyInferenceTrait.class);
 
             // Add any inferred resource identifiers to the resource and to the service-wide definitions.
             Map<String, String> childIdentifiers = !disableConditionKeyInference
@@ -194,7 +180,9 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                     : MapUtils.of();
 
             // Compute the keys of each child operation, passing no keys.
-            resource.getAllOperations().stream().flatMap(id -> OptionalUtils.stream(model.getShape(id)))
+            resource.getAllOperations()
+                    .stream()
+                    .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
                     .forEach(child -> compute(model, service, arnRoot, child, resource));
 
             // Child resources always inherit the identifiers of the parent.
@@ -212,8 +200,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ShapeId service,
             String arnRoot,
             ResourceShape resource,
-            ResourceShape parent
-    ) {
+            ResourceShape parent) {
         Map<String, String> result = new HashMap<>();
 
         // We want child resources to reuse parent resource context keys, so
@@ -261,7 +248,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
     private static String getContextKeyResourceName(ResourceShape resource) {
         return resource.getTrait(IamResourceTrait.class)
-                       .flatMap(IamResourceTrait::getName)
-                       .orElse(resource.getId().getName());
+                .flatMap(IamResourceTrait::getName)
+                .orElse(resource.getId().getName());
     }
 }

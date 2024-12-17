@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Objects;
@@ -38,14 +37,17 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
 
     @Override
     public void accept(GenerateTraitDirective directive) {
-        directive.context().writerDelegator().useShapeWriter(directive.shape(),
-                writer -> writeEnum(directive.shape(), directive.symbolProvider(), writer, directive.model()));
+        directive.context()
+                .writerDelegator()
+                .useShapeWriter(directive.shape(),
+                        writer -> writeEnum(directive.shape(), directive.symbolProvider(), writer, directive.model()));
     }
 
-    public void writeEnum(Shape enumShape,
-                          SymbolProvider provider,
-                          TraitCodegenWriter writer,
-                          Model model) {
+    public void writeEnum(
+            Shape enumShape,
+            SymbolProvider provider,
+            TraitCodegenWriter writer,
+            Model model) {
         writeEnum(enumShape, provider, writer, model, true);
     }
 
@@ -58,36 +60,39 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
      * @param model smithy model used for code generation.
      * @param isStandaloneClass flag indicating if enum is a standalone class (i.e. defined in its own class file).
      */
-    public void writeEnum(Shape enumShape,
-                          SymbolProvider provider,
-                          TraitCodegenWriter writer,
-                          Model model,
-                          boolean isStandaloneClass
-    ) {
+    public void writeEnum(
+            Shape enumShape,
+            SymbolProvider provider,
+            TraitCodegenWriter writer,
+            Model model,
+            boolean isStandaloneClass) {
         Symbol enumSymbol = provider.toSymbol(enumShape);
         writer.pushState(new ClassSection(enumShape))
                 .putContext("standalone", isStandaloneClass)
-                .openBlock("public enum $B ${?standalone}implements $T ${/standalone}{", "}",
-                        enumSymbol, ToNode.class, () -> {
-                    writeVariants(enumShape, provider, writer);
-                    writer.newLine();
+                .openBlock("public enum $B ${?standalone}implements $T ${/standalone}{",
+                        "}",
+                        enumSymbol,
+                        ToNode.class,
+                        () -> {
+                            writeVariants(enumShape, provider, writer);
+                            writer.newLine();
 
-                    writeValueField(writer);
-                    writer.newLine();
+                            writeValueField(writer);
+                            writer.newLine();
 
-                    writeConstructor(enumSymbol, writer);
+                            writeConstructor(enumSymbol, writer);
 
-                    writeValueGetter(writer);
-                    writer.newLine();
+                            writeValueGetter(writer);
+                            writer.newLine();
 
-                    writeFromMethod(enumSymbol, writer);
+                            writeFromMethod(enumSymbol, writer);
 
-                    // Only generate From and To Node when we are in a standalone class.
-                    if (isStandaloneClass) {
-                        writeToNode(writer);
-                        new FromNodeGenerator(writer, enumSymbol, enumShape, provider, model).run();
-                    }
-                })
+                            // Only generate From and To Node when we are in a standalone class.
+                            if (isStandaloneClass) {
+                                writeToNode(writer);
+                                new FromNodeGenerator(writer, enumSymbol, enumShape, provider, model).run();
+                            }
+                        })
                 .popState();
     }
 
@@ -111,20 +116,27 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
     }
 
     private void writeValueGetter(TraitCodegenWriter writer) {
-        writer.openBlock("public $T getValue() {", "}", getValueType(),
+        writer.openBlock("public $T getValue() {",
+                "}",
+                getValueType(),
                 () -> writer.writeWithNoFormatting("return value;"));
     }
 
     private void writeToNode(TraitCodegenWriter writer) {
         writer.override();
-        writer.openBlock("public $T toNode() {", "}", Node.class,
+        writer.openBlock("public $T toNode() {",
+                "}",
+                Node.class,
                 () -> writer.write("return $T.from(value);", Node.class));
         writer.newLine();
     }
 
     private void writeConstructor(Symbol enumSymbol, TraitCodegenWriter writer) {
-        writer.openBlock("$B($T value) {", "}",
-                enumSymbol, getValueType(), () -> writer.write("this.value = value;"));
+        writer.openBlock("$B($T value) {",
+                "}",
+                enumSymbol,
+                getValueType(),
+                () -> writer.write("this.value = value;"));
         writer.newLine();
     }
 
@@ -133,13 +145,19 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
                 + "<p>Any unknown value is returned as {@code UNKNOWN}.\n"
                 + "@param value Value to create enum from.\n"
                 + "@return Returns the {@link $1B} enum value.", enumSymbol));
-        writer.openBlock("public static $B from($T value) {", "}",
-                enumSymbol, getValueType(), () -> {
+        writer.openBlock("public static $B from($T value) {",
+                "}",
+                enumSymbol,
+                getValueType(),
+                () -> {
                     writer.write("$T.requireNonNull(value, \"Enum value should not be null.\");", Objects.class);
-                    writer.openBlock("for ($B val: values()) {", "}",
+                    writer.openBlock("for ($B val: values()) {",
+                            "}",
                             enumSymbol,
-                            () -> writer.openBlock("if ($T.equals(val.getValue(), value)) {", "}",
-                                    Objects.class, () -> writer.writeWithNoFormatting("return val;")));
+                            () -> writer.openBlock("if ($T.equals(val.getValue(), value)) {",
+                                    "}",
+                                    Objects.class,
+                                    () -> writer.writeWithNoFormatting("return val;")));
                     writer.writeWithNoFormatting("return UNKNOWN;");
                 });
         writer.newLine();

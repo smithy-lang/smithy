@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.Collections;
@@ -53,7 +52,7 @@ final class ConfigurationUtils {
             repositories.addAll(configuredRepos);
         } else if (envRepos == null) {
             LOGGER.finest(() -> String.format("maven.repositories is not defined in `smithy-build.json` and the %s "
-                            + "environment variable is not set. Defaulting to Maven Central.",
+                    + "environment variable is not set. Defaulting to Maven Central.",
                     EnvironmentVariable.SMITHY_MAVEN_REPOS));
             repositories.add(CENTRAL);
         }

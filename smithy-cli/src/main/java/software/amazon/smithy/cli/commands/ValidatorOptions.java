@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.ArrayList;
@@ -31,14 +30,23 @@ final class ValidatorOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.param(SEVERITY, null, "SEVERITY", "Set the minimum reported validation severity (one of NOTE, "
-                                                  + "WARNING [default setting], DANGER, ERROR).");
-        printer.param(SHOW_VALIDATORS, null, "VALIDATORS", "Comma-separated list of hierarchical validation event "
-                                                           + "IDs to show in the output of the command, "
-                                                           + "hiding the rest.");
-        printer.param(HIDE_VALIDATORS, null, "VALIDATORS", "Comma-separated list of hierarchical validation event "
-                                                           + "IDs to hide in the output of the command, "
-                                                           + "showing the rest.");
+        printer.param(SEVERITY,
+                null,
+                "SEVERITY",
+                "Set the minimum reported validation severity (one of NOTE, "
+                        + "WARNING [default setting], DANGER, ERROR).");
+        printer.param(SHOW_VALIDATORS,
+                null,
+                "VALIDATORS",
+                "Comma-separated list of hierarchical validation event "
+                        + "IDs to show in the output of the command, "
+                        + "hiding the rest.");
+        printer.param(HIDE_VALIDATORS,
+                null,
+                "VALIDATORS",
+                "Comma-separated list of hierarchical validation event "
+                        + "IDs to hide in the output of the command, "
+                        + "showing the rest.");
     }
 
     @Override

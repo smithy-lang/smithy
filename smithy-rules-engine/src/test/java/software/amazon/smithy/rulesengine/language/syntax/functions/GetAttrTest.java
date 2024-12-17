@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language.syntax.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,10 +20,11 @@ public class GetAttrTest {
         Expression asGetAttr = GetAttr.fromNode(ObjectNode
                 .builder()
                 .withMember("fn", Node.from("getAttr"))
-                .withMember("argv", Node.fromNodes(
-                        ObjectNode.builder().withMember("ref", "a").build(),
-                        Node.from("b[5]"))
-                ).build());
+                .withMember("argv",
+                        Node.fromNodes(
+                                ObjectNode.builder().withMember("ref", "a").build(),
+                                Node.from("b[5]")))
+                .build());
         assertEquals(asTemplate, asGetAttr);
         assertEquals(asTemplate.hashCode(), asGetAttr.hashCode());
     }

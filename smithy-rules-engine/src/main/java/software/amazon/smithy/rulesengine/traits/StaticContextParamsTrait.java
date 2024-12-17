@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.LinkedHashMap;
@@ -77,8 +76,7 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
     public static final class Builder extends AbstractTraitBuilder<StaticContextParamsTrait, Builder> {
         private final BuilderRef<Map<String, StaticContextParamDefinition>> parameters = BuilderRef.forOrderedMap();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder parameters(Map<String, StaticContextParamDefinition> parameters) {
             this.parameters.clear();

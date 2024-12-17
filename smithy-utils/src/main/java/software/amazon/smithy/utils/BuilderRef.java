@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.util.ArrayList;
@@ -96,8 +85,10 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      * @return Returns the created map.
      */
     static <K, V> BuilderRef<Map<K, V>> forUnorderedMap() {
-        return new DefaultBuilderRef<>(HashMap::new, HashMap::new,
-                                       Collections::unmodifiableMap, Collections::emptyMap);
+        return new DefaultBuilderRef<>(HashMap::new,
+                HashMap::new,
+                Collections::unmodifiableMap,
+                Collections::emptyMap);
     }
 
     /**
@@ -108,8 +99,10 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      * @return Returns the created map.
      */
     static <K, V> BuilderRef<Map<K, V>> forOrderedMap() {
-        return new DefaultBuilderRef<>(LinkedHashMap::new, LinkedHashMap::new,
-                                       Collections::unmodifiableMap, Collections::emptyMap);
+        return new DefaultBuilderRef<>(LinkedHashMap::new,
+                LinkedHashMap::new,
+                Collections::unmodifiableMap,
+                Collections::emptyMap);
     }
 
     /**
@@ -119,8 +112,10 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      * @return Returns the created list.
      */
     static <T> BuilderRef<List<T>> forList() {
-        return new DefaultBuilderRef<>(ArrayList::new, ArrayList::new,
-                                       Collections::unmodifiableList, Collections::emptyList);
+        return new DefaultBuilderRef<>(ArrayList::new,
+                ArrayList::new,
+                Collections::unmodifiableList,
+                Collections::emptyList);
     }
 
     /**
@@ -130,8 +125,10 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      * @return Returns the created set.
      */
     static <T> BuilderRef<Set<T>> forUnorderedSet() {
-        return new DefaultBuilderRef<>(HashSet::new, HashSet::new,
-                                       Collections::unmodifiableSet, Collections::emptySet);
+        return new DefaultBuilderRef<>(HashSet::new,
+                HashSet::new,
+                Collections::unmodifiableSet,
+                Collections::emptySet);
     }
 
     /**
@@ -141,7 +138,9 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      * @return Returns the created set.
      */
     static <T> BuilderRef<Set<T>> forOrderedSet() {
-        return new DefaultBuilderRef<>(LinkedHashSet::new, LinkedHashSet::new,
-                                       Collections::unmodifiableSet, Collections::emptySet);
+        return new DefaultBuilderRef<>(LinkedHashSet::new,
+                LinkedHashSet::new,
+                Collections::unmodifiableSet,
+                Collections::emptySet);
     }
 }

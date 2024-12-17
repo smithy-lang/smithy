@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.util.ArrayDeque;
@@ -70,14 +59,18 @@ public final class TextIndex implements KnowledgeIndex {
     private static void computeShapeTextInstances(
             Shape shape,
             Collection<TextInstance> textInstances,
-            Model model
-    ) {
+            Model model) {
         textInstances.add(TextInstance.createShapeInstance(shape));
 
         for (Trait trait : shape.getAllTraits().values()) {
             model.getShape(trait.toShapeId()).ifPresent(traitShape -> {
-                computeTextInstancesForAppliedTrait(trait.toNode(), trait, shape, textInstances,
-                        new ArrayDeque<>(), model, traitShape);
+                computeTextInstancesForAppliedTrait(trait.toNode(),
+                        trait,
+                        shape,
+                        textInstances,
+                        new ArrayDeque<>(),
+                        model,
+                        traitShape);
             });
         }
     }
@@ -89,29 +82,40 @@ public final class TextIndex implements KnowledgeIndex {
             Collection<TextInstance> textInstances,
             Deque<String> propertyPath,
             Model model,
-            Shape currentTraitPropertyShape
-    ) {
+            Shape currentTraitPropertyShape) {
         if (trait.toShapeId().equals(ReferencesTrait.ID)) {
             //Skip ReferenceTrait because it is referring to other shape names already being checked
         } else if (node.isStringNode()) {
             textInstances.add(TextInstance.createTraitInstance(
-                node.expectStringNode().getValue(), parentShape, trait, propertyPath));
+                    node.expectStringNode().getValue(),
+                    parentShape,
+                    trait,
+                    propertyPath));
         } else if (node.isObjectNode()) {
             ObjectNode objectNode = node.expectObjectNode();
             objectNode.getStringMap().entrySet().forEach(memberEntry -> {
                 propertyPath.offerLast(memberEntry.getKey());
                 Shape memberTypeShape = getChildMemberShapeType(memberEntry.getKey(),
-                        model, currentTraitPropertyShape);
+                        model,
+                        currentTraitPropertyShape);
                 if (memberTypeShape == null) {
                     //This means the "property" key value isn't modeled in the trait's structure/shape definition
                     //and this text instance is unique
                     propertyPath.offerLast("key");
                     textInstances.add(TextInstance.createTraitInstance(
-                        memberEntry.getKey(), parentShape, trait, propertyPath));
+                            memberEntry.getKey(),
+                            parentShape,
+                            trait,
+                            propertyPath));
                     propertyPath.removeLast();
                 }
-                computeTextInstancesForAppliedTrait(memberEntry.getValue(), trait, parentShape, textInstances,
-                        propertyPath, model, memberTypeShape);
+                computeTextInstancesForAppliedTrait(memberEntry.getValue(),
+                        trait,
+                        parentShape,
+                        textInstances,
+                        propertyPath,
+                        model,
+                        memberTypeShape);
                 propertyPath.removeLast();
             });
         } else if (node.isArrayNode()) {
@@ -119,9 +123,15 @@ public final class TextIndex implements KnowledgeIndex {
             for (Node nodeElement : node.expectArrayNode().getElements()) {
                 propertyPath.offerLast(Integer.toString(index));
                 Shape memberTypeShape = getChildMemberShapeType(null,
-                        model, currentTraitPropertyShape);
-                computeTextInstancesForAppliedTrait(nodeElement, trait, parentShape, textInstances,
-                        propertyPath, model, memberTypeShape);
+                        model,
+                        currentTraitPropertyShape);
+                computeTextInstancesForAppliedTrait(nodeElement,
+                        trait,
+                        parentShape,
+                        textInstances,
+                        propertyPath,
+                        model,
+                        memberTypeShape);
                 propertyPath.removeLast();
                 ++index;
             }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.net.URL;
@@ -40,7 +39,7 @@ public final class TraitCodegenUtils {
      * @return Symbol representing the provided class.
      */
     public static Symbol fromClass(Class<?> clazz) {
-        Symbol.Builder builder =  Symbol.builder()
+        Symbol.Builder builder = Symbol.builder()
                 .name(clazz.getSimpleName())
                 .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".");
 
@@ -125,10 +124,10 @@ public final class TraitCodegenUtils {
      * @param shapeNamespace namespace of shape to map into package namespace.
      * @param packageNamespace Java package namespace for trait codegen.
      */
-    public static String mapNamespace(String rootSmithyNamespace,
-                                      String shapeNamespace,
-                                      String packageNamespace
-    ) {
+    public static String mapNamespace(
+            String rootSmithyNamespace,
+            String shapeNamespace,
+            String packageNamespace) {
         if (!shapeNamespace.startsWith(rootSmithyNamespace)) {
             throw new IllegalArgumentException("Cannot relativize non-nested namespaces "
                     + "Root: " + rootSmithyNamespace + " Nested: " + shapeNamespace + ".");

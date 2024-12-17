@@ -1,7 +1,10 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -29,8 +32,10 @@ public class ProtocolDefinitionTraitTest {
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ProtocolDefinitionTrait.class));
         ProtocolDefinitionTrait protocolDefinitionTrait = (ProtocolDefinitionTrait) trait.get();
-        assertThat(protocolDefinitionTrait.getTraits(), containsInAnyOrder(
-                JsonNameTrait.ID, XmlNameTrait.ID));
+        assertThat(protocolDefinitionTrait.getTraits(),
+                containsInAnyOrder(
+                        JsonNameTrait.ID,
+                        XmlNameTrait.ID));
         assertThat(protocolDefinitionTrait.toNode(), equalTo(node));
         assertThat(protocolDefinitionTrait.toBuilder().build(), equalTo(protocolDefinitionTrait));
     }

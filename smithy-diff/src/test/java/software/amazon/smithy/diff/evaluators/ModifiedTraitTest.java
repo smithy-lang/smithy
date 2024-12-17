@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -97,7 +86,12 @@ public class ModifiedTraitTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testWithoutDefinition(String oldValue, String newValue, String diffType, String tag, String searchString) {
+    public void testWithoutDefinition(
+            String oldValue,
+            String newValue,
+            String diffType,
+            String tag,
+            String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
 
         Model modelA = Model.assembler().addShape(data.oldShape).assemble().unwrap();
@@ -160,11 +154,11 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
                 equalTo(2L));
 
-        assertThat(messages, containsInAnyOrder(
-                "Changed trait `smithy.example#b` from `hello` to `hello!`",
-                "Removed trait `smithy.example#a`. Previous trait value: `{}`",
-                "Added trait `smithy.example#c` with value `foo`"
-        ));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Changed trait `smithy.example#b` from `hello` to `hello!`",
+                        "Removed trait `smithy.example#a`. Previous trait value: `{}`",
+                        "Added trait `smithy.example#c` with value `foo`"));
     }
 
     @Test
@@ -186,10 +180,10 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
                 equalTo(2L));
 
-        assertThat(messages, containsInAnyOrder(
-                "Added trait contents to `smithy.example#aTrait` at path `/bar` with value `no`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `bye` to `adios`"
-        ));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Added trait contents to `smithy.example#aTrait` at path `/bar` with value `no`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `bye` to `adios`"));
     }
 
     @Test
@@ -206,23 +200,28 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
-        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
-        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
-        assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
-                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: %n"
-                        + "```%n"
-                        + "[%n"
-                        + "    \"1\",%n"
-                        + "    \"2\",%n"
-                        + "    \"3\"%n"
-                        + "]%n"
-                        + "```%n")
-        ));
+        assertThat(events.stream()
+                .filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy"))
+                .count(), equalTo(2L));
+        assertThat(events.stream()
+                .filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy"))
+                .count(), equalTo(2L));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
+                        "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
+                        String.format(
+                                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: %n"
+                                        + "```%n"
+                                        + "[%n"
+                                        + "    \"1\",%n"
+                                        + "    \"2\",%n"
+                                        + "    \"3\"%n"
+                                        + "]%n"
+                                        + "```%n")));
     }
 
     @Test
@@ -239,24 +238,28 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
-        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
-        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
-        assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
-                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
-                        + "Removed value: %n"
-                        + "```%n"
-                        + "[%n"
-                        + "    \"1\",%n"
-                        + "    \"2\",%n"
-                        + "    \"3\"%n"
-                        + "]%n"
-                        + "```%n")
-        ));
+        assertThat(events.stream()
+                .filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy"))
+                .count(), equalTo(2L));
+        assertThat(events.stream()
+                .filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy"))
+                .count(), equalTo(2L));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
+                        "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
+                        String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                                + "Removed value: %n"
+                                + "```%n"
+                                + "[%n"
+                                + "    \"1\",%n"
+                                + "    \"2\",%n"
+                                + "    \"3\"%n"
+                                + "]%n"
+                                + "```%n")));
     }
 
     @Test
@@ -273,24 +276,28 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
-        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
-        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
-        assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from `b` to `B`",
-                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
-                        + "Removed value: %n"
-                        + "```%n"
-                        + "{%n"
-                        + "    \"baz\": \"1\",%n"
-                        + "    \"bam\": \"2\",%n"
-                        + "    \"boo\": \"3\"%n"
-                        + "}%n"
-                        + "```%n"),
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/qux` with value `4`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/boo`. Removed value: `3`"
-        ));
+        assertThat(events.stream()
+                .filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy"))
+                .count(), equalTo(2L));
+        assertThat(events.stream()
+                .filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy"))
+                .count(), equalTo(2L));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from `b` to `B`",
+                        String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                                + "Removed value: %n"
+                                + "```%n"
+                                + "{%n"
+                                + "    \"baz\": \"1\",%n"
+                                + "    \"bam\": \"2\",%n"
+                                + "    \"boo\": \"3\"%n"
+                                + "}%n"
+                                + "```%n"),
+                        "Added trait contents to `smithy.example#aTrait` at path `/foo/qux` with value `4`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/foo/boo`. Removed value: `3`"));
     }
 
     @Test
@@ -309,10 +316,10 @@ public class ModifiedTraitTest {
         assertThat(events, hasSize(2));
         assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
                 equalTo(2L));
-        assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `a` to `b`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/baz` from `a` to `b`"
-        ));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `a` to `b`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/baz/baz` from `a` to `b`"));
     }
 
     @Test
@@ -329,41 +336,47 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(12));
-        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(3L));
-        assertThat(events.stream().filter(e -> e.getMessage().contains("Changed") || e.getMessage().contains("Added"))
-                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(9L));
-        assertThat(messages, containsInAnyOrder(
-                "Added trait contents to `smithy.example#aTrait` at path `/a` with value `a`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/b`. Removed value: `a`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/c` from `a` to `c`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/d` from `a` to `d`",
-                "Added trait contents to `smithy.example#aTrait` at path `/e` with value `a`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/f`. Removed value: `a`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/g` from `a` to `h`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/h` from `a` to `h`",
-                "Added trait contents to `smithy.example#aTrait` at path `/i` with value `a`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/j`. Removed value: `a`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/k` from `a` to `k`",
-                "Changed trait contents of `smithy.example#aTrait` at path `/l` from `a` to `l`"
-        ));
+        assertThat(events.stream()
+                .filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy"))
+                .count(), equalTo(3L));
+        assertThat(events.stream()
+                .filter(e -> e.getMessage().contains("Changed") || e.getMessage().contains("Added"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy"))
+                .count(), equalTo(9L));
+        assertThat(messages,
+                containsInAnyOrder(
+                        "Added trait contents to `smithy.example#aTrait` at path `/a` with value `a`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/b`. Removed value: `a`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/c` from `a` to `c`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/d` from `a` to `d`",
+                        "Added trait contents to `smithy.example#aTrait` at path `/e` with value `a`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/f`. Removed value: `a`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/g` from `a` to `h`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/h` from `a` to `h`",
+                        "Added trait contents to `smithy.example#aTrait` at path `/i` with value `a`",
+                        "Removed trait contents from `smithy.example#aTrait` at path `/j`. Removed value: `a`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/k` from `a` to `k`",
+                        "Changed trait contents of `smithy.example#aTrait` at path `/l` from `a` to `l`"));
     }
 
     @Test
     public void letsOtherValidatorsHandleRequiredTrait() {
         String originalModel =
                 "$version: \"2.0\"\n"
-                + "namespace smithy.example\n"
-                + "structure Baz {}\n"
-                + "structure Foo {\n"
-                + "    @required\n"
-                + "    baz: Baz\n"
-                + "}\n";
+                        + "namespace smithy.example\n"
+                        + "structure Baz {}\n"
+                        + "structure Foo {\n"
+                        + "    @required\n"
+                        + "    baz: Baz\n"
+                        + "}\n";
         Model oldModel = Model.assembler().addUnparsedModel("foo.smithy", originalModel).assemble().unwrap();
-        Model newModel = ModelTransformer.create().replaceShapes(oldModel, ListUtils.of(
-                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Foo$baz")))
-                        .removeTrait(RequiredTrait.ID)
-                        .build()));
+        Model newModel = ModelTransformer.create()
+                .replaceShapes(oldModel,
+                        ListUtils.of(
+                                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Foo$baz")))
+                                        .removeTrait(RequiredTrait.ID)
+                                        .build()));
 
         assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
     }
@@ -371,17 +384,19 @@ public class ModifiedTraitTest {
     @Test
     public void letsTraitBreakingChangeHandleDiffEvents() {
         String originalModel =
-            "$version: \"2.0\"\n"
-          + "namespace smithy.example\n"
-          + "structure Test {\n"
-          + "   @jsonName(\"a\")\n"
-          + "   member: String\n"
-          + "}";
+                "$version: \"2.0\"\n"
+                        + "namespace smithy.example\n"
+                        + "structure Test {\n"
+                        + "   @jsonName(\"a\")\n"
+                        + "   member: String\n"
+                        + "}";
         Model oldModel = Model.assembler().addUnparsedModel("foo.smithy", originalModel).assemble().unwrap();
-        Model newModel = ModelTransformer.create().replaceShapes(oldModel, ListUtils.of(
-                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Test$member")))
-                        .removeTrait(JsonNameTrait.ID)
-                        .build()));
+        Model newModel = ModelTransformer.create()
+                .replaceShapes(oldModel,
+                        ListUtils.of(
+                                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Test$member")))
+                                        .removeTrait(JsonNameTrait.ID)
+                                        .build()));
 
         assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
         assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "TraitBreakingChange"), hasSize(1));

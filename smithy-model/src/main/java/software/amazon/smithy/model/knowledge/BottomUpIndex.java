@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.util.ArrayDeque;
@@ -55,8 +44,7 @@ public final class BottomUpIndex implements KnowledgeIndex {
             Map<ShapeId, List<EntityShape>> paths,
             Deque<EntityShape> path,
             Shape current,
-            NeighborProvider neighborProvider
-    ) {
+            NeighborProvider neighborProvider) {
         for (Relationship relationship : neighborProvider.getNeighbors(current)) {
             Shape neighbor = relationship.expectNeighborShape();
             if (!neighbor.isOperationShape() && !neighbor.isResourceShape()) {
@@ -93,7 +81,8 @@ public final class BottomUpIndex implements KnowledgeIndex {
      */
     public List<EntityShape> getAllParents(ToShapeId service, ToShapeId operationOrResource) {
         Map<ShapeId, List<EntityShape>> serviceBindings = parentBindings.getOrDefault(
-                service.toShapeId(), Collections.emptyMap());
+                service.toShapeId(),
+                Collections.emptyMap());
         List<EntityShape> entities = serviceBindings.get(operationOrResource.toShapeId());
         return entities == null ? Collections.emptyList() : Collections.unmodifiableList(entities);
     }

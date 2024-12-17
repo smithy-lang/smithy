@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.Arrays;
@@ -48,8 +47,7 @@ public final class Substring extends LibraryFunction {
             ToExpression expression,
             ToExpression startIndex,
             ToExpression stopIndex,
-            ToExpression reverse
-    ) {
+            ToExpression reverse) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, expression, startIndex, stopIndex, reverse));
     }
 

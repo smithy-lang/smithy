@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -99,8 +88,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             new DiffStrategy(DiffType.REMOVE, Severity.WARNING));
 
     /** Traits in this list have special backward compatibility rules and can't be validated here. */
-    private static final Set<ShapeId> IGNORED_TRAITS = SetUtils.of(BoxTrait.ID, RequiredTrait.ID,
-            SyntheticEnumTrait.ID, OriginalShapeIdTrait.ID);
+    private static final Set<ShapeId> IGNORED_TRAITS = SetUtils.of(BoxTrait.ID,
+            RequiredTrait.ID,
+            SyntheticEnumTrait.ID,
+            OriginalShapeIdTrait.ID);
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -223,8 +214,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity
-            ) {
+                    Severity severity) {
                 if (left != null) {
                     return Collections.emptyList();
                 }
@@ -235,16 +225,18 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     message = String.format("Added trait `%s` with value %s", trait, pretty);
                 } else {
                     message = String.format("Added trait contents to `%s` at path `%s` with value %s",
-                                            trait, path, pretty);
+                            trait,
+                            path,
+                            pretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(getValidationEventId(this, trait))
-                                                         .severity(severity)
-                                                         .shape(shape)
-                                                         .sourceLocation(right)
-                                                         .message(message)
-                                                         .build());
+                        .id(getValidationEventId(this, trait))
+                        .severity(severity)
+                        .shape(shape)
+                        .sourceLocation(right)
+                        .message(message)
+                        .build());
             }
         },
 
@@ -257,8 +249,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity
-            ) {
+                    Severity severity) {
                 if (right != null) {
                     return Collections.emptyList();
                 }
@@ -269,16 +260,18 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     message = String.format("Removed trait `%s`. Previous trait value: %s", trait, pretty);
                 } else {
                     message = String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
-                                            trait, path, pretty);
+                            trait,
+                            path,
+                            pretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(getValidationEventId(this, trait))
-                                                         .severity(severity)
-                                                         .shape(shape)
-                                                         .sourceLocation(left.getSourceLocation())
-                                                         .message(message)
-                                                         .build());
+                        .id(getValidationEventId(this, trait))
+                        .severity(severity)
+                        .shape(shape)
+                        .sourceLocation(left.getSourceLocation())
+                        .message(message)
+                        .build());
             }
         },
 
@@ -291,8 +284,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity
-            ) {
+                    Severity severity) {
                 if (left == null || right == null || Objects.equals(left, right)) {
                     return Collections.emptyList();
                 }
@@ -304,15 +296,18 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     message = String.format("Changed trait `%s` from %s to %s", trait, leftPretty, rightPretty);
                 } else {
                     message = String.format("Changed trait contents of `%s` at path `%s` from %s to %s",
-                                            trait, path, leftPretty, rightPretty);
+                            trait,
+                            path,
+                            leftPretty,
+                            rightPretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(getValidationEventId(this, trait))
-                                                         .severity(severity)
-                                                         .shape(shape)
-                                                         .message(message)
-                                                         .build());
+                        .id(getValidationEventId(this, trait))
+                        .severity(severity)
+                        .shape(shape)
+                        .message(message)
+                        .build());
             }
         },
 
@@ -325,8 +320,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity
-            ) {
+                    Severity severity) {
                 List<ValidationEvent> events = new ArrayList<>();
                 events.addAll(ADD.validate(model, path, shape, trait, left, right, severity));
                 events.addAll(REMOVE.validate(model, path, shape, trait, left, right, severity));
@@ -344,8 +338,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     ShapeId trait,
                     Node left,
                     Node right,
-                    Severity severity
-            ) {
+                    Severity severity) {
                 // The trait needs to exist in both models to perform this check.
                 if (left == null || right == null) {
                     return Collections.emptyList();
@@ -375,8 +368,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 Severity severity);
 
         private static String getValidationEventId(DiffType diffType, ShapeId trait) {
-            return String.format("%s.%s.%s", ModifiedTrait.class.getSimpleName(),
-                    StringUtils.capitalize(StringUtils.lowerCase(diffType.toString())), trait);
+            return String.format("%s.%s.%s",
+                    ModifiedTrait.class.getSimpleName(),
+                    StringUtils.capitalize(StringUtils.lowerCase(diffType.toString())),
+                    trait);
         }
     }
 
@@ -388,8 +383,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             Node leftValue,
             Node rightValue,
             List<ValidationEvent> events,
-            String path
-    ) {
+            String path) {
         currentTraitShape.accept(new DiffCrawler(model, startingShape, trait, leftValue, rightValue, events, path));
     }
 
@@ -410,8 +404,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 Node leftValue,
                 Node rightValue,
                 List<ValidationEvent> events,
-                String path
-        ) {
+                String path) {
             this.model = model;
             this.startingShape = startingShape;
             this.trait = trait;
@@ -431,11 +424,23 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 for (int i = 0; i < leftValues.size(); i++) {
                     Node element = leftValues.get(i);
                     if (rightValues.size() > i) {
-                        crawlContents(model, startingShape, trait, shape.getMember(), element, rightValues.get(i),
-                                      events, path + '/' + i);
+                        crawlContents(model,
+                                startingShape,
+                                trait,
+                                shape.getMember(),
+                                element,
+                                rightValues.get(i),
+                                events,
+                                path + '/' + i);
                     } else {
-                        crawlContents(model, startingShape, trait, shape.getMember(), element, null,
-                                      events, path + '/' + i);
+                        crawlContents(model,
+                                startingShape,
+                                trait,
+                                shape.getMember(),
+                                element,
+                                null,
+                                events,
+                                path + '/' + i);
                     }
                 }
 
@@ -443,8 +448,14 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 for (int i = 0; i < rightValues.size(); i++) {
                     Node element = rightValues.get(i);
                     if (leftValues.size() <= i) {
-                        crawlContents(model, startingShape, trait, shape.getMember(), null, element,
-                                      events, path + '/' + i);
+                        crawlContents(model,
+                                startingShape,
+                                trait,
+                                shape.getMember(),
+                                null,
+                                element,
+                                events,
+                                path + '/' + i);
                     }
                 }
             }
@@ -460,15 +471,27 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 // Look for changed and removed entries.
                 for (Map.Entry<String, Node> entry : leftValues.entrySet()) {
                     Node rightValue = rightValues.get(entry.getKey());
-                    crawlContents(model, startingShape, trait, shape.getValue(), entry.getValue(), rightValue,
-                                  events, path + '/' + entry.getKey());
+                    crawlContents(model,
+                            startingShape,
+                            trait,
+                            shape.getValue(),
+                            entry.getValue(),
+                            rightValue,
+                            events,
+                            path + '/' + entry.getKey());
                 }
 
                 // Look for added entries.
                 for (Map.Entry<String, Node> entry : rightValues.entrySet()) {
                     if (!leftValues.containsKey(entry.getKey())) {
-                        crawlContents(model, startingShape, trait, shape.getValue(), null, entry.getValue(),
-                                      events, path + '/' + entry.getKey());
+                        crawlContents(model,
+                                startingShape,
+                                trait,
+                                shape.getValue(),
+                                null,
+                                entry.getValue(),
+                                events,
+                                path + '/' + entry.getKey());
                     }
                 }
             }
@@ -496,8 +519,14 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     Node leftValue = leftObj.getMember(member.getMemberName()).orElse(null);
                     Node rightValue = rightObj.getMember(member.getMemberName()).orElse(null);
                     if (leftValue != null || rightValue != null) {
-                        crawlContents(model, startingShape, trait, member, leftValue, rightValue,
-                                      events, path + '/' + member.getMemberName());
+                        crawlContents(model,
+                                startingShape,
+                                trait,
+                                member,
+                                leftValue,
+                                rightValue,
+                                events,
+                                path + '/' + member.getMemberName());
                     }
                 }
             }
@@ -508,7 +537,13 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             List<DiffStrategy> strategies = createStrategiesForShape(shape, false);
             for (DiffStrategy strategy : strategies) {
                 events.addAll(strategy.diffType.validate(
-                        model, path, startingShape, trait, leftValue, rightValue, strategy.severity));
+                        model,
+                        path,
+                        startingShape,
+                        trait,
+                        leftValue,
+                        rightValue,
+                        strategy.severity));
             }
 
             // Recursively continue to crawl the shape and model.

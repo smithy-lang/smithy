@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import java.util.ArrayList;
@@ -237,13 +226,20 @@ public final class NodePointer {
         } else {
             LOGGER.warning(() -> String.format(
                     "Attempted to add a value through JSON pointer `%s`, but segment %d targets %s",
-                    toString(), partPosition, Node.printJson(container)));
+                    toString(),
+                    partPosition,
+                    Node.printJson(container)));
             return container;
         }
     }
 
     private Node addObjectMember(
-            String part, boolean isLast, ObjectNode container, Node value, int partPosition, boolean intermediate) {
+            String part,
+            boolean isLast,
+            ObjectNode container,
+            Node value,
+            int partPosition,
+            boolean intermediate) {
         if (isLast) {
             return container.withMember(part, value);
         } else if (container.getMember(part).isPresent()) {
@@ -259,13 +255,20 @@ public final class NodePointer {
         } else {
             LOGGER.warning(() -> String.format(
                     "Attempted to add a value through JSON pointer `%s`, but `%s` could not be found in %s",
-                    toString(), part, Node.printJson(container)));
+                    toString(),
+                    part,
+                    Node.printJson(container)));
             return container;
         }
     }
 
     private Node addArrayMember(
-            String part, boolean isLast, ArrayNode container, Node value, int partPosition, boolean intermediate) {
+            String part,
+            boolean isLast,
+            ArrayNode container,
+            Node value,
+            int partPosition,
+            boolean intermediate) {
         if (!isLast) {
             // "-" is a special case for the last element.
             int partInt = part.equals("-") ? container.size() - 1 : parseIntPart(part);
@@ -300,7 +303,9 @@ public final class NodePointer {
     private void logInvalidArrayIndex(Node container, int partInt) {
         LOGGER.warning(() -> String.format(
                 "Attempted to add a value through JSON pointer `%s`, but index %d could not be set in %s",
-                toString(), partInt, Node.printJson(container)));
+                toString(),
+                partInt,
+                Node.printJson(container)));
     }
 
     private int parseIntPart(String part) {

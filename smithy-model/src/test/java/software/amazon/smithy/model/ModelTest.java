@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,9 +42,9 @@ public class ModelTest {
         Model model = Model.builder()
                 .putMetadataProperty("name.name", Node.objectNode())
                 .addShape(StringShape.builder()
-                                  .id("smithy.example#String")
-                                  .addTrait(TraitDefinition.builder().build())
-                                  .build())
+                        .id("smithy.example#String")
+                        .addTrait(TraitDefinition.builder().build())
+                        .build())
                 .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
@@ -79,11 +68,21 @@ public class ModelTest {
 
     @Test
     public void modelEqualityExamples() {
-        StructureShape opInput = StructureShape.builder().id(ShapeId.fromParts("foo", "FooInput")).addMember("test", ShapeId.from("smithy.api#String")).build();
+        StructureShape opInput = StructureShape.builder()
+                .id(ShapeId.fromParts("foo", "FooInput"))
+                .addMember("test", ShapeId.from("smithy.api#String"))
+                .build();
         Supplier<OperationShape> op = () -> {
-            ExamplesTrait.Example example = ExamplesTrait.Example.builder().title("anything").input(ObjectNode.builder().withMember("test", StringNode.from("something")).build()).build();
+            ExamplesTrait.Example example = ExamplesTrait.Example.builder()
+                    .title("anything")
+                    .input(ObjectNode.builder().withMember("test", StringNode.from("something")).build())
+                    .build();
             ExamplesTrait examples = ExamplesTrait.builder().addExample(example).build();
-            return OperationShape.builder().id(ShapeId.fromParts("foo", "Foo")).input(opInput).addTrait(examples).build();
+            return OperationShape.builder()
+                    .id(ShapeId.fromParts("foo", "Foo"))
+                    .input(opInput)
+                    .addTrait(examples)
+                    .build();
         };
 
         Model modelA = Model.builder()

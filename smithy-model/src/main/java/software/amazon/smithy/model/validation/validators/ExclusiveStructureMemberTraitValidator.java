@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -61,8 +50,7 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
     private void validateExclusiveMembers(
             Shape shape,
             Set<ShapeId> exclusiveMemberTraits,
-            List<ValidationEvent> events
-    ) {
+            List<ValidationEvent> events) {
         for (ShapeId traitId : exclusiveMemberTraits) {
             List<String> matches = new ArrayList<>();
             for (MemberShape member : shape.members()) {
@@ -72,11 +60,12 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
             }
 
             if (matches.size() > 1) {
-                events.add(error(shape, String.format(
-                        "The `%s` trait can be applied to only a single member of a shape, but it was found on "
-                        + "the following members: %s",
-                        Trait.getIdiomaticTraitName(traitId),
-                        ValidationUtils.tickedList(matches))));
+                events.add(error(shape,
+                        String.format(
+                                "The `%s` trait can be applied to only a single member of a shape, but it was found on "
+                                        + "the following members: %s",
+                                Trait.getIdiomaticTraitName(traitId),
+                                ValidationUtils.tickedList(matches))));
             }
         }
     }
@@ -85,8 +74,7 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
             Model model,
             Shape shape,
             Set<ShapeId> exclusiveTargets,
-            List<ValidationEvent> events
-    ) {
+            List<ValidationEvent> events) {
         // Find all member targets that violate the exclusion rule (e.g., streaming trait).
         for (ShapeId id : exclusiveTargets) {
             List<String> matches = new ArrayList<>();
@@ -97,11 +85,12 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
             }
 
             if (matches.size() > 1) {
-                events.add(error(shape, String.format(
-                        "Only a single member of a structure can target a shape marked with the `%s` trait, "
-                        + "but it was found on the following members: %s",
-                        Trait.getIdiomaticTraitName(id),
-                        ValidationUtils.tickedList(matches))));
+                events.add(error(shape,
+                        String.format(
+                                "Only a single member of a structure can target a shape marked with the `%s` trait, "
+                                        + "but it was found on the following members: %s",
+                                Trait.getIdiomaticTraitName(id),
+                                ValidationUtils.tickedList(matches))));
             }
         }
     }

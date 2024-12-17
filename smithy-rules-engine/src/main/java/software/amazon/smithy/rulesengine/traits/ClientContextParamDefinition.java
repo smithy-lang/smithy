@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -64,8 +63,7 @@ public final class ClientContextParamDefinition implements ToSmithyBuilder<Clien
         private ShapeType type;
         private String documentation;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder type(ShapeType type) {
             this.type = type;

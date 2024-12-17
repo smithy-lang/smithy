@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
@@ -49,11 +48,11 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     private final Shape shape;
     private final SymbolProvider symbolProvider;
 
-    ConstructorGenerator(TraitCodegenWriter writer,
-                         Symbol symbol,
-                         Shape shape,
-                         SymbolProvider symbolProvider
-    ) {
+    ConstructorGenerator(
+            TraitCodegenWriter writer,
+            Symbol symbol,
+            Shape shape,
+            SymbolProvider symbolProvider) {
         this.writer = writer;
         this.symbol = symbol;
         this.shape = shape;
@@ -68,13 +67,17 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     @Override
     public Void listShape(ListShape shape) {
         if (!shape.hasTrait(UniqueItemsTrait.class)
-                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
-        ) {
-            writer.openBlock("public $1T($1B values, $2T sourceLocation) {", "}",
-                    symbol, FromSourceLocation.class, () -> writer.write("super(ID, values, sourceLocation);"));
+                && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))) {
+            writer.openBlock("public $1T($1B values, $2T sourceLocation) {",
+                    "}",
+                    symbol,
+                    FromSourceLocation.class,
+                    () -> writer.write("super(ID, values, sourceLocation);"));
             writer.newLine();
 
-            writer.openBlock("public $1T($1B values) {", "}", symbol,
+            writer.openBlock("public $1T($1B values) {",
+                    "}",
+                    symbol,
                     () -> writer.write("super(ID, values, $T.NONE);", SourceLocation.class));
             writer.newLine();
         } else {
@@ -94,16 +97,23 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     public Void intEnumShape(IntEnumShape shape) {
         Symbol integerSymbol = TraitCodegenUtils.fromClass(Integer.class);
         // Constructor with no source location
-        writer.openBlock("public $T($T value) {", "}",
-                symbol, integerSymbol, () -> {
-            writer.write("super(ID, $T.NONE);", SourceLocation.class);
-            writer.writeWithNoFormatting("this.value = value;");
-        });
+        writer.openBlock("public $T($T value) {",
+                "}",
+                symbol,
+                integerSymbol,
+                () -> {
+                    writer.write("super(ID, $T.NONE);", SourceLocation.class);
+                    writer.writeWithNoFormatting("this.value = value;");
+                });
         writer.newLine();
 
         // Constructor with source location
-        writer.openBlock("public $T($T value, $T sourceLocation) {", "}",
-                symbol, integerSymbol, FromSourceLocation.class, () -> {
+        writer.openBlock("public $T($T value, $T sourceLocation) {",
+                "}",
+                symbol,
+                integerSymbol,
+                FromSourceLocation.class,
+                () -> {
                     writer.writeWithNoFormatting("super(ID, sourceLocation);");
                     writer.writeWithNoFormatting("this.value = value;");
                 });
@@ -113,8 +123,11 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
 
     @Override
     public Void documentShape(DocumentShape shape) {
-        writer.openBlock("public $T($T value) {", "}",
-                symbol, Node.class, () -> writer.writeWithNoFormatting("super(ID, value);"));
+        writer.openBlock("public $T($T value) {",
+                "}",
+                symbol,
+                Node.class,
+                () -> writer.writeWithNoFormatting("super(ID, value);"));
         writer.newLine();
         return null;
     }
@@ -173,8 +186,11 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
         writer.newLine();
 
         // Constructor with source location
-        writer.openBlock("public $1T($1B value, $2T sourceLocation) {", "}",
-                symbol, FromSourceLocation.class, () -> {
+        writer.openBlock("public $1T($1B value, $2T sourceLocation) {",
+                "}",
+                symbol,
+                FromSourceLocation.class,
+                () -> {
                     writer.writeWithNoFormatting("super(ID, sourceLocation);");
                     writer.writeWithNoFormatting("this.value = value;");
                 });
@@ -183,13 +199,18 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
 
     private void writeStringTraitConstructors() {
         // Without source location
-        writer.openBlock("public $T(String value) {", "}", symbol,
+        writer.openBlock("public $T(String value) {",
+                "}",
+                symbol,
                 () -> writer.write("super(ID, value, $T.NONE);", SourceLocation.class));
         writer.newLine();
 
         // With source location
-        writer.openBlock("public $T($T value, $T sourceLocation) {", "}",
-                symbol, String.class, FromSourceLocation.class,
+        writer.openBlock("public $T($T value, $T sourceLocation) {",
+                "}",
+                symbol,
+                String.class,
+                FromSourceLocation.class,
                 () -> writer.writeWithNoFormatting("super(ID, value, sourceLocation);"));
         writer.newLine();
     }
@@ -273,7 +294,9 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
                     writer.write("this.$L = $L;", symbolProvider.toMemberName(member), getBuilderValue(member));
                 } else {
                     writer.write("this.$1L = $2T.requiredState($1S, $3L);",
-                            symbolProvider.toMemberName(member), SmithyBuilder.class, getBuilderValue(member));
+                            symbolProvider.toMemberName(member),
+                            SmithyBuilder.class,
+                            getBuilderValue(member));
                 }
             }
             return null;

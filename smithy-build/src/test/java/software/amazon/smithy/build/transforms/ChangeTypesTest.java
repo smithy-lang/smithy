@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,9 +31,11 @@ public class ChangeTypesTest {
         Model model = Model.assembler().addShapes(a, b).assemble().unwrap();
         TransformContext context = TransformContext.builder()
                 .model(model)
-                .settings(Node.objectNode().withMember("shapeTypes", Node.objectNode()
-                        .withMember("ns.foo#a", "boolean")
-                        .withMember("ns.foo#b", "union")))
+                .settings(Node.objectNode()
+                        .withMember("shapeTypes",
+                                Node.objectNode()
+                                        .withMember("ns.foo#a", "boolean")
+                                        .withMember("ns.foo#b", "union")))
                 .build();
         Model result = new ChangeTypes().transform(context);
 
@@ -52,7 +58,8 @@ public class ChangeTypesTest {
 
         Model model = Model.assembler()
                 .addShape(initialShape)
-                .assemble().unwrap();
+                .assemble()
+                .unwrap();
 
         ObjectNode settings = Node.objectNode()
                 .withMember("shapeTypes", Node.objectNode().withMember(shapeId.toString(), "enum"))
@@ -66,10 +73,11 @@ public class ChangeTypesTest {
 
         assertThat(result.expectShape(shapeId).getType(), Matchers.is(ShapeType.ENUM));
         assertThat(result.expectShape(shapeId).members(), Matchers.hasSize(1));
-        assertThat(result.expectShape(shapeId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
-                .id(shapeId.withMember("foo_bar"))
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
-                .build()));
+        assertThat(result.expectShape(shapeId).members().iterator().next(),
+                Matchers.equalTo(MemberShape.builder()
+                        .id(shapeId.withMember("foo_bar"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                        .build()));
     }
 }

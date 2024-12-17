@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import static java.util.stream.Collectors.toList;
@@ -78,7 +67,8 @@ public final class ArnTemplateValidator extends AbstractValidator {
 
     // Validates the syntax of each template.
     private Optional<ValidationEvent> syntax(Shape shape, ArnTrait trait) {
-        List<String> invalid = trait.getLabels().stream()
+        List<String> invalid = trait.getLabels()
+                .stream()
                 .filter(expr -> !EXPRESSION_PATTERN.matcher(expr).find())
                 .collect(toList());
 
@@ -86,10 +76,13 @@ public final class ArnTemplateValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(shape, trait, String.format(
-                "aws.api#arn trait contains invalid template labels: %s. Template labels must match the "
-                + "following regular expression: %s",
-                tickedList(invalid), EXPRESSION_PATTERN.pattern())));
+        return Optional.of(error(shape,
+                trait,
+                String.format(
+                        "aws.api#arn trait contains invalid template labels: %s. Template labels must match the "
+                                + "following regular expression: %s",
+                        tickedList(invalid),
+                        EXPRESSION_PATTERN.pattern())));
     }
 
     // Ensures that a template does not contain extraneous resource identifiers.
@@ -97,10 +90,14 @@ public final class ArnTemplateValidator extends AbstractValidator {
         Set<String> templateCheck = new HashSet<>(trait.getLabels());
         templateCheck.removeAll(names);
         if (!templateCheck.isEmpty()) {
-            return Optional.of(error(shape, trait, String.format(
-                    "Invalid aws.api#arn trait resource, `%s`. Found template labels in the trait "
-                    + "that are not the names of the identifiers of the resource: %s. Extraneous identifiers: [%s]",
-                    trait.getTemplate(), names, tickedList(templateCheck))));
+            return Optional.of(error(shape,
+                    trait,
+                    String.format(
+                            "Invalid aws.api#arn trait resource, `%s`. Found template labels in the trait "
+                                    + "that are not the names of the identifiers of the resource: %s. Extraneous identifiers: [%s]",
+                            trait.getTemplate(),
+                            names,
+                            tickedList(templateCheck))));
         }
         return Optional.empty();
     }
@@ -110,10 +107,13 @@ public final class ArnTemplateValidator extends AbstractValidator {
         Set<String> identifierVars = new HashSet<>(names);
         identifierVars.removeAll(trait.getLabels());
         if (!identifierVars.isEmpty()) {
-            return Optional.of(error(shape, trait, String.format(
-                    "Invalid aws.api#arn trait resource, `%s`. The following resource identifier names "
-                    + "were missing from the `arn` template: %s",
-                    trait.getTemplate(), tickedList(identifierVars))));
+            return Optional.of(error(shape,
+                    trait,
+                    String.format(
+                            "Invalid aws.api#arn trait resource, `%s`. The following resource identifier names "
+                                    + "were missing from the `arn` template: %s",
+                            trait.getTemplate(),
+                            tickedList(identifierVars))));
         }
         return Optional.empty();
     }

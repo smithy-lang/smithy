@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import java.util.ArrayList;
@@ -298,7 +287,9 @@ final class Lexer {
         expect('"');
         String value = consumeInsideString();
         return new Token(TokenType.IDENTIFIER,
-                         new LiteralExpression(value, currentLine, currentColumn), currentLine, currentColumn);
+                new LiteralExpression(value, currentLine, currentColumn),
+                currentLine,
+                currentColumn);
     }
 
     private String consumeInsideString() {
@@ -414,8 +405,9 @@ final class Lexer {
                 skip();
                 String result = builder.toString();
                 return new Token(TokenType.LITERAL,
-                                 new LiteralExpression(result, currentLine, currentColumn),
-                                 currentLine, currentColumn);
+                        new LiteralExpression(result, currentLine, currentColumn),
+                        currentLine,
+                        currentColumn);
             } else {
                 builder.append(peek());
                 skip();

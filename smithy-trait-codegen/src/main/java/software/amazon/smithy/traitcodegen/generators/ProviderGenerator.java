@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
@@ -26,7 +25,6 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
-
 /**
  * Adds provider class to use as the {@link software.amazon.smithy.model.traits.TraitService} implementation for a
  * trait.
@@ -44,13 +42,12 @@ final class ProviderGenerator implements Runnable {
     private final SymbolProvider provider;
     private final Symbol traitSymbol;
 
-
-    ProviderGenerator(TraitCodegenWriter writer,
-                      Model model,
-                      Shape shape,
-                      SymbolProvider provider,
-                      Symbol traitSymbol
-    ) {
+    ProviderGenerator(
+            TraitCodegenWriter writer,
+            Model model,
+            Shape shape,
+            SymbolProvider provider,
+            Symbol traitSymbol) {
         this.writer = writer;
         this.model = model;
         this.shape = shape;
@@ -67,15 +64,20 @@ final class ProviderGenerator implements Runnable {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
-                    AbstractTrait.class, () -> {
-                generateProviderConstructor();
-                writer.newLine();
-                writer.override();
-                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
-                        Trait.class, ShapeId.class, Node.class,
-                        () -> writer.write("return new $T(value);", traitSymbol));
-            });
+            writer.openBlock("public static final class Provider extends $T.Provider {",
+                    "}",
+                    AbstractTrait.class,
+                    () -> {
+                        generateProviderConstructor();
+                        writer.newLine();
+                        writer.override();
+                        writer.openBlock("public $T createTrait($T target, $T value) {",
+                                "}",
+                                Trait.class,
+                                ShapeId.class,
+                                Node.class,
+                                () -> writer.write("return new $T(value);", traitSymbol));
+                    });
             return null;
         }
 
@@ -101,9 +103,12 @@ final class ProviderGenerator implements Runnable {
         public Void listShape(ListShape shape) {
             // If the trait is a string-only list we can use a simpler provider from the StringListTrait base class
             if (TraitCodegenUtils.isJavaStringList(shape, provider)) {
-                writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                        StringListTrait.class, traitSymbol,
-                        () -> writer.openBlock("public Provider() {", "}",
+                writer.openBlock("public static final class Provider extends $T.Provider<$T> {",
+                        "}",
+                        StringListTrait.class,
+                        traitSymbol,
+                        () -> writer.openBlock("public Provider() {",
+                                "}",
                                 () -> writer.write("super(ID, $T::new);", traitSymbol)));
             } else {
                 generateAbstractTraitProvider();
@@ -136,17 +141,23 @@ final class ProviderGenerator implements Runnable {
         }
 
         private void generateAbstractTraitProvider() {
-            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
-                    AbstractTrait.class, () -> {
-                generateProviderConstructor();
-                writer.override();
-                writer.openBlock("public $T createTrait($T target, $T value) {", "}",
-                        Trait.class, ShapeId.class, Node.class, () -> {
-                    writer.write("$1T result = $1T.fromNode(value);", traitSymbol);
-                    writer.writeWithNoFormatting("result.setNodeCache(value);");
-                    writer.writeWithNoFormatting("return result;");
-                });
-            });
+            writer.openBlock("public static final class Provider extends $T.Provider {",
+                    "}",
+                    AbstractTrait.class,
+                    () -> {
+                        generateProviderConstructor();
+                        writer.override();
+                        writer.openBlock("public $T createTrait($T target, $T value) {",
+                                "}",
+                                Trait.class,
+                                ShapeId.class,
+                                Node.class,
+                                () -> {
+                                    writer.write("$1T result = $1T.fromNode(value);", traitSymbol);
+                                    writer.writeWithNoFormatting("result.setNodeCache(value);");
+                                    writer.writeWithNoFormatting("return result;");
+                                });
+                    });
         }
 
         private void generateProviderConstructor() {
@@ -154,22 +165,31 @@ final class ProviderGenerator implements Runnable {
         }
 
         private void generateValueShapeProvider() {
-            writer.openBlock("public static final class Provider extends $T.Provider {", "}",
-                    AbstractTrait.class, () -> {
+            writer.openBlock("public static final class Provider extends $T.Provider {",
+                    "}",
+                    AbstractTrait.class,
+                    () -> {
                         generateProviderConstructor();
                         writer.override();
-                        writer.openBlock("public $T createTrait($T target, $T value) {", "}",
-                                Trait.class, ShapeId.class, Node.class,
+                        writer.openBlock("public $T createTrait($T target, $T value) {",
+                                "}",
+                                Trait.class,
+                                ShapeId.class,
+                                Node.class,
                                 () -> writer.write("return new $1T($2C, value.getSourceLocation());",
-                                    traitSymbol,
-                                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "value")))
-                        );
+                                        traitSymbol,
+                                        (Runnable) () -> shape
+                                                .accept(new FromNodeMapperVisitor(writer, model, "value"))));
                     });
         }
 
         private void generateStringShapeProvider() {
-            writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
-                    StringTrait.class, traitSymbol, () -> writer.openBlock("public Provider() {", "}",
+            writer.openBlock("public static final class Provider extends $T.Provider<$T> {",
+                    "}",
+                    StringTrait.class,
+                    traitSymbol,
+                    () -> writer.openBlock("public Provider() {",
+                            "}",
                             () -> writer.write("super(ID, $T::new);", traitSymbol)));
         }
     }

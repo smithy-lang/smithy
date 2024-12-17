@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.transforms;
 
 import java.util.ArrayList;
@@ -209,17 +198,18 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
     protected Model transformWithConfig(TransformContext context, Config config) {
         if (!config.getEventIdAllowList().isEmpty() && !config.getEventIdDenyList().isEmpty()) {
             throw new SmithyBuildException(getName() + ": cannot set both eventIdAllowList values and "
-                                           + "eventIdDenyList values at the same time");
+                    + "eventIdDenyList values at the same time");
         }
 
         if (!config.getNamespaceAllowList().isEmpty() && !config.getNamespaceDenyList().isEmpty()) {
             throw new SmithyBuildException(getName() + ": cannot set both namespaceAllowList values and "
-                                           + "namespaceDenyList values at the same time");
+                    + "namespaceDenyList values at the same time");
         }
 
         Model model = context.getModel();
         Set<String> removedValidators = getRemovedValidators(context, config);
-        List<ValidationEvent> suppressedEvents = context.getOriginalModelValidationEvents().stream()
+        List<ValidationEvent> suppressedEvents = context.getOriginalModelValidationEvents()
+                .stream()
                 .filter(event -> event.getSeverity() == Severity.SUPPRESSED)
                 .filter(event -> !removedValidators.contains(event.getId()))
                 .collect(Collectors.toList());
@@ -248,8 +238,8 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
 
         if (config.getRemoveUnused()) {
             LOGGER.info(() -> "Detected the removal of the following validators: "
-                              + originalValidators
-                              + ". Suppressions that refer to these validators will be removed.");
+                    + originalValidators
+                    + ". Suppressions that refer to these validators will be removed.");
         }
 
         return originalValidators;
@@ -275,8 +265,7 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             Model model,
             Config config,
             List<ValidationEvent> suppressedEvents,
-            ModelTransformer transformer
-    ) {
+            ModelTransformer transformer) {
 
         List<Shape> replacementShapes = new ArrayList<>();
         // First filter and '@suppress' traits that didn't suppress anything.
@@ -307,11 +296,11 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             Model model,
             Config config,
             List<ValidationEvent> suppressedEvents,
-            Set<String> removedValidators
-    ) {
+            Set<String> removedValidators) {
         // Next remove metadata suppressions that didn't suppress anything.
         ArrayNode suppressionsNode = model.getMetadata()
-                .getOrDefault("suppressions", Node.arrayNode()).expectArrayNode();
+                .getOrDefault("suppressions", Node.arrayNode())
+                .expectArrayNode();
         List<ObjectNode> updatedMetadataSuppressions = new ArrayList<>();
 
         for (Node suppressionNode : suppressionsNode) {

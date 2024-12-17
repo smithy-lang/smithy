@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.processor;
 
 import com.google.testing.compile.Compilation;
@@ -7,8 +11,6 @@ import com.google.testing.compile.JavaFileObjects;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static com.google.testing.compile.CompilationSubject.assertThat;
 
 /**
  * Test the {@link SmithyAnnotationProcessor}
@@ -45,7 +47,8 @@ public class AnnotationProcessorTest {
 
     @Test
     void ignoresFile() {
-        CompilationSubject.assertThat(compilation).hadNoteContaining("Executing processor: TestProcessorImplementation...");
+        CompilationSubject.assertThat(compilation)
+                .hadNoteContaining("Executing processor: TestProcessorImplementation...");
         CompilationSubject.assertThat(compilation).hadNoteContaining("Ignoring generated file: ");
         CompilationSubject.assertThat(compilation).hadNoteContaining("Ignored.ignored");
     }

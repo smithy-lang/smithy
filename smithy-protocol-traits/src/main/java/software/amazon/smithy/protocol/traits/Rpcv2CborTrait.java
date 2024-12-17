@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocol.traits;
 
 import java.util.ArrayList;
@@ -48,9 +47,11 @@ public final class Rpcv2CborTrait extends AbstractTrait implements ToSmithyBuild
     public static Rpcv2CborTrait fromNode(Node node) {
         Builder builder = builder().sourceLocation(node);
         ObjectNode objectNode = node.expectObjectNode();
-        objectNode.getArrayMember(HTTP).map(values -> Node.loadArrayOfString(HTTP, values))
+        objectNode.getArrayMember(HTTP)
+                .map(values -> Node.loadArrayOfString(HTTP, values))
                 .ifPresent(builder::http);
-        objectNode.getArrayMember(EVENT_STREAM_HTTP).map(values -> Node.loadArrayOfString(EVENT_STREAM_HTTP, values))
+        objectNode.getArrayMember(EVENT_STREAM_HTTP)
+                .map(values -> Node.loadArrayOfString(EVENT_STREAM_HTTP, values))
                 .ifPresent(builder::eventStreamHttp);
         return builder.build();
     }

@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.function.Consumer;
@@ -35,7 +24,7 @@ final class IdlNodeParser {
 
     private static final String SYNTACTIC_SHAPE_ID_TARGET = "SyntacticShapeIdTarget";
 
-    private IdlNodeParser() { }
+    private IdlNodeParser() {}
 
     /**
      * Expects that the current token is a valid Node, and parses it into a {@link Node} value.
@@ -63,8 +52,12 @@ final class IdlNodeParser {
      */
     static Node expectAndSkipNode(IdlModelLoader loader, SourceLocation location) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
-        IdlToken token = tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.NUMBER, IdlToken.IDENTIFIER,
-                                          IdlToken.LBRACE, IdlToken.LBRACKET);
+        IdlToken token = tokenizer.expect(IdlToken.STRING,
+                IdlToken.TEXT_BLOCK,
+                IdlToken.NUMBER,
+                IdlToken.IDENTIFIER,
+                IdlToken.LBRACE,
+                IdlToken.LBRACKET);
 
         switch (token) {
             case STRING:
@@ -98,8 +91,8 @@ final class IdlNodeParser {
     static Node createIdentifier(IdlModelLoader loader, String identifier, SourceLocation location) {
         Keyword keyword = Keyword.from(identifier);
         return keyword == null
-               ? createSyntacticShapeId(loader, identifier, location)
-               : keyword.createNode(location);
+                ? createSyntacticShapeId(loader, identifier, location)
+                : keyword.createNode(location);
     }
 
     private enum Keyword {
@@ -141,8 +134,7 @@ final class IdlNodeParser {
     private static Node createSyntacticShapeId(
             IdlModelLoader loader,
             String identifier,
-            SourceLocation location
-    ) {
+            SourceLocation location) {
         // Unquoted node values syntactically are assumed to be references to shapes. A lazy string node is
         // used because the shape ID may not be able to be resolved until after the entire model is loaded.
         Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(identifier, location);
@@ -156,8 +148,8 @@ final class IdlNodeParser {
                         .id(SYNTACTIC_SHAPE_ID_TARGET)
                         .severity(Severity.DANGER)
                         .message(String.format("Syntactic shape ID `%s` does not resolve to a valid shape ID: "
-                                               + "`%s`. Did you mean to quote this string? Are you missing a "
-                                               + "model file?", identifier, id))
+                                + "`%s`. Did you mean to quote this string? Are you missing a "
+                                + "model file?", identifier, id))
                         .sourceLocation(location)
                         .build();
             }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.smoketests.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -118,7 +122,8 @@ public class AwsSmokeTestModelTest {
                 .assemble()
                 .unwrap();
         SmokeTestsTrait trait = model.expectShape(ShapeId.from("com.foo#GetFoo")).expectTrait(SmokeTestsTrait.class);
-        SmokeTestCase awsCase = trait.getTestCases().stream()
+        SmokeTestCase awsCase = trait.getTestCases()
+                .stream()
                 .filter(testCase -> testCase.getId().equals("AwsVendorParamsCase"))
                 .findAny()
                 .get();

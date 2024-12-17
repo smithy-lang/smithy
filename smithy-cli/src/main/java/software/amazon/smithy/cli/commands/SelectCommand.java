@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.ArrayList;
@@ -77,18 +66,17 @@ final class SelectCommand implements Command {
         arguments.addReceiver(new Options());
 
         CommandAction action = HelpActionWrapper.fromCommand(
-            this,
-            parentCommandName,
-            this::getDocumentation,
-            new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader)
-        );
+                this,
+                parentCommandName,
+                this::getDocumentation,
+                new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
 
         return action.apply(arguments, env);
     }
 
     private String getDocumentation(ColorFormatter colors) {
         return "By default, each matching shape ID is printed to stdout on a new line. Pass --show or --show-traits "
-               + "to get JSON array output.";
+                + "to get JSON array output.";
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -110,9 +98,12 @@ final class SelectCommand implements Command {
                     SourceLocation source = match.getShape().getSourceLocation();
                     // Only shapes with a real source location add a file.
                     if (!source.getFilename().equals(SourceLocation.NONE.getFilename())) {
-                        builder.withMember("file", source.getFilename()
-                                                   + ':' + source.getLine()
-                                                   + ':' + source.getColumn());
+                        builder.withMember("file",
+                                source.getFilename()
+                                        + ':'
+                                        + source.getLine()
+                                        + ':'
+                                        + source.getColumn());
                     }
                 }
             },
@@ -124,9 +115,8 @@ final class SelectCommand implements Command {
                         ObjectNode.Builder varBuilder = Node.objectNodeBuilder();
                         for (Map.Entry<String, Set<Shape>> varEntry : match.entrySet()) {
                             varBuilder.withMember(
-                                varEntry.getKey(),
-                                sortShapeIds(varEntry.getValue()).map(Node::from).collect(ArrayNode.collect())
-                            );
+                                    varEntry.getKey(),
+                                    sortShapeIds(varEntry.getValue()).map(Node::from).collect(ArrayNode.collect()));
                         }
                         ObjectNode collectedVars = varBuilder.build();
                         builder.withMember("vars", collectedVars);
@@ -201,19 +191,25 @@ final class SelectCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--selector", null, "SELECTOR",
-                          "The Smithy selector to execute. Reads from STDIN when not provided.");
-            printer.param("--show", null, "DATA",
-                          "Displays additional top-level members in each match and forces JSON output. This parameter "
-                          + "accepts a comma-separated list of values, including 'type', 'file', and 'vars'. 'type' "
-                          + "adds a string member containing the shape type of each match. 'file' adds a string "
-                          + "member containing the absolute path to where the shape is defined followed by the line "
-                          + "number then column (e.g., '/path/example.smithy:10:1'). 'vars' adds an object containing "
-                          + "the variables that were captured when a shape was matched.");
-            printer.param("--show-traits", null, "TRAITS",
-                          "Returns JSON output that includes the values of specific traits applied to matched shapes, "
-                          + "stored in a 'traits' property. Provide a comma-separated list of trait shape IDs. "
-                          + "Prelude traits may omit a namespace (e.g., 'required' or 'smithy.api#required').");
+            printer.param("--selector",
+                    null,
+                    "SELECTOR",
+                    "The Smithy selector to execute. Reads from STDIN when not provided.");
+            printer.param("--show",
+                    null,
+                    "DATA",
+                    "Displays additional top-level members in each match and forces JSON output. This parameter "
+                            + "accepts a comma-separated list of values, including 'type', 'file', and 'vars'. 'type' "
+                            + "adds a string member containing the shape type of each match. 'file' adds a string "
+                            + "member containing the absolute path to where the shape is defined followed by the line "
+                            + "number then column (e.g., '/path/example.smithy:10:1'). 'vars' adds an object containing "
+                            + "the variables that were captured when a shape was matched.");
+            printer.param("--show-traits",
+                    null,
+                    "TRAITS",
+                    "Returns JSON output that includes the values of specific traits applied to matched shapes, "
+                            + "stored in a 'traits' property. Provide a comma-separated list of trait shape IDs. "
+                            + "Prelude traits may omit a namespace (e.g., 'required' or 'smithy.api#required').");
         }
 
         public Selector selector() {

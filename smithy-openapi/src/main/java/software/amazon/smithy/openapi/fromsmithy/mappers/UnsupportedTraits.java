@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.List;
@@ -45,10 +34,12 @@ public final class UnsupportedTraits implements OpenApiMapper {
 
     @Override
     public void before(Context<? extends Trait> context, OpenApi.Builder builder) {
-        List<Pair<ShapeId, List<String>>> violations = context.getModel().shapes()
-                .map(shape -> Pair.of(shape.getId(), TRAITS.stream()
-                        .filter(trait -> shape.findTrait(trait).isPresent())
-                        .collect(Collectors.toList())))
+        List<Pair<ShapeId, List<String>>> violations = context.getModel()
+                .shapes()
+                .map(shape -> Pair.of(shape.getId(),
+                        TRAITS.stream()
+                                .filter(trait -> shape.findTrait(trait).isPresent())
+                                .collect(Collectors.toList())))
                 .filter(pair -> pair.getRight().size() > 0)
                 .collect(Collectors.toList());
 
@@ -59,10 +50,12 @@ public final class UnsupportedTraits implements OpenApiMapper {
         StringBuilder message = new StringBuilder(
                 "Encountered unsupported Smithy traits when converting to OpenAPI:");
         violations.forEach(pair -> message.append(String.format(
-                " (`%s`: [%s])", pair.getLeft(), String.join(",", pair.getRight()))));
+                " (`%s`: [%s])",
+                pair.getLeft(),
+                String.join(",", pair.getRight()))));
         message.append(". While these traits may still be meaningful to clients and servers using the Smithy "
-                       + "model directly, they have no direct corollary in OpenAPI and can not be included in "
-                       + "the generated model.");
+                + "model directly, they have no direct corollary in OpenAPI and can not be included in "
+                + "the generated model.");
 
         if (context.getConfig().getIgnoreUnsupportedTraits()) {
             LOGGER.warning(message.toString());

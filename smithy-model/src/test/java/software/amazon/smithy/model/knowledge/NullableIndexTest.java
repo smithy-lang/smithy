@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -115,11 +104,13 @@ public class NullableIndexTest {
                 // Nullable because the target is boxed
                 .addMember("b", ShapeId.from("smithy.api#Boolean"))
                 // Nullable because the member is boxed
-                .addMember("c", ShapeId.from("smithy.api#PrimitiveBoolean"),
-                           b -> b.addTrait(new DefaultTrait(Node.nullNode())))
+                .addMember("c",
+                        ShapeId.from("smithy.api#PrimitiveBoolean"),
+                        b -> b.addTrait(new DefaultTrait(Node.nullNode())))
                 // Non-nullable due to the default trait with a zero value.
-                .addMember("d", ShapeId.from("smithy.api#PrimitiveBoolean"),
-                           b -> b.addTrait(new DefaultTrait(Node.from(false))))
+                .addMember("d",
+                        ShapeId.from("smithy.api#PrimitiveBoolean"),
+                        b -> b.addTrait(new DefaultTrait(Node.from(false))))
                 .addMember("e", ShapeId.from("smithy.api#Document"))
                 .build();
 
@@ -130,7 +121,7 @@ public class NullableIndexTest {
                 .assemble()
                 .unwrap();
 
-        return Arrays.asList(new Object[][]{
+        return Arrays.asList(new Object[][] {
                 {model, "smithy.api#String", true},
                 {model, "smithy.api#Blob", true},
                 {model, "smithy.api#Boolean", true},
@@ -185,19 +176,22 @@ public class NullableIndexTest {
             boolean bar,
             boolean baz,
             boolean bam,
-            boolean boo
-    ) {
+            boolean boo) {
         StringShape str = StringShape.builder().id("smithy.example#Str").build();
         StructureShape struct = StructureShape.builder()
                 .id("smithy.example#Struct")
                 // This member is technically invalid, but clientOptional takes precedent here
                 // over the default trait.
-                .addMember("foo", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
-                        .addTrait(new DefaultTrait(Node.from("a")))
-                        .build())
-                .addMember("bar", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
-                        .addTrait(new RequiredTrait())
-                        .build())
+                .addMember("foo",
+                        str.getId(),
+                        b -> b.addTrait(new ClientOptionalTrait())
+                                .addTrait(new DefaultTrait(Node.from("a")))
+                                .build())
+                .addMember("bar",
+                        str.getId(),
+                        b -> b.addTrait(new ClientOptionalTrait())
+                                .addTrait(new RequiredTrait())
+                                .build())
                 .addMember("baz", str.getId(), b -> b.addTrait(new ClientOptionalTrait()).build())
                 .addMember("bam", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
                 .addMember("boo", str.getId(), b -> b.addTrait(new DefaultTrait(Node.from("boo"))).build())
@@ -215,9 +209,8 @@ public class NullableIndexTest {
 
     public static Stream<Arguments> nullableTraitTests() {
         return Stream.of(
-            Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true, false, false),
-            Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true, false, false)
-        );
+                Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true, false, false),
+                Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true, false, false));
     }
 
     @ParameterizedTest
@@ -242,9 +235,8 @@ public class NullableIndexTest {
 
     public static Stream<Arguments> inputTraitTests() {
         return Stream.of(
-            Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true),
-            Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true)
-        );
+                Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true),
+                Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true));
     }
 
     @Test
@@ -425,9 +417,9 @@ public class NullableIndexTest {
         NullableIndex index = NullableIndex.of(model);
 
         assertThat(index.isMemberNullable(outer.getMember("a").get(), NullableIndex.CheckMode.CLIENT_CAREFUL),
-                   is(true));
+                is(true));
         assertThat(index.isMemberNullable(outer.getMember("b").get(), NullableIndex.CheckMode.CLIENT_CAREFUL),
-                   is(true));
+                is(true));
     }
 
     @Test
@@ -488,9 +480,9 @@ public class NullableIndexTest {
         assertThat(index.isNullable(ShapeId.from("smithy.example#Baz$bam")), is(false));
 
         assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Baz$bar"), MemberShape.class)),
-                   is(false));
+                is(false));
         assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Baz$bam"), MemberShape.class)),
-                   is(false));
+                is(false));
     }
 
     @Test
@@ -521,7 +513,7 @@ public class NullableIndexTest {
 
         // In v2 based semantics and tools, the addedDefault trait is ignored.
         assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
-                   is(false));
+                is(false));
     }
 
     // The required trait makes this non-nullable. The default(null) trait just means that there's no default value,
@@ -531,11 +523,11 @@ public class NullableIndexTest {
     public void requiredMembersAreNonNullableEvenIfDefaultNullTraitIsPresent() {
         String modelText =
                 "$version: \"2.0\"\n"
-                + "namespace smithy.example\n"
-                + "structure Foo {\n"
-                + "    @required\n"
-                + "    baz: Integer = null\n"
-                + "}\n";
+                        + "namespace smithy.example\n"
+                        + "structure Foo {\n"
+                        + "    @required\n"
+                        + "    baz: Integer = null\n"
+                        + "}\n";
         Model model = Model.assembler()
                 .addUnparsedModel("foo.smithy", modelText)
                 .assemble()
@@ -544,8 +536,7 @@ public class NullableIndexTest {
         NullableIndex index = NullableIndex.of(model);
 
         assertThat(
-            index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
-            is(false)
-        );
+                index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
+                is(false));
     }
 }

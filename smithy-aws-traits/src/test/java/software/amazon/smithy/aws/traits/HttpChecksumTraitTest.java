@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,7 +32,7 @@ public class HttpChecksumTraitTest {
 
         List<String> algorithms = new ArrayList<>(Arrays.asList("CRC64NVME", "CRC32C", "CRC32", "SHA1", "SHA256"));
         List<Node> responseAlgorithmNodes = new ArrayList<>();
-        for (String algorithm: algorithms) {
+        for (String algorithm : algorithms) {
             responseAlgorithmNodes.add(Node.from(algorithm));
         }
 
@@ -54,7 +43,9 @@ public class HttpChecksumTraitTest {
                 .withMember("responseAlgorithms", ArrayNode.fromNodes(responseAlgorithmNodes));
 
         Optional<Trait> trait = provider.createTrait(
-                ShapeId.from("aws.protocols#httpChecksum"), ShapeId.from("ns.qux#foo"), node);
+                ShapeId.from("aws.protocols#httpChecksum"),
+                ShapeId.from("ns.qux#foo"),
+                node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(HttpChecksumTrait.class));
         HttpChecksumTrait checksumTrait = (HttpChecksumTrait) trait.get();
@@ -62,8 +53,12 @@ public class HttpChecksumTraitTest {
         assertThat(checksumTrait.isRequestChecksumRequired(), is(true));
         assertThat(checksumTrait.getRequestAlgorithmMember().get(), equalTo("ChecksumAlgorithm"));
         assertThat(checksumTrait.getRequestValidationModeMember().get(), equalTo("ChecksumMode"));
-        assertThat(checksumTrait.getResponseAlgorithms(), containsInRelativeOrder("CRC64NVME", "CRC32C", "CRC32",
-                "SHA1", "SHA256"));
+        assertThat(checksumTrait.getResponseAlgorithms(),
+                containsInRelativeOrder("CRC64NVME",
+                        "CRC32C",
+                        "CRC32",
+                        "SHA1",
+                        "SHA256"));
 
         assertThat(node.expectBooleanMember("requestChecksumRequired"), equalTo(BooleanNode.from(true)));
         assertThat(node.expectStringMember("requestAlgorithmMember"), equalTo(Node.from("ChecksumAlgorithm")));

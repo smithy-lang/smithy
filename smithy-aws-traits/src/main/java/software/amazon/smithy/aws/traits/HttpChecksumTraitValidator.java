@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import static java.lang.String.format;
@@ -80,8 +69,10 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                 !trait.getResponseAlgorithms().isEmpty() || trait.getRequestValidationModeMember().isPresent();
 
         if (!isRequestChecksumConfiguration && !isResponseChecksumConfiguration) {
-            return ListUtils.of(error(operation, trait, "The `httpChecksum` trait must define at least one of the"
-                    + " `request` or `response` checksum behaviors."));
+            return ListUtils.of(error(operation,
+                    trait,
+                    "The `httpChecksum` trait must define at least one of the"
+                            + " `request` or `response` checksum behaviors."));
         }
 
         List<ValidationEvent> events = new ArrayList<>();
@@ -104,8 +95,7 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input
-    ) {
+            StructureShape input) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate the requestAlgorithmMember is set properly for request behavior.
@@ -121,12 +111,16 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input
-    ) {
+            StructureShape input) {
         // Validate that requestAlgorithmMember, if present, targets a properly configured member.
         if (trait.getRequestAlgorithmMember().isPresent()) {
-            return validateEnumMember(model, trait, HttpChecksumTrait.REQUEST_ALGORITHM_MEMBER, operation, input,
-                    trait.getRequestAlgorithmMember().get(), HttpChecksumTrait.CHECKSUM_ALGORITHMS);
+            return validateEnumMember(model,
+                    trait,
+                    HttpChecksumTrait.REQUEST_ALGORITHM_MEMBER,
+                    operation,
+                    input,
+                    trait.getRequestAlgorithmMember().get(),
+                    HttpChecksumTrait.CHECKSUM_ALGORITHMS);
         }
         return Optional.empty();
     }
@@ -139,13 +133,14 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             OperationShape operation,
             StructureShape input,
             String memberName,
-            List<String> supportedValues
-    ) {
+            List<String> supportedValues) {
         Optional<MemberShape> member = input.getMember(memberName);
         // There's no member that matches the configured name.
         if (!member.isPresent()) {
-            return Optional.of(error(operation, trait, format("The `%s` property of the `httpChecksum` trait targets"
-                    + " a member that does not exist.", traitProperty)));
+            return Optional.of(error(operation,
+                    trait,
+                    format("The `%s` property of the `httpChecksum` trait targets"
+                            + " a member that does not exist.", traitProperty)));
         }
 
         // Validate the enum contains only supported values.
@@ -159,8 +154,10 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             }
         } else {
             // This member does not have an enum trait.
-            return Optional.of(error(operation, trait, format("The `%s` property of the `httpChecksum` trait targets"
-                    + " a member that does not resolve an `enum` trait.", traitProperty)));
+            return Optional.of(error(operation,
+                    trait,
+                    format("The `%s` property of the `httpChecksum` trait targets"
+                            + " a member that does not resolve an `enum` trait.", traitProperty)));
         }
 
         // Valid enum target containing only supported values.
@@ -169,9 +166,12 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
         }
 
         // The member has an enum that contains unsupported values.
-        return Optional.of(error(operation, trait, format("The `%s` property of the `httpChecksum` trait targets"
-                + " a member with an `enum` trait that contains unsupported values: %s",
-                traitProperty, ValidationUtils.tickedList(unsupportedValues))));
+        return Optional.of(error(operation,
+                trait,
+                format("The `%s` property of the `httpChecksum` trait targets"
+                        + " a member with an `enum` trait that contains unsupported values: %s",
+                        traitProperty,
+                        ValidationUtils.tickedList(unsupportedValues))));
     }
 
     private List<ValidationEvent> validateHeaderConflicts(OperationShape operation, StructureShape containerShape) {
@@ -188,11 +188,16 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                         if (HttpChecksumTrait.CHECKSUM_PREFIX.startsWith(headerPrefix)) {
                             String memberName = member.getId().getName();
                             String prefixString = headerPrefix.toLowerCase(Locale.US);
-                            events.add(danger(operation, format("The `httpPrefixHeaders` binding of `%s` uses"
-                                                    + " the prefix `%s` that conflicts with the prefix `%s` used by the"
-                                                    + " `httpChecksum` trait.",
-                                                memberName, prefixString, HttpChecksumTrait.CHECKSUM_PREFIX),
-                                    "HttpPrefixHeaders", memberName, prefixString));
+                            events.add(danger(operation,
+                                    format("The `httpPrefixHeaders` binding of `%s` uses"
+                                            + " the prefix `%s` that conflicts with the prefix `%s` used by the"
+                                            + " `httpChecksum` trait.",
+                                            memberName,
+                                            prefixString,
+                                            HttpChecksumTrait.CHECKSUM_PREFIX),
+                                    "HttpPrefixHeaders",
+                                    memberName,
+                                    prefixString));
                         }
                     });
 
@@ -205,10 +210,15 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                         if (headerName.startsWith(HttpChecksumTrait.CHECKSUM_PREFIX)) {
                             String memberName = member.getId().getName();
                             String headerString = headerName.toLowerCase(Locale.US);
-                            events.add(warning(operation, format("The `httpHeader` binding of `%s` on `%s`"
-                                                    + " starts with the prefix `%s` used by the `httpChecksum` trait.",
-                                                headerString, memberName, HttpChecksumTrait.CHECKSUM_PREFIX),
-                                    "HttpHeader", memberName, headerString));
+                            events.add(warning(operation,
+                                    format("The `httpHeader` binding of `%s` on `%s`"
+                                            + " starts with the prefix `%s` used by the `httpChecksum` trait.",
+                                            headerString,
+                                            memberName,
+                                            HttpChecksumTrait.CHECKSUM_PREFIX),
+                                    "HttpHeader",
+                                    memberName,
+                                    headerString));
                         }
                     });
         }
@@ -219,22 +229,25 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input
-    ) {
+            StructureShape input) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate requestValidationModeMember is set properly for response behavior.
         if (!trait.getRequestValidationModeMember().isPresent()) {
-            events.add(error(operation, trait, "The `httpChecksum` trait must model the"
-                    + " `requestValidationModeMember` property to support response checksum behavior."));
+            events.add(error(operation,
+                    trait,
+                    "The `httpChecksum` trait must model the"
+                            + " `requestValidationModeMember` property to support response checksum behavior."));
         } else {
             validateValidationModeMember(model, trait, operation, input).map(events::add);
         }
 
         // Validate responseAlgorithms is not empty.
         if (trait.getResponseAlgorithms().isEmpty()) {
-            events.add(error(operation, trait, "The `httpChecksum` trait must model the"
-                    + " `responseAlgorithms` property to support response checksum behavior."));
+            events.add(error(operation,
+                    trait,
+                    "The `httpChecksum` trait must model the"
+                            + " `responseAlgorithms` property to support response checksum behavior."));
         }
 
         // Check for header binding conflicts with the output shape.
@@ -257,10 +270,14 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
             Model model,
             HttpChecksumTrait trait,
             OperationShape operation,
-            StructureShape input
-    ) {
+            StructureShape input) {
         // Validate that requestValidationModeMember, which we've found already, targets a properly configured member.
-        return validateEnumMember(model, trait, HttpChecksumTrait.REQUEST_VALIDATION_MODE_MEMBER, operation, input,
-                trait.getRequestValidationModeMember().get(), HttpChecksumTrait.VALIDATION_MODES);
+        return validateEnumMember(model,
+                trait,
+                HttpChecksumTrait.REQUEST_VALIDATION_MODE_MEMBER,
+                operation,
+                input,
+                trait.getRequestValidationModeMember().get(),
+                HttpChecksumTrait.VALIDATION_MODES);
     }
 }

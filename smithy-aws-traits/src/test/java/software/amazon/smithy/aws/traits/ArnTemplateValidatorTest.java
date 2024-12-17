@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,13 +56,15 @@ public class ArnTemplateValidatorTest {
         List<ValidationEvent> events = result.getValidationEvents(Severity.ERROR);
         events.sort(Comparator.comparing(event -> event.getShapeId().get().toString()));
 
-        assertThat(events.get(0).getMessage(), equalTo(
-                "Invalid aws.api#arn trait resource, `a/{aid}/{InvalidId}/{InvalidId2}`. Found template "
-                + "labels in the trait that are not the names of the identifiers of the resource: [aid]. "
-                + "Extraneous identifiers: [`InvalidId`, `InvalidId2`]"));
-        assertThat(events.get(1).getMessage(), containsString(
-                "Invalid aws.api#arn trait resource, `a/{aid}/{InvalidId}/{InvalidId2}/b/{bid}/{AnotherInvalid}`. "
-                + "Found template labels in the trait that are not the names of the identifiers of the resource"));
+        assertThat(events.get(0).getMessage(),
+                equalTo(
+                        "Invalid aws.api#arn trait resource, `a/{aid}/{InvalidId}/{InvalidId2}`. Found template "
+                                + "labels in the trait that are not the names of the identifiers of the resource: [aid]. "
+                                + "Extraneous identifiers: [`InvalidId`, `InvalidId2`]"));
+        assertThat(events.get(1).getMessage(),
+                containsString(
+                        "Invalid aws.api#arn trait resource, `a/{aid}/{InvalidId}/{InvalidId2}/b/{bid}/{AnotherInvalid}`. "
+                                + "Found template labels in the trait that are not the names of the identifiers of the resource"));
     }
 
     @Test
@@ -83,6 +74,6 @@ public class ArnTemplateValidatorTest {
         assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
         List<ValidationEvent> events = result.getValidationEvents(Severity.ERROR);
         assertThat(events.get(0).getMessage(),
-                   containsString("aws.api#arn trait contains invalid template labels"));
+                containsString("aws.api#arn trait contains invalid template labels"));
     }
 }

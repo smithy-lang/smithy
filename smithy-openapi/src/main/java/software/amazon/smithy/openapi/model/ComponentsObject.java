@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
@@ -85,43 +74,59 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
         ObjectNode.Builder builder = Node.objectNodeBuilder();
 
         if (!schemas.isEmpty()) {
-            builder.withMember("schemas", schemas.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("schemas",
+                    schemas.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!responses.isEmpty()) {
-            builder.withMember("responses", responses.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("responses",
+                    responses.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!parameters.isEmpty()) {
-            builder.withMember("parameters", parameters.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("parameters",
+                    parameters.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!requestBodies.isEmpty()) {
-            builder.withMember("requestBodies", requestBodies.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("requestBodies",
+                    requestBodies.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!headers.isEmpty()) {
-            builder.withMember("headers", headers.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("headers",
+                    headers.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!securitySchemes.isEmpty()) {
-            builder.withMember("securitySchemes", securitySchemes.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("securitySchemes",
+                    securitySchemes.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!links.isEmpty()) {
-            builder.withMember("links", links.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("links",
+                    links.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         if (!callbacks.isEmpty()) {
-            builder.withMember("callbacks", callbacks.entrySet().stream()
-                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+            builder.withMember("callbacks",
+                    callbacks.entrySet()
+                            .stream()
+                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
         return builder;

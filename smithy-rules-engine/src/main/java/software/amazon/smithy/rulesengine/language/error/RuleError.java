@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.error;
 
 import java.util.ArrayList;
@@ -83,8 +82,7 @@ public final class RuleError extends RuntimeException {
     public static <T> T context(
             String message,
             FromSourceLocation sourceLocation,
-            Evaluator<T> runnable
-    ) throws RuleError {
+            Evaluator<T> runnable) throws RuleError {
         try {
             return runnable.call();
         } catch (SourceException ex) {
@@ -132,9 +130,11 @@ public final class RuleError extends RuntimeException {
 
         message.append(root.getMessageWithoutLocation());
         if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
-            message.append(System.lineSeparator()).append("  at ")
+            message.append(System.lineSeparator())
+                    .append("  at ")
                     .append(root.getSourceLocation().getFilename())
-                    .append(":").append(root.getSourceLocation().getLine());
+                    .append(":")
+                    .append(root.getSourceLocation().getLine());
         }
         return message.toString();
     }

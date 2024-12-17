@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -50,13 +39,18 @@ public final class ServiceRename extends AbstractDiffEvaluator {
                     for (Map.Entry<ShapeId, String> old : oldShape.getRename().entrySet()) {
                         String newValue = newShape.getRename().get(old.getKey());
                         if (newValue == null) {
-                            events.add(error(newShape, String.format(
-                                    "Service rename of `%s` to `%s` was removed",
-                                    old.getKey(), old.getValue())));
+                            events.add(error(newShape,
+                                    String.format(
+                                            "Service rename of `%s` to `%s` was removed",
+                                            old.getKey(),
+                                            old.getValue())));
                         } else if (!old.getValue().equals(newValue)) {
-                            events.add(error(newShape, String.format(
-                                    "Service rename of `%s` was changed from `%s` to `%s`",
-                                    old.getKey(), old.getValue(), newValue)));
+                            events.add(error(newShape,
+                                    String.format(
+                                            "Service rename of `%s` was changed from `%s` to `%s`",
+                                            old.getKey(),
+                                            old.getValue(),
+                                            newValue)));
                         }
                     }
 
@@ -65,9 +59,11 @@ public final class ServiceRename extends AbstractDiffEvaluator {
                     for (Map.Entry<ShapeId, String> newEntry : newShape.getRename().entrySet()) {
                         if (!oldShape.getRename().containsKey(newEntry.getKey())) {
                             if (oldClosure.contains(newEntry.getKey())) {
-                                events.add(error(newShape, String.format(
-                                        "Service rename of `%s` to `%s` was added to an old shape",
-                                        newEntry.getKey(), newEntry.getValue())));
+                                events.add(error(newShape,
+                                        String.format(
+                                                "Service rename of `%s` to `%s` was added to an old shape",
+                                                newEntry.getKey(),
+                                                newEntry.getValue())));
                             }
                         }
                     }

@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static java.lang.String.format;
@@ -93,8 +82,11 @@ final class MigrateCommand implements Command {
             @Override
             public int execute(Arguments arguments, Env env) {
                 if (!arguments.getReceiver(StandardOptions.class).quiet()) {
-                    env.colors().style(env.stderr(), "upgrade-1-to-2 is deprecated. Use the migrate command instead."
-                                                     + System.lineSeparator(), ColorTheme.DEPRECATED);
+                    env.colors()
+                            .style(env.stderr(),
+                                    "upgrade-1-to-2 is deprecated. Use the migrate command instead."
+                                            + System.lineSeparator(),
+                                    ColorTheme.DEPRECATED);
                     env.stderr().flush();
                 }
                 return command.execute(arguments, env);
@@ -123,7 +115,9 @@ final class MigrateCommand implements Command {
         arguments.addReceiver(new BuildOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(
-                this, parentCommandName, this::run);
+                this,
+                parentCommandName,
+                this::run);
 
         return action.apply(arguments, env);
     }
@@ -186,7 +180,6 @@ final class MigrateCommand implements Command {
             // Replace existing models with upgraded models for a Smithy IDL model file
             assembler.addUnparsedModel(modelFilePath.toAbsolutePath().toString(), upgradedModelString);
         }
-
 
         try {
             assembler.assemble().validate();
@@ -309,7 +302,8 @@ final class MigrateCommand implements Command {
                 addDefault(shape, shape.getType());
             }
             // Handle members in reverse definition order.
-            shape.members().stream()
+            shape.members()
+                    .stream()
                     .sorted(Comparator.comparing(Shape::getSourceLocation).reversed())
                     .forEach(this::handleMemberShape);
             return null;
@@ -414,7 +408,8 @@ final class MigrateCommand implements Command {
             // Build a faux model that only contains the enum we want to write.
             Model model = Model.assembler()
                     .addShapes(stripped)
-                    .assemble().unwrap();
+                    .assemble()
+                    .unwrap();
 
             // Use existing conversion tools to convert it to an enum shape,
             // then serialize it using the idl serializer.

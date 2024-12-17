@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
@@ -75,8 +64,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
             Context<? extends Trait> context,
             Shape shape,
             SecuritySchemeConverter<? extends Trait> converter,
-            Map<String, List<String>> requirement
-    ) {
+            Map<String, List<String>> requirement) {
         // Only modify requirements that exactly match the updated scheme.
         if (requirement.size() != 1
                 || !requirement.keySet().iterator().next().equals(converter.getOpenApiAuthSchemeName())) {
@@ -99,8 +87,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
             OperationShape shape,
             OperationObject operation,
             String httpMethodName,
-            String path
-    ) {
+            String path) {
         ServiceShape service = context.getService();
         AuthorizerIndex authorizerIndex = AuthorizerIndex.of(context.getModel());
 
@@ -146,7 +133,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
-        return context.getService().getTrait(AuthorizersTrait.class)
+        return context.getService()
+                .getTrait(AuthorizersTrait.class)
                 .map(authorizers -> addComputedAuthorizers(context, openapi, authorizers))
                 .orElse(openapi);
     }
@@ -154,8 +142,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
     private OpenApi addComputedAuthorizers(
             Context<? extends Trait> context,
             OpenApi openApi,
-            AuthorizersTrait trait
-    ) {
+            AuthorizersTrait trait) {
         OpenApi.Builder builder = openApi.toBuilder();
         ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
@@ -180,18 +167,16 @@ final class AddAuthorizers implements ApiGatewayMapper {
     private boolean isAuthConverterMatched(
             Context<? extends Trait> context,
             SecuritySchemeConverter<? extends Trait> converter,
-            ShapeId scheme
-    ) {
+            ShapeId scheme) {
         return converter.getAuthSchemeId().equals(scheme)
-               && context.getService().hasTrait(converter.getAuthSchemeType());
+                && context.getService().hasTrait(converter.getAuthSchemeType());
     }
 
     private <T extends Trait> SecurityScheme convertAuthScheme(
             Context<? extends Trait> context,
             SecuritySchemeConverter<T> converter,
             AuthorizerDefinition authorizer,
-            String authorizerName
-    ) {
+            String authorizerName) {
         T authTrait = context.getService().expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
@@ -213,14 +198,14 @@ final class AddAuthorizers implements ApiGatewayMapper {
                 .withOptionalMember("authorizerUri", authorizer.getUri().map(Node::from))
                 .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
                 .withOptionalMember("identityValidationExpression",
-                                    authorizer.getIdentityValidationExpression().map(Node::from))
+                        authorizer.getIdentityValidationExpression().map(Node::from))
                 .withOptionalMember("identitySource", authorizer.getIdentitySource().map(Node::from))
                 .withOptionalMember("authorizerResultTtlInSeconds",
-                                    authorizer.getResultTtlInSeconds().map(Node::from))
+                        authorizer.getResultTtlInSeconds().map(Node::from))
                 .withOptionalMember("authorizerPayloadFormatVersion",
-                                    authorizer.getAuthorizerPayloadFormatVersion().map(Node::from))
+                        authorizer.getAuthorizerPayloadFormatVersion().map(Node::from))
                 .withOptionalMember("enableSimpleResponses",
-                                    authorizer.getEnableSimpleResponses().map(Node::from))
+                        authorizer.getEnableSimpleResponses().map(Node::from))
                 .build();
         if (authorizerNode.size() != 0) {
             schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);

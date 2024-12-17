@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.util.Collections;
@@ -49,11 +48,11 @@ public final class TraitCodegenSettings {
      * @param excludeTags smithy tags to exclude from trait code generation. Traits with these tags will be
      *                    ignored when generating java classes.
      */
-    TraitCodegenSettings(String packageName,
-                         String smithyNamespace,
-                         List<String> headerLines,
-                         List<String> excludeTags
-    ) {
+    TraitCodegenSettings(
+            String packageName,
+            String smithyNamespace,
+            List<String> headerLines,
+            List<String> excludeTags) {
         this.packageName = Objects.requireNonNull(packageName);
         if (packageName.startsWith(SMITHY_MODEL_NAMESPACE)) {
             throw new IllegalArgumentException("The `software.amazon.smithy` package namespace is reserved.");
@@ -80,8 +79,7 @@ public final class TraitCodegenSettings {
                         .getElementsAs(el -> el.expectStringNode().getValue()),
                 node.getArrayMember("excludeTags")
                         .map(n -> n.getElementsAs(el -> el.expectStringNode().getValue()))
-                        .orElse(Collections.emptyList())
-        );
+                        .orElse(Collections.emptyList()));
     }
 
     /**

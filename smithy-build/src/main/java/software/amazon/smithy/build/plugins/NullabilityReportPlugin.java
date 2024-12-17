@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.plugins;
 
 import software.amazon.smithy.build.PluginContext;
@@ -65,16 +54,16 @@ public final class NullabilityReportPlugin implements SmithyBuildPlugin {
                     entry.withMember("v1", index.isNullable(member));
                     entry.withMember("v1-via-box", member.getMemberTrait(model, BoxTrait.class).isPresent());
                     entry.withMember("v2-client",
-                                     index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT));
+                            index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT));
                     entry.withMember("v2-client-careful",
-                                     index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_CAREFUL));
+                            index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_CAREFUL));
                     entry.withMember("v2-client-zero-value",
-                                     index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1));
+                            index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1));
                     entry.withMember("v2-client-zero-value-no-input",
-                                     index.isMemberNullable(member,
-                                                            NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1_NO_INPUT));
+                            index.isMemberNullable(member,
+                                    NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1_NO_INPUT));
                     entry.withMember("v2-server",
-                                     index.isMemberNullable(member, NullableIndex.CheckMode.SERVER));
+                            index.isMemberNullable(member, NullableIndex.CheckMode.SERVER));
                     struct.withMember(member.getMemberName(), entry.build());
                 }
                 root.withMember(structure.getId().toString(), struct.build());

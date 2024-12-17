@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.Collections;
@@ -58,7 +57,8 @@ public final class IsSet extends LibraryFunction {
         Type type = arg.typeCheck(scope);
         if (!type.isA(Type.optionalType(Type.anyType()))) {
             throw new RuntimeException(String.format("Expected %s but found %s",
-                    Type.optionalType(Type.anyType()), type));
+                    Type.optionalType(Type.anyType()),
+                    type));
         }
 
         // Insert the non-null fact, but only for references.

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -68,9 +67,9 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
         }
         EndpointTestOperationInput that = (EndpointTestOperationInput) o;
         return getOperationName().equals(that.getOperationName())
-               && Objects.equals(getOperationParams(), that.getOperationParams())
-               && Objects.equals(getBuiltInParams(), that.getBuiltInParams())
-               && Objects.equals(getClientParams(), that.getClientParams());
+                && Objects.equals(getOperationParams(), that.getOperationParams())
+                && Objects.equals(getBuiltInParams(), that.getBuiltInParams())
+                && Objects.equals(getClientParams(), that.getClientParams());
     }
 
     @Override

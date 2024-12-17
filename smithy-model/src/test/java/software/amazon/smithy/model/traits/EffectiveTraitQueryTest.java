@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,7 +17,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 public class EffectiveTraitQueryTest {
     @Test
     public void detectsTraitOnShape() {
-        Shape stringShape = StringShape.builder().id("foo.bar#Baz")
+        Shape stringShape = StringShape.builder()
+                .id("foo.bar#Baz")
                 .addTrait(new SensitiveTrait())
                 .build();
         Model model = Model.builder()
@@ -29,7 +34,8 @@ public class EffectiveTraitQueryTest {
 
     @Test
     public void detectsTraitOnMemberTarget() {
-        Shape stringShape = StringShape.builder().id("foo.bar#Baz")
+        Shape stringShape = StringShape.builder()
+                .id("foo.bar#Baz")
                 .addTrait(new SensitiveTrait())
                 .build();
         ListShape list = ListShape.builder().id("foo.bar#List").member(stringShape.getId()).build();

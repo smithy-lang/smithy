@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.testrunner;
 
 import static java.lang.String.format;
@@ -139,10 +128,10 @@ public final class SmithyTestCase {
 
         String comparedMessage = normalizeMessage(expected.getMessage());
         return expected.getSeverity() == actual.getSeverity()
-               && actual.containsId(expected.getId())
-               && expected.getShapeId().equals(actual.getShapeId())
-               // Normalize new lines.
-               && normalizedActualMessage.startsWith(comparedMessage);
+                && actual.containsId(expected.getId())
+                && expected.getShapeId().equals(actual.getShapeId())
+                // Normalize new lines.
+                && normalizedActualMessage.startsWith(comparedMessage);
     }
 
     // Newlines in persisted validation events are escaped.
@@ -152,9 +141,9 @@ public final class SmithyTestCase {
 
     private boolean isModelDeprecationEvent(ValidationEvent event) {
         return event.containsId(Validator.MODEL_DEPRECATION)
-               // Trait vendors should be free to deprecate a trait without breaking consumers.
-               || event.containsId("DeprecatedTrait")
-               || event.containsId("DeprecatedShape");
+                // Trait vendors should be free to deprecate a trait without breaking consumers.
+                || event.containsId("DeprecatedTrait")
+                || event.containsId("DeprecatedShape");
     }
 
     private static String inferErrorFileLocation(String modelLocation) {
@@ -179,7 +168,9 @@ public final class SmithyTestCase {
         if (!matcher.find()) {
             throw new IllegalArgumentException(format("Invalid validation event in file `%s`, the following event did "
                     + "not match the expected regular expression `%s`: %s",
-                    fileName, EVENT_PATTERN.pattern(), event));
+                    fileName,
+                    EVENT_PATTERN.pattern(),
+                    event));
         }
 
         // Construct a dummy source location since we don't validate it.
@@ -210,8 +201,7 @@ public final class SmithyTestCase {
         Result(
                 String modelLocation,
                 Collection<ValidationEvent> unmatchedEvents,
-                Collection<ValidationEvent> extraEvents
-        ) {
+                Collection<ValidationEvent> extraEvents) {
             this.modelLocation = modelLocation;
             this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
             this.extraEvents = Collections.unmodifiableCollection(new TreeSet<>(extraEvents));
@@ -222,14 +212,14 @@ public final class SmithyTestCase {
             StringBuilder builder = new StringBuilder();
 
             builder.append("=======================\n"
-                           + "Model Validation Result\n"
-                           + "=======================\n")
+                    + "Model Validation Result\n"
+                    + "=======================\n")
                     .append(getModelLocation())
                     .append('\n');
 
             if (!getUnmatchedEvents().isEmpty()) {
                 builder.append("\nDid not match the following events\n"
-                               + "----------------------------------\n");
+                        + "----------------------------------\n");
                 for (ValidationEvent event : getUnmatchedEvents()) {
                     builder.append(event.toString().replace("\n", "\\n")).append('\n');
                 }
@@ -238,7 +228,7 @@ public final class SmithyTestCase {
 
             if (!getExtraEvents().isEmpty()) {
                 builder.append("\nEncountered unexpected events\n"
-                               + "-----------------------------\n");
+                        + "-----------------------------\n");
                 for (ValidationEvent event : getExtraEvents()) {
                     builder.append(event.toString().replace("\n", "\\n")).append("\n");
                 }

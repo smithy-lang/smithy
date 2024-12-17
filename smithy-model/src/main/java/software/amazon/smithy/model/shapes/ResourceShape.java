@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
@@ -75,7 +64,8 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
                 || !getResources().isEmpty())) {
             throw new IllegalStateException(String.format(
                     "Resource shapes with the mixin trait may not define any properties. Resource mixin shape `%s` "
-                            + "defines one or more properties.", getId()));
+                            + "defines one or more properties.",
+                    getId()));
         }
     }
 
@@ -219,13 +209,13 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
         ResourceShape otherShape = (ResourceShape) other;
         return identifiers.equals(otherShape.identifiers)
-               && Objects.equals(properties, otherShape.properties)
-               && Objects.equals(create, otherShape.create)
-               && Objects.equals(put, otherShape.put)
-               && Objects.equals(read, otherShape.read)
-               && Objects.equals(update, otherShape.update)
-               && Objects.equals(delete, otherShape.delete)
-               && Objects.equals(list, otherShape.list);
+                && Objects.equals(properties, otherShape.properties)
+                && Objects.equals(create, otherShape.create)
+                && Objects.equals(put, otherShape.put)
+                && Objects.equals(read, otherShape.read)
+                && Objects.equals(update, otherShape.update)
+                && Objects.equals(delete, otherShape.delete)
+                && Objects.equals(list, otherShape.list);
     }
 
     /**

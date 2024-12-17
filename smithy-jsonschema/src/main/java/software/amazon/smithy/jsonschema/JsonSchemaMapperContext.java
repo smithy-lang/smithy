@@ -1,8 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import software.amazon.smithy.model.Model;
@@ -19,8 +18,7 @@ public class JsonSchemaMapperContext {
     JsonSchemaMapperContext(
             Model model,
             Shape shape,
-            JsonSchemaConfig config
-    ) {
+            JsonSchemaConfig config) {
         this.model = model;
         this.shape = shape;
         this.config = config;

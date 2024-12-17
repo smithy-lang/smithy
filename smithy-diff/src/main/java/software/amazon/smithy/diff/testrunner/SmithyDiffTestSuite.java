@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.testrunner;
 
 import java.io.IOException;
@@ -51,7 +50,6 @@ public final class SmithyDiffTestSuite {
     public static SmithyDiffTestSuite runner() {
         return new SmithyDiffTestSuite();
     }
-
 
     /**
      * Factory method used to easily create a JUnit 5 {@code ParameterizedTest}
@@ -183,13 +181,13 @@ public final class SmithyDiffTestSuite {
         try (Stream<Path> files = Files.walk(modelDirectory)) {
             String modelDirectoryName = modelDirectory.toString();
             files
-                .filter(Files::isRegularFile)
-                .map(Path::toString)
-                .filter(fileName ->  fileName.endsWith(EVENTS))
-                .map(fileName -> SmithyDiffTestCase.from(
-                    modelDirectory,
-                    fileName.substring(modelDirectoryName.length() + 1, fileName.length() - EVENTS.length())))
-                .forEach(this::addTestCase);
+                    .filter(Files::isRegularFile)
+                    .map(Path::toString)
+                    .filter(fileName -> fileName.endsWith(EVENTS))
+                    .map(fileName -> SmithyDiffTestCase.from(
+                            modelDirectory,
+                            fileName.substring(modelDirectoryName.length() + 1, fileName.length() - EVENTS.length())))
+                    .forEach(this::addTestCase);
             return this;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -216,17 +214,17 @@ public final class SmithyDiffTestSuite {
         }
     }
 
-     /**
-     * Sets a custom {@link ModelAssembler} factory to use to create a
-     * {@code ModelAssembler} for each test case.
-     *
-     * <p>The supplier must return a new instance of a Model assembler
-     * each time it is called. Model assemblers are mutated and execute
-     * in parallel.
-     *
-     * @param modelAssemblerFactory Model assembler factory to use.
-     * @return Returns the test suite.
-     */
+    /**
+    * Sets a custom {@link ModelAssembler} factory to use to create a
+    * {@code ModelAssembler} for each test case.
+    *
+    * <p>The supplier must return a new instance of a Model assembler
+    * each time it is called. Model assemblers are mutated and execute
+    * in parallel.
+    *
+    * @param modelAssemblerFactory Model assembler factory to use.
+    * @return Returns the test suite.
+    */
     public SmithyDiffTestSuite setModelAssemblerFactory(Supplier<ModelAssembler> modelAssemblerFactory) {
         this.modelAssemblerFactory = Objects.requireNonNull(modelAssemblerFactory);
         return this;
@@ -248,8 +246,8 @@ public final class SmithyDiffTestSuite {
 
     private Callable<SmithyDiffTestCase.Result> createTestCaseCallable(SmithyDiffTestCase testCase) {
         return () -> testCase.createResult(ModelDiff.compare(
-            getModel(testCase, modelAssemblerFactory.get(), MODEL_A),
-            getModel(testCase, modelAssemblerFactory.get(), MODEL_B)));
+                getModel(testCase, modelAssemblerFactory.get(), MODEL_A),
+                getModel(testCase, modelAssemblerFactory.get(), MODEL_B)));
     }
 
     private static Model getModel(SmithyDiffTestCase testCase, ModelAssembler assembler, String infix) {
@@ -258,9 +256,9 @@ public final class SmithyDiffTestSuite {
             modelPath = modelPath.resolveSibling(testCase.getName() + infix + EXT_JSON);
         }
         return assembler
-            .addImport(modelPath)
-            .assemble()
-            .unwrap();
+                .addImport(modelPath)
+                .assemble()
+                .unwrap();
     }
 
     /**
@@ -312,7 +310,7 @@ public final class SmithyDiffTestSuite {
     }
 
     private SmithyDiffTestCase.Result waitOnFuture(Future<SmithyDiffTestCase.Result> future)
-        throws InterruptedException {
+            throws InterruptedException {
         try {
             return future.get();
         } catch (ExecutionException e) {
@@ -356,7 +354,8 @@ public final class SmithyDiffTestSuite {
         public String toString() {
             StringBuilder builder = new StringBuilder(String.format(
                     "Smithy diff test runner encountered %d successful result(s), and %d failed result(s)",
-                    successCount, failedResults.size()));
+                    successCount,
+                    failedResults.size()));
             failedResults.forEach(failed -> builder.append('\n').append(failed.toString()).append('\n'));
             return builder.toString();
         }

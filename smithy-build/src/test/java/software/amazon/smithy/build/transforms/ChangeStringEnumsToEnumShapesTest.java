@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +51,8 @@ public class ChangeStringEnumsToEnumShapesTest {
         Model model = Model.assembler()
                 .addShape(compatibleString)
                 .addShape(incompatibleString)
-                .assemble().unwrap();
+                .assemble()
+                .unwrap();
 
         TransformContext context = TransformContext.builder()
                 .model(model)
@@ -73,11 +63,12 @@ public class ChangeStringEnumsToEnumShapesTest {
 
         assertThat(result.expectShape(compatibleStringId).getType(), Matchers.is(ShapeType.ENUM));
         assertThat(result.expectShape(compatibleStringId).members(), Matchers.hasSize(1));
-        assertThat(result.expectShape(compatibleStringId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
-                .id(compatibleStringId.withMember("foo"))
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                .build()));
+        assertThat(result.expectShape(compatibleStringId).members().iterator().next(),
+                Matchers.equalTo(MemberShape.builder()
+                        .id(compatibleStringId.withMember("foo"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .build()));
 
         assertThat(result.expectShape(incompatibleStringId).getType(), Matchers.is(ShapeType.STRING));
         assertThat(result.expectShape(incompatibleStringId).members(), Matchers.hasSize(0));
@@ -98,7 +89,8 @@ public class ChangeStringEnumsToEnumShapesTest {
 
         Model model = Model.assembler()
                 .addShape(initialShape)
-                .assemble().unwrap();
+                .assemble()
+                .unwrap();
 
         ObjectNode config = Node.parse("{\"synthesizeNames\": true}").expectObjectNode();
         TransformContext context = TransformContext.builder()
@@ -110,10 +102,11 @@ public class ChangeStringEnumsToEnumShapesTest {
 
         assertThat(result.expectShape(shapeId).getType(), Matchers.is(ShapeType.ENUM));
         assertThat(result.expectShape(shapeId).members(), Matchers.hasSize(1));
-        assertThat(result.expectShape(shapeId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
-                .id(shapeId.withMember("foo_bar"))
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
-                .build()));
+        assertThat(result.expectShape(shapeId).members().iterator().next(),
+                Matchers.equalTo(MemberShape.builder()
+                        .id(shapeId.withMember("foo_bar"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                        .build()));
     }
 }

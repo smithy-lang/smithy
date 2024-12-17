@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,13 +28,15 @@ public class StaticContextParamsTraitTest {
                 OperationShape.class);
 
         StaticContextParamsTrait trait = operationShape.getTrait(StaticContextParamsTrait.class).get();
-        assertEquals(trait.getParameters(), MapUtils.of(
-                "stringBar", StaticContextParamDefinition.builder()
-                        .value(StringNode.from("some value"))
-                        .build(),
-                "boolBar", StaticContextParamDefinition.builder()
-                        .value(Node.from(true))
-                        .build()
-        ));
+        assertEquals(trait.getParameters(),
+                MapUtils.of(
+                        "stringBar",
+                        StaticContextParamDefinition.builder()
+                                .value(StringNode.from("some value"))
+                                .build(),
+                        "boolBar",
+                        StaticContextParamDefinition.builder()
+                                .value(Node.from(true))
+                                .build()));
     }
 }

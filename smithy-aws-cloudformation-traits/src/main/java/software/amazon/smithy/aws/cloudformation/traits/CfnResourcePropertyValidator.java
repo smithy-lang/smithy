@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import java.util.ArrayList;
@@ -49,8 +38,7 @@ public final class CfnResourcePropertyValidator extends AbstractValidator {
     private List<ValidationEvent> validateResource(
             Model model,
             CfnResourceIndex cfnResourceIndex,
-            ResourceShape resource
-    ) {
+            ResourceShape resource) {
         CfnResourceTrait trait = resource.expectTrait(CfnResourceTrait.class);
         List<ValidationEvent> events = new ArrayList<>();
         String resourceName = trait.getName().orElse(resource.getId().getName());
@@ -70,24 +58,26 @@ public final class CfnResourcePropertyValidator extends AbstractValidator {
             Model model,
             ResourceShape resource,
             String resourceName,
-            Map.Entry<String, CfnResourceProperty> property
-    ) {
+            Map.Entry<String, CfnResourceProperty> property) {
         Set<ShapeId> propertyTargets = new TreeSet<>();
         for (ShapeId shapeId : property.getValue().getShapeIds()) {
             model.getShape(shapeId).ifPresent(shape ->
-                    // Use the member target or identifier definition shape.
-                    OptionalUtils.ifPresentOrElse(shape.asMemberShape(),
-                            memberShape -> propertyTargets.add(memberShape.getTarget()),
-                            () -> propertyTargets.add(shapeId)));
+            // Use the member target or identifier definition shape.
+            OptionalUtils.ifPresentOrElse(shape.asMemberShape(),
+                    memberShape -> propertyTargets.add(memberShape.getTarget()),
+                    () -> propertyTargets.add(shapeId)));
         }
 
         if (propertyTargets.size() > 1) {
-            return Optional.of(error(resource, String.format("The `%s` property of the generated `%s` "
-                    + "CloudFormation resource targets multiple shapes: %s. Reusing member names that "
-                    + "target different shapes can cause confusion for users of the API. This target "
-                    + "discrepancy must either be resolved in the model or one of the members must be "
-                    + "excluded from the conversion.",
-                    property.getKey(), resourceName, propertyTargets)));
+            return Optional.of(error(resource,
+                    String.format("The `%s` property of the generated `%s` "
+                            + "CloudFormation resource targets multiple shapes: %s. Reusing member names that "
+                            + "target different shapes can cause confusion for users of the API. This target "
+                            + "discrepancy must either be resolved in the model or one of the members must be "
+                            + "excluded from the conversion.",
+                            property.getKey(),
+                            resourceName,
+                            propertyTargets)));
         }
 
         return Optional.empty();

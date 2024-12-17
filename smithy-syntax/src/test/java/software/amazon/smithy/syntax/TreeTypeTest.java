@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.syntax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -585,10 +589,10 @@ public class TreeTypeTest {
         TokenTree tree = getTree(TreeType.TRAIT, trait);
         assertTreeIsValid(tree);
         rootAndChildTypesEqual(tree,
-                               TreeType.TRAIT,
-                               TreeType.TOKEN,
-                               TreeType.SHAPE_ID,
-                               TreeType.TRAIT_BODY);
+                TreeType.TRAIT,
+                TreeType.TOKEN,
+                TreeType.SHAPE_ID,
+                TreeType.TRAIT_BODY);
     }
 
     @Test
@@ -597,10 +601,10 @@ public class TreeTypeTest {
         TokenTree tree = getTree(TreeType.TRAIT, trait);
         assertTreeIsValid(tree);
         rootAndChildTypesEqual(tree,
-                               TreeType.TRAIT,
-                               TreeType.TOKEN,
-                               TreeType.SHAPE_ID,
-                               TreeType.TRAIT_BODY);
+                TreeType.TRAIT,
+                TreeType.TOKEN,
+                TreeType.SHAPE_ID,
+                TreeType.TRAIT_BODY);
     }
 
     @Test
@@ -1296,7 +1300,7 @@ public class TreeTypeTest {
         TokenTree emptyTree = getTree(TreeType.TEXT_BLOCK, empty);
         assertTreeIsValid(emptyTree);
         rootAndChildTypesEqual(emptyTree, TreeType.TEXT_BLOCK, TreeType.TOKEN);
-        
+
         String withQuotes = "\"\"\"\n\"\"foo\"\n\"\"bar\"\"\"";
         TokenTree withQuotesTree = getTree(TreeType.TEXT_BLOCK, withQuotes);
         assertTreeIsValid(withQuotesTree);
@@ -1488,6 +1492,7 @@ public class TreeTypeTest {
         TokenTree wrongTypeNameTree = getTree(TreeType.SHAPE_STATEMENT, wrongTypeName);
         assertTreeIsInvalid(wrongTypeNameTree);
     }
+
     @Test
     public void invalidMixins() {
         String missingOpenBracket = "with foo, bar]";
@@ -1667,7 +1672,6 @@ public class TreeTypeTest {
         TokenTree missingColonTree = getTree(TreeType.OPERATION_ERRORS, missingColon);
         assertTreeIsInvalid(missingColonTree);
 
-
         String notColon = "errors = Foo";
         TokenTree notColonTree = getTree(TreeType.OPERATION_ERRORS, notColon);
         assertTreeIsInvalid(notColonTree);
@@ -1835,9 +1839,13 @@ public class TreeTypeTest {
         assertTreeIsInvalid(invalidSlashesTree);
     }
 
-    private static void rootAndChildTypesEqual(TokenTree actualTree, TreeType expectedRoot, TreeType... expectedChildren) {
+    private static void rootAndChildTypesEqual(
+            TokenTree actualTree,
+            TreeType expectedRoot,
+            TreeType... expectedChildren) {
         assertEquals(expectedRoot, actualTree.getType());
-        String actual = actualTree.getChildren().stream().map(t -> t.getType().toString()).collect(Collectors.joining(","));
+        String actual =
+                actualTree.getChildren().stream().map(t -> t.getType().toString()).collect(Collectors.joining(","));
         String expected = Arrays.stream(expectedChildren).map(Object::toString).collect(Collectors.joining(","));
         assertEquals(expected, actual);
     }

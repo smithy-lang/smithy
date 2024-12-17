@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.syntax;
 
 import com.opencastsoftware.prettier4j.Doc;
@@ -82,7 +71,7 @@ final class FormatVisitor {
                         result = result.append(Doc.line());
                     }
                     result = result.append(visit(childIterator.next())) // SHAPE
-                            .append(visit(childIterator.next()))        // BR
+                            .append(visit(childIterator.next())) // BR
                             .append(Doc.line());
                 }
                 return result;
@@ -218,8 +207,9 @@ final class FormatVisitor {
 
             case OPERATION_SHAPE: {
                 return skippedComments(cursor, false)
-                        .append(formatShape(cursor, Doc.text("operation"),
-                                            visit(cursor.getFirstChild(TreeType.OPERATION_BODY))));
+                        .append(formatShape(cursor,
+                                Doc.text("operation"),
+                                visit(cursor.getFirstChild(TreeType.OPERATION_BODY))));
             }
 
             case OPERATION_BODY: {
@@ -232,7 +222,8 @@ final class FormatVisitor {
                         .append(Doc.text("input"))
                         .append(simpleTarget == null
                                 ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
-                                : Doc.text(": ")).append(visit(simpleTarget));
+                                : Doc.text(": "))
+                        .append(visit(simpleTarget));
             }
 
             case OPERATION_OUTPUT: {
@@ -241,7 +232,8 @@ final class FormatVisitor {
                         .append(Doc.text("output"))
                         .append(simpleTarget == null
                                 ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
-                                : Doc.text(": ")).append(visit(simpleTarget));
+                                : Doc.text(": "))
+                        .append(visit(simpleTarget));
             }
 
             case INLINE_AGGREGATE_SHAPE: {
@@ -278,28 +270,29 @@ final class FormatVisitor {
                 }
                 return comments.append(Doc.text("errors: ")
                         .append(new BracketFormatter()
-                                        .open(Formatter.LBRACKET)
-                                        .close(Formatter.RBRACKET)
-                                        .extractChildren(child, BracketFormatter.extractor(
+                                .open(Formatter.LBRACKET)
+                                .close(Formatter.RBRACKET)
+                                .extractChildren(child,
+                                        BracketFormatter.extractor(
                                                 this::visit,
                                                 BracketFormatter.byTypeMapper(TreeType.SHAPE_ID),
                                                 BracketFormatter.siblingChildrenSupplier()))
-                                        .forceLineBreaks() // always put each error on separate lines.
-                                        .write()));
+                                .forceLineBreaks() // always put each error on separate lines.
+                                .write()));
             }
 
             case MIXINS: {
                 return Doc.text("with ")
                         .append(new BracketFormatter()
-                                        .open(Formatter.LBRACKET)
-                                        .close(Formatter.RBRACKET)
-                                        .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                            return child.getTree().getType() == TreeType.SHAPE_ID
-                                                   ? Stream.of(child)
-                                                   : Stream.empty();
-                                        }))
-                                        .detectHardLines(cursor)
-                                        .write());
+                                .open(Formatter.LBRACKET)
+                                .close(Formatter.RBRACKET)
+                                .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                                    return child.getTree().getType() == TreeType.SHAPE_ID
+                                            ? Stream.of(child)
+                                            : Stream.empty();
+                                }))
+                                .detectHardLines(cursor)
+                                .write());
             }
 
             case VALUE_ASSIGNMENT: {
@@ -310,11 +303,11 @@ final class FormatVisitor {
 
             case TRAIT_STATEMENTS: {
                 return Doc.intersperse(
-                                Doc.line(),
-                                cursor.children()
-                                        // Skip WS nodes that have no comments.
-                                        .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
-                                        .map(this::visit))
+                        Doc.line(),
+                        cursor.children()
+                                // Skip WS nodes that have no comments.
+                                .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
+                                .map(this::visit))
                         .append(tree.isEmpty() ? Doc.empty() : Doc.line());
             }
 
@@ -406,16 +399,17 @@ final class FormatVisitor {
                 //   the closing brace.
                 return flushBrBuffer()
                         .append(Doc.text(skippedComments(cursor, false)
-                                                 .append(Doc.text("apply "))
-                                                 .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
-                                                 .append(Doc.text(" {"))
-                                                 .append(Doc.line().append(visit(cursor.getFirstChild(
-                                                         TreeType.TRAIT_STATEMENTS)))
-                                                                 .indent(4))
-                                                 .render(width)
-                                                 .trim())
-                                        .append(Doc.line())
-                                        .append(Formatter.RBRACE));
+                                .append(Doc.text("apply "))
+                                .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)))
+                                .append(Doc.text(" {"))
+                                .append(Doc.line()
+                                        .append(visit(cursor.getFirstChild(
+                                                TreeType.TRAIT_STATEMENTS)))
+                                        .indent(4))
+                                .render(width)
+                                .trim())
+                                .append(Doc.line())
+                                .append(Formatter.RBRACE));
             }
 
             case NODE_ARRAY: {
@@ -429,9 +423,10 @@ final class FormatVisitor {
 
             case NODE_OBJECT: {
                 BracketFormatter formatter = new BracketFormatter()
-                        .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP,
-                                                                                this::visit));
-                if (cursor.getParent().getParent().getTree().getType() == TreeType.NODE_ARRAY)  {
+                        .extractChildren(cursor,
+                                BracketFormatter.extractByType(TreeType.NODE_OBJECT_KVP,
+                                        this::visit));
+                if (cursor.getParent().getParent().getTree().getType() == TreeType.NODE_ARRAY) {
                     // Always break objects inside arrays if not empty
                     formatter.forceLineBreaksIfNotEmpty();
                 } else {
@@ -453,8 +448,8 @@ final class FormatVisitor {
                         .map(token -> token.getLexeme().subSequence(1, token.getSpan() - 1))
                         .orElse("");
                 return ShapeId.isValidIdentifier(unquoted)
-                       ? Doc.text(unquoted.toString())
-                       : Doc.text(tree.concatTokens());
+                        ? Doc.text(unquoted.toString())
+                        : Doc.text(tree.concatTokens());
             }
 
             case TEXT_BLOCK: {
@@ -533,8 +528,7 @@ final class FormatVisitor {
                 // Ignore all whitespace except for comments and doc comments.
                 return Doc.intersperse(
                         Doc.line(),
-                        cursor.getChildrenByType(TreeType.COMMENT).stream().map(this::visit)
-                );
+                        cursor.getChildrenByType(TreeType.COMMENT).stream().map(this::visit));
             }
 
             case BR: {
@@ -702,8 +696,7 @@ final class FormatVisitor {
     private static Doc formatNodeObjectKvp(
             TreeCursor cursor,
             Function<TreeCursor, Doc> keyVisitor,
-            Function<TreeCursor, Doc> valueVisitor
-    ) {
+            Function<TreeCursor, Doc> valueVisitor) {
         // Since text blocks span multiple lines, when they are the NODE_VALUE for NODE_OBJECT_KVP,
         // they have to be indented. Since we only format valid models, NODE_OBJECT_KVP is guaranteed to
         // have a NODE_VALUE child.
@@ -733,8 +726,9 @@ final class FormatVisitor {
             return new BracketFormatter()
                     .open(Formatter.LBRACKET)
                     .close(Formatter.RBRACKET)
-                    .extractChildren(value, BracketFormatter
-                            .extractByType(TreeType.NODE_VALUE, FormatVisitor.this::visit))
+                    .extractChildren(value,
+                            BracketFormatter
+                                    .extractByType(TreeType.NODE_VALUE, FormatVisitor.this::visit))
                     .forceLineBreaksIfNotEmpty()
                     .write();
         };
@@ -743,8 +737,9 @@ final class FormatVisitor {
         private final Function<TreeCursor, Doc> hardLineObject = value -> {
             value = value.getFirstChild(TreeType.NODE_OBJECT);
             return new BracketFormatter()
-                    .extractChildren(value, BracketFormatter
-                            .extractByType(TreeType.NODE_OBJECT_KVP, FormatVisitor.this::visit))
+                    .extractChildren(value,
+                            BracketFormatter
+                                    .extractByType(TreeType.NODE_OBJECT_KVP, FormatVisitor.this::visit))
                     .forceLineBreaksIfNotEmpty()
                     .write();
         };

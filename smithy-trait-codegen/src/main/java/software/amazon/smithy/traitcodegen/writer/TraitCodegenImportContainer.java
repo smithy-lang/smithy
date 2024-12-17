@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.HashMap;
@@ -53,7 +52,8 @@ final class TraitCodegenImportContainer implements ImportContainer {
      * @return sorted list of imports
      */
     private Set<String> getSortedAndFilteredImports() {
-        return imports.values().stream()
+        return imports.values()
+                .stream()
                 .filter(s -> s.size() == 1)
                 .map(s -> s.iterator().next())
                 .filter(s -> !s.getNamespace().startsWith("java.lang"))

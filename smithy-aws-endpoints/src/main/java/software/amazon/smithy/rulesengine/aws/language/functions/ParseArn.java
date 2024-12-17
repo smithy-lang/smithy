@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.ArrayList;
@@ -110,11 +109,16 @@ public final class ParseArn extends LibraryFunction {
                 resourceId.add(Value.stringValue(resourceIdPart));
             }
             return Value.recordValue(MapUtils.of(
-                    PARTITION, Value.stringValue(awsArn.getPartition()),
-                    SERVICE, Value.stringValue(awsArn.getService()),
-                    REGION, Value.stringValue(awsArn.getRegion()),
-                    ACCOUNT_ID, Value.stringValue(awsArn.getAccountId()),
-                    RESOURCE_ID, Value.arrayValue(resourceId)));
+                    PARTITION,
+                    Value.stringValue(awsArn.getPartition()),
+                    SERVICE,
+                    Value.stringValue(awsArn.getService()),
+                    REGION,
+                    Value.stringValue(awsArn.getRegion()),
+                    ACCOUNT_ID,
+                    Value.stringValue(awsArn.getAccountId()),
+                    RESOURCE_ID,
+                    Value.arrayValue(resourceId)));
         }
 
         @Override

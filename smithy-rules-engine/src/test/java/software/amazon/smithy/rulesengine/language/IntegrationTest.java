@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,8 +28,7 @@ import software.amazon.smithy.utils.Pair;
 public class IntegrationTest {
     public static List<EndpointRuleSet> validRules() throws Exception {
         try (Stream<Path> paths = Files.list(
-                Paths.get(IntegrationTest.class.getResource("errorfiles/valid/").toURI()))
-        ) {
+                Paths.get(IntegrationTest.class.getResource("errorfiles/valid/").toURI()))) {
             return paths.filter(path -> path.toString().endsWith(".smithy"))
                     .map(path -> Model.assembler().discoverModels().addImport(path).assemble().unwrap())
                     .flatMap(model -> model.getServiceShapesWithTrait(EndpointRuleSetTrait.class).stream())
@@ -36,14 +39,14 @@ public class IntegrationTest {
 
     public static List<Pair<Node, String>> invalidRules() throws Exception {
         try (Stream<Path> paths = Files.list(
-                Paths.get(IntegrationTest.class.getResource("invalid-rules/").toURI()))
-        ) {
+                Paths.get(IntegrationTest.class.getResource("invalid-rules/").toURI()))) {
             return paths.map(path -> {
                 try {
                     String pathContents = IoUtils.toUtf8String(new FileInputStream(path.toFile()));
                     Node content = Node.parseJsonWithComments(pathContents,
                             path.subpath(path.getNameCount() - 2, path.getNameCount())
-                                    .toString().replace("\\", "/"));
+                                    .toString()
+                                    .replace("\\", "/"));
 
                     List<String> commentLines = new ArrayList<>();
                     for (String line : pathContents.split(System.lineSeparator())) {

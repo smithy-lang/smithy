@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
@@ -66,9 +55,9 @@ public final class ServiceIndex implements KnowledgeIndex {
         return model.getKnowledge(ServiceIndex.class, ServiceIndex::new);
     }
 
-     /**
-     * Defines the type of auth schemes returned by {@link #getEffectiveAuthSchemes}.
-     */
+    /**
+    * Defines the type of auth schemes returned by {@link #getEffectiveAuthSchemes}.
+    */
     public enum AuthSchemeMode {
 
         /**
@@ -268,9 +257,10 @@ public final class ServiceIndex implements KnowledgeIndex {
      * @param authSchemeMode AuthSchemeMode to determine which authentication schemes to include.
      * @return Returns a map of the trait shape ID to the auth trait itself.
      */
-    public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service,
-                                                       ToShapeId operation,
-                                                       AuthSchemeMode authSchemeMode) {
+    public Map<ShapeId, Trait> getEffectiveAuthSchemes(
+            ToShapeId service,
+            ToShapeId operation,
+            AuthSchemeMode authSchemeMode) {
         Map<ShapeId, Trait> authSchemes = getEffectiveAuthSchemes(service, operation);
         if (authSchemeMode == AuthSchemeMode.NO_AUTH_AWARE) {
             if (authSchemes.isEmpty() || hasOptionalAuth(operation)) {

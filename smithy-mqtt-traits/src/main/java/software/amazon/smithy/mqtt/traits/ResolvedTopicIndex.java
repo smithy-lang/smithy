@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.mqtt.traits;
 
 import java.util.HashMap;
@@ -137,8 +126,7 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
     private void createPublishBindings(
             OperationIndex operationIndex,
             OperationShape operation,
-            PublishTrait trait
-    ) {
+            PublishTrait trait) {
         StructureShape input = operationIndex.expectInputShape(operation);
         TopicBinding<PublishTrait> topicBinding = new TopicBinding<>(operation, trait, trait.getTopic(), input, input);
         publishBindings.put(operation.getId(), topicBinding);
@@ -148,15 +136,18 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
             StructureShape input,
             EventStreamIndex eventStreamIndex,
             OperationShape operation,
-            SubscribeTrait trait
-    ) {
+            SubscribeTrait trait) {
         EventStreamInfo outputInfo = eventStreamIndex.getOutputInfo(operation).orElse(null);
 
         // Subscribe operations must have an event stream. Omit the bindings
         // if an event stream is not found.
         if (outputInfo != null) {
             TopicBinding<SubscribeTrait> binding = new TopicBinding<>(
-                    operation, trait, trait.getTopic(), outputInfo.getEventStreamTarget(), input);
+                    operation,
+                    trait,
+                    trait.getTopic(),
+                    outputInfo.getEventStreamTarget(),
+                    input);
             subscribeBindings.put(operation.getId(), binding);
             subscribeInfo.put(operation.getId(), outputInfo);
         }

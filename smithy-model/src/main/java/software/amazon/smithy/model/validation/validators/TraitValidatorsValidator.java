@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -43,8 +42,10 @@ public final class TraitValidatorsValidator extends AbstractValidator {
         boolean isValid = true;
         for (String key : trait.getValidators().keySet()) {
             if (!ShapeId.isValidNamespace(key)) {
-                events.add(error(shape, trait, "`" + TraitValidatorsTrait.ID + "` key is not a valid event ID: `"
-                                               + key + '`'));
+                events.add(error(shape,
+                        trait,
+                        "`" + TraitValidatorsTrait.ID + "` key is not a valid event ID: `"
+                                + key + '`'));
                 isValid = false;
             }
         }
@@ -55,8 +56,7 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             Model model,
             Shape traitWithValidators,
             Shape appliedShape,
-            List<ValidationEvent> events
-    ) {
+            List<ValidationEvent> events) {
         Selector.StartingContext startingEnv = new Selector.StartingContext(Collections.singleton(appliedShape));
         TraitValidatorsTrait trait = traitWithValidators.expectTrait(TraitValidatorsTrait.class);
 
@@ -65,8 +65,12 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             TraitValidatorsTrait.Validator definition = entry.getValue();
             for (Shape shape : definition.getSelector().select(model, startingEnv)) {
                 String suffix = definition.getMessage().orElse(null);
-                events.add(createEvent(traitWithValidators, appliedShape, id, shape,
-                                       definition.getSeverity(), suffix));
+                events.add(createEvent(traitWithValidators,
+                        appliedShape,
+                        id,
+                        shape,
+                        definition.getSeverity(),
+                        suffix));
             }
         }
     }
@@ -77,13 +81,14 @@ public final class TraitValidatorsValidator extends AbstractValidator {
             String eventId,
             Shape shape,
             Severity severity,
-            String suffix
-    ) {
+            String suffix) {
         String suffixMessage = suffix == null ? "" : ": " + suffix;
         String message = String.format(
                 "Found an incompatible shape when validating the constraints of the `%s` trait "
-                + "attached to `%s`%s",
-                traitWithValidators.getId(), appliedShape.getId(), suffixMessage);
+                        + "attached to `%s`%s",
+                traitWithValidators.getId(),
+                appliedShape.getId(),
+                suffixMessage);
         return ValidationEvent.builder().id(eventId).shape(shape).message(message).severity(severity).build();
     }
 }

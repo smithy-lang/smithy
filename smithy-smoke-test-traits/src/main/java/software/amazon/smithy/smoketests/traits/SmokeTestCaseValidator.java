@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.smoketests.traits;
 
 import java.util.ArrayList;
@@ -55,37 +44,49 @@ public class SmokeTestCaseValidator extends AbstractValidator {
                 Optional<ObjectNode> vendorParamsOptional = testCase.getVendorParams();
                 if (vendorParamsShapeIdOptional.isPresent()) {
                     if (!vendorParamsOptional.isPresent()) {
-                        events.add(warning(shape, trait, String.format(
-                                "Smoke test case with ID `%s` defined a `vendorParamsShape` but no `vendorParams`",
-                                testCase.getId())));
+                        events.add(warning(shape,
+                                trait,
+                                String.format(
+                                        "Smoke test case with ID `%s` defined a `vendorParamsShape` but no `vendorParams`",
+                                        testCase.getId())));
                     } else {
                         Optional<Shape> vendorParamsShapeOptional = model.getShape(vendorParamsShapeIdOptional.get());
                         if (vendorParamsShapeOptional.isPresent()) {
                             Shape vendorParamsShape = vendorParamsShapeOptional.get();
                             NodeValidationVisitor vendorParamsValidator = createVisitor(vendorParamsOptional.get(),
-                                    model, shape, testCase.getId(), ".vendorParams");
+                                    model,
+                                    shape,
+                                    testCase.getId(),
+                                    ".vendorParams");
                             events.addAll(vendorParamsShape.accept(vendorParamsValidator));
                         }
 
                     }
                 } else if (vendorParamsOptional.isPresent()) {
-                    events.add(warning(shape, trait, String.format(
-                            "Smoke test case with ID `%s` defined `vendorParams` but no `vendorParamsShape`",
-                            testCase.getId())));
+                    events.add(warning(shape,
+                            trait,
+                            String.format(
+                                    "Smoke test case with ID `%s` defined `vendorParams` but no `vendorParamsShape`",
+                                    testCase.getId())));
                 }
 
                 // Validate input params
                 StructureShape input = operationIndex.expectInputShape(shape);
                 if (input != null && testCase.getParams().isPresent()) {
-                    NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(), model, shape,
-                            testCase.getId(), ".params");
+                    NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(),
+                            model,
+                            shape,
+                            testCase.getId(),
+                            ".params");
                     events.addAll(input.accept(paramsValidator));
                 } else if (testCase.getParams().isPresent()) {
-                    events.add(error(shape, trait, String.format(
-                            "Smoke test parameters provided for operation with no input: `%s`",
-                            Node.printJson(testCase.getParams().get())
+                    events.add(error(shape,
+                            trait,
+                            String.format(
+                                    "Smoke test parameters provided for operation with no input: `%s`",
+                                    Node.printJson(testCase.getParams().get())
 
-                    )));
+                            )));
                 }
             }
         }
@@ -97,8 +98,7 @@ public class SmokeTestCaseValidator extends AbstractValidator {
             Model model,
             Shape shape,
             String caseId,
-            String contextSuffix
-    ) {
+            String contextSuffix) {
         return NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())

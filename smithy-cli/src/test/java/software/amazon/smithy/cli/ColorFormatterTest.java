@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +37,7 @@ public class ColorFormatterTest {
     public void appendsNewlineIfNeededInToString() {
         BufferPrinter printer = new BufferPrinter();
         ColorFormatter formatter = AnsiColorFormatter.FORCE_COLOR;
-        String expected ="abc\n";
+        String expected = "abc\n";
 
         try (ColorBuffer buffer = ColorBuffer.of(formatter, printer)) {
             buffer.println("abc");

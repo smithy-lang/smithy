@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static java.lang.String.format;
@@ -225,7 +214,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @return Returns the map of matching members.
      */
     public Map<String, Node> getMembersByPrefix(String prefix) {
-        return getStringMap().entrySet().stream()
+        return getStringMap().entrySet()
+                .stream()
                 .filter(entry -> entry.getKey().startsWith(prefix))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -492,7 +482,8 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
                 additional.removeAll(allowedProperties);
                 throw new ExpectationNotMetException(String.format(
                         "Expected an object with possible properties of %s, but found additional properties: %s",
-                        ValidationUtils.tickedList(allowedProperties), ValidationUtils.tickedList(additional)), this);
+                        ValidationUtils.tickedList(allowedProperties),
+                        ValidationUtils.tickedList(additional)), this);
             }
         }
 
@@ -731,8 +722,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collect(
             Function<T, StringNode> keyMapper,
-            Function<T, ToNode> valueMapper
-    ) {
+            Function<T, ToNode> valueMapper) {
         return Collector.of(
                 LinkedHashMap::new,
                 (results, entry) -> results.put(keyMapper.apply(entry), valueMapper.apply(entry).toNode()),
@@ -741,8 +731,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
                     return left;
                 },
                 // Use the constructor that doesn't need to re-copy.
-                results -> new ObjectNode(results, SourceLocation.NONE, false)
-        );
+                results -> new ObjectNode(results, SourceLocation.NONE, false));
     }
 
     /**
@@ -755,8 +744,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public static <T> Collector<T, Map<StringNode, Node>, ObjectNode> collectStringKeys(
             Function<T, String> keyMapper,
-            Function<T, ToNode> valueMapper
-    ) {
+            Function<T, ToNode> valueMapper) {
         return collect(entry -> from(keyMapper.apply(entry)), valueMapper);
     }
 

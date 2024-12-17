@@ -1,8 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi;
 
 import java.util.LinkedHashMap;
@@ -28,11 +27,10 @@ public final class OpenApiUtils {
      * @return Extension name for the given trait shape.
      */
     public static String getSpecificationExtensionName(
-        ShapeId metaTraitId,
-        SpecificationExtensionTrait specificationExtensionTrait
-    ) {
+            ShapeId metaTraitId,
+            SpecificationExtensionTrait specificationExtensionTrait) {
         return specificationExtensionTrait.getAs()
-            .orElse("x-" + metaTraitId.toString().replaceAll("[.#]", "-"));
+                .orElse("x-" + metaTraitId.toString().replaceAll("[.#]", "-"));
     }
 
     /**
@@ -45,14 +43,14 @@ public final class OpenApiUtils {
     public static Map<String, Node> getSpecificationExtensionsMap(Model model, Shape shape) {
         Map<String, Node> specificationExtensions = new LinkedHashMap<String, Node>();
         shape.getAllTraits().forEach((traitId, trait) ->
-            // Get Applied Trait
-            model.getShape(traitId)
-                    // Get SpecificationExtensionTrait on the Applied Trait
-                    .flatMap(traitShape -> traitShape.getTrait(SpecificationExtensionTrait.class))
-                    // Get specification extension name from the Applied Trait and SpecificationExtensionTrait
-                    .map(specificationExtension -> getSpecificationExtensionName(traitId, specificationExtension))
-                    // Put the specification extension name and Applied Meta trait into the map.
-                    .ifPresent(name -> specificationExtensions.put(name, trait.toNode())));
+        // Get Applied Trait
+        model.getShape(traitId)
+                // Get SpecificationExtensionTrait on the Applied Trait
+                .flatMap(traitShape -> traitShape.getTrait(SpecificationExtensionTrait.class))
+                // Get specification extension name from the Applied Trait and SpecificationExtensionTrait
+                .map(specificationExtension -> getSpecificationExtensionName(traitId, specificationExtension))
+                // Put the specification extension name and Applied Meta trait into the map.
+                .ifPresent(name -> specificationExtensions.put(name, trait.toNode())));
         return specificationExtensions;
     }
 }

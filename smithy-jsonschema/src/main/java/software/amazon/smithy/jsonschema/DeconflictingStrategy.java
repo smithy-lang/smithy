@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.HashMap;
@@ -79,7 +68,9 @@ final class DeconflictingStrategy implements RefStrategy {
                     String deconflictedPointer = deconflict(shape, pointer, reversePointers);
                     LOGGER.info(() -> String.format(
                             "De-conflicted `%s` JSON schema pointer from `%s` to `%s`",
-                            shape.getId(), pointer, deconflictedPointer));
+                            shape.getId(),
+                            pointer,
+                            deconflictedPointer));
                     pointers.put(shape.getId(), deconflictedPointer);
                     reversePointers.put(deconflictedPointer, shape.getId());
                 }
@@ -91,22 +82,26 @@ final class DeconflictingStrategy implements RefStrategy {
     // don't have a corresponding definition.
     private boolean isIgnoredShape(Shape shape) {
         return (shape instanceof SimpleShape && !shape.hasTrait(EnumTrait.class))
-               || shape.isResourceShape()
-               || shape.isServiceShape()
-               || shape.isOperationShape()
-               || shape.isMemberShape()
-               || (Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class));
+                || shape.isResourceShape()
+                || shape.isServiceShape()
+                || shape.isOperationShape()
+                || shape.isMemberShape()
+                || (Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class));
     }
 
     private String deconflict(Shape shape, String pointer, Map<String, ShapeId> reversePointers) {
         LOGGER.info(() -> String.format(
                 "Attempting to de-conflict `%s` JSON schema pointer `%s` that conflicts with `%s`",
-                shape.getId(), pointer, reversePointers.get(pointer)));
+                shape.getId(),
+                pointer,
+                reversePointers.get(pointer)));
 
         if (!isSafeToDeconflict(shape)) {
             throw new ConflictingShapeNameException(String.format(
                     "Shape %s conflicts with %s using a JSON schema pointer of %s",
-                    shape, reversePointers.get(pointer), pointer));
+                    shape,
+                    reversePointers.get(pointer),
+                    pointer));
         }
 
         // Create a de-conflicted JSON schema pointer that just appends
@@ -123,7 +118,9 @@ final class DeconflictingStrategy implements RefStrategy {
             // Note: I don't know if this can ever actually happen... but just in case.
             throw new ConflictingShapeNameException(String.format(
                     "Unable to de-conflict shape %s because the de-conflicted name resolves "
-                    + "to another generated name: %s", shape, updatedPointer));
+                            + "to another generated name: %s",
+                    shape,
+                    updatedPointer));
         }
 
         return updatedPointer;

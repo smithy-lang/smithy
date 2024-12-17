@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
@@ -99,8 +88,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     public static Optional<MemberShape> resolvePath(
             String path,
             Model model,
-            StructureShape shape
-    ) {
+            StructureShape shape) {
         List<MemberShape> memberShapes = resolveFullPath(path, model, shape);
         if (memberShapes.size() == 0) {
             return Optional.empty();
@@ -124,8 +112,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     public static List<MemberShape> resolveFullPath(
             String path,
             Model model,
-            StructureShape shape
-    ) {
+            StructureShape shape) {
         List<MemberShape> memberShapes = new ArrayList<>();
 
         // For each member name in the path, try to find that member in the previous structure

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.Collections;
@@ -69,12 +58,16 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
     }
 
     private ShapeId protocolWithBindings(ServiceShape service, Model model) {
-        return ServiceIndex.of(model).getProtocols(service).values().stream()
+        return ServiceIndex.of(model)
+                .getProtocols(service)
+                .values()
+                .stream()
                 .map(t -> model.expectShape(t.toShapeId()))
                 .map(s -> Pair.of(s.getId(), s.expectTrait(ProtocolDefinitionTrait.class)))
                 .filter(pair -> pair.getRight().getTraits().contains(HttpTrait.ID))
                 .map(Pair::getLeft)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean hasBindings(OperationShape op) {
@@ -85,11 +78,12 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
             ServiceShape service,
             Set<OperationShape> operations,
             Severity severity,
-            String reason
-    ) {
+            String reason) {
         return operations.stream()
                 .filter(operation -> !operation.getTrait(HttpTrait.class).isPresent())
-                .map(operation -> createEvent(severity, operation, operation.getSourceLocation(),
+                .map(operation -> createEvent(severity,
+                        operation,
+                        operation.getSourceLocation(),
                         String.format("%s operations in the `%s` service define the `http` trait, but this "
                                 + "operation is missing the `http` trait.", reason, service.getId())))
                 .collect(Collectors.toList());

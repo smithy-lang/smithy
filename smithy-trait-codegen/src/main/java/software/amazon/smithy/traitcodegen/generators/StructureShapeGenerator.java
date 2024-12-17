@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.function.Consumer;
@@ -21,22 +20,38 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
     public void accept(GenerateTraitDirective directive) {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
             writer.pushState(new ClassSection(directive.shape()))
-                    .openBlock("public final class $1T implements $2T, $3T<$1T> {", "}",
-                            directive.symbol(), ToNode.class, ToSmithyBuilder.class, () -> {
-                        new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-                        new ConstructorGenerator(writer, directive.symbol(), directive.shape(),
-                                directive.symbolProvider()).run();
-                        new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(),
-                                directive.model()).run();
-                        new FromNodeGenerator(writer, directive.symbol(), directive.shape(),
-                                directive.symbolProvider(), directive.model()).run();
-                        new GetterGenerator(writer, directive.symbolProvider(), directive.model(),
-                                directive.shape()).run();
-                        new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(),
-                                directive.shape(), directive.model()).run();
-                        writeEquals(writer, directive.symbol());
-                        writeHashCode(writer);
-                    })
+                    .openBlock("public final class $1T implements $2T, $3T<$1T> {",
+                            "}",
+                            directive.symbol(),
+                            ToNode.class,
+                            ToSmithyBuilder.class,
+                            () -> {
+                                new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
+                                new ConstructorGenerator(writer,
+                                        directive.symbol(),
+                                        directive.shape(),
+                                        directive.symbolProvider()).run();
+                                new ToNodeGenerator(writer,
+                                        directive.shape(),
+                                        directive.symbolProvider(),
+                                        directive.model()).run();
+                                new FromNodeGenerator(writer,
+                                        directive.symbol(),
+                                        directive.shape(),
+                                        directive.symbolProvider(),
+                                        directive.model()).run();
+                                new GetterGenerator(writer,
+                                        directive.symbolProvider(),
+                                        directive.model(),
+                                        directive.shape()).run();
+                                new BuilderGenerator(writer,
+                                        directive.symbol(),
+                                        directive.symbolProvider(),
+                                        directive.shape(),
+                                        directive.model()).run();
+                                writeEquals(writer, directive.symbol());
+                                writeHashCode(writer);
+                            })
                     .popState();
             writer.newLine();
         });
@@ -46,9 +61,12 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
         writer.override();
         writer.openBlock("public boolean equals(Object other) {", "}", () -> {
             writer.disableNewlines();
-            writer.openBlock("if (other == this) {\n", "}",
+            writer.openBlock("if (other == this) {\n",
+                    "}",
                     () -> writer.writeWithNoFormatting("return true;").newLine());
-            writer.openBlock(" else if (!(other instanceof $T)) {\n", "}", symbol,
+            writer.openBlock(" else if (!(other instanceof $T)) {\n",
+                    "}",
+                    symbol,
                     () -> writer.writeWithNoFormatting("return false;").newLine());
             writer.openBlock(" else {\n", "}", () -> {
                 writer.write("$1T b = ($1T) other;", symbol).newLine();
@@ -61,7 +79,8 @@ final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> 
 
     private void writeHashCode(TraitCodegenWriter writer) {
         writer.override();
-        writer.openBlock("public int hashCode() {", "}",
+        writer.openBlock("public int hashCode() {",
+                "}",
                 () -> writer.writeWithNoFormatting("return toNode().hashCode();"));
     }
 }

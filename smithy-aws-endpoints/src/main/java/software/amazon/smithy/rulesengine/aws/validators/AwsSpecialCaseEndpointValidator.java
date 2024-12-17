@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.validators;
 
 import java.net.MalformedURLException;
@@ -31,8 +30,10 @@ import software.amazon.smithy.utils.SetUtils;
 public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
     private static final Set<String> SUPPORTED_PATTERNS = SetUtils.of(
-            "{region}", "{service}", "{dnsSuffix}", "{dualStackDnsSuffix}"
-    );
+            "{region}",
+            "{service}",
+            "{dnsSuffix}",
+            "{dualStackDnsSuffix}");
 
     private static final Pattern PATTERN = Pattern.compile("\\{[^\\}]*\\}");
 
@@ -51,20 +52,25 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateRegionalEndpointPatterns(
-            ServiceShape serviceShape, StandardRegionalEndpointsTrait regionalEndpoints) {
+            ServiceShape serviceShape,
+            StandardRegionalEndpointsTrait regionalEndpoints) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (List<RegionSpecialCase> specialCases : regionalEndpoints.getRegionSpecialCases().values()) {
             for (RegionSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
-                        serviceShape, regionalEndpoints, specialCase.getEndpoint()));
+                        serviceShape,
+                        regionalEndpoints,
+                        specialCase.getEndpoint()));
             }
         }
 
         for (List<PartitionSpecialCase> specialCases : regionalEndpoints.getPartitionSpecialCases().values()) {
             for (PartitionSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
-                        serviceShape, regionalEndpoints, specialCase.getEndpoint()));
+                        serviceShape,
+                        regionalEndpoints,
+                        specialCase.getEndpoint()));
             }
         }
 
@@ -72,15 +78,18 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validatePartitionalEndpointPatterns(
-            ServiceShape serviceShape, StandardPartitionalEndpointsTrait partitionalEndpoints) {
+            ServiceShape serviceShape,
+            StandardPartitionalEndpointsTrait partitionalEndpoints) {
 
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (List<PartitionEndpointSpecialCase> specialCases
-                : partitionalEndpoints.getPartitionEndpointSpecialCases().values()) {
+        for (List<PartitionEndpointSpecialCase> specialCases : partitionalEndpoints.getPartitionEndpointSpecialCases()
+                .values()) {
             for (PartitionEndpointSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
-                        serviceShape, partitionalEndpoints, specialCase.getEndpoint()));
+                        serviceShape,
+                        partitionalEndpoints,
+                        specialCase.getEndpoint()));
             }
         }
 
@@ -88,7 +97,9 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateEndpointPatterns(
-            ServiceShape serviceShape, FromSourceLocation location, String endpoint) {
+            ServiceShape serviceShape,
+            FromSourceLocation location,
+            String endpoint) {
         List<ValidationEvent> events = new ArrayList<>();
 
         Matcher m = PATTERN.matcher(endpoint);
@@ -101,15 +112,18 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
         if (!unsupportedPatterns.isEmpty()) {
             events.add(danger(
-                    serviceShape, location,
+                    serviceShape,
+                    location,
                     String.format("Endpoint `%s` contains unsupported patterns: %s",
-                            endpoint, String.join(", ", unsupportedPatterns)),
+                            endpoint,
+                            String.join(", ", unsupportedPatterns)),
                     "UnsupportedEndpointPattern"));
         }
 
         if (!(endpoint.startsWith("http://") || endpoint.startsWith("https://"))) {
             events.add(danger(
-                    serviceShape, location,
+                    serviceShape,
+                    location,
                     String.format("Endpoint `%s` should start with scheme `http://` or `https://`",
                             endpoint),
                     "InvalidEndpointPatternScheme"));
@@ -117,7 +131,8 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
         if (!isValidUrl(endpoint)) {
             events.add(error(
-                    serviceShape, location,
+                    serviceShape,
+                    location,
                     String.format("Endpoint `%s` should be a valid URL.",
                             endpoint),
                     "InvalidEndpointPatternUrl"));

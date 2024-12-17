@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,17 +27,18 @@ public class CodeFormatterTest {
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
         CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 80);
         List<SourceContextLoader.Line> lines = Arrays.asList(
-            new SourceContextLoader.Line(2, "A"),
-            new SourceContextLoader.Line(3, "B"),
-            new SourceContextLoader.Line(4, "C"),
-            new SourceContextLoader.Line(5, "D"));
+                new SourceContextLoader.Line(2, "A"),
+                new SourceContextLoader.Line(3, "B"),
+                new SourceContextLoader.Line(4, "C"),
+                new SourceContextLoader.Line(5, "D"));
 
         formatter.writeCode(0, 0, lines);
 
-        assertThat(builder.toString(), equalTo("2| A" + ls
-                                               + "3| B" + ls
-                                               + "4| C" + ls
-                                               + "5| D" + ls2));
+        assertThat(builder.toString(),
+                equalTo("2| A" + ls
+                        + "3| B" + ls
+                        + "4| C" + ls
+                        + "5| D" + ls2));
     }
 
     @Test
@@ -64,11 +54,12 @@ public class CodeFormatterTest {
 
         formatter.writeCode(3, 2, lines);
 
-        assertThat(builder.toString(), equalTo("2| Aa" + ls
-                                               + "3| Bb" + ls
-                                               + " |  ^" + ls
-                                               + "4| Cc" + ls
-                                               + "5| Dd" + ls2));
+        assertThat(builder.toString(),
+                equalTo("2| Aa" + ls
+                        + "3| Bb" + ls
+                        + " |  ^" + ls
+                        + "4| Cc" + ls
+                        + "5| Dd" + ls2));
     }
 
     @Test
@@ -84,13 +75,14 @@ public class CodeFormatterTest {
 
         formatter.writeCode(8, 2, lines);
 
-        assertThat(builder.toString(), equalTo("2 | Aa" + ls
-                                               + "··|" + ls
-                                               + "8 | Bb" + ls
-                                               + "  |  ^" + ls
-                                               + "9 | Cc" + ls
-                                               + "··|" + ls
-                                               + "12| Dd" + ls2));
+        assertThat(builder.toString(),
+                equalTo("2 | Aa" + ls
+                        + "··|" + ls
+                        + "8 | Bb" + ls
+                        + "  |  ^" + ls
+                        + "9 | Cc" + ls
+                        + "··|" + ls
+                        + "12| Dd" + ls2));
     }
 
     @Test

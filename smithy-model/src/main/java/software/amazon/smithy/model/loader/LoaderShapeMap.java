@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -171,8 +160,7 @@ final class LoaderShapeMap {
 
     void buildShapesAndClaimMixinTraits(
             Model.Builder modelBuilder,
-            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits
-    ) {
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits) {
         Function<ShapeId, Shape> createdShapeMap = id -> modelBuilder.getCurrentShapes().get(id);
 
         for (Shape shape : createdShapes.values()) {
@@ -191,8 +179,7 @@ final class LoaderShapeMap {
             ShapeWrapper wrapper,
             Model.Builder builder,
             Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> createdShapeMap
-    ) {
+            Function<ShapeId, Shape> createdShapeMap) {
         Shape built = null;
         for (LoadOperation.DefineShape shape : wrapper) {
             if (validateShapeVersion(shape)) {
@@ -276,8 +263,7 @@ final class LoaderShapeMap {
             ShapeId current,
             List<ShapeId> resolved,
             Set<ShapeId> unresolved,
-            Set<ShapeId> visited
-    ) {
+            Set<ShapeId> visited) {
         if (resolved.contains(current)) {
             return false;
         } else if (!unresolved.contains(current)) {
@@ -300,14 +286,14 @@ final class LoaderShapeMap {
     private boolean validateShapeVersion(LoadOperation.DefineShape operation) {
         if (!operation.version.isShapeTypeSupported(operation.getShapeType())) {
             events.add(ValidationEvent.builder()
-                               .severity(Severity.ERROR)
-                               .id(Validator.MODEL_ERROR)
-                               .shapeId(operation.toShapeId())
-                               .sourceLocation(operation)
-                               .message(String.format(
-                                       "%s shapes cannot be used in Smithy version " + operation.version,
-                                       operation.getShapeType()))
-                               .build());
+                    .severity(Severity.ERROR)
+                    .id(Validator.MODEL_ERROR)
+                    .shapeId(operation.toShapeId())
+                    .sourceLocation(operation)
+                    .message(String.format(
+                            "%s shapes cannot be used in Smithy version " + operation.version,
+                            operation.getShapeType()))
+                    .build());
             return false;
         }
         return true;
@@ -330,8 +316,8 @@ final class LoaderShapeMap {
                             joiner.add("Left has trait " + tid);
                         } else if (!previous.getAllTraits().get(tid).equals(t)) {
                             joiner.add("Left trait " + tid + " differs from right trait. "
-                                       + Node.printJson(t.toNode()) + " vs "
-                                       + Node.printJson(previous.getAllTraits().get(tid).toNode()));
+                                    + Node.printJson(t.toNode()) + " vs "
+                                    + Node.printJson(previous.getAllTraits().get(tid).toNode()));
                         }
                     });
                     previous.getAllTraits().forEach((tid, t) -> {
@@ -342,10 +328,12 @@ final class LoaderShapeMap {
                 }
                 if (!built.getAllMembers().equals(previous.getAllMembers())) {
                     joiner.add("Members differ: " + built.getAllMembers().keySet()
-                               + " vs " + previous.getAllMembers().keySet());
+                            + " vs " + previous.getAllMembers().keySet());
                 }
-                events.add(LoaderUtils.onShapeConflict(id, built.getSourceLocation(),
-                                                       previous.getSourceLocation(), joiner.toString()));
+                events.add(LoaderUtils.onShapeConflict(id,
+                        built.getSourceLocation(),
+                        previous.getSourceLocation(),
+                        joiner.toString()));
                 return false;
             } else if (!LoaderUtils.isSameLocation(built, previous)) {
                 events.add(ValidationEvent.builder()
@@ -365,8 +353,7 @@ final class LoaderShapeMap {
     private Shape buildShape(
             LoadOperation.DefineShape defineShape,
             Function<ShapeId, Map<ShapeId, Trait>> traitClaimer,
-            Function<ShapeId, Shape> createdShapeMap
-    ) {
+            Function<ShapeId, Shape> createdShapeMap) {
         try {
             AbstractShapeBuilder<?, ?> builder = defineShape.builder();
             ModelInteropTransformer.patchShapeBeforeBuilding(defineShape, builder, events);

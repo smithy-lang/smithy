@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.neighbor;
 
 import java.util.ArrayList;
@@ -59,8 +48,8 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> getDefault(Shape shape) {
         return shape.getMixins().isEmpty()
-               ? Collections.emptyList()
-               : initializeRelationships(shape, 0);
+                ? Collections.emptyList()
+                : initializeRelationships(shape, 0);
     }
 
     private List<Relationship> initializeRelationships(Shape shape, int knownMemberCount) {
@@ -108,7 +97,8 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> resourceShape(ResourceShape shape) {
         int neededSize = shape.getAllOperations().size() + shape.getResources().size()
-                         + shape.getIdentifiers().size() + shape.getProperties().size();
+                + shape.getIdentifiers().size()
+                + shape.getProperties().size();
         List<Relationship> result = initializeRelationships(shape, neededSize);
         shape.getIdentifiers().forEach((k, v) -> push(result, shape, RelationshipType.IDENTIFIER, v));
         shape.getProperties().forEach((k, v) -> push(result, shape, RelationshipType.PROPERTY, v));

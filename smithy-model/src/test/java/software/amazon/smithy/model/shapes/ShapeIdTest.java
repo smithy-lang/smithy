@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -206,70 +195,70 @@ public class ShapeIdTest {
         return Arrays.asList(new Object[][] {
 
                 // valid namespaces
-                { "n.s#name", false},
-                { "name.space#name", false},
-                { "name1.space2#name", false},
-                { "na.me.spa.ce#name", false},
-                { "na.me.spa.ce_#name", false},
-                { "na.me.spa.ce__#name", false},
-                { "na.me.spa.ce__2#name", false},
-                { "na.me.spa.ce__2_#name", false},
-                { "namespace#name", false},
-                { "mixed.Case#name", false},
-                { "NAMESPACE#name", false},
-                { "nameSpace#name", false},
-                { "Mixed.case#name", false},
-                { "_foo.baz#name", false},
-                { "__foo.baz#name", false},
+                {"n.s#name", false},
+                {"name.space#name", false},
+                {"name1.space2#name", false},
+                {"na.me.spa.ce#name", false},
+                {"na.me.spa.ce_#name", false},
+                {"na.me.spa.ce__#name", false},
+                {"na.me.spa.ce__2#name", false},
+                {"na.me.spa.ce__2_#name", false},
+                {"namespace#name", false},
+                {"mixed.Case#name", false},
+                {"NAMESPACE#name", false},
+                {"nameSpace#name", false},
+                {"Mixed.case#name", false},
+                {"_foo.baz#name", false},
+                {"__foo.baz#name", false},
 
                 // invalid namespaces
-                { "#name", true},
-                { "name.space.#name", true},
-                { "name..space#name", true},
-                { ".name.space#name", true},
-                { "name-space#name", true},
-                { "1namespace.foo#name", true},
-                { "a._.b#name", true},
-                { "a.____.b#name", true},
+                {"#name", true},
+                {"name.space.#name", true},
+                {"name..space#name", true},
+                {".name.space#name", true},
+                {"name-space#name", true},
+                {"1namespace.foo#name", true},
+                {"a._.b#name", true},
+                {"a.____.b#name", true},
 
                 // valid shape names
-                { "ns.foo#shapename", false},
-                { "ns.foo#shapeName", false},
-                { "ns.foo#ShapeName", false},
-                { "ns.foo#SHAPENAME", false},
-                { "ns.foo#name1", false},
-                { "ns.foo#Shape_Name", false},
-                { "ns.foo#shape_name_num1", false},
-                { "ns.foo#shape_1name", false},
-                { "ns.foo#_Shape_Name", false},
-                { "ns.foo#__shape_name_num1", false},
+                {"ns.foo#shapename", false},
+                {"ns.foo#shapeName", false},
+                {"ns.foo#ShapeName", false},
+                {"ns.foo#SHAPENAME", false},
+                {"ns.foo#name1", false},
+                {"ns.foo#Shape_Name", false},
+                {"ns.foo#shape_name_num1", false},
+                {"ns.foo#shape_1name", false},
+                {"ns.foo#_Shape_Name", false},
+                {"ns.foo#__shape_name_num1", false},
 
                 // invalid shape names
-                { "ns.foo#", true},
-                { "ns.foo#1name", true},
-                { "ns.foo#1", true},
-                { "ns.foo#shape.name", true},
+                {"ns.foo#", true},
+                {"ns.foo#1name", true},
+                {"ns.foo#1", true},
+                {"ns.foo#shape.name", true},
 
                 // valid segments
-                { "ns.foo#name$abc", false},
-                { "ns.foo#name$Abc", false},
-                { "ns.foo#name$ABC", false},
-                { "ns.foo#name$abcMno", false},
-                { "ns.foo#name$AbcMno", false},
-                { "ns.foo#name$AbcMno1", false},
-                { "ns.foo#name$abc_mno", false},
-                { "ns.foo#name$Abc_Mno", false},
-                { "ns.foo#name$abc_", false},
-                { "ns.foo#name$abc__mno", false},
-                { "ns.foo#name$_abc", false},
-                { "ns.foo#name$_abc_", false},
+                {"ns.foo#name$abc", false},
+                {"ns.foo#name$Abc", false},
+                {"ns.foo#name$ABC", false},
+                {"ns.foo#name$abcMno", false},
+                {"ns.foo#name$AbcMno", false},
+                {"ns.foo#name$AbcMno1", false},
+                {"ns.foo#name$abc_mno", false},
+                {"ns.foo#name$Abc_Mno", false},
+                {"ns.foo#name$abc_", false},
+                {"ns.foo#name$abc__mno", false},
+                {"ns.foo#name$_abc", false},
+                {"ns.foo#name$_abc_", false},
 
                 // invalid segments
-                { "ns.foo#name$", true},
-                { "ns.foo#name$abc-mno", true},
-                { "ns.foo#name$1abc", true},
-                { "ns.foo#name$abc.mno", true},
-                { "ns.foo#name$abc.", true},
+                {"ns.foo#name$", true},
+                {"ns.foo#name$abc-mno", true},
+                {"ns.foo#name$1abc", true},
+                {"ns.foo#name$abc.mno", true},
+                {"ns.foo#name$abc.", true},
         });
     }
 
@@ -279,8 +268,7 @@ public class ShapeIdTest {
             final String namespace,
             final String name,
             final String member,
-            final String expectedResult
-    ) {
+            final String expectedResult) {
         ShapeId shapeId = ShapeId.fromParts(namespace, name, member);
 
         assertEquals(expectedResult, shapeId.toString());
@@ -303,8 +291,7 @@ public class ShapeIdTest {
                 ShapeId.fromParts("ns.foo", "bar", "Member"),
                 ShapeId.fromParts("ns.foo", "bar", "AMember"),
                 ShapeId.fromParts("ns.Foo", "foo"),
-                ShapeId.fromParts("ns.baz", "foo")
-        );
+                ShapeId.fromParts("ns.baz", "foo"));
         given.sort(ShapeId::compareTo);
 
         List<ShapeId> expected = Arrays.asList(
@@ -315,8 +302,7 @@ public class ShapeIdTest {
                 ShapeId.fromParts("ns.foo", "bar", "member"),
                 ShapeId.fromParts("ns.Foo", "foo"),
                 ShapeId.fromParts("ns.foo", "Foo"),
-                ShapeId.fromParts("ns.foo", "foo")
-        );
+                ShapeId.fromParts("ns.foo", "foo"));
 
         assertEquals(expected, given);
     }
@@ -331,7 +317,7 @@ public class ShapeIdTest {
 
         ShapeId obj = ShapeId.fromParts("ns.foo", "name");
         return Arrays.asList(new Object[][] {
-                {obj, obj, true },
+                {obj, obj, true},
                 {ShapeId.fromParts("ns.foo", "name"), "other-object", false},
                 {ShapeId.fromParts("ns.foo", "name"), ShapeId.fromParts("ns.foo", "name"), true},
                 {ShapeId.fromParts("ns.foo", "name1"), ShapeId.fromParts("ns.foo", "name2"), false},

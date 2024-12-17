@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -80,8 +69,7 @@ public final class OperationValidator extends AbstractValidator {
             NeighborProvider reverseProvider,
             List<ValidationEvent> events,
             String descriptor,
-            String invalid
-    ) {
+            String invalid) {
         for (Shape shape : shapes) {
             Set<ShapeId> operations = new HashSet<>();
             for (Relationship rel : reverseProvider.getNeighbors(shape)) {
@@ -113,15 +101,16 @@ public final class OperationValidator extends AbstractValidator {
             Shape operation,
             Shape target,
             String property,
-            String invalid
-    ) {
+            String invalid) {
         return ValidationEvent.builder()
                 .id(OPERATION_INPUT_OUTPUT_MISUSE)
                 .severity(Severity.ERROR)
                 .shape(operation)
                 .message(String.format(
                         "Operation `%s` cannot target structures marked with the `@%s` trait: `%s`",
-                        property, invalid, target.getId()))
+                        property,
+                        invalid,
+                        target.getId()))
                 .build();
     }
 
@@ -140,7 +129,7 @@ public final class OperationValidator extends AbstractValidator {
                 .severity(Severity.ERROR)
                 .shape(shape)
                 .message("Shapes marked with the @" + descriptor + " trait cannot be used as " + descriptor + " by "
-                         + "multiple operations: " + ValidationUtils.tickedList(operations))
+                        + "multiple operations: " + ValidationUtils.tickedList(operations))
                 .build();
     }
 
@@ -151,7 +140,10 @@ public final class OperationValidator extends AbstractValidator {
                 .id(OPERATION_INPUT_OUTPUT_NAME + "." + property)
                 .message(String.format(
                         "The %s of this operation should target a shape that starts with the operation's name, '%s', "
-                        + "but the targeted shape is `%s`", property, operation.getId().getName(), target))
+                                + "but the targeted shape is `%s`",
+                        property,
+                        operation.getId().getName(),
+                        target))
                 .build();
     }
 
@@ -181,17 +173,19 @@ public final class OperationValidator extends AbstractValidator {
             Shape ambiguousShape,
             OperationShape operation,
             ShapeId ioShape,
-            String descriptor
-    ) {
+            String descriptor) {
         return ValidationEvent.builder()
                 .id(OPERATION_NAME_AMBIGUITY)
                 .shape(ambiguousShape)
                 .severity(Severity.WARNING)
                 .message(String.format(
                         "The name of this shape implies that it is the %1$s of %2$s, but that operation uses %3$s "
-                        + "for %1$s. This kind of ambiguity can confuse developers calling this operation and can "
-                        + "cause issues in code generators that use similar naming conventions to generate %1$s "
-                        + "types.", descriptor, operation.getId(), ioShape))
+                                + "for %1$s. This kind of ambiguity can confuse developers calling this operation and can "
+                                + "cause issues in code generators that use similar naming conventions to generate %1$s "
+                                + "types.",
+                        descriptor,
+                        operation.getId(),
+                        ioShape))
                 .build();
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.plugins;
 
 import java.util.Collections;
@@ -160,21 +149,28 @@ public final class BuildInfo {
 
         BuildInfo buildInfo = (BuildInfo) o;
         return Objects.equals(getVersion(), buildInfo.getVersion())
-               && Objects.equals(getProjectionName(), buildInfo.getProjectionName())
-               && Objects.equals(getProjection(), buildInfo.getProjection())
-               && Objects.equals(getValidationEvents(), buildInfo.getValidationEvents())
-               && Objects.equals(getTraitNames(), buildInfo.getTraitNames())
-               && Objects.equals(getTraitDefNames(), buildInfo.getTraitDefNames())
-               && Objects.equals(getServiceShapeIds(), buildInfo.getServiceShapeIds())
-               && Objects.equals(getOperationShapeIds(), buildInfo.getOperationShapeIds())
-               && Objects.equals(getResourceShapeIds(), buildInfo.getResourceShapeIds())
-               && Objects.equals(getMetadata(), buildInfo.getMetadata());
+                && Objects.equals(getProjectionName(), buildInfo.getProjectionName())
+                && Objects.equals(getProjection(), buildInfo.getProjection())
+                && Objects.equals(getValidationEvents(), buildInfo.getValidationEvents())
+                && Objects.equals(getTraitNames(), buildInfo.getTraitNames())
+                && Objects.equals(getTraitDefNames(), buildInfo.getTraitDefNames())
+                && Objects.equals(getServiceShapeIds(), buildInfo.getServiceShapeIds())
+                && Objects.equals(getOperationShapeIds(), buildInfo.getOperationShapeIds())
+                && Objects.equals(getResourceShapeIds(), buildInfo.getResourceShapeIds())
+                && Objects.equals(getMetadata(), buildInfo.getMetadata());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getVersion(), getProjectionName(), getProjection(), getValidationEvents(),
-                            getTraitNames(), getTraitDefNames(), getServiceShapeIds(), getOperationShapeIds(),
-                            getResourceShapeIds(), getMetadata());
+        return Objects.hash(getVersion(),
+                getProjectionName(),
+                getProjection(),
+                getValidationEvents(),
+                getTraitNames(),
+                getTraitDefNames(),
+                getServiceShapeIds(),
+                getOperationShapeIds(),
+                getResourceShapeIds(),
+                getMetadata());
     }
 }

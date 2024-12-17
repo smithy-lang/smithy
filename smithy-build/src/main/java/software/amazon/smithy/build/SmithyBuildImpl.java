@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build;
 
 import java.nio.file.Path;
@@ -167,14 +156,16 @@ final class SmithyBuildImpl {
         if (!PLUGIN_PATTERN.matcher(plugin).matches()) {
             throw new SmithyBuildException(String.format(
                     "Invalid plugin name `%s` found in the `%s` projection. "
-                    + " Plugin names must match the following regex: %s", plugin, projection, PLUGIN_PATTERN));
+                            + " Plugin names must match the following regex: %s",
+                    plugin,
+                    projection,
+                    PLUGIN_PATTERN));
         }
     }
 
     void applyAllProjections(
             Consumer<ProjectionResult> projectionResultConsumer,
-            BiConsumer<String, Throwable> projectionExceptionConsumer
-    ) {
+            BiConsumer<String, Throwable> projectionExceptionConsumer) {
         ValidatedResult<Model> resolvedModel = createBaseModel();
 
         // Some plugins need things like file locks and can't be run in parallel with other plugins.
@@ -194,12 +185,20 @@ final class SmithyBuildImpl {
             List<ResolvedPlugin> resolvedPlugins = resolvePlugins(projectionName, config);
 
             if (areAnyResolvedPluginsSerial(resolvedPlugins)) {
-                executeSerialProjection(resolvedModel, projectionName, config, resolvedPlugins,
-                                        projectionResultConsumer, projectionExceptionConsumer);
+                executeSerialProjection(resolvedModel,
+                        projectionName,
+                        config,
+                        resolvedPlugins,
+                        projectionResultConsumer,
+                        projectionExceptionConsumer);
             } else {
                 parallelProjections.add(() -> {
-                    executeSerialProjection(resolvedModel, projectionName, config, resolvedPlugins,
-                                            projectionResultConsumer, projectionExceptionConsumer);
+                    executeSerialProjection(resolvedModel,
+                            projectionName,
+                            config,
+                            resolvedPlugins,
+                            projectionResultConsumer,
+                            projectionExceptionConsumer);
                 });
             }
         }
@@ -221,7 +220,8 @@ final class SmithyBuildImpl {
             if (!seenArtifactNames.add(id.getArtifactName())) {
                 throw new SmithyBuildException(String.format(
                         "Multiple plugins use the same artifact name '%s' in the '%s' projection",
-                        id.getArtifactName(), projectionName));
+                        id.getArtifactName(),
+                        projectionName));
             }
             createPlugin(projectionName, id).ifPresent(plugin -> {
                 resolvedPlugins.add(new ResolvedPlugin(id, plugin, pluginEntry.getValue()));
@@ -245,8 +245,8 @@ final class SmithyBuildImpl {
         }
 
         String message = "Unable to find a plugin for `" + id + "` in the `" + projectionName + "` "
-                         + "projection. Is this the correct spelling? Are you missing a dependency? Is your "
-                         + "classpath configured correctly?";
+                + "projection. Is this the correct spelling? Are you missing a dependency? Is your "
+                + "classpath configured correctly?";
 
         if (config.isIgnoreMissingPlugins()) {
             LOGGER.severe(message);
@@ -271,8 +271,7 @@ final class SmithyBuildImpl {
             ProjectionConfig config,
             List<ResolvedPlugin> resolvedPlugins,
             Consumer<ProjectionResult> projectionResultConsumer,
-            BiConsumer<String, Throwable> projectionExceptionConsumer
-    ) {
+            BiConsumer<String, Throwable> projectionExceptionConsumer) {
         // Errors that occur while invoking the result callback must not
         // cause the exception callback to be invoked.
         ProjectionResult result = null;
@@ -302,8 +301,7 @@ final class SmithyBuildImpl {
             String projectionName,
             ProjectionConfig projection,
             ValidatedResult<Model> baseModel,
-            List<ResolvedPlugin> resolvedPlugins
-    ) throws Throwable {
+            List<ResolvedPlugin> resolvedPlugins) throws Throwable {
         Model resolvedModel = baseModel.unwrap();
         LOGGER.fine(() -> String.format("Creating the `%s` projection", projectionName));
 
@@ -311,7 +309,8 @@ final class SmithyBuildImpl {
         if (!projection.getImports().isEmpty()) {
             LOGGER.fine(() -> String.format(
                     "Merging the following `%s` projection imports into the loaded model: %s",
-                    projectionName, projection.getImports()));
+                    projectionName,
+                    projection.getImports()));
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(resolvedModel);
             projection.getImports().forEach(assembler::addImport);
             baseModel = assembler.assemble();
@@ -342,10 +341,14 @@ final class SmithyBuildImpl {
         // Don't do another round of validation and transforms if there are no transforms.
         // This is the case on the source projection, for example.
         if (!projection.getTransforms().isEmpty()) {
-            LOGGER.fine(() -> String.format("Applying transforms to projection %s: %s", projectionName,
+            LOGGER.fine(() -> String.format("Applying transforms to projection %s: %s",
+                    projectionName,
                     projection.getTransforms().stream().map(TransformConfig::getName).collect(Collectors.toList())));
             projectedModel = applyProjectionTransforms(
-                    baseModel, resolvedModel, projectionName, Collections.emptySet());
+                    baseModel,
+                    resolvedModel,
+                    projectionName,
+                    Collections.emptySet());
             modelResult = modelAssemblerSupplier.get().addModel(projectedModel).assemble();
         } else {
             LOGGER.fine(() -> String.format("No transforms to apply for projection %s", projectionName));
@@ -361,8 +364,14 @@ final class SmithyBuildImpl {
         for (ResolvedPlugin resolvedPlugin : resolvedPlugins) {
             if (pluginFilter.test(resolvedPlugin.id.getArtifactName())) {
                 try {
-                    applyPlugin(projectionName, projection, baseProjectionDir, resolvedPlugin,
-                            projectedModel, resolvedModel, modelResult, resultBuilder);
+                    applyPlugin(projectionName,
+                            projection,
+                            baseProjectionDir,
+                            resolvedPlugin,
+                            projectedModel,
+                            resolvedModel,
+                            modelResult,
+                            resultBuilder);
                 } catch (Throwable e) {
                     if (firstPluginError == null) {
                         firstPluginError = e;
@@ -385,8 +394,7 @@ final class SmithyBuildImpl {
             ValidatedResult<Model> baseModel,
             Model currentModel,
             String projectionName,
-            Set<String> visited
-    ) {
+            Set<String> visited) {
         Model originalModel = baseModel.unwrap();
 
         for (Pair<ObjectNode, ProjectionTransformer> transformerBinding : transformers.get(projectionName)) {
@@ -415,8 +423,7 @@ final class SmithyBuildImpl {
             Model projectedModel,
             Model resolvedModel,
             ValidatedResult<Model> modelResult,
-            ProjectionResult.Builder resultBuilder
-    ) {
+            ProjectionResult.Builder resultBuilder) {
         PluginId id = resolvedPlugin.id;
 
         // Create the manifest where plugin artifacts are stored.
@@ -425,21 +432,22 @@ final class SmithyBuildImpl {
 
         if (resolvedPlugin.plugin.requiresValidModel() && modelResult.isBroken()) {
             LOGGER.fine(() -> String.format("Skipping `%s` plugin for `%s` projection because the model is broken",
-                                            id, projectionName));
+                    id,
+                    projectionName));
         } else {
             LOGGER.info(() -> String.format("Applying `%s` plugin to `%s` projection", id, projectionName));
             resolvedPlugin.plugin
                     .execute(PluginContext.builder()
-                    .model(projectedModel)
-                    .originalModel(resolvedModel)
-                    .projection(projectionName, projection)
-                    .events(modelResult.getValidationEvents())
-                    .settings(resolvedPlugin.config)
-                    .fileManifest(manifest)
-                    .pluginClassLoader(pluginClassLoader)
-                    .sources(sources)
-                    .artifactName(id.hasArtifactName() ? id.getArtifactName() : null)
-                    .build());
+                            .model(projectedModel)
+                            .originalModel(resolvedModel)
+                            .projection(projectionName, projection)
+                            .events(modelResult.getValidationEvents())
+                            .settings(resolvedPlugin.config)
+                            .fileManifest(manifest)
+                            .pluginClassLoader(pluginClassLoader)
+                            .sources(sources)
+                            .artifactName(id.hasArtifactName() ? id.getArtifactName() : null)
+                            .build());
             resultBuilder.addPluginManifest(id.getArtifactName(), manifest);
         }
     }
@@ -448,8 +456,7 @@ final class SmithyBuildImpl {
     // transformer, and the right value is the instantiated transformer.
     private List<Pair<ObjectNode, ProjectionTransformer>> createTransformers(
             String projectionName,
-            ProjectionConfig config
-    ) {
+            ProjectionConfig config) {
         List<Pair<ObjectNode, ProjectionTransformer>> resolved = new ArrayList<>(config.getTransforms().size());
 
         for (TransformConfig transformConfig : config.getTransforms()) {
@@ -457,18 +464,20 @@ final class SmithyBuildImpl {
             ProjectionTransformer transformer = transformFactory.apply(name)
                     .orElseThrow(() -> new UnknownTransformException(String.format(
                             "Unable to find a transform named `%s` in the `%s` projection. Is this the correct "
-                            + "spelling? Are you missing a dependency? Is your classpath configured correctly?",
-                            name, projectionName)));
+                                    + "spelling? Are you missing a dependency? Is your classpath configured correctly?",
+                            name,
+                            projectionName)));
             resolved.add(Pair.of(transformConfig.getArgs(), transformer));
         }
 
         return resolved;
     }
 
-    private Model applyQueuedProjections(Collection<String> queuedProjections,
-                                         TransformContext context,
-                                         Model currentModel,
-                                         Set<String> visited) {
+    private Model applyQueuedProjections(
+            Collection<String> queuedProjections,
+            TransformContext context,
+            Model currentModel,
+            Set<String> visited) {
         LOGGER.fine(() -> String.format("Applying queued projections: %s", queuedProjections));
         for (String projectionTarget : queuedProjections) {
             Set<String> updatedVisited = new LinkedHashSet<>(visited);
@@ -477,17 +486,19 @@ final class SmithyBuildImpl {
             } else if (!transformers.containsKey(projectionTarget)) {
                 throw new UnknownProjectionException(String.format(
                         "Unable to find projection named `%s` referenced by the `%s` projection",
-                        projectionTarget, context.getProjectionName()));
+                        projectionTarget,
+                        context.getProjectionName()));
             } else if (visited.contains(projectionTarget)) {
                 updatedVisited.add(projectionTarget);
                 throw new SmithyBuildException(String.format(
-                        "Cycle found in apply transforms: %s -> ...", String.join(" -> ", updatedVisited)));
+                        "Cycle found in apply transforms: %s -> ...",
+                        String.join(" -> ", updatedVisited)));
             }
 
             updatedVisited.add(projectionTarget);
             currentModel = applyProjectionTransforms(
                     new ValidatedResult<>(context.getOriginalModel().orElse(currentModel),
-                                          context.getOriginalModelValidationEvents()),
+                            context.getOriginalModelValidationEvents()),
                     currentModel,
                     projectionTarget,
                     updatedVisited);

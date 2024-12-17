@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions.partition;
 
 import java.util.List;
@@ -59,8 +58,9 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
         objNode.expectNoAdditionalProperties(PROPERTIES);
 
         objNode.getStringMember(VERSION, builder::version);
-        objNode.getArrayMember(PARTITIONS, partitionsNode ->
-                partitionsNode.forEach(partNode -> builder.addPartition(Partition.fromNode(partNode))));
+        objNode.getArrayMember(PARTITIONS,
+                partitionsNode -> partitionsNode
+                        .forEach(partNode -> builder.addPartition(Partition.fromNode(partNode))));
 
         return builder.build();
     }
@@ -126,9 +126,9 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
     @Override
     public String toString() {
         return "Partitions{version='" + version
-               + "', partitions=" + partitions
-               + ", sourceLocation=" + sourceLocation
-               + '}';
+                + "', partitions=" + partitions
+                + ", sourceLocation=" + sourceLocation
+                + '}';
     }
 
     /**

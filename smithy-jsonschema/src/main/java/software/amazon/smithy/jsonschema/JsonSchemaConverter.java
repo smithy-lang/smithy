@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
@@ -92,12 +81,15 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
 
         LOGGER.fine("Creating JSON ref strategy");
         Model refModel = config.isEnableOutOfServiceReferences()
-                ? this.model : scopeModelToService(model, config.getService());
+                ? this.model
+                : scopeModelToService(model, config.getService());
 
         unitTargetedByUnion = refModel.shapes(UnionShape.class)
                 .anyMatch(u -> u.members().stream().anyMatch(m -> m.getTarget().equals(UnitTypeTrait.UNIT)));
 
-        refStrategy = RefStrategy.createDefaultStrategy(refModel, config, propertyNamingStrategy,
+        refStrategy = RefStrategy.createDefaultStrategy(refModel,
+                config,
+                propertyNamingStrategy,
                 new FilterPreludeUnit(unitTargetedByUnion));
 
         // Combine custom mappers with the discovered mappers and sort them.
@@ -115,14 +107,13 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         rootDefinitionPointer = config.getDefinitionPointer();
         rootDefinitionSegments = countSegments(rootDefinitionPointer);
         LOGGER.fine(() -> "Using the following root JSON schema pointer: " + rootDefinitionPointer
-                          + " (" + rootDefinitionSegments + " segments)");
+                + " (" + rootDefinitionSegments + " segments)");
     }
 
     private static Model createUpdatedModel(
             Model model,
             Shape rootShape,
-            Predicate<Shape> predicate
-    ) {
+            Predicate<Shape> predicate) {
         ModelTransformer transformer = ModelTransformer.create();
 
         if (rootShape != null) {
@@ -222,7 +213,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
      */
     public boolean isTopLevelPointer(String pointer) {
         return pointer.startsWith(rootDefinitionPointer)
-               && countSegments(pointer) == rootDefinitionSegments + 1;
+                && countSegments(pointer) == rootDefinitionSegments + 1;
     }
 
     /**

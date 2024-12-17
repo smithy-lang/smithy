@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
@@ -40,8 +29,7 @@ final class AttributeSelector implements InternalSelector {
             List<String> path,
             List<String> expected,
             AttributeComparator comparator,
-            boolean caseInsensitive
-    ) {
+            boolean caseInsensitive) {
         this.path = path;
         this.caseInsensitive = caseInsensitive;
         this.comparator = comparator;
@@ -61,7 +49,7 @@ final class AttributeSelector implements InternalSelector {
         // and it doesn't matter how deep into the trait the selector descends.
         if (comparator == null
                 && path.size() >= 2
-                && path.get(0).equals("trait")     // only match on traits
+                && path.get(0).equals("trait") // only match on traits
                 && !path.get(1).startsWith("(")) { // don't match projections
             optimizer = model -> {
                 // The trait name might be relative to the prelude, so ensure it's absolute.
