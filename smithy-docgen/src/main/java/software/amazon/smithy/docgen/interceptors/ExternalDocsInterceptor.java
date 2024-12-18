@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ShapeDetailsSection;
@@ -34,7 +33,9 @@ public final class ExternalDocsInterceptor implements CodeInterceptor<ShapeDetai
     public void write(DocWriter writer, String previousText, ShapeDetailsSection section) {
         var trait = section.shape().getMemberTrait(section.context().model(), ExternalDocumentationTrait.class).get();
         writer.openAdmonition(NoticeType.INFO);
-        trait.getUrls().entrySet().stream()
+        trait.getUrls()
+                .entrySet()
+                .stream()
                 .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
                 .forEach(pair -> writer.write("$R\n", pair));
         writer.closeAdmonition();

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.List;
@@ -32,5 +31,6 @@ public interface AuthSchemeValidator extends Predicate<String> {
     List<ValidationEvent> validateScheme(
             Map<Identifier, Literal> authScheme,
             FromSourceLocation sourceLocation,
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter);
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+    );
 }

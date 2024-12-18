@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,7 +46,7 @@ public class EventStreamIndexTest {
         EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getInputInfo(ShapeId.from("example.smithy#EmptyOperation")),
-                   equalTo(Optional.empty()));
+                equalTo(Optional.empty()));
     }
 
     @Test
@@ -65,7 +54,7 @@ public class EventStreamIndexTest {
         EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#EmptyOperation")),
-                   equalTo(Optional.empty()));
+                equalTo(Optional.empty()));
     }
 
     @Test
@@ -73,7 +62,7 @@ public class EventStreamIndexTest {
         EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#NotEventStreamOperation")),
-                   equalTo(Optional.empty()));
+                equalTo(Optional.empty()));
     }
 
     @Test
@@ -81,7 +70,7 @@ public class EventStreamIndexTest {
         EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#NotEventStreamOperation")),
-                   equalTo(Optional.empty()));
+                equalTo(Optional.empty()));
     }
 
     @Test
@@ -98,7 +87,7 @@ public class EventStreamIndexTest {
         assertThat(input.getOperation().getId(), equalTo(ShapeId.from("example.smithy#EventStreamOperation")));
         assertThat(input.getStructure().getId(), equalTo(ShapeId.from("example.smithy#EventStreamOperationInput")));
         assertThat(input.getEventStreamMember().getId(),
-                   equalTo(ShapeId.from("example.smithy#EventStreamOperationInput$c")));
+                equalTo(ShapeId.from("example.smithy#EventStreamOperationInput$c")));
         assertThat(input.getEventStreamTarget().getId(), equalTo(ShapeId.from("example.smithy#InputEventStream")));
         assertThat(input.getInitialMessageMembers(), hasKey("a"));
         assertThat(input.getInitialMessageMembers(), hasKey("b"));
@@ -109,7 +98,7 @@ public class EventStreamIndexTest {
         assertThat(output.getOperation().getId(), equalTo(ShapeId.from("example.smithy#EventStreamOperation")));
         assertThat(output.getStructure().getId(), equalTo(ShapeId.from("example.smithy#EventStreamOperationOutput")));
         assertThat(output.getEventStreamMember().getId(),
-                   equalTo(ShapeId.from("example.smithy#EventStreamOperationOutput$c")));
+                equalTo(ShapeId.from("example.smithy#EventStreamOperationOutput$c")));
         assertThat(output.getEventStreamTarget().getId(), equalTo(ShapeId.from("example.smithy#OutputEventStream")));
         assertThat(output.getInitialMessageMembers(), hasKey("a"));
         assertThat(output.getInitialMessageMembers(), hasKey("b"));

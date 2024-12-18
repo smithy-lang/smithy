@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.plugins;
 
 import java.io.File;
@@ -79,7 +68,8 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
             // Copy sources directly.
             names = copySources(context);
             LOGGER.fine(() -> String.format("Copying source files to the sources of %s: %s",
-                    projectionName, names));
+                    projectionName,
+                    names));
         } else {
             // Extract source shapes, traits, and metadata from the projected model.
             LOGGER.fine(() -> String.format(
@@ -118,7 +108,8 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
                 if (current.toString().endsWith(".jar")) {
                     // Account for just a simple file vs recursing into directories.
                     String jarRoot = root.equals(current)
-                            ? "" : (root.relativize(current).toString() + File.separator);
+                            ? ""
+                            : (root.relativize(current).toString() + File.separator);
                     // Copy Smithy models out of the JAR.
                     copyModelsFromJar(names, manifest, jarRoot, current);
                 } else {
@@ -141,10 +132,10 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
         if (manifest.hasFile(target)) {
             throw new SourcesConflictException(
                     "Source file conflict found when attempting to add `" + target + "` to the `sources` plugin "
-                    + "output. All sources must have unique filenames relative to the directories marked as a "
-                    + "'source'. The files and directories that make up sources are flattened into a single "
-                    + "directory and conflicts are not allowed. The manifest has the following files: "
-                    + ValidationUtils.tickedList(manifest.getFiles()));
+                            + "output. All sources must have unique filenames relative to the directories marked as a "
+                            + "'source'. The files and directories that make up sources are flattened into a single "
+                            + "directory and conflicts are not allowed. The manifest has the following files: "
+                            + ValidationUtils.tickedList(manifest.getFiles()));
         }
 
         String filename = target.toString();

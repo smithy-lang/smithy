@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
@@ -20,9 +9,11 @@ import java.util.List;
 
 final class IdlStringLexer {
 
-    private IdlStringLexer() { }
+    private IdlStringLexer() {}
 
-    private enum State { NORMAL, AFTER_ESCAPE, UNICODE }
+    private enum State {
+        NORMAL, AFTER_ESCAPE, UNICODE
+    }
 
     // Use the original lexeme of a string when possible, but creates a new string when escapes are used.
     private static final class StringBuilderProxy {
@@ -285,11 +276,11 @@ final class IdlStringLexer {
         // QuotedChar grammar:
         // https://smithy.io/2.0/spec/idl.html#grammar-token-smithy-QuotedChar
         return c == '\t'
-               || c == '\n'
-               || c == '\r'
-               || (c >= 0x20 && c <= 0x21) // space - "!"
-               || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
-               || (c >= 0x23 && c <= 0x5b) // "#" - "["
-               || c >= 0x5d; // "]"+
+                || c == '\n'
+                || c == '\r'
+                || (c >= 0x20 && c <= 0x21) // space - "!"
+                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
+                || (c >= 0x23 && c <= 0x5b) // "#" - "["
+                || c >= 0x5d; // "]"+
     }
 }

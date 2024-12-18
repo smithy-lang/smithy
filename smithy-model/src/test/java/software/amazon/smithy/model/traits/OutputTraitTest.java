@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,7 +20,9 @@ public class OutputTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                ShapeId.from("smithy.api#output"), ShapeId.from("ns.qux#foo"), Node.objectNode());
+                ShapeId.from("smithy.api#output"),
+                ShapeId.from("ns.qux#foo"),
+                Node.objectNode());
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(OutputTrait.class));

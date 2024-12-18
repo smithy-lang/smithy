@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,19 +24,22 @@ public final class ClientContextParamsTraitTest {
                 .unwrap();
         ServiceShape service = result
                 .expectShape(ShapeId.from("smithy.example#ExampleService"))
-                .asServiceShape().get();
+                .asServiceShape()
+                .get();
 
         ClientContextParamsTrait trait = service.getTrait(ClientContextParamsTrait.class).get();
 
-        assertEquals(trait.getParameters(), MapUtils.of(
-                "stringFoo", ClientContextParamDefinition.builder()
-                        .type(ShapeType.STRING)
-                        .documentation("a client string parameter")
-                        .build(),
-                "boolFoo", ClientContextParamDefinition.builder()
-                        .type(ShapeType.BOOLEAN)
-                        .documentation("a client boolean parameter")
-                        .build()
-        ));
+        assertEquals(trait.getParameters(),
+                MapUtils.of(
+                        "stringFoo",
+                        ClientContextParamDefinition.builder()
+                                .type(ShapeType.STRING)
+                                .documentation("a client string parameter")
+                                .build(),
+                        "boolFoo",
+                        ClientContextParamDefinition.builder()
+                                .type(ShapeType.BOOLEAN)
+                                .documentation("a client boolean parameter")
+                                .build()));
     }
 }

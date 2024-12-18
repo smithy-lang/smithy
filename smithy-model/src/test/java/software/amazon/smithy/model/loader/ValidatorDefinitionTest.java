@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,16 +36,16 @@ public class ValidatorDefinitionTest {
                     @Override
                     public Optional<Validator> createValidator(String name, ObjectNode configuration) {
                         return name.equals("hello")
-                               ? Optional.of(
-                                       model -> model.shapes()
-                                               .map(shape -> ValidationEvent.builder()
-                                                       .id("hello.subpart")
-                                                       .shape(shape)
-                                                       .severity(Severity.WARNING)
-                                                       .message("Hello!")
-                                                       .build())
-                                               .collect(Collectors.toList()))
-                               : Optional.empty();
+                                ? Optional.of(
+                                        model -> model.shapes()
+                                                .map(shape -> ValidationEvent.builder()
+                                                        .id("hello.subpart")
+                                                        .shape(shape)
+                                                        .severity(Severity.WARNING)
+                                                        .message("Hello!")
+                                                        .build())
+                                                .collect(Collectors.toList()))
+                                : Optional.empty();
                     }
                 })
                 .assemble()

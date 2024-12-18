@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ShapeSubheadingSection;
@@ -21,8 +20,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class LengthInterceptor implements CodeInterceptor<ShapeSubheadingSection, DocWriter> {
     private static final Pair<String, String> UNICODE_SCALAR_VALUE_REFERENCE = Pair.of(
-            "Unicode scalar values", "https://www.unicode.org/glossary/#unicode_scalar_value"
-    );
+            "Unicode scalar values",
+            "https://www.unicode.org/glossary/#unicode_scalar_value");
 
     @Override
     public Class<ShapeSubheadingSection> sectionType() {

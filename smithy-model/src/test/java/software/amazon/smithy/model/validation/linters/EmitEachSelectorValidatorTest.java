@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.linters;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,7 +50,7 @@ public class EmitEachSelectorValidatorTest {
         List<ValidationEvent> events = validator.validate(model);
 
         assertThat(events.get(0).getMessage(),
-                   equalTo("before `\"hello\"` after. ID: foo.bar#Baz. Var: [foo.bar#Baz]."));
+                equalTo("before `\"hello\"` after. ID: foo.bar#Baz. Var: [foo.bar#Baz]."));
     }
 
     @Test
@@ -54,9 +58,9 @@ public class EmitEachSelectorValidatorTest {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
                 .addShape(StringShape.builder()
-                                  .id(ShapeId.from("foo.bar#A"))
-                                  .addTrait(new DocumentationTrait("hello"))
-                                  .build())
+                        .id(ShapeId.from("foo.bar#A"))
+                        .addTrait(new DocumentationTrait("hello"))
+                        .build())
                 .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
                 .build();
         config.setSelector(Selector.parse("*"));
@@ -73,9 +77,9 @@ public class EmitEachSelectorValidatorTest {
         EmitEachSelectorValidator.Config config = new EmitEachSelectorValidator.Config();
         Model model = Model.builder()
                 .addShape(StringShape.builder()
-                                  .id(ShapeId.from("foo.bar#A"))
-                                  .addTrait(new DocumentationTrait("hello"))
-                                  .build())
+                        .id(ShapeId.from("foo.bar#A"))
+                        .addTrait(new DocumentationTrait("hello"))
+                        .build())
                 .addShape(StringShape.builder().id(ShapeId.from("foo.bar#B")).build())
                 .build();
         config.setSelector(Selector.parse("*"));
@@ -126,7 +130,7 @@ public class EmitEachSelectorValidatorTest {
         });
 
         assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 12 of EmitEachSelector message template"));
+                containsString("Syntax error at line 1 column 12 of EmitEachSelector message template"));
     }
 
     @Test
@@ -139,7 +143,7 @@ public class EmitEachSelectorValidatorTest {
         });
 
         assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 3 of EmitEachSelector message template"));
+                containsString("Syntax error at line 1 column 3 of EmitEachSelector message template"));
     }
 
     @Test
@@ -152,6 +156,6 @@ public class EmitEachSelectorValidatorTest {
         });
 
         assertThat(e.getMessage(),
-                   containsString("Syntax error at line 1 column 7 of EmitEachSelector message template"));
+                containsString("Syntax error at line 1 column 7 of EmitEachSelector message template"));
     }
 }

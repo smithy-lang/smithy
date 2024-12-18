@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -74,8 +63,9 @@ public final class StreamingTraitValidator extends AbstractValidator {
             Shape target = model.expectShape(member.getTarget());
             if (target.isBlobShape() && target.hasTrait(StreamingTrait.class)
                     && !(member.hasTrait(RequiredTrait.class) || member.hasTrait(DefaultTrait.class))) {
-                events.add(error(member, "Members that target blobs marked with the `streaming` trait MUST also be "
-                        + "marked with the `required` or `default` trait."));
+                events.add(error(member,
+                        "Members that target blobs marked with the `streaming` trait MUST also be "
+                                + "marked with the `required` or `default` trait."));
             }
         }
     }
@@ -99,10 +89,13 @@ public final class StreamingTraitValidator extends AbstractValidator {
                     MemberShape member = shape.asMemberShape().get();
                     Shape target = model.expectShape(member.getTarget());
                     if (target.hasTrait(StreamingTrait.class)) {
-                        events.add(error(member, String.format(
-                                "Member `%s` referencing @streaming shape `%s` must have the @httpPayload trait, "
-                                + "as service `%s` has a protocol that supports @httpPayload.",
-                                member.toShapeId(), member.getTarget(), service.toShapeId())));
+                        events.add(error(member,
+                                String.format(
+                                        "Member `%s` referencing @streaming shape `%s` must have the @httpPayload trait, "
+                                                + "as service `%s` has a protocol that supports @httpPayload.",
+                                        member.toShapeId(),
+                                        member.getTarget(),
+                                        service.toShapeId())));
                     }
                 }
             });
@@ -140,23 +133,28 @@ public final class StreamingTraitValidator extends AbstractValidator {
                         break;
                     case OUTPUT:
                         if (target.hasTrait(RequiresLengthTrait.class)) {
-                            events.add(error(rel.getNeighborShape().get(), String.format(
-                                    "Structures that contain a reference to a stream marked with the "
-                                    + "@requiresLength trait can only be used as operation inputs, but this "
-                                    + "structure is referenced from `%s` as %s",
-                                    rel.getShape().getId(),
-                                    rel.getRelationshipType().toString().toLowerCase(Locale.ENGLISH))));
+                            events.add(error(rel.getNeighborShape().get(),
+                                    String.format(
+                                            "Structures that contain a reference to a stream marked with the "
+                                                    + "@requiresLength trait can only be used as operation inputs, but this "
+                                                    + "structure is referenced from `%s` as %s",
+                                            rel.getShape().getId(),
+                                            rel.getRelationshipType().toString().toLowerCase(Locale.ENGLISH))));
                         }
                         break;
                     case MEMBER_TARGET:
-                        events.add(error(rel.getShape(), String.format(
-                                "Members cannot target structures that contain a stream, but this member targets %s",
-                                container.getId())));
+                        events.add(error(rel.getShape(),
+                                String.format(
+                                        "Members cannot target structures that contain a stream, but this member targets %s",
+                                        container.getId())));
                         break;
                     default:
-                        events.add(error(rel.getShape(), String.format(
-                                "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
-                                + "a stream", rel.getRelationshipType(), container.getId())));
+                        events.add(error(rel.getShape(),
+                                String.format(
+                                        "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
+                                                + "a stream",
+                                        rel.getRelationshipType(),
+                                        container.getId())));
                 }
             }
         }
@@ -176,9 +174,11 @@ public final class StreamingTraitValidator extends AbstractValidator {
             String invalidMembers = joiner.toString();
 
             if (!invalidMembers.isEmpty()) {
-                events.add(error(union, String.format(
-                        "Each member of an event stream union must target a structure shape, but the following union "
-                        + "members do not: [%s]", invalidMembers)));
+                events.add(error(union,
+                        String.format(
+                                "Each member of an event stream union must target a structure shape, but the following union "
+                                        + "members do not: [%s]",
+                                invalidMembers)));
             }
         }
     }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -54,8 +53,8 @@ final class RemoveInvalidDefaults {
         // To show up here, the shape has to have a range trait, or the target has to have one.
         RangeTrait rangeTrait = shape.getMemberTrait(model, RangeTrait.class).get();
         LOGGER.info(() -> "Removing default trait from " + shape.getId()
-                          + " because of an incompatible range trait: "
-                          + Node.printJson(rangeTrait.toNode()));
+                + " because of an incompatible range trait: "
+                + Node.printJson(rangeTrait.toNode()));
 
         // Members that target a shape with a default value need to set their default to null to override it.
         // Other members and other shapes can simply remove the default trait.

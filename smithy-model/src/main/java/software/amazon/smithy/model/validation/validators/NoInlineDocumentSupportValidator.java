@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -58,7 +47,7 @@ public final class NoInlineDocumentSupportValidator extends AbstractValidator {
         for (ServiceShape service : services) {
             // Find all service shapes that use a protocol that does not
             // support documents.
-            for (ShapeId protocol :noInlineDocumentSupport) {
+            for (ShapeId protocol : noInlineDocumentSupport) {
                 if (service.findTrait(protocol).isPresent()) {
                     // Find if the service uses a document.
                     Set<Shape> shapes = walker.walkShapes(service);
@@ -96,9 +85,12 @@ public final class NoInlineDocumentSupportValidator extends AbstractValidator {
             joiner.add(document.getId() + " @ " + document.getSourceLocation());
         }
 
-        return error(service, protocol, String.format(
-                "This service uses the `%s` protocol which does not support inline document types, "
-                + "but the following document types were found in the closure of the service: %s",
-                protocol.toShapeId(), joiner.toString()));
+        return error(service,
+                protocol,
+                String.format(
+                        "This service uses the `%s` protocol which does not support inline document types, "
+                                + "but the following document types were found in the closure of the service: %s",
+                        protocol.toShapeId(),
+                        joiner.toString()));
     }
 }

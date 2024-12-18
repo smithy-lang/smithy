@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import java.util.Collection;
@@ -28,6 +27,4 @@ public record ShapeMembersSection(
         DocGenerationContext context,
         Shape shape,
         Collection<MemberShape> members,
-        MemberListingType listingType
-) implements CodeSection {
-}
+        MemberListingType listingType) implements CodeSection {}

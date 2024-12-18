@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ProtocolSection;
@@ -21,8 +20,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class HttpChecksumRequiredInterceptor extends ProtocolTraitInterceptor<HttpChecksumRequiredTrait> {
     private static final Pair<String, String> CONTENT_MD5 = Pair.of(
-            "Content-MD5", "https://datatracker.ietf.org/doc/html/rfc1864.html"
-    );
+            "Content-MD5",
+            "https://datatracker.ietf.org/doc/html/rfc1864.html");
 
     @Override
     protected Class<HttpChecksumRequiredTrait> getTraitClass() {

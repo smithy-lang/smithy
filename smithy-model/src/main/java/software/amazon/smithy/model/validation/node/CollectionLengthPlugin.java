@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.model.node.ArrayNode;
@@ -36,17 +25,25 @@ final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionS
     protected void check(Shape shape, LengthTrait trait, ArrayNode node, Context context, Emitter emitter) {
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
-                emitter.accept(node, String.format(
-                        "Value provided for `%s` must have at least %d elements, but the provided value only "
-                        + "has %d elements", shape.getId(), min, node.size()));
+                emitter.accept(node,
+                        String.format(
+                                "Value provided for `%s` must have at least %d elements, but the provided value only "
+                                        + "has %d elements",
+                                shape.getId(),
+                                min,
+                                node.size()));
             }
         });
 
         trait.getMax().ifPresent(max -> {
             if (node.size() > max) {
-                emitter.accept(node, String.format(
-                        "Value provided for `%s` must have no more than %d elements, but the provided value "
-                        + "has %d elements", shape.getId(), max, node.size()));
+                emitter.accept(node,
+                        String.format(
+                                "Value provided for `%s` must have no more than %d elements, but the provided value "
+                                        + "has %d elements",
+                                shape.getId(),
+                                max,
+                                node.size()));
             }
         });
     }

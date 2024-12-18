@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.processor;
 
 import java.io.IOException;
@@ -169,14 +168,14 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
     private void writeArtifact(Path path) {
         String pathStr = path.toString();
         final String outputPath = pathStr.substring(pathStr.lastIndexOf(getPluginName())
-                + getPluginName().length() + 1);
+                + getPluginName().length()
+                + 1);
         try {
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
                 try (Writer writer = filer
                         .createResource(StandardLocation.CLASS_OUTPUT, "", convertOutputPath(outputPath))
-                        .openWriter()
-                ) {
+                        .openWriter()) {
                     writer.write(IoUtils.readUtf8File(path));
                 }
                 // All other Java files are written to the source output

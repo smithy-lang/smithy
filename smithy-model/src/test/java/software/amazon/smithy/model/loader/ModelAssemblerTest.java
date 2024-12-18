@@ -1,24 +1,12 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -45,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -152,7 +139,8 @@ public class ModelAssemblerTest {
 
     @Test
     public void addsExplicitTraitsToUnparsedModel() {
-        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        String unparsed =
+                "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
         SuppressTrait trait = SuppressTrait.builder().build();
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), unparsed)
@@ -167,7 +155,8 @@ public class ModelAssemblerTest {
 
     @Test
     public void addsExplicitTraitsToParsedDocumentNode() {
-        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        String unparsed =
+                "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
         SuppressTrait trait = SuppressTrait.builder().build();
         ValidatedResult<Model> result = new ModelAssembler()
                 .addDocumentNode(Node.parse(unparsed, SourceLocation.NONE.getFilename()))
@@ -184,9 +173,11 @@ public class ModelAssemblerTest {
     public void addsExplicitDocumentNode_1_0_0() {
         ObjectNode node = Node.objectNode()
                 .withMember("smithy", "1.0")
-                .withMember("shapes", Node.objectNode()
-                        .withMember("ns.foo#String", Node.objectNode()
-                                .withMember("type", Node.from("string"))));
+                .withMember("shapes",
+                        Node.objectNode()
+                                .withMember("ns.foo#String",
+                                        Node.objectNode()
+                                                .withMember("type", Node.from("string"))));
         ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
 
         assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
@@ -194,7 +185,8 @@ public class ModelAssemblerTest {
 
     @Test
     public void addsExplicitUnparsedDocumentNode() {
-        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#String\": { \"type\": \"string\"}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION
+                + "\", \"shapes\": { \"ns.foo#String\": { \"type\": \"string\"}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
@@ -206,7 +198,10 @@ public class ModelAssemblerTest {
     @Test
     public void addsExplicitValidators() {
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR).id("Foo").message("bar").build();
+                .severity(Severity.ERROR)
+                .id("Foo")
+                .message("bar")
+                .build();
         String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\"}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
@@ -218,14 +213,16 @@ public class ModelAssemblerTest {
 
     @Test
     public void detectsTraitsOnUnknownShape() {
-        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": {\"ns.foo#Unknown\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"foo\"}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION
+                + "\", \"shapes\": {\"ns.foo#Unknown\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"foo\"}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
 
         assertThat(result.getValidationEvents(), hasSize(1));
-        assertThat(result.getValidationEvents().get(0).getMessage(), containsString(
-                "Trait `documentation` applied to unknown shape `ns.foo#Unknown`"));
+        assertThat(result.getValidationEvents().get(0).getMessage(),
+                containsString(
+                        "Trait `documentation` applied to unknown shape `ns.foo#Unknown`"));
         assertThat(result.getValidationEvents().get(0).getSeverity(), is(Severity.ERROR));
     }
 
@@ -238,8 +235,10 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), hasSize(1));
         assertThat(result.getValidationEvents().get(0).getMessage(), containsString("Invalid shape `type`: foobaz"));
         assertThat(result.getValidationEvents().get(0).getSeverity(), is(Severity.ERROR));
-        assertTrue(result.getResult().get()
-                           .getShape(ShapeId.from("example.namespace#String")).isPresent());
+        assertTrue(result.getResult()
+                .get()
+                .getShape(ShapeId.from("example.namespace#String"))
+                .isPresent());
     }
 
     @Test
@@ -250,55 +249,56 @@ public class ModelAssemblerTest {
     @Test
     public void importsSymlinksDirectoryWithAllShapes() throws Exception {
         ValidatedResult<Model> result = new ModelAssembler()
-            .addImport(getClass().getResource("main.json"))
-            .addImport(createSymbolicLink(Paths.get(getClass().getResource("nested").toURI()), "symlink-nested"))
-            .assemble();
+                .addImport(getClass().getResource("main.json"))
+                .addImport(createSymbolicLink(Paths.get(getClass().getResource("nested").toURI()), "symlink-nested"))
+                .assemble();
 
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
-            is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
-            is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
-            is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
-            is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
-            is(ShapeType.INTEGER));
+                is(ShapeType.INTEGER));
         assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
-            is(ShapeType.LONG));
+                is(ShapeType.LONG));
         assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
-            is(ShapeType.FLOAT));
+                is(ShapeType.FLOAT));
         assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
-            is(ShapeType.BIG_DECIMAL));
+                is(ShapeType.BIG_DECIMAL));
         assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
-            is(ShapeType.BIG_INTEGER));
+                is(ShapeType.BIG_INTEGER));
         assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
-            is(ShapeType.BLOB));
+                is(ShapeType.BLOB));
         assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
-            is(ShapeType.BOOLEAN));
+                is(ShapeType.BOOLEAN));
         assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
-            is(ShapeType.TIMESTAMP));
+                is(ShapeType.TIMESTAMP));
         assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
-            is(ShapeType.LIST));
+                is(ShapeType.LIST));
         assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
-            is(ShapeType.MAP));
+                is(ShapeType.MAP));
         assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
-            is(ShapeType.STRUCTURE));
+                is(ShapeType.STRUCTURE));
         assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
-            is(ShapeType.UNION));
+                is(ShapeType.UNION));
         assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
-            is(ShapeType.RESOURCE));
+                is(ShapeType.RESOURCE));
         assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
-            is(ShapeType.OPERATION));
+                is(ShapeType.OPERATION));
         assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
-            is(ShapeType.SERVICE));
+                is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
         Optional<SensitiveTrait> sensitiveTrait = model
-            .getShape(stringId).get()
-            .getTrait(SensitiveTrait.class);
+                .getShape(stringId)
+                .get()
+                .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
 
         assertThat(model.getMetadata(), hasKey("foo"));
@@ -309,27 +309,28 @@ public class ModelAssemblerTest {
         assertThat(model.getMetadata().get("lorem"), equalTo(Node.from("ipsum")));
         assertThat(model.getMetadata(), hasKey("list"));
         assertThat(model.getMetadata().get("list").expectArrayNode().getElementsAs(StringNode::getValue),
-            containsInAnyOrder("a", "b", "c"));
+                containsInAnyOrder("a", "b", "c"));
 
         // The String shape should have a documentation trait applied.
         assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
-            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
-            .isPresent());
+                .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+                .isPresent());
     }
 
     @Test
     public void importsSymlinkFileWithAllShapes() throws Exception {
         ValidatedResult<Model> result = new ModelAssembler()
-            .addImport(getClass().getResource("main.json"))
-            .addImport(createSymbolicLink(
-                Paths.get(getClass().getResource("nested/merges-2.json").toURI()), "symlink-merges-2.json"))
-            .assemble();
+                .addImport(getClass().getResource("main.json"))
+                .addImport(createSymbolicLink(
+                        Paths.get(getClass().getResource("nested/merges-2.json").toURI()),
+                        "symlink-merges-2.json"))
+                .assemble();
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
         // The String shape should have a documentation trait applied.
         assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
-            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
-            .isPresent());
+                .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+                .isPresent());
     }
 
     public Path createSymbolicLink(Path target, String linkName) throws IOException {
@@ -357,47 +358,48 @@ public class ModelAssemblerTest {
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
-                   is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
-                   is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
-                   is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
-                   is(ShapeType.STRING));
+                is(ShapeType.STRING));
         assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
-                   is(ShapeType.INTEGER));
+                is(ShapeType.INTEGER));
         assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
-                   is(ShapeType.LONG));
+                is(ShapeType.LONG));
         assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
-                   is(ShapeType.FLOAT));
+                is(ShapeType.FLOAT));
         assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
-                   is(ShapeType.BIG_DECIMAL));
+                is(ShapeType.BIG_DECIMAL));
         assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
-                   is(ShapeType.BIG_INTEGER));
+                is(ShapeType.BIG_INTEGER));
         assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
-                   is(ShapeType.BLOB));
+                is(ShapeType.BLOB));
         assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
-                   is(ShapeType.BOOLEAN));
+                is(ShapeType.BOOLEAN));
         assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
-                   is(ShapeType.TIMESTAMP));
+                is(ShapeType.TIMESTAMP));
         assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
-                    is(ShapeType.LIST));
+                is(ShapeType.LIST));
         assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
-                   is(ShapeType.MAP));
+                is(ShapeType.MAP));
         assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
-                   is(ShapeType.STRUCTURE));
+                is(ShapeType.STRUCTURE));
         assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
-                   is(ShapeType.UNION));
+                is(ShapeType.UNION));
         assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
-                   is(ShapeType.RESOURCE));
+                is(ShapeType.RESOURCE));
         assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
-                   is(ShapeType.OPERATION));
+                is(ShapeType.OPERATION));
         assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
-                   is(ShapeType.SERVICE));
+                is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
         Optional<SensitiveTrait> sensitiveTrait = model
-                .getShape(stringId).get()
+                .getShape(stringId)
+                .get()
                 .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
 
@@ -409,12 +411,12 @@ public class ModelAssemblerTest {
         assertThat(model.getMetadata().get("lorem"), equalTo(Node.from("ipsum")));
         assertThat(model.getMetadata(), hasKey("list"));
         assertThat(model.getMetadata().get("list").expectArrayNode().getElementsAs(StringNode::getValue),
-                   containsInAnyOrder("a", "b", "c"));
+                containsInAnyOrder("a", "b", "c"));
 
         // The String shape should have a documentation trait applied.
         assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
-                           .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
-                           .isPresent());
+                .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+                .isPresent());
     }
 
     @Test
@@ -441,7 +443,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), hasSize(1));
         assertThat(result.getValidationEvents().get(0).getMessage(),
-                   containsString("Metadata conflict for key `foo`"));
+                containsString("Metadata conflict for key `foo`"));
     }
 
     @Test
@@ -458,11 +460,22 @@ public class ModelAssemblerTest {
                 .addUnparsedModel("b3.smithy", "metadata items = [3]")
                 .assemble()
                 .unwrap();
-        List<Number> metadata1 = model1.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
-        List<Number> metadata2 = model2.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
+        List<Number> metadata1 = model1.getMetadata()
+                .get("items")
+                .expectArrayNode()
+                .getElements()
+                .stream()
+                .map(s -> s.expectNumberNode().getValue())
+                .collect(Collectors.toList());
+        List<Number> metadata2 = model2.getMetadata()
+                .get("items")
+                .expectArrayNode()
+                .getElements()
+                .stream()
+                .map(s -> s.expectNumberNode().getValue())
+                .collect(Collectors.toList());
         assertThat(metadata1, is(metadata2));
     }
-
 
     @Test
     public void mergesMultipleModels() {
@@ -489,11 +502,11 @@ public class ModelAssemblerTest {
 
     private void assertImportPathsWereLoaded(Model model) {
         assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
-                           .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
-                           .isPresent());
+                .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+                .isPresent());
         assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
-                           .flatMap(shape -> shape.getTrait(MediaTypeTrait.class))
-                           .isPresent());
+                .flatMap(shape -> shape.getTrait(MediaTypeTrait.class))
+                .isPresent());
     }
 
     @Test
@@ -501,12 +514,17 @@ public class ModelAssemblerTest {
         Model model = new ModelAssembler().addImport(getClass().getResource("main.json")).assemble().unwrap();
         Model model2 = Model.assembler()
                 .addModel(model)
-                .addUnparsedModel("N/A", "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": {\"example.namespace#String\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"hi\"}}}}")
+                .addUnparsedModel("N/A",
+                        "{\"smithy\": \"" + Model.MODEL_VERSION
+                                + "\", \"shapes\": {\"example.namespace#String\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"hi\"}}}}")
                 .assemble()
                 .unwrap();
 
-        assertEquals("hi", model2.expectShape(ShapeId.from("example.namespace#String"))
-                .getTrait(DocumentationTrait.class).get().getValue());
+        assertEquals("hi",
+                model2.expectShape(ShapeId.from("example.namespace#String"))
+                        .getTrait(DocumentationTrait.class)
+                        .get()
+                        .getValue());
     }
 
     @Test
@@ -575,9 +593,9 @@ public class ModelAssemblerTest {
     public void canIgnoreUnknownTraits() {
         String document =
                 "{\"smithy\": \"" + Model.MODEL_VERSION + "\", "
-                + "\"shapes\": { "
-                + "\"ns.foo#String\": {"
-                + "\"type\": \"string\", \"traits\": {\"com.foo#invalidTrait\": true}}}}";
+                        + "\"shapes\": { "
+                        + "\"ns.foo#String\": {"
+                        + "\"type\": \"string\", \"traits\": {\"com.foo#invalidTrait\": true}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
@@ -598,7 +616,7 @@ public class ModelAssemblerTest {
             ShapeId shapeId = ShapeId.from(id);
             assertTrue(model.getShape(shapeId).isPresent());
             assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
-                       startsWith("jar:file:"));
+                    startsWith("jar:file:"));
         }
     }
 
@@ -609,7 +627,7 @@ public class ModelAssemblerTest {
 
         Supplier<Model> modelSupplier = () -> {
             URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {jar});
-             return Model.assembler(urlClassLoader)
+            return Model.assembler(urlClassLoader)
                     .discoverModels(urlClassLoader)
                     .addImport(file)
                     .assemble()
@@ -626,8 +644,8 @@ public class ModelAssemblerTest {
     @Test
     public void canDisableValidation() {
         String document = "namespace foo.baz\n"
-                          + "@idempotent\n" // < this is invalid
-                          + "string MyString\n";
+                + "@idempotent\n" // < this is invalid
+                + "string MyString\n";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("foo.smithy", document)
                 .disableValidation()
@@ -655,14 +673,14 @@ public class ModelAssemblerTest {
         // regression test to ensure that trait specific stuff like coercion
         // is handled correctly.
         String document1 = "namespace foo.baz\n"
-                          + "@trait\n"
-                          + "structure myTrait {}\n";
+                + "@trait\n"
+                + "structure myTrait {}\n";
         String document2 = "namespace foo.baz\n"
-                          + "@trait\n"
-                          + "integer myTrait\n";
+                + "@trait\n"
+                + "integer myTrait\n";
         String document3 = "namespace foo.baz\n"
-                           + "@myTrait(10)\n"
-                           + "string MyShape\n";
+                + "@myTrait(10)\n"
+                + "string MyShape\n";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("1.smithy", document1)
                 .addUnparsedModel("2.smithy", document2)
@@ -677,15 +695,15 @@ public class ModelAssemblerTest {
         // While these two shapes have different traits, the traits merge.
         // Since they are equivalent the conflicts are allowed.
         String document1 = "namespace foo.baz\n"
-                           + "@deprecated\n"
-                           + "structure Foo {\n"
-                           + "    foo: String,"
-                           + "}\n";
+                + "@deprecated\n"
+                + "structure Foo {\n"
+                + "    foo: String,"
+                + "}\n";
         String document2 = "namespace foo.baz\n"
-                           + "structure Foo {\n"
-                           + "    @internal\n"
-                           + "    foo: String,\n"
-                           + "}\n";
+                + "structure Foo {\n"
+                + "    @internal\n"
+                + "    foo: String,\n"
+                + "}\n";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("1.smithy", document1)
                 .addUnparsedModel("2.smithy", document2)
@@ -704,11 +722,11 @@ public class ModelAssemblerTest {
     public void detectsConflictingDuplicateAggregates() {
         // Aggregate shapes have to have the same exact members.
         String document1 = "namespace foo.baz\n"
-                           + "structure Foo {\n"
-                           + "    foo: String,"
-                           + "}\n";
+                + "structure Foo {\n"
+                + "    foo: String,"
+                + "}\n";
         String document2 = "namespace foo.baz\n"
-                           + "structure Foo {}\n";
+                + "structure Foo {}\n";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("1.smithy", document1)
                 .addUnparsedModel("2.smithy", document2)
@@ -759,7 +777,6 @@ public class ModelAssemblerTest {
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
                 .assemble()
                 .unwrap();
-
 
         assertTrue(model.expectShape(id).findTrait(traitId).isPresent());
         assertThat(model.expectShape(id).findTrait(traitId).get(), instanceOf(DynamicTrait.class));
@@ -818,7 +835,7 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         assertThat(model.expectShape(stringShape.getId()).expectTrait(OriginalShapeIdTrait.class).getOriginalId(),
-                   equalTo(originalId));
+                equalTo(originalId));
     }
 
     // Synthetic traits should not be parsed again. That will cause a
@@ -924,10 +941,11 @@ public class ModelAssemblerTest {
                 .build();
         ModelAssembler assembler = Model.assembler();
         assembler.addShape(string1);
-        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                 + "namespace smithy.example\n\n"
-                                                 + "@documentation(\"hi\")\n"
-                                                 + "string String1\n");
+        assembler.addUnparsedModel("foo.smithy",
+                "$version: \"2.0\"\n"
+                        + "namespace smithy.example\n\n"
+                        + "@documentation(\"hi\")\n"
+                        + "string String1\n");
         Model result = assembler.assemble().unwrap();
 
         assertThat(result.expectShape(string1.getId()).expectTrait(DocumentationTrait.class).getValue(), equalTo("hi"));
@@ -941,10 +959,11 @@ public class ModelAssemblerTest {
                 .build();
         ModelAssembler assembler = Model.assembler();
         assembler.addShape(string1);
-        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                 + "namespace smithy.example\n\n"
-                                                 + "@tags([\"b\"])\n"
-                                                 + "string String1\n");
+        assembler.addUnparsedModel("foo.smithy",
+                "$version: \"2.0\"\n"
+                        + "namespace smithy.example\n\n"
+                        + "@tags([\"b\"])\n"
+                        + "string String1\n");
         Model result = assembler.assemble().unwrap();
 
         assertThat(result.expectShape(string1.getId()).getTags(), contains("a", "b"));
@@ -953,12 +972,12 @@ public class ModelAssemblerTest {
     @Test
     public void providesDiffWhenConflictsAreFound() {
         String a = "$version: \"2\"\n"
-                   + "namespace foo.baz\n"
-                   + "integer Foo\n";
+                + "namespace foo.baz\n"
+                + "integer Foo\n";
         String b = "$version: \"2\"\n"
-                   + "namespace foo.baz\n"
-                   + "@default(0)\n"
-                   + "long Foo\n";
+                + "namespace foo.baz\n"
+                + "@default(0)\n"
+                + "long Foo\n";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("1.smithy", a)
                 .addUnparsedModel("2.smithy", b)
@@ -1039,9 +1058,10 @@ public class ModelAssemblerTest {
     public void canResolveTargetsWithoutPrelude() {
         ValidatedResult<Model> model = Model.assembler()
                 .disablePrelude()
-                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                + "namespace smithy.example\n"
-                                                + "list Foo { member: String }\n")
+                .addUnparsedModel("foo.smithy",
+                        "$version: \"2.0\"\n"
+                                + "namespace smithy.example\n"
+                                + "list Foo { member: String }\n")
                 .assemble();
 
         assertThat(model.getValidationEvents(), hasSize(1));
@@ -1070,12 +1090,12 @@ public class ModelAssemblerTest {
 
         ShapeId service = ShapeId.from("smithy.example#Example");
         assertThat(model.expectShape(service, ServiceShape.class).getErrors(),
-                   contains(ShapeId.from("smithy.example#Error1"),
-                            ShapeId.from("smithy.example#Error2"),
-                            ShapeId.from("smithy.example#Error3"),
-                            ShapeId.from("smithy.example#Error4"),
-                            ShapeId.from("smithy.example#Error5"),
-                            ShapeId.from("smithy.example#Error6")));
+                contains(ShapeId.from("smithy.example#Error1"),
+                        ShapeId.from("smithy.example#Error2"),
+                        ShapeId.from("smithy.example#Error3"),
+                        ShapeId.from("smithy.example#Error4"),
+                        ShapeId.from("smithy.example#Error5"),
+                        ShapeId.from("smithy.example#Error6")));
     }
 
     @Test
@@ -1220,9 +1240,9 @@ public class ModelAssemblerTest {
 
         // MixinStruct$bar and MixedStruct$bar have synthetic box traits.
         StructureShape mixinStruct = model1.expectShape(ShapeId.from("smithy.example#MixinStruct"),
-                                                        StructureShape.class);
+                StructureShape.class);
         StructureShape mixedStruct = model1.expectShape(ShapeId.from("smithy.example#MixedStruct"),
-                                                        StructureShape.class);
+                StructureShape.class);
         assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
         assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
         assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
@@ -1326,14 +1346,14 @@ public class ModelAssemblerTest {
     @Test
     public void exceptionsThrownWhenCreatingTraitsDontCrashSmithy() {
         String document = "{\n"
-                          + "\"smithy\": \"" + Model.MODEL_VERSION + "\",\n"
-                          + "    \"shapes\": {\n"
-                          + "        \"ns.foo#Test\": {\n"
-                          + "            \"type\": \"string\",\n"
-                          + "            \"traits\": {\"smithy.foo#baz\": true}\n"
-                          + "        }\n"
-                          + "    }\n"
-                          + "}";
+                + "\"smithy\": \"" + Model.MODEL_VERSION + "\",\n"
+                + "    \"shapes\": {\n"
+                + "        \"ns.foo#Test\": {\n"
+                + "            \"type\": \"string\",\n"
+                + "            \"traits\": {\"smithy.foo#baz\": true}\n"
+                + "        }\n"
+                + "    }\n"
+                + "}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
@@ -1344,12 +1364,13 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
         assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(),
-                   equalTo("Error creating trait `smithy.foo#baz`: Oops!"));
+                equalTo("Error creating trait `smithy.foo#baz`: Oops!"));
     }
 
     @Test
     public void resolvesDuplicateTraitApplicationsToDuplicateMixedInMembers() throws Exception {
-        String model = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/apply-to-mixed-member.json").toURI()));
+        String model =
+                IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/apply-to-mixed-member.json").toURI()));
         // Should be able to de-conflict the apply statements when the same model is loaded multiple times.
         // See https://github.com/smithy-lang/smithy/issues/2004
         Model.assembler()
@@ -1362,8 +1383,10 @@ public class ModelAssemblerTest {
 
     @Test
     public void resolvesDuplicateTraitApplicationsToSameMixedInMember() throws Exception {
-        String modelToApplyTo = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/mixed-member.smithy").toURI()));
-        String modelWithApply = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/member-apply-other-namespace.smithy").toURI()));
+        String modelToApplyTo =
+                IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/mixed-member.smithy").toURI()));
+        String modelWithApply = IoUtils
+                .readUtf8File(Paths.get(getClass().getResource("mixins/member-apply-other-namespace.smithy").toURI()));
         // Should be able to load when you have multiple identical apply statements to the same mixed in member.
         // See https://github.com/smithy-lang/smithy/issues/2004
         Model.assembler()
@@ -1383,10 +1406,10 @@ public class ModelAssemblerTest {
 
         MemberShape shape = model.expectShape(ShapeId.from("com.example#FinalStructure$member"), MemberShape.class);
 
-        assertThat(shape.getMixins(), contains(
-                ShapeId.from("com.example#MixinA$member"),
-                ShapeId.from("com.example#MixinB$member")
-        ));
+        assertThat(shape.getMixins(),
+                contains(
+                        ShapeId.from("com.example#MixinA$member"),
+                        ShapeId.from("com.example#MixinB$member")));
         assertThat(shape.getAllTraits().keySet(),
                 containsInAnyOrder(PatternTrait.ID, RequiredTrait.ID, InternalTrait.ID));
         String actualPattern = shape.expectTrait(PatternTrait.class).getValue();
@@ -1396,25 +1419,28 @@ public class ModelAssemblerTest {
     @Test
     public void loadsShapesWhenThereAreUnresolvedMixins() {
         String modelText = "$version: \"2\"\n"
-                       + "namespace com.foo\n"
-                       + "\n"
-                       + "string Foo\n"
-                       + "@mixin\n"
-                       + "structure Bar {}\n"
-                       + "structure Baz with [Unknown] {}\n";
+                + "namespace com.foo\n"
+                + "\n"
+                + "string Foo\n"
+                + "@mixin\n"
+                + "structure Bar {}\n"
+                + "structure Baz with [Unknown] {}\n";
         ValidatedResult<Model> result = Model.assembler()
                 .addUnparsedModel("foo.smithy", modelText)
                 .assemble();
 
         assertThat(result.isBroken(), is(true));
         assertThat(result.getResult().isPresent(), is(true));
-        Set<ShapeId> fooShapes = result.getResult().get().getShapeIds().stream()
+        Set<ShapeId> fooShapes = result.getResult()
+                .get()
+                .getShapeIds()
+                .stream()
                 .filter(id -> id.getNamespace().equals("com.foo"))
                 .collect(Collectors.toSet());
-        assertThat(fooShapes, containsInAnyOrder(
-                ShapeId.from("com.foo#Foo"),
-                ShapeId.from("com.foo#Bar")
-        ));
+        assertThat(fooShapes,
+                containsInAnyOrder(
+                        ShapeId.from("com.foo#Foo"),
+                        ShapeId.from("com.foo#Bar")));
     }
 
     @Test

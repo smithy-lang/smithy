@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.linters;
 
 import java.util.ArrayList;
@@ -134,7 +123,9 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateWithSimpleMessages(Model model) {
-        return config.getSelector().select(model).stream()
+        return config.getSelector()
+                .select(model)
+                .stream()
                 .flatMap(shape -> OptionalUtils.stream(createSimpleEvent(shape)))
                 .collect(Collectors.toList());
     }
@@ -153,8 +144,8 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
     // set if the shape actually has the trait.
     private FromSourceLocation determineEventLocation(Shape shape) {
         return config.bindToTrait == null
-               ? shape.getSourceLocation()
-               : shape.findTrait(config.bindToTrait).orElse(null);
+                ? shape.getSourceLocation()
+                : shape.findTrait(config.bindToTrait).orElse(null);
     }
 
     // Created events with a message template requires emitting matches
@@ -256,7 +247,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
         @Override
         public RuntimeException syntax(String message) {
             return new RuntimeException("Syntax error at line " + line() + " column " + column()
-                                        + " of EmitEachSelector message template: " + message);
+                    + " of EmitEachSelector message template: " + message);
         }
 
         private void addLiteralPartIfNecessary() {

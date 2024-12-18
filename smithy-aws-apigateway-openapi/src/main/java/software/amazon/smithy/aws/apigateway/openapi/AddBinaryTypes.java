@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
@@ -59,10 +48,11 @@ final class AddBinaryTypes implements ApiGatewayMapper {
         if (!binaryTypes.isEmpty()) {
             LOGGER.fine(() -> "Adding recognized binary types to model: " + binaryTypes);
             return openApi.toBuilder()
-                    .putExtension(EXTENSION_NAME, Stream.concat(binaryTypes.stream(), Stream.of(DEFAULT_BINARY_TYPE))
-                            .distinct()
-                            .map(Node::from)
-                            .collect(ArrayNode.collect()))
+                    .putExtension(EXTENSION_NAME,
+                            Stream.concat(binaryTypes.stream(), Stream.of(DEFAULT_BINARY_TYPE))
+                                    .distinct()
+                                    .map(Node::from)
+                                    .collect(ArrayNode.collect()))
                     .build();
         }
 
@@ -75,7 +65,8 @@ final class AddBinaryTypes implements ApiGatewayMapper {
         TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
 
         // Find the media types defined on all request and response bindings.
-        return topDownIndex.getContainedOperations(context.getService()).stream()
+        return topDownIndex.getContainedOperations(context.getService())
+                .stream()
                 .flatMap(operation -> Stream.concat(
                         OptionalUtils.stream(
                                 binaryMediaType(model, httpBindingIndex.getRequestBindings(operation))),
@@ -84,7 +75,8 @@ final class AddBinaryTypes implements ApiGatewayMapper {
     }
 
     private Optional<String> binaryMediaType(Model model, Map<String, HttpBinding> httpBindings) {
-        return httpBindings.values().stream()
+        return httpBindings.values()
+                .stream()
                 .filter(binding -> binding.getLocation().equals(HttpBinding.Location.PAYLOAD))
                 .map(HttpBinding::getMember)
                 .flatMap(member -> OptionalUtils.stream(member.getMemberTrait(model, MediaTypeTrait.class)))

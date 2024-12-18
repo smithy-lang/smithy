@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.ArrayList;
@@ -81,8 +80,7 @@ public abstract class LibraryFunction extends Expression {
                     String.format(
                             "Expected %s arguments but found %s",
                             expectedArgs.size(),
-                            actualArguments)
-            );
+                            actualArguments));
         }
         for (int i = 0; i < expectedArgs.size(); i++) {
             Type expected = expectedArgs.get(i);
@@ -91,7 +89,7 @@ public abstract class LibraryFunction extends Expression {
                 Type optAny = Type.optionalType(Type.anyType());
                 String hint = "";
                 if (actual.isA(optAny) && !expected.isA(optAny)
-                            && actual.expectOptionalType().inner().equals(expected)) {
+                        && actual.expectOptionalType().inner().equals(expected)) {
                     hint = String.format(
                             "hint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null",
                             actualArguments.get(i));
@@ -100,8 +98,10 @@ public abstract class LibraryFunction extends Expression {
                 throw new InnerParseError(
                         String.format(
                                 "Unexpected type in the %s argument: Expected %s but found %s%n%s",
-                                ordinal(i + 1), expected, actual, hint)
-                );
+                                ordinal(i + 1),
+                                expected,
+                                actual,
+                                hint));
             }
         }
     }

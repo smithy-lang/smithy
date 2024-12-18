@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.apigateway.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +37,7 @@ public class AuthorizerIndexTest {
         // Resolves service value.
         assertThat(index.getAuthorizer(serviceA).get(), equalTo("foo"));
         assertThat(index.getAuthorizerValue(serviceA).map(AuthorizerDefinition::getScheme),
-                   equalTo(Optional.of(SigV4Trait.ID)));
+                equalTo(Optional.of(SigV4Trait.ID)));
         assertThat(index.getAuthorizer(serviceB), equalTo(Optional.empty()));
         assertThat(index.getAuthorizerValue(serviceB), equalTo(Optional.empty()));
 

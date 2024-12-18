@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.ArrayList;
@@ -68,8 +57,7 @@ public interface OpenApiMapper {
      * @param model Model being converted.
      * @param config Configuration object to modify.
      */
-    default void updateDefaultSettings(Model model, OpenApiConfig config) {
-    }
+    default void updateDefaultSettings(Model model, OpenApiConfig config) {}
 
     /**
      * Updates an operation before invoking the plugin system on the contents
@@ -197,8 +185,7 @@ public interface OpenApiMapper {
      * @param context Conversion context.
      * @param builder OpenAPI builder to modify.
      */
-    default void before(Context<? extends Trait> context, OpenApi.Builder builder) {
-    }
+    default void before(Context<? extends Trait> context, OpenApi.Builder builder) {}
 
     /**
      * Updates a security scheme object.
@@ -338,7 +325,11 @@ public interface OpenApiMapper {
                         return null;
                     }
                     parameterObject = plugin.updateParameter(
-                            context, operation, httpMethodName, path, parameterObject);
+                            context,
+                            operation,
+                            httpMethodName,
+                            path,
+                            parameterObject);
                 }
                 return parameterObject;
             }

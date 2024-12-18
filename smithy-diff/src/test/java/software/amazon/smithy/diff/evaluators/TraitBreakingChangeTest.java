@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -74,14 +63,13 @@ public class TraitBreakingChangeTest {
     @Test
     public void detectsBreakingChangeWhenAdded() {
         validate(
-            "trait-added.smithy",
-            shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode())).build(),
-            events -> {
-                assertThat(events, hasSize(1));
-                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Add.smithy.example#exampleTrait"));
-                assertThat(events.get(0).getMessage(), equalTo("Added trait `smithy.example#exampleTrait`"));
-            }
-        );
+                "trait-added.smithy",
+                shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode())).build(),
+                events -> {
+                    assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Add.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getMessage(), equalTo("Added trait `smithy.example#exampleTrait`"));
+                });
     }
 
     @Test
@@ -117,23 +105,23 @@ public class TraitBreakingChangeTest {
             assertThat(events, hasSize(1));
             assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getMessage(),
-                       equalTo("Removed trait `smithy.example#exampleTrait`; This is bad!"));
+                    equalTo("Removed trait `smithy.example#exampleTrait`; This is bad!"));
         });
     }
 
     @Test
     public void canPathIntoListMembers() {
         validate(
-            "trait-list-members.smithy",
-            shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.fromStrings("a", "B", "c"))).build(),
-            events -> {
-                assertThat(events, hasSize(1));
-                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
-                assertThat(events.get(0).getMessage(),
-                           equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/1` "
-                                   + "from `b` to `B`"));
-            }
-        );
+                "trait-list-members.smithy",
+                shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.fromStrings("a", "B", "c"))).build(),
+                events -> {
+                    assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(),
+                            equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getMessage(),
+                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/1` "
+                                    + "from `b` to `B`"));
+                });
     }
 
     @Test
@@ -144,66 +132,66 @@ public class TraitBreakingChangeTest {
                         .build(),
                 events -> {
                     assertThat(events, hasSize(1));
-                    assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getId(),
+                            equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
                     assertThat(events.get(0).getMessage(),
-                               equalTo("Removed trait contents from `smithy.example#exampleTrait` at path `/b`. "
-                                       + "Removed value: `B`"));
-                }
-        );
+                            equalTo("Removed trait contents from `smithy.example#exampleTrait` at path `/b`. "
+                                    + "Removed value: `B`"));
+                });
     }
 
     @Test
     public void canPathIntoMapValues() {
         validate(
-            "trait-map-values.smithy",
-            shape -> {
-                Trait trait = new DynamicTrait(EXAMPLE_TRAIT,
-                                               Node.objectNode().withMember("a", "A").withMember("b", "_B_"));
-                return shape.addTrait(trait).build();
-            },
-            events -> {
-                assertThat(events, hasSize(1));
-                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
-                assertThat(events.get(0).getMessage(),
-                           equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/b` "
-                                   + "from `B` to `_B_`"));
-            }
-        );
+                "trait-map-values.smithy",
+                shape -> {
+                    Trait trait = new DynamicTrait(EXAMPLE_TRAIT,
+                            Node.objectNode().withMember("a", "A").withMember("b", "_B_"));
+                    return shape.addTrait(trait).build();
+                },
+                events -> {
+                    assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(),
+                            equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getMessage(),
+                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/b` "
+                                    + "from `B` to `_B_`"));
+                });
     }
 
     @Test
     public void canPathIntoStructureMembers() {
         validate(
-            "trait-structure-members.smithy",
-            shape -> {
-                Trait trait = new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode());
-                return shape.addTrait(trait).build();
-            },
-            events -> {
-                assertThat(events, hasSize(1));
-                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
-                assertThat(events.get(0).getMessage(),
-                           equalTo("Removed trait contents from `smithy.example#exampleTrait` at path "
-                                   + "`/foo/bar`. Removed value: `hi`"));
-            }
-        );
+                "trait-structure-members.smithy",
+                shape -> {
+                    Trait trait = new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode());
+                    return shape.addTrait(trait).build();
+                },
+                events -> {
+                    assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(),
+                            equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getMessage(),
+                            equalTo("Removed trait contents from `smithy.example#exampleTrait` at path "
+                                    + "`/foo/bar`. Removed value: `hi`"));
+                });
     }
 
     @Test
     public void canPathIntoUnionMembers() {
         validate(
-            "trait-union-members.smithy",
-            shape -> {
-                Trait trait = new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode().withMember("foo", "bye"));
-                return shape.addTrait(trait).build();
-            },
-            events -> {
-                assertThat(events, hasSize(1));
-                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
-                assertThat(events.get(0).getMessage(),
-                           equalTo("Changed trait contents of `smithy.example#exampleTrait` at path "
-                                   + "`/foo` from `hi` to `bye`"));
-            }
-        );
+                "trait-union-members.smithy",
+                shape -> {
+                    Trait trait = new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode().withMember("foo", "bye"));
+                    return shape.addTrait(trait).build();
+                },
+                events -> {
+                    assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(),
+                            equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
+                    assertThat(events.get(0).getMessage(),
+                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path "
+                                    + "`/foo` from `hi` to `bye`"));
+                });
     }
 }

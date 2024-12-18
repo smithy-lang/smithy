@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static software.amazon.smithy.model.node.NodeMapper.ObjectCreatorFactory;
@@ -221,8 +210,8 @@ final class DefaultNodeDeserializers {
                         || targetClass == Iterable.class) {
                     return ArrayList::new;
                 } else if (targetClass == Set.class
-                           || targetClass == HashSet.class
-                           || targetClass == LinkedHashSet.class) {
+                        || targetClass == HashSet.class
+                        || targetClass == LinkedHashSet.class) {
                     // Special casing for Set or HashSet.
                     return LinkedHashSet::new;
                 } else if (Collection.class.isAssignableFrom(targetClass)) {
@@ -246,7 +235,8 @@ final class DefaultNodeDeserializers {
                 // probably never work in practice and results in a less descriptive error message.
                 throw new NodeDeserializationException(
                         "Unable to find a zero-arg constructor for Collection " + into.getName(),
-                        SourceLocation.NONE, e);
+                        SourceLocation.NONE,
+                        e);
             }
         }
     };
@@ -297,9 +287,15 @@ final class DefaultNodeDeserializers {
                 for (Map.Entry<StringNode, Node> entry : objectNode.getMembers().entrySet()) {
                     String keyValue = entry.getKey().getValue();
                     Object key = mapper.deserializeNext(
-                            entry.getKey(), pointer + "/(key:" + keyValue + ")", keyType, mapper);
+                            entry.getKey(),
+                            pointer + "/(key:" + keyValue + ")",
+                            keyType,
+                            mapper);
                     Object value = mapper.deserializeNext(
-                            entry.getValue(), pointer + "/" + keyValue, valueType, mapper);
+                            entry.getValue(),
+                            pointer + "/" + keyValue,
+                            valueType,
+                            mapper);
                     map.put(key, value);
                 }
 
@@ -331,7 +327,8 @@ final class DefaultNodeDeserializers {
                 // probably never work in practice and results in a less descriptive error message.
                 throw new NodeDeserializationException(
                         "Unable to find a zero-arg constructor for Map " + into.getName(),
-                        SourceLocation.NONE, e);
+                        SourceLocation.NONE,
+                        e);
             }
         }
     };
@@ -511,7 +508,8 @@ final class DefaultNodeDeserializers {
             // TODO: we could potentially add support for this if it's not too complicated.
             if (targetClass.getEnclosingClass() != null && !Modifier.isStatic(targetClass.getModifiers())) {
                 throw new NodeDeserializationException(
-                        "Cannot create non-static inner class: " + targetClass.getCanonicalName(), SourceLocation.NONE);
+                        "Cannot create non-static inner class: " + targetClass.getCanonicalName(),
+                        SourceLocation.NONE);
             }
 
             Constructor<?> ctor = targetClass.getDeclaredConstructor();
@@ -524,7 +522,10 @@ final class DefaultNodeDeserializers {
                     applySourceLocation(value, node);
                     return value;
                 } catch (ReflectiveOperationException e) {
-                    throw NodeDeserializationException.fromReflectiveContext(targetType, pointer, node, e,
+                    throw NodeDeserializationException.fromReflectiveContext(targetType,
+                            pointer,
+                            node,
+                            e,
                             "Unable to deserialize a Node when invoking target constructor: " + getCauseMessage(e));
                 }
             };
@@ -559,7 +560,10 @@ final class DefaultNodeDeserializers {
                 names.add(constant.toString());
             }
 
-            throw NodeDeserializationException.fromContext(targetClass, pointer, node, null,
+            throw NodeDeserializationException.fromContext(targetClass,
+                    pointer,
+                    node,
+                    null,
                     "Expected one of the following enum strings: " + names);
         };
     };
@@ -572,12 +576,16 @@ final class DefaultNodeDeserializers {
     // This mirrors the simpler behaviors allowed in Jackson.
     // See https://github.com/FasterXML/jackson-databind/blob/ab583fb2319ee33ef6b548b720afec84265d40a7/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
     private static final Map<Type, FromStringClassFactory> FROM_STRING_CLASSES = MapUtils.of(
-            URL.class, URL::new,
-            URI.class, URI::new,
-            Pattern.class, Pattern::compile,
-            Path.class, Paths::get,
-            File.class, File::new
-    );
+            URL.class,
+            URL::new,
+            URI.class,
+            URI::new,
+            Pattern.class,
+            Pattern::compile,
+            Path.class,
+            Paths::get,
+            File.class,
+            File::new);
 
     private static final ObjectCreatorFactory FROM_STRING = (nodeType, target, nodeMapper) -> {
         if (nodeType != NodeType.STRING || !FROM_STRING_CLASSES.containsKey(target)) {
@@ -614,8 +622,7 @@ final class DefaultNodeDeserializers {
             COLLECTION_CREATOR,
             MAP_CREATOR,
             FROM_BUILDER_CREATOR,
-            BEAN_CREATOR
-    );
+            BEAN_CREATOR);
 
     static final ObjectCreatorFactory DEFAULT_CHAIN = (nodeType, target, nodeMapper) -> {
         for (ObjectCreatorFactory factory : DEFAULT_FACTORIES) {

@@ -28,6 +28,12 @@ sourceSets {
         resources {
             srcDir(layout.buildDirectory.dir("generated-resources"))
         }
+
+        spotless {
+            java {
+                targetExclude("build/**/*.*")
+            }
+        }
     }
 }
 
@@ -48,10 +54,6 @@ tasks.register<Copy>("copyGeneratedSrcs") {
 }
 
 tasks {
-    named("checkstyleIt") {
-        enabled = false
-    }
-
     named("compileItJava") {
         dependsOn("generateTraits", "copyGeneratedSrcs")
     }

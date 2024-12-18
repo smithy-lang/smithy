@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import software.amazon.smithy.model.node.Node;
@@ -35,12 +34,13 @@ public enum EndpointPatternType {
 
     public static EndpointPatternType fromNode(Node node) {
         StringNode value = node.expectStringNode();
-        for (EndpointPatternType type: EndpointPatternType.values()) {
+        for (EndpointPatternType type : EndpointPatternType.values()) {
             if (type.name.equals(value.getValue())) {
                 return type;
             }
         }
         throw new RuntimeException(String.format(
-            "Unable to find EndpointPatternType enum with value [%s]", value.getValue()));
+                "Unable to find EndpointPatternType enum with value [%s]",
+                value.getValue()));
     }
 }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
@@ -150,7 +139,9 @@ public final class ModelSerializer {
 
     private Optional<Node> createMetadata(Model model) {
         // Grab metadata, filter by key using the predicate.
-        Map<StringNode, Node> metadata = model.getMetadata().entrySet().stream()
+        Map<StringNode, Node> metadata = model.getMetadata()
+                .entrySet()
+                .stream()
                 .filter(entry -> metadataFilter.test(entry.getKey()))
                 .collect(Collectors.toMap(entry -> Node.from(entry.getKey()), Map.Entry::getValue));
         return metadata.isEmpty() ? Optional.empty() : Optional.of(new ObjectNode(metadata, SourceLocation.NONE));
@@ -351,10 +342,11 @@ public final class ModelSerializer {
 
         @Override
         public Node operationShape(OperationShape shape) {
-            return serializeAllTraits(shape, createTypedBuilder(shape)
-                    .withMember("input", serializeReference(shape.getInputShape()))
-                    .withMember("output", serializeReference(shape.getOutputShape()))
-                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
+            return serializeAllTraits(shape,
+                    createTypedBuilder(shape)
+                            .withMember("input", serializeReference(shape.getInputShape()))
+                            .withMember("output", serializeReference(shape.getOutputShape()))
+                            .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
                     .build();
         }
 
@@ -375,18 +367,20 @@ public final class ModelSerializer {
                         entry -> serializeReference(entry.getValue()))));
             }
 
-            return serializeAllTraits(shape, createTypedBuilder(shape)
-                    .withOptionalMember("identifiers", identifiers)
-                    .withOptionalMember("properties", properties)
-                    .withOptionalMember("put", shape.getPut().map(this::serializeReference))
-                    .withOptionalMember("create", shape.getCreate().map(this::serializeReference))
-                    .withOptionalMember("read", shape.getRead().map(this::serializeReference))
-                    .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
-                    .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
-                    .withOptionalMember("list", shape.getList().map(this::serializeReference))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
-                    .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
+            return serializeAllTraits(shape,
+                    createTypedBuilder(shape)
+                            .withOptionalMember("identifiers", identifiers)
+                            .withOptionalMember("properties", properties)
+                            .withOptionalMember("put", shape.getPut().map(this::serializeReference))
+                            .withOptionalMember("create", shape.getCreate().map(this::serializeReference))
+                            .withOptionalMember("read", shape.getRead().map(this::serializeReference))
+                            .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
+                            .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
+                            .withOptionalMember("list", shape.getList().map(this::serializeReference))
+                            .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
+                            .withOptionalMember("collectionOperations",
+                                    createOptionalIdList(shape.getCollectionOperations()))
+                            .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
                     .build();
         }
 

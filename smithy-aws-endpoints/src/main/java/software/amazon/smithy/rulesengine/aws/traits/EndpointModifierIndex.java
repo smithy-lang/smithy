@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.HashMap;
@@ -35,8 +34,9 @@ public final class EndpointModifierIndex implements KnowledgeIndex {
                 Optional<Shape> traitShape = model.getShape(trait.toShapeId());
                 if (!traitShape.isPresent()) {
                     LOGGER.warning(String.format(
-                        "`%s` trait found in service `%s`, but the trait definition is missing",
-                            trait.toShapeId(), serviceShape.toShapeId()));
+                            "`%s` trait found in service `%s`, but the trait definition is missing",
+                            trait.toShapeId(),
+                            serviceShape.toShapeId()));
                     continue;
                 }
                 if (traitShape.get().hasTrait(EndpointModifierTrait.ID)) {

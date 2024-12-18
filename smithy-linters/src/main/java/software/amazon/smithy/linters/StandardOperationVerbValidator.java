@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
@@ -100,7 +89,7 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
                 Config config = new NodeMapper().deserialize(node, Config.class);
                 if (config.getVerbs().isEmpty() && config.getSuggestAlternatives().isEmpty()) {
                     throw new SourceException("Either verbs or suggestAlternatives must be set when configuring "
-                                              + "StandardOperationVerb", node);
+                            + "StandardOperationVerb", node);
                 }
                 return new StandardOperationVerbValidator(config);
             });
@@ -129,23 +118,27 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
         if (!config.getPrefixes().contains(words.get(0))) {
             name = words.get(0);
         } else if (words.size() == 1) {
-            return Optional.of(danger(operation, format(
-                    "Operation name consists of only a verb prefix: %s", operation.getId().getName())));
+            return Optional.of(danger(operation,
+                    format(
+                            "Operation name consists of only a verb prefix: %s",
+                            operation.getId().getName())));
         } else {
             foundPrefix = words.get(0);
             name = words.get(1);
         }
 
         if (config.getSuggestAlternatives().containsKey(name)) {
-            return Optional.of(danger(operation, format(
-                    "%s Consider using one of the following verbs instead: %s",
-                    createMessagePrefix(operation, name, foundPrefix),
-                    tickedList(config.getSuggestAlternatives().get(name)))));
+            return Optional.of(danger(operation,
+                    format(
+                            "%s Consider using one of the following verbs instead: %s",
+                            createMessagePrefix(operation, name, foundPrefix),
+                            tickedList(config.getSuggestAlternatives().get(name)))));
         } else if (!config.getVerbs().contains(name)) {
-            return Optional.of(danger(operation, format(
-                    "%s Expected one of the following verbs: %s",
-                    createMessagePrefix(operation, name, foundPrefix),
-                    tickedList(config.getVerbs()))));
+            return Optional.of(danger(operation,
+                    format(
+                            "%s Expected one of the following verbs: %s",
+                            createMessagePrefix(operation, name, foundPrefix),
+                            tickedList(config.getVerbs()))));
         } else {
             return Optional.empty();
         }

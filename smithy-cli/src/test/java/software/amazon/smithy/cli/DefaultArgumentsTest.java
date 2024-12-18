@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,7 +20,7 @@ import org.junit.jupiter.api.Test;
 public class DefaultArgumentsTest {
     @Test
     public void canShiftArgumentsManually() {
-        Arguments arguments = Arguments.of(new String[]{"a", "--b", "c"});
+        Arguments arguments = Arguments.of(new String[] {"a", "--b", "c"});
 
         assertThat(arguments.peek(), equalTo("a"));
         assertThat(arguments.hasNext(), is(true));
@@ -34,7 +38,7 @@ public class DefaultArgumentsTest {
 
     @Test
     public void canShiftArgumentsThatRequireValue() {
-        Arguments arguments = Arguments.of(new String[]{"--a", "1"});
+        Arguments arguments = Arguments.of(new String[] {"--a", "1"});
 
         assertThat(arguments.shift(), equalTo("--a"));
         assertThat(arguments.shiftFor("--a"), equalTo("1"));
@@ -42,28 +46,28 @@ public class DefaultArgumentsTest {
 
     @Test
     public void throwsWhenExpectedValueNotPresent() {
-        Arguments arguments = Arguments.of(new String[]{});
+        Arguments arguments = Arguments.of(new String[] {});
 
         Assertions.assertThrows(CliError.class, () -> arguments.shiftFor("--a"));
     }
 
     @Test
     public void allArgumentsMustHaveReceiver() {
-        Arguments arguments = Arguments.of(new String[]{"--a", "--b", "--c"});
+        Arguments arguments = Arguments.of(new String[] {"--a", "--b", "--c"});
 
         Assertions.assertThrows(CliError.class, arguments::getPositional);
     }
 
     @Test
     public void evenSingleHyphenArgumentsMustHaveReceiver() {
-        Arguments arguments = Arguments.of(new String[]{"-h"});
+        Arguments arguments = Arguments.of(new String[] {"-h"});
 
         Assertions.assertThrows(CliError.class, arguments::getPositional);
     }
 
     @Test
     public void receiversReceiveArguments() {
-        Arguments arguments = Arguments.of(new String[]{"--a", "1", "--b", "--c", "2", "foo", "bar"});
+        Arguments arguments = Arguments.of(new String[] {"--a", "1", "--b", "--c", "2", "foo", "bar"});
         Map<String, String> received = new LinkedHashMap<>();
 
         arguments.addReceiver(new ArgumentReceiver() {
@@ -95,7 +99,7 @@ public class DefaultArgumentsTest {
 
     @Test
     public void considersDoubleHyphenBeginningOfPositionalArgs() {
-        Arguments arguments = Arguments.of(new String[]{"--", "--bar"});
+        Arguments arguments = Arguments.of(new String[] {"--", "--bar"});
 
         assertThat(arguments.hasNext(), is(true));
         // Inherently skips "--" because it's handled by Arguments.
@@ -106,7 +110,7 @@ public class DefaultArgumentsTest {
     @Test
     public void canGetReceiversByClass() {
         StandardOptions options = new StandardOptions();
-        Arguments arguments = Arguments.of(new String[]{"--help"});
+        Arguments arguments = Arguments.of(new String[] {"--help"});
         arguments.addReceiver(options);
 
         arguments.getPositional();

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.smoketests.model;
 
 import software.amazon.smithy.model.node.ObjectNode;
@@ -33,7 +32,8 @@ public final class S3VendorParams extends BaseAwsVendorParams {
         this.forcePathStyle = node.getBooleanMemberOrDefault("forcePathStyle", DEFAULT_FORCE_PATH_STYLE);
         this.useArnRegion = node.getBooleanMemberOrDefault("useArnRegion", DEFAULT_USE_ARN_REGION);
         this.useMultiRegionAccessPoints = node.getBooleanMemberOrDefault(
-                "useMultiRegionAccessPoints", DEFAULT_USE_MULTI_REGION_ACCESS_POINTS);
+                "useMultiRegionAccessPoints",
+                DEFAULT_USE_MULTI_REGION_ACCESS_POINTS);
     }
 
     /**

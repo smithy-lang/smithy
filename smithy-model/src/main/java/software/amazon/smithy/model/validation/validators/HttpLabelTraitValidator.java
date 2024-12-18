@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -62,8 +51,10 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(Model model, OperationShape operation, HttpTrait http) {
-        return validateBindings(model, operation, http,
-                                model.expectShape(operation.getInputShape(), StructureShape.class));
+        return validateBindings(model,
+                operation,
+                http,
+                model.expectShape(operation.getInputShape(), StructureShape.class));
     }
 
     private List<ValidationEvent> validateBindings(
@@ -77,7 +68,9 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
         // Create a set of labels and remove from the set when a match is
         // found. If any labels remain after looking at all members, then
         // there are unmatched labels.
-        Set<String> labels = http.getUri().getLabels().stream()
+        Set<String> labels = http.getUri()
+                .getLabels()
+                .stream()
                 .map(UriPattern.Segment::getContent)
                 .collect(Collectors.toSet());
 
@@ -87,19 +80,27 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
 
                 // Emit an error if the member is not a valid label.
                 if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
-                    events.add(error(member, trait, format(
-                            "This `%s` structure member is marked with the `httpLabel` trait, but no "
-                            + "corresponding `http` URI label could be found when used as the input of "
-                            + "the `%s` operation.", member.getMemberName(), operation.getId())));
+                    events.add(error(member,
+                            trait,
+                            format(
+                                    "This `%s` structure member is marked with the `httpLabel` trait, but no "
+                                            + "corresponding `http` URI label could be found when used as the input of "
+                                            + "the `%s` operation.",
+                                    member.getMemberName(),
+                                    operation.getId())));
                 } else if (http.getUri().getLabel(member.getMemberName()).get().isGreedyLabel()) {
                     model.getShape(member.getTarget()).ifPresent(target -> {
                         // Greedy labels must be strings.
                         if (!target.isStringShape()) {
-                            events.add(error(member, trait, format(
-                                    "The `%s` structure member corresponds to a greedy label when used as the "
-                                    + "input of the `%s` operation. This member targets %s, but greedy labels "
-                                    + "must target string shapes.",
-                                    member.getMemberName(), operation.getId(), target)));
+                            events.add(error(member,
+                                    trait,
+                                    format(
+                                            "The `%s` structure member corresponds to a greedy label when used as the "
+                                                    + "input of the `%s` operation. This member targets %s, but greedy labels "
+                                                    + "must target string shapes.",
+                                            member.getMemberName(),
+                                            operation.getId(),
+                                            target)));
                         }
                     });
                 }
@@ -107,10 +108,12 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
         }
 
         if (!labels.isEmpty()) {
-            events.add(error(operation, String.format(
-                    "This operation uses `%s` as input, but the following URI labels found in the operation's "
-                    + "`http` trait do not have a corresponding member marked with the `httpLabel` trait: %s",
-                    input.getId(), ValidationUtils.tickedList(labels))));
+            events.add(error(operation,
+                    String.format(
+                            "This operation uses `%s` as input, but the following URI labels found in the operation's "
+                                    + "`http` trait do not have a corresponding member marked with the `httpLabel` trait: %s",
+                            input.getId(),
+                            ValidationUtils.tickedList(labels))));
         }
 
         return events;

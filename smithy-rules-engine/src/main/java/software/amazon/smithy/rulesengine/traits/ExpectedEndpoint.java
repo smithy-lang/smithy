@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.List;
@@ -79,7 +78,7 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         }
         ExpectedEndpoint that = (ExpectedEndpoint) o;
         return getUrl().equals(that.getUrl()) && Objects.equals(getHeaders(), that.getHeaders())
-               && Objects.equals(getProperties(), that.getProperties());
+                && Objects.equals(getProperties(), that.getProperties());
     }
 
     @Override
@@ -97,8 +96,8 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
             properties.forEach((k, v) -> sb
                     .append(
                             StringUtils.indent(
-                                    String.format("%s: %s", k, Node.prettyPrintJson(v)), 2)
-                    ));
+                                    String.format("%s: %s", k, Node.prettyPrintJson(v)),
+                                    2)));
         }
         return sb.toString();
     }
@@ -109,8 +108,7 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         private SourceLocation sourceLocation = SourceLocation.none();
         private String url;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
             this.sourceLocation = fromSourceLocation.getSourceLocation();

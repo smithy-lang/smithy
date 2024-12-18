@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.directed;
 
 import java.util.ArrayList;
@@ -177,8 +166,8 @@ public final class CodegenDirector<
         S deserialized = new NodeMapper().deserialize(settingsNode, settingsType);
         settings(deserialized);
         settingsNode.asObjectNode()
-            .flatMap(node -> node.getObjectMember("integrations"))
-            .ifPresent(this::integrationSettings);
+                .flatMap(node -> node.getObjectMember("integrations"))
+                .ifPresent(this::integrationSettings);
         return deserialized;
     }
 
@@ -245,7 +234,7 @@ public final class CodegenDirector<
      */
     public void integrationClassLoader(ClassLoader classLoader) {
         Objects.requireNonNull(integrationClass,
-                               "integrationClass() must be called before calling integrationClassLoader");
+                "integrationClass() must be called before calling integrationClassLoader");
         integrationFinder(() -> ServiceLoader.load(integrationClass, classLoader));
     }
 
@@ -419,13 +408,13 @@ public final class CodegenDirector<
         directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
         LOGGER.finest(() -> "Performing custom codegen for "
-                            + directedCodegen.getClass().getName() + " before integrations");
+                + directedCodegen.getClass().getName() + " before integrations");
         directedCodegen.customizeBeforeIntegrations(customizeDirective);
 
         applyIntegrationCustomizations(context, integrations);
 
         LOGGER.finest(() -> "Performing custom codegen for "
-                            + directedCodegen.getClass().getName() + " after integrations");
+                + directedCodegen.getClass().getName() + " after integrations");
         directedCodegen.customizeAfterIntegrations(customizeDirective);
 
         LOGGER.finest(() -> "Directed codegen finished for " + directedCodegen.getClass().getName());
@@ -448,8 +437,8 @@ public final class CodegenDirector<
         // Use a default integration finder implementation.
         if (integrationFinder == null) {
             LOGGER.fine(() -> String.format("Finding %s integrations using the %s class loader",
-                                            integrationClass.getName(),
-                                            CodegenDirector.class.getCanonicalName()));
+                    integrationClass.getName(),
+                    CodegenDirector.class.getCanonicalName()));
             integrationClassLoader(getClass().getClassLoader());
         }
     }
@@ -496,7 +485,12 @@ public final class CodegenDirector<
     private C createContext(ServiceShape serviceShape, SymbolProvider provider, List<I> integrations) {
         LOGGER.fine(() -> "Creating a codegen context for " + directedCodegen.getClass().getName());
         return directedCodegen.createContext(new CreateContextDirective<>(
-                model, settings, serviceShape, provider, fileManifest, integrations));
+                model,
+                settings,
+                serviceShape,
+                provider,
+                fileManifest,
+                integrations));
     }
 
     private void registerInterceptors(C context, List<I> integrations) {
@@ -510,7 +504,8 @@ public final class CodegenDirector<
 
     private void generateShapesInService(C context, ServiceShape serviceShape) {
         LOGGER.fine(() -> String.format("Generating shapes for %s in %s order",
-                directedCodegen.getClass().getName(), this.shapeGenerationOrder.name()));
+                directedCodegen.getClass().getName(),
+                this.shapeGenerationOrder.name()));
         Set<Shape> shapes = new Walker(context.model()).walkShapes(serviceShape);
         ShapeGenerator<W, C, S> generator = new ShapeGenerator<>(context, serviceShape, directedCodegen);
         List<Shape> orderedShapes = new ArrayList<>();
@@ -549,7 +544,7 @@ public final class CodegenDirector<
     private void applyIntegrationCustomizations(C context, List<I> integrations) {
         for (I integration : integrations) {
             LOGGER.finest(() -> "Customizing codegen for " + directedCodegen.getClass().getName()
-                                + " using integration " + integration.getClass().getName());
+                    + " using integration " + integration.getClass().getName());
             integration.customize(context);
         }
     }
@@ -586,7 +581,7 @@ public final class CodegenDirector<
         public Void operationShape(OperationShape shape) {
             LOGGER.finest(() -> "Generating operation " + shape.getId());
             directedCodegen.generateOperation(
-                new GenerateOperationDirective<>(context, serviceShape, shape));
+                    new GenerateOperationDirective<>(context, serviceShape, shape));
             return null;
         }
 

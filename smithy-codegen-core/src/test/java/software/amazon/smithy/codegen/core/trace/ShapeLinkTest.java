@@ -1,4 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core.trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -6,9 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 class ShapeLinkTest {
 
@@ -23,17 +27,16 @@ class ShapeLinkTest {
                 .column(2)
                 .build();
 
-
         ObjectNode node = shapeLink.toNode();
 
         assertThat(node.getStringMember(ShapeLink.TYPE_TEXT).get().getValue(), equalTo("type"));
         assertThat(node.getNumberMember(ShapeLink.LINE_TEXT).get().getValue(), equalTo(1));
         assertThat(node.getArrayMember(ShapeLink.TAGS_TEXT)
-                        .get()
-                        .get(0)
-                        .get()
-                        .expectStringNode()
-                        .getValue(),
+                .get()
+                .get(0)
+                .get()
+                .expectStringNode()
+                .getValue(),
                 equalTo("tag"));
     }
 

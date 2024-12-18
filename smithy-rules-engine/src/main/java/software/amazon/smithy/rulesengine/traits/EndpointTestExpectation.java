@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -75,8 +74,7 @@ public final class EndpointTestExpectation implements FromSourceLocation, ToSmit
         private String error;
         private ExpectedEndpoint endpoint;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
             this.sourceLocation = fromSourceLocation.getSourceLocation();

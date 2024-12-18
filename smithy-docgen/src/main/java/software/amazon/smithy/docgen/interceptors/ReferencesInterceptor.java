@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import java.util.LinkedHashMap;
@@ -58,7 +57,8 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
         var symbolProvider = section.context().symbolProvider();
         var localRefs = getLocalReferences(section.context(), section.shape());
         var externalRefs = section.context().settings().references();
-        var serviceResources = TopDownIndex.of(model).getContainedResources(section.context().settings().service())
+        var serviceResources = TopDownIndex.of(model)
+                .getContainedResources(section.context().settings().service())
                 .stream()
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
@@ -108,7 +108,8 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
 
         var shapeRefs = shape.getMemberTrait(model, ReferencesTrait.class);
         var externalsRefs = context.settings().references();
-        var serviceResources = TopDownIndex.of(model).getContainedResources(context.settings().service())
+        var serviceResources = TopDownIndex.of(model)
+                .getContainedResources(context.settings().service())
                 .stream()
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
@@ -122,7 +123,8 @@ public final class ReferencesInterceptor implements CodeInterceptor.Appender<Sha
                     LOGGER.warning(String.format("""
                             Unable to generate a reference link for `%s`, referenced by `%s`. Use the `references` \
                             map in the generator settings to add a reference link.""",
-                            reference.getResource(), shape.getId()));
+                            reference.getResource(),
+                            shape.getId()));
                 }
             }
         }

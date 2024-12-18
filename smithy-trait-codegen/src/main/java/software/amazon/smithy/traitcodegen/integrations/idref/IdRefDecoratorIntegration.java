@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.integrations.idref;
 
 import software.amazon.smithy.codegen.core.Symbol;
@@ -43,8 +42,11 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     }
 
     @Override
-    public SymbolProvider decorateSymbolProvider(Model model, TraitCodegenSettings settings,
-                                                 SymbolProvider symbolProvider) {
+    public SymbolProvider decorateSymbolProvider(
+            Model model,
+            TraitCodegenSettings settings,
+            SymbolProvider symbolProvider
+    ) {
         return new SymbolProvider() {
             @Override
             public Symbol toSymbol(Shape shape) {
@@ -69,7 +71,8 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
             // Replace any members reference by a list shape as the decorator does wrap the internal call from the
             // toSymbol(member)
             MemberShape member = shape.asListShape().orElseThrow(RuntimeException::new).getMember();
-            return symbolProvider.toSymbol(shape).toBuilder()
+            return symbolProvider.toSymbol(shape)
+                    .toBuilder()
                     .references(ListUtils.of(new SymbolReference(provideSymbol(member, symbolProvider, model))))
                     .build();
         } else if (shape.isMapShape()) {
@@ -79,8 +82,7 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
                     .toBuilder()
                     .references(ListUtils.of(
                             new SymbolReference(provideSymbol(mapShape.getKey(), symbolProvider, model)),
-                            new SymbolReference(provideSymbol(mapShape.getValue(), symbolProvider, model))
-                    ))
+                            new SymbolReference(provideSymbol(mapShape.getValue(), symbolProvider, model))))
                     .build();
         }
         return symbolProvider.toSymbol(shape);

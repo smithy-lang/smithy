@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
@@ -62,11 +51,25 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     private static final Set<String> DEFAULT_VERBS_REQUIRE = SetUtils.of("list", "search");
     private static final Set<String> DEFAULT_VERBS_SUGGEST = SetUtils.of("describe", "get");
     private static final Set<String> DEFAULT_INPUT_MEMBERS = SetUtils.of(
-            "maxresults", "maxitems", "pagesize", "limit",
-            "nexttoken", "pagetoken", "token", "marker");
+            "maxresults",
+            "maxitems",
+            "pagesize",
+            "limit",
+            "nexttoken",
+            "pagetoken",
+            "token",
+            "marker");
     private static final Set<String> DEFAULT_OUTPUT_MEMBERS = SetUtils.of(
-            "nexttoken", "pagetoken", "token", "marker", "nextpage", "nextpagetoken", "position", "nextmarker",
-            "paginationtoken", "nextpagemarker");
+            "nexttoken",
+            "pagetoken",
+            "token",
+            "marker",
+            "nextpage",
+            "nextpagetoken",
+            "position",
+            "nextmarker",
+            "paginationtoken",
+            "nextpagemarker");
 
     public static final class Config {
         private Set<String> verbsRequirePagination = DEFAULT_VERBS_REQUIRE;
@@ -146,8 +149,8 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     }
 
     private static final String DISCLAIMER = "Paginating operations that can return potentially unbounded lists "
-                                             + "of data helps to maintain a predictable SLA and helps to prevent "
-                                             + "operational issues in the future.";
+            + "of data helps to maintain a predictable SLA and helps to prevent "
+            + "operational issues in the future.";
 
     private final Config config;
 
@@ -180,25 +183,35 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
 
         // The presence of "verbsRequirePagination" immediately qualifies the operation as needing `paginated`.
         if (config.getVerbsRequirePagination().contains(verb)) {
-            return Stream.of(danger(operation, format(
-                    "The verb of this operation, `%s`, requires that the operation is marked with the "
-                    + "`paginated` trait. %s", verb, DISCLAIMER)));
+            return Stream.of(danger(operation,
+                    format(
+                            "The verb of this operation, `%s`, requires that the operation is marked with the "
+                                    + "`paginated` trait. %s",
+                            verb,
+                            DISCLAIMER)));
         }
 
         StructureShape input = operationIndex.expectInputShape(operation.getId());
         Optional<String> member = findMember(
-                input.getAllMembers().keySet(), config.getInputMembersRequirePagination());
+                input.getAllMembers().keySet(),
+                config.getInputMembersRequirePagination());
         if (member.isPresent()) {
-            return Stream.of(danger(operation, format(
-                    "This operation contains an input member, `%s`, that requires that the operation is "
-                    + "marked with the `paginated` trait. %s", member.get(), DISCLAIMER)));
+            return Stream.of(danger(operation,
+                    format(
+                            "This operation contains an input member, `%s`, that requires that the operation is "
+                                    + "marked with the `paginated` trait. %s",
+                            member.get(),
+                            DISCLAIMER)));
         }
 
         StructureShape output = operationIndex.expectOutputShape(operation.getId());
         return findMember(output.getAllMembers().keySet(), config.getOutputMembersRequirePagination())
-                .map(outputMember -> Stream.of(danger(operation, format(
-                        "This operation contains an output member, `%s`, that requires that the "
-                        + "operation is marked with the `paginated` trait. %s", outputMember, DISCLAIMER))))
+                .map(outputMember -> Stream.of(danger(operation,
+                        format(
+                                "This operation contains an output member, `%s`, that requires that the "
+                                        + "operation is marked with the `paginated` trait. %s",
+                                outputMember,
+                                DISCLAIMER))))
                 .orElseGet(() -> suggestPagination(verb, operation, output, model));
     }
 
@@ -213,7 +226,9 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
         }
 
         // We matched a verb, but only suggest pagination if there's a top-level output member that's a list.
-        boolean hasListMember = output.getAllMembers().values().stream()
+        boolean hasListMember = output.getAllMembers()
+                .values()
+                .stream()
                 .map(MemberShape::getTarget)
                 .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
                 .anyMatch(Shape::isListShape);
@@ -222,9 +237,11 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
             return Stream.empty();
         }
 
-        return Stream.of(warning(operation, format(
-                "The verb of this operation, `%s`, and the presence of a top-level list member in its "
-                + "output, suggests that the operation should have the `paginated` trait. %s",
-                verb, DISCLAIMER)));
+        return Stream.of(warning(operation,
+                format(
+                        "The verb of this operation, `%s`, and the presence of a top-level list member in its "
+                                + "output, suggests that the operation should have the `paginated` trait. %s",
+                        verb,
+                        DISCLAIMER)));
     }
 }

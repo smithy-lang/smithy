@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema;
 
 import java.util.Collections;
@@ -42,13 +31,21 @@ public final class CfnConfig extends JsonSchemaConfig {
     private boolean disableRequiredPropertyGeneration = false;
     private boolean disableCapitalizedProperties = false;
     private List<String> externalDocs = ListUtils.of(
-            "Documentation Url", "DocumentationUrl", "API Reference", "User Guide",
-            "Developer Guide", "Reference", "Guide");
+            "Documentation Url",
+            "DocumentationUrl",
+            "API Reference",
+            "User Guide",
+            "Developer Guide",
+            "Reference",
+            "Guide");
     private Map<ShapeId, Map<String, Node>> jsonAdd = Collections.emptyMap();
     private String organizationName;
     private String serviceName;
     private List<String> sourceDocs = ListUtils.of(
-            "Source Url", "SourceUrl", "Source", "Source Code");
+            "Source Url",
+            "SourceUrl",
+            "Source",
+            "Source Code");
 
     public CfnConfig() {
         super();
@@ -357,7 +354,7 @@ public final class CfnConfig extends JsonSchemaConfig {
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
         if (!schemaVersion.equals(JsonSchemaVersion.DRAFT07)) {
             throw new CfnException(String.format("CloudFormation Resource Schemas require the use of JSON Schema"
-                + " version draft07. `jsonSchemaVersion` value of `%s` was provided.", schemaVersion));
+                    + " version draft07. `jsonSchemaVersion` value of `%s` was provided.", schemaVersion));
         }
     }
 }

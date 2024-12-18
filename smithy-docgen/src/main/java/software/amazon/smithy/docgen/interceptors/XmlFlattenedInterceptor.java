@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -24,17 +23,17 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class XmlFlattenedInterceptor implements CodeInterceptor<ProtocolSection, DocWriter> {
     private static final Pair<String, String> WRAPPED_LIST_REF = Pair.of(
-            "wrapped", "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-list-serialization"
-    );
+            "wrapped",
+            "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-list-serialization");
     private static final Pair<String, String> FLAT_LIST_REF = Pair.of(
-            "flat", "https://smithy.io/2.0/spec/protocol-traits.html#flattened-list-serialization"
-    );
+            "flat",
+            "https://smithy.io/2.0/spec/protocol-traits.html#flattened-list-serialization");
     private static final Pair<String, String> WRAPPED_MAP_REF = Pair.of(
-            "wrapped", "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-map-serialization"
-    );
+            "wrapped",
+            "https://smithy.io/2.0/spec/protocol-traits.html#wrapped-map-serialization");
     private static final Pair<String, String> FLAT_MAP_REF = Pair.of(
-            "flat", "https://smithy.io/2.0/spec/protocol-traits.html#flattened-map-serialization"
-    );
+            "flat",
+            "https://smithy.io/2.0/spec/protocol-traits.html#flattened-map-serialization");
 
     @Override
     public Class<ProtocolSection> sectionType() {

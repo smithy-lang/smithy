@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,11 +20,13 @@ public class FunctionsTest {
     @Test
     public void isVirtualHostableS3BucketOfExpression() {
         IsVirtualHostableS3Bucket function = IsVirtualHostableS3Bucket.ofExpressions(
-                Expression.of("foobar"), true);
+                Expression.of("foobar"),
+                true);
         assertThat(function, instanceOf(IsVirtualHostableS3Bucket.class));
 
         IsVirtualHostableS3Bucket function2 = IsVirtualHostableS3Bucket.ofExpressions(
-                Expression.of("foobar"), Expression.of(true));
+                Expression.of("foobar"),
+                Expression.of(true));
         assertThat(function2, instanceOf(IsVirtualHostableS3Bucket.class));
     }
 

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.ArrayList;
@@ -82,13 +71,18 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
 
     @Override
     public PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {
-        return context.getService().getTrait(CorsTrait.class)
+        return context.getService()
+                .getTrait(CorsTrait.class)
                 .map(corsTrait -> addPreflightIntegration(context, path, pathItem, corsTrait))
                 .orElse(pathItem);
     }
 
     private static PathItem addPreflightIntegration(
-            Context<? extends Trait> context, String path, PathItem pathItem, CorsTrait corsTrait) {
+            Context<? extends Trait> context,
+            String path,
+            PathItem pathItem,
+            CorsTrait corsTrait
+    ) {
         // Filter out any path for which an OPTIONS handler has already been defined
         if (pathItem.getOptions().isPresent()) {
             LOGGER.fine(() -> path + " already defines an OPTIONS request, so no need to generate CORS-preflight");
@@ -103,7 +97,11 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     }
 
     private static <T extends Trait> Map<CorsHeader, String> deduceCorsHeaders(
-            Context<T> context, String path, PathItem pathItem, CorsTrait corsTrait) {
+            Context<T> context,
+            String path,
+            PathItem pathItem,
+            CorsTrait corsTrait
+    ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
         corsHeaders.put(CorsHeader.MAX_AGE, String.valueOf(corsTrait.getMaxAge()));
         corsHeaders.put(CorsHeader.ALLOW_ORIGIN, corsTrait.getOrigin());
@@ -121,7 +119,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         headerNames.addAll(corsTrait.getAdditionalAllowedHeaders());
 
         // Sets additional allowed headers from the API Gateway config.
-        Set<String> additionalAllowedHeaders = context.getConfig().getExtensions(ApiGatewayConfig.class)
+        Set<String> additionalAllowedHeaders = context.getConfig()
+                .getExtensions(ApiGatewayConfig.class)
                 .getAdditionalAllowedCorsHeadersSet();
         headerNames.addAll(additionalAllowedHeaders);
         headerNames.addAll(findAllHeaders(path, pathItem));
@@ -134,7 +133,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         // Add protocol headers.
         Model model = context.getModel();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
-        Map<String, OperationShape> operations = topDownIndex.getContainedOperations(context.getService()).stream()
+        Map<String, OperationShape> operations = topDownIndex.getContainedOperations(context.getService())
+                .stream()
                 .collect(Collectors.toMap(o -> o.getId().getName(), o -> o));
         for (OperationObject operationObject : pathItem.getOperations().values()) {
             if (operationObject.getOperationId().isPresent()) {
@@ -144,7 +144,10 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         }
 
         LOGGER.fine(() -> String.format(
-                "Adding the following %s headers to `%s`: %s", CorsHeader.ALLOW_HEADERS, path, headerNames));
+                "Adding the following %s headers to `%s`: %s",
+                CorsHeader.ALLOW_HEADERS,
+                path,
+                headerNames));
         corsHeaders.put(CorsHeader.ALLOW_HEADERS, String.join(",", headerNames));
 
         return corsHeaders;
@@ -160,11 +163,14 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
 
     private static Collection<String> findAllHeaders(String path, PathItem pathItem) {
         // Get all "in" = "header" parameters and gather up their "name" properties.
-        return pathItem.getOperations().values().stream()
+        return pathItem.getOperations()
+                .values()
+                .stream()
                 .flatMap(operationObject -> operationObject.getParameters().stream())
                 .filter(parameter -> parameter.getIn().filter(in -> in.equals("header")).isPresent())
-                .map(parameter -> parameter.getName().orElseThrow(() -> new OpenApiException(
-                        "OpenAPI header parameter is missing a name in " + path)))
+                .map(parameter -> parameter.getName()
+                        .orElseThrow(() -> new OpenApiException(
+                                "OpenAPI header parameter is missing a name in " + path)))
                 .collect(Collectors.toList());
     }
 
@@ -173,7 +179,11 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     }
 
     private static OperationObject createPreflightOperation(
-            Context<? extends Trait> context, String path, PathItem pathItem, Map<CorsHeader, String> headers) {
+            Context<? extends Trait> context,
+            String path,
+            PathItem pathItem,
+            Map<CorsHeader, String> headers
+    ) {
         return OperationObject.builder()
                 .tags(ListUtils.of("CORS"))
                 .security(Collections.emptyList())
@@ -218,7 +228,10 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     }
 
     private static ObjectNode createPreflightIntegration(
-            Context<? extends Trait> context, Map<CorsHeader, String> headers, PathItem pathItem) {
+            Context<? extends Trait> context,
+            Map<CorsHeader, String> headers,
+            PathItem pathItem
+    ) {
         IntegrationResponse.Builder responseBuilder = IntegrationResponse.builder().statusCode("200");
 
         // Add each CORS header to the mock integration response.

@@ -1,11 +1,15 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.traits;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class EndpointModifierIndexTest {
     @Test
@@ -31,21 +35,20 @@ class EndpointModifierIndexTest {
 
         assertEquals(index.getEndpointModifierTraits(service2).size(), 1);
         assertInstanceOf(StandardPartitionalEndpointsTrait.class,
-            index.getEndpointModifierTraits(service2).get(StandardPartitionalEndpointsTrait.ID));
+                index.getEndpointModifierTraits(service2).get(StandardPartitionalEndpointsTrait.ID));
 
         assertEquals(index.getEndpointModifierTraits(service3).size(), 2);
         assertInstanceOf(StandardRegionalEndpointsTrait.class,
-            index.getEndpointModifierTraits(service3).get(StandardRegionalEndpointsTrait.ID));
+                index.getEndpointModifierTraits(service3).get(StandardRegionalEndpointsTrait.ID));
         assertInstanceOf(DualStackOnlyEndpointsTrait.class,
-            index.getEndpointModifierTraits(service3).get(DualStackOnlyEndpointsTrait.ID));
+                index.getEndpointModifierTraits(service3).get(DualStackOnlyEndpointsTrait.ID));
 
         assertEquals(index.getEndpointModifierTraits(service4).size(), 2);
         assertInstanceOf(StandardPartitionalEndpointsTrait.class,
-            index.getEndpointModifierTraits(service4).get(StandardPartitionalEndpointsTrait.ID));
+                index.getEndpointModifierTraits(service4).get(StandardPartitionalEndpointsTrait.ID));
         assertInstanceOf(RuleBasedEndpointsTrait.class,
-            index.getEndpointModifierTraits(service4).get(RuleBasedEndpointsTrait.ID));
+                index.getEndpointModifierTraits(service4).get(RuleBasedEndpointsTrait.ID));
     }
-
 
     @Test
     public void indexSkipsLoadingTraitsWhenDefinitionIsMissing() {
@@ -69,6 +72,7 @@ class EndpointModifierIndexTest {
 
     private ShapeId getServiceShapeId(Model model, String service) {
         return model
-            .expectShape(ShapeId.from(service), ServiceShape.class).toShapeId();
+                .expectShape(ShapeId.from(service), ServiceShape.class)
+                .toShapeId();
     }
 }

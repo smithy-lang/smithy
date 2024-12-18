@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
@@ -53,9 +42,12 @@ public final class ErrorRenameValidator extends AbstractValidator {
      * Hence, error shape renaming are not supported for these protocols.
      */
     private static final Set<ShapeId> UNSUPPORTED_PROTOCOLS = SetUtils.of(
-        AwsJson1_0Trait.ID, AwsJson1_1Trait.ID, AwsQueryTrait.ID,
-        Ec2QueryTrait.ID, RestJson1Trait.ID, RestXmlTrait.ID
-    );
+            AwsJson1_0Trait.ID,
+            AwsJson1_1Trait.ID,
+            AwsQueryTrait.ID,
+            Ec2QueryTrait.ID,
+            RestJson1Trait.ID,
+            RestXmlTrait.ID);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -74,7 +66,7 @@ public final class ErrorRenameValidator extends AbstractValidator {
         }
 
         Set<String> unsupportedProtocols = new HashSet<>();
-        for (ShapeId protocol: UNSUPPORTED_PROTOCOLS) {
+        for (ShapeId protocol : UNSUPPORTED_PROTOCOLS) {
             if (service.getAllTraits().containsKey(protocol)) {
                 unsupportedProtocols.add(protocol.getName());
             }
@@ -93,10 +85,13 @@ public final class ErrorRenameValidator extends AbstractValidator {
 
             ShapeId from = shape.get().getId();
             String to = renames.get(from);
-            events.add(error(service, String.format(
-                    "Service attempts to rename an error shape from `%s` to \"%s\"; "
-                            + "Service protocols %s do not support error renaming.",
-                    from, to, unsupportedProtocols)));
+            events.add(error(service,
+                    String.format(
+                            "Service attempts to rename an error shape from `%s` to \"%s\"; "
+                                    + "Service protocols %s do not support error renaming.",
+                            from,
+                            to,
+                            unsupportedProtocols)));
         });
     }
 }

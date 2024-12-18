@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
@@ -44,8 +43,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
             VERSION_NAME,
             CONFIG_HASH_NAME,
             ARTIFACT_LIST_NAME,
-            REPOSITORIES_LIST_NAME
-    );
+            REPOSITORIES_LIST_NAME);
 
     private final Map<String, LockedArtifact> artifacts;
     private final Set<String> repositories;
@@ -54,7 +52,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
 
     private LockFile(Builder builder) {
         this.artifacts = builder.artifacts.copy();
-        this.repositories =  builder.repositories.copy();
+        this.repositories = builder.repositories.copy();
         this.version = builder.version;
         this.configHash = builder.configHash;
     }
@@ -92,7 +90,6 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         }
         return Optional.empty();
     }
-
 
     @Override
     public Node toNode() {
@@ -267,8 +264,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         }
 
         boolean matchesResolved(ResolvedArtifact resolved) {
-           return shaSum.equals(resolved.getShaSum());
+            return shaSum.equals(resolved.getShaSum());
         }
     }
 }
-

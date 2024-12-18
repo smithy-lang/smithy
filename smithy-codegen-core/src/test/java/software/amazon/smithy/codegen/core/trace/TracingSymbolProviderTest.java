@@ -1,4 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core.trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +17,6 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 class TracingSymbolProviderTest {
 
@@ -52,29 +56,29 @@ class TracingSymbolProviderTest {
 
     @Test
     void assertBuildFailsWithoutSymbolProvider() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
-                .metadata(constructTraceMetadata())
-                .shapeLinkCreator(constructFunction())
-                .build()
-        );
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> TracingSymbolProvider.builder()
+                        .metadata(constructTraceMetadata())
+                        .shapeLinkCreator(constructFunction())
+                        .build());
     }
 
     @Test
     void assertBuildFailsWithoutTraceMetadata() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
-                .symbolProvider(new TestSymbolProvider())
-                .shapeLinkCreator(constructFunction())
-                .build()
-        );
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> TracingSymbolProvider.builder()
+                        .symbolProvider(new TestSymbolProvider())
+                        .shapeLinkCreator(constructFunction())
+                        .build());
     }
 
     @Test
     void assertBuildFailsWithoutShapeLinkCreator() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TracingSymbolProvider.builder()
-                .metadata(constructTraceMetadata())
-                .symbolProvider(new TestSymbolProvider())
-                .build()
-        );
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> TracingSymbolProvider.builder()
+                        .metadata(constructTraceMetadata())
+                        .symbolProvider(new TestSymbolProvider())
+                        .build());
     }
 
     @Test
@@ -149,7 +153,8 @@ class TracingSymbolProviderTest {
     static class TestSymbolProvider implements SymbolProvider {
         @Override
         public Symbol toSymbol(Shape shape) {
-            return Symbol.builder().putProperty("shape", shape)
+            return Symbol.builder()
+                    .putProperty("shape", shape)
                     .name(shape.getId().getName())
                     .namespace(shape.getId().getNamespace(), "/")
                     .definitionFile("file.java")

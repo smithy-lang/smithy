@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.linters;
 
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public final class UnreferencedShapeValidator extends AbstractValidator {
                         config.setRootShapeSelector(Selector.parse(rootShapeNode.getValue()));
                     } catch (SelectorSyntaxException e) {
                         throw new ExpectationNotMetException("Error parsing `rootShapeSelector`: " + e.getMessage(),
-                                                             rootShapeNode);
+                                rootShapeNode);
                     }
                 });
                 return new UnreferencedShapeValidator(config);
@@ -80,8 +79,9 @@ public final class UnreferencedShapeValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Shape shape : new UnreferencedShapes(config.rootShapeSelector).compute(model)) {
-            events.add(note(shape, "This shape is unreferenced. It has no modeled connections to shapes "
-                                   + "that match the following selector: `" + config.rootShapeSelector + "`"));
+            events.add(note(shape,
+                    "This shape is unreferenced. It has no modeled connections to shapes "
+                            + "that match the following selector: `" + config.rootShapeSelector + "`"));
         }
 
         return events;

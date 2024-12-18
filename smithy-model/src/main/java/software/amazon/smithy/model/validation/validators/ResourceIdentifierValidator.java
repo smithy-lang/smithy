@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -54,8 +43,9 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
             for (String identifier : resource.getIdentifiers().keySet()) {
                 if (propertyLowerCaseToActual.containsKey(identifier.toLowerCase(Locale.ENGLISH))) {
-                   events.add(error(resource, String.format("Resource identifier `%s` cannot also be a"
-                           + " resource property", identifier)));
+                    events.add(error(resource,
+                            String.format("Resource identifier `%s` cannot also be a"
+                                    + " resource property", identifier)));
                 }
             }
         }
@@ -64,7 +54,7 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId childResourceId: resource.getResources()) {
+        for (ShapeId childResourceId : resource.getResources()) {
             ResourceShape childResource = model.expectShape(childResourceId, ResourceShape.class);
             checkForMissing(childResource, resource).ifPresent(e -> events.add(e));
             checkForMismatches(childResource, resource).ifPresent(e -> events.add(e));
@@ -74,7 +64,9 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> checkForMissing(ResourceShape resource, ResourceShape parent) {
         // Look for identifiers on the parent that are flat-out missing on the child.
-        String missingKeys = parent.getIdentifiers().entrySet().stream()
+        String missingKeys = parent.getIdentifiers()
+                .entrySet()
+                .stream()
                 .filter(entry -> resource.getIdentifiers().get(entry.getKey()) == null)
                 .map(Map.Entry::getKey)
                 .sorted()
@@ -84,20 +76,27 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(resource, String.format(
-                "This resource is bound as a child of `%s`, but it is invalid because its `identifiers` property "
-                + "is missing the following identifiers that are defined in `%s`: [%s]",
-                parent.getId(), parent.getId(), missingKeys)));
+        return Optional.of(error(resource,
+                String.format(
+                        "This resource is bound as a child of `%s`, but it is invalid because its `identifiers` property "
+                                + "is missing the following identifiers that are defined in `%s`: [%s]",
+                        parent.getId(),
+                        parent.getId(),
+                        missingKeys)));
     }
 
     private Optional<ValidationEvent> checkForMismatches(ResourceShape resource, ResourceShape parent) {
         // Look for identifiers on the child that have the same key but target different shapes.
-        String mismatchedTargets = parent.getIdentifiers().entrySet().stream()
+        String mismatchedTargets = parent.getIdentifiers()
+                .entrySet()
+                .stream()
                 .filter(entry -> resource.getIdentifiers().get(entry.getKey()) != null)
                 .filter(entry -> !resource.getIdentifiers().get(entry.getKey()).equals(entry.getValue()))
                 .map(entry -> String.format(
                         "expected the `%s` member to target `%s`, but found a target of `%s`",
-                        entry.getKey(), entry.getValue(), resource.getIdentifiers().get(entry.getKey())))
+                        entry.getKey(),
+                        entry.getValue(),
+                        resource.getIdentifiers().get(entry.getKey())))
                 .sorted()
                 .collect(Collectors.joining("; "));
 
@@ -105,8 +104,10 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(resource, String.format(
-                "The `identifiers` property of this resource is incompatible with its binding to `%s`: %s",
-                parent.getId(), mismatchedTargets)));
+        return Optional.of(error(resource,
+                String.format(
+                        "The `identifiers` property of this resource is incompatible with its binding to `%s`: %s",
+                        parent.getId(),
+                        mismatchedTargets)));
     }
 }

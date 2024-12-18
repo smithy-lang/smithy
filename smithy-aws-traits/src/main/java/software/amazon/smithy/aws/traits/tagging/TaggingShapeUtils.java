@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.Map;
@@ -131,19 +120,19 @@ final class TaggingShapeUtils {
     static boolean verifyTagKeysShape(Model model, Shape tagShape) {
         // A list or set that targets a string shape qualifies as listing tag keys
         return (tagShape.isListShape()
-                    && model.expectShape(tagShape.asListShape().get().getMember().getTarget()).isStringShape());
+                && model.expectShape(tagShape.asListShape().get().getMember().getTarget()).isStringShape());
     }
 
-    static boolean verifyTagResourceOperation(Model model,
-        OperationShape tagResourceOperation,
-        OperationIndex operationIndex
+    static boolean verifyTagResourceOperation(
+            Model model,
+            OperationShape tagResourceOperation,
+            OperationIndex operationIndex
     ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
         int taglistMemberCount = 0;
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
             if (isTagDesiredName(memberEntry.getKey())
-                && verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget()))
-            ) {
+                    && verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget()))) {
                 ++taglistMemberCount;
             }
         }
@@ -151,16 +140,15 @@ final class TaggingShapeUtils {
     }
 
     static boolean verifyUntagResourceOperation(
-        Model model,
-        OperationShape untagResourceOperation,
-        OperationIndex operationIndex
+            Model model,
+            OperationShape untagResourceOperation,
+            OperationIndex operationIndex
     ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
         int untagKeyMemberCount = 0;
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
             if (isTagKeysDesiredName(memberEntry.getKey())
-                && verifyTagKeysShape(model, model.expectShape(memberEntry.getValue().getTarget()))
-            ) {
+                    && verifyTagKeysShape(model, model.expectShape(memberEntry.getValue().getTarget()))) {
                 ++untagKeyMemberCount;
             }
         }
@@ -168,17 +156,16 @@ final class TaggingShapeUtils {
     }
 
     static boolean verifyListTagsOperation(
-        Model model,
-        OperationShape listTagsResourceOperation,
-        OperationIndex operationIndex
+            Model model,
+            OperationShape listTagsResourceOperation,
+            OperationIndex operationIndex
     ) {
         Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
         Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
         int taglistMemberCount = 0;
         for (Map.Entry<String, MemberShape> memberEntry : outputMembers.entrySet()) {
             if (isTagDesiredName(memberEntry.getKey())
-                && verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget()))
-            ) {
+                    && verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget()))) {
                 ++taglistMemberCount;
             }
         }
@@ -186,9 +173,9 @@ final class TaggingShapeUtils {
     }
 
     static boolean isTagPropertyInInput(
-        Optional<ShapeId> operationId,
-        Model model,
-        ResourceShape resource
+            Optional<ShapeId> operationId,
+            Model model,
+            ResourceShape resource
     ) {
         if (operationId.isPresent()) {
             PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
@@ -203,9 +190,9 @@ final class TaggingShapeUtils {
     }
 
     static boolean isTagPropertyInShape(
-        String tagPropertyName,
-        Shape shape,
-        PropertyBindingIndex propertyBindingIndex
+            String tagPropertyName,
+            Shape shape,
+            PropertyBindingIndex propertyBindingIndex
     ) {
         for (MemberShape member : shape.members()) {
             Optional<String> propertyName = propertyBindingIndex.getPropertyName(member.getId());

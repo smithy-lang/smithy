@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,12 +58,18 @@ public class CfnResourceIndexTest {
         fooResource.identifiers = SetUtils.of("fooId");
         fooResource.additionalIdentifiers = ListUtils.of();
         fooResource.mutabilities = MapUtils.of(
-                "fooId", SetUtils.of(Mutability.READ),
-                "fooValidFullyMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
-                "fooValidCreateProperty", SetUtils.of(Mutability.CREATE),
-                "fooValidCreateReadProperty", SetUtils.of(Mutability.CREATE, Mutability.READ),
-                "fooValidReadProperty", SetUtils.of(Mutability.READ),
-                "fooValidWriteProperty", SetUtils.of(Mutability.WRITE));
+                "fooId",
+                SetUtils.of(Mutability.READ),
+                "fooValidFullyMutableProperty",
+                CfnResourceIndex.FULLY_MUTABLE,
+                "fooValidCreateProperty",
+                SetUtils.of(Mutability.CREATE),
+                "fooValidCreateReadProperty",
+                SetUtils.of(Mutability.CREATE, Mutability.READ),
+                "fooValidReadProperty",
+                SetUtils.of(Mutability.READ),
+                "fooValidWriteProperty",
+                SetUtils.of(Mutability.WRITE));
         fooResource.createOnlyProperties = SetUtils.of("fooValidCreateProperty", "fooValidCreateReadProperty");
         fooResource.readOnlyProperties = SetUtils.of("fooId", "fooValidReadProperty");
         fooResource.writeOnlyProperties = SetUtils.of("fooValidWriteProperty", "fooValidCreateProperty");
@@ -84,12 +79,18 @@ public class CfnResourceIndexTest {
         barResource.identifiers = SetUtils.of("barId");
         barResource.additionalIdentifiers = ListUtils.of(SetUtils.of("arn"));
         barResource.mutabilities = MapUtils.of(
-                "barId", SetUtils.of(Mutability.CREATE, Mutability.READ),
-                "arn", SetUtils.of(Mutability.READ),
-                "barExplicitMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
-                "barValidAdditionalProperty", SetUtils.of(),
-                "barImplicitReadProperty", SetUtils.of(Mutability.READ),
-                "barImplicitFullProperty", CfnResourceIndex.FULLY_MUTABLE);
+                "barId",
+                SetUtils.of(Mutability.CREATE, Mutability.READ),
+                "arn",
+                SetUtils.of(Mutability.READ),
+                "barExplicitMutableProperty",
+                CfnResourceIndex.FULLY_MUTABLE,
+                "barValidAdditionalProperty",
+                SetUtils.of(),
+                "barImplicitReadProperty",
+                SetUtils.of(Mutability.READ),
+                "barImplicitFullProperty",
+                CfnResourceIndex.FULLY_MUTABLE);
         barResource.createOnlyProperties = SetUtils.of("barId");
         barResource.readOnlyProperties = SetUtils.of("arn", "barImplicitReadProperty");
         barResource.writeOnlyProperties = SetUtils.of();
@@ -99,13 +100,20 @@ public class CfnResourceIndexTest {
         bazResource.identifiers = SetUtils.of("barId", "bazId");
         bazResource.additionalIdentifiers = ListUtils.of();
         bazResource.mutabilities = MapUtils.of(
-                "barId", SetUtils.of(Mutability.CREATE, Mutability.READ),
-                "bazId", SetUtils.of(Mutability.READ),
-                "bazExplicitMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
-                "bazImplicitFullyMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
-                "bazImplicitCreateProperty", SetUtils.of(Mutability.CREATE, Mutability.READ),
-                "bazImplicitReadProperty", SetUtils.of(Mutability.READ),
-                "bazImplicitWriteProperty", SetUtils.of(Mutability.CREATE, Mutability.WRITE));
+                "barId",
+                SetUtils.of(Mutability.CREATE, Mutability.READ),
+                "bazId",
+                SetUtils.of(Mutability.READ),
+                "bazExplicitMutableProperty",
+                CfnResourceIndex.FULLY_MUTABLE,
+                "bazImplicitFullyMutableProperty",
+                CfnResourceIndex.FULLY_MUTABLE,
+                "bazImplicitCreateProperty",
+                SetUtils.of(Mutability.CREATE, Mutability.READ),
+                "bazImplicitReadProperty",
+                SetUtils.of(Mutability.READ),
+                "bazImplicitWriteProperty",
+                SetUtils.of(Mutability.CREATE, Mutability.WRITE));
         bazResource.createOnlyProperties = SetUtils.of("barId", "bazImplicitCreateProperty");
         bazResource.readOnlyProperties = SetUtils.of("bazId", "bazImplicitReadProperty");
         bazResource.writeOnlyProperties = SetUtils.of("bazImplicitWriteProperty");
@@ -133,12 +141,14 @@ public class CfnResourceIndexTest {
     @MethodSource("data")
     public void findsAllProperties(ResourceData data) {
         Map<String, CfnResourceProperty> properties = cfnResourceIndex.getResource(data.resourceId)
-                .get().getProperties();
+                .get()
+                .getProperties();
 
         assertThat(properties.keySet(), containsInAnyOrder(data.mutabilities.keySet().toArray()));
         properties.forEach((name, definition) -> {
             assertThat(String.format("Mismatch on property %s for %s.", name, data.resourceId),
-                    definition.getMutabilities(), containsInAnyOrder(data.mutabilities.get(name).toArray()));
+                    definition.getMutabilities(),
+                    containsInAnyOrder(data.mutabilities.get(name).toArray()));
         });
     }
 
@@ -148,7 +158,8 @@ public class CfnResourceIndexTest {
         Set<String> properties = cfnResourceIndex.getResource(data.resourceId).get().getCreateOnlyProperties();
 
         assertThat(String.format("Failure for resource %s.", data.resourceId),
-                properties, containsInAnyOrder(data.createOnlyProperties.toArray()));
+                properties,
+                containsInAnyOrder(data.createOnlyProperties.toArray()));
     }
 
     @ParameterizedTest
@@ -157,7 +168,8 @@ public class CfnResourceIndexTest {
         Set<String> properties = cfnResourceIndex.getResource(data.resourceId).get().getReadOnlyProperties();
 
         assertThat(String.format("Failure for resource %s.", data.resourceId),
-                properties, containsInAnyOrder(data.readOnlyProperties.toArray()));
+                properties,
+                containsInAnyOrder(data.readOnlyProperties.toArray()));
     }
 
     @ParameterizedTest
@@ -166,24 +178,29 @@ public class CfnResourceIndexTest {
         Set<String> properties = cfnResourceIndex.getResource(data.resourceId).get().getWriteOnlyProperties();
 
         assertThat(String.format("Failure for resource %s.", data.resourceId),
-                properties, containsInAnyOrder(data.writeOnlyProperties.toArray()));
+                properties,
+                containsInAnyOrder(data.writeOnlyProperties.toArray()));
     }
 
     @Test
     public void setsProperIdentifierMutability() {
         Map<String, CfnResourceProperty> fooProperties = cfnResourceIndex.getResource(FOO)
-                .get().getProperties();
+                .get()
+                .getProperties();
         Map<String, CfnResourceProperty> barProperties = cfnResourceIndex.getResource(BAR)
-                .get().getProperties();
+                .get()
+                .getProperties();
 
         assertThat(fooProperties.get("fooId").getMutabilities(), containsInAnyOrder(Mutability.READ));
-        assertThat(barProperties.get("barId").getMutabilities(), containsInAnyOrder(Mutability.CREATE, Mutability.READ));
+        assertThat(barProperties.get("barId").getMutabilities(),
+                containsInAnyOrder(Mutability.CREATE, Mutability.READ));
     }
 
     @Test
     public void handlesAdditionalSchemaProperty() {
         Map<String, CfnResourceProperty> barProperties = cfnResourceIndex.getResource(BAR)
-                .get().getProperties();
+                .get()
+                .getProperties();
 
         assertTrue(barProperties.containsKey("barValidAdditionalProperty"));
         assertTrue(barProperties.get("barValidAdditionalProperty").getMutabilities().isEmpty());

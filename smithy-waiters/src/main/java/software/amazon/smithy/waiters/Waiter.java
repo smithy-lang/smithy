@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.waiters;
 
 import java.util.List;
@@ -46,7 +35,12 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
     private static final int DEFAULT_MIN_DELAY = 2;
     private static final int DEFAULT_MAX_DELAY = 120;
     private static final Set<String> KEYS = SetUtils.of(
-            DOCUMENTATION, ACCEPTORS, MIN_DELAY, MAX_DELAY, TAGS, DEPRECATED);
+            DOCUMENTATION,
+            ACCEPTORS,
+            MIN_DELAY,
+            MAX_DELAY,
+            TAGS,
+            DEPRECATED);
 
     private final String documentation;
     private final List<Acceptor> acceptors;
@@ -191,11 +185,11 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
 
         Waiter waiter = (Waiter) o;
         return minDelay == waiter.minDelay
-               && maxDelay == waiter.maxDelay
-               && Objects.equals(documentation, waiter.documentation)
-               && acceptors.equals(waiter.acceptors)
-               && tags.equals(waiter.tags)
-               && deprecated == waiter.deprecated;
+                && maxDelay == waiter.maxDelay
+                && Objects.equals(documentation, waiter.documentation)
+                && acceptors.equals(waiter.acceptors)
+                && tags.equals(waiter.tags)
+                && deprecated == waiter.deprecated;
     }
 
     @Override

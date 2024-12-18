@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.node;
 
 import java.nio.charset.StandardCharsets;
@@ -41,23 +30,28 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
 
         trait.getMin().ifPresent(min -> {
             if (size < min) {
-                emitter.accept(node, getSeverity(context), "Value provided for `" + shape.getId()
-                            + "` must have at least " + min + " bytes, but the provided value only has " + size
-                            + " bytes");
+                emitter.accept(node,
+                        getSeverity(context),
+                        "Value provided for `" + shape.getId()
+                                + "` must have at least " + min + " bytes, but the provided value only has " + size
+                                + " bytes");
             }
         });
 
         trait.getMax().ifPresent(max -> {
             if (value.getBytes(StandardCharsets.UTF_8).length > max) {
-                emitter.accept(node, getSeverity(context), "Value provided for `" + shape.getId()
-                            + "` must have no more than " + max + " bytes, but the provided value has " + size
-                            + " bytes");
+                emitter.accept(node,
+                        getSeverity(context),
+                        "Value provided for `" + shape.getId()
+                                + "` must have no more than " + max + " bytes, but the provided value has " + size
+                                + " bytes");
             }
         });
     }
 
     private Severity getSeverity(Context context) {
         return context.hasFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS)
-                ? Severity.WARNING : Severity.ERROR;
+                ? Severity.WARNING
+                : Severity.ERROR;
     }
 }

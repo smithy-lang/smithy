@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli;
 
 import java.util.function.Consumer;
@@ -47,9 +36,11 @@ public final class StandardOptions implements ArgumentReceiver {
         printer.option(NO_COLOR, null, "Disable ANSI colors.");
         printer.option(FORCE_COLOR, null, "Force the use of ANSI colors.");
         printer.option(STACKTRACE, null, "Display a stacktrace on error.");
-        printer.param(LOGGING, null, "LOG_LEVEL",
-                            "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
-                            + "FINE, ALL.");
+        printer.param(LOGGING,
+                null,
+                "LOG_LEVEL",
+                "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
+                        + "FINE, ALL.");
     }
 
     @Override

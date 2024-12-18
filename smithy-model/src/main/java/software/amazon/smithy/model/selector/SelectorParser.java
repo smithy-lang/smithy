@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
@@ -213,7 +202,9 @@ final class SelectorParser extends SimpleParser {
             if (!REL_TYPES.contains(next)) {
                 LOGGER.warning(String.format(
                         "Unknown relationship type '%s' found near %s. Expected one of: %s",
-                        next, position() - next.length(), REL_TYPES));
+                        next,
+                        position() - next.length(),
+                        REL_TYPES));
             }
 
             ws();
@@ -232,7 +223,10 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :not function requires a single selector argument",
-                            input().toString(), functionPosition, line(), column());
+                            input().toString(),
+                            functionPosition,
+                            line(),
+                            column());
                 }
                 return new NotSelector(selectors.get(0));
             case "test":
@@ -243,14 +237,20 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :in function requires a single selector argument",
-                            input().toString(), functionPosition, line(), column());
+                            input().toString(),
+                            functionPosition,
+                            line(),
+                            column());
                 }
                 return new InSelector(selectors.get(0));
             case "root":
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :root function requires a single selector argument",
-                            input().toString(), functionPosition, line(), column());
+                            input().toString(),
+                            functionPosition,
+                            line(),
+                            column());
                 }
                 InternalSelector root = new RootSelector(selectors.get(0), roots.size());
                 roots.add(selectors.get(0));
@@ -259,14 +259,20 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() > 2) {
                     throw new SelectorSyntaxException(
                             "The :topdown function accepts 1 or 2 selectors, but found " + selectors.size(),
-                            input().toString(), functionPosition, line(), column());
+                            input().toString(),
+                            functionPosition,
+                            line(),
+                            column());
                 }
                 return new TopDownSelector(selectors);
             case "recursive":
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :recursive function requires a single selector argument",
-                            input().toString(), functionPosition, line(), column());
+                            input().toString(),
+                            functionPosition,
+                            line(),
+                            column());
                 }
                 return new RecursiveSelector(selectors.get(0));
             case "each":
@@ -274,7 +280,8 @@ final class SelectorParser extends SimpleParser {
                 return IsSelector.of(selectors);
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
-                                             name, input()));
+                        name,
+                        input()));
                 return (context, shape, next) -> InternalSelector.Response.CONTINUE;
         }
     }

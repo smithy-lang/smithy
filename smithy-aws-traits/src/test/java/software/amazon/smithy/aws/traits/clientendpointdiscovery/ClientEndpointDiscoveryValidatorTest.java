@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,7 +24,7 @@ public class ClientEndpointDiscoveryValidatorTest {
                 .addImport(getClass().getResource("endpoint-operation-unbound.json"))
                 .assemble();
 
-        List<ValidationEvent> events =  result.getValidationEvents(Severity.ERROR);
+        List<ValidationEvent> events = result.getValidationEvents(Severity.ERROR);
         assertThat(events, not(empty()));
         assertThat(events.get(0).getMessage(), containsString("must be bound"));
     }
@@ -47,7 +36,7 @@ public class ClientEndpointDiscoveryValidatorTest {
                 .addImport(getClass().getResource("no-configured-operations.json"))
                 .assemble();
 
-        List<ValidationEvent> events =  result.getValidationEvents(Severity.WARNING);
+        List<ValidationEvent> events = result.getValidationEvents(Severity.WARNING);
         assertThat(events, not(empty()));
         assertThat(events.get(0).getMessage(), containsString("no operations bound"));
     }
@@ -59,7 +48,7 @@ public class ClientEndpointDiscoveryValidatorTest {
                 .addImport(getClass().getResource("service-not-configured.json"))
                 .assemble();
 
-        List<ValidationEvent> events =  result.getValidationEvents(Severity.ERROR);
+        List<ValidationEvent> events = result.getValidationEvents(Severity.ERROR);
         assertThat(events, not(empty()));
         assertThat(events.get(0).getMessage(), containsString("not attached to a service"));
     }

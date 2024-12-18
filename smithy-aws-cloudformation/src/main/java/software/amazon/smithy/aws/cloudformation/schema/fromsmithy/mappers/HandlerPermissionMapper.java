@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import java.util.Locale;
@@ -83,18 +72,24 @@ final class HandlerPermissionMapper implements CfnMapper {
         // permissions to be combined.
         resource.getRead()
                 .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("read", Handler.builder()
-                        .permissions(permissions).build()));
+                .ifPresent(permissions -> resourceSchema.addHandler("read",
+                        Handler.builder()
+                                .permissions(permissions)
+                                .build()));
 
         resource.getDelete()
                 .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("delete", Handler.builder()
-                        .permissions(permissions).build()));
+                .ifPresent(permissions -> resourceSchema.addHandler("delete",
+                        Handler.builder()
+                                .permissions(permissions)
+                                .build()));
 
         resource.getList()
                 .map(operation -> getPermissionsEntriesForOperation(model, service, operation))
-                .ifPresent(permissions -> resourceSchema.addHandler("list", Handler.builder()
-                        .permissions(permissions).build()));
+                .ifPresent(permissions -> resourceSchema.addHandler("list",
+                        Handler.builder()
+                                .permissions(permissions)
+                                .build()));
     }
 
     static Set<String> getPermissionsEntriesForOperation(Model model, ServiceShape service, ShapeId operationId) {
@@ -106,7 +101,7 @@ final class HandlerPermissionMapper implements CfnMapper {
                 service.getTrait(ServiceTrait.class)
                         .map(ServiceTrait::getArnNamespace)
                         .orElse(service.getId().getName())
-                .toLowerCase(Locale.US);
+                        .toLowerCase(Locale.US);
         operationActionName += ":" + operationId.getName(service);
         permissionsEntries.add(operationActionName);
 

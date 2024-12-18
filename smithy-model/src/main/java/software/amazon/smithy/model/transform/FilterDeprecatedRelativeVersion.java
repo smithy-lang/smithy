@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -23,8 +22,7 @@ final class FilterDeprecatedRelativeVersion {
      */
     private static final Pattern SEMVER_REGEX = Pattern.compile(
             "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)"
-            + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
-    );
+                    + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
 
     private final String relativeVersion;
 
@@ -32,8 +30,7 @@ final class FilterDeprecatedRelativeVersion {
         if (relativeVersion != null && !isSemVer(relativeVersion)) {
             throw new IllegalArgumentException("Provided relativeDate: `"
                     + relativeVersion
-                    + "` is not a valid ."
-            );
+                    + "` is not a valid .");
         }
         this.relativeVersion = relativeVersion;
     }
@@ -58,8 +55,7 @@ final class FilterDeprecatedRelativeVersion {
                 if (compareSemVer(relativeVersion, since) > 0) {
                     LOGGER.fine("Filtering deprecated shape: `"
                             + shape + "`"
-                            + ". Shape was deprecated as of version: " + since
-                    );
+                            + ". Shape was deprecated as of version: " + since);
                     shapesToRemove.add(shape);
                 }
             }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ProtocolSection;
@@ -19,11 +18,11 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class TimestampFormatInterceptor extends ProtocolTraitInterceptor<TimestampFormatTrait> {
     private static final Pair<String, String> DATE_TIME_REF = Pair.of(
-            "RFC3339 date-time", "https://datatracker.ietf.org/doc/html/rfc3339.html#section-5.6"
-    );
+            "RFC3339 date-time",
+            "https://datatracker.ietf.org/doc/html/rfc3339.html#section-5.6");
     private static final Pair<String, String> HTTP_DATE_REF = Pair.of(
-            "RFC7231 IMF-fixdate", "https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"
-    );
+            "RFC7231 IMF-fixdate",
+            "https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1");
 
     @Override
     protected Class<TimestampFormatTrait> getTraitClass() {

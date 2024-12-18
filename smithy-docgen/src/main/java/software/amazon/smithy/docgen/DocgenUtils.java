@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import static java.lang.String.format;
@@ -48,9 +47,9 @@ public final class DocgenUtils {
     public static String runCommand(String command, Path directory) {
         String[] finalizedCommand;
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            finalizedCommand = new String[]{"cmd.exe", "/c", command};
+            finalizedCommand = new String[] {"cmd.exe", "/c", command};
         } else {
-            finalizedCommand = new String[]{"sh", "-c", command};
+            finalizedCommand = new String[] {"sh", "-c", command};
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(finalizedCommand)
@@ -63,7 +62,8 @@ public final class DocgenUtils {
 
             // Capture output for reporting.
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                process.getInputStream(), Charset.defaultCharset()))) {
+                    process.getInputStream(),
+                    Charset.defaultCharset()))) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     LOGGER.finest(line);
@@ -77,7 +77,9 @@ public final class DocgenUtils {
             String joinedOutput = String.join(System.lineSeparator(), output);
             if (process.exitValue() != 0) {
                 throw new CodegenException(format(
-                    "Command `%s` failed with output:%n%n%s", command, joinedOutput));
+                        "Command `%s` failed with output:%n%n%s",
+                        command,
+                        joinedOutput));
             }
             return joinedOutput;
         } catch (InterruptedException | IOException e) {
@@ -115,8 +117,9 @@ public final class DocgenUtils {
             return Optional.empty();
         }
         return Optional.of(format(
-                "./%s#%s", relativeToParent.relativize(Paths.get(symbol.getDefinitionFile())), linkId.get()
-        ));
+                "./%s#%s",
+                relativeToParent.relativize(Paths.get(symbol.getDefinitionFile())),
+                linkId.get()));
     }
 
     /**

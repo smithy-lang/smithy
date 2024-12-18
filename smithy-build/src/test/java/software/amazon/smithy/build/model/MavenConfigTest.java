@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,9 +63,10 @@ public class MavenConfigTest {
                 .build());
         MavenConfig config2 = MavenConfig.fromNode(Node.objectNodeBuilder()
                 .withMember("dependencies", Node.fromStrings("g:a:v", "a:a:a"))
-                .withMember("repositories", Node.fromNodes(
-                        Node.objectNode().withMember("url", "https://example.com"),
-                        Node.objectNode().withMember("url", "https://m2.example.com")))
+                .withMember("repositories",
+                        Node.fromNodes(
+                                Node.objectNode().withMember("url", "https://example.com"),
+                                Node.objectNode().withMember("url", "https://m2.example.com")))
                 .build());
         MavenConfig merged = config1.merge(config2);
 
@@ -73,9 +78,9 @@ public class MavenConfigTest {
         dependencies.add("a:a:a");
 
         MavenConfig expectedMerge = MavenConfig.builder()
-            .repositories(repos)
-            .dependencies(dependencies)
-            .build();
+                .repositories(repos)
+                .dependencies(dependencies)
+                .build();
 
         assertThat(merged, equalTo(expectedMerge));
     }

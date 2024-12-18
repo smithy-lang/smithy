@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core.directed;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -65,8 +54,12 @@ public class CodegenDirectorTest {
                     directive.symbolProvider(),
                     (f, s) -> new TestWriter());
 
-            return new TestContext(directive.model(), directive.settings(), directive.symbolProvider(),
-                                   directive.fileManifest(), delegator, directive.service());
+            return new TestContext(directive.model(),
+                    directive.settings(),
+                    directive.symbolProvider(),
+                    directive.fileManifest(),
+                    delegator,
+                    directive.service());
         }
 
         @Override
@@ -140,8 +133,7 @@ public class CodegenDirectorTest {
     @Test
     public void validatesInput() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings>
-                runner = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
 
         runner.directedCodegen(testDirected);
         runner.fileManifest(new MockManifest());
@@ -155,8 +147,7 @@ public class CodegenDirectorTest {
     @Test
     public void failsWhenServiceIsMissing() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
 
         runner.settings(TestSettings.class, Node.objectNode().withMember("foo", "hi"));
@@ -172,8 +163,7 @@ public class CodegenDirectorTest {
     @Test
     public void performsCodegen() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("directed-model.smithy"))
@@ -192,32 +182,31 @@ public class CodegenDirectorTest {
         runner.run();
 
         // asserts that mixin smithy.example#Paginated is not generated
-        assertThat(testDirected.generatedShapes, containsInAnyOrder(
-                ShapeId.from("smithy.example#Foo"),
-                ShapeId.from("smithy.example#TheFoo"),
-                ShapeId.from("smithy.example#ListFooInput"),
-                ShapeId.from("smithy.example#ListFooOutput"),
-                ShapeId.from("smithy.example#FooStructure"),
-                ShapeId.from("smithy.example#FooList"),
-                ShapeId.from("smithy.example#StringMap"),
-                ShapeId.from("smithy.example#Status"),
-                ShapeId.from("smithy.example#FaceCard"),
-                ShapeId.from("smithy.example#Instruction"),
-                ShapeId.from("smithy.api#Unit"),
-                ShapeId.from("smithy.example#ListFoo")
-        ));
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#Foo"),
+                        ShapeId.from("smithy.example#TheFoo"),
+                        ShapeId.from("smithy.example#ListFooInput"),
+                        ShapeId.from("smithy.example#ListFooOutput"),
+                        ShapeId.from("smithy.example#FooStructure"),
+                        ShapeId.from("smithy.example#FooList"),
+                        ShapeId.from("smithy.example#StringMap"),
+                        ShapeId.from("smithy.example#Status"),
+                        ShapeId.from("smithy.example#FaceCard"),
+                        ShapeId.from("smithy.example#Instruction"),
+                        ShapeId.from("smithy.api#Unit"),
+                        ShapeId.from("smithy.example#ListFoo")));
 
-        assertThat(testDirected.generatedStringTypeEnums, containsInAnyOrder(
-                ShapeId.from("smithy.example#Status")
-        ));
+        assertThat(testDirected.generatedStringTypeEnums,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#Status")));
         assertThat(testDirected.generatedEnumTypeEnums, empty());
     }
 
     @Test
     public void performsCodegenWithStringEnumsChangedToEnumShapes() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("directed-model.smithy"))
@@ -237,32 +226,31 @@ public class CodegenDirectorTest {
         runner.run();
 
         // asserts that mixin smithy.example#Paginated is not generated
-        assertThat(testDirected.generatedShapes, containsInAnyOrder(
-                ShapeId.from("smithy.example#Foo"),
-                ShapeId.from("smithy.example#TheFoo"),
-                ShapeId.from("smithy.example#ListFooInput"),
-                ShapeId.from("smithy.example#ListFooOutput"),
-                ShapeId.from("smithy.example#FooStructure"),
-                ShapeId.from("smithy.example#FooList"),
-                ShapeId.from("smithy.example#StringMap"),
-                ShapeId.from("smithy.example#Status"),
-                ShapeId.from("smithy.example#FaceCard"),
-                ShapeId.from("smithy.example#Instruction"),
-                ShapeId.from("smithy.api#Unit"),
-                ShapeId.from("smithy.example#ListFoo")
-        ));
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#Foo"),
+                        ShapeId.from("smithy.example#TheFoo"),
+                        ShapeId.from("smithy.example#ListFooInput"),
+                        ShapeId.from("smithy.example#ListFooOutput"),
+                        ShapeId.from("smithy.example#FooStructure"),
+                        ShapeId.from("smithy.example#FooList"),
+                        ShapeId.from("smithy.example#StringMap"),
+                        ShapeId.from("smithy.example#Status"),
+                        ShapeId.from("smithy.example#FaceCard"),
+                        ShapeId.from("smithy.example#Instruction"),
+                        ShapeId.from("smithy.api#Unit"),
+                        ShapeId.from("smithy.example#ListFoo")));
 
-        assertThat(testDirected.generatedEnumTypeEnums, containsInAnyOrder(
-                ShapeId.from("smithy.example#Status")
-        ));
+        assertThat(testDirected.generatedEnumTypeEnums,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#Status")));
         assertThat(testDirected.generatedStringTypeEnums, empty());
     }
 
     @Test
     public void sortsShapesWithDefaultTopologicalOrder() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("needs-sorting.smithy"))
@@ -280,25 +268,24 @@ public class CodegenDirectorTest {
         runner.sortMembers();
         runner.run();
 
-        assertThat(testDirected.generatedShapes, contains(
-                ShapeId.from("smithy.example#D"),
-                ShapeId.from("smithy.example#C"),
-                ShapeId.from("smithy.example#B"),
-                ShapeId.from("smithy.example#A"),
-                ShapeId.from("smithy.example#FooOperationOutput"),
-                ShapeId.from("smithy.example#RecursiveA"),
-                ShapeId.from("smithy.example#RecursiveB"),
-                ShapeId.from("smithy.example#FooOperationInput"),
-                ShapeId.from("smithy.example#FooOperation"),
-                ShapeId.from("smithy.example#Foo")
-        ));
+        assertThat(testDirected.generatedShapes,
+                contains(
+                        ShapeId.from("smithy.example#D"),
+                        ShapeId.from("smithy.example#C"),
+                        ShapeId.from("smithy.example#B"),
+                        ShapeId.from("smithy.example#A"),
+                        ShapeId.from("smithy.example#FooOperationOutput"),
+                        ShapeId.from("smithy.example#RecursiveA"),
+                        ShapeId.from("smithy.example#RecursiveB"),
+                        ShapeId.from("smithy.example#FooOperationInput"),
+                        ShapeId.from("smithy.example#FooOperation"),
+                        ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
     public void testShapesGenerationWithAlphabeticalOrder() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("needs-sorting.smithy"))
@@ -315,25 +302,24 @@ public class CodegenDirectorTest {
         runner.shapeGenerationOrder(ShapeGenerationOrder.ALPHABETICAL);
         runner.run();
 
-        assertThat(testDirected.generatedShapes, contains(
-                ShapeId.from("smithy.example#A"),
-                ShapeId.from("smithy.example#B"),
-                ShapeId.from("smithy.example#C"),
-                ShapeId.from("smithy.example#D"),
-                ShapeId.from("smithy.example#FooOperation"),
-                ShapeId.from("smithy.example#FooOperationInput"),
-                ShapeId.from("smithy.example#FooOperationOutput"),
-                ShapeId.from("smithy.example#RecursiveA"),
-                ShapeId.from("smithy.example#RecursiveB"),
-                ShapeId.from("smithy.example#Foo")
-        ));
+        assertThat(testDirected.generatedShapes,
+                contains(
+                        ShapeId.from("smithy.example#A"),
+                        ShapeId.from("smithy.example#B"),
+                        ShapeId.from("smithy.example#C"),
+                        ShapeId.from("smithy.example#D"),
+                        ShapeId.from("smithy.example#FooOperation"),
+                        ShapeId.from("smithy.example#FooOperationInput"),
+                        ShapeId.from("smithy.example#FooOperationOutput"),
+                        ShapeId.from("smithy.example#RecursiveA"),
+                        ShapeId.from("smithy.example#RecursiveB"),
+                        ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
     public void testShapesGenerationWithoutOrder() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("needs-sorting.smithy"))
@@ -350,37 +336,36 @@ public class CodegenDirectorTest {
         runner.shapeGenerationOrder(ShapeGenerationOrder.NONE);
         runner.run();
 
-        assertThat(testDirected.generatedShapes, contains(
-                ShapeId.from("smithy.example#FooOperation"),
-                ShapeId.from("smithy.example#FooOperationOutput"),
-                ShapeId.from("smithy.example#A"),
-                ShapeId.from("smithy.example#B"),
-                ShapeId.from("smithy.example#C"),
-                ShapeId.from("smithy.example#D"),
-                ShapeId.from("smithy.example#FooOperationInput"),
-                ShapeId.from("smithy.example#RecursiveA"),
-                ShapeId.from("smithy.example#RecursiveB"),
-                ShapeId.from("smithy.example#Foo")
-        ));
+        assertThat(testDirected.generatedShapes,
+                contains(
+                        ShapeId.from("smithy.example#FooOperation"),
+                        ShapeId.from("smithy.example#FooOperationOutput"),
+                        ShapeId.from("smithy.example#A"),
+                        ShapeId.from("smithy.example#B"),
+                        ShapeId.from("smithy.example#C"),
+                        ShapeId.from("smithy.example#D"),
+                        ShapeId.from("smithy.example#FooOperationInput"),
+                        ShapeId.from("smithy.example#RecursiveA"),
+                        ShapeId.from("smithy.example#RecursiveB"),
+                        ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
     public void testConfiguresIntegrations() {
         TestDirected testDirected = new TestDirected();
-        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
-            = new CodegenDirector<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
-            .addImport(getClass().getResource("needs-sorting.smithy"))
-            .assemble()
-            .unwrap();
+                .addImport(getClass().getResource("needs-sorting.smithy"))
+                .assemble()
+                .unwrap();
 
         ObjectNode integrationSettings = Node.objectNode().withMember("spam", "eggs");
         ObjectNode allIntegrationSettings = Node.objectNode()
                 .withMember("capturing-integration", integrationSettings);
         ObjectNode settings = Node.objectNode()
-            .withMember("foo", "hi")
-            .withMember("integrations", allIntegrationSettings);
+                .withMember("foo", "hi")
+                .withMember("integrations", allIntegrationSettings);
         runner.settings(TestSettings.class, settings);
         runner.directedCodegen(testDirected);
         runner.fileManifest(manifest);

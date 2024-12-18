@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.aws.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,7 +62,7 @@ public class EventSourceValidatorTest {
         assertThat(event.getSeverity(), is(Severity.WARNING));
         assertThat(event.getShapeId().get(), equalTo(service.getId()));
         assertThat(event.getMessage(),
-                   containsString("Expected 'foo.amazonaws.com', but found 'notfoo.amazonaws.com'"));
+                containsString("Expected 'foo.amazonaws.com', but found 'notfoo.amazonaws.com'"));
     }
 
     @Test

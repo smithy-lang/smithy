@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +27,7 @@ public class FilterDeprecatedRelativeVersionTest {
                 Arguments.of("1.0.0.1", "1.0.0", 1),
                 Arguments.of("1.0.0", "1.0", 0),
                 Arguments.of("20.20.0.1", "20.20.1.0", -1),
-                Arguments.of("20.20.1.0", "20.20.1.0-PATCH", -1)
-        );
+                Arguments.of("20.20.1.0", "20.20.1.0-PATCH", -1));
     }
 
     @ParameterizedTest
@@ -59,12 +57,14 @@ public class FilterDeprecatedRelativeVersionTest {
     @MethodSource("fileSource")
     void compareTransform(String prefix) {
         Model before = Model.assembler()
-                .addImport(FilterDeprecatedRelativeDate.class.getResource("deprecated-version/" + prefix + "-before.smithy"))
+                .addImport(FilterDeprecatedRelativeDate.class
+                        .getResource("deprecated-version/" + prefix + "-before.smithy"))
                 .assemble()
                 .unwrap();
         Model actualResult = ModelTransformer.create().filterDeprecatedRelativeVersion(before, "1.1.0");
         Model expectedResult = Model.assembler()
-                .addImport(FilterDeprecatedRelativeDate.class.getResource("deprecated-version/" + prefix + "-after.smithy"))
+                .addImport(FilterDeprecatedRelativeDate.class
+                        .getResource("deprecated-version/" + prefix + "-after.smithy"))
                 .assemble()
                 .unwrap();
 

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -216,7 +205,7 @@ public class RemoveShapesTest {
         assertThat(result.getShape(container.getId()), Matchers.not(Optional.empty()));
         assertThat(result.getShape(c.getId()), Matchers.not(Optional.empty()));
         assertThat(result.expectShape(container.getId()).asResourceShape().get().getOperations(),
-                   Matchers.contains(c.getId()));
+                Matchers.contains(c.getId()));
     }
 
     @Test
@@ -227,7 +216,6 @@ public class RemoveShapesTest {
                 .unwrap();
         ShapeId removedId = ShapeId.from("ns.foo#bar");
         Shape removedShape = model.expectShape(removedId);
-
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.removeShapes(model, Collections.singletonList(removedShape));
@@ -344,18 +332,18 @@ public class RemoveShapesTest {
 
     public static Collection<Object[]> removeMixinData() {
         return Arrays.asList(new Object[][] {
-            { "without-a.smithy", new String[] {"A"}},
-            { "without-a2.smithy", new String[] {"A2"}},
-            { "without-a3.smithy", new String[] {"A3"}},
-            { "without-a-a2.smithy", new String[] {"A", "A2"}},
-            { "without-a-a2-a3.smithy", new String[] {"A", "A2", "A3"}},
-            { "without-a-a2-a3-b-b2-b3.smithy", new String[] {"A", "A2", "A3", "B", "B2", "B3"}},
-            { "without-a-b.smithy", new String[] {"A", "B"}},
-            { "without-b.smithy", new String[] {"B"}},
-            { "without-b2.smithy", new String[] {"B2"}},
-            { "without-b3.smithy", new String[] {"B3"}},
-            { "without-c.smithy", new String[] {"C"}},
-            { "without-d.smithy", new String[] {"D"}}
+                {"without-a.smithy", new String[] {"A"}},
+                {"without-a2.smithy", new String[] {"A2"}},
+                {"without-a3.smithy", new String[] {"A3"}},
+                {"without-a-a2.smithy", new String[] {"A", "A2"}},
+                {"without-a-a2-a3.smithy", new String[] {"A", "A2", "A3"}},
+                {"without-a-a2-a3-b-b2-b3.smithy", new String[] {"A", "A2", "A3", "B", "B2", "B3"}},
+                {"without-a-b.smithy", new String[] {"A", "B"}},
+                {"without-b.smithy", new String[] {"B"}},
+                {"without-b2.smithy", new String[] {"B2"}},
+                {"without-b3.smithy", new String[] {"B3"}},
+                {"without-c.smithy", new String[] {"C"}},
+                {"without-d.smithy", new String[] {"D"}}
         });
     }
 }

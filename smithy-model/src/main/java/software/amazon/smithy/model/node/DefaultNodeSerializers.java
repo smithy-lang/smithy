@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static software.amazon.smithy.model.node.NodeMapper.Serializer;
@@ -199,7 +188,7 @@ final class DefaultNodeSerializers {
                 } else {
                     throw new NodeSerializationException(
                             "Unable to write Map key because it was not serialized as a string: "
-                            + entry.getKey() + " -> " + Node.printJson(key));
+                                    + entry.getKey() + " -> " + Node.printJson(key));
                 }
             }
 
@@ -416,8 +405,7 @@ final class DefaultNodeSerializers {
             PATH_SERIALIZER,
             FILE_SERIALIZER,
             // Lots of things implement iterable that have specialized serialization.
-            ITERABLE_SERIALIZER
-    );
+            ITERABLE_SERIALIZER);
 
     private DefaultNodeSerializers() {}
 }

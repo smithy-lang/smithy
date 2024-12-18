@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
@@ -126,16 +115,19 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
         switch (mapStrategy) {
             case PROPERTY_NAMES:
-                return buildSchema(shape, createBuilder(shape, "object")
-                        .propertyNames(createRef(shape.getKey()))
-                        .additionalProperties(createRef(shape.getValue())));
+                return buildSchema(shape,
+                        createBuilder(shape, "object")
+                                .propertyNames(createRef(shape.getKey()))
+                                .additionalProperties(createRef(shape.getValue())));
             case PATTERN_PROPERTIES:
-                String keyPattern = shape.getKey().getMemberTrait(model, PatternTrait.class)
+                String keyPattern = shape.getKey()
+                        .getMemberTrait(model, PatternTrait.class)
                         .map(PatternTrait::getPattern)
                         .map(Pattern::pattern)
                         .orElse(".+");
-                return buildSchema(shape, createBuilder(shape, "object")
-                        .putPatternProperty(keyPattern, createRef(shape.getValue())));
+                return buildSchema(shape,
+                        createBuilder(shape, "object")
+                                .putPatternProperty(keyPattern, createRef(shape.getValue())));
             default:
                 throw new SmithyJsonSchemaException(String.format("Unsupported map strategy: %s", mapStrategy));
         }
@@ -347,17 +339,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     private Optional<String> descriptionMessage(Shape shape) {
         StringBuilder builder = new StringBuilder();
         shape
-            .getTrait(DocumentationTrait.class)
-            .ifPresent(trait ->
-                builder.append(trait.getValue())
-            );
+                .getTrait(DocumentationTrait.class)
+                .ifPresent(trait -> builder.append(trait.getValue()));
         shape
-            .getTrait(DeprecatedTrait.class)
-            .ifPresent(trait ->
-                builder
-                    .append("\n")
-                    .append(trait.getDeprecatedDescription(shape.getType()))
-            );
+                .getTrait(DeprecatedTrait.class)
+                .ifPresent(trait -> builder
+                        .append("\n")
+                        .append(trait.getDeprecatedDescription(shape.getType())));
         String description = builder.toString().trim();
         return description.isEmpty() ? Optional.empty() : Optional.of(description);
     }

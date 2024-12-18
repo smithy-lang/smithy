@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -164,10 +153,11 @@ public class SmithyBuildTest {
         List<Path> files = results.allArtifacts().collect(Collectors.toList());
 
         assertThat(files, hasItem(outputDirectory.resolve("source/sources/manifest")));
-        assertThat("\n", equalTo(IoUtils.readUtf8File(results.allArtifacts()
-                .filter(path -> path.toString().endsWith(System.getProperty("file.separator") + "manifest"))
-                .findFirst()
-                .get())));
+        assertThat("\n",
+                equalTo(IoUtils.readUtf8File(results.allArtifacts()
+                        .filter(path -> path.toString().endsWith(System.getProperty("file.separator") + "manifest"))
+                        .findFirst()
+                        .get())));
     }
 
     @Test
@@ -181,7 +171,8 @@ public class SmithyBuildTest {
                 .unwrap();
         SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
         String content = IoUtils.readUtf8File(results.allArtifacts()
-                .filter(path -> path.toString().endsWith("withoutPrelude" + System.getProperty("file.separator") + "model.json"))
+                .filter(path -> path.toString()
+                        .endsWith("withoutPrelude" + System.getProperty("file.separator") + "model.json"))
                 .findFirst()
                 .get());
         assertThat(Files.isRegularFile(outputDirectory.resolve("source/withoutPrelude/model.json")), is(true));
@@ -200,7 +191,8 @@ public class SmithyBuildTest {
                 .unwrap();
         SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
         String content = IoUtils.readUtf8File(results.allArtifacts()
-                .filter(path -> path.toString().endsWith("withPrelude" + System.getProperty("file.separator") + "model.json"))
+                .filter(path -> path.toString()
+                        .endsWith("withPrelude" + System.getProperty("file.separator") + "model.json"))
                 .findFirst()
                 .get());
         assertThat(Files.isRegularFile(outputDirectory.resolve("source/withPrelude/model.json")), is(true));
@@ -287,18 +279,20 @@ public class SmithyBuildTest {
         plugins.put("broken", new SmithyBuildPlugin() {
             @Override
             public String getName() {
-                        return "broken";
-                    }
+                return "broken";
+            }
+
             @Override
             public void execute(PluginContext context) {
-                        throw canned;
-                    }
+                throw canned;
+            }
         });
         plugins.put("test1Serial", new Test1SerialPlugin());
 
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         // Because the build will fail, we need a way to access the file manifests
         List<FileManifest> manifests = new ArrayList<>();
@@ -317,16 +311,17 @@ public class SmithyBuildTest {
 
         // "broken" plugin produces the error that causes the build to fail
         assertThat(e.getMessage(), containsString("java.lang.RuntimeException: broken"));
-        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[] {canned}));
 
         List<Path> files = manifests.stream()
                 .flatMap(fm -> fm.getFiles().stream())
                 .collect(Collectors.toList());
-        assertThat(files, containsInAnyOrder(
-                outputDirectory.resolve("source/sources/manifest"),
-                outputDirectory.resolve("source/model/model.json"),
-                outputDirectory.resolve("source/build-info/smithy-build-info.json"),
-                outputDirectory.resolve("source/test1Serial/hello1Serial")));
+        assertThat(files,
+                containsInAnyOrder(
+                        outputDirectory.resolve("source/sources/manifest"),
+                        outputDirectory.resolve("source/model/model.json"),
+                        outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                        outputDirectory.resolve("source/test1Serial/hello1Serial")));
     }
 
     @Test
@@ -334,9 +329,10 @@ public class SmithyBuildTest {
         Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
                     .version(SmithyBuild.VERSION)
-                    .projections(MapUtils.of("source", ProjectionConfig.builder()
-                            .transforms(ListUtils.of(TransformConfig.builder().name("foo").build()))
-                            .build()))
+                    .projections(MapUtils.of("source",
+                            ProjectionConfig.builder()
+                                    .transforms(ListUtils.of(TransformConfig.builder().name("foo").build()))
+                                    .build()))
                     .build();
             new SmithyBuild().config(config).build();
         });
@@ -358,36 +354,72 @@ public class SmithyBuildTest {
         Model resultB = results.getProjectionResult("b").get().getModel();
         Model resultC = results.getProjectionResult("c").get().getModel();
 
-        assertTrue(resultA.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(SensitiveTrait.class).isPresent());
-        assertFalse(resultA.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(DocumentationTrait.class).isPresent());
-        assertTrue(resultA.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).isPresent());
-        assertThat(resultA.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
+        assertTrue(resultA.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(SensitiveTrait.class)
+                .isPresent());
+        assertFalse(resultA.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(DocumentationTrait.class)
+                .isPresent());
+        assertTrue(resultA.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .isPresent());
+        assertThat(resultA.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .get()
+                .getValues()
+                .get(0), equalTo("multi-import"));
 
-        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(DocumentationTrait.class).get().getValue(), equalTo("b.json"));
-        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).isPresent());
-        assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(SensitiveTrait.class)
+                .isPresent());
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(DocumentationTrait.class)
+                .isPresent());
+        assertThat(resultB.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(DocumentationTrait.class)
+                .get()
+                .getValue(), equalTo("b.json"));
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .isPresent());
+        assertThat(resultB.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .get()
+                .getValues()
+                .get(0), equalTo("multi-import"));
 
-        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
-                           .getTrait(DocumentationTrait.class).get().getValue(), equalTo("c.json"));
-        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).isPresent());
-        assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
-                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(SensitiveTrait.class)
+                .isPresent());
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(DocumentationTrait.class)
+                .isPresent());
+        assertThat(resultC.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(DocumentationTrait.class)
+                .get()
+                .getValue(), equalTo("c.json"));
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .isPresent());
+        assertThat(resultC.getShape(ShapeId.from("com.foo#String"))
+                .get()
+                .getTrait(TagsTrait.class)
+                .get()
+                .getValues()
+                .get(0), equalTo("multi-import"));
     }
 
     @Test
@@ -395,7 +427,8 @@ public class SmithyBuildTest {
         Map<String, SmithyBuildPlugin> plugins = MapUtils.of("test1", new Test1Plugin(), "test2", new Test2Plugin());
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
         builder.fileManifestFactory(MockManifest::new);
@@ -436,7 +469,8 @@ public class SmithyBuildTest {
 
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
         builder.fileManifestFactory(MockManifest::new);
@@ -466,13 +500,16 @@ public class SmithyBuildTest {
     @Test
     public void appliesGlobalSerialPlugins() throws Exception {
         Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
-                "test1Serial", new Test1SerialPlugin(),
-                "test1Parallel", new Test1ParallelPlugin(),
-                "test2Parallel", new Test2ParallelPlugin()
-        );
+                "test1Serial",
+                new Test1SerialPlugin(),
+                "test1Parallel",
+                new Test1ParallelPlugin(),
+                "test2Parallel",
+                new Test2ParallelPlugin());
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
         builder.fileManifestFactory(MockManifest::new);
@@ -495,7 +532,7 @@ public class SmithyBuildTest {
         return Long.parseLong(manifest.getFileString(manifest.getFiles().iterator().next()).get());
     }
 
-    private void assertPluginPresent(String pluginName, String outputFileName, ProjectionResult...results) {
+    private void assertPluginPresent(String pluginName, String outputFileName, ProjectionResult... results) {
         for (ProjectionResult result : results) {
             assertTrue(result.getPluginManifest(pluginName).isPresent());
             assertTrue(result.getPluginManifest(pluginName).get().hasFile(outputFileName));
@@ -522,18 +559,19 @@ public class SmithyBuildTest {
         SmithyBuildResult results = builder.build();
         List<Path> files = results.allArtifacts().collect(Collectors.toList());
 
-        assertThat(files, containsInAnyOrder(
-                outputDirectory.resolve("source/sources/manifest"),
-                outputDirectory.resolve("source/model/model.json"),
-                outputDirectory.resolve("source/build-info/smithy-build-info.json"),
-                outputDirectory.resolve("a/sources/manifest"),
-                outputDirectory.resolve("a/sources/model.json"),
-                outputDirectory.resolve("a/model/model.json"),
-                outputDirectory.resolve("a/build-info/smithy-build-info.json"),
-                outputDirectory.resolve("b/sources/manifest"),
-                outputDirectory.resolve("b/sources/model.json"),
-                outputDirectory.resolve("b/model/model.json"),
-                outputDirectory.resolve("b/build-info/smithy-build-info.json")));
+        assertThat(files,
+                containsInAnyOrder(
+                        outputDirectory.resolve("source/sources/manifest"),
+                        outputDirectory.resolve("source/model/model.json"),
+                        outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                        outputDirectory.resolve("a/sources/manifest"),
+                        outputDirectory.resolve("a/sources/model.json"),
+                        outputDirectory.resolve("a/model/model.json"),
+                        outputDirectory.resolve("a/build-info/smithy-build-info.json"),
+                        outputDirectory.resolve("b/sources/manifest"),
+                        outputDirectory.resolve("b/sources/model.json"),
+                        outputDirectory.resolve("b/model/model.json"),
+                        outputDirectory.resolve("b/build-info/smithy-build-info.json")));
     }
 
     @Test
@@ -558,7 +596,7 @@ public class SmithyBuildTest {
         });
 
         assertThat(thrown.getMessage(),
-                   containsString("Unable to find projection named `bar` referenced by the `foo` projection"));
+                containsString("Unable to find projection named `bar` referenced by the `foo` projection"));
     }
 
     @Test
@@ -610,8 +648,9 @@ public class SmithyBuildTest {
             new SmithyBuild().config(config).build();
         });
 
-        assertThat(thrown.getMessage(), containsString(
-                "Invalid plugin name `!invalid` found in the `[top-level]` projection"));
+        assertThat(thrown.getMessage(),
+                containsString(
+                        "Invalid plugin name `!invalid` found in the `[top-level]` projection"));
     }
 
     @Test
@@ -683,7 +722,8 @@ public class SmithyBuildTest {
 
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild()
                 .model(model)
@@ -694,7 +734,7 @@ public class SmithyBuildTest {
         SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
         assertThat(e.getMessage(), containsString("1 Smithy build projections failed"));
         assertThat(e.getMessage(), containsString("(exampleProjection): java.lang.RuntimeException: Hi"));
-        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[] {canned}));
     }
 
     /*
@@ -758,11 +798,14 @@ public class SmithyBuildTest {
 
     @Test
     public void canRunMultiplePluginsWithDifferentArtifactNames() throws URISyntaxException {
-        Map<String, SmithyBuildPlugin> plugins = MapUtils.of("test1", new Test1SerialPlugin(),
-                                                             "test2", new Test2ParallelPlugin());
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of("test1",
+                new Test1SerialPlugin(),
+                "test2",
+                new Test2ParallelPlugin());
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
         builder.fileManifestFactory(MockManifest::new);
@@ -864,9 +907,8 @@ public class SmithyBuildTest {
         Assumptions.assumeTrue(isPosix());
 
         SmithyBuildException e = Assertions.assertThrows(
-            SmithyBuildException.class,
-            () -> runPosixTestAndGetOutput("run-plugin/invalid-exit-code.json", "invalid-exit-code")
-        );
+                SmithyBuildException.class,
+                () -> runPosixTestAndGetOutput("run-plugin/invalid-exit-code.json", "invalid-exit-code"));
 
         assertThat(e.getMessage(), containsString("Error exit code 2 returned from: `sh return-error.sh 2`"));
     }
@@ -885,11 +927,14 @@ public class SmithyBuildTest {
         // Setup fake test1 and test2 plugins just to create a conflict in the test between artifact names
         // but without conflicting JSON keys.
         Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
-                "test1", new Test1SerialPlugin(),
-                "test2", new Test2ParallelPlugin());
+                "test1",
+                new Test1SerialPlugin(),
+                "test2",
+                new Test2ParallelPlugin());
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
-                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
 
         URI build = getClass().getResource("run-plugin/invalid-conflicting-artifact-names.json").toURI();
         SmithyBuild builder = new SmithyBuild()
@@ -899,8 +944,9 @@ public class SmithyBuildTest {
 
         SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
 
-        assertThat(e.getMessage(), containsString("Multiple plugins use the same artifact name 'foo' in "
-                                                  + "the 'source' projection"));
+        assertThat(e.getMessage(),
+                containsString("Multiple plugins use the same artifact name 'foo' in "
+                        + "the 'source' projection"));
     }
 
     @ParameterizedTest
@@ -917,9 +963,9 @@ public class SmithyBuildTest {
 
         // Apply multiple projections to ensure that sources are filtered even in projections.
         builder.config(SmithyBuildConfig.builder()
-                               .load(Paths.get(getClass().getResource("apply-multiple-projections.json").toURI()))
-                               .outputDirectory("/foo")
-                               .build());
+                .load(Paths.get(getClass().getResource("apply-multiple-projections.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
 
         SmithyBuildResult results = builder.build();
         assertTrue(results.getProjectionResult("source").isPresent());
@@ -941,12 +987,11 @@ public class SmithyBuildTest {
 
     public static List<Arguments> unrecognizedModelPaths() throws URISyntaxException {
         Path rootPath = Paths.get(SmithyBuildTest.class.getResource("plugins/sources-ignores-unrecognized-files")
-                                          .toURI());
+                .toURI());
         return ListUtils.of(
-            // Test that crawling the directory works.
-            Arguments.of(ListUtils.of(rootPath)),
-            // Test that passing explicit files works too.
-            Arguments.of(ListUtils.of(rootPath.resolve("a.smithy"), rootPath.resolve("foo.md")))
-        );
+                // Test that crawling the directory works.
+                Arguments.of(ListUtils.of(rootPath)),
+                // Test that passing explicit files works too.
+                Arguments.of(ListUtils.of(rootPath.resolve("a.smithy"), rootPath.resolve("foo.md"))));
     }
 }

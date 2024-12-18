@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,10 +51,19 @@ public class FlattenNamespacesTest {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
-        assertThat(ids, containsInAnyOrder("ns.qux#MyService", "ns.qux#MyOperation", "ns.qux#MyOperationOutput",
-                "ns.qux#MyOperationOutput$foo", "ns.corge#UnconnectedFromService", "ns.grault#MyOperationOutput"));
-        assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.bar#MyOperation", "ns.baz#MyOperationOutput",
-                "ns.baz#MyOperationOutput$foo", "ns.qux#UnconnectedFromService")));
+        assertThat(ids,
+                containsInAnyOrder("ns.qux#MyService",
+                        "ns.qux#MyOperation",
+                        "ns.qux#MyOperationOutput",
+                        "ns.qux#MyOperationOutput$foo",
+                        "ns.corge#UnconnectedFromService",
+                        "ns.grault#MyOperationOutput"));
+        assertThat(ids,
+                not(containsInAnyOrder("ns.foo#MyService",
+                        "ns.bar#MyOperation",
+                        "ns.baz#MyOperationOutput",
+                        "ns.baz#MyOperationOutput$foo",
+                        "ns.qux#UnconnectedFromService")));
     }
 
     @Test
@@ -89,10 +87,19 @@ public class FlattenNamespacesTest {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
-        assertThat(ids, containsInAnyOrder("ns.qux#MyService", "ns.qux#MyOperation", "ns.qux#MyOperationOutput",
-                "ns.qux#MyOperationOutput$foo", "ns.qux#UnconnectedFromService", "ns.grault#MyOperationOutput"));
-        assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.bar#MyOperation", "ns.baz#MyOperationOutput",
-                "ns.baz#MyOperationOutput$foo", "ns.corge#UnconnectedFromService")));
+        assertThat(ids,
+                containsInAnyOrder("ns.qux#MyService",
+                        "ns.qux#MyOperation",
+                        "ns.qux#MyOperationOutput",
+                        "ns.qux#MyOperationOutput$foo",
+                        "ns.qux#UnconnectedFromService",
+                        "ns.grault#MyOperationOutput"));
+        assertThat(ids,
+                not(containsInAnyOrder("ns.foo#MyService",
+                        "ns.bar#MyOperation",
+                        "ns.baz#MyOperationOutput",
+                        "ns.baz#MyOperationOutput$foo",
+                        "ns.corge#UnconnectedFromService")));
     }
 
     @Test
@@ -116,10 +123,19 @@ public class FlattenNamespacesTest {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
-        assertThat(ids, containsInAnyOrder("ns.qux#MyService", "ns.qux#MyOperation", "ns.qux#MyOperationOutput",
-                "ns.qux#MyOperationOutput$foo", "ns.corge#UnconnectedFromService", "ns.grault#MyOperationOutput"));
-        assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.bar#MyOperation", "ns.baz#MyOperationOutput",
-                "ns.baz#MyOperationOutput$foo", "ns.qux#UnconnectedFromService")));
+        assertThat(ids,
+                containsInAnyOrder("ns.qux#MyService",
+                        "ns.qux#MyOperation",
+                        "ns.qux#MyOperationOutput",
+                        "ns.qux#MyOperationOutput$foo",
+                        "ns.corge#UnconnectedFromService",
+                        "ns.grault#MyOperationOutput"));
+        assertThat(ids,
+                not(containsInAnyOrder("ns.foo#MyService",
+                        "ns.bar#MyOperation",
+                        "ns.baz#MyOperationOutput",
+                        "ns.baz#MyOperationOutput$foo",
+                        "ns.qux#UnconnectedFromService")));
     }
 
     @Test
@@ -142,11 +158,20 @@ public class FlattenNamespacesTest {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
-        assertThat(ids, containsInAnyOrder("ns.qux#MyService", "ns.qux#GetSomething", "ns.qux#GetSomethingOutput",
-                "ns.qux#GetSomethingOutput$widget1", "ns.qux#GetSomethingOutput$fooWidget", "ns.qux#Widget",
-                "ns.qux#FooWidget"));
-        assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.foo#GetSomething", "ns.foo#GetSomethingOutput",
-                "ns.bar#Widget", "foo.example#Widget")));
+        assertThat(ids,
+                containsInAnyOrder("ns.qux#MyService",
+                        "ns.qux#GetSomething",
+                        "ns.qux#GetSomethingOutput",
+                        "ns.qux#GetSomethingOutput$widget1",
+                        "ns.qux#GetSomethingOutput$fooWidget",
+                        "ns.qux#Widget",
+                        "ns.qux#FooWidget"));
+        assertThat(ids,
+                not(containsInAnyOrder("ns.foo#MyService",
+                        "ns.foo#GetSomething",
+                        "ns.foo#GetSomethingOutput",
+                        "ns.bar#Widget",
+                        "foo.example#Widget")));
     }
 
     @Test
@@ -186,7 +211,8 @@ public class FlattenNamespacesTest {
         ValidatedResult<Model> validatedResult = Model.assembler()
                 .addModel(result)
                 .assemble();
-        List<ShapeId> validationEventShapeIds = validatedResult.getValidationEvents().stream()
+        List<ShapeId> validationEventShapeIds = validatedResult.getValidationEvents()
+                .stream()
                 .map(ValidationEvent::getShapeId)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -240,7 +266,8 @@ public class FlattenNamespacesTest {
     @Test
     public void throwsWhenServiceIsInvalidInModel() {
         Model model = Model.assembler()
-                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\", \"shapes\": { \"ns.foo#InvalidService\": { \"type\": \"string\" } } }")
+                .addUnparsedModel("N/A",
+                        "{ \"smithy\": \"1.0\", \"shapes\": { \"ns.foo#InvalidService\": { \"type\": \"string\" } } }")
                 .assemble()
                 .unwrap();
         ObjectNode config = Node.objectNode()

@@ -106,12 +106,6 @@ if (project.hasProperty("log-tests")) {
     }
 }
 
-// ==== CheckStyle ====
-// https://docs.gradle.org/current/userguide/checkstyle_plugin.html
-tasks.named("checkstyleTest") {
-    enabled = false
-}
-
 // ==== Code coverage ====
 // https://docs.gradle.org/current/userguide/jacoco_plugin.html
 

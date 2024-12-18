@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,8 +39,7 @@ public class JavadocTest {
                                 .withMember("package", "com.example.traits")
                                 .withMember("namespace", "com.example.javadoc")
                                 .withMember("header", ArrayNode.fromStrings("Header line One"))
-                                .build()
-                )
+                                .build())
                 .model(model)
                 .build();
         SmithyBuildPlugin plugin = new TraitCodegenPlugin();
@@ -60,7 +63,8 @@ public class JavadocTest {
     void wrapsBasicTextString() {
         String fileContents = getFileContentsFromShapeName("DocumentationWrapping", true);
         String expected = "    /**\n" +
-                "     * This is a long long docstring that should be wrapped. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\n" +
+                "     * This is a long long docstring that should be wrapped. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\n"
+                +
                 "     * eiusmod tempor incididunt ut labore et dolore magna aliqua.\n" +
                 "     */\n" +
                 "    public Optional<String> getShouldBeWrapped() {\n" +
@@ -73,15 +77,19 @@ public class JavadocTest {
     void doesNotFormatContentInsideHtmlTags() {
         String fileContents = getFileContentsFromShapeName("DocumentationWrapping", true);
         String expected = "    /**\n" +
-                "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n" +
+                "     * Documentation includes preformatted text that should not be messed with. This sentence should still be partially\n"
+                +
                 "     * wrapped.\n" +
                 "     * For example:\n" +
                 "     * <pre>\n" +
-                "     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n" +
+                "     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                +
                 "     * </pre>\n" +
                 "     * <ul>\n" +
-                "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing </li>\n" +
-                "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing </li>\n" +
+                "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing </li>\n"
+                +
+                "     *     <li> Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit consectetur adipiscing </li>\n"
+                +
                 "     * </ul>\n" +
                 "     */\n" +
                 "    public Optional<String> getPreformattedText() {\n" +

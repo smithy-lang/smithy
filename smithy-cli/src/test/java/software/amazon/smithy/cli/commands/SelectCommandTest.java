@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,8 +60,12 @@ public class SelectCommandTest {
     @Test
     public void printsJsonVarsToStdout() throws Exception {
         String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
-        CliUtils.Result result = CliUtils.runSmithy("select", "--selector", "string $referenceMe(<)",
-                                                    "--show", "vars", model);
+        CliUtils.Result result = CliUtils.runSmithy("select",
+                "--selector",
+                "string $referenceMe(<)",
+                "--show",
+                "vars",
+                model);
 
         assertThat(result.code(), equalTo(0));
         validateSelectorOutput(result.stdout());

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections.sphinx;
 
 import java.util.Set;
@@ -20,5 +19,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param requirements The requirements as a list of <a href="https://peps.python.org/pep-0508/">PEP 508</a> strings.
  */
 @SmithyUnstableApi
-public record RequirementsSection(DocGenerationContext context, Set<String> requirements) implements CodeSection {
-}
+public record RequirementsSection(DocGenerationContext context, Set<String> requirements) implements CodeSection {}

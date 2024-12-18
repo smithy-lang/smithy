@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -80,9 +69,14 @@ public class DiffCommandTest {
             Path b = dir.resolve("b.smithy");
             writeFile(b, "$version: \"2.0\"\nnamespace example\n@aaaaaa\nstring A\n");
 
-            RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--old", a.toString(),
-                                                                "--new", b.toString(),
-                                                                "--format", "csv"));
+            RunResult result = IntegUtils.run(dir,
+                    ListUtils.of("diff",
+                            "--old",
+                            a.toString(),
+                            "--new",
+                            b.toString(),
+                            "--format",
+                            "csv"));
             assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
             assertThat(result.getOutput(), containsString("severity,id,"));
             assertThat(result.getOutput(), containsString("ERROR"));
@@ -98,11 +92,15 @@ public class DiffCommandTest {
             Path b = dir.resolve("b.smithy");
             writeFile(b, "$version: \"2.0\"\nnamespace example\nstring A\nstring B\n"); // Added B.
 
-            RunResult result = IntegUtils.run(dir, ListUtils.of(
-                    "diff",
-                    "--old", a.toString(),
-                    "--new", b.toString(),
-                    "--severity", "NOTE")); // Note that this is required since the default severity is WARNING.
+            RunResult result = IntegUtils.run(dir,
+                    ListUtils.of(
+                            "diff",
+                            "--old",
+                            a.toString(),
+                            "--new",
+                            b.toString(),
+                            "--severity",
+                            "NOTE")); // Note that this is required since the default severity is WARNING.
             assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
             assertThat(result.getOutput(), containsString("──  DIFF  NOTE  ──"));
         });
@@ -126,10 +124,14 @@ public class DiffCommandTest {
             // The model from simple-config-sources defines a MyString. This would fail if we used imports/sources.
             writeFile(file, "$version: \"2.0\"\nnamespace smithy.example\ninteger MyString\n");
 
-            RunResult result = IntegUtils.run(dir, ListUtils.of("diff",
-                                                                "-c", dir.resolve("smithy-build.json").toString(),
-                                                                "--old", file.toString(),
-                                                                "--new", file.toString()));
+            RunResult result = IntegUtils.run(dir,
+                    ListUtils.of("diff",
+                            "-c",
+                            dir.resolve("smithy-build.json").toString(),
+                            "--old",
+                            file.toString(),
+                            "--new",
+                            file.toString()));
             assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
         });
     }
@@ -144,10 +146,14 @@ public class DiffCommandTest {
 
     @Test
     public void doesNotAllowNewWithProjectMode() {
-        RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff",
-                                                                       "--mode", "project",
-                                                                       "--new", "x",
-                                                                       "--old", "y"));
+        RunResult result = IntegUtils.run(Paths.get("."),
+                ListUtils.of("diff",
+                        "--mode",
+                        "project",
+                        "--new",
+                        "x",
+                        "--old",
+                        "y"));
 
         assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
         assertThat(result.getOutput(), containsString("--new cannot be used with this diff mode"));
@@ -157,12 +163,13 @@ public class DiffCommandTest {
     public void projectModeUsesConfigOfOldModel() {
         IntegUtils.withProject("diff-example-conflict-with-simple", outer -> {
             IntegUtils.withProject("simple-config-sources", dir -> {
-                RunResult result = IntegUtils.run(dir, ListUtils.of(
-                        "diff",
-                        "--mode",
-                        "project",
-                        "--old",
-                        outer.toString()));
+                RunResult result = IntegUtils.run(dir,
+                        ListUtils.of(
+                                "diff",
+                                "--mode",
+                                "project",
+                                "--old",
+                                outer.toString()));
 
                 assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
                 assertThat(result.getOutput(), containsString("ChangedShapeType"));
@@ -174,12 +181,13 @@ public class DiffCommandTest {
     public void projectModeCanDiffAgainstSingleFile() {
         // Diff against itself (the only model file of the project), so there should be no differences.
         IntegUtils.withProject("simple-config-sources", dir -> {
-            RunResult result = IntegUtils.run(dir, ListUtils.of(
-                    "diff",
-                    "--mode",
-                    "project",
-                    "--old",
-                    dir.resolve("model").resolve("main.smithy").toString()));
+            RunResult result = IntegUtils.run(dir,
+                    ListUtils.of(
+                            "diff",
+                            "--mode",
+                            "project",
+                            "--old",
+                            dir.resolve("model").resolve("main.smithy").toString()));
 
             assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
         });

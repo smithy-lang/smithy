@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.auth;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,8 +26,8 @@ public class SigV4ATraitTest {
     @Test
     public void loadsTrait() {
         Node node = ObjectNode.builder()
-            .withMember("name", StringNode.from(MOCK_SIGNING_NAME))
-            .build();
+                .withMember("name", StringNode.from(MOCK_SIGNING_NAME))
+                .build();
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(SigV4ATrait.ID, MOCK_TARGET, node);
 

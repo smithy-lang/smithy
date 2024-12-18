@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.Arrays;
@@ -134,8 +133,10 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
             return false;
         }
         AwsArn awsArn = (AwsArn) o;
-        return partition.equals(awsArn.partition) && service.equals(awsArn.service) && region.equals(awsArn.region)
-               && accountId.equals(awsArn.accountId) && resource.equals(awsArn.resource);
+        return partition.equals(awsArn.partition) && service.equals(awsArn.service)
+                && region.equals(awsArn.region)
+                && accountId.equals(awsArn.accountId)
+                && resource.equals(awsArn.resource);
     }
 
     @Override
@@ -144,10 +145,10 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         resource.forEach(builder::append);
 
         return "Arn[partition=" + partition + ", "
-               + "service=" + service + ", "
-               + "region=" + region + ", "
-               + "accountId=" + accountId + ", "
-               + "resource=" + builder + "]";
+                + "service=" + service + ", "
+                + "region=" + region + ", "
+                + "accountId=" + accountId + ", "
+                + "resource=" + builder + "]";
     }
 
     @Override

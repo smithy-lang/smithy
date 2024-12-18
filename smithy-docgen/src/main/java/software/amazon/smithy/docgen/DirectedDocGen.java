@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -41,12 +40,11 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
     @Override
     public DocGenerationContext createContext(CreateContextDirective<DocSettings, DocIntegration> directive) {
         return new DocGenerationContext(
-            directive.model(),
-            directive.settings(),
-            directive.symbolProvider(),
-            directive.fileManifest(),
-            directive.integrations()
-        );
+                directive.model(),
+                directive.settings(),
+                directive.symbolProvider(),
+                directive.fileManifest(),
+                directive.integrations());
     }
 
     @Override
@@ -86,8 +84,10 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
     @Override
     public void generateIntEnumShape(GenerateIntEnumDirective<DocGenerationContext, DocSettings> directive) {
         var shape = directive.shape();
-        var intEnum = shape.asIntEnumShape().orElseThrow(() -> new ExpectationNotMetException(
-                "Expected an intEnum shape, but found " + shape, shape));
+        var intEnum = shape.asIntEnumShape()
+                .orElseThrow(() -> new ExpectationNotMetException(
+                        "Expected an intEnum shape, but found " + shape,
+                        shape));
         new StructuredShapeGenerator(directive.context()).accept(intEnum, MemberListingType.OPTIONS);
     }
 

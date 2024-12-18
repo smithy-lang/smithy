@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -62,8 +51,11 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                             .expectTrait(TraitDefinition.class)
                             .getBreakingChanges();
                     for (TraitDefinition.BreakingChangeRule rule : rules) {
-                        PathChecker checker = new PathChecker(differences.getNewModel(), traitShape,
-                                                              changedShape.getNewShape(), rule, events);
+                        PathChecker checker = new PathChecker(differences.getNewModel(),
+                                traitShape,
+                                changedShape.getNewShape(),
+                                rule,
+                                events);
                         checker.check(Node.from(oldTrait), Node.from(newTrait));
                     }
                 });
@@ -146,13 +138,19 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                 } else if (currentShape instanceof MapShape) {
                     currentValue.asObjectNode().ifPresent(v -> {
                         for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
-                            extract(result, nextShape, segmentPosition + 1,
-                                    entry.getValue(), path + "/" + entry.getKey());
+                            extract(result,
+                                    nextShape,
+                                    segmentPosition + 1,
+                                    entry.getValue(),
+                                    path + "/" + entry.getKey());
                         }
                     });
                 } else if (currentShape.isStructureShape() || currentShape.isUnionShape()) {
                     currentValue.asObjectNode().ifPresent(v -> {
-                        extract(result, nextShape, segmentPosition + 1, v.getMember(segment).orElse(Node.nullNode()),
+                        extract(result,
+                                nextShape,
+                                segmentPosition + 1,
+                                v.getMember(segment).orElse(Node.nullNode()),
                                 path + "/" + segment);
                     });
                 }
@@ -172,19 +170,21 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                     }
                     FromSourceLocation location = !right.isNullNode() ? right : targetShape;
                     events.add(ValidationEvent.builder()
-                                       .id(getValidationEventId(type))
-                                       .severity(rule.getDefaultedSeverity())
-                                       .shape(targetShape)
-                                       .sourceLocation(location)
-                                       .message(message)
-                                       .build());
+                            .id(getValidationEventId(type))
+                            .severity(rule.getDefaultedSeverity())
+                            .shape(targetShape)
+                            .sourceLocation(location)
+                            .message(message)
+                            .build());
                 }
             }
         }
 
         private String getValidationEventId(TraitDefinition.ChangeType type) {
-            return String.format("%s.%s.%s", TraitBreakingChange.class.getSimpleName(),
-                    StringUtils.capitalize(type.toString()), trait.getId());
+            return String.format("%s.%s.%s",
+                    TraitBreakingChange.class.getSimpleName(),
+                    StringUtils.capitalize(type.toString()),
+                    trait.getId());
         }
 
         // Check if a breaking change was encountered, and return the type of breaking change.
@@ -222,7 +222,9 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                 case ADD:
                     if (!path.isEmpty()) {
                         return String.format("Added trait contents to `%s` at path `%s` with value %s",
-                                             trait.getId(), path, rightPretty);
+                                trait.getId(),
+                                path,
+                                rightPretty);
                     } else if (Node.objectNode().equals(right)) {
                         return String.format("Added trait `%s`", trait.getId());
                     } else {
@@ -231,20 +233,28 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                 case REMOVE:
                     if (!path.isEmpty()) {
                         return String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
-                                             trait.getId(), path, leftPretty);
+                                trait.getId(),
+                                path,
+                                leftPretty);
                     } else if (Node.objectNode().equals(left)) {
                         return String.format("Removed trait `%s`", trait.getId());
                     } else {
                         return String.format("Removed trait `%s`. Previous trait value: %s",
-                                             trait.getId(), leftPretty);
+                                trait.getId(),
+                                leftPretty);
                     }
                 case UPDATE:
                     if (!path.isEmpty()) {
                         return String.format("Changed trait contents of `%s` at path `%s` from %s to %s",
-                                             trait.getId(), path, leftPretty, rightPretty);
+                                trait.getId(),
+                                path,
+                                leftPretty,
+                                rightPretty);
                     } else {
                         return String.format("Changed trait `%s` from %s to %s",
-                                             trait.getId(), leftPretty, rightPretty);
+                                trait.getId(),
+                                leftPretty,
+                                rightPretty);
                     }
                 default:
                     throw new UnsupportedOperationException("Expected add, remove, update: " + type);

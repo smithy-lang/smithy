@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.math.BigDecimal;
@@ -104,7 +93,7 @@ class DefaultTokenizer implements IdlTokenizer {
             return getCurrentTokenLexeme();
         } else {
             throw syntax("The current token must be string or identifier but found: "
-                         + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
+                    + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
         }
     }
 
@@ -113,7 +102,7 @@ class DefaultTokenizer implements IdlTokenizer {
         getCurrentToken();
         if (currentTokenNumber == null) {
             throw syntax("The current token must be number but found: "
-                         + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
+                    + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
         }
         return currentTokenNumber;
     }
@@ -123,7 +112,7 @@ class DefaultTokenizer implements IdlTokenizer {
         getCurrentToken();
         if (currentTokenType != IdlToken.ERROR) {
             throw syntax("The current token must be an error but found: "
-                         + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
+                    + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
         }
         return currentTokenError == null ? "" : currentTokenError;
     }
@@ -260,7 +249,7 @@ class DefaultTokenizer implements IdlTokenizer {
 
     private ModelSyntaxException syntax(String message, SourceLocation location) {
         return new ModelSyntaxException("Syntax error at line " + location.getLine() + ", column "
-                                        + location.getColumn() + ": " + message, location);
+                + location.getColumn() + ": " + message, location);
     }
 
     private IdlToken singleCharToken(IdlToken type) {
@@ -330,7 +319,7 @@ class DefaultTokenizer implements IdlTokenizer {
     private IdlToken parseNumber() {
         try {
             String lexeme = ParserUtils.parseNumber(parser);
-            if (lexeme.contains("e") || lexeme.contains("E")  || lexeme.contains(".")) {
+            if (lexeme.contains("e") || lexeme.contains("E") || lexeme.contains(".")) {
                 double value = Double.parseDouble(lexeme);
                 if (Double.isFinite(value)) {
                     currentTokenNumber = value;

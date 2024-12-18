@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import java.io.IOException;
@@ -103,7 +92,7 @@ final class ModelLoader {
                 Version version = Version.fromString(versionNode.getValue());
                 if (version == null) {
                     throw new ModelSyntaxException("Unsupported Smithy version number: " + versionNode.getValue(),
-                                                   versionNode);
+                            versionNode);
                 } else {
                     new AstModelLoader(version, model).parse(operationConsumer);
                     return true;
@@ -156,6 +145,7 @@ final class ModelLoader {
 
     private static ModelImportException throwIoJarException(URL model, Throwable e) {
         return new ModelImportException(
-                String.format("Error loading Smithy model from URL `%s`: %s", model, e.getMessage()), e);
+                String.format("Error loading Smithy model from URL `%s`: %s", model, e.getMessage()),
+                e);
     }
 }

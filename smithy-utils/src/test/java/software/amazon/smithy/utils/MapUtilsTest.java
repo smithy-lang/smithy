@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import static java.util.function.Function.identity;
@@ -84,8 +73,14 @@ public class MapUtilsTest {
 
     @Test
     public void ofFourIsFour() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -94,8 +89,16 @@ public class MapUtilsTest {
 
     @Test
     public void ofFiveIsFive() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -105,8 +108,18 @@ public class MapUtilsTest {
 
     @Test
     public void ofSixIsSix() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E", "6", "F");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E",
+                "6",
+                "F");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -117,8 +130,20 @@ public class MapUtilsTest {
 
     @Test
     public void ofSevenIsSeven() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E", "6", "F", "7", "G");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E",
+                "6",
+                "F",
+                "7",
+                "G");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -130,9 +155,22 @@ public class MapUtilsTest {
 
     @Test
     public void ofEightIsEight() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E", "6", "F", "7", "G",
-                "8", "H");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E",
+                "6",
+                "F",
+                "7",
+                "G",
+                "8",
+                "H");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -145,9 +183,24 @@ public class MapUtilsTest {
 
     @Test
     public void ofNineIsNine() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E", "6", "F", "7", "G",
-                "8", "H", "9", "I");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E",
+                "6",
+                "F",
+                "7",
+                "G",
+                "8",
+                "H",
+                "9",
+                "I");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));
@@ -161,9 +214,26 @@ public class MapUtilsTest {
 
     @Test
     public void ofTenIsTen() {
-        Map<String, String> map = MapUtils.of("1", "A", "2", "B",
-                "3", "C", "4", "D", "5", "E", "6", "F", "7", "G",
-                "8", "H", "9", "I", "10", "J");
+        Map<String, String> map = MapUtils.of("1",
+                "A",
+                "2",
+                "B",
+                "3",
+                "C",
+                "4",
+                "D",
+                "5",
+                "E",
+                "6",
+                "F",
+                "7",
+                "G",
+                "8",
+                "H",
+                "9",
+                "I",
+                "10",
+                "J");
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
         assertThat(map, hasEntry("3", "C"));

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -109,11 +98,14 @@ public class IdlModelLoaderTest {
                 .unwrap();
 
         MemberShape baz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"))
-                .asMemberShape().get();
+                .asMemberShape()
+                .get();
         MemberShape bar = model.expectShape(ShapeId.from("smithy.example#Foo$bar"))
-                .asMemberShape().get();
+                .asMemberShape()
+                .get();
         ResourceShape resource = model.expectShape(ShapeId.from("smithy.example#MyResource"))
-                .asResourceShape().get();
+                .asResourceShape()
+                .get();
 
         assertThat(baz.getTarget().toString(), equalTo("smithy.api#String"));
         assertThat(bar.getTarget().toString(), equalTo("smithy.example#Integer"));
@@ -184,20 +176,21 @@ public class IdlModelLoaderTest {
     @Test
     public void warnsWhenInvalidSyntacticShapeIdIsFound() {
         ValidatedResult<Model> result = Model.assembler()
-                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
-                                                + "namespace smithy.example\n"
-                                                + "@tags([nonono])\n"
-                                                + "string Foo\n")
+                .addUnparsedModel("foo.smithy",
+                        "$version: \"2.0\"\n"
+                                + "namespace smithy.example\n"
+                                + "@tags([nonono])\n"
+                                + "string Foo\n")
                 .assemble();
 
         assertThat(result.isBroken(), is(true));
         List<ValidationEvent> events = result.getValidationEvents(Severity.DANGER);
         assertThat(events.stream().filter(e -> e.getId().equals("SyntacticShapeIdTarget")).count(), equalTo(1L));
         assertThat(events.stream()
-                           .filter(e -> e.getId().equals("SyntacticShapeIdTarget"))
-                           .filter(e -> e.getMessage().contains("`nonono`"))
-                           .count(),
-                   equalTo(1L));
+                .filter(e -> e.getId().equals("SyntacticShapeIdTarget"))
+                .filter(e -> e.getMessage().contains("`nonono`"))
+                .count(),
+                equalTo(1L));
     }
 
     @Test
@@ -211,15 +204,14 @@ public class IdlModelLoaderTest {
 
         // Spot check for a specific "use" shape.
         assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getInput(),
-                   equalTo(Optional.of(ShapeId.from("smithy.example.nested#A"))));
+                equalTo(Optional.of(ShapeId.from("smithy.example.nested#A"))));
 
         assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrors(),
-                   equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C"))));
+                equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C"))));
 
         Map<String, ShapeId> identifiers = model.expectShape(
                 ShapeId.from("smithy.example.nested#Resource"),
-                ResourceShape.class
-        ).getIdentifiers();
+                ResourceShape.class).getIdentifiers();
 
         assertThat(identifiers.get("s"), equalTo(ShapeId.from("smithy.api#String")));
         assertThat(identifiers.get("x"), equalTo(ShapeId.from("smithy.example.other#X")));
@@ -274,7 +266,7 @@ public class IdlModelLoaderTest {
 
         // Spot check for a specific "use" shape.
         assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
-                   equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
+                equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
     }
 
     @Test
@@ -302,9 +294,9 @@ public class IdlModelLoaderTest {
     @Test
     public void defaultValueSugaringDoesNotEatSubsequentDocumentation() {
         Model model = Model.assembler()
-            .addImport(getClass().getResource("default-subsequent-trait.smithy"))
-            .assemble()
-            .unwrap();
+                .addImport(getClass().getResource("default-subsequent-trait.smithy"))
+                .assemble()
+                .unwrap();
 
         StructureShape testShape = model.expectShape(ShapeId.from("smithy.example#TestShape"), StructureShape.class);
         MemberShape barMember = testShape.getMember("bar").orElseThrow(AssertionFailedError::new);
@@ -330,7 +322,7 @@ public class IdlModelLoaderTest {
                 .unwrap();
 
         EnumShape enumWithoutValueTraits = model.expectShape(ShapeId.from("smithy.example#EnumWithoutValueTraits"),
-                                                             EnumShape.class);
+                EnumShape.class);
         MemberShape barMember = enumWithoutValueTraits.getMember("BAR").orElseThrow(AssertionFailedError::new);
 
         assertThat(enumWithoutValueTraits.getSourceLocation().getLine(), is(5));
@@ -366,8 +358,9 @@ public class IdlModelLoaderTest {
         boolean foundSyntax = false;
         boolean foundTrait = false;
         for (ValidationEvent e : result.getValidationEvents()) {
-            if (e.getSeverity() == Severity.ERROR && e.getMessage().contains(
-                    "Syntax error at line 9, column 9: Expected COLON(':') but found IDENTIFIER('MyInteger')")) {
+            if (e.getSeverity() == Severity.ERROR && e.getMessage()
+                    .contains(
+                            "Syntax error at line 9, column 9: Expected COLON(':') but found IDENTIFIER('MyInteger')")) {
                 foundSyntax = true;
             }
             if (e.getSeverity() == Severity.ERROR && e.getMessage().contains("Unable to resolve trait")) {
@@ -425,9 +418,10 @@ public class IdlModelLoaderTest {
         assertThat(model.getShape(myString).isPresent(), is(true));
         assertThat(model.expectShape(myString).hasTrait(ExternalDocumentationTrait.class), is(false));
 
-        boolean foundSyntax = result.getValidationEvents().stream()
+        boolean foundSyntax = result.getValidationEvents()
+                .stream()
                 .anyMatch(e -> e.getSeverity() == Severity.ERROR
-                               && e.getMessage().contains("Syntax error at line 6, column 28"));
+                        && e.getMessage().contains("Syntax error at line 6, column 28"));
 
         assertThat(foundSyntax, is(true));
     }
@@ -445,9 +439,10 @@ public class IdlModelLoaderTest {
 
         assertThat(model.getShape(ShapeId.from("smithy.example#MyInteger")).isPresent(), is(true));
 
-        boolean foundSyntax = result.getValidationEvents().stream()
+        boolean foundSyntax = result.getValidationEvents()
+                .stream()
                 .anyMatch(e -> e.getSeverity() == Severity.ERROR
-                               && e.getMessage().contains("Syntax error at line 1, column 5"));
+                        && e.getMessage().contains("Syntax error at line 1, column 5"));
 
         assertThat(foundSyntax, is(true));
     }
@@ -471,7 +466,8 @@ public class IdlModelLoaderTest {
         assertThat(model.getMetadata().get("valid4"), equalTo(Node.from("ok")));
 
         // Find all four invalid metadata keys.
-        long foundSyntax = result.getValidationEvents().stream()
+        long foundSyntax = result.getValidationEvents()
+                .stream()
                 .filter(e -> e.getSeverity() == Severity.ERROR && e.getMessage().contains("Syntax error"))
                 .count();
 
@@ -489,7 +485,7 @@ public class IdlModelLoaderTest {
         ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, loader::increaseNestingLevel);
 
         assertThat(e.getMessage(),
-                   startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
+                startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
     }
 
     @Test

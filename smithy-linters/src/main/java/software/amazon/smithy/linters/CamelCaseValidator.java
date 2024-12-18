@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
@@ -140,9 +129,12 @@ public final class CamelCaseValidator extends AbstractValidator {
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !shape.hasTrait(TraitDefinition.class))
                 .filter(shape -> !MemberNameHandling.UPPER.getRegex().matcher(shape.getId().getName()).find())
-                .map(shape -> danger(shape, format(
-                        "%s shape name, `%s`, is not %s camel case",
-                        shape.getType(), shape.getId().getName(), MemberNameHandling.UPPER)))
+                .map(shape -> danger(shape,
+                        format(
+                                "%s shape name, `%s`, is not %s camel case",
+                                shape.getType(),
+                                shape.getId().getName(),
+                                MemberNameHandling.UPPER)))
                 .forEach(events::add);
 
         // Trait shapes are expected to be lower camel.
@@ -151,9 +143,11 @@ public final class CamelCaseValidator extends AbstractValidator {
                 .filter(shape -> !shape.hasTrait(AuthDefinitionTrait.class))
                 .filter(shape -> !shape.hasTrait(ProtocolDefinitionTrait.class))
                 .filter(shape -> !MemberNameHandling.LOWER.getRegex().matcher(shape.getId().getName()).find())
-                .map(shape -> danger(shape, format(
-                        "%s trait definition, `%s`, is not lower camel case",
-                        shape.getType(), shape.getId().getName())))
+                .map(shape -> danger(shape,
+                        format(
+                                "%s trait definition, `%s`, is not lower camel case",
+                                shape.getType(),
+                                shape.getId().getName())))
                 .forEach(events::add);
 
         // First validate each service's closure's member shape member names
@@ -171,13 +165,15 @@ public final class CamelCaseValidator extends AbstractValidator {
         }
 
         // Next get all other member shapes (ex. trait shape members) and validate per namespace grouping
-        Map<String, List<MemberShape>> memberShapesByNamespace = model.toSet(MemberShape.class).stream()
+        Map<String, List<MemberShape>> memberShapesByNamespace = model.toSet(MemberShape.class)
+                .stream()
                 .filter(memberShape -> !seenShapes.contains(memberShape))
                 .collect(Collectors.groupingBy(
                         memberShape -> memberShape.getContainer().getNamespace()));
 
         for (Map.Entry<String, List<MemberShape>> memberShapeGrouping : memberShapesByNamespace.entrySet()) {
-            events.addAll(validateCamelCasing(model, memberShapeGrouping.getValue(),
+            events.addAll(validateCamelCasing(model,
+                    memberShapeGrouping.getValue(),
                     memberShapeGrouping.getKey() + " namespace"));
         }
 
@@ -196,7 +192,8 @@ public final class CamelCaseValidator extends AbstractValidator {
             // Also exclude list and map members as their names are constant.
             Shape container = model.expectShape(memberShape.getContainer());
             if (!container.isEnumShape() && !container.isIntEnumShape()
-                    && !container.isListShape() && !container.isMapShape()) {
+                    && !container.isListShape()
+                    && !container.isMapShape()) {
                 if (MemberNameHandling.UPPER.getRegex().matcher(memberShape.getMemberName()).find()) {
                     upperCamelMemberNamesCount++;
                 } else {
@@ -229,10 +226,14 @@ public final class CamelCaseValidator extends AbstractValidator {
 
         String finalMemberNameHandling = memberNameHandling;
         return violatingMemberShapes.stream()
-                .map(shape -> danger(shape, format(
-                        "Member shape member name, `%s`, is not %s camel case;"
-                                + " members in the %s must all use %s camel case.",
-                        shape.getMemberName(), finalMemberNameHandling, scope, finalMemberNameHandling)))
+                .map(shape -> danger(shape,
+                        format(
+                                "Member shape member name, `%s`, is not %s camel case;"
+                                        + " members in the %s must all use %s camel case.",
+                                shape.getMemberName(),
+                                finalMemberNameHandling,
+                                scope,
+                                finalMemberNameHandling)))
                 .collect(Collectors.toList());
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,8 +41,8 @@ public class SortMembersTest {
 
         // Members in the new model use the sorted order.
         assertThat(sortedModel.expectShape(u.getId(), UnionShape.class).getMemberNames(),
-                   Matchers.contains("abc", "zoo"));
+                Matchers.contains("abc", "zoo"));
         assertThat(sortedModel.expectShape(s.getId(), StructureShape.class).getMemberNames(),
-                   Matchers.contains("abc", "zoo"));
+                Matchers.contains("abc", "zoo"));
     }
 }

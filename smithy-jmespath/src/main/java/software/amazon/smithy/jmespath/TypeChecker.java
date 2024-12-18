@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import static software.amazon.smithy.jmespath.FunctionDefinition.isType;
@@ -66,15 +55,20 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
         FUNCTIONS.put("abs", new FunctionDefinition(NUMBER, isNumber));
         FUNCTIONS.put("avg", new FunctionDefinition(NUMBER, listOfType(RuntimeType.NUMBER)));
-        FUNCTIONS.put("contains", new FunctionDefinition(
-                BOOLEAN, oneOf(RuntimeType.ARRAY, RuntimeType.STRING), isAny));
+        FUNCTIONS.put("contains",
+                new FunctionDefinition(
+                        BOOLEAN,
+                        oneOf(RuntimeType.ARRAY, RuntimeType.STRING),
+                        isAny));
         FUNCTIONS.put("ceil", new FunctionDefinition(NUMBER, isNumber));
         FUNCTIONS.put("ends_with", new FunctionDefinition(NUMBER, isString, isString));
         FUNCTIONS.put("floor", new FunctionDefinition(NUMBER, isNumber));
         FUNCTIONS.put("join", new FunctionDefinition(STRING, isString, listOfType(RuntimeType.STRING)));
         FUNCTIONS.put("keys", new FunctionDefinition(ARRAY, isType(RuntimeType.OBJECT)));
-        FUNCTIONS.put("length", new FunctionDefinition(
-                NUMBER, oneOf(RuntimeType.STRING, RuntimeType.ARRAY, RuntimeType.OBJECT)));
+        FUNCTIONS.put("length",
+                new FunctionDefinition(
+                        NUMBER,
+                        oneOf(RuntimeType.STRING, RuntimeType.ARRAY, RuntimeType.OBJECT)));
         // TODO: Support expression reference return type validation?
         FUNCTIONS.put("map", new FunctionDefinition(ARRAY, isType(RuntimeType.EXPRESSION), isArray));
         // TODO: support array<X|Y>
@@ -162,16 +156,21 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
             if (current.hasObjectField(expression.getName())) {
                 return current.getObjectField(expression.getName());
             } else {
-                danger(expression, String.format(
-                        "Object field '%s' does not exist in object with properties %s",
-                        expression.getName(), current.expectObjectValue().keySet()));
+                danger(expression,
+                        String.format(
+                                "Object field '%s' does not exist in object with properties %s",
+                                expression.getName(),
+                                current.expectObjectValue().keySet()));
                 return NULL;
             }
         }
 
         if (current.getType() != RuntimeType.ANY) {
-            danger(expression, String.format(
-                    "Object field '%s' extraction performed on %s", expression.getName(), current.getType()));
+            danger(expression,
+                    String.format(
+                            "Object field '%s' extraction performed on %s",
+                            expression.getName(),
+                            current.getType()));
         }
 
         return ANY;
@@ -184,8 +183,11 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         }
 
         if (current.getType() != RuntimeType.ANY) {
-            danger(expression, String.format(
-                    "Array index '%s' extraction performed on %s", expression.getIndex(), current.getType()));
+            danger(expression,
+                    String.format(
+                            "Array index '%s' extraction performed on %s",
+                            expression.getIndex(),
+                            current.getType()));
         }
 
         return ANY;
@@ -361,7 +363,8 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         // Positional argument arity must match.
         if (arguments.size() < def.arguments.size()
                 || (def.variadic == null && arguments.size() > def.arguments.size())) {
-            err(expression, expression.getName() + " function expected " + def.arguments.size()
+            err(expression,
+                    expression.getName() + " function expected " + def.arguments.size()
                             + " arguments, but was given " + arguments.size());
         } else {
             for (int i = 0; i < arguments.size(); i++) {
@@ -373,7 +376,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
                 }
                 if (error != null) {
                     err(expression.getArguments().get(i),
-                        expression.getName() + " function argument " + i + " error: " + error);
+                            expression.getName() + " function argument " + i + " error: " + error);
                 }
             }
         }

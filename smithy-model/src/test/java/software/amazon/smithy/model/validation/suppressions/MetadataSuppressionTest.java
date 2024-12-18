@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.suppressions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,7 +63,6 @@ public class MetadataSuppressionTest {
                 Arguments.of(true, "BadThing.Foo", "BadThing"),
                 Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar"),
                 Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar.Baz"),
-                Arguments.of(false, "BadThing.Fooz", "BadThing.Foo")
-        );
+                Arguments.of(false, "BadThing.Fooz", "BadThing.Foo"));
     }
 }

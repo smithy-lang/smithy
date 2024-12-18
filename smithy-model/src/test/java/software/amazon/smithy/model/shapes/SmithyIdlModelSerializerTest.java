@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +15,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -19,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -36,7 +38,8 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class SmithyIdlModelSerializerTest {
-    private static final URL TEST_FILE_URL = Objects.requireNonNull(SmithyIdlModelSerializer.class.getResource("idl-serialization/cases"));
+    private static final URL TEST_FILE_URL =
+            Objects.requireNonNull(SmithyIdlModelSerializer.class.getResource("idl-serialization/cases"));
 
     @TestFactory
     public Stream<DynamicTest> generateTests() throws IOException, URISyntaxException {
@@ -69,7 +72,8 @@ public class SmithyIdlModelSerializerTest {
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
         serialized.forEach((path, generated) -> assertThat(
-                generated, equalTo(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"))));
+                generated,
+                equalTo(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"))));
     }
 
     @Test
@@ -179,7 +183,7 @@ public class SmithyIdlModelSerializerTest {
         Map<Path, String> results = serializer.serialize(model);
 
         assertThat(results.get(Paths.get("com.foo.smithy")),
-                   not(containsString(OriginalShapeIdTrait.ID.toString())));
+                not(containsString(OriginalShapeIdTrait.ID.toString())));
     }
 
     @Test
@@ -222,9 +226,9 @@ public class SmithyIdlModelSerializerTest {
         Model model2 = Model.assembler().addUnparsedModel("test.smithy", modelResult).assemble().unwrap();
 
         assertThat(model.expectShape(ShapeId.from("smithy.example#PrimitiveBool")).hasTrait(DefaultTrait.ID),
-                   is(true));
+                is(true));
         assertThat(model2.expectShape(ShapeId.from("smithy.example#PrimitiveBool")).hasTrait(DefaultTrait.ID),
-                   is(true));
+                is(true));
         assertThat(model2, equalTo(model2));
     }
 
@@ -297,11 +301,14 @@ public class SmithyIdlModelSerializerTest {
     @Test
     public void canInferInlineSuffixes() {
         Map<Path, URL> resources = MapUtils.of(
-                Paths.get("default.smithy"), getClass().getResource("idl-serialization/inferred-io/default.smithy"),
-                Paths.get("main.smithy"), getClass().getResource("idl-serialization/inferred-io/main.smithy"),
-                Paths.get("mixed.smithy"), getClass().getResource("idl-serialization/inferred-io/mixed.smithy"),
-                Paths.get("shared.smithy"), getClass().getResource("idl-serialization/inferred-io/shared.smithy")
-        );
+                Paths.get("default.smithy"),
+                getClass().getResource("idl-serialization/inferred-io/default.smithy"),
+                Paths.get("main.smithy"),
+                getClass().getResource("idl-serialization/inferred-io/main.smithy"),
+                Paths.get("mixed.smithy"),
+                getClass().getResource("idl-serialization/inferred-io/mixed.smithy"),
+                Paths.get("shared.smithy"),
+                getClass().getResource("idl-serialization/inferred-io/shared.smithy"));
         ModelAssembler assembler = Model.assembler();
         resources.values().forEach(assembler::addImport);
         Model model = assembler.assemble().unwrap();
@@ -325,7 +332,8 @@ public class SmithyIdlModelSerializerTest {
     public void coercesInlineIO() {
         Model before = Model.assembler()
                 .addImport(getClass().getResource("idl-serialization/coerced-io/before.smithy"))
-                .assemble().unwrap();
+                .assemble()
+                .unwrap();
 
         Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
                 .coerceInlineIo(true)

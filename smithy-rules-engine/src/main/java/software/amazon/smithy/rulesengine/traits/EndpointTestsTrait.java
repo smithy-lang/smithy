@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.List;
@@ -83,8 +82,7 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
         private final BuilderRef<List<EndpointTestCase>> testCases = BuilderRef.forList();
         private String version;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder version(String version) {
             this.version = version;

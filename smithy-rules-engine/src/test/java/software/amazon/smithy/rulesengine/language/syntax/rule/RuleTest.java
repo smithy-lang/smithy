@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,8 +12,6 @@ import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -35,25 +37,41 @@ public class RuleTest {
         Parameters parameters = Parameters.builder().addParameter(p1).addParameter(p2).addParameter(p3).build();
         EndpointRuleSet ruleset = EndpointRuleSet.builder().version("1.1").parameters(parameters).addRule(rule).build();
         ruleset.typeCheck(new Scope<>());
-        assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
-                        Identifier.of("param1"), Value.stringValue("a"),
-                        Identifier.of("param2"), Value.stringValue("c"),
-                        Identifier.of("param3"), Value.stringValue("c"))),
+        assertEquals(RuleEvaluator.evaluate(ruleset,
+                MapUtils.of(
+                        Identifier.of("param1"),
+                        Value.stringValue("a"),
+                        Identifier.of("param2"),
+                        Value.stringValue("c"),
+                        Identifier.of("param3"),
+                        Value.stringValue("c"))),
                 Value.stringValue("rule matched: p3"));
-        assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
-                        Identifier.of("param1"), Value.stringValue("b"),
-                        Identifier.of("param2"), Value.stringValue("c"),
-                        Identifier.of("param3"), Value.stringValue("c"))),
+        assertEquals(RuleEvaluator.evaluate(ruleset,
+                MapUtils.of(
+                        Identifier.of("param1"),
+                        Value.stringValue("b"),
+                        Identifier.of("param2"),
+                        Value.stringValue("c"),
+                        Identifier.of("param3"),
+                        Value.stringValue("c"))),
                 Value.stringValue("param1 value is not a"));
-        assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
-                        Identifier.of("param1"), Value.stringValue("a"),
-                        Identifier.of("param2"), Value.stringValue("b"),
-                        Identifier.of("param3"), Value.stringValue("c"))),
+        assertEquals(RuleEvaluator.evaluate(ruleset,
+                MapUtils.of(
+                        Identifier.of("param1"),
+                        Value.stringValue("a"),
+                        Identifier.of("param2"),
+                        Value.stringValue("b"),
+                        Identifier.of("param3"),
+                        Value.stringValue("c"))),
                 Value.stringValue("param2 is b"));
-        assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
-                        Identifier.of("param1"), Value.stringValue("a"),
-                        Identifier.of("param2"), Value.stringValue("c"),
-                        Identifier.of("param3"), Value.stringValue("d"))),
+        assertEquals(RuleEvaluator.evaluate(ruleset,
+                MapUtils.of(
+                        Identifier.of("param1"),
+                        Value.stringValue("a"),
+                        Identifier.of("param2"),
+                        Value.stringValue("c"),
+                        Identifier.of("param3"),
+                        Value.stringValue("d"))),
                 Value.stringValue("param3 value is not c"));
     }
 

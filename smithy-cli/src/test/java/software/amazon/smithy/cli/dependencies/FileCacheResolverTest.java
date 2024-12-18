@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,10 +115,9 @@ public class FileCacheResolverTest {
         Mock mock = new Mock(result);
         // Set the "config" last modified to a future date to ensure it's newer than the "JAR" file.
         DependencyResolver cachingResolver = new FileCacheResolver(
-            cache,
-            jar.lastModified() + Duration.parse("P1D").toMillis(),
-            mock
-        );
+                cache,
+                jar.lastModified() + Duration.parse("P1D").toMillis(),
+                mock);
         List<ResolvedArtifact> resolved = cachingResolver.resolve();
 
         // Make sure artifacts were cached as expected.

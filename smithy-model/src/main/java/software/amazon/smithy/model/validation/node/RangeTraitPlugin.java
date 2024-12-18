@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.model.node.Node;
@@ -38,7 +27,10 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
             if (value.isNumberNode()) {
                 check(shape, context, shape.expectTrait(RangeTrait.class), value.expectNumberNode(), emitter);
             } else if (value.isStringNode()) {
-                checkNonNumeric(shape, shape.expectTrait(RangeTrait.class), value.expectStringNode(), emitter,
+                checkNonNumeric(shape,
+                        shape.expectTrait(RangeTrait.class),
+                        value.expectStringNode(),
+                        emitter,
                         context);
             }
         }
@@ -47,24 +39,35 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
     private void checkNonNumeric(Shape shape, RangeTrait trait, StringNode node, Emitter emitter, Context context) {
         NonNumericFloat.fromStringRepresentation(node.getValue()).ifPresent(value -> {
             if (value.equals(NonNumericFloat.NAN)) {
-                emitter.accept(node, getSeverity(context), String.format(
-                        "Value provided for `%s` must be a number because the `smithy.api#range` trait is applied, "
-                                + "but found \"%s\"",
-                        shape.getId(), node.getValue()));
+                emitter.accept(node,
+                        getSeverity(context),
+                        String.format(
+                                "Value provided for `%s` must be a number because the `smithy.api#range` trait is applied, "
+                                        + "but found \"%s\"",
+                                shape.getId(),
+                                node.getValue()));
             }
 
             if (trait.getMin().isPresent() && value.equals(NonNumericFloat.NEGATIVE_INFINITY)) {
-                emitter.accept(node, getSeverity(context), String.format(
-                        "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
-                        shape.getId(), trait.getMin().get(), node.getValue()),
+                emitter.accept(node,
+                        getSeverity(context),
+                        String.format(
+                                "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
+                                shape.getId(),
+                                trait.getMin().get(),
+                                node.getValue()),
                         shape.isMemberShape() ? MEMBER : TARGET,
                         INVALID_RANGE);
             }
 
             if (trait.getMax().isPresent() && value.equals(NonNumericFloat.POSITIVE_INFINITY)) {
-                emitter.accept(node, getSeverity(context), String.format(
-                        "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
-                        shape.getId(), trait.getMax().get(), node.getValue()),
+                emitter.accept(node,
+                        getSeverity(context),
+                        String.format(
+                                "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
+                                shape.getId(),
+                                trait.getMax().get(),
+                                node.getValue()),
                         shape.isMemberShape() ? MEMBER : TARGET,
                         INVALID_RANGE);
             }
@@ -75,11 +78,15 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
         trait.getMin().ifPresent(min -> {
             node.asBigDecimal().ifPresent(decimal -> {
                 if (decimal.compareTo(min) < 0) {
-                    emitter.accept(node, getSeverity(node, context), String.format(
-                                           "Value provided for `%s` must be greater than or equal to %s, but found %s",
-                                           shape.getId(), min, decimal),
-                                   shape.isMemberShape() ? MEMBER : TARGET,
-                                   INVALID_RANGE);
+                    emitter.accept(node,
+                            getSeverity(node, context),
+                            String.format(
+                                    "Value provided for `%s` must be greater than or equal to %s, but found %s",
+                                    shape.getId(),
+                                    min,
+                                    decimal),
+                            shape.isMemberShape() ? MEMBER : TARGET,
+                            INVALID_RANGE);
                 }
             });
         });
@@ -87,11 +94,15 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
         trait.getMax().ifPresent(max -> {
             node.asBigDecimal().ifPresent(decimal -> {
                 if (decimal.compareTo(max) > 0) {
-                    emitter.accept(node, getSeverity(node, context), String.format(
-                                           "Value provided for `%s` must be less than or equal to %s, but found %s",
-                                           shape.getId(), max, decimal),
-                                   shape.isMemberShape() ? MEMBER : TARGET,
-                                   INVALID_RANGE);
+                    emitter.accept(node,
+                            getSeverity(node, context),
+                            String.format(
+                                    "Value provided for `%s` must be less than or equal to %s, but found %s",
+                                    shape.getId(),
+                                    max,
+                                    decimal),
+                            shape.isMemberShape() ? MEMBER : TARGET,
+                            INVALID_RANGE);
                 }
             });
         });
@@ -106,6 +117,7 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
 
     private Severity getSeverity(Context context) {
         return context.hasFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS)
-                ? Severity.WARNING : Severity.ERROR;
+                ? Severity.WARNING
+                : Severity.ERROR;
     }
 }

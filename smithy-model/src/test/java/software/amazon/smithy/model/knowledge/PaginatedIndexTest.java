@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,14 +36,16 @@ public class PaginatedIndexTest {
         assertThat(info.getInputTokenMember().getMemberName(), equalTo("nextToken"));
         assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
         assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
-        assertThat(info.getOutputTokenMemberPath().stream()
+        assertThat(info.getOutputTokenMemberPath()
+                .stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("nextToken")));
         assertThat(info.getPageSizeMember().isPresent(), is(true));
         assertThat(info.getPageSizeMember().get().getMemberName(), equalTo("pageSize"));
         assertThat(info.getItemsMember().get().getMemberName(), equalTo("items"));
         assertThat(info.getItemsMemberPath().isEmpty(), is(false));
-        assertThat(info.getItemsMemberPath().stream()
+        assertThat(info.getItemsMemberPath()
+                .stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("items")));
     }
@@ -76,13 +67,15 @@ public class PaginatedIndexTest {
         PaginationInfo info = optionalInfo.get();
         assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
         assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
-        assertThat(info.getOutputTokenMemberPath().stream()
+        assertThat(info.getOutputTokenMemberPath()
+                .stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("result", "nextToken")));
         assertThat(info.getItemsMember().isPresent(), is(true));
         assertThat(info.getItemsMember().get().getMemberName(), equalTo("items"));
         assertThat(info.getItemsMemberPath().isEmpty(), is(false));
-        assertThat(info.getItemsMemberPath().stream()
+        assertThat(info.getItemsMemberPath()
+                .stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("result", "items")));
     }

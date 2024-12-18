@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -7,7 +11,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
@@ -15,7 +18,7 @@ import software.amazon.smithy.model.node.Node;
 public class ResolvedArtifactTest {
     @Test
     public void loadsFromCoordinates() throws URISyntaxException {
-        Path path =  Paths.get(Objects.requireNonNull(getClass().getResource("test.txt")).toURI());
+        Path path = Paths.get(Objects.requireNonNull(getClass().getResource("test.txt")).toURI());
         String coordinates = "com.foo:baz-bam:1.2.0";
         ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(path, coordinates);
 
@@ -29,7 +32,7 @@ public class ResolvedArtifactTest {
 
     @Test
     public void createsCoordinatesStringFromParts() throws URISyntaxException {
-        Path path =  Paths.get(Objects.requireNonNull(getClass().getResource("test.txt")).toURI());
+        Path path = Paths.get(Objects.requireNonNull(getClass().getResource("test.txt")).toURI());
         ResolvedArtifact artifact = new ResolvedArtifact(path, "com.foo", "baz-bam", "1.2.0");
 
         assertThat(artifact.getPath(), equalTo(path));
@@ -45,7 +48,7 @@ public class ResolvedArtifactTest {
         String coordinates = "com.foo:baz-bam:1.2.0:boo";
 
         Assertions.assertThrows(DependencyResolverException.class,
-                                () -> ResolvedArtifact.fromCoordinateNode(coordinates, getNode()));
+                () -> ResolvedArtifact.fromCoordinateNode(coordinates, getNode()));
     }
 
     @Test
@@ -53,14 +56,14 @@ public class ResolvedArtifactTest {
         String coordinates = "com.foo:baz-bam";
 
         Assertions.assertThrows(DependencyResolverException.class,
-                                () -> ResolvedArtifact.fromCoordinateNode(coordinates,getNode()));
+                () -> ResolvedArtifact.fromCoordinateNode(coordinates, getNode()));
     }
 
     @Test
     public void createsArtifactFromNode() {
-        Path path =  Paths.get("/a");
+        Path path = Paths.get("/a");
         ResolvedArtifact artifact = ResolvedArtifact.fromCoordinateNode("com.foo:baz-bam:1.2.0",
-                        getNode());
+                getNode());
 
         assertThat(artifact.getPath(), equalTo(path));
         assertThat(artifact.getCoordinates(), equalTo("com.foo:baz-bam:1.2.0"));

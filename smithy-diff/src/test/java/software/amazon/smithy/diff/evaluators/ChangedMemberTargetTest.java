@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +33,10 @@ public class ChangedMemberTargetTest {
         MemberShape member1 = MemberShape.builder().id("foo.baz#List$member").target(shape1.getId()).build();
         ListShape list1 = ListShape.builder().id("foo.baz#List").member(member1).build();
         Shape shape2 = TimestampShape.builder().id("foo.baz#Timestamp").build();
-        MemberShape member2 = MemberShape.builder().id("foo.baz#List$member").target(shape2.getId()).source(source)
+        MemberShape member2 = MemberShape.builder()
+                .id("foo.baz#List$member")
+                .target(shape2.getId())
+                .source(source)
                 .build();
         ListShape list2 = ListShape.builder().id("foo.baz#List").member(member2).build();
         Model modelA = Model.assembler().addShapes(shape1, shape2, member1, list1).assemble().unwrap();
@@ -74,9 +66,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
-                           + "`foo.baz#Shape1` (structure) to `foo.baz#Shape2` (structure). The name of a "
-                           + "structure is significant."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
+                        + "`foo.baz#Shape1` (structure) to `foo.baz#Shape2` (structure). The name of a "
+                        + "structure is significant."));
     }
 
     @Test
@@ -95,9 +87,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
-                           + "`foo.baz#String1` (string) to `foo.baz#String2` (string). "
-                           + "This was determined backward compatible."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
+                        + "`foo.baz#String1` (string) to `foo.baz#String2` (string). "
+                        + "This was determined backward compatible."));
     }
 
     @Test
@@ -122,9 +114,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
-                           + "(string) to `foo.baz#String2` (string). The `smithy.api#enum` trait was found on the "
-                           + "target, so the name of the targeted shape matters for codegen."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
+                        + "(string) to `foo.baz#String2` (string). The `smithy.api#enum` trait was found on the "
+                        + "target, so the name of the targeted shape matters for codegen."));
     }
 
     @Test
@@ -149,10 +141,10 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
-                           + "`foo.baz#String1` (string) to `foo.baz#String2` (string). The `smithy.api#enum` trait "
-                           + "was found on the target, so the name of the targeted shape matters for codegen. "
-                           + "The targeted shape no longer has the following traits: [smithy.api#enum]."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
+                        + "`foo.baz#String1` (string) to `foo.baz#String2` (string). The `smithy.api#enum` trait "
+                        + "was found on the target, so the name of the targeted shape matters for codegen. "
+                        + "The targeted shape no longer has the following traits: [smithy.api#enum]."));
     }
 
     @Test
@@ -173,9 +165,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
-                           + "(string) to `foo.baz#String2` (string). The newly targeted shape now has the "
-                           + "following additional traits: [smithy.api#sensitive]."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
+                        + "(string) to `foo.baz#String2` (string). The newly targeted shape now has the "
+                        + "following additional traits: [smithy.api#sensitive]."));
     }
 
     @Test
@@ -196,9 +188,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
-                           + "(string) to `foo.baz#String2` (string). The newly targeted shape has traits that "
-                           + "differ from the previous shape: [smithy.api#documentation]."));
+                equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
+                        + "(string) to `foo.baz#String2` (string). The newly targeted shape has traits that "
+                        + "differ from the previous shape: [smithy.api#documentation]."));
     }
 
     @Test
@@ -216,9 +208,9 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                           + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined "
-                           + "backward compatible."));
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined "
+                        + "backward compatible."));
     }
 
     @Test
@@ -257,10 +249,10 @@ public class ChangedMemberTargetTest {
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
         assertThat(event.getSeverity(), equalTo(Severity.ERROR));
         assertThat(event.getMessage(),
-                   equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                           + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
-                           + "shapes are a list, but their members have differing traits. The newly targeted "
-                           + "shape now has the following additional traits: [smithy.api#pattern]."));
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
+                        + "shapes are a list, but their members have differing traits. The newly targeted "
+                        + "shape now has the following additional traits: [smithy.api#pattern]."));
     }
 
     @Test
@@ -279,10 +271,10 @@ public class ChangedMemberTargetTest {
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
         assertThat(event.getSeverity(), equalTo(Severity.ERROR));
         assertThat(event.getMessage(),
-                   equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                           + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
-                           + "shapes are a list, but the old shape targeted `smithy.example#MyString` while "
-                           + "the new shape targets `smithy.example#MyString2`."));
+                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
+                        + "shapes are a list, but the old shape targeted `smithy.example#MyString` while "
+                        + "the new shape targets `smithy.example#MyString2`."));
     }
 
     @Test

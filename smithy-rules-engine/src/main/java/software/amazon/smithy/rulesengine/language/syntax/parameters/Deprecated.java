@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.Objects;
@@ -74,7 +73,7 @@ public final class Deprecated implements ToNode {
         }
         Deprecated that = (Deprecated) obj;
         return Objects.equals(this.message, that.message)
-                       && Objects.equals(this.since, that.since);
+                && Objects.equals(this.since, that.since);
     }
 
     @Override
@@ -85,7 +84,7 @@ public final class Deprecated implements ToNode {
     @Override
     public String toString() {
         return "Deprecated["
-                       + "message=" + message + ", "
-                       + "since=" + since + ']';
+                + "message=" + message + ", "
+                + "since=" + since + ']';
     }
 }

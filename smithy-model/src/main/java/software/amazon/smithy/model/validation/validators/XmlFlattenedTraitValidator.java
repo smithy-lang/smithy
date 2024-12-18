@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -43,11 +42,14 @@ public final class XmlFlattenedTraitValidator extends AbstractValidator {
         if (targetList.getMember().hasTrait(XmlNameTrait.class)) {
             XmlNameTrait xmlName = targetList.getMember().expectTrait(XmlNameTrait.class);
             if (!member.getMemberName().equals(xmlName.getValue())) {
-                events.add(warning(member, String.format(
-                        "Member is `@xmlFlattened`, so `@xmlName` of target's member (`%s`) has no effect."
-                        + " The flattened list elements will have the name of this member - `%s`. If this"
-                        + " is unintended, you can add `@xmlName(\"%s\")` to this member.",
-                        targetList.getMember().getId(), member.getMemberName(), xmlName.getValue())));
+                events.add(warning(member,
+                        String.format(
+                                "Member is `@xmlFlattened`, so `@xmlName` of target's member (`%s`) has no effect."
+                                        + " The flattened list elements will have the name of this member - `%s`. If this"
+                                        + " is unintended, you can add `@xmlName(\"%s\")` to this member.",
+                                targetList.getMember().getId(),
+                                member.getMemberName(),
+                                xmlName.getValue())));
             }
         }
     }

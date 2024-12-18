@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.List;
@@ -40,7 +39,6 @@ public class CoreExtension implements EndpointRuleSetExtension {
                 ParseUrl.getDefinition(),
                 StringEquals.getDefinition(),
                 Substring.getDefinition(),
-                UriEncode.getDefinition()
-        );
+                UriEncode.getDefinition());
     }
 }

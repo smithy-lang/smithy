@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,9 +20,10 @@ public class TraitValidatorsTest {
         TraitValidatorsTrait trait1 = TraitValidatorsTrait.builder()
                 .sourceLocation(s)
                 .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("*"), "Error!"))
-                .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("string"),
-                                                                        "Warning!",
-                                                                        Severity.WARNING))
+                .putValidator("hi",
+                        new TraitValidatorsTrait.Validator(Selector.parse("string"),
+                                "Warning!",
+                                Severity.WARNING))
                 .build();
 
         TraitValidatorsTrait.Provider p = new TraitValidatorsTrait.Provider();
@@ -36,9 +36,10 @@ public class TraitValidatorsTest {
         SourceLocation s = new SourceLocation("foo.xml");
         TraitValidatorsTrait trait1 = TraitValidatorsTrait.builder()
                 .sourceLocation(s)
-                .putValidator("hi", new TraitValidatorsTrait.Validator(Selector.parse("*"),
-                                                                        "Error!",
-                                                                        Severity.DANGER))
+                .putValidator("hi",
+                        new TraitValidatorsTrait.Validator(Selector.parse("*"),
+                                "Error!",
+                                Severity.DANGER))
                 .build();
 
         assertThat(trait1.toBuilder().build(), equalTo(trait1));

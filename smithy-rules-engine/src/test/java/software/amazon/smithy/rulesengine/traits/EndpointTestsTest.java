@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -56,16 +60,16 @@ public final class EndpointTestsTest {
                                 .builtInParams(ObjectNode.builder()
                                         .withMember("SDK::Endpoint", "https://custom.example.com")
                                         .build())
-                                .build()
-                ))
+                                .build()))
                 .expect(EndpointTestExpectation.builder()
                         .endpoint(ExpectedEndpoint.builder()
                                 .url("https://example.com")
                                 .properties(MapUtils.of())
                                 .headers(MapUtils.of(
-                                        "single", ListUtils.of("foo"),
-                                        "multi", ListUtils.of("foo", "bar", "baz")
-                                ))
+                                        "single",
+                                        ListUtils.of("foo"),
+                                        "multi",
+                                        ListUtils.of("foo", "bar", "baz")))
                                 .build())
                         .build())
                 .build(), equalTo(testCases.get(1)));
@@ -75,16 +79,17 @@ public final class EndpointTestsTest {
     public void roundTrips() {
         Node expectedNode = Node.parse(
                 "{\"version\":\"1.0\",\"testCases\":[{\"documentation\":\"foo bar\",\"params\":{\"foo\":\"bar\""
-                + ",\"bar\":\"foo\"},\"operationInputs\":[{\"operationName\":\"GetThing\",\"clientParams\":"
-                + "{\"stringFoo\":\"client value\"},\"operationParams\":{\"buzz\":\"a buzz value\"},\"builtInParams\":"
-                + "{\"SDK::Endpoint\":\"https://custom.example.com\"}}],\"expect\":{\"endpoint\":{\"url\":"
-                + "\"example.com\",\"headers\":{\"single\":[\"one\"],\"multi\":[\"one\",\"two\"]},\"properties\":"
-                + "{\"foo\":{\"bar\":\"thing\",\"baz\":false}}}}},{\"documentation\":\"bar foo\",\"params\":{\"foo\":"
-                + "\"foo\"},\"expect\":{\"error\":\"error string\"}}]}");
+                        + ",\"bar\":\"foo\"},\"operationInputs\":[{\"operationName\":\"GetThing\",\"clientParams\":"
+                        + "{\"stringFoo\":\"client value\"},\"operationParams\":{\"buzz\":\"a buzz value\"},\"builtInParams\":"
+                        + "{\"SDK::Endpoint\":\"https://custom.example.com\"}}],\"expect\":{\"endpoint\":{\"url\":"
+                        + "\"example.com\",\"headers\":{\"single\":[\"one\"],\"multi\":[\"one\",\"two\"]},\"properties\":"
+                        + "{\"foo\":{\"bar\":\"thing\",\"baz\":false}}}}},{\"documentation\":\"bar foo\",\"params\":{\"foo\":"
+                        + "\"foo\"},\"expect\":{\"error\":\"error string\"}}]}");
 
         TraitFactory traitFactory = TraitFactory.createServiceFactory();
         EndpointTestsTrait expectedTrait = (EndpointTestsTrait) traitFactory.createTrait(EndpointTestsTrait.ID,
-                ShapeId.from("ns.example#Foo"), expectedNode).get();
+                ShapeId.from("ns.example#Foo"),
+                expectedNode).get();
         EndpointTestsTrait actualTrait = expectedTrait.toBuilder().build();
 
         Node.assertEquals(actualTrait.toNode(), expectedNode);

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.pattern;
 
 import static java.lang.String.format;
@@ -87,9 +76,9 @@ public class SmithyPattern {
     public final Optional<Segment> getLabel(String name) {
         String searchKey = name.toLowerCase(Locale.US);
         return segments.stream()
-                       .filter(Segment::isLabel)
-                       .filter(label -> label.getContent().toLowerCase(Locale.US).equals(searchKey))
-                       .findFirst();
+                .filter(Segment::isLabel)
+                .filter(label -> label.getContent().toLowerCase(Locale.US).equals(searchKey))
+                .findFirst();
     }
 
     /**
@@ -134,7 +123,7 @@ public class SmithyPattern {
                 // The segments conflict if one is a literal and the other
                 // is a label.
                 conflictingSegments.put(thisSegment, otherSegment);
-            } else if  (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
+            } else if (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
                 // The segments conflict if a greedy label is introduced at
                 // or before segments in the other pattern.
                 conflictingSegments.put(thisSegment, otherSegment);
@@ -160,7 +149,8 @@ public class SmithyPattern {
         segments.forEach(segment -> {
             if (segment.isLabel() && !labels.add(segment.getContent().toLowerCase(Locale.US))) {
                 throw new InvalidPatternException(format("Label `%s` is defined more than once in pattern: %s",
-                        segment.getContent(), pattern));
+                        segment.getContent(),
+                        pattern));
             }
         });
     }
@@ -207,7 +197,9 @@ public class SmithyPattern {
      */
     public static final class Segment {
 
-        public enum Type { LITERAL, LABEL, GREEDY_LABEL }
+        public enum Type {
+            LITERAL, LABEL, GREEDY_LABEL
+        }
 
         private final String asString;
         private final String content;
@@ -266,8 +258,8 @@ public class SmithyPattern {
             if (content.length() >= 2 && content.charAt(0) == '{' && content.charAt(content.length() - 1) == '}') {
                 Type labelType = content.charAt(content.length() - 2) == '+' ? Type.GREEDY_LABEL : Type.LABEL;
                 content = labelType == Type.GREEDY_LABEL
-                          ? content.substring(1, content.length() - 2)
-                          : content.substring(1, content.length() - 1);
+                        ? content.substring(1, content.length() - 2)
+                        : content.substring(1, content.length() - 1);
                 return new Segment(content, labelType, offset);
             } else {
                 return new Segment(content, Type.LITERAL, offset);

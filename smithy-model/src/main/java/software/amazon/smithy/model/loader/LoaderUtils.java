@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
@@ -45,7 +34,8 @@ final class LoaderUtils {
      */
     static Optional<ValidationEvent> checkForAdditionalProperties(
             ObjectNode node,
-            ShapeId shape, Collection<String> properties
+            ShapeId shape,
+            Collection<String> properties
     ) {
         try {
             node.expectNoAdditionalProperties(properties);
@@ -114,7 +104,7 @@ final class LoaderUtils {
 
     static ValidationEvent emitBadDocComment(SourceLocation location, String comments) {
         String message = "Found documentation comments ('///') attached to nothing. Documentation comments must "
-                         + "appear on their own lines, directly before shapes and members, and before any traits.";
+                + "appear on their own lines, directly before shapes and members, and before any traits.";
         if (comments != null) {
             message += " The invalid comments were: " + comments;
         }
@@ -154,7 +144,9 @@ final class LoaderUtils {
     static ModelSyntaxException idlSyntaxError(ShapeId shape, String message, SourceLocation location) {
         return ModelSyntaxException.builder()
                 .message(format("Syntax error at line %d, column %d: %s",
-                                location.getLine(), location.getColumn(), message))
+                        location.getLine(),
+                        location.getColumn(),
+                        message))
                 .sourceLocation(location)
                 .shapeId(shape)
                 .build();

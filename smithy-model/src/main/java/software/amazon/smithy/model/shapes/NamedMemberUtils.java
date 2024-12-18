@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
@@ -28,8 +17,7 @@ import software.amazon.smithy.utils.BuilderRef;
 
 final class NamedMemberUtils {
 
-    private NamedMemberUtils() {
-    }
+    private NamedMemberUtils() {}
 
     static Map<String, MemberShape> computeMixinMembers(
             Map<ShapeId, Shape> mixins,
@@ -62,17 +50,18 @@ final class NamedMemberUtils {
                         validateMixinMemberConflict(member, previouslyDefined);
                         computedMembers.put(name,
                                 previouslyDefined.toBuilder()
-                                .source(member.getSourceLocation())
-                                .addMixin(member)
-                                .addTraits(member.getAllTraits().values())
-                                .build());
+                                        .source(member.getSourceLocation())
+                                        .addMixin(member)
+                                        .addTraits(member.getAllTraits().values())
+                                        .build());
                     } else {
-                        computedMembers.put(name, MemberShape.builder()
-                                .id(shapeId.withMember(name))
-                                .target(member.getTarget())
-                                .source(member.getSourceLocation())
-                                .addMixin(member)
-                                .build());
+                        computedMembers.put(name,
+                                MemberShape.builder()
+                                        .id(shapeId.withMember(name))
+                                        .target(member.getTarget())
+                                        .source(member.getSourceLocation())
+                                        .addMixin(member)
+                                        .build());
                     }
                 }
             }
@@ -121,13 +110,14 @@ final class NamedMemberUtils {
                     previousTraits = previouslyDefined.getAllTraits().values();
                     validateMixinMemberConflict(member, previouslyDefined);
                 }
-                orderedMembers.put(memberName, MemberShape.builder()
-                        .id(shapeId.withMember(memberName))
-                        .target(member.getTarget())
-                        .addTraits(previousTraits)
-                        .addTraits(member.getAllTraits().values())
-                        .source(member.getSourceLocation())
-                        .build());
+                orderedMembers.put(memberName,
+                        MemberShape.builder()
+                                .id(shapeId.withMember(memberName))
+                                .target(member.getTarget())
+                                .addTraits(previousTraits)
+                                .addTraits(member.getAllTraits().values())
+                                .source(member.getSourceLocation())
+                                .build());
             }
         }
 
@@ -135,10 +125,11 @@ final class NamedMemberUtils {
             String memberName = entry.getKey();
             MemberShape existing = entry.getValue();
             MemberShape needUpdate = orderedMembers.get(memberName);
-            orderedMembers.put(memberName, needUpdate.toBuilder()
-                    .source(existing.getSourceLocation())
-                    .addTraits(existing.getIntroducedTraits().values())
-                    .build());
+            orderedMembers.put(memberName,
+                    needUpdate.toBuilder()
+                            .source(existing.getSourceLocation())
+                            .addTraits(existing.getIntroducedTraits().values())
+                            .build());
         }
 
         // Add any local members _after_ mixin members. LinkedHashMap will keep insertion

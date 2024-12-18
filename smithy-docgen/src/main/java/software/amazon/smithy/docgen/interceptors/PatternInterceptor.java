@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ShapeSubheadingSection;
@@ -20,8 +19,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class PatternInterceptor implements CodeInterceptor<ShapeSubheadingSection, DocWriter> {
     private static final Pair<String, String> REGEX_REF = Pair.of(
-            "ECMA 262 regular expression", "https://262.ecma-international.org/8.0/#sec-patterns"
-    );
+            "ECMA 262 regular expression",
+            "https://262.ecma-international.org/8.0/#sec-patterns");
 
     @Override
     public Class<ShapeSubheadingSection> sectionType() {

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,24 +56,26 @@ public class TopologicalIndexTest {
             recursive.add(shape.getId().toString());
         }
 
-        assertThat(ordered, contains(
-                "smithy.example#MyString",
-                "smithy.example#BamList$member",
-                "smithy.example#BamList",
-                "smithy.example#Bar$bam",
-                "smithy.api#Integer",
-                "smithy.example#Bar$baz",
-                "smithy.example#Bar",
-                "smithy.example#Foo$bar",
-                "smithy.example#Foo$foo",
-                "smithy.example#Foo"));
+        assertThat(ordered,
+                contains(
+                        "smithy.example#MyString",
+                        "smithy.example#BamList$member",
+                        "smithy.example#BamList",
+                        "smithy.example#Bar$bam",
+                        "smithy.api#Integer",
+                        "smithy.example#Bar$baz",
+                        "smithy.example#Bar",
+                        "smithy.example#Foo$bar",
+                        "smithy.example#Foo$foo",
+                        "smithy.example#Foo"));
 
-        assertThat(recursive, contains(
-                "smithy.example#Recursive",
-                "smithy.example#Recursive$b",
-                "smithy.example#RecursiveList$member",
-                "smithy.example#RecursiveList",
-                "smithy.example#Recursive$a"));
+        assertThat(recursive,
+                contains(
+                        "smithy.example#Recursive",
+                        "smithy.example#Recursive$b",
+                        "smithy.example#RecursiveList$member",
+                        "smithy.example#RecursiveList",
+                        "smithy.example#Recursive$a"));
     }
 
     @Test
@@ -123,36 +129,40 @@ public class TopologicalIndexTest {
         assertThat(topologicalShapes, equalTo(nonPrelude));
 
         // The ordered shape IDs must be in the this order.
-        List<String> orderedIds = index.getOrderedShapes().stream()
+        List<String> orderedIds = index.getOrderedShapes()
+                .stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)
                 .collect(Collectors.toList());
-        assertThat(orderedIds, contains(
-                "smithy.example#MyString",
-                "smithy.example#NonRecursive$foo",
-                "smithy.example#NonRecursive",
-                "smithy.example#NonRecursiveList$member",
-                "smithy.example#NonRecursiveList",
-                "smithy.example#User$notRecursive",
-                "smithy.example#UsersMap$key"));
+        assertThat(orderedIds,
+                contains(
+                        "smithy.example#MyString",
+                        "smithy.example#NonRecursive$foo",
+                        "smithy.example#NonRecursive",
+                        "smithy.example#NonRecursiveList$member",
+                        "smithy.example#NonRecursiveList",
+                        "smithy.example#User$notRecursive",
+                        "smithy.example#UsersMap$key"));
 
-        List<String> recursiveIds = index.getRecursiveShapes().stream()
+        List<String> recursiveIds = index.getRecursiveShapes()
+                .stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)
                 .collect(Collectors.toList());
-        assertThat(recursiveIds, contains(
-                "smithy.example#User",
-                "smithy.example#User$recursiveUser",
-                "smithy.example#UsersList$member",
-                "smithy.example#UsersMap$value",
-                "smithy.example#GetFooInput$foo",
-                "smithy.example#UsersList",
-                "smithy.example#UsersMap",
-                "smithy.example#GetFooInput",
-                "smithy.example#User$recursiveList",
-                "smithy.example#User$recursiveMap",
-                "smithy.example#GetFoo",
-                "smithy.example#Example"));
+        assertThat(recursiveIds,
+                contains(
+                        "smithy.example#User",
+                        "smithy.example#User$recursiveUser",
+                        "smithy.example#UsersList$member",
+                        "smithy.example#UsersMap$value",
+                        "smithy.example#GetFooInput$foo",
+                        "smithy.example#UsersList",
+                        "smithy.example#UsersMap",
+                        "smithy.example#GetFooInput",
+                        "smithy.example#User$recursiveList",
+                        "smithy.example#User$recursiveMap",
+                        "smithy.example#GetFoo",
+                        "smithy.example#Example"));
 
         for (String recursiveId : recursiveIds) {
             ShapeId id = ShapeId.from(recursiveId);

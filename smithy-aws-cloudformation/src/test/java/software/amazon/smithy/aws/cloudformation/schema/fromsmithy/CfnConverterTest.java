@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,14 +37,16 @@ public class CfnConverterTest {
         CfnConfig config = new CfnConfig();
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("smithy.example#TestService"));
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
                 .convertToNodes(testService);
 
         assertEquals(result.keySet().size(), 3);
-        assertThat(result.keySet(), containsInAnyOrder(ListUtils.of(
-                "Smithy::TestService::Bar",
-                "Smithy::TestService::Basil",
-                "Smithy::TestService::FooResource").toArray()));
+        assertThat(result.keySet(),
+                containsInAnyOrder(ListUtils.of(
+                        "Smithy::TestService::Bar",
+                        "Smithy::TestService::Basil",
+                        "Smithy::TestService::FooResource").toArray()));
         for (String resourceTypeName : result.keySet()) {
             String filename = Smithy2Cfn.getFileNameFromResourceType(resourceTypeName);
             // Handle our convention of using ".cfn.json" for schema validation.
@@ -82,8 +73,9 @@ public class CfnConverterTest {
 
         CfnConfig config = new CfnConfig();
         config.setService(ShapeId.from("smithy.example#TestService"));
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
-                    .convertToNodes(model);
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
+                .convertToNodes(model);
 
         assertEquals(result.keySet().size(), 1);
         assertThat(result.keySet(), containsInAnyOrder(ListUtils.of("AWS::SomeThing::FooResource").toArray()));
@@ -99,14 +91,16 @@ public class CfnConverterTest {
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("smithy.example#TestService"));
         config.setServiceName("ExampleService");
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
                 .convertToNodes(testService);
 
         assertEquals(result.keySet().size(), 3);
-        assertThat(result.keySet(), containsInAnyOrder(ListUtils.of(
-                "Smithy::ExampleService::Bar",
-                "Smithy::ExampleService::Basil",
-                "Smithy::ExampleService::FooResource").toArray()));
+        assertThat(result.keySet(),
+                containsInAnyOrder(ListUtils.of(
+                        "Smithy::ExampleService::Bar",
+                        "Smithy::ExampleService::Basil",
+                        "Smithy::ExampleService::FooResource").toArray()));
     }
 
     @Test
@@ -115,14 +109,16 @@ public class CfnConverterTest {
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("smithy.example#TestService"));
         config.setDisableCapitalizedProperties(true);
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
-                    .convertToNodes(testService);
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
+                .convertToNodes(testService);
 
         assertEquals(result.keySet().size(), 3);
-        assertThat(result.keySet(), containsInAnyOrder(ListUtils.of(
-                "Smithy::TestService::Bar",
-                "Smithy::TestService::Basil",
-                "Smithy::TestService::FooResource").toArray()));
+        assertThat(result.keySet(),
+                containsInAnyOrder(ListUtils.of(
+                        "Smithy::TestService::Bar",
+                        "Smithy::TestService::Basil",
+                        "Smithy::TestService::FooResource").toArray()));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("disable-caps-fooresource.cfn.json")));
 
@@ -141,7 +137,8 @@ public class CfnConverterTest {
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("example.weather#Weather"));
         config.setServiceName("Weather");
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
                 .convertToNodes(model);
         assertEquals(1, result.keySet().size());
         result.keySet().contains("Smithy::Weather::City");
@@ -164,14 +161,15 @@ public class CfnConverterTest {
         config.setOrganizationName("Smithy");
         config.setService(ShapeId.from("example.weather#Weather"));
         config.setServiceName("Weather");
-        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+        Map<String, ObjectNode> result = CfnConverter.create()
+                .config(config)
                 .convertToNodes(model);
         assertEquals(1, result.keySet().size());
         result.keySet().contains("Smithy::Weather::City");
- 
+
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("weather-service-wide.cfn.json")));
 
         Node.assertEquals(result.get("Smithy::Weather::City"), expectedNode);
-     }
+    }
 }

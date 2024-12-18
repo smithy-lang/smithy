@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -95,7 +93,8 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
         objectNode.getObjectMember(HEADERS, headers -> {
             for (Map.Entry<String, Node> header : headers.getStringMap().entrySet()) {
                 builder.putHeader(header.getKey(),
-                        header.getValue().expectArrayNode("header values should be an array")
+                        header.getValue()
+                                .expectArrayNode("header values should be an array")
                                 .getElementsAs(Expression::fromNode));
             }
         });
@@ -151,10 +150,12 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
      */
     public List<Map<Identifier, Literal>> getEndpointAuthSchemes() {
         return Optional.ofNullable(getProperties().get(ID_AUTH_SCHEMES))
-            .map(a -> a.asTupleLiteral().get().stream()
-                .map(l -> l.asRecordLiteral().get())
-                .collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
+                .map(a -> a.asTupleLiteral()
+                        .get()
+                        .stream()
+                        .map(l -> l.asRecordLiteral().get())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
     @Override

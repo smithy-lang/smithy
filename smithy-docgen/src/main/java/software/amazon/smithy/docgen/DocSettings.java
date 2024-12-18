@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import java.util.Map;
@@ -45,15 +44,17 @@ public record DocSettings(ShapeId service, String format, Map<ShapeId, String> r
      * @return loaded settings based on the given node.
      */
     public static DocSettings fromNode(ObjectNode pluginSettings) {
-        var references = pluginSettings.getObjectMember("references").orElse(ObjectNode.objectNode())
-                .getMembers().entrySet().stream()
+        var references = pluginSettings.getObjectMember("references")
+                .orElse(ObjectNode.objectNode())
+                .getMembers()
+                .entrySet()
+                .stream()
                 .collect(Collectors.toMap(
                         e -> ShapeId.from(e.getKey().getValue()),
                         e -> e.getValue().expectStringNode().getValue()));
         return new DocSettings(
                 pluginSettings.expectStringMember("service").expectShapeId(),
                 pluginSettings.getStringMemberOrDefault("format", "sphinx-markdown"),
-                references
-        );
+                references);
     }
 }

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -53,6 +52,6 @@ public final class ErrorRule extends Rule {
     @Override
     public String toString() {
         return super.toString()
-               + StringUtils.indent(String.format("error(%s)", error), 2);
+                + StringUtils.indent(String.format("error(%s)", error), 2);
     }
 }

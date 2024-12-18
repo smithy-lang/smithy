@@ -1,25 +1,13 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -61,14 +49,20 @@ public final class HandlerPermissionMapperTest {
         Assertions.assertEquals(3, handlersDefined.size());
         assertThat(handlersDefined.keySet(), containsInAnyOrder("create", "read", "update"));
 
-        assertThat(handlersDefined.get("create").expectObjectNode()
-                           .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("create")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 containsInAnyOrder("testservice:CreateFooOperation", "otherservice:DescribeDependencyComponent"));
-        assertThat(handlersDefined.get("read").expectObjectNode()
-                           .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("read")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 containsInAnyOrder("testservice:GetFooOperation", "otherservice:DescribeThing"));
-        assertThat(handlersDefined.get("update").expectObjectNode()
-                           .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("update")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 contains("testservice:UpdateFooOperation"));
     }
 
@@ -79,11 +73,15 @@ public final class HandlerPermissionMapperTest {
         Assertions.assertEquals(2, handlersDefined.size());
         assertThat(handlersDefined.keySet(), containsInAnyOrder("create", "update"));
 
-        assertThat(handlersDefined.get("create").expectObjectNode()
-                        .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("create")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 contains("testservice:CreateBar"));
-        assertThat(handlersDefined.get("update").expectObjectNode()
-                        .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("update")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 contains("testservice:CreateBar"));
     }
 
@@ -94,8 +92,10 @@ public final class HandlerPermissionMapperTest {
         Assertions.assertEquals(1, handlersDefined.size());
         assertThat(handlersDefined.keySet(), contains("create"));
 
-        assertThat(handlersDefined.get("create").expectObjectNode()
-                        .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
+        assertThat(handlersDefined.get("create")
+                .expectObjectNode()
+                .expectArrayMember("permissions")
+                .getElementsAs(StringNode::getValue),
                 contains("testservice:CreateBaz"));
     }
 

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.testrunner;
 
 import java.io.IOException;
@@ -287,13 +276,13 @@ public final class SmithyTestSuite {
 
         if (!criticalEvents.isEmpty() && !nonCriticalEvents.isEmpty()) {
             LOGGER.warning(String.format("Test suite `%s` relies on the emission of non-critical validation events "
-                                         + "after critical validation events were emitted. This test case should be "
-                                         + "refactored so that critical validation events are tested using separate "
-                                         + "test cases from non-critical events. Critical events: %s. Non-critical "
-                                         + "events: %s",
-                                         testCase.getModelLocation(),
-                                         criticalEvents,
-                                         nonCriticalEvents));
+                    + "after critical validation events were emitted. This test case should be "
+                    + "refactored so that critical validation events are tested using separate "
+                    + "test cases from non-critical events. Critical events: %s. Non-critical "
+                    + "events: %s",
+                    testCase.getModelLocation(),
+                    criticalEvents,
+                    nonCriticalEvents));
             return true;
         }
 
@@ -402,7 +391,8 @@ public final class SmithyTestSuite {
         public String toString() {
             StringBuilder builder = new StringBuilder(String.format(
                     "Smithy validation test runner encountered %d successful result(s), and %d failed result(s)",
-                    getSuccessCount(), getFailedResults().size()));
+                    getSuccessCount(),
+                    getFailedResults().size()));
             getFailedResults().forEach(failed -> builder.append('\n').append(failed.toString()).append('\n'));
             return builder.toString();
         }

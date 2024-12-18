@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.plugins;
 
 import java.io.ByteArrayInputStream;
@@ -118,20 +107,20 @@ public final class RunPlugin implements SmithyBuildPlugin {
         Appendable appendable = new StringBuilder();
 
         LOGGER.fine(() -> "Running command for artifact "
-                          + context.getArtifactName().orElse(getName())
-                          + ": " + command);
+                + context.getArtifactName().orElse(getName())
+                + ": " + command);
 
         int result;
         try {
             result = IoUtils.runCommand(command, baseDir, inputStream, appendable, env);
         } catch (RuntimeException e) {
             throw new SmithyBuildException("Error running process `" + String.join(" ", command) + "` for '"
-                                           + artifactName + "': " + e.getMessage(), e);
+                    + artifactName + "': " + e.getMessage(), e);
         }
 
         if (result != 0) {
             throw new SmithyBuildException(("Error exit code " + result + " returned from: `"
-                                           + String.join(" ", command) + "`: " + appendable).trim());
+                    + String.join(" ", command) + "`: " + appendable).trim());
         }
 
         LOGGER.fine(() -> command.get(0) + " output: " + appendable);

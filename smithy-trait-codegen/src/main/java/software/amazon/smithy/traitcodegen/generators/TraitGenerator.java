@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.function.Consumer;
@@ -52,30 +51,49 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
             boolean isAggregateType = directive.shape().getType().getCategory().equals(ShapeType.Category.AGGREGATE);
             writer.putContext("isAggregateType", isAggregateType);
             writer.openBlock("public final class $2T extends $baseClass:T"
-                            + "${?isAggregateType} implements $1T<$2T>${/isAggregateType} {", "}",
-                    ToSmithyBuilder.class, directive.symbol(), () -> {
-                // All traits include a static ID property
-                writer.write("public static final $1T ID = $1T.from($2S);",
-                        ShapeId.class, directive.shape().getId());
-                writer.newLine();
-                new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-                new ConstructorGenerator(writer, directive.symbol(), directive.shape(),
-                        directive.symbolProvider()).run();
-                // Abstract Traits need to define serde methods
-                if (AbstractTrait.class.equals(
-                        directive.shape().accept(new BaseClassVisitor(directive.symbolProvider())))
-                ) {
-                    new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
-                }
-                new FromNodeGenerator(writer, directive.symbol(), directive.shape(),
-                        directive.symbolProvider(), directive.model()).run();
-                new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape()).run();
-                directive.shape().accept(new NestedClassVisitor(writer, directive.symbolProvider(), directive.model()));
-                new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(), directive.shape(),
-                        directive.model()).run();
-                new ProviderGenerator(writer, directive.model(), directive.shape(),
-                        directive.symbolProvider(), directive.symbol()).run();
-            });
+                    + "${?isAggregateType} implements $1T<$2T>${/isAggregateType} {",
+                    "}",
+                    ToSmithyBuilder.class,
+                    directive.symbol(),
+                    () -> {
+                        // All traits include a static ID property
+                        writer.write("public static final $1T ID = $1T.from($2S);",
+                                ShapeId.class,
+                                directive.shape().getId());
+                        writer.newLine();
+                        new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
+                        new ConstructorGenerator(writer,
+                                directive.symbol(),
+                                directive.shape(),
+                                directive.symbolProvider()).run();
+                        // Abstract Traits need to define serde methods
+                        if (AbstractTrait.class.equals(
+                                directive.shape().accept(new BaseClassVisitor(directive.symbolProvider())))) {
+                            new ToNodeGenerator(writer,
+                                    directive.shape(),
+                                    directive.symbolProvider(),
+                                    directive.model()).run();
+                        }
+                        new FromNodeGenerator(writer,
+                                directive.symbol(),
+                                directive.shape(),
+                                directive.symbolProvider(),
+                                directive.model()).run();
+                        new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape())
+                                .run();
+                        directive.shape()
+                                .accept(new NestedClassVisitor(writer, directive.symbolProvider(), directive.model()));
+                        new BuilderGenerator(writer,
+                                directive.symbol(),
+                                directive.symbolProvider(),
+                                directive.shape(),
+                                directive.model()).run();
+                        new ProviderGenerator(writer,
+                                directive.model(),
+                                directive.shape(),
+                                directive.symbolProvider(),
+                                directive.symbol()).run();
+                    });
             writer.popState();
         });
         // Add the trait provider to the META-INF/services/TraitService file
@@ -89,8 +107,9 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
      * @param symbol  Symbol for trait class
      */
     private static void addSpiTraitProvider(TraitCodegenContext context, Symbol symbol) {
-        context.writerDelegator().useFileWriter(PROVIDER_FILE,
-                writer -> writer.writeInline("$L$$Provider", symbol.getFullName()));
+        context.writerDelegator()
+                .useFileWriter(PROVIDER_FILE,
+                        writer -> writer.writeInline("$L$$Provider", symbol.getFullName()));
     }
 
     /**

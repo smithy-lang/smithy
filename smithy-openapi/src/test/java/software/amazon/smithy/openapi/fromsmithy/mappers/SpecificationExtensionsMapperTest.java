@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.io.InputStream;
@@ -24,9 +28,9 @@ public class SpecificationExtensionsMapperTest {
         config.setService(ShapeId.from("smithy.example#Service"));
 
         Node actual = OpenApiConverter
-                        .create()
-                        .config(config)
-                        .convertToNode(getSpecificationExtensionTraits(name));
+                .create()
+                .config(config)
+                .convertToNode(getSpecificationExtensionTraits(name));
         Node expected = getExpectedOpenAPI(name);
 
         Node.assertEquals(actual, expected);

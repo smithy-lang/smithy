@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import java.util.Optional;
@@ -28,7 +27,7 @@ abstract class NoReplaceInterceptor<S extends CodeSection> implements CodeInterc
     @Override
     public boolean isIntercepted(S section) {
         var shape = getShape(section);
-        var resource =  getResource(getContext(section), shape);
+        var resource = getResource(getContext(section), shape);
         return resource.isPresent()
                 && resource.get().hasTrait(NoReplaceTrait.class)
                 && resource.get().getPut().map(put -> put.equals(shape.getId())).orElse(false);
@@ -66,7 +65,6 @@ abstract class NoReplaceInterceptor<S extends CodeSection> implements CodeInterc
      * @return returns the section's shape.
      */
     abstract Shape getShape(S section);
-
 
     /**
      * Extracts the context for the section.

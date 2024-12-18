@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.waiters;
 
 import java.util.ArrayList;
@@ -54,17 +43,20 @@ public final class UniqueWaiterNamesValidator extends AbstractValidator {
         for (Map.Entry<String, Set<OperationShape>> entry : waiterNamesToOperations.entrySet()) {
             if (entry.getValue().size() > 1) {
                 for (OperationShape operation : entry.getValue()) {
-                    Set<ShapeId> conflicts = entry.getValue().stream()
+                    Set<ShapeId> conflicts = entry.getValue()
+                            .stream()
                             .filter(o -> !o.equals(operation))
                             .map(Shape::getId)
                             .collect(Collectors.toCollection(TreeSet::new));
-                    events.add(error(operation, operation.expectTrait(WaitableTrait.class), String.format(
-                            "`%s` trait waiter name `%s` case-insensitively conflicts with waiters on other "
-                            + "operations in the closure of service, `%s`: %s",
-                            WaitableTrait.ID,
-                            entry.getKey(),
-                            service.getId(),
-                            conflicts)));
+                    events.add(error(operation,
+                            operation.expectTrait(WaitableTrait.class),
+                            String.format(
+                                    "`%s` trait waiter name `%s` case-insensitively conflicts with waiters on other "
+                                            + "operations in the closure of service, `%s`: %s",
+                                    WaitableTrait.ID,
+                                    entry.getKey(),
+                                    service.getId(),
+                                    conflicts)));
                 }
             }
         }
@@ -80,7 +72,8 @@ public final class UniqueWaiterNamesValidator extends AbstractValidator {
             operation.getTrait(WaitableTrait.class).ifPresent(trait -> {
                 for (String name : trait.getWaiters().keySet()) {
                     Set<OperationShape> operations = waiterNamesToOperations.computeIfAbsent(
-                            name.toLowerCase(Locale.ENGLISH), n -> new HashSet<>());
+                            name.toLowerCase(Locale.ENGLISH),
+                            n -> new HashSet<>());
                     operations.add(operation);
                 }
             });

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.language.value;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +14,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 
 public class TemplateTest {
@@ -19,7 +22,12 @@ public class TemplateTest {
         checkTemplateParts("asdf", "asdf");
         checkTemplateParts("a{B}c", "a", "{B}", "c");
         checkTemplateParts("a{{b}}c", "a{b}c");
-        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com", "https://", "{Bucket#arn-region}", ".", "{Region}", ".amazonaws.com");
+        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com",
+                "https://",
+                "{Bucket#arn-region}",
+                ".",
+                "{Region}",
+                ".amazonaws.com");
         checkTemplateParts("https://{Partition#meta.dnsSuffix}", "https://", "{Partition#meta.dnsSuffix}");
         checkTemplateParts("https://{ {\"ref\": \"Foo\"} }.com", "https://", "{ {\"ref\": \"Foo\"} }", ".com");
         checkTemplateParts("{a}b", "{a}", "b");
@@ -36,11 +44,16 @@ public class TemplateTest {
 
     @Test
     public void validateShortformParsing() {
-        assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.getReference(Identifier.of("a"), SourceLocation.none()));
-        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), GetAttr.ofExpressions(
-                Expression.getReference(Identifier.of("a"), SourceLocation.none()), "b"));
-        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), GetAttr.ofExpressions(
-                Expression.getReference(Identifier.of("a"), SourceLocation.none()), "b.c"));
+        assertEquals(Expression.parseShortform("a", SourceLocation.none()),
+                Expression.getReference(Identifier.of("a"), SourceLocation.none()));
+        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()),
+                GetAttr.ofExpressions(
+                        Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+                        "b"));
+        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()),
+                GetAttr.ofExpressions(
+                        Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+                        "b.c"));
     }
 
     @Test

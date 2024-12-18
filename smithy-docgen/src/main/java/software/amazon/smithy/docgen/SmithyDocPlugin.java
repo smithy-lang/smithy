@@ -2,9 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +37,7 @@ public final class SmithyDocPlugin implements SmithyBuildPlugin {
     @Override
     public void execute(PluginContext pluginContext) {
         LOGGER.fine("Beginning documentation generation.");
-        CodegenDirector<DocWriter, DocIntegration, DocGenerationContext, DocSettings> runner
-                = new CodegenDirector<>();
+        CodegenDirector<DocWriter, DocIntegration, DocGenerationContext, DocSettings> runner = new CodegenDirector<>();
 
         runner.directedCodegen(new DirectedDocGen());
         runner.integrationClass(DocIntegration.class);
@@ -59,7 +56,8 @@ public final class SmithyDocPlugin implements SmithyBuildPlugin {
 
         // This will discover and apply suppressions from the model.
         Optional<ValidationEventDecorator> modelDecorator = new ModelBasedEventDecorator()
-                .createDecorator(model).getResult();
+                .createDecorator(model)
+                .getResult();
         if (modelDecorator.isPresent()) {
             eventDecorator = ValidationEventDecorator.compose(List.of(modelDecorator.get(), eventDecorator));
         }

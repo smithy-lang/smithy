@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model;
 
 import java.util.AbstractSet;
@@ -711,7 +700,8 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public Shape expectShape(ShapeId id) {
         return getShape(id).orElseThrow(() -> new ExpectationNotMetException(
-                "Shape not found in model: " + id, SourceLocation.NONE));
+                "Shape not found in model: " + id,
+                SourceLocation.NONE));
     }
 
     /**
@@ -733,7 +723,9 @@ public final class Model implements ToSmithyBuilder<Model> {
 
         throw new ExpectationNotMetException(String.format(
                 "Expected shape `%s` to be an instance of `%s`, but found `%s`",
-                id, type.getSimpleName(), shape.getType()), shape);
+                id,
+                type.getSimpleName(),
+                shape.getType()), shape);
     }
 
     /**
@@ -859,11 +851,14 @@ public final class Model implements ToSmithyBuilder<Model> {
                 return type.getConstructor(Model.class).newInstance(this);
             } catch (NoSuchMethodException e) {
                 String message = String.format(
-                        "KnowledgeIndex for type `%s` does not expose a public constructor that accepts a Model", type);
+                        "KnowledgeIndex for type `%s` does not expose a public constructor that accepts a Model",
+                        type);
                 throw new RuntimeException(message, e);
             } catch (ReflectiveOperationException e) {
                 String message = String.format(
-                        "Unable to create a KnowledgeIndex for type `%s`: %s", type, e.getMessage());
+                        "Unable to create a KnowledgeIndex for type `%s`: %s",
+                        type,
+                        e.getMessage());
                 throw new RuntimeException(message, e);
             }
         });

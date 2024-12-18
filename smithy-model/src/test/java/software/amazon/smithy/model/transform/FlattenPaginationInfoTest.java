@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +29,6 @@ public class FlattenPaginationInfoTest {
 
         Shape resultService = result.expectShape(serviceId);
         assertFalse(resultService.hasTrait(PaginatedTrait.class));
-
 
         Shape resultOperation = result.expectShape(operationId);
         PaginatedTrait resultTrait = resultOperation.expectTrait(PaginatedTrait.class);

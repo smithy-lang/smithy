@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.smoketests.model;
 
 import java.util.Optional;
@@ -15,8 +14,7 @@ import software.amazon.smithy.smoketests.traits.SmokeTestCase;
  * kinds of vendor params shapes used in smoke tests for AWS services.
  */
 public final class AwsSmokeTestModel {
-    private AwsSmokeTestModel() {
-    }
+    private AwsSmokeTestModel() {}
 
     /**
      * @param testCase The test case to check.

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -132,8 +121,9 @@ public class SmithyBuildConfigTest {
         // Did the key expand?
         assertThat(transform.getName(), equalTo("includeShapesByTag"));
         // Did the array and string values in it expand?
-        assertThat(transform.getArgs(), equalTo(Node.objectNode()
-                .withMember("tags", Node.fromStrings("Hi", "compoundTagFromEnv", "${BAZ}"))));
+        assertThat(transform.getArgs(),
+                equalTo(Node.objectNode()
+                        .withMember("tags", Node.fromStrings("Hi", "compoundTagFromEnv", "${BAZ}"))));
     }
 
     @Test
@@ -190,13 +180,15 @@ public class SmithyBuildConfigTest {
                 .expectObjectNode()
                 .toBuilder()
                 .sourceLocation(new SourceLocation(
-                        root.resolve("hello").resolve("smithy-build.json").toString(), 1, 1))
+                        root.resolve("hello").resolve("smithy-build.json").toString(),
+                        1,
+                        1))
                 .build();
         SmithyBuildConfig config = SmithyBuildConfig.fromNode(value);
 
         assertThat(config.getImports(), contains(root.resolve("hello").resolve("foo.json").toString()));
         assertThat(config.getProjections().get("a").getImports(),
-                   contains(root.resolve("hello").resolve("baz.json").toString()));
+                contains(root.resolve("hello").resolve("baz.json").toString()));
     }
 
     @Test
@@ -224,7 +216,8 @@ public class SmithyBuildConfigTest {
     @Test
     public void mergingTakesOtherMavenConfigWhenHasNone() {
         SmithyBuildConfig a = SmithyBuildConfig.builder().version("1").build();
-        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1")
+        SmithyBuildConfig b = SmithyBuildConfig.builder()
+                .version("1")
                 .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0")).build())
                 .build();
 
@@ -233,7 +226,8 @@ public class SmithyBuildConfigTest {
 
     @Test
     public void mergingTakesSelfMavenConfigWhenOtherHasNone() {
-        SmithyBuildConfig a = SmithyBuildConfig.builder().version("1")
+        SmithyBuildConfig a = SmithyBuildConfig.builder()
+                .version("1")
                 .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0")).build())
                 .build();
         SmithyBuildConfig b = SmithyBuildConfig.builder().version("1").build();
@@ -243,14 +237,16 @@ public class SmithyBuildConfigTest {
 
     @Test
     public void mergingCombinesMavenConfigsWhenBothPresent() {
-        SmithyBuildConfig a = SmithyBuildConfig.builder().version("1")
+        SmithyBuildConfig a = SmithyBuildConfig.builder()
+                .version("1")
                 .maven(MavenConfig.builder().dependencies(ListUtils.of("c:d:1.0.0")).build())
                 .build();
-        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1")
+        SmithyBuildConfig b = SmithyBuildConfig.builder()
+                .version("1")
                 .maven(MavenConfig.builder().dependencies(ListUtils.of("a:b:1.0.0", "c:d:1.0.0")).build())
                 .build();
 
         assertThat(a.toBuilder().merge(b).build().getMaven().get().getDependencies(),
-                   contains("c:d:1.0.0", "a:b:1.0.0"));
+                contains("c:d:1.0.0", "a:b:1.0.0"));
     }
 }

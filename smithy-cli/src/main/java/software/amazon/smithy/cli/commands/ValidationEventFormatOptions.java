@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.function.Consumer;
@@ -36,15 +35,15 @@ final class ValidationEventFormatOptions implements ArgumentReceiver {
             void print(CliPrinter printer, ValidationEventFormatter formatter, ValidationEvent event) {
                 printer.println(
                         String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d,%d,\"%s\",\"%s\",\"%s\"",
-                                      event.getSeverity().toString(),
-                                      formatCsv(event.getId()),
-                                      event.getShapeId().map(ShapeId::toString).orElse(""),
-                                      formatCsv(event.getSourceLocation().getFilename()),
-                                      event.getSourceLocation().getLine(),
-                                      event.getSourceLocation().getColumn(),
-                                      formatCsv(event.getMessage()),
-                                      formatCsv(event.getHint().orElse("")),
-                                      formatCsv(event.getSuppressionReason().orElse(""))));
+                                event.getSeverity().toString(),
+                                formatCsv(event.getId()),
+                                event.getShapeId().map(ShapeId::toString).orElse(""),
+                                formatCsv(event.getSourceLocation().getFilename()),
+                                event.getSourceLocation().getLine(),
+                                event.getSourceLocation().getColumn(),
+                                formatCsv(event.getMessage()),
+                                formatCsv(event.getHint().orElse("")),
+                                formatCsv(event.getSuppressionReason().orElse(""))));
             }
         };
 
@@ -64,8 +63,10 @@ final class ValidationEventFormatOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.param(VALIDATION_FORMAT, null, "text|csv",
-                      "Specifies the format to write validation events (text or csv). Defaults to text.");
+        printer.param(VALIDATION_FORMAT,
+                null,
+                "text|csv",
+                "Specifies the format to write validation events (text or csv). Defaults to text.");
     }
 
     @Override

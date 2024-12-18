@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.testrunner;
 
 import static java.lang.String.format;
@@ -30,12 +29,12 @@ import software.amazon.smithy.utils.IoUtils;
  */
 public final class SmithyDiffTestCase {
     private static final Pattern EVENT_PATTERN = Pattern.compile(
-        "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] "
-            + "(?<shape>[^ ]+): "
-            + "?(?<message>.*) "
-            + "\\| "
-            + "(?<id>[^)]+)",
-        Pattern.DOTALL);
+            "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] "
+                    + "(?<shape>[^ ]+): "
+                    + "?(?<message>.*) "
+                    + "\\| "
+                    + "(?<id>[^)]+)",
+            Pattern.DOTALL);
 
     private final Path path;
     private final String name;
@@ -47,9 +46,9 @@ public final class SmithyDiffTestCase {
      * @param expectedEvents The expected diff events to encounter.
      */
     public SmithyDiffTestCase(
-        Path path,
-        String name,
-        List<ValidationEvent> expectedEvents
+            Path path,
+            String name,
+            List<ValidationEvent> expectedEvents
     ) {
         this.path = Objects.requireNonNull(path);
         this.name = Objects.requireNonNull(name);
@@ -119,17 +118,17 @@ public final class SmithyDiffTestCase {
      */
     public Result createResult(List<ValidationEvent> actualEvents) {
         List<ValidationEvent> unmatchedEvents = expectedEvents.stream()
-            .filter(expectedEvent -> actualEvents.stream()
-                .noneMatch(actualEvent -> compareEvents(expectedEvent, actualEvent)))
-            .collect(Collectors.toList());
+                .filter(expectedEvent -> actualEvents.stream()
+                        .noneMatch(actualEvent -> compareEvents(expectedEvent, actualEvent)))
+                .collect(Collectors.toList());
 
         List<ValidationEvent> extraEvents = actualEvents.stream()
-            .filter(actualEvent -> expectedEvents.stream()
-                .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent)))
-            // Exclude suppressed events from needing to be defined as acceptable events.
-            // However, these can still be defined as required events.
-            .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
-            .collect(Collectors.toList());
+                .filter(actualEvent -> expectedEvents.stream()
+                        .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent)))
+                // Exclude suppressed events from needing to be defined as acceptable events.
+                // However, these can still be defined as required events.
+                .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
+                .collect(Collectors.toList());
 
         return new SmithyDiffTestCase.Result(name, unmatchedEvents, extraEvents);
     }
@@ -143,10 +142,10 @@ public final class SmithyDiffTestCase {
 
         String comparedMessage = normalizeMessage(expected.getMessage());
         return expected.getSeverity() == actual.getSeverity()
-            && actual.containsId(expected.getId())
-            && expected.getShapeId().equals(actual.getShapeId())
-            // Normalize new lines.
-            && normalizedActualMessage.startsWith(comparedMessage);
+                && actual.containsId(expected.getId())
+                && expected.getShapeId().equals(actual.getShapeId())
+                // Normalize new lines.
+                && normalizedActualMessage.startsWith(comparedMessage);
     }
 
     // Newlines in persisted validation events are escaped.
@@ -158,28 +157,30 @@ public final class SmithyDiffTestCase {
         String fileName = path.resolve(name + SmithyDiffTestSuite.EVENTS).toString();
         String contents = IoUtils.readUtf8File(fileName);
         return Arrays.stream(contents.split("-----"))
-            .map(chunk -> chunk.trim())
-            .filter(chunk -> !chunk.isEmpty())
-            .map(chunk -> parseValidationEvent(chunk, fileName))
-            .collect(Collectors.toList());
+                .map(chunk -> chunk.trim())
+                .filter(chunk -> !chunk.isEmpty())
+                .map(chunk -> parseValidationEvent(chunk, fileName))
+                .collect(Collectors.toList());
     }
 
     static ValidationEvent parseValidationEvent(String event, String fileName) {
         Matcher matcher = EVENT_PATTERN.matcher(event);
         if (!matcher.find()) {
             throw new IllegalArgumentException(format("Invalid validation event in file `%s`, the following event did "
-                + "not match the expected regular expression `%s`: %s",
-                fileName, EVENT_PATTERN.pattern(), event));
+                    + "not match the expected regular expression `%s`: %s",
+                    fileName,
+                    EVENT_PATTERN.pattern(),
+                    event));
         }
 
         // Construct a dummy source location since we don't validate it.
         SourceLocation location = new SourceLocation("/", 0, 0);
 
         ValidationEvent.Builder builder = ValidationEvent.builder()
-            .severity(Severity.fromString(matcher.group("severity")).get())
-            .sourceLocation(location)
-            .id(matcher.group("id"))
-            .message(matcher.group("message"));
+                .severity(Severity.fromString(matcher.group("severity")).get())
+                .sourceLocation(location)
+                .id(matcher.group("id"))
+                .message(matcher.group("message"));
 
         // A shape ID of "-" means no shape.
         if (!matcher.group("shape").equals("-")) {
@@ -198,9 +199,9 @@ public final class SmithyDiffTestCase {
         private final Collection<ValidationEvent> extraEvents;
 
         Result(
-            String name,
-            Collection<ValidationEvent> unmatchedEvents,
-            Collection<ValidationEvent> extraEvents
+                String name,
+                Collection<ValidationEvent> unmatchedEvents,
+                Collection<ValidationEvent> extraEvents
         ) {
             this.name = name;
             this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
@@ -212,15 +213,15 @@ public final class SmithyDiffTestCase {
             StringBuilder builder = new StringBuilder();
 
             builder
-                .append("============================\n"
-                      + "Model Diff Validation Result\n"
-                      + "============================\n")
-                .append(name)
-                .append('\n');
+                    .append("============================\n"
+                            + "Model Diff Validation Result\n"
+                            + "============================\n")
+                    .append(name)
+                    .append('\n');
 
             if (!unmatchedEvents.isEmpty()) {
                 builder.append("\nDid not match the following events\n"
-                             + "----------------------------------\n");
+                        + "----------------------------------\n");
                 for (ValidationEvent event : unmatchedEvents) {
                     builder.append(event.toString()).append("\n\n");
                 }
@@ -228,7 +229,7 @@ public final class SmithyDiffTestCase {
 
             if (!extraEvents.isEmpty()) {
                 builder.append("\nEncountered unexpected events\n"
-                             + "-----------------------------\n");
+                        + "-----------------------------\n");
                 for (ValidationEvent event : extraEvents) {
                     builder.append(event.toString()).append("\n\n");
                 }

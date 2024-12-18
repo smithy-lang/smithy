@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,9 +29,11 @@ public class WriterDelegatorTest {
                 .definitionFile("com/foo/Baz.bam")
                 .build();
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
         Shape shape = StringShape.builder().id("com.foo#Baz").build();
-        delegator.useShapeWriter(shape, writer -> { });
+        delegator.useShapeWriter(shape, writer -> {});
 
         assertThat(delegator.getWriters(), hasKey(Paths.get("com/foo/Baz.bam").toString()));
     }
@@ -52,13 +43,15 @@ public class WriterDelegatorTest {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
-        Symbol symbol =  Symbol.builder()
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
+        Symbol symbol = Symbol.builder()
                 .namespace("com.foo", ".")
                 .name("Baz")
                 .definitionFile("com/foo/Baz.bam")
                 .build();
-        delegator.useSymbolWriter(symbol, writer -> { });
+        delegator.useSymbolWriter(symbol, writer -> {});
 
         assertThat(delegator.getWriters(), hasKey(Paths.get("com/foo/Baz.bam").toString()));
     }
@@ -68,7 +61,9 @@ public class WriterDelegatorTest {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
         SymbolDependency dependency = SymbolDependency.builder()
                 .packageName("x")
                 .version("123")
@@ -86,7 +81,9 @@ public class WriterDelegatorTest {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
 
         delegator.useFileWriter("foo/baz", writer -> {
             writer.write(".");
@@ -97,7 +94,7 @@ public class WriterDelegatorTest {
         });
 
         assertThat(delegator.getWriters().get(Paths.get("foo/baz").toString()).toString(),
-                   equalTo(".\n\n.\n"));
+                equalTo(".\n\n.\n"));
     }
 
     @Test
@@ -105,7 +102,9 @@ public class WriterDelegatorTest {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
         delegator.setAutomaticSeparator("");
 
         delegator.useFileWriter("foo/baz", writer -> {
@@ -117,7 +116,7 @@ public class WriterDelegatorTest {
         });
 
         assertThat(delegator.getWriters().get(Paths.get("foo/baz").toString()).toString(),
-                   equalTo("..\n"));
+                equalTo("..\n"));
     }
 
     @Test
@@ -129,7 +128,9 @@ public class WriterDelegatorTest {
                 .definitionFile("com/foo/Baz.bam")
                 .build();
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
         Shape shape = StringShape.builder().id("com.foo#Baz").build();
         delegator.useShapeWriter(shape, writer -> {
             writer.write("Hi!");
@@ -149,7 +150,9 @@ public class WriterDelegatorTest {
                 .definitionFile("com/foo/Baz.bam")
                 .build();
         WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+                mockManifest,
+                provider,
+                (f, n) -> new MySimpleWriter(n));
 
         CodeInterceptor<CodeSection, MySimpleWriter> a = CodeInterceptor.forName("test", (w, s) -> {
             w.write("Yes");

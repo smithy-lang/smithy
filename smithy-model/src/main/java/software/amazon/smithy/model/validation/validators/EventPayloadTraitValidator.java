@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -52,7 +41,9 @@ public final class EventPayloadTraitValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> validateEvent(StructureShape shape, MemberShape payload) {
-        List<String> unmarked = shape.getAllMembers().values().stream()
+        List<String> unmarked = shape.getAllMembers()
+                .values()
+                .stream()
                 .filter(FunctionalUtils.not(this::isMarked))
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList());
@@ -61,10 +52,12 @@ public final class EventPayloadTraitValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(shape, String.format(
-                "This event structure contains a member marked with the `eventPayload` trait, so all other members "
-                + "must be marked with the `eventHeader` trait. However, the following member(s) are not marked "
-                + "with the eventHeader trait: %s", ValidationUtils.tickedList(unmarked))));
+        return Optional.of(error(shape,
+                String.format(
+                        "This event structure contains a member marked with the `eventPayload` trait, so all other members "
+                                + "must be marked with the `eventHeader` trait. However, the following member(s) are not marked "
+                                + "with the eventHeader trait: %s",
+                        ValidationUtils.tickedList(unmarked))));
     }
 
     private boolean isMarked(Shape s) {

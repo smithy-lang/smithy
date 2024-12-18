@@ -2,9 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
-
 
 import java.nio.file.Paths;
 import software.amazon.smithy.build.FileManifest;
@@ -33,11 +31,9 @@ public final class PluginExecutor {
                         .withMember("package", "com.example.traits")
                         .withMember("namespace", "test.smithy.traitcodegen")
                         .withMember("header", ArrayNode.fromStrings("Header line One"))
-                        .build()
-                )
+                        .build())
                 .model(model)
                 .build();
         plugin.execute(context);
     }
 }
-

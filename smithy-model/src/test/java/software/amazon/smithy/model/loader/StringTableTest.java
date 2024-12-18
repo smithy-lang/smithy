@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +18,7 @@ public class StringTableTest {
     public void cachesAndReturnsStringValues() {
         StringTable table = new StringTable();
 
-        CharBuffer originalFoo = CharBuffer.wrap(new char[]{'f', 'o', 'o'});
+        CharBuffer originalFoo = CharBuffer.wrap(new char[] {'f', 'o', 'o'});
         String internedFoo = table.apply(originalFoo);
 
         assertThat(table.apply(originalFoo), equalTo(internedFoo));
@@ -25,9 +29,9 @@ public class StringTableTest {
     public void overwritePreviousValuesWhenFull() {
         StringTable table = new StringTable(1); // 2 entries
 
-        CharBuffer originalFoo = CharBuffer.wrap(new char[]{'f', 'o', 'o'});
-        CharBuffer originalFoo1 = CharBuffer.wrap(new char[]{'f', 'o', 'o', '1'});
-        CharBuffer originalFoo2 = CharBuffer.wrap(new char[]{'f', 'o', 'o', '2'});
+        CharBuffer originalFoo = CharBuffer.wrap(new char[] {'f', 'o', 'o'});
+        CharBuffer originalFoo1 = CharBuffer.wrap(new char[] {'f', 'o', 'o', '1'});
+        CharBuffer originalFoo2 = CharBuffer.wrap(new char[] {'f', 'o', 'o', '2'});
 
         String internedFoo = table.apply(originalFoo);
 

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import static software.amazon.smithy.model.validation.ValidationUtils.tickedList;
@@ -42,12 +41,16 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
             String resourceName = IamResourceTrait.resolveResourceName(resource);
             resourceMap.computeIfAbsent(resourceName, k -> new ArrayList<>()).add(resource.getId());
         }
-        resourceMap.entrySet().stream()
+        resourceMap.entrySet()
+                .stream()
                 .filter(entry -> entry.getValue().size() > 1)
-                .map(entry -> error(service, String.format(
-                        "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
-                                + "closure, but found multiple resources named `%s` in the service `%s`: [%s]",
-                        entry.getKey(), service.getId(), tickedList(entry.getValue()))))
+                .map(entry -> error(service,
+                        String.format(
+                                "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
+                                        + "closure, but found multiple resources named `%s` in the service `%s`: [%s]",
+                                entry.getKey(),
+                                service.getId(),
+                                tickedList(entry.getValue()))))
                 .forEach(events::add);
         return events;
     }

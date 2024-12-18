@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import java.util.ArrayList;
@@ -61,19 +50,25 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
             List<ValidationEvent> events
     ) {
         if (!input.hasTrait(InputTrait.class)) {
-            events.add(warning(input, String.format(
-                    "This structure is the input of `%s`, but it is not marked with the "
-                    + "@input trait. The @input trait gives operations more flexibility to "
-                    + "evolve their top-level input members in ways that would otherwise "
-                    + "be backward incompatible.", operation.getId()),
-                    INPUT, operation.getId().getName()));
+            events.add(warning(input,
+                    String.format(
+                            "This structure is the input of `%s`, but it is not marked with the "
+                                    + "@input trait. The @input trait gives operations more flexibility to "
+                                    + "evolve their top-level input members in ways that would otherwise "
+                                    + "be backward incompatible.",
+                            operation.getId()),
+                    INPUT,
+                    operation.getId().getName()));
         }
 
         if (!output.hasTrait(OutputTrait.class)) {
-            events.add(warning(output, String.format(
-                    "This structure is the output of `%s`, but it is not marked with "
-                    + "the @output trait.", operation.getId()),
-                    OUTPUT, operation.getId().getName()));
+            events.add(warning(output,
+                    String.format(
+                            "This structure is the output of `%s`, but it is not marked with "
+                                    + "the @output trait.",
+                            operation.getId()),
+                    OUTPUT,
+                    operation.getId().getName()));
         }
     }
 }

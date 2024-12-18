@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.evaluation.value;
 
 import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
@@ -70,8 +69,10 @@ public final class EndpointValue extends Value {
 
         objectNode.getObjectMember("headers", headers -> {
             for (Map.Entry<String, Node> entry : headers.getStringMap().entrySet()) {
-                builder.putHeader(entry.getKey(), entry.getValue().expectArrayNode("Header values must be an array")
-                        .getElementsAs(n -> n.expectStringNode().getValue()));
+                builder.putHeader(entry.getKey(),
+                        entry.getValue()
+                                .expectArrayNode("Header values must be an array")
+                                .getElementsAs(n -> n.expectStringNode().getValue()));
             }
         });
         return builder.build();

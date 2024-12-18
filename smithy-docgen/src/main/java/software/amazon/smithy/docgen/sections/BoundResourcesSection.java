@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import java.util.List;
@@ -36,6 +35,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public record BoundResourcesSection(
         DocGenerationContext context,
         EntityShape container,
-        List<ResourceShape> resources
-) implements CodeSection {
-}
+        List<ResourceShape> resources) implements CodeSection {}

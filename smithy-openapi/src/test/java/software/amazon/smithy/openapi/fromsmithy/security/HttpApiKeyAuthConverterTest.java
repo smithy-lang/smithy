@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy.security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +49,6 @@ public class HttpApiKeyAuthConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
-
 
     @Test
     public void returnsTraitHeader() {

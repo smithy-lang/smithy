@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.dependencies;
 
 import java.util.stream.Stream;
@@ -36,16 +40,15 @@ public class MavenDependencyResolverTest {
 
     public static Stream<Arguments> invalidDependencies() {
         return Stream.of(
-            Arguments.of("X"),
-            Arguments.of("smithy.foo:bar:RELEASE"),
-            Arguments.of("smithy.foo:bar:latest-status"),
-            Arguments.of("smithy.foo:bar:LATEST"),
-            Arguments.of("smithy.foo:bar:1.25.0+"),
-            Arguments.of("a::1.2.0"),
-            Arguments.of(":b:1.2.0"),
-            Arguments.of("a:b:"),
-            Arguments.of("a:b: ")
-        );
+                Arguments.of("X"),
+                Arguments.of("smithy.foo:bar:RELEASE"),
+                Arguments.of("smithy.foo:bar:latest-status"),
+                Arguments.of("smithy.foo:bar:LATEST"),
+                Arguments.of("smithy.foo:bar:1.25.0+"),
+                Arguments.of("a::1.2.0"),
+                Arguments.of(":b:1.2.0"),
+                Arguments.of("a:b:"),
+                Arguments.of("a:b: "));
     }
 
     @Test

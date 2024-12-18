@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.openapi.fromsmithy;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,8 +25,7 @@ public class Smithy2OpenApiTest {
         MockManifest manifest = new MockManifest();
         PluginContext context = PluginContext.builder()
                 .settings(Node.objectNode()
-                        .withMember("service", "example.rest#RestService")
-                )
+                        .withMember("service", "example.rest#RestService"))
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)

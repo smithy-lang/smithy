@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.node;
 
 import java.util.ArrayList;
@@ -39,9 +38,12 @@ final class UniqueItemsPlugin extends MemberAndShapeTraitPlugin<CollectionShape,
             for (Node duplicateNode : duplicateNodes) {
                 duplicateValues.add(duplicateNode.toString());
             }
-            emitter.accept(value, String.format(
-                    "Value provided for `%s` must have unique items, but the following items had multiple entries: "
-                    + "[`%s`]", shape.getId(), String.join("`, `", duplicateValues)));
+            emitter.accept(value,
+                    String.format(
+                            "Value provided for `%s` must have unique items, but the following items had multiple entries: "
+                                    + "[`%s`]",
+                            shape.getId(),
+                            String.join("`, `", duplicateValues)));
         }
     }
 }

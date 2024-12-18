@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -300,7 +304,7 @@ public class AttributeValueTest {
         assertThat(attr.getProperty("var").toString(), equalTo(""));
         assertThat(attr.getProperty("var").toMessageString(), equalTo(""));
         assertThat(attr.getPath(ListUtils.of("var", "a")).getProperty("id").toMessageString(),
-                   equalTo("[foo.baz#Foo2, foo.baz#Foo3]"));
+                equalTo("[foo.baz#Foo2, foo.baz#Foo3]"));
     }
 
     @Test

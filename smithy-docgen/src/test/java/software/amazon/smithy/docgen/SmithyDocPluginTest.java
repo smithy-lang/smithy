@@ -2,23 +2,21 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.jupiter.api.Test;
-import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.build.MockManifest;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.utils.IoUtils;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.MockManifest;
+import software.amazon.smithy.build.PluginContext;
+import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.utils.IoUtils;
 
 public class SmithyDocPluginTest {
 
@@ -62,6 +60,6 @@ public class SmithyDocPluginTest {
         }
 
         return IoUtils.readUtf8File(Paths.get(uri))
-            .replace("\r\n", "\n");
+                .replace("\r\n", "\n");
     }
 }

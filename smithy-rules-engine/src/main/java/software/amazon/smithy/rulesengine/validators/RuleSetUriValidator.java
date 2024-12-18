@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
@@ -93,7 +92,8 @@ public final class RuleSetUriValidator extends AbstractValidator {
                 if (part instanceof Template.Literal) {
                     String scheme = ((Template.Literal) part).getValue();
                     if (!(scheme.startsWith("http://") || scheme.startsWith("https://"))) {
-                        return Optional.of(error(serviceShape, template,
+                        return Optional.of(error(serviceShape,
+                                template,
                                 "URI should start with `http://` or `https://` but the URI started with "
                                         + scheme));
                     }

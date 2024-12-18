@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,7 +21,8 @@ public class NotSelectorTest {
 
     @BeforeAll
     public static void before() {
-        model = Model.assembler().addImport(SelectorTest.class.getResource("not-test.smithy"))
+        model = Model.assembler()
+                .addImport(SelectorTest.class.getResource("not-test.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -65,8 +70,8 @@ public class NotSelectorTest {
         Set<String> ids = SelectorTest.ids(
                 model,
                 "structure > member"
-                + ":not([trait|length])"
-                + ":test(> string :not([trait|length]))");
+                        + ":not([trait|length])"
+                        + ":test(> string :not([trait|length]))");
 
         assertThat(ids, hasItem("smithy.example#StructA$noLengthOnEither"));
         assertThat(ids, not(hasItem("smithy.example#StructA")));

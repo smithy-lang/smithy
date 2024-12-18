@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen.integrations;
 
 import software.amazon.smithy.codegen.core.SmithyIntegration;
@@ -20,5 +19,4 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * {@code AutoService}, can do this for you.
  */
 public interface TraitCodegenIntegration extends SmithyIntegration<TraitCodegenSettings, TraitCodegenWriter,
-        TraitCodegenContext> {
-}
+        TraitCodegenContext> {}

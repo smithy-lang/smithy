@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -42,8 +31,10 @@ public class CfnSchemasTest {
     private static final String JSON_SCHEMA = "draft-07-schema";
     private static final String DEFINITION = "provider.definition.schema.v1.json";
     private static final String CONFIGURATION = "provider.configuration.definition.schema.v1.json";
-    private static final String CONFIGURATION_URI = "https://schema.cloudformation.us-east-1.amazonaws.com/provider.configuration.definition.schema.v1.json";
-    private static final String BASE_DEFINITION_URI = "https://schema.cloudformation.us-east-1.amazonaws.com/base.definition.schema.v1.json";
+    private static final String CONFIGURATION_URI =
+            "https://schema.cloudformation.us-east-1.amazonaws.com/provider.configuration.definition.schema.v1.json";
+    private static final String BASE_DEFINITION_URI =
+            "https://schema.cloudformation.us-east-1.amazonaws.com/base.definition.schema.v1.json";
     private static final String BASE_DEFINITION = "base.definition.schema.v1.json";
 
     private static Schema validationSchema;
@@ -51,9 +42,9 @@ public class CfnSchemasTest {
     @BeforeAll
     public static void loadSchema() {
         try (InputStream schemaStream = CfnSchemasTest.class.getResourceAsStream(DEFINITION);
-                 InputStream draftSchemaStream = CfnSchemasTest.class.getResourceAsStream(JSON_SCHEMA);
-                 InputStream configSchemaStream = CfnSchemasTest.class.getResourceAsStream(CONFIGURATION);
-                 InputStream baseSchemaStream = CfnSchemasTest.class.getResourceAsStream(BASE_DEFINITION)) {
+                InputStream draftSchemaStream = CfnSchemasTest.class.getResourceAsStream(JSON_SCHEMA);
+                InputStream configSchemaStream = CfnSchemasTest.class.getResourceAsStream(CONFIGURATION);
+                InputStream baseSchemaStream = CfnSchemasTest.class.getResourceAsStream(BASE_DEFINITION)) {
 
             JSONObject schemaJson = new JSONObject(new JSONTokener(schemaStream));
             JSONObject baseSchemaJson = new JSONObject(new JSONTokener(baseSchemaStream));

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
@@ -104,11 +93,15 @@ public final class SymbolDependency extends TypedPropertiesBag
      * @throws CodegenException when two package versions conflict.
      */
     public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
-            Stream<SymbolDependency> symbolStream) {
+            Stream<SymbolDependency> symbolStream
+    ) {
         return gatherDependencies(symbolStream, (a, b) -> {
             throw new CodegenException(String.format(
                     "Found a conflicting `%s` dependency for `%s`: `%s` conflicts with `%s`",
-                    a.getDependencyType(), a.getPackageName(), a.getVersion(), b.getVersion()));
+                    a.getDependencyType(),
+                    a.getPackageName(),
+                    a.getVersion(),
+                    b.getVersion()));
         });
     }
 
@@ -207,10 +200,10 @@ public final class SymbolDependency extends TypedPropertiesBag
     @Override
     public String toString() {
         return "SymbolDependency{"
-               + "dependencyType='" + dependencyType + '\''
-               + ", packageName='" + packageName + '\''
-               + ", version='" + version + '\''
-               + '}';
+                + "dependencyType='" + dependencyType + '\''
+                + ", packageName='" + packageName + '\''
+                + ", version='" + version + '\''
+                + '}';
     }
 
     @Override
@@ -223,9 +216,9 @@ public final class SymbolDependency extends TypedPropertiesBag
 
         SymbolDependency that = (SymbolDependency) o;
         return super.equals(o)
-               && dependencyType.equals(that.dependencyType)
-               && packageName.equals(that.packageName)
-               && version.equals(that.version);
+                && dependencyType.equals(that.dependencyType)
+                && packageName.equals(that.packageName)
+                && version.equals(that.version);
     }
 
     @Override

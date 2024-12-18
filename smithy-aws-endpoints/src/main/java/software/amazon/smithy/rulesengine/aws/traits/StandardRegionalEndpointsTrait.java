@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
     @Override
     protected Node createNode() {
         ObjectNode.Builder partitionSpecialCasesNodeBuilder = ObjectNode.objectNodeBuilder();
-        for (Map.Entry<String, List<PartitionSpecialCase>> entry: partitionSpecialCases.entrySet()) {
+        for (Map.Entry<String, List<PartitionSpecialCase>> entry : partitionSpecialCases.entrySet()) {
             List<Node> nodes = new ArrayList<>();
             for (PartitionSpecialCase partitionSpecialCase : entry.getValue()) {
                 nodes.add(partitionSpecialCase.toNode());
@@ -67,7 +66,7 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
         }
 
         ObjectNode.Builder regionSpecialCasesNodeBuilder = ObjectNode.objectNodeBuilder();
-        for (Map.Entry<String, List<RegionSpecialCase>> entry: regionSpecialCases.entrySet()) {
+        for (Map.Entry<String, List<RegionSpecialCase>> entry : regionSpecialCases.entrySet()) {
             List<Node> nodes = new ArrayList<>();
             for (RegionSpecialCase regionSpecialCase : entry.getValue()) {
                 nodes.add(regionSpecialCase.toNode());
@@ -106,22 +105,25 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
                     .sourceLocation(value);
 
             if (objectNode.containsMember(PARTITION_SPECIAL_CASES)) {
-                for (Map.Entry<String, Node> entry
-                        : objectNode.expectObjectMember(PARTITION_SPECIAL_CASES).getStringMap().entrySet()) {
+                for (Map.Entry<String, Node> entry : objectNode.expectObjectMember(PARTITION_SPECIAL_CASES)
+                        .getStringMap()
+                        .entrySet()) {
                     List<PartitionSpecialCase> partitionSpecialCases = new ArrayList<>();
-                    for (Node node: entry.getValue().expectArrayNode().getElements()) {
+                    for (Node node : entry.getValue().expectArrayNode().getElements()) {
                         partitionSpecialCases.add(PartitionSpecialCase.fromNode(node));
                     }
                     builder.putPartitionSpecialCases(
-                        entry.getKey(), Collections.unmodifiableList(partitionSpecialCases));
+                            entry.getKey(),
+                            Collections.unmodifiableList(partitionSpecialCases));
                 }
             }
 
             if (objectNode.containsMember(REGION_SPECIAL_CASES)) {
-                for (Map.Entry<String, Node> entry
-                        : objectNode.expectObjectMember(REGION_SPECIAL_CASES).getStringMap().entrySet()) {
+                for (Map.Entry<String, Node> entry : objectNode.expectObjectMember(REGION_SPECIAL_CASES)
+                        .getStringMap()
+                        .entrySet()) {
                     List<RegionSpecialCase> regionSpecialCases = new ArrayList<>();
-                    for (Node node: entry.getValue().expectArrayNode().getElements()) {
+                    for (Node node : entry.getValue().expectArrayNode().getElements()) {
                         regionSpecialCases.add(RegionSpecialCase.fromNode(node));
                     }
                     builder.putRegionSpecialCases(entry.getKey(), Collections.unmodifiableList(regionSpecialCases));

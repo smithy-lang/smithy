@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.lang.reflect.Method;
@@ -579,14 +568,52 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
 
     // Valid formatter characters that can be registered. Must be sorted for binary search to work.
     static final char[] VALID_FORMATTER_CHARS = {
-            '!', '%', '&', '*', '+', ',', '-', '.', ';', '=', '@',
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-            'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', '`'};
+            '!',
+            '%',
+            '&',
+            '*',
+            '+',
+            ',',
+            '-',
+            '.',
+            ';',
+            '=',
+            '@',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+            '_',
+            '`'};
 
     private static final Pattern LINES = Pattern.compile("\\r?\\n");
     private static final Map<Character, BiFunction<Object, String, String>> DEFAULT_FORMATTERS = MapUtils.of(
-            'L', (s, i) -> formatLiteral(s),
-            'S', (s, i) -> StringUtils.escapeJavaString(formatLiteral(s), i));
+            'L',
+            (s, i) -> formatLiteral(s),
+            'S',
+            (s, i) -> StringUtils.escapeJavaString(formatLiteral(s), i));
 
     private final Deque<State> states = new ArrayDeque<>();
     private State currentState;
@@ -917,7 +944,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         info.putMetadata("path", getStateDebugPath());
 
         if (numberOfContextLines < 0) {
-            throw new IllegalArgumentException("Cannot get fewer than 0 lines");
+            throw new IllegalArgumentException("Cannot get fewer than 0Lines");
         } else if (numberOfContextLines > 0) {
             StringBuilder lastLines = new StringBuilder();
             // Get the last N lines of text written.
@@ -1450,7 +1477,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns this.
      */
     public T openBlock(String textBeforeNewline, String textAfterNewline, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{}, f);
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {}, f);
     }
 
     /**
@@ -1465,7 +1492,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns this.
      */
     public T openBlock(String textBeforeNewline, String textAfterNewline, Object arg1, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1}, f);
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1}, f);
     }
 
     /**
@@ -1480,9 +1507,14 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns this.
      */
-    public T openBlock(String textBeforeNewline, String textAfterNewline,
-                       Object arg1, Object arg2, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2}, f);
+    public T openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Runnable f
+    ) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2}, f);
     }
 
     /**
@@ -1498,9 +1530,15 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns this.
      */
-    public T openBlock(String textBeforeNewline, String textAfterNewline,
-                       Object arg1, Object arg2, Object arg3, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3}, f);
+    public T openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Runnable f
+    ) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3}, f);
     }
 
     /**
@@ -1517,9 +1555,16 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns this.
      */
-    public T openBlock(String textBeforeNewline, String textAfterNewline,
-                       Object arg1, Object arg2, Object arg3, Object arg4, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4}, f);
+    public T openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Object arg4,
+            Runnable f
+    ) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3, arg4}, f);
     }
 
     /**
@@ -1537,9 +1582,17 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns this.
      */
-    public T openBlock(String textBeforeNewline, String textAfterNewline,
-                       Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Runnable f) {
-        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4, arg5}, f);
+    public T openBlock(
+            String textBeforeNewline,
+            String textAfterNewline,
+            Object arg1,
+            Object arg2,
+            Object arg3,
+            Object arg4,
+            Object arg5,
+            Runnable f
+    ) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[] {arg1, arg2, arg3, arg4, arg5}, f);
     }
 
     /**
@@ -1620,14 +1673,14 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     protected boolean isStackTraceRelevant(StackTraceElement e) {
         String normalized = e.getClassName().replace("$", ".");
         return !normalized.startsWith("java.")
-               // Ignore writes made by AbstractCodeWriter or AbstractCodeWriter$State.
-               && !normalized.startsWith(AbstractCodeWriter.class.getCanonicalName())
-               // Ignore writes made by subclasses of this class.
-               && !normalized.startsWith(getClass().getCanonicalName())
-               // Ignore writes made by SimpleCodeWriter.
-               && !normalized.equals(SimpleCodeWriter.class.getCanonicalName())
-               // Ignore any writes made by the well-known SymbolWriter from smithy-codegen-core.
-               && !normalized.equals("software.amazon.smithy.utils.SymbolWriter");
+                // Ignore writes made by AbstractCodeWriter or AbstractCodeWriter$State.
+                && !normalized.startsWith(AbstractCodeWriter.class.getCanonicalName())
+                // Ignore writes made by subclasses of this class.
+                && !normalized.startsWith(getClass().getCanonicalName())
+                // Ignore writes made by SimpleCodeWriter.
+                && !normalized.equals(SimpleCodeWriter.class.getCanonicalName())
+                // Ignore any writes made by the well-known SymbolWriter from smithy-codegen-core.
+                && !normalized.equals("software.amazon.smithy.utils.SymbolWriter");
     }
 
     /**
@@ -1800,7 +1853,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
 
     private boolean builderEndsWith(StringBuilder builder, String check) {
         return builder.length() > check.length()
-               && builder.substring(builder.length() - check.length(), builder.length()).equals(check);
+                && builder.substring(builder.length() - check.length(), builder.length()).equals(check);
     }
 
     /**
@@ -1983,7 +2036,10 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         } else {
             throw new ClassCastException(String.format(
                     "Expected context value '%s' to be an instance of %s, but found %s %s",
-                    key, type.getName(), value.getClass().getName(), getDebugInfo()));
+                    key,
+                    type.getName(),
+                    value.getClass().getName(),
+                    getDebugInfo()));
         }
     }
 
@@ -2042,8 +2098,10 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             } else {
                 throw new ClassCastException(String.format(
                         "Expected value for 'C' formatter to be an instance of %s or %s, but found %s %s",
-                        Runnable.class.getName(), Consumer.class.getName(),
-                        value == null ? "null" : value.getClass().getName(), getDebugInfo()));
+                        Runnable.class.getName(),
+                        Consumer.class.getName(),
+                        value == null ? "null" : value.getClass().getName(),
+                        getDebugInfo()));
             }
         } else {
             // Return null if no formatter was found.

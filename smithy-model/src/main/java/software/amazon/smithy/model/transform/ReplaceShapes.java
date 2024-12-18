@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
@@ -131,7 +120,9 @@ final class ReplaceShapes {
                 if (shape.getType() != previousShape.getType() && !isReplacementValid(shape, previousShape)) {
                     throw new ModelTransformException(String.format(
                             "Cannot change the type of %s from %s to %s",
-                            previousShape.getId(), previousShape.getType(), shape.getType()));
+                            previousShape.getId(),
+                            previousShape.getType(),
+                            shape.getType()));
                 }
             });
         }
@@ -192,8 +183,8 @@ final class ReplaceShapes {
         List<ShapeId> sorted = sorter.dequeueSortedShapes();
         for (ShapeId toRebuild : sorted) {
             Shape shape = updatedShapes.containsKey(toRebuild)
-                          ? updatedShapes.get(toRebuild)
-                          : model.expectShape(toRebuild);
+                    ? updatedShapes.get(toRebuild)
+                    : model.expectShape(toRebuild);
             if (!shape.getMixins().isEmpty()) {
                 // We don't clear mixins here because a shape might have an inherited
                 // mixin member that was updated with an applied trait. Clearing mixins
@@ -202,8 +193,8 @@ final class ReplaceShapes {
                 AbstractShapeBuilder<?, ?> shapeBuilder = Shape.shapeToBuilder(shape);
                 for (ShapeId mixin : shape.getMixins()) {
                     Shape mixinShape = updatedShapes.containsKey(mixin)
-                                       ? updatedShapes.get(mixin)
-                                       : model.expectShape(mixin);
+                            ? updatedShapes.get(mixin)
+                            : model.expectShape(mixin);
                     shapeBuilder.addMixin(mixinShape);
                 }
                 Shape rebuilt = shapeBuilder.build();

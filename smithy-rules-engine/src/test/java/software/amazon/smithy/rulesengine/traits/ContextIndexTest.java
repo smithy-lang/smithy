@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,13 +53,13 @@ public class ContextIndexTest {
                 model.expectShape(ShapeId.from("smithy.example#GetThing"))).get().getParameters();
 
         assertEquals(StaticContextParamDefinition.builder()
-                        .value(StringNode.from("some value"))
-                        .build(),
+                .value(StringNode.from("some value"))
+                .build(),
                 staticContexts.get("stringBar"));
 
         assertEquals(StaticContextParamDefinition.builder()
-                        .value(BooleanNode.from(true))
-                        .build(),
+                .value(BooleanNode.from(true))
+                .build(),
                 staticContexts.get("boolBar"));
     }
 
@@ -66,12 +70,14 @@ public class ContextIndexTest {
         Map<MemberShape, ContextParamTrait> contexts = index.getContextParams(
                 model.expectShape(ShapeId.from("smithy.example#GetThing")));
 
-        assertEquals(contexts.get(model.expectShape(ShapeId.from("smithy.example#GetThingInput$buzz"), MemberShape.class)),
+        assertEquals(
+                contexts.get(model.expectShape(ShapeId.from("smithy.example#GetThingInput$buzz"), MemberShape.class)),
                 ContextParamTrait.builder()
                         .name("stringBaz")
                         .build());
 
-        assertEquals(contexts.get(model.expectShape(ShapeId.from("smithy.example#GetThingInput$fuzz"), MemberShape.class)),
+        assertEquals(
+                contexts.get(model.expectShape(ShapeId.from("smithy.example#GetThingInput$fuzz"), MemberShape.class)),
                 ContextParamTrait.builder()
                         .name("boolBaz")
                         .build());

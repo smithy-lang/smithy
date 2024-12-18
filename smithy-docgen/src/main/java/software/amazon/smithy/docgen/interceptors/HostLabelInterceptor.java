@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ProtocolSection;
@@ -18,7 +17,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * hostLabel</a> trait if the protocol supports it..
  */
 @SmithyInternalApi
-public final class HostLabelInterceptor extends ProtocolTraitInterceptor<HostLabelTrait>  {
+public final class HostLabelInterceptor extends ProtocolTraitInterceptor<HostLabelTrait> {
     @Override
     protected Class<HostLabelTrait> getTraitClass() {
         return HostLabelTrait.class;

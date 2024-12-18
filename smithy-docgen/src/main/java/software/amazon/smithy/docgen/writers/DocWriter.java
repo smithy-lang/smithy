@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.writers;
 
 import java.util.function.Consumer;
@@ -108,7 +107,8 @@ public abstract class DocWriter extends SymbolWriter<DocWriter, DocImportContain
      * @return returns the writer.
      */
     public DocWriter writeShapeDocs(Shape shape, Model model) {
-        var documentation = shape.getMemberTrait(model, DocumentationTrait.class).map(StringTrait::getValue)
+        var documentation = shape.getMemberTrait(model, DocumentationTrait.class)
+                .map(StringTrait::getValue)
                 .orElse("Placeholder documentation for `" + shape.getId() + "`");
         writeCommonMark(documentation.replace("$", "$$"));
         return this;
@@ -140,9 +140,8 @@ public abstract class DocWriter extends SymbolWriter<DocWriter, DocImportContain
         headingDepth++;
         if (headingDepth > MAX_HEADING_DEPTH) {
             throw new CodegenException(String.format(
-                "Tried opening a heading nested more deeply than the max depth of %d.",
-                MAX_HEADING_DEPTH
-            ));
+                    "Tried opening a heading nested more deeply than the max depth of %d.",
+                    MAX_HEADING_DEPTH));
         }
         return openHeading(content, headingDepth);
     }
@@ -184,8 +183,7 @@ public abstract class DocWriter extends SymbolWriter<DocWriter, DocImportContain
         headingDepth--;
         if (headingDepth < 0) {
             throw new CodegenException(
-                "Attempted to close a heading when at the base heading level."
-            );
+                    "Attempted to close a heading when at the base heading level.");
         }
         write("");
         return this;

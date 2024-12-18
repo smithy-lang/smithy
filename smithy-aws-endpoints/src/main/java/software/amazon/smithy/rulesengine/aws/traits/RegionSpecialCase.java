@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
@@ -75,21 +74,21 @@ public final class RegionSpecialCase implements FromSourceLocation, ToNode, ToSm
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-            .withMember(ENDPOINT, endpoint)
-            .withMember(DUAL_STACK, dualStack.toString())
-            .withMember(FIPS, fips.toString())
-            .withMember(SIGNING_REGION, signingRegion)
-            .build();
+                .withMember(ENDPOINT, endpoint)
+                .withMember(DUAL_STACK, dualStack.toString())
+                .withMember(FIPS, fips.toString())
+                .withMember(SIGNING_REGION, signingRegion)
+                .build();
     }
 
     @Override
     public Builder toBuilder() {
         return new Builder()
-            .dualStack(dualStack)
-            .endpoint(endpoint)
-            .fips(fips)
-            .signingRegion(signingRegion)
-            .sourceLocation(sourceLocation);
+                .dualStack(dualStack)
+                .endpoint(endpoint)
+                .fips(fips)
+                .signingRegion(signingRegion)
+                .sourceLocation(sourceLocation);
     }
 
     @Override
@@ -106,12 +105,12 @@ public final class RegionSpecialCase implements FromSourceLocation, ToNode, ToSm
     public static RegionSpecialCase fromNode(Node node) {
         ObjectNode objectNode = node.expectObjectNode();
         return builder()
-            .sourceLocation(objectNode.getSourceLocation())
-            .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
-            .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
-            .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
-            .signingRegion(objectNode.getStringMemberOrDefault(SIGNING_REGION, null))
-            .build();
+                .sourceLocation(objectNode.getSourceLocation())
+                .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
+                .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
+                .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
+                .signingRegion(objectNode.getStringMemberOrDefault(SIGNING_REGION, null))
+                .build();
     }
 
     public static Builder builder() {

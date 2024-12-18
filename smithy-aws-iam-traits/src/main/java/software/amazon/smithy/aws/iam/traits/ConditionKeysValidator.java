@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import java.util.ArrayList;
@@ -66,24 +55,30 @@ public final class ConditionKeysValidator extends AbstractValidator {
                         List<String> invalidNames = new ArrayList<>(trait.getValues());
                         invalidNames.removeAll(knownKeys);
                         if (!invalidNames.isEmpty()) {
-                            results.add(error(service, trait, String.format(
-                                    "This condition keys resolved by the `%s` service "
-                                            + "refer to undefined "
-                                            + "condition key(s) [%s]. Expected one of the following "
-                                            + "defined condition keys: [%s]",
-                                    service.getId(),  ValidationUtils.tickedList(invalidNames),
-                                    ValidationUtils.tickedList(knownKeys))));
+                            results.add(error(service,
+                                    trait,
+                                    String.format(
+                                            "This condition keys resolved by the `%s` service "
+                                                    + "refer to undefined "
+                                                    + "condition key(s) [%s]. Expected one of the following "
+                                                    + "defined condition keys: [%s]",
+                                            service.getId(),
+                                            ValidationUtils.tickedList(invalidNames),
+                                            ValidationUtils.tickedList(knownKeys))));
                         }
                     }
 
                     for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
                         for (String name : conditionIndex.getConditionKeyNames(service, operation)) {
                             if (!knownKeys.contains(name) && !name.startsWith("aws:")) {
-                                results.add(error(operation, String.format(
-                                        "This operation scoped within the `%s` service refers to an undefined "
-                                                + "condition key `%s`. Expected one of the following defined condition "
-                                                + "keys: [%s]",
-                                        service.getId(), name, ValidationUtils.tickedList(knownKeys))));
+                                results.add(error(operation,
+                                        String.format(
+                                                "This operation scoped within the `%s` service refers to an undefined "
+                                                        + "condition key `%s`. Expected one of the following defined condition "
+                                                        + "keys: [%s]",
+                                                service.getId(),
+                                                name,
+                                                ValidationUtils.tickedList(knownKeys))));
                             }
                         }
 
@@ -92,20 +87,30 @@ public final class ConditionKeysValidator extends AbstractValidator {
                                 ConditionKeyValueTrait trait = memberShape.expectTrait(ConditionKeyValueTrait.class);
                                 String conditionKey = trait.getValue();
                                 if (!knownKeys.contains(conditionKey)) {
-                                    results.add(error(memberShape, trait, String.format(
-                                            "This operation `%s` scoped within the `%s` service with member `%s` "
-                                                    + "refers to an undefined "
-                                                    + "condition key `%s`. Expected one of the following defined "
-                                                    + "condition keys: [%s]",
-                                            operation.getId(), service.getId(), memberShape.getId(),
-                                            conditionKey, ValidationUtils.tickedList(knownKeys))));
+                                    results.add(error(memberShape,
+                                            trait,
+                                            String.format(
+                                                    "This operation `%s` scoped within the `%s` service with member `%s` "
+                                                            + "refers to an undefined "
+                                                            + "condition key `%s`. Expected one of the following defined "
+                                                            + "condition keys: [%s]",
+                                                    operation.getId(),
+                                                    service.getId(),
+                                                    memberShape.getId(),
+                                                    conditionKey,
+                                                    ValidationUtils.tickedList(knownKeys))));
                                 }
                                 if (serviceResolvedKeys.contains(conditionKey)) {
-                                    results.add(error(memberShape, trait, String.format(
-                                            "This operation `%s` scoped within the `%s` service with member `%s` refers"
-                                                    + " to a condition key `%s` that is also resolved by service.",
-                                            operation.getId(), service.getId(), memberShape.getId(),
-                                            conditionKey, ValidationUtils.tickedList(knownKeys))));
+                                    results.add(error(memberShape,
+                                            trait,
+                                            String.format(
+                                                    "This operation `%s` scoped within the `%s` service with member `%s` refers"
+                                                            + " to a condition key `%s` that is also resolved by service.",
+                                                    operation.getId(),
+                                                    service.getId(),
+                                                    memberShape.getId(),
+                                                    conditionKey,
+                                                    ValidationUtils.tickedList(knownKeys))));
                                 }
                             }
                         }

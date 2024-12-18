@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocol.traits;
 
 import java.util.ArrayList;
@@ -31,7 +30,8 @@ public final class Rpcv2CborTraitValidator extends AbstractValidator {
             List<String> invalid = new ArrayList<>(protocolTrait.getEventStreamHttp());
             invalid.removeAll(protocolTrait.getHttp());
             if (!invalid.isEmpty()) {
-                events.add(error(serviceShape, protocolTrait,
+                events.add(error(serviceShape,
+                        protocolTrait,
                         String.format("The following values of the `eventStreamHttp` property do "
                                 + "not also appear in the `http` property of the %s protocol "
                                 + "trait: %s", protocolTrait.toShapeId(), invalid)));

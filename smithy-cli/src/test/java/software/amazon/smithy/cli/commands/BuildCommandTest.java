@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -81,7 +70,7 @@ public class BuildCommandTest {
         assertThat(result.code(), not(0));
         assertThat(result.stderr(), containsString("ResourceLifecycle"));
         assertThat(result.stderr(),
-                   containsString("The following 1 Smithy build projection(s) failed: [exampleProjection]"));
+                containsString("The following 1 Smithy build projection(s) failed: [exampleProjection]"));
     }
 
     @Test
@@ -97,7 +86,7 @@ public class BuildCommandTest {
     @Test
     public void projectionUnknownTraitsAreAllowedWithFlag() throws Exception {
         String config = Paths.get(getClass().getResource("projection-model-import.json").toURI()).toString();
-        CliUtils.Result result = CliUtils.runSmithy("build", "--allow-unknown-traits",  "--config", config);
+        CliUtils.Result result = CliUtils.runSmithy("build", "--allow-unknown-traits", "--config", config);
 
         assertThat(result.code(), equalTo(0));
         assertThat(result.stderr(), containsString("Completed projection exampleProjection"));
@@ -107,7 +96,7 @@ public class BuildCommandTest {
     @Test
     public void projectionUnknownTraitsAreAllowedWithShortFlag() throws Exception {
         String config = Paths.get(getClass().getResource("projection-model-import.json").toURI()).toString();
-        CliUtils.Result result = CliUtils.runSmithy("build", "--aut",  "--config", config);
+        CliUtils.Result result = CliUtils.runSmithy("build", "--aut", "--config", config);
 
         assertThat(result.code(), equalTo(0));
     }

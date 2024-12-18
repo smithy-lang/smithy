@@ -1,24 +1,12 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URISyntaxException;
@@ -141,8 +129,11 @@ public class ValidateCommandTest {
 
     private CliUtils.Result runValidationEventsTest(Severity severity) throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        return CliUtils.runSmithy("validate", "--debug",
-                                  "--severity", severity.toString(), validationEventsModel.toString());
+        return CliUtils.runSmithy("validate",
+                "--debug",
+                "--severity",
+                severity.toString(),
+                validationEventsModel.toString());
     }
 
     @Test
@@ -196,8 +187,11 @@ public class ValidateCommandTest {
     @Test
     public void canShowEventsById() throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--show-validators", "EmitWarnings",
-                                                    validationEventsModel.toString());
+        CliUtils.Result result = CliUtils.runSmithy("validate",
+                "--debug",
+                "--show-validators",
+                "EmitWarnings",
+                validationEventsModel.toString());
 
         assertThat(result.code(), not(0));
         assertThat(result.stdout(), containsString("EmitWarnings"));
@@ -208,8 +202,11 @@ public class ValidateCommandTest {
     @Test
     public void canHideEventsById() throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--hide-validators", "EmitDangers",
-                                                    validationEventsModel.toString());
+        CliUtils.Result result = CliUtils.runSmithy("validate",
+                "--debug",
+                "--hide-validators",
+                "EmitDangers",
+                validationEventsModel.toString());
 
         assertThat(result.code(), not(0));
         assertThat(result.stdout(), containsString("EmitWarnings"));
@@ -220,8 +217,10 @@ public class ValidateCommandTest {
     @Test
     public void canOutputCsv() throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "csv",
-                                                    validationEventsModel.toString());
+        CliUtils.Result result = CliUtils.runSmithy("validate",
+                "--format",
+                "csv",
+                validationEventsModel.toString());
 
         assertThat(result.code(), not(0));
         assertThat(result.stdout(), containsString("suppressionReason"));
@@ -237,8 +236,10 @@ public class ValidateCommandTest {
     @Test
     public void canOutputText() throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        CliUtils.Result result = CliUtils.runSmithy("validate", "--format", "text",
-                                                    validationEventsModel.toString());
+        CliUtils.Result result = CliUtils.runSmithy("validate",
+                "--format",
+                "text",
+                validationEventsModel.toString());
 
         assertThat(result.code(), not(0));
         assertThat(result.stdout(), not(containsString("suppressionReason")));

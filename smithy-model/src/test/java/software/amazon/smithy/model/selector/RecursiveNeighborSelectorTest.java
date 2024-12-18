@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,19 +47,19 @@ public class RecursiveNeighborSelectorTest {
     public void findsClosure() {
         Set<String> result = selectIds("service[id=smithy.example#MyService2] ~> *");
 
-        assertThat(result, containsInAnyOrder(
-                "smithy.example#MyResource",
-                "smithy.example#GetMyResource",
-                "smithy.example#DeleteMyResource",
-                "smithy.example#Input",
-                "smithy.example#Output$foo",
-                "smithy.example#Error$foo",
-                "smithy.example#Operation",
-                "smithy.example#Error",
-                "smithy.api#String",
-                "smithy.example#Input$foo",
-                "smithy.example#Output"
-        ));
+        assertThat(result,
+                containsInAnyOrder(
+                        "smithy.example#MyResource",
+                        "smithy.example#GetMyResource",
+                        "smithy.example#DeleteMyResource",
+                        "smithy.example#Input",
+                        "smithy.example#Output$foo",
+                        "smithy.example#Error$foo",
+                        "smithy.example#Operation",
+                        "smithy.example#Error",
+                        "smithy.api#String",
+                        "smithy.example#Input$foo",
+                        "smithy.example#Output"));
     }
 
     @Test

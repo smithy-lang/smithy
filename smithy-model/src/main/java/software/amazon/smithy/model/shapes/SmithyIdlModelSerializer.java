@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.nio.file.Path;
@@ -108,7 +97,7 @@ public final class SmithyIdlModelSerializer {
         // If prelude serializing has been enabled, only use the given shape filter.
         if (builder.serializePrelude) {
             shapeFilter = builder.shapeFilter;
-        // Default to using the given shape filter and filtering prelude shapes.
+            // Default to using the given shape filter and filtering prelude shapes.
         } else {
             shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         }
@@ -152,7 +141,9 @@ public final class SmithyIdlModelSerializer {
         Map<Path, String> result = model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shapeFilter)
-                .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
+                .collect(Collectors.groupingBy(shapePlacer))
+                .entrySet()
+                .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
         // If there is no metadata, do not create metadata file
         if (model.getMetadata().isEmpty()) {
@@ -165,11 +156,23 @@ public final class SmithyIdlModelSerializer {
             metadataPath = basePath.resolve(metadataPath);
         }
         if (result.isEmpty()) {
-            return Collections.singletonMap(metadataPath, serializeHeader(
-                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix, true));
+            return Collections.singletonMap(metadataPath,
+                    serializeHeader(
+                            model,
+                            null,
+                            Collections.emptySet(),
+                            inlineInputSuffix,
+                            inlineOutputSuffix,
+                            true));
         } else {
-            result.put(metadataPath, serializeHeader(
-                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix, true));
+            result.put(metadataPath,
+                    serializeHeader(
+                            model,
+                            null,
+                            Collections.emptySet(),
+                            inlineInputSuffix,
+                            inlineOutputSuffix,
+                            true));
         }
         return result;
     }
@@ -189,9 +192,17 @@ public final class SmithyIdlModelSerializer {
 
         Pair<String, String> inlineSuffixes = determineInlineSuffixes(fullModel, shapes);
         Set<ShapeId> inlineableShapes = getInlineableShapes(
-                fullModel, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight());
+                fullModel,
+                shapes,
+                inlineSuffixes.getLeft(),
+                inlineSuffixes.getRight());
         ShapeSerializer shapeSerializer = new ShapeSerializer(
-                codeWriter, nodeSerializer, traitFilter, fullModel, inlineableShapes, componentOrder);
+                codeWriter,
+                nodeSerializer,
+                traitFilter,
+                fullModel,
+                inlineableShapes,
+                componentOrder);
         Comparator<Shape> comparator = componentOrder.shapeComparator();
         shapes.stream()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
@@ -200,7 +211,12 @@ public final class SmithyIdlModelSerializer {
                 .forEach(shape -> shape.accept(shapeSerializer));
 
         String header = serializeHeader(
-                fullModel, namespace, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight(), false);
+                fullModel,
+                namespace,
+                shapes,
+                inlineSuffixes.getLeft(),
+                inlineSuffixes.getRight(),
+                false);
         return header + codeWriter;
     }
 
@@ -315,7 +331,9 @@ public final class SmithyIdlModelSerializer {
         if (addMetadata) {
             NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
             Comparator<Map.Entry<String, Node>> comparator = componentOrder.metadataComparator();
-            fullModel.getMetadata().entrySet().stream()
+            fullModel.getMetadata()
+                    .entrySet()
+                    .stream()
                     .filter(entry -> metadataFilter.test(entry.getKey()))
                     .sorted(comparator)
                     .forEach(entry -> {
@@ -687,7 +705,8 @@ public final class SmithyIdlModelSerializer {
 
             Comparator<Trait> traitComparator = componentOrder.toShapeIdComparator();
 
-            traits.values().stream()
+            traits.values()
+                    .stream()
                     .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
                     // The default and enumValue traits are serialized using the assignment syntactic sugar.
                     .filter(trait -> {
@@ -808,10 +827,14 @@ public final class SmithyIdlModelSerializer {
             codeWriter.openBlock("{");
             if (!shape.getIdentifiers().isEmpty()) {
                 codeWriter.openBlock("identifiers: {");
-                shape.getIdentifiers().entrySet().stream()
+                shape.getIdentifiers()
+                        .entrySet()
+                        .stream()
                         .sorted(Map.Entry.comparingByKey())
                         .forEach(entry -> codeWriter.write(
-                                "$L: $I", entry.getKey(), entry.getValue()));
+                                "$L: $I",
+                                entry.getKey(),
+                                entry.getValue()));
                 codeWriter.closeBlock("}");
             }
 
@@ -825,9 +848,9 @@ public final class SmithyIdlModelSerializer {
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
             codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
             if (shape.hasProperties()) {
-              codeWriter.openBlock("properties: {");
-              shape.getProperties().forEach((name, shapeId) -> codeWriter.write("$L: $I", name, shapeId));
-              codeWriter.closeBlock("}");
+                codeWriter.openBlock("properties: {");
+                shape.getProperties().forEach((name, shapeId) -> codeWriter.write("$L: $I", name, shapeId));
+                codeWriter.closeBlock("}");
             }
             codeWriter.closeBlock("}");
             codeWriter.write("");
@@ -1037,7 +1060,8 @@ public final class SmithyIdlModelSerializer {
             if (shape == null) {
                 members = Collections.emptyMap();
             } else {
-                members = shape.members().stream()
+                members = shape.members()
+                        .stream()
                         .collect(Collectors.toMap(MemberShape::getMemberName, Function.identity()));
             }
 
@@ -1196,7 +1220,8 @@ public final class SmithyIdlModelSerializer {
             if (imports.isEmpty()) {
                 return contents;
             }
-            String importString = imports.stream().sorted()
+            String importString = imports.stream()
+                    .sorted()
                     .map(shapeId -> String.format("use %s", shapeId.toString()))
                     .collect(Collectors.joining("\n"));
             return importString + "\n\n" + contents;

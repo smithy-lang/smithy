@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,7 +28,9 @@ public class SymbolReferenceTest {
         Symbol symbol = Symbol.builder().name("foo").build();
         SymbolReference ref1 = new SymbolReference(symbol);
         SymbolReference ref2 = new SymbolReference(
-                symbol, MapUtils.of("foo", true), SymbolReference.ContextOption.USE);
+                symbol,
+                MapUtils.of("foo", true),
+                SymbolReference.ContextOption.USE);
         SymbolReference ref3 = new SymbolReference(symbol, SymbolReference.ContextOption.USE);
 
         assertThat(ref1, equalTo(ref1));

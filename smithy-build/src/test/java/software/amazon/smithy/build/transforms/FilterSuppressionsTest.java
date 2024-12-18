@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,19 +59,19 @@ public class FilterSuppressionsTest {
 
     @ParameterizedTest
     @CsvSource({
-        "traits,removeUnused",
-        "traits,eventIdAllowList",
-        "traits,eventIdDenyList",
-        "namespaces,filterByNamespaceAllowList",
-        "namespaces,removeReasons",
-        "namespaces,removeUnused",
-        "namespaces,namespaceDenyList",
-        "namespaces,filterWithTopLevelImports",
-        "namespaces,filterWithProjectionImports",
-        "namespaces,detectsValidatorRemoval",
-        "namespaces,unchanged",
-        "noSuppressions,removeUnused",
-        "eventHierarchy,removeUnused"
+            "traits,removeUnused",
+            "traits,eventIdAllowList",
+            "traits,eventIdDenyList",
+            "namespaces,filterByNamespaceAllowList",
+            "namespaces,removeReasons",
+            "namespaces,removeUnused",
+            "namespaces,namespaceDenyList",
+            "namespaces,filterWithTopLevelImports",
+            "namespaces,filterWithProjectionImports",
+            "namespaces,detectsValidatorRemoval",
+            "namespaces,unchanged",
+            "noSuppressions,removeUnused",
+            "eventHierarchy,removeUnused"
     })
     public void runTransformTests(String modelFile, String testName) throws Exception {
         Model model = Model.assembler()
@@ -81,7 +85,7 @@ public class FilterSuppressionsTest {
 
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
         configBuilder.load(Paths.get(
-                        getClass().getResource("filtersuppressions/" + modelFile + "." + testName + ".json").toURI()));
+                getClass().getResource("filtersuppressions/" + modelFile + "." + testName + ".json").toURI()));
         configBuilder.outputDirectory("/mocked/is/not/used");
         builder.config(configBuilder.build());
 

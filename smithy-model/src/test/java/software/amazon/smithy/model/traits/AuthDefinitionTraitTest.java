@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,8 +32,10 @@ public class AuthDefinitionTraitTest {
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(AuthDefinitionTrait.class));
         AuthDefinitionTrait authDefinitionTrait = (AuthDefinitionTrait) trait.get();
-        assertThat(authDefinitionTrait.getTraits(), containsInAnyOrder(
-                JsonNameTrait.ID, XmlNameTrait.ID));
+        assertThat(authDefinitionTrait.getTraits(),
+                containsInAnyOrder(
+                        JsonNameTrait.ID,
+                        XmlNameTrait.ID));
         assertThat(authDefinitionTrait.toNode(), equalTo(node));
         assertThat(authDefinitionTrait.toBuilder().build(), equalTo(authDefinitionTrait));
     }

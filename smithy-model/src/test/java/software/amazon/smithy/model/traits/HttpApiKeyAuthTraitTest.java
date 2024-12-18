@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,7 +24,9 @@ public class HttpApiKeyAuthTraitTest {
                 .withMember("name", "X-Foo")
                 .withMember("in", "header");
         Optional<Trait> trait = provider.createTrait(
-                HttpApiKeyAuthTrait.ID, ShapeId.from("ns.qux#foo"), node);
+                HttpApiKeyAuthTrait.ID,
+                ShapeId.from("ns.qux#foo"),
+                node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
@@ -54,7 +45,9 @@ public class HttpApiKeyAuthTraitTest {
                 .withMember("name", "blerg")
                 .withMember("in", "query");
         Optional<Trait> trait = provider.createTrait(
-                HttpApiKeyAuthTrait.ID, ShapeId.from("ns.qux#foo"), node);
+                HttpApiKeyAuthTrait.ID,
+                ShapeId.from("ns.qux#foo"),
+                node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
@@ -74,7 +67,9 @@ public class HttpApiKeyAuthTraitTest {
                 .withMember("name", "X-Foo")
                 .withMember("in", "header");
         Optional<Trait> trait = provider.createTrait(
-                HttpApiKeyAuthTrait.ID, ShapeId.from("ns.qux#foo"), node);
+                HttpApiKeyAuthTrait.ID,
+                ShapeId.from("ns.qux#foo"),
+                node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();

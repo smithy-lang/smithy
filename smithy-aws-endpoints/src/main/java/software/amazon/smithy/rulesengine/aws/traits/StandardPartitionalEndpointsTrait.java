@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.ArrayList;
@@ -60,8 +59,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
     @Override
     protected Node createNode() {
         ObjectNode.Builder partitionEndpointSpecialCasesNodeBuilder = ObjectNode.objectNodeBuilder();
-        for (Map.Entry<String, List<PartitionEndpointSpecialCase>> entry
-                : partitionEndpointSpecialCases.entrySet()) {
+        for (Map.Entry<String, List<PartitionEndpointSpecialCase>> entry : partitionEndpointSpecialCases.entrySet()) {
             List<Node> nodes = new ArrayList<>();
             for (PartitionEndpointSpecialCase partitionEndpointSpecialCase : entry.getValue()) {
                 nodes.add(partitionEndpointSpecialCase.toNode());
@@ -97,21 +95,23 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
             ObjectNode objectNode = value.expectObjectNode();
 
             EndpointPatternType endpointPatternType = EndpointPatternType
-                .fromNode(objectNode.expectStringMember(ENDPOINT_PATTERN_TYPE));
+                    .fromNode(objectNode.expectStringMember(ENDPOINT_PATTERN_TYPE));
 
             StandardPartitionalEndpointsTrait.Builder builder = builder()
                     .sourceLocation(value)
                     .endpointPatternType(endpointPatternType);
 
             if (objectNode.containsMember(PARTITION_ENDPOINT_SPECIAL_CASES)) {
-                for (Map.Entry<String, Node> entry
-                        : objectNode.expectObjectMember(PARTITION_ENDPOINT_SPECIAL_CASES).getStringMap().entrySet()) {
+                for (Map.Entry<String, Node> entry : objectNode.expectObjectMember(PARTITION_ENDPOINT_SPECIAL_CASES)
+                        .getStringMap()
+                        .entrySet()) {
                     List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases = new ArrayList<>();
-                    for (Node node: entry.getValue().expectArrayNode().getElements()) {
+                    for (Node node : entry.getValue().expectArrayNode().getElements()) {
                         partitionEndpointSpecialCases.add(PartitionEndpointSpecialCase.fromNode(node));
                     }
                     builder.putPartitionEndpointSpecialCase(
-                        entry.getKey(), Collections.unmodifiableList(partitionEndpointSpecialCases));
+                            entry.getKey(),
+                            Collections.unmodifiableList(partitionEndpointSpecialCases));
                 }
             }
 
@@ -123,7 +123,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
 
     public static final class Builder extends AbstractTraitBuilder<StandardPartitionalEndpointsTrait, Builder> {
         private final BuilderRef<Map<String, List<PartitionEndpointSpecialCase>>> partitionEndpointSpecialCases =
-            BuilderRef.forOrderedMap();
+                BuilderRef.forOrderedMap();
         private EndpointPatternType endpointPatternType;
 
         /**
@@ -133,7 +133,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
          * @return Returns the builder.
          */
         public Builder partitionEndpointSpecialCases(
-            Map<String, List<PartitionEndpointSpecialCase>> partitionEndpointSpecialCases
+                Map<String, List<PartitionEndpointSpecialCase>> partitionEndpointSpecialCases
         ) {
             this.partitionEndpointSpecialCases.clear();
             this.partitionEndpointSpecialCases.get().putAll(partitionEndpointSpecialCases);
@@ -148,8 +148,8 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
          * @return Returns the builder.
          */
         public Builder putPartitionEndpointSpecialCase(
-            String partition,
-            List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases
+                String partition,
+                List<PartitionEndpointSpecialCase> partitionEndpointSpecialCases
         ) {
             this.partitionEndpointSpecialCases.get().put(partition, partitionEndpointSpecialCases);
             return this;

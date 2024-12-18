@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,9 +48,9 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
+                Matchers.equalTo(Optional.empty()));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
+                Matchers.equalTo(Optional.empty()));
     }
 
     @Test
@@ -73,9 +62,9 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
+                Matchers.equalTo(Optional.empty()));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
+                Matchers.equalTo(Optional.empty()));
     }
 
     @Test
@@ -86,10 +75,12 @@ public class CreateDedicatedInputAndOutputTest {
 
         result.expectShape(ShapeId.from("smithy.example#GetFooRequest")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooResponse")).expectTrait(OutputTrait.class);
-        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooRequest")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
-        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooResponse")).getTrait(OriginalShapeIdTrait.class),
-                   Matchers.equalTo(Optional.empty()));
+        assertThat(
+                result.expectShape(ShapeId.from("smithy.example#GetFooRequest")).getTrait(OriginalShapeIdTrait.class),
+                Matchers.equalTo(Optional.empty()));
+        assertThat(
+                result.expectShape(ShapeId.from("smithy.example#GetFooResponse")).getTrait(OriginalShapeIdTrait.class),
+                Matchers.equalTo(Optional.empty()));
     }
 
     @Test
@@ -101,13 +92,13 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
@@ -119,13 +110,13 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooOperationInput")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooOperationOutput")).expectTrait(OutputTrait.class);
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOperationInput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOperationOutput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
@@ -141,13 +132,13 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#GetFooData")));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#Foo")));
     }
 
     @Test
@@ -160,20 +151,19 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.api#Unit")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.api#Unit")));
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
-                           .expectTrait(OriginalShapeIdTrait.class)
-                           .getOriginalId(),
-                   Matchers.equalTo(ShapeId.from("smithy.api#Unit")));
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.api#Unit")));
     }
 
     @Test
     public void removesDisconnectedSharedShape() {
-        Model result = compareTransform("removes-disconnected-shared-shape", model ->
-                ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output")
-        );
+        Model result = compareTransform("removes-disconnected-shared-shape",
+                model -> ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output"));
 
         assertThat(result.getShapeIds(), Matchers.not(Matchers.hasItem(ShapeId.from("smithy.example#MyGetFooOutput"))));
 
@@ -181,32 +171,31 @@ public class CreateDedicatedInputAndOutputTest {
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
-                            .expectTrait(OriginalShapeIdTrait.class)
-                            .getOriginalId(),
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
                 Matchers.equalTo(ShapeId.from("smithy.example#MyGetFooOutput")));
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
-                        .expectTrait(OriginalShapeIdTrait.class)
-                        .getOriginalId(),
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
                 Matchers.equalTo(ShapeId.from("smithy.example#MyGetFooOutput")));
     }
 
     @Test
     public void createsDedicatedHeuristicForSharedShape() {
-        Model result = compareTransform("creates-dedicated-heuristic-for-shared", model ->
-                ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output")
-        );
+        Model result = compareTransform("creates-dedicated-heuristic-for-shared",
+                model -> ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output"));
 
         result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
         result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
-                            .expectTrait(OriginalShapeIdTrait.class)
-                            .getOriginalId(),
+                .expectTrait(OriginalShapeIdTrait.class)
+                .getOriginalId(),
                 Matchers.equalTo(ShapeId.from("smithy.example#GetFooOutput")));
 
         assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
-                        .getTrait(OriginalShapeIdTrait.class), Matchers.equalTo(Optional.empty()));
+                .getTrait(OriginalShapeIdTrait.class), Matchers.equalTo(Optional.empty()));
     }
 
     @Test

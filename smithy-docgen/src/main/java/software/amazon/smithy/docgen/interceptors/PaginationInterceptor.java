@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.codegen.core.SymbolReference;
@@ -36,17 +35,19 @@ public final class PaginationInterceptor implements CodeInterceptor<ShapeDetails
         var paginationInfo = paginatedIndex.getPaginationInfo(service, section.shape()).get();
         var symbolProvider = section.context().symbolProvider();
         writer.putContext("size", paginationInfo.getPageSizeMember().map(symbolProvider::toSymbol));
-        writer.putContext("inputToken", SymbolReference.builder()
-                .symbol(symbolProvider.toSymbol(paginationInfo.getInputTokenMember()))
-                .alias("input token")
-                .build());
+        writer.putContext("inputToken",
+                SymbolReference.builder()
+                        .symbol(symbolProvider.toSymbol(paginationInfo.getInputTokenMember()))
+                        .alias("input token")
+                        .build());
 
         var outputTokenPath = paginationInfo.getOutputTokenMemberPath();
         var outputToken = outputTokenPath.get(outputTokenPath.size() - 1);
-        writer.putContext("outputToken", SymbolReference.builder()
-                .symbol(symbolProvider.toSymbol(outputToken))
-                .alias("output token")
-                .build());
+        writer.putContext("outputToken",
+                SymbolReference.builder()
+                        .symbol(symbolProvider.toSymbol(outputToken))
+                        .alias("output token")
+                        .build());
 
         writer.openAdmonition(NoticeType.IMPORTANT);
         writer.write("""

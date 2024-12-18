@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy.security;
 
 import java.util.Set;
@@ -32,7 +21,13 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class AwsV4Converter implements SecuritySchemeConverter<SigV4Trait> {
     private static final String AUTH_HEADER = "Authorization";
     private static final Set<String> REQUEST_HEADERS = SetUtils.of(
-            AUTH_HEADER, "Date", "Host", "X-Amz-Content-Sha256", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
+            AUTH_HEADER,
+            "Date",
+            "Host",
+            "X-Amz-Content-Sha256",
+            "X-Amz-Date",
+            "X-Amz-Target",
+            "X-Amz-Security-Token");
 
     @Override
     public Class<SigV4Trait> getAuthSchemeType() {

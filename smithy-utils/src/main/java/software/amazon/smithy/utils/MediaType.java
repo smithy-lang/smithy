@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.util.Collections;
@@ -69,7 +58,7 @@ public final class MediaType {
     public static boolean isJson(String mediaType) {
         MediaType type = from(mediaType);
         return (type.getType().equals("application") && type.getSubtypeWithoutSuffix().equals("json"))
-               || type.getSuffix().filter(s -> s.equals("json")).isPresent();
+                || type.getSuffix().filter(s -> s.equals("json")).isPresent();
     }
 
     /**
@@ -126,8 +115,8 @@ public final class MediaType {
     public Optional<String> getSuffix() {
         int position = subtype.lastIndexOf('+');
         return position == -1 || position == subtype.length() - 1
-               ? Optional.empty()
-               : Optional.of(subtype.substring(position + 1));
+                ? Optional.empty()
+                : Optional.of(subtype.substring(position + 1));
     }
 
     @Override

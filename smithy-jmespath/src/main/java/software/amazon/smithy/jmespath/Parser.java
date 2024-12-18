@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath;
 
 import java.util.ArrayList;
@@ -125,11 +114,11 @@ final class Parser {
                 return new LiteralExpression(token.value.getValue(), token.line, token.column);
             case LBRACKET: // Example: [1]
                 return parseNudLbracket();
-            case LBRACE:  // Example: {foo: bar}
+            case LBRACE: // Example: {foo: bar}
                 return parseNudLbrace();
             case FLATTEN: // Example: [].bar
                 return parseFlatten(new CurrentExpression(token.line, token.column));
-            case EXPREF:  // Example: sort_by(@, &foo)
+            case EXPREF: // Example: sort_by(@, &foo)
                 JmespathExpression expressionRef = expression(token.type.lbp);
                 return new ExpressionTypeExpression(expressionRef, token.line, token.column);
             case NOT: // Example: !foo
@@ -221,7 +210,7 @@ final class Parser {
     private JmespathExpression parseIndex() {
         int line = iterator.line();
         int column = iterator.column();
-        Integer[] parts = new Integer[]{null, null, 1}; // start, stop, step (defaults to 1)
+        Integer[] parts = new Integer[] {null, null, 1}; // start, stop, step (defaults to 1)
         int pos = 0;
 
         loop: while (true) {

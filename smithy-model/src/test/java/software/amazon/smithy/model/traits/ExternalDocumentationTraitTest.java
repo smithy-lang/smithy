@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +18,7 @@ public class ExternalDocumentationTraitTest {
     @Test
     public void loadsTrait() {
         Node node = Node.parse("{\"API Reference\": \"https://foo.bar/api\","
-                             + "\"Usage Guide\": \"https://foo.bar/guide\"}");
+                + "\"Usage Guide\": \"https://foo.bar/guide\"}");
         ExternalDocumentationTrait trait = new ExternalDocumentationTrait.Provider()
                 .createTrait(ShapeId.from("ns.foo#baz"), node);
 
@@ -31,7 +35,8 @@ public class ExternalDocumentationTraitTest {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
             provider.createTrait(ShapeId.from("smithy.api#externalDocumentation"),
-                    ShapeId.from("ns.qux#foo"), Node.parse("{\"API Reference\": \"foobarapi\""));
+                    ShapeId.from("ns.qux#foo"),
+                    Node.parse("{\"API Reference\": \"foobarapi\""));
         });
     }
 }

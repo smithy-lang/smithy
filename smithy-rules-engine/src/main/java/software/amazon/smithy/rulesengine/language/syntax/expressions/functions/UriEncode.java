@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.io.UnsupportedEncodingException;
@@ -58,10 +57,12 @@ public final class UriEncode extends LibraryFunction {
      */
     public static final class Definition implements FunctionDefinition {
         private static final Map<String, String> ENCODING_REPLACEMENTS = MapUtils.of(
-                "+", "%20",
-                "*", "%2A",
-                "%7E", "~"
-        );
+                "+",
+                "%20",
+                "*",
+                "%2A",
+                "%7E",
+                "~");
 
         private Definition() {}
 
