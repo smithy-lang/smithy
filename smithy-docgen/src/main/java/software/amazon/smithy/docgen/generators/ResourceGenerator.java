@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.generators;
 
 import java.util.HashSet;
@@ -116,7 +115,9 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
             new MemberGenerator(context, writer, resource, MemberListingType.RESOURCE_IDENTIFIERS).run();
             new MemberGenerator(context, writer, resource, MemberListingType.RESOURCE_PROPERTIES).run();
 
-            var subResources = resource.getResources().stream().sorted()
+            var subResources = resource.getResources()
+                    .stream()
+                    .sorted()
                     .map(id -> context.model().expectShape(id, ResourceShape.class))
                     .toList();
             GeneratorUtils.generateResourceListing(context, writer, resource, subResources);
@@ -125,7 +126,8 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
 
             var operationIds = new HashSet<>(resource.getOperations());
             operationIds.addAll(resource.getCollectionOperations());
-            var operations = operationIds.stream().sorted()
+            var operations = operationIds.stream()
+                    .sorted()
                     .map(id -> context.model().expectShape(id, OperationShape.class))
                     .toList();
             GeneratorUtils.generateOperationListing(context, writer, resource, operations);
@@ -141,7 +143,8 @@ public final class ResourceGenerator implements BiConsumer<DocGenerationContext,
             writer.popState();
             return;
         }
-        var linkId = context.symbolProvider().toSymbol(resource)
+        var linkId = context.symbolProvider()
+                .toSymbol(resource)
                 .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         writer.openHeading("Lifecycle Operations", linkId + "-lifecycle-operations");
         writer.openDefinitionList();

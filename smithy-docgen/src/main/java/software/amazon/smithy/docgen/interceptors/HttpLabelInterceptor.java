@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ProtocolSection;
@@ -41,11 +40,14 @@ public final class HttpLabelInterceptor extends ProtocolTraitInterceptor<HttpLab
     @Override
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpLabelTrait trait) {
         var index = OperationIndex.of(section.context().model());
-        writer.putContext("greedy", index.getInputBindings(section.shape()).stream().findFirst()
-                .map(operation -> operation.expectTrait(HttpTrait.class))
-                .flatMap(httpTrait -> httpTrait.getUri().getGreedyLabel())
-                .map(segment -> segment.getContent().equals(section.shape().getId().getName()))
-                .orElse(false));
+        writer.putContext("greedy",
+                index.getInputBindings(section.shape())
+                        .stream()
+                        .findFirst()
+                        .map(operation -> operation.expectTrait(HttpTrait.class))
+                        .flatMap(httpTrait -> httpTrait.getUri().getGreedyLabel())
+                        .map(segment -> segment.getContent().equals(section.shape().getId().getName()))
+                        .orElse(false));
         var segment = "{" + section.shape().getId().getName() + "}";
         writer.write("""
                 This is bound to the path of the URI. Its value should be URI-escaped and \

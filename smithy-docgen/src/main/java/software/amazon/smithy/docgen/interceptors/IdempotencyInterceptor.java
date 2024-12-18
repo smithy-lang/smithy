@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import java.util.Optional;
@@ -27,11 +26,11 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     private static final Pair<String, String> IDEMPOTENT_REF = Pair.of(
-            "idempotent", "https://datatracker.ietf.org/doc/html/rfc7231.html#section-4.2.2"
-    );
+            "idempotent",
+            "https://datatracker.ietf.org/doc/html/rfc7231.html#section-4.2.2");
     private static final Pair<String, String> UUID_REF = Pair.of(
-            "UUID", "https://tools.ietf.org/html/rfc4122.html"
-    );
+            "UUID",
+            "https://tools.ietf.org/html/rfc4122.html");
 
     @Override
     public Class<ShapeDetailsSection> sectionType() {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import software.amazon.smithy.codegen.core.SymbolWriter;
@@ -23,5 +22,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *                      format.
  */
 @SmithyUnstableApi
-public record DocFormat(String name, String extension, SymbolWriter.Factory<DocWriter> writerFactory) {
-}
+public record DocFormat(String name, String extension, SymbolWriter.Factory<DocWriter> writerFactory) {}

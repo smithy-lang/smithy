@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import java.util.List;
@@ -56,7 +55,6 @@ public final class OperationAuthInterceptor implements CodeInterceptor<ShapeDeta
         var index = ServiceIndex.of(section.context().model());
         var service = section.context().settings().service();
         var operation = section.shape();
-
 
         var serviceAuth = DocgenUtils.getPrioritizedServiceAuth(section.context().model(), service);
         var operationAuth = List.copyOf(

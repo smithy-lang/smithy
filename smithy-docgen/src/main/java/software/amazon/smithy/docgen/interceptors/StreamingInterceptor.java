@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ShapeDetailsSection;
@@ -30,7 +29,8 @@ public class StreamingInterceptor implements CodeInterceptor.Appender<ShapeDetai
 
     @Override
     public void append(DocWriter writer, ShapeDetailsSection section) {
-        var target = section.shape().asMemberShape()
+        var target = section.shape()
+                .asMemberShape()
                 .map(member -> section.context().model().expectShape(member.getTarget()))
                 .orElse(section.shape());
         if (target.isBlobShape()) {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.writers;
 
 import static software.amazon.smithy.docgen.DocgenUtils.getSymbolLink;
@@ -92,14 +91,12 @@ public class MarkdownWriter extends DocWriter {
             } else {
                 throw new CodegenException(
                         "Invalid type provided to $R. Expected both key and vale of the Pair to be Strings, but "
-                        + "found " + value.getClass()
-                );
+                                + "found " + value.getClass());
             }
         } else {
             throw new CodegenException(
                     "Invalid type provided to $R. Expected a Symbol, SymbolReference, or Pair<String, String>, but "
-                    + "found " + value.getClass()
-            );
+                            + "found " + value.getClass());
         }
         return Pair.of(text, ref);
     }

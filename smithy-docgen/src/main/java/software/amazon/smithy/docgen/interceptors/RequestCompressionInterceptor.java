@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import java.util.Optional;
@@ -36,9 +35,10 @@ public final class RequestCompressionInterceptor implements CodeInterceptor<Shap
         writer.openAdmonition(NoticeType.IMPORTANT);
 
         // Have particular support for single-element lists.
-        writer.putContext("encoding", trait.getEncodings().size() == 1
-                ? Optional.of(trait.getEncodings().get(0))
-                : Optional.empty());
+        writer.putContext("encoding",
+                trait.getEncodings().size() == 1
+                        ? Optional.of(trait.getEncodings().get(0))
+                        : Optional.empty());
         writer.putContext("encodings", trait.getEncodings());
 
         writer.write("""

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.generators;
 
 import java.util.List;
@@ -50,7 +49,8 @@ final class GeneratorUtils {
             return;
         }
 
-        var parentLinkId = context.symbolProvider().toSymbol(shape)
+        var parentLinkId = context.symbolProvider()
+                .toSymbol(shape)
                 .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         writer.openHeading("Operations", parentLinkId + "-operations");
         writer.openList(ListType.UNORDERED);
@@ -79,7 +79,8 @@ final class GeneratorUtils {
             return;
         }
 
-        var parentLinkId = context.symbolProvider().toSymbol(shape)
+        var parentLinkId = context.symbolProvider()
+                .toSymbol(shape)
                 .expectProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class);
         var heading = shape.isServiceShape() ? "Resources" : "Sub-Resources";
         writer.openHeading(heading, parentLinkId + "-" + heading.toLowerCase(Locale.ENGLISH));
@@ -141,8 +142,9 @@ final class GeneratorUtils {
         AtomicReference<String> tabContents = new AtomicReference<>();
         var tab = capture(writer, tabWriter -> {
             tabWriter.openTab(protocolSymbol.getName());
-            tabContents.set(capture(tabWriter, w2 -> tabWriter.injectSection(
-                    new ProtocolSection(context, shape, protocol))));
+            tabContents.set(capture(tabWriter,
+                    w2 -> tabWriter.injectSection(
+                            new ProtocolSection(context, shape, protocol))));
             tabWriter.closeTab();
         });
 

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import java.util.LinkedHashSet;
@@ -66,9 +65,9 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
         }
         if (resolvedFormat == null) {
             throw new CodegenException(String.format(
-                "Unknown doc format `%s`. You may be missing a dependency. Currently available formats: [%s]",
-                docSettings.format(), String.join(", ", availableFormats)
-            ));
+                    "Unknown doc format `%s`. You may be missing a dependency. Currently available formats: [%s]",
+                    docSettings.format(),
+                    String.join(", ", availableFormats)));
         }
 
         this.docFormat = resolvedFormat;

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen;
 
 import static java.lang.String.format;
@@ -180,8 +179,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     @Override
     public Symbol serviceShape(ServiceShape shape) {
         return getSymbolBuilder(shape)
-            .definitionFile(getDefinitionFile(SERVICE_FILE))
-            .build();
+                .definitionFile(getDefinitionFile(SERVICE_FILE))
+                .build();
     }
 
     @Override
@@ -277,8 +276,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     private String getShapeName(ServiceShape serviceShape, Shape shape) {
         if (shape.isServiceShape()) {
             return shape.getTrait(TitleTrait.class)
-                .map(StringTrait::getValue)
-                .orElse(shape.getId().getName());
+                    .map(StringTrait::getValue)
+                    .orElse(shape.getId().getName());
         }
         if (shape.isMemberShape()) {
             return toMemberName(shape.asMemberShape().get());
@@ -326,9 +325,9 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
                 return symbol;
             }
             return symbol.toBuilder()
-                .definitionFile(addExtension(symbol.getDefinitionFile()))
-                .declarationFile(addExtension(symbol.getDeclarationFile()))
-                .build();
+                    .definitionFile(addExtension(symbol.getDefinitionFile()))
+                    .declarationFile(addExtension(symbol.getDeclarationFile()))
+                    .build();
         }
 
         private String addExtension(String path) {

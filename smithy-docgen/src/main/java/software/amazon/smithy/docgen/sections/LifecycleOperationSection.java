@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -34,8 +33,7 @@ public record LifecycleOperationSection(
         DocGenerationContext context,
         ResourceShape resource,
         OperationShape operation,
-        LifecycleType lifecycleType
-) implements CodeSection {
+        LifecycleType lifecycleType) implements CodeSection {
 
     // smithy-model doesn't have a pared-down enum for these lifecycle types, instead
     // using the broader RelationshipType. That's fine for smithy-model, which needs

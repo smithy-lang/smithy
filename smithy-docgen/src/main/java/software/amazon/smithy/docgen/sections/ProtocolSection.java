@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -26,6 +25,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public record ProtocolSection(
         DocGenerationContext context,
         Shape shape,
-        ShapeId protocol
-) implements CodeSection {
-}
+        ShapeId protocol) implements CodeSection {}
