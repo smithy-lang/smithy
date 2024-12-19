@@ -5,5 +5,6 @@
 [ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a path `projectionOnScalar` with an invalid JMESPath path `nested.foo[*]`: 'Array projection performed on string'. | OperationContextParamsTrait
 [ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `unsupportedFunction` with a JMESPath path `length(listOfObjects)` with unsupported expressions: '`length` function'. | OperationContextParamsTrait
 [ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `unsupportedExpression` with a JMESPath path `listOfObjects[1]` with unsupported expressions: 'index'. | OperationContextParamsTrait
+[ERROR] example#Bar: The operation `example#Bar` is marked with `smithy.rules#operationContextParams` which contains a key `projectionAndUnsupportedExpression` with a JMESPath path `listOfObjects[*].listOfStrings[0]` with unsupported expressions: 'index'. | OperationContextParamsTrait
 
 
