@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.selector;
 
 import java.math.BigDecimal;
@@ -131,7 +120,7 @@ interface AttributeComparator {
     static boolean existsCheck(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
         String bString = b.toString();
         return (a.isPresent() && bString.equals("true"))
-               || (!a.isPresent() && b.toString().equals("false"));
+                || (!a.isPresent() && b.toString().equals("false"));
     }
 
     static boolean areBothProjections(AttributeValue a, AttributeValue b) {
@@ -140,7 +129,7 @@ interface AttributeComparator {
 
     static boolean subset(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
         return areBothProjections(a, b)
-               && isSubset(a.getFlattenedValues(), b.getFlattenedValues(), caseInsensitive);
+                && isSubset(a.getFlattenedValues(), b.getFlattenedValues(), caseInsensitive);
     }
 
     // Note that projections with different sizes can still be subsets since
@@ -177,7 +166,7 @@ interface AttributeComparator {
         Collection<? extends AttributeValue> aValues = a.getFlattenedValues();
         Collection<? extends AttributeValue> bValues = b.getFlattenedValues();
         return isSubset(aValues, bValues, caseInsensitive)
-               && !isSubset(bValues, aValues, caseInsensitive);
+                && !isSubset(bValues, aValues, caseInsensitive);
     }
 
     // {A} is equal to {B} if they are both subsets of one another.
@@ -189,7 +178,7 @@ interface AttributeComparator {
         Collection<? extends AttributeValue> aValues = a.getFlattenedValues();
         Collection<? extends AttributeValue> bValues = b.getFlattenedValues();
         return isSubset(aValues, bValues, caseInsensitive)
-               && isSubset(bValues, aValues, caseInsensitive);
+                && isSubset(bValues, aValues, caseInsensitive);
     }
 
     static boolean setNotEquals(AttributeValue a, AttributeValue b, boolean caseInsensitive) {

@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections.sphinx;
 
 import java.util.Set;
@@ -18,5 +17,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param extensions Extensions needed to generate documentation.
  */
 @SmithyUnstableApi
-public record ConfSection(DocGenerationContext context, Set<String> extensions) implements CodeSection {
-}
+public record ConfSection(DocGenerationContext context, Set<String> extensions) implements CodeSection {}

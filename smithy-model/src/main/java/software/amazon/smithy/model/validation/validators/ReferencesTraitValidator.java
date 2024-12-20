@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -62,17 +51,22 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ReferencesTrait.Reference reference : trait.getReferences()) {
             if (shape.isStringShape() && !reference.getIds().isEmpty()) {
-                events.add(error(shape, trait, "References applied to string shapes cannot contain 'ids': "
-                                               + reference));
+                events.add(error(shape,
+                        trait,
+                        "References applied to string shapes cannot contain 'ids': "
+                                + reference));
             }
 
             ShapeId shapeId = reference.getResource();
             Optional<Shape> targetedShape = model.getShape(shapeId);
             if (targetedShape.isPresent()) {
                 if (!targetedShape.get().isResourceShape()) {
-                    events.add(error(shape, trait, format(
-                            "`references` trait reference targets a %s shape not a resource: %s",
-                            targetedShape.get().getType(), reference)));
+                    events.add(error(shape,
+                            trait,
+                            format(
+                                    "`references` trait reference targets a %s shape not a resource: %s",
+                                    targetedShape.get().getType(),
+                                    reference)));
                 } else {
                     ResourceShape resource = targetedShape.get().asResourceShape().get();
                     events.addAll(validateSingleReference(model, reference, shape, trait, resource));
@@ -107,17 +101,23 @@ public final class ReferencesTraitValidator extends AbstractValidator {
     ) {
         // You can only reference a resource with a single ID on a string shape.
         if (target.getIdentifiers().size() != 1) {
-            return ListUtils.of(error(shape, trait, String.format(
-                    "This string shape contains an invalid reference to %s: %s. References on a string shape can "
-                    + "only refer to resource shapes with exactly one entry in its identifiers property, but this "
-                    + "shape has the following identifiers: [%s]",
-                    target.getId(), reference, ValidationUtils.tickedList(target.getIdentifiers().keySet()))));
+            return ListUtils.of(error(shape,
+                    trait,
+                    String.format(
+                            "This string shape contains an invalid reference to %s: %s. References on a string shape can "
+                                    + "only refer to resource shapes with exactly one entry in its identifiers property, but this "
+                                    + "shape has the following identifiers: [%s]",
+                            target.getId(),
+                            reference,
+                            ValidationUtils.tickedList(target.getIdentifiers().keySet()))));
         }
 
         return ListUtils.of();
     }
 
-    private enum ErrorReason { BAD_TARGET, NOT_FOUND, NOT_REQUIRED }
+    private enum ErrorReason {
+        BAD_TARGET, NOT_FOUND, NOT_REQUIRED
+    }
 
     private List<ValidationEvent> validateStructureRef(
             Model model,
@@ -159,8 +159,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     private Map<String, String> resolveIds(ReferencesTrait.Reference reference, ResourceShape target) {
         return !reference.getIds().isEmpty()
-               ? reference.getIds()
-               : target.getIdentifiers().keySet().stream().collect(toMap(identity(), identity()));
+                ? reference.getIds()
+                : target.getIdentifiers().keySet().stream().collect(toMap(identity(), identity()));
     }
 
     private void validateExplicitIds(
@@ -191,13 +191,18 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             Collection<String> expectedNames
     ) {
         String prefix = expectedNames.size() < reference.getIds().size()
-                        ? "Too many identifiers"
-                        : "Not enough identifiers";
-        return error(shape, trait, String.format(
-                "%s were provided in the `ids` properties of %s. Expected %d identifiers(s), but "
-                + "found %d. This resource requires bindings for the following identifiers: [%s].",
-                prefix, reference, expectedNames.size(), reference.getIds().size(),
-                ValidationUtils.tickedList(expectedNames)));
+                ? "Too many identifiers"
+                : "Not enough identifiers";
+        return error(shape,
+                trait,
+                String.format(
+                        "%s were provided in the `ids` properties of %s. Expected %d identifiers(s), but "
+                                + "found %d. This resource requires bindings for the following identifiers: [%s].",
+                        prefix,
+                        reference,
+                        expectedNames.size(),
+                        reference.getIds().size(),
+                        ValidationUtils.tickedList(expectedNames)));
     }
 
     private ValidationEvent extraneousIdentifiers(
@@ -207,13 +212,16 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ResourceShape resource,
             Collection<String> extraneousKeys
     ) {
-        return error(shape, trait, String.format(
-                "`references` trait %s contains extraneous resource identifier bindings, [%s], that are "
-                + "not actually identifier names of the resource, `%s`. This resource has the following identifier "
-                + "names: [%s]",
-                reference,
-                ValidationUtils.tickedList(extraneousKeys), reference.getResource(),
-                ValidationUtils.tickedList(resource.getIdentifiers().keySet())));
+        return error(shape,
+                trait,
+                String.format(
+                        "`references` trait %s contains extraneous resource identifier bindings, [%s], that are "
+                                + "not actually identifier names of the resource, `%s`. This resource has the following identifier "
+                                + "names: [%s]",
+                        reference,
+                        ValidationUtils.tickedList(extraneousKeys),
+                        reference.getResource(),
+                        ValidationUtils.tickedList(resource.getIdentifiers().keySet())));
     }
 
     private Optional<ValidationEvent> validateErrors(
@@ -230,7 +238,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                     // Must be found when it's explicit or not a collection rel.
                     if (implicit) {
                         messages.add(format("implicit binding of `%s` is not part of the structure "
-                                            + "(set \"rel\" to \"collection\" to create a collection binding)", name));
+                                + "(set \"rel\" to \"collection\" to create a collection binding)", name));
                     } else {
                         messages.add(format("`%s` refers to a member that is not part of the structure", name));
                     }
@@ -248,8 +256,11 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(shape, trait, format(
-                "`references` trait %s is invalid for the following reasons: %s",
-                reference, messages.stream().sorted().collect(Collectors.joining("; ")))));
+        return Optional.of(error(shape,
+                trait,
+                format(
+                        "`references` trait %s is invalid for the following reasons: %s",
+                        reference,
+                        messages.stream().sorted().collect(Collectors.joining("; ")))));
     }
 }

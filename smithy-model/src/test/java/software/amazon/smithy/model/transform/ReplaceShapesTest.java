@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,13 +46,13 @@ public class ReplaceShapesTest {
             transformer.mapShapes(model, s -> {
                 if (s.getId().equals(shapeId)) {
                     return StructureShape.builder()
-                        .id(shapeId)
-                        .addMember(
-                                MemberShape.builder()
-                                        .id(ShapeId.from("ns.foo#id1$member1"))
-                                        .target("ns.foo#id2")
-                                        .build()
-                        ).build();
+                            .id(shapeId)
+                            .addMember(
+                                    MemberShape.builder()
+                                            .id(ShapeId.from("ns.foo#id1$member1"))
+                                            .target("ns.foo#id2")
+                                            .build())
+                            .build();
                 }
                 return s;
             });
@@ -170,7 +159,11 @@ public class ReplaceShapesTest {
         MemberShape member2 = MemberShape.builder().id("ns.foo#Shape$member2").target("ns.foo#String").build();
         MemberShape member3 = MemberShape.builder().id("ns.foo#Shape$member3").target("ns.foo#String").build();
         UnionShape shape = UnionShape.builder()
-                .id("ns.foo#Shape").addMember(member1).addMember(member2).addMember(member3).build();
+                .id("ns.foo#Shape")
+                .addMember(member1)
+                .addMember(member2)
+                .addMember(member3)
+                .build();
         Model model = Model.builder().addShapes(string, shape, member1, member2, member3).build();
 
         // Add a trait to a replaced member3.
@@ -182,7 +175,10 @@ public class ReplaceShapesTest {
         // Replace the union with a shape that has the new member3.
         // Also remove member2.
         UnionShape other = UnionShape.builder()
-                .id("ns.foo#Shape").addMember(member1).addMember(newMember3).build();
+                .id("ns.foo#Shape")
+                .addMember(member1)
+                .addMember(newMember3)
+                .build();
 
         Model result = ModelTransformer.create().replaceShapes(model, Collections.singleton(other));
 
@@ -243,14 +239,14 @@ public class ReplaceShapesTest {
         Model resultWithNewValue = transformer.replaceShapes(model, Arrays.asList(newValueMember));
 
         assertThat(resultWithNewKey.getShape(keyMemberId).get().getTrait(SensitiveTrait.class),
-                          Matchers.not(Optional.empty()));
+                Matchers.not(Optional.empty()));
         assertThat(resultWithNewKey.getShape(containerId).get().asMapShape().get().getKey(),
-                          Matchers.is(newKeyMember));
+                Matchers.is(newKeyMember));
 
         assertThat(resultWithNewValue.getShape(valueMemberId).get().getTrait(SensitiveTrait.class),
-                          Matchers.not(Optional.empty()));
+                Matchers.not(Optional.empty()));
         assertThat(resultWithNewValue.getShape(containerId).get().asMapShape().get().getValue(),
-                          Matchers.is(newValueMember));
+                Matchers.is(newValueMember));
     }
 
     @Test
@@ -288,7 +284,7 @@ public class ReplaceShapesTest {
         assertTrue(result.getShape(containerId).get().asStructureShape().get().getMember("b").get().isOptional());
         // Ensure that the structure that contains the shape was updated.
         assertThat(result.getShape(containerId).get().asStructureShape().get().getMember("b").get(),
-                   Matchers.is(newMemberB));
+                Matchers.is(newMemberB));
     }
 
     @Test
@@ -317,13 +313,19 @@ public class ReplaceShapesTest {
         assertThat(result.getShape(memberBId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
 
         // Make sure the members got updated inside of the container.
-        assertTrue(result.getShape(containerId).get()
-                .asStructureShape().get()
-                .getMember("a").get()
+        assertTrue(result.getShape(containerId)
+                .get()
+                .asStructureShape()
+                .get()
+                .getMember("a")
+                .get()
                 .hasTrait(RequiredTrait.class));
-        assertTrue(result.getShape(containerId).get()
-                .asStructureShape().get()
-                .getMember("b").get()
+        assertTrue(result.getShape(containerId)
+                .get()
+                .asStructureShape()
+                .get()
+                .getMember("b")
+                .get()
                 .hasTrait(RequiredTrait.class));
     }
 
@@ -356,7 +358,7 @@ public class ReplaceShapesTest {
         assertThat(result.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the union that contains the shape was updated.
         assertThat(result.getShape(containerId).get().asUnionShape().get().getMember("b").get(),
-                   Matchers.is(newMemberB));
+                Matchers.is(newMemberB));
     }
 
     @Test
@@ -373,10 +375,10 @@ public class ReplaceShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
         ListShape newContainer = container.toBuilder()
                 .addTrait(LengthTrait.builder()
-                                  .min(1L)
-                                  .max(2L)
-                                  .sourceLocation(SourceLocation.NONE)
-                                  .build())
+                        .min(1L)
+                        .max(2L)
+                        .sourceLocation(SourceLocation.NONE)
+                        .build())
                 .build();
         MemberShape newMember = MemberShape.builder()
                 .id(memberId)
@@ -389,7 +391,7 @@ public class ReplaceShapesTest {
         assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the list shape changes were not overwritten.
         assertThat(result.getShape(containerId).get().asListShape().get().getTrait(LengthTrait.class),
-                          Matchers.not(Optional.empty()));
+                Matchers.not(Optional.empty()));
         // Ensure that the list shape has the new member.
         assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
     }

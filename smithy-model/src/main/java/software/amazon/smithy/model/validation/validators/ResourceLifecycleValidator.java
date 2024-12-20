@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -85,10 +74,13 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(resource, format(
-                "The `%s` lifecycle operation of this resource targets an invalid operation, `%s`. The targeted "
-                + "operation %s be marked with the readonly trait.",
-                lifecycle, operation.getId(), requireReadOnly ? "must" : "must not")));
+        return Optional.of(error(resource,
+                format(
+                        "The `%s` lifecycle operation of this resource targets an invalid operation, `%s`. The targeted "
+                                + "operation %s be marked with the readonly trait.",
+                        lifecycle,
+                        operation.getId(),
+                        requireReadOnly ? "must" : "must not")));
     }
 
     private Optional<ValidationEvent> validateIdempotent(
@@ -101,9 +93,12 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        return Optional.of(error(resource, format(
-                "The `%s` lifecycle operation of this resource targets an invalid operation, `%s`. The targeted "
-                + "operation must be marked as idempotent.%s",
-                lifecycle, operation.getId(), additionalMessage)));
+        return Optional.of(error(resource,
+                format(
+                        "The `%s` lifecycle operation of this resource targets an invalid operation, `%s`. The targeted "
+                                + "operation must be marked as idempotent.%s",
+                        lifecycle,
+                        operation.getId(),
+                        additionalMessage)));
     }
 }

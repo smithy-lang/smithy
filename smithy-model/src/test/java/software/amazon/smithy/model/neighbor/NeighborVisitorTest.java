@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.neighbor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -65,7 +54,8 @@ public class NeighborVisitorTest {
 
     @Test
     public void findsMixinsOnThingsOtherThanStructAndUnion() {
-        Shape blobMixin = BlobShape.builder().id("smithy.example#BlobMixin")
+        Shape blobMixin = BlobShape.builder()
+                .id("smithy.example#BlobMixin")
                 .addTrait(MixinTrait.builder().build())
                 .build();
         Shape shape = BlobShape.builder()
@@ -116,9 +106,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member1Target),
-                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member2Target)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(shape, RelationshipType.ENUM_MEMBER, member1Target),
+                        Relationship.create(shape, RelationshipType.ENUM_MEMBER, member2Target)));
     }
 
     @Test
@@ -134,9 +125,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member1Target),
-                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member2Target)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member1Target),
+                        Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member2Target)));
     }
 
     @Test
@@ -185,9 +177,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = map.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(map, RelationshipType.MAP_KEY, keyTarget),
-                Relationship.create(map, RelationshipType.MAP_VALUE, valueTarget)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(map, RelationshipType.MAP_KEY, keyTarget),
+                        Relationship.create(map, RelationshipType.MAP_VALUE, valueTarget)));
     }
 
     @Test
@@ -217,9 +210,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = struct.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member1Target),
-                Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member2Target)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member1Target),
+                        Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member2Target)));
     }
 
     @Test
@@ -243,11 +237,12 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = concrete.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("a").get()),
-                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("b").get()),
-                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("c").get()),
-                Relationship.create(concrete, RelationshipType.MIXIN, mixin1)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("a").get()),
+                        Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("b").get()),
+                        Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("c").get()),
+                        Relationship.create(concrete, RelationshipType.MIXIN, mixin1)));
     }
 
     @Test
@@ -277,9 +272,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = union.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(union, RelationshipType.UNION_MEMBER, v1Target),
-                Relationship.create(union, RelationshipType.UNION_MEMBER, v2Target)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(union, RelationshipType.UNION_MEMBER, v1Target),
+                        Relationship.create(union, RelationshipType.UNION_MEMBER, v2Target)));
     }
 
     @Test
@@ -298,9 +294,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = service.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(service, RelationshipType.RESOURCE, resourceShape),
-                Relationship.create(service, RelationshipType.OPERATION, operationShape)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(service, RelationshipType.RESOURCE, resourceShape),
+                        Relationship.create(service, RelationshipType.OPERATION, operationShape)));
     }
 
     @Test
@@ -318,8 +315,9 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = service.accept(neighborVisitor);
 
-        assertThat(relationships, contains(
-                Relationship.create(service, RelationshipType.ERROR, errorShape)));
+        assertThat(relationships,
+                contains(
+                        Relationship.create(service, RelationshipType.ERROR, errorShape)));
     }
 
     @Test
@@ -378,19 +376,19 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = resource.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
-                Relationship.create(resource, RelationshipType.PROPERTY, property),
-                Relationship.create(resource, RelationshipType.CREATE, createOperation),
-                Relationship.create(resource, RelationshipType.READ, getOperation),
-                Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
-                Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
-                Relationship.create(resource, RelationshipType.LIST, listOperation),
-                Relationship.create(resource, RelationshipType.PUT, putOperation),
-                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, collectionOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
-                Relationship.create(resource, RelationshipType.RESOURCE, child1)
-        ));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
+                        Relationship.create(resource, RelationshipType.PROPERTY, property),
+                        Relationship.create(resource, RelationshipType.CREATE, createOperation),
+                        Relationship.create(resource, RelationshipType.READ, getOperation),
+                        Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
+                        Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
+                        Relationship.create(resource, RelationshipType.LIST, listOperation),
+                        Relationship.create(resource, RelationshipType.PUT, putOperation),
+                        Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, collectionOperation),
+                        Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
+                        Relationship.create(resource, RelationshipType.RESOURCE, child1)));
     }
 
     @Test
@@ -408,10 +406,11 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = method.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(method, RelationshipType.INPUT, input),
-                Relationship.create(method, RelationshipType.OUTPUT, output),
-                Relationship.create(method, RelationshipType.ERROR, error)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(method, RelationshipType.INPUT, input),
+                        Relationship.create(method, RelationshipType.OUTPUT, output),
+                        Relationship.create(method, RelationshipType.ERROR, error)));
     }
 
     @Test
@@ -444,11 +443,11 @@ public class NeighborVisitorTest {
 
         assertThat(enumRelationships, hasSize(1));
         assertThat(enumRelationships.get(0),
-                   equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
+                equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
 
         assertThat(enumMemberRelationships, hasSize(1));
         assertThat(enumMemberRelationships.get(0),
-                   equalTo(Relationship.create(member, RelationshipType.MEMBER_CONTAINER, enumShape)));
+                equalTo(Relationship.create(member, RelationshipType.MEMBER_CONTAINER, enumShape)));
     }
 
     @Test
@@ -472,9 +471,10 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = target.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(target, RelationshipType.MEMBER_CONTAINER, list),
-                Relationship.create(target, RelationshipType.MEMBER_TARGET, string)));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship.create(target, RelationshipType.MEMBER_CONTAINER, list),
+                        Relationship.create(target, RelationshipType.MEMBER_TARGET, string)));
     }
 
     @Test
@@ -489,8 +489,11 @@ public class NeighborVisitorTest {
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = target.accept(neighborVisitor);
 
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.createInvalid(target, RelationshipType.MEMBER_CONTAINER, ShapeId.from("ns.foo#List")),
-                Relationship.createInvalid(target, RelationshipType.MEMBER_TARGET, ShapeId.from("ns.foo#String"))));
+        assertThat(relationships,
+                containsInAnyOrder(
+                        Relationship
+                                .createInvalid(target, RelationshipType.MEMBER_CONTAINER, ShapeId.from("ns.foo#List")),
+                        Relationship
+                                .createInvalid(target, RelationshipType.MEMBER_TARGET, ShapeId.from("ns.foo#String"))));
     }
 }

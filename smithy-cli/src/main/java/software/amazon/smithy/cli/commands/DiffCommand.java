@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.nio.file.Files;
@@ -72,11 +61,10 @@ final class DiffCommand implements Command {
         arguments.getReceiver(BuildOptions.class).noPositionalArguments(true);
 
         CommandAction action = HelpActionWrapper.fromCommand(
-            this,
-            parentCommandName,
-            this::getDocumentation,
-            new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader)
-        );
+                this,
+                parentCommandName,
+                this::getDocumentation,
+                new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
 
         return action.apply(arguments, env);
     }
@@ -85,54 +73,54 @@ final class DiffCommand implements Command {
         String ls = System.lineSeparator();
         String content =
                 "The `diff` command supports different modes through the `--mode` option:"
-                + ls
-                + ls
-                + "`--mode arbitrary`:"
-                + ls
-                + "Compares two arbitrary models. This mode requires that `--old` and `--new` are specified. "
-                + "When run within a project directory that contains a `smithy-build.json` config, any dependencies "
-                + "defined in the config file are used when loading both the old and new models; however, `imports` "
-                + "and `sources` defined in the config file are not used. This is the default mode when no `--mode` "
-                + "is specified and `--old` or `--new` are provided."
-                + ls
-                + ls
-                + "    smithy diff --old /path/old --new /path/new"
-                + ls
-                + "    smithy diff --mode arbitrary --old /path/old --new /path/new"
-                + ls
-                + ls
-                + "`--mode project`:"
-                + ls
-                + "Compares the current state of a project against another project. `--old` is required and points "
-                + "to the location of another Smithy model or the root directory of another project. `--new` is not "
-                + "allowed in this mode because the new model is the project in the current working directory. The "
-                + "old model does not use any `sources` or `imports` defined by the current project, though it is "
-                + "loaded using any dependencies defined by the current project. If the `--old` argument points to "
-                + "a directory that contains a `smithy-build.json` file, any `imports` or `sources` defined in that "
-                + "config file will be used when loading the old model, though the dependencies of the old model "
-                + "are ignored."
-                + ls
-                + ls
-                + "    smithy diff --mode project --old /path/old"
-                + ls
-                + ls
-                + "`--mode git`:"
-                + ls
-                + "Compares the current state of a Smithy project to another commit in the current git repo. This "
-                + "command must be run from within a git repo. The `--old` argument can be provided to specify a "
-                + "specific revision to compare against. If `--old` is not provided, the commit defaults to `HEAD` "
-                + "(the last commit on the current branch). This mode is a wrapper around `--mode project`, so its "
-                + "restrictions apply. This is the default mode when no arguments are provided."
-                + ls
-                + ls
-                + "    # Equivalent to `smithy diff --mode git`"
-                + "    smithy diff"
-                + ls
-                + "    smithy diff --mode git"
-                + ls
-                + "    smithy diff --mode git --old main"
-                + ls
-                + "    smithy diff --mode git --old HEAD~2";
+                        + ls
+                        + ls
+                        + "`--mode arbitrary`:"
+                        + ls
+                        + "Compares two arbitrary models. This mode requires that `--old` and `--new` are specified. "
+                        + "When run within a project directory that contains a `smithy-build.json` config, any dependencies "
+                        + "defined in the config file are used when loading both the old and new models; however, `imports` "
+                        + "and `sources` defined in the config file are not used. This is the default mode when no `--mode` "
+                        + "is specified and `--old` or `--new` are provided."
+                        + ls
+                        + ls
+                        + "    smithy diff --old /path/old --new /path/new"
+                        + ls
+                        + "    smithy diff --mode arbitrary --old /path/old --new /path/new"
+                        + ls
+                        + ls
+                        + "`--mode project`:"
+                        + ls
+                        + "Compares the current state of a project against another project. `--old` is required and points "
+                        + "to the location of another Smithy model or the root directory of another project. `--new` is not "
+                        + "allowed in this mode because the new model is the project in the current working directory. The "
+                        + "old model does not use any `sources` or `imports` defined by the current project, though it is "
+                        + "loaded using any dependencies defined by the current project. If the `--old` argument points to "
+                        + "a directory that contains a `smithy-build.json` file, any `imports` or `sources` defined in that "
+                        + "config file will be used when loading the old model, though the dependencies of the old model "
+                        + "are ignored."
+                        + ls
+                        + ls
+                        + "    smithy diff --mode project --old /path/old"
+                        + ls
+                        + ls
+                        + "`--mode git`:"
+                        + ls
+                        + "Compares the current state of a Smithy project to another commit in the current git repo. This "
+                        + "command must be run from within a git repo. The `--old` argument can be provided to specify a "
+                        + "specific revision to compare against. If `--old` is not provided, the commit defaults to `HEAD` "
+                        + "(the last commit on the current branch). This mode is a wrapper around `--mode project`, so its "
+                        + "restrictions apply. This is the default mode when no arguments are provided."
+                        + ls
+                        + ls
+                        + "    # Equivalent to `smithy diff --mode git`"
+                        + "    smithy diff"
+                        + ls
+                        + "    smithy diff --mode git"
+                        + ls
+                        + "    smithy diff --mode git --old main"
+                        + ls
+                        + "    smithy diff --mode git --old HEAD~2";
         return StyleHelper.markdownLiterals(content, colors);
     }
 
@@ -168,14 +156,20 @@ final class DiffCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--mode", null, "DIFF_MODE",
-                          "The diff mode to use: 'arbitrary' (the default mode), 'project', 'git'.");
-            printer.param("--old", null, "OLD_MODEL",
-                          "Path to an old Smithy model file or directory that contains model files. When using "
-                          + "git mode, this argument refers to a Git commit or branch.");
-            printer.param("--new", null, "NEW_MODEL",
-                          "Path to the new Smithy model file or directory that contains model files. This argument "
-                          + "is not allowed in project or git mode.");
+            printer.param("--mode",
+                    null,
+                    "DIFF_MODE",
+                    "The diff mode to use: 'arbitrary' (the default mode), 'project', 'git'.");
+            printer.param("--old",
+                    null,
+                    "OLD_MODEL",
+                    "Path to an old Smithy model file or directory that contains model files. When using "
+                            + "git mode, this argument refers to a Git commit or branch.");
+            printer.param("--new",
+                    null,
+                    "NEW_MODEL",
+                    "Path to the new Smithy model file or directory that contains model files. This argument "
+                            + "is not allowed in project or git mode.");
         }
     }
 
@@ -270,8 +264,10 @@ final class DiffCommand implements Command {
                 }
 
                 if (!arguments.getReceiver(StandardOptions.class).quiet()) {
-                    env.colors().println(env.stderr(), "Comparing current project to git " + options.oldModel,
-                                         ColorTheme.MUTED);
+                    env.colors()
+                            .println(env.stderr(),
+                                    "Comparing current project to git " + options.oldModel,
+                                    ColorTheme.MUTED);
                 }
 
                 // Setup a worktree if one isn't present.
@@ -287,13 +283,22 @@ final class DiffCommand implements Command {
                     exec(ListUtils.of("git", "worktree", "prune"), root, "Error pruning worktrees");
                     // Now create the worktree using a dedicated branch. The branch allows other worktrees to checkout
                     // the same branch or SHA without conflicting.
-                    exec(ListUtils.of("git", "worktree", "add", "--quiet", "--force", "-B", DIFF_WORKTREE_BRANCH,
-                                      worktreePath.toString(), sha),
-                        root, "Unable to create git worktree");
+                    exec(ListUtils.of("git",
+                            "worktree",
+                            "add",
+                            "--quiet",
+                            "--force",
+                            "-B",
+                            DIFF_WORKTREE_BRANCH,
+                            worktreePath.toString(),
+                            sha),
+                            root,
+                            "Unable to create git worktree");
                 } else {
                     // Checkout the right commit in the worktree.
                     exec(ListUtils.of("git", "reset", "--quiet", "--hard", sha),
-                         worktreePath, "Unable to checkout " + options.oldModel + " in git worktree");
+                            worktreePath,
+                            "Unable to checkout " + options.oldModel + " in git worktree");
                 }
 
                 // Now run a project mode build using the worktree.

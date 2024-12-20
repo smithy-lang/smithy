@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
@@ -122,7 +121,8 @@ public final class Condition extends SyntaxElement implements TypeCheck, FromSou
         if (result != null) {
             scope.getDeclaration(result).ifPresent(entry -> {
                 throw new SourceException(String.format("Invalid shadowing of `%s` (first declared on line %s)",
-                        result, entry.getKey().getSourceLocation().getLine()), result);
+                        result,
+                        entry.getKey().getSourceLocation().getLine()), result);
             });
             scope.insert(result, conditionType.provenTruthy());
         }

@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
@@ -37,8 +26,8 @@ import software.amazon.smithy.utils.StringUtils;
 public final class EventSourceValidator extends AbstractValidator {
 
     private static final Map<String, String> KNOWN_EXCEPTIONS = MapUtils.of(
-            "cloudwatch.amazonaws.com", "monitoring.amazonaws.com"
-    );
+            "cloudwatch.amazonaws.com",
+            "monitoring.amazonaws.com");
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -60,7 +49,7 @@ public final class EventSourceValidator extends AbstractValidator {
                 message = "aws.api#service|cloudTrailEventSource must not use placeholders, but found: " + source;
             } else if (!source.equals(expectedEventSource)) {
                 message = String.format("aws.api#service|cloudTrailEventSource does not match the expected value. "
-                                        + "Expected '%s', but found '%s'.", expectedEventSource, source);
+                        + "Expected '%s', but found '%s'.", expectedEventSource, source);
             }
         }
 

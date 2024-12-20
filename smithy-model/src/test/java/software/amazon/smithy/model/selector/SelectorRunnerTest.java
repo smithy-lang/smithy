@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import java.io.IOException;
@@ -5,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,8 +76,8 @@ public final class SelectorRunnerTest {
         extra.removeAll(expectedMatches);
 
         StringBuilder error = new StringBuilder("Selector ")
-            .append(selector)
-            .append(" test case failed.\n");
+                .append(selector)
+                .append(" test case failed.\n");
 
         if (!missing.isEmpty()) {
             error.append("The following shapes were not matched: ").append(missing).append(".\n");
@@ -94,12 +97,12 @@ public final class SelectorRunnerTest {
         List<Path> paths = new ArrayList<>();
         try (Stream<Path> files = Files.walk(Paths.get(SelectorRunnerTest.class.getResource("cases").toURI()))) {
             files
-                .filter(Files::isRegularFile)
-                .filter(file -> {
-                    String filename = file.toString();
-                    return filename.endsWith(".smithy") || filename.endsWith(".json");
-                })
-                .forEach(paths::add);
+                    .filter(Files::isRegularFile)
+                    .filter(file -> {
+                        String filename = file.toString();
+                        return filename.endsWith(".smithy") || filename.endsWith(".json");
+                    })
+                    .forEach(paths::add);
         } catch (IOException e) {
             throw new RuntimeException("Error loading models for selector runner", e);
         }

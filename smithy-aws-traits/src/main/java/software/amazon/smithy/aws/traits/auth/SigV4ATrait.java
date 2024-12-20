@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.traits.auth;
 
 import software.amazon.smithy.model.node.Node;
@@ -44,16 +43,16 @@ public final class SigV4ATrait extends AbstractTrait implements ToSmithyBuilder<
     @Override
     public Builder toBuilder() {
         return builder()
-            .sourceLocation(getSourceLocation())
-            .name(getName());
+                .sourceLocation(getSourceLocation())
+                .name(getName());
     }
 
     @Override
     protected Node createNode() {
         return Node.objectNodeBuilder()
-            .sourceLocation(getSourceLocation())
-            .withMember(NAME, getName())
-            .build();
+                .sourceLocation(getSourceLocation())
+                .withMember(NAME, getName())
+                .build();
     }
 
     public static final class Builder extends AbstractTraitBuilder<SigV4ATrait, Builder> {

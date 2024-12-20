@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,18 +68,18 @@ public class RootCommandTest {
     @Test
     public void runsWithColors() {
         IntegUtils.run("simple-config-sources",
-                       ListUtils.of("--help"),
-                       MapUtils.of(EnvironmentVariable.FORCE_COLOR.toString(), "true"),
-                       result -> {
-            assertThat(result.getExitCode(), equalTo(0));
-            assertThat(result.getOutput(), containsString("[0m"));
-        });
+                ListUtils.of("--help"),
+                MapUtils.of(EnvironmentVariable.FORCE_COLOR.toString(), "true"),
+                result -> {
+                    assertThat(result.getExitCode(), equalTo(0));
+                    assertThat(result.getOutput(), containsString("[0m"));
+                });
     }
 
     private void ensureHelpOutput(RunResult result) {
         // Make sure it's the help output.
         assertThat(result.getOutput(),
-                   containsString("Usage: smithy [-h | --help] [--version] <command> [<args>]"));
+                containsString("Usage: smithy [-h | --help] [--version] <command> [<args>]"));
         // Make sure commands are listed.
         assertThat(result.getOutput(), containsString("Available commands:"));
         // Check on one of the command's help summary.

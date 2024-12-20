@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
@@ -103,9 +92,11 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             String invalidList = String.join("`, `", invalid);
             throw new SourceException(String.format(
                     "Mixins may only be mixed into shapes of the same type. The following mixins were applied to the "
-                            + "%s shape `%s` which are not %1$s shapes: [`%s`]", getType(), getId(), invalidList),
-                    source
-            );
+                            + "%s shape `%s` which are not %1$s shapes: [`%s`]",
+                    getType(),
+                    getId(),
+                    invalidList),
+                    source);
         }
     }
 
@@ -171,7 +162,9 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         String missingRequired = missingMembersNames.size() > 1 ? "members" : "member";
         String missingMembers = String.join(", ", missingMembersNames);
         String message = String.format("Missing required %s of shape `%s`: %s",
-                missingRequired, getId(), missingMembers);
+                missingRequired,
+                getId(),
+                missingMembers);
         return new SourceException(message, getSourceLocation());
     }
 
@@ -185,12 +178,14 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             if (!getId().hasMember()) {
                 throw new SourceException(String.format(
                         "Shapes of type `%s` must contain a member in their shape ID. Found `%s`",
-                        getType(), getId()), getSourceLocation());
+                        getType(),
+                        getId()), getSourceLocation());
             }
         } else if (getId().hasMember()) {
             throw new SourceException(String.format(
                     "Shapes of type `%s` cannot contain a member in their shape ID. Found `%s`",
-                    getType(), getId()), getSourceLocation());
+                    getType(),
+                    getId()), getSourceLocation());
         }
     }
 
@@ -200,7 +195,10 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
                 ShapeId expected = getId().withMember(member.getMemberName());
                 throw new SourceException(String.format(
                         "Expected the `%s` member of `%s` to have an ID of `%s` but found `%s`",
-                        member.getMemberName(), getId(), expected, member.getId()), getSourceLocation());
+                        member.getMemberName(),
+                        getId(),
+                        expected,
+                        member.getId()), getSourceLocation());
             }
         }
     }
@@ -330,7 +328,9 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     public final <T extends Trait> T expectTrait(Class<T> traitClass) {
         return getTrait(traitClass).orElseThrow(() -> new ExpectationNotMetException(String.format(
-                "Expected shape `%s` to have a trait `%s`", getId(), traitClass.getCanonicalName()), this));
+                "Expected shape `%s` to have a trait `%s`",
+                getId(),
+                traitClass.getCanonicalName()), this));
     }
 
     /**
@@ -830,11 +830,11 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
         Shape other = (Shape) o;
         return getType() == other.getType()
-               && getId().equals(other.getId())
-               && getMemberNames().equals(other.getMemberNames())
-               && getAllMembers().equals(other.getAllMembers())
-               && getAllTraits().equals(other.getAllTraits())
-               && mixins.equals(other.mixins);
+                && getId().equals(other.getId())
+                && getMemberNames().equals(other.getMemberNames())
+                && getAllMembers().equals(other.getAllMembers())
+                && getAllTraits().equals(other.getAllTraits())
+                && mixins.equals(other.mixins);
     }
 
     /**

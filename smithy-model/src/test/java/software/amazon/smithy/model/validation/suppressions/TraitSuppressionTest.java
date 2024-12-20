@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.suppressions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +66,6 @@ public class TraitSuppressionTest {
                 Arguments.of(false, "BadThing", ListUtils.of("NotBadThing")),
                 Arguments.of(false, "BadThing.Foo", ListUtils.of("BadThing.Foo.Bar")),
                 Arguments.of(false, "BadThing.Foo", ListUtils.of("BadThing.Foo.Bar.Baz")),
-                Arguments.of(false, "BadThing.Fooz", ListUtils.of("BadThing.Foo"))
-        );
+                Arguments.of(false, "BadThing.Fooz", ListUtils.of("BadThing.Foo")));
     }
 }

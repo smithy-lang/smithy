@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.integrations;
 
 import java.util.List;
@@ -83,13 +82,13 @@ public class BuiltinsIntegration implements DocIntegration {
     @Override
     public List<DocFormat> docFormats(DocSettings settings) {
         return List.of(
-            new DocFormat("markdown", ".md", new MarkdownWriter.Factory())
-        );
+                new DocFormat("markdown", ".md", new MarkdownWriter.Factory()));
     }
 
     @Override
     public List<? extends CodeInterceptor<? extends CodeSection, DocWriter>> interceptors(
-            DocGenerationContext context) {
+            DocGenerationContext context
+    ) {
         // Due to the way that interceptors work, the elements at the bottom of the list will
         // be called last. Since most of these append data to their sections, that means that
         // the ones at the end will be at the top of the rendered pages. Therefore, interceptors
@@ -138,7 +137,6 @@ public class BuiltinsIntegration implements DocIntegration {
                 new DeprecatedInterceptor(),
                 new RecommendedInterceptor(),
                 new NullabilityInterceptor(),
-                new SensitiveInterceptor()
-        );
+                new SensitiveInterceptor());
     }
 }

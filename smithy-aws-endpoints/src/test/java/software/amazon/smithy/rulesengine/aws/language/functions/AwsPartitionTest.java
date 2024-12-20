@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -65,7 +69,7 @@ public class AwsPartitionTest {
 
         // Set the partitions back to what they were.
         AwsPartition.overridePartitions(Partitions.fromNode(
-                        Node.parse(Partitions.class.getResourceAsStream("partitions.json"))));
+                Node.parse(Partitions.class.getResourceAsStream("partitions.json"))));
     }
 
     private RecordValue evalWithRegion(String region) {

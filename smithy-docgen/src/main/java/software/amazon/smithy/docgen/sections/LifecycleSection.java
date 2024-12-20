@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -27,5 +26,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * about other sections present on the documentation pages for resrouces.
  */
 @SmithyUnstableApi
-public record LifecycleSection(DocGenerationContext context, ResourceShape resource) implements CodeSection {
-}
+public record LifecycleSection(DocGenerationContext context, ResourceShape resource) implements CodeSection {}

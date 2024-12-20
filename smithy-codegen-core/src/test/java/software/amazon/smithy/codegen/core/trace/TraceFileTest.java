@@ -1,4 +1,12 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.codegen.core.trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +23,6 @@ import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
 
 class TraceFileTest {
     /**
@@ -114,7 +118,6 @@ class TraceFileTest {
          */
         //traceFile.validateModel(assembleModelTestHelper(("Your model resource path here");
 
-
         //Then write the TraceFile, just specify path/filename string.
         String filename = "trace-file-output.json";
         MockManifest manifest = writeTraceFileTestHelper(traceFile, filename);
@@ -128,8 +131,10 @@ class TraceFileTest {
 
         //few assorted checks
         assertThat(traceFile2.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
-        assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
-                "requestBuilder"));
+        assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(),
+                containsInAnyOrder("service",
+                        "request",
+                        "requestBuilder"));
         assertThat(traceFile2.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
                 equalTo("TYPE"));
         assertThat(traceFile2.getSmithyTrace(), equalTo("1.0"));
@@ -140,8 +145,12 @@ class TraceFileTest {
         TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-file.json").toURI());
 
         assertThat(traceFile.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
-        assertThat(traceFile.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
-                "response", "requestBuilder", "responseBuilder"));
+        assertThat(traceFile.getArtifactDefinitions().get().getTags().keySet(),
+                containsInAnyOrder("service",
+                        "request",
+                        "response",
+                        "requestBuilder",
+                        "responseBuilder"));
         assertThat(traceFile.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
                 equalTo("TYPE"));
         assertThat(traceFile.getSmithyTrace(), equalTo("1.0"));
@@ -154,8 +163,12 @@ class TraceFileTest {
         TraceFile traceFile2 = parseTraceFileFromManifest(manifest, "trace-file-output.json");
 
         assertThat(traceFile2.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
-        assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
-                "response", "requestBuilder", "responseBuilder"));
+        assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(),
+                containsInAnyOrder("service",
+                        "request",
+                        "response",
+                        "requestBuilder",
+                        "responseBuilder"));
         assertThat(traceFile2.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
                 equalTo("TYPE"));
         assertThat(traceFile2.getSmithyTrace(), equalTo("1.0"));
@@ -188,11 +201,12 @@ class TraceFileTest {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-file.json").toURI());
             traceFile.toBuilder()
-                    .addShapeLink("com.amazonaws.snowball#Snowball", ShapeLink
-                            .builder()
-                            .id("id")
-                            .type("fake_type")
-                            .build())
+                    .addShapeLink("com.amazonaws.snowball#Snowball",
+                            ShapeLink
+                                    .builder()
+                                    .id("id")
+                                    .type("fake_type")
+                                    .build())
                     .build();
         });
     }
@@ -202,36 +216,43 @@ class TraceFileTest {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-file.json").toURI());
             traceFile.toBuilder()
-                    .addShapeLink("com.amazonaws.snowball#Snowball", ShapeLink
-                            .builder()
-                            .id("id")
-                            .type("TYPE")
-                            .addTag("fake_tag")
-                            .build())
+                    .addShapeLink("com.amazonaws.snowball#Snowball",
+                            ShapeLink
+                                    .builder()
+                                    .id("id")
+                                    .type("TYPE")
+                                    .addTag("fake_tag")
+                                    .build())
                     .build();
         });
     }
 
     @Test
-    void validateModelDoesNotThrowOnValidTraceFileModelPair() throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
+    void validateModelDoesNotThrowOnValidTraceFileModelPair()
+            throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
         Assertions.assertDoesNotThrow(() -> {
-            TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-for-simple-service-validation.json").toURI());
+            TraceFile traceFile =
+                    parseTraceFileFromFile(getClass().getResource("trace-for-simple-service-validation.json").toURI());
             traceFile.validateModel(assembleModelTestHelper("simple-service.smithy"));
         });
     }
 
     @Test
-    void validateModelThrowsOnTraceFileWithoutAllModelShapeIDs() throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
+    void validateModelThrowsOnTraceFileWithoutAllModelShapeIDs()
+            throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
-            TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-for-model-validation.json").toURI());
+            TraceFile traceFile =
+                    parseTraceFileFromFile(getClass().getResource("trace-for-model-validation.json").toURI());
             traceFile.validateModel(assembleModelTestHelper("service-with-shapeids.smithy"));
         });
     }
 
     @Test
-    void validateModelThrowsOnModelWithoutAllTraceFileShapeIds() throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
+    void validateModelThrowsOnModelWithoutAllTraceFileShapeIds()
+            throws ExpectationNotMetException, URISyntaxException, FileNotFoundException {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
-            TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-for-simple-service-validation.json").toURI());
+            TraceFile traceFile =
+                    parseTraceFileFromFile(getClass().getResource("trace-for-simple-service-validation.json").toURI());
             Model model = assembleModelTestHelper("simple-service.smithy");
             //add a shape to our model that's not in our trace file
             model = model.toBuilder().addShape(StringShape.builder().id("ns.foo#bar").build()).build();

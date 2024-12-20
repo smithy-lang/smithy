@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -20,5 +19,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @see ShapeSubheadingSection to add context immediately before the member's docs.
  */
 @SmithyUnstableApi
-public record MemberSection(DocGenerationContext context, MemberShape member) implements CodeSection {
-}
+public record MemberSection(DocGenerationContext context, MemberShape member) implements CodeSection {}

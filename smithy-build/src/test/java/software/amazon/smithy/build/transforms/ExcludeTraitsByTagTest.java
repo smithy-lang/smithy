@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.build.transforms;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,7 +38,8 @@ public class ExcludeTraitsByTagTest {
                 .settings(Node.objectNode().withMember("tags", Node.fromStrings("qux")))
                 .build();
         Model result = new ExcludeTraitsByTag().transform(context);
-        Set<ShapeId> traits = result.getShapesWithTrait(TraitDefinition.class).stream()
+        Set<ShapeId> traits = result.getShapesWithTrait(TraitDefinition.class)
+                .stream()
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 
@@ -66,31 +56,35 @@ public class ExcludeTraitsByTagTest {
     @Test
     public void classesWithMixinsFilteredWithoutCycleError() throws Exception {
         Model model = Model.assembler()
-            .addImport(Paths.get(getClass().getResource("mixin-cycle-test.smithy").toURI()))
-            .assemble()
-            .unwrap();
+                .addImport(Paths.get(getClass().getResource("mixin-cycle-test.smithy").toURI()))
+                .assemble()
+                .unwrap();
         TransformContext context = TransformContext.builder()
-            .model(model)
-            .settings(Node.objectNode().withMember("tags", Node.fromStrings("filter")))
-            .build();
+                .model(model)
+                .settings(Node.objectNode().withMember("tags", Node.fromStrings("filter")))
+                .build();
         Model result = new ExcludeTraitsByTag().transform(context);
 
-        Set<ShapeId> traits = result.getShapesWithTrait(TraitDefinition.class).stream()
-            .map(Shape::getId)
-            .collect(Collectors.toSet());
+        Set<ShapeId> traits = result.getShapesWithTrait(TraitDefinition.class)
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
 
         assertFalse(traits.contains(ShapeId.from("smithy.example#filteredTrait")));
         assertTrue(traits.contains(ShapeId.from("smithy.example#unfilteredTrait")));
 
-        ResourceShape resourceShape = result.expectShape(ShapeId.from("smithy.example#ResourceWithMixin"), ResourceShape.class);
+        ResourceShape resourceShape =
+                result.expectShape(ShapeId.from("smithy.example#ResourceWithMixin"), ResourceShape.class);
         assertFalse(resourceShape.findMemberTrait(result, "smithy.example#filteredTrait").isPresent());
         assertTrue(resourceShape.findMemberTrait(result, "smithy.example#unfilteredTrait").isPresent());
 
-        OperationShape operationShape = result.expectShape(ShapeId.from("smithy.example#OperationWithMixin"), OperationShape.class);
+        OperationShape operationShape =
+                result.expectShape(ShapeId.from("smithy.example#OperationWithMixin"), OperationShape.class);
         assertFalse(operationShape.findMemberTrait(result, "smithy.example#filteredTrait").isPresent());
         assertTrue(operationShape.findMemberTrait(result, "smithy.example#unfilteredTrait").isPresent());
 
-        StructureShape structureShape = result.expectShape(ShapeId.from("smithy.example#StructureWithMixin"), StructureShape.class);
+        StructureShape structureShape =
+                result.expectShape(ShapeId.from("smithy.example#StructureWithMixin"), StructureShape.class);
         assertFalse(structureShape.findMemberTrait(result, "smithy.example#filteredTrait").isPresent());
         assertTrue(structureShape.findMemberTrait(result, "smithy.example#unfilteredTrait").isPresent());
 

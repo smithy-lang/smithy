@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
@@ -113,7 +102,10 @@ final class ParameterizedHttpMalformedRequestTestCase
             return ListUtils.of(builder.build());
         }
 
-        int paramLength = testParameters.values().stream().findFirst().map(List::size)
+        int paramLength = testParameters.values()
+                .stream()
+                .findFirst()
+                .map(List::size)
                 .orElseThrow(IllegalStateException::new);
         final List<HttpMalformedRequestTestCase> testCases = new ArrayList<>(paramLength);
         for (int i = 0; i < paramLength; i++) {
@@ -129,8 +121,8 @@ final class ParameterizedHttpMalformedRequestTestCase
             getDocumentation().map(writer::format).ifPresent(builder::documentation);
 
             testCases.add(builder.request(interpolateRequest(request, writer))
-                                 .response(interpolateResponse(response, writer))
-                                 .build());
+                    .response(interpolateResponse(response, writer))
+                    .build());
         }
         return testCases;
     }
@@ -188,7 +180,7 @@ final class ParameterizedHttpMalformedRequestTestCase
             Map<String, List<String>> paramsMap = new HashMap<>();
             for (Map.Entry<String, Node> e : params.getStringMap().entrySet()) {
                 paramsMap.put(e.getKey(),
-                              e.getValue().expectArrayNode().getElementsAs(n -> n.expectStringNode().getValue()));
+                        e.getValue().expectArrayNode().getElementsAs(n -> n.expectStringNode().getValue()));
             }
             builder.testParameters(paramsMap);
         });

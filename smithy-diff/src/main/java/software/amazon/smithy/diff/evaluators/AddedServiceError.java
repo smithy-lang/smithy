@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -44,13 +33,15 @@ public final class AddedServiceError extends AbstractDiffEvaluator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ShapeId id : change.getNewShape().getErrors()) {
             if (!change.getOldShape().getErrors().contains(id)) {
-                events.add(warning(change.getNewShape(), String.format(
-                        "The `%s` error was added to the `%s` service, making this error common "
-                        + "to all operations within the service. This is backward-compatible if the "
-                        + "error is only encountered as a result of a change in behavior of "
-                        + "the client (for example, the client sends a new "
-                        + "parameter to an operation).",
-                        id, change.getShapeId())));
+                events.add(warning(change.getNewShape(),
+                        String.format(
+                                "The `%s` error was added to the `%s` service, making this error common "
+                                        + "to all operations within the service. This is backward-compatible if the "
+                                        + "error is only encountered as a result of a change in behavior of "
+                                        + "the client (for example, the client sends a new "
+                                        + "parameter to an operation).",
+                                id,
+                                change.getShapeId())));
             }
         }
 

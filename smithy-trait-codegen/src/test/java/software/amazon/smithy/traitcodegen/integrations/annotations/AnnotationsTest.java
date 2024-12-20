@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.traitcodegen.integrations.annotations;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,7 +23,8 @@ import software.amazon.smithy.traitcodegen.TraitCodegenPlugin;
 
 public class AnnotationsTest {
 
-    private static final URL TEST_FILE = Objects.requireNonNull(AnnotationsTest.class.getResource("annotations-test.smithy"));
+    private static final URL TEST_FILE =
+            Objects.requireNonNull(AnnotationsTest.class.getResource("annotations-test.smithy"));
     private final MockManifest manifest = new MockManifest();
 
     @BeforeEach
@@ -35,8 +40,7 @@ public class AnnotationsTest {
                                 .withMember("package", "com.example.traits")
                                 .withMember("namespace", "com.example.annotations")
                                 .withMember("header", ArrayNode.fromStrings("Header line One"))
-                                .build()
-                )
+                                .build())
                 .model(model)
                 .build();
         SmithyBuildPlugin plugin = new TraitCodegenPlugin();

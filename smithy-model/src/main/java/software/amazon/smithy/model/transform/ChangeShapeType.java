@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashMap;
@@ -63,7 +52,7 @@ final class ChangeShapeType {
 
     static ChangeShapeType upgradeEnums(Model model, boolean synthesizeEnumNames) {
         Map<ShapeId, ShapeType> toUpdate = new HashMap<>();
-        for (StringShape shape: model.getStringShapesWithTrait(EnumTrait.class)) {
+        for (StringShape shape : model.getStringShapesWithTrait(EnumTrait.class)) {
             if (EnumShape.canConvertToEnum(shape, synthesizeEnumNames)) {
                 toUpdate.put(shape.getId(), ShapeType.ENUM);
             }
@@ -87,8 +76,8 @@ final class ChangeShapeType {
             if (shapeToType.containsKey(shape.getId())) {
                 ShapeType targetType = shapeToType.get(shape.getId());
                 return targetType == shape.getType()
-                       ? shape
-                       : shape.accept(new Retype(targetType, synthesizeEnumNames));
+                        ? shape
+                        : shape.accept(new Retype(targetType, synthesizeEnumNames));
             } else {
                 return shape;
             }
@@ -182,8 +171,10 @@ final class ChangeShapeType {
                 if (enumShape.isPresent()) {
                     return enumShape.get();
                 }
-                throw invalidType(shape, to, "Strings can only be converted to enums if they have an enum "
-                        + "trait where each enum definition has a name.");
+                throw invalidType(shape,
+                        to,
+                        "Strings can only be converted to enums if they have an enum "
+                                + "trait where each enum definition has a name.");
             }
             return copyToSimpleShape(to, shape);
         }

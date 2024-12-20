@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public final class StaticContextParamsTraitValidator extends AbstractValidator {
                 }
                 events.add(error(operationShape,
                         String.format("The operation `%s` is marked with `%s` which contains a "
-                                      + "key `%s` with an unsupported document type value `%s`.",
+                                + "key `%s` with an unsupported document type value `%s`.",
                                 operationShape.getId(),
                                 StaticContextParamsTrait.ID.toString(),
                                 entry.getKey(),

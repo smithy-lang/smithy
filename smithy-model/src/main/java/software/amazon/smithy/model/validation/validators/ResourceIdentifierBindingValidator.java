@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -74,9 +63,12 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 if (entry.getValue().size() > 1 && entry.getValue().contains(entry.getKey())) {
                     Set<String> explicitBindings = entry.getValue();
                     explicitBindings.remove(entry.getKey());
-                    events.add(warning(structure, String.format(
-                            "Implicit resource identifier for '%s' is overridden by `resourceIdentifier` trait on "
-                            + "members: '%s'", entry.getKey(), String.join("', '", explicitBindings))));
+                    events.add(warning(structure,
+                            String.format(
+                                    "Implicit resource identifier for '%s' is overridden by `resourceIdentifier` trait on "
+                                            + "members: '%s'",
+                                    entry.getKey(),
+                                    String.join("', '", explicitBindings))));
                 }
             }
 
@@ -117,9 +109,12 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
 
         for (Map.Entry<String, Set<String>> entry : explicitBindings.entrySet()) {
             if (entry.getValue().size() > 1) {
-                events.add(error(structure, String.format(
-                        "Conflicting resource identifier member bindings found for identifier '%s' between "
-                        + "members: '%s'", entry.getKey(), String.join("', '", entry.getValue()))));
+                events.add(error(structure,
+                        String.format(
+                                "Conflicting resource identifier member bindings found for identifier '%s' between "
+                                        + "members: '%s'",
+                                entry.getKey(),
+                                String.join("', '", entry.getValue()))));
             }
         }
     }
@@ -132,8 +127,9 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 model.shapes(ResourceShape.class)
                         .flatMap(resource -> validateCollectionBindings(model, resource, bindingIndex)),
                 model.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateInstanceBindings(model, resource, bindingIndex))
-        ).flatMap(Function.identity()).forEach(events::add);
+                        .flatMap(resource -> validateInstanceBindings(model, resource, bindingIndex)))
+                .flatMap(Function.identity())
+                .forEach(events::add);
     }
 
     private Stream<ValidationEvent> validateResource(
@@ -141,9 +137,11 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             ResourceShape parent,
             IdentifierBindingIndex bindingIndex
     ) {
-        return parent.getResources().stream()
+        return parent.getResources()
+                .stream()
                 .flatMap(childId -> OptionalUtils.stream(model.getShape(childId).flatMap(Shape::asResourceShape)))
-                .flatMap(child -> child.getAllOperations().stream()
+                .flatMap(child -> child.getAllOperations()
+                        .stream()
                         .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                         .map(operation -> Pair.of(child, operation)))
                 .flatMap(pair -> OptionalUtils.stream(
@@ -158,14 +156,20 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     ) {
         if (bindingIndex.getOperationBindingType(child, operation) != IdentifierBindingIndex.BindingType.NONE) {
             Set<String> bindings = bindingIndex.getOperationInputBindings(child, operation).keySet();
-            Set<String> missing = parent.getIdentifiers().keySet().stream()
+            Set<String> missing = parent.getIdentifiers()
+                    .keySet()
+                    .stream()
                     .filter(FunctionalUtils.not(bindings::contains))
                     .collect(Collectors.toSet());
             if (!missing.isEmpty()) {
-                return Optional.of(error(operation, String.format(
-                        "This operation is bound to the `%s` resource, which is a child of the `%s` resource, and "
-                        + "it is missing the following resource identifier bindings of `%s`: [%s]",
-                        child.getId(), parent.getId(), parent.getId(), ValidationUtils.tickedList(missing))));
+                return Optional.of(error(operation,
+                        String.format(
+                                "This operation is bound to the `%s` resource, which is a child of the `%s` resource, and "
+                                        + "it is missing the following resource identifier bindings of `%s`: [%s]",
+                                child.getId(),
+                                parent.getId(),
+                                parent.getId(),
+                                ValidationUtils.tickedList(missing))));
             }
         }
 
@@ -177,19 +181,20 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             ResourceShape resource,
             IdentifierBindingIndex identifierIndex
     ) {
-        return resource.getAllOperations().stream()
+        return resource.getAllOperations()
+                .stream()
                 // Find all collection operations bound to the resource.
-                .filter(operation -> identifierIndex.getOperationBindingType(resource, operation)
-                        == IdentifierBindingIndex.BindingType.COLLECTION)
+                .filter(operation -> identifierIndex.getOperationBindingType(resource,
+                        operation) == IdentifierBindingIndex.BindingType.COLLECTION)
                 // Get their operation shapes.
                 .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find collection operations which improperly bind all the resource identifiers.
                 .filter(operation -> hasAllIdentifiersBound(resource, operation, identifierIndex))
-                .map(operation -> error(operation, format(
-                        "This operation is bound as a collection operation on the `%s` resource, but it improperly "
-                        + "binds all of the identifiers of the resource to members of the operation input.",
-                        resource.getId()
-                )));
+                .map(operation -> error(operation,
+                        format(
+                                "This operation is bound as a collection operation on the `%s` resource, but it improperly "
+                                        + "binds all of the identifiers of the resource to members of the operation input.",
+                                resource.getId())));
     }
 
     private Stream<ValidationEvent> validateInstanceBindings(
@@ -197,10 +202,11 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             ResourceShape resource,
             IdentifierBindingIndex bindingIndex
     ) {
-        return resource.getAllOperations().stream()
+        return resource.getAllOperations()
+                .stream()
                 // Find all instance operations bound to the resource.
-                .filter(operation -> bindingIndex.getOperationBindingType(resource, operation)
-                        == IdentifierBindingIndex.BindingType.INSTANCE)
+                .filter(operation -> bindingIndex.getOperationBindingType(resource,
+                        operation) == IdentifierBindingIndex.BindingType.INSTANCE)
                 // Get their operation shapes.
                 .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find instance operations which do not bind all of the resource identifiers.
@@ -208,26 +214,34 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 .map(operation -> {
                     String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
                     String boundIds = createBindingMessage(bindingIndex.getOperationInputBindings(resource, operation));
-                    return error(operation, format(
-                            "This operation does not form a valid instance operation when bound to resource `%s`. "
-                                    + "All of the identifiers of the resource were not implicitly or explicitly bound "
-                                    + "to the input of the operation. Expected the following identifier bindings: "
-                                    + "[%s]. Found the following identifier bindings: [%s]",
-                            resource.getId(), expectedIdentifiers, boundIds));
+                    return error(operation,
+                            format(
+                                    "This operation does not form a valid instance operation when bound to resource `%s`. "
+                                            + "All of the identifiers of the resource were not implicitly or explicitly bound "
+                                            + "to the input of the operation. Expected the following identifier bindings: "
+                                            + "[%s]. Found the following identifier bindings: [%s]",
+                                    resource.getId(),
+                                    expectedIdentifiers,
+                                    boundIds));
                 });
     }
 
     private boolean hasAllIdentifiersBound(
-            ResourceShape resource, OperationShape operation, IdentifierBindingIndex bindingIndex
+            ResourceShape resource,
+            OperationShape operation,
+            IdentifierBindingIndex bindingIndex
     ) {
-        return bindingIndex.getOperationInputBindings(resource, operation).keySet()
+        return bindingIndex.getOperationInputBindings(resource, operation)
+                .keySet()
                 .containsAll(resource.getIdentifiers().keySet());
     }
 
     private String createBindingMessage(Map<String, ?> bindings) {
-        return bindings.entrySet().stream()
+        return bindings.entrySet()
+                .stream()
                 .map(entry -> format("required member named `%s` that targets `%s`",
-                                     entry.getKey(), entry.getValue().toString()))
+                        entry.getKey(),
+                        entry.getValue().toString()))
                 .sorted()
                 .collect(Collectors.joining(", "));
     }

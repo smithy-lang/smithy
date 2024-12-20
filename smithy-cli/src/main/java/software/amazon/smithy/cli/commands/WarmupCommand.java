@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.File;
@@ -47,7 +36,9 @@ final class WarmupCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(WarmupCommand.class.getName());
     private final String parentCommandName;
 
-    private enum Phase { WRAPPER, CLASSES, DUMP }
+    private enum Phase {
+        WRAPPER, CLASSES, DUMP
+    }
 
     private static final class Config implements ArgumentReceiver {
         private Phase phase = Phase.WRAPPER;
@@ -137,19 +128,38 @@ final class WarmupCommand implements Command {
             Path baseDir = Files.createTempDirectory("smithy-warmup");
 
             LOGGER.info("Building class list");
-            callJava(Phase.CLASSES, isDebug, printer, baseDir, baseArgs,
-                     "-Xshare:off", "-XX:DumpLoadedClassList=" + classListFile,
-                     SmithyCli.class.getName(), "warmup");
+            callJava(Phase.CLASSES,
+                    isDebug,
+                    printer,
+                    baseDir,
+                    baseArgs,
+                    "-Xshare:off",
+                    "-XX:DumpLoadedClassList=" + classListFile,
+                    SmithyCli.class.getName(),
+                    "warmup");
 
             LOGGER.info("Building archive from classlist");
-            callJava(Phase.WRAPPER, isDebug, printer, baseDir, baseArgs,
-                     "-XX:SharedClassListFile=" + classListFile, "-Xshare:dump", "-XX:SharedArchiveFile=" + jsaFile,
-                     SmithyCli.class.getName(), "warmup");
+            callJava(Phase.WRAPPER,
+                    isDebug,
+                    printer,
+                    baseDir,
+                    baseArgs,
+                    "-XX:SharedClassListFile=" + classListFile,
+                    "-Xshare:dump",
+                    "-XX:SharedArchiveFile=" + jsaFile,
+                    SmithyCli.class.getName(),
+                    "warmup");
 
             LOGGER.info("Validating that the archive was created correctly");
-            callJava(null, isDebug, printer, baseDir, baseArgs,
-                     "-Xshare:on", "-XX:SharedArchiveFile=" + jsaFile,
-                     SmithyCli.class.getName(), "--help");
+            callJava(null,
+                    isDebug,
+                    printer,
+                    baseDir,
+                    baseArgs,
+                    "-Xshare:on",
+                    "-XX:SharedArchiveFile=" + jsaFile,
+                    SmithyCli.class.getName(),
+                    "--help");
 
             classListFile.toFile().delete();
             return 0;
@@ -172,7 +182,8 @@ final class WarmupCommand implements Command {
             CliPrinter printer,
             Path baseDir,
             List<String> baseArgs,
-            String... args) {
+            String... args
+    ) {
         List<String> resolved = new ArrayList<>(baseArgs);
         Collections.addAll(resolved, args);
 
@@ -213,10 +224,10 @@ final class WarmupCommand implements Command {
             File buildFile = tempDirWithPrefix.resolve("smithy-build.json").toFile();
             try (FileWriter writer = new FileWriter(buildFile)) {
                 writer.write("{\n"
-                             + "  \"version\": \"1.0\",\n"
-                             + "  \"maven\": {\"dependencies\": [\"software.amazon.smithy:smithy-model:"
-                             + SmithyCli.getVersion() + "\"]}\n"
-                             + "}");
+                        + "  \"version\": \"1.0\",\n"
+                        + "  \"maven\": {\"dependencies\": [\"software.amazon.smithy:smithy-model:"
+                        + SmithyCli.getVersion() + "\"]}\n"
+                        + "}");
             }
 
             SmithyBuildConfig.builder().load(buildFile.toPath()).build();

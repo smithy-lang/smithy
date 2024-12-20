@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.ArrayList;
@@ -71,7 +70,8 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
      */
     public void writeToScope(Scope<Type> scope) {
         for (Parameter parameter : parameters) {
-            RuleError.context(String.format("while typechecking par %s", parameter.getName()), parameter,
+            RuleError.context(String.format("while typechecking par %s", parameter.getName()),
+                    parameter,
                     () -> scope.insert(parameter.getName(), parameter.toType()));
         }
     }

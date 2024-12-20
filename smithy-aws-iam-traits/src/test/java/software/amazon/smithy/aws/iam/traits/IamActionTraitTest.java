@@ -1,23 +1,11 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.iam.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -64,7 +52,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void prefersIamActionTraitName() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(IamActionTrait.builder().name("ThisOne").build())
                 .addTrait(new ActionNameTrait("Unused"))
                 .build();
@@ -75,7 +64,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void usesDeprecatedActionNameTrait() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(new ActionNameTrait("ThisOne"))
                 .build();
 
@@ -92,7 +82,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void prefersIamActionTraitDocumentation() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(IamActionTrait.builder().documentation("ThisOne").build())
                 .addTrait(new ActionPermissionDescriptionTrait("Unused"))
                 .addTrait(new DocumentationTrait("Unused"))
@@ -104,7 +95,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void usesDeprecatedActionPermissionDescriptionTrait() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(new ActionPermissionDescriptionTrait("ThisOne"))
                 .addTrait(new DocumentationTrait("Unused"))
                 .build();
@@ -114,7 +106,8 @@ public class IamActionTraitTest {
 
     @Test
     public void usesDocumentationTrait() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(new DocumentationTrait("ThisOne"))
                 .build();
 
@@ -131,7 +124,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void prefersIamActionTraitRequiredActions() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(IamActionTrait.builder().addRequiredAction("ThisOne").build())
                 .addTrait(new ActionNameTrait("Unused"))
                 .build();
@@ -142,7 +136,8 @@ public class IamActionTraitTest {
     @Test
     @SuppressWarnings("deprecation")
     public void usesDeprecatedRequiredActionsTrait() {
-        OperationShape op = OperationShape.builder().id(ID)
+        OperationShape op = OperationShape.builder()
+                .id(ID)
                 .addTrait(RequiredActionsTrait.builder().addValue("ThisOne").build())
                 .build();
 

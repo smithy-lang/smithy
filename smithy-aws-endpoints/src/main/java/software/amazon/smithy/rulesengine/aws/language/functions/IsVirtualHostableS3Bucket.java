@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.Arrays;
@@ -49,7 +48,6 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
     public static IsVirtualHostableS3Bucket ofExpressions(ToExpression arg1, ToExpression arg2) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
     }
-
 
     /**
      * Creates a {@link IsVirtualHostableS3Bucket} function from the given expressions.
@@ -100,11 +98,10 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
             if (allowDots) {
                 return Value.booleanValue(
                         DOTS_ALLOWED.matcher(hostLabel).matches()
-                        // Don't allow ip address
-                        && !IP_ADDRESS.matcher(hostLabel).matches()
-                        // Don't allow names like bucket-.name or bucket.-name
-                        && !DASH_DOT_SEPARATOR.matcher(hostLabel).matches()
-                );
+                                // Don't allow ip address
+                                && !IP_ADDRESS.matcher(hostLabel).matches()
+                                // Don't allow names like bucket-.name or bucket.-name
+                                && !DASH_DOT_SEPARATOR.matcher(hostLabel).matches());
             } else {
                 return Value.booleanValue(DOTS_DISALLOWED.matcher(hostLabel).matches());
             }

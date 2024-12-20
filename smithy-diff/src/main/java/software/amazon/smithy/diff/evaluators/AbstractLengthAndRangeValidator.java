@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.math.BigDecimal;
@@ -40,8 +29,8 @@ abstract class AbstractLengthAndRangeValidator<T extends Trait> extends Abstract
                 .flatMap(change -> {
                     Pair<T, T> pair = change.getChangedTrait(getTraitType()).orElse(null);
                     return pair == null
-                           ? Stream.empty()
-                           : validateTrait(change, pair).stream();
+                            ? Stream.empty()
+                            : validateTrait(change, pair).stream();
                 })
                 .collect(Collectors.toList());
     }
@@ -62,15 +51,21 @@ abstract class AbstractLengthAndRangeValidator<T extends Trait> extends Abstract
         BigDecimal newMax = getMax(newTrait).orElse(null);
 
         if (newMin.compareTo(oldMin) > 0) {
-            events.add(error(change.getNewShape(), String.format(
-                    "%s trait value `min` was made more restrictive by raising from %s to %s",
-                    newTrait.toShapeId(), oldMin, newMin)));
+            events.add(error(change.getNewShape(),
+                    String.format(
+                            "%s trait value `min` was made more restrictive by raising from %s to %s",
+                            newTrait.toShapeId(),
+                            oldMin,
+                            newMin)));
         }
 
         if (newMax != null && (oldMax == null || oldMax.compareTo(newMax) > 0)) {
-            events.add(error(change.getNewShape(), String.format(
-                    "%s trait value `max` was made more restrictive by lowering from %s to %s",
-                    newTrait.toShapeId(), oldMax, newMax)));
+            events.add(error(change.getNewShape(),
+                    String.format(
+                            "%s trait value `max` was made more restrictive by lowering from %s to %s",
+                            newTrait.toShapeId(),
+                            oldMax,
+                            newMax)));
         }
 
         return events;

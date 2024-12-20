@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.utils;
 
 import java.io.IOException;
@@ -406,12 +395,12 @@ final class CodeFormatter {
 
             throw new IllegalArgumentException(
                     "Unclosed parse conditional blocks: ["
-                    + blocks.stream()
-                            // Don't include the root block.
-                            .filter(b -> !b.variable().isEmpty())
-                            .map(BlockOperation::variable)
-                            .collect(Collectors.joining(", "))
-                    + "]");
+                            + blocks.stream()
+                                    // Don't include the root block.
+                                    .filter(b -> !b.variable().isEmpty())
+                                    .map(BlockOperation::variable)
+                                    .collect(Collectors.joining(", "))
+                            + "]");
         }
 
         private void ensureAllPositionalArgumentsWereUsed() {
@@ -456,7 +445,7 @@ final class CodeFormatter {
                 parser.skip();
                 if (pendingTextStart > -1) {
                     while (startPosition > pendingTextStart
-                           && Character.isWhitespace(parser.input().charAt(startPosition - 1))) {
+                            && Character.isWhitespace(parser.input().charAt(startPosition - 1))) {
                         startPosition--;
                     }
                 }
@@ -587,8 +576,9 @@ final class CodeFormatter {
                 }
             } else if (isAllLeadingWhitespaceOnLine(startPosition, startColumn)) {
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart,
-                                                        startPosition - startColumn));
+                    pushOperation(Operation.stringSlice(parser.input(),
+                            pendingTextStart,
+                            startPosition - startColumn));
                 }
                 parser.skip();
             } else if (pendingTextStart > -1) {
@@ -610,7 +600,7 @@ final class CodeFormatter {
             BlockOperation block = blocks.pop();
             if (!block.variable().equals(name)) {
                 throw new IllegalArgumentException("Invalid closing tag: '" + name + "'. Expected: '"
-                                                   + block.variable() + "'");
+                        + block.variable() + "'");
             }
 
             blocks.getFirst().push(block);
@@ -639,9 +629,13 @@ final class CodeFormatter {
 
             // The error message needs to be created here and given to the operation in way that it can
             // throw with an appropriate message.
-            return Operation.formatted(getter, identifier, () -> createErrorMessage(String.format(
-                    "Syntax error at line %d column %d: Unknown formatter `%c` found in format string",
-                    line, column, identifier)));
+            return Operation.formatted(getter,
+                    identifier,
+                    () -> createErrorMessage(String.format(
+                            "Syntax error at line %d column %d: Unknown formatter `%c` found in format string",
+                            line,
+                            column,
+                            identifier)));
         }
 
         private String parseArgumentName() {
@@ -678,7 +672,8 @@ final class CodeFormatter {
         private Object getPositionalArgument(int index) {
             if (index >= arguments.length) {
                 throw error(String.format("Given %d arguments but attempted to format index %d",
-                                          arguments.length, index));
+                        arguments.length,
+                        index));
             } else {
                 // Track the usage of the positional argument.
                 positionals[index] = true;
@@ -700,7 +695,8 @@ final class CodeFormatter {
             if (index < 0 || index >= arguments.length) {
                 throw error(String.format(
                         "Positional argument index %d out of range of provided %d arguments in format string",
-                        index, arguments.length));
+                        index,
+                        arguments.length));
             }
 
             Object value = getPositionalArgument(index);
@@ -715,12 +711,12 @@ final class CodeFormatter {
 
         private boolean isNameCharacter(int c) {
             return (c >= 'a' && c <= 'z')
-                   || (c >= 'A' && c <= 'Z')
-                   || (c >= '0' && c <= '9')
-                   || c == '_'
-                   || c == '.'
-                   || c == '#'
-                   || c == '$';
+                    || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9')
+                    || c == '_'
+                    || c == '.'
+                    || c == '#'
+                    || c == '$';
         }
     }
 }

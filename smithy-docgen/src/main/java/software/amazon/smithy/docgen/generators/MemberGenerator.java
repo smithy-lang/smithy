@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.generators;
 
 import java.util.Collection;
@@ -141,10 +140,12 @@ public final class MemberGenerator implements Runnable {
         return switch (listingType) {
             case INPUT -> context.model()
                     .expectShape(shape.asOperationShape().get().getInputShape())
-                    .getAllMembers().values();
+                    .getAllMembers()
+                    .values();
             case OUTPUT -> context.model()
                     .expectShape(shape.asOperationShape().get().getOutputShape())
-                    .getAllMembers().values();
+                    .getAllMembers()
+                    .values();
             case RESOURCE_IDENTIFIERS -> synthesizeResourceMembers(shape.asResourceShape().get().getIdentifiers());
             case RESOURCE_PROPERTIES -> synthesizeResourceMembers(shape.asResourceShape().get().getProperties());
             default -> shape.getAllMembers().values();
@@ -154,7 +155,8 @@ public final class MemberGenerator implements Runnable {
     // Resource identifiers and properties aren't actually members, but they're close
     // enough that we can treat them like they are for the purposes of the doc generator.
     private List<MemberShape> synthesizeResourceMembers(Map<String, ShapeId> properties) {
-        return properties.entrySet().stream()
+        return properties.entrySet()
+                .stream()
                 .map(entry -> MemberShape.builder()
                         .id(shape.getId().withMember(entry.getKey()))
                         .target(entry.getValue())
@@ -236,7 +238,9 @@ public final class MemberGenerator implements Runnable {
         @Override
         protected Void getDefault(Shape shape) {
             throw new CodegenException(String.format(
-                    "Unexpected member %s of type %s", shape.getId(), shape.getType()));
+                    "Unexpected member %s of type %s",
+                    shape.getId(),
+                    shape.getType()));
         }
 
         @Override

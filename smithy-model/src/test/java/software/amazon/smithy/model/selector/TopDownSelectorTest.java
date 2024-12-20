@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,11 +25,13 @@ public class TopDownSelectorTest {
 
     @BeforeAll
     public static void before() {
-        model1 = Model.assembler().addImport(SelectorTest.class.getResource("topdown-auth.smithy"))
+        model1 = Model.assembler()
+                .addImport(SelectorTest.class.getResource("topdown-auth.smithy"))
                 .assemble()
                 .unwrap();
 
-        model2 = Model.assembler().addImport(SelectorTest.class.getResource("topdown-exclusive-traits.smithy"))
+        model2 = Model.assembler()
+                .addImport(SelectorTest.class.getResource("topdown-exclusive-traits.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -43,17 +49,23 @@ public class TopDownSelectorTest {
     @Test
     public void findsByAuthScheme() {
         Set<String> basic = SelectorTest.ids(
-                model1, ":topdown([trait|auth|(values)='smithy.api#httpBasicAuth'],\n"
-                       + "        [trait|auth]:not([trait|auth|(values)='smithy.api#httpBasicAuth']))");
+                model1,
+                ":topdown([trait|auth|(values)='smithy.api#httpBasicAuth'],\n"
+                        + "        [trait|auth]:not([trait|auth|(values)='smithy.api#httpBasicAuth']))");
         Set<String> digest = SelectorTest.ids(
-                model1, ":topdown([trait|auth|(values)='smithy.api#httpDigestAuth'],\n"
+                model1,
+                ":topdown([trait|auth|(values)='smithy.api#httpDigestAuth'],\n"
                         + "       [trait|auth]:not([trait|auth|(values)='smithy.api#httpDigestAuth']))");
 
-        assertThat(basic, containsInAnyOrder("smithy.example#RA", "smithy.example#ServiceWithAuthTrait",
-                                             "smithy.example#OperationWithNoAuthTrait"));
-        assertThat(digest, containsInAnyOrder("smithy.example#ServiceWithAuthTrait",
-                                              "smithy.example#OperationWithNoAuthTrait",
-                                              "smithy.example#RA", "smithy.example#OperationWithAuthTrait"));
+        assertThat(basic,
+                containsInAnyOrder("smithy.example#RA",
+                        "smithy.example#ServiceWithAuthTrait",
+                        "smithy.example#OperationWithNoAuthTrait"));
+        assertThat(digest,
+                containsInAnyOrder("smithy.example#ServiceWithAuthTrait",
+                        "smithy.example#OperationWithNoAuthTrait",
+                        "smithy.example#RA",
+                        "smithy.example#OperationWithAuthTrait"));
     }
 
     @Test
@@ -62,17 +74,25 @@ public class TopDownSelectorTest {
         Set<String> b = SelectorTest.ids(model2, ":topdown([trait|smithy.example#b], [trait|smithy.example#a])");
 
         assertThat(a, containsInAnyOrder("smithy.example#Service1", "smithy.example#R1", "smithy.example#O2"));
-        assertThat(b, containsInAnyOrder("smithy.example#R2", "smithy.example#O1", "smithy.example#O3",
-                                         "smithy.example#O4"));
+        assertThat(b,
+                containsInAnyOrder("smithy.example#R2",
+                        "smithy.example#O1",
+                        "smithy.example#O3",
+                        "smithy.example#O4"));
     }
 
     @Test
     public void topDownWithNoDisqualifiers() {
         Set<String> a = SelectorTest.ids(model2, ":topdown([trait|smithy.example#a])");
 
-        assertThat(a, containsInAnyOrder("smithy.example#Service1", "smithy.example#R1",
-                                         "smithy.example#O1", "smithy.example#O2", "smithy.example#R2",
-                                         "smithy.example#O3", "smithy.example#O4"));
+        assertThat(a,
+                containsInAnyOrder("smithy.example#Service1",
+                        "smithy.example#R1",
+                        "smithy.example#O1",
+                        "smithy.example#O2",
+                        "smithy.example#R2",
+                        "smithy.example#O3",
+                        "smithy.example#O4"));
     }
 
     @Test

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -154,11 +143,12 @@ public class ArrayNodeTest {
         ArrayNode result = a.merge(b);
 
         assertThat(result.getSourceLocation(), equalTo(sloc));
-        assertThat(result.getElements().stream()
-                           .map(Node::expectStringNode)
-                           .map(StringNode::getValue)
-                           .collect(Collectors.toList()),
-                   contains("a", "b", "c", "d"));
+        assertThat(result.getElements()
+                .stream()
+                .map(Node::expectStringNode)
+                .map(StringNode::getValue)
+                .collect(Collectors.toList()),
+                contains("a", "b", "c", "d"));
     }
 
     @Test
@@ -182,11 +172,12 @@ public class ArrayNodeTest {
         ArrayNode array = Node.fromStrings("a", "b", "c");
         List<String> list = array.getElementsAs(StringNode::getValue);
 
-        assertThat(array.getElements().stream()
-                           .map(Node::expectStringNode)
-                           .map(StringNode::getValue)
-                           .collect(Collectors.toList()),
-                   equalTo(list));
+        assertThat(array.getElements()
+                .stream()
+                .map(Node::expectStringNode)
+                .map(StringNode::getValue)
+                .collect(Collectors.toList()),
+                equalTo(list));
     }
 
     @Test

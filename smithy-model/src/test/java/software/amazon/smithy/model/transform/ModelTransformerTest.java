@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,11 +48,11 @@ public class ModelTransformerTest {
 
         assertThat(result.expectShape(operation), Matchers.not(Optional.empty()));
         assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getInputShape),
-                   Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
+                Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
         assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getOutputShape),
-                   Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
+                Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
         assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getErrors),
-                          Matchers.equalTo(Optional.of(Collections.emptyList())));
+                Matchers.equalTo(Optional.of(Collections.emptyList())));
     }
 
     @Test
@@ -74,7 +63,8 @@ public class ModelTransformerTest {
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
         assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
-        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class),
+                Matchers.not(Optional.empty()));
         assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyTrait"));
         assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyOtherTrait"));
         assertFalse(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyTrait")).isPresent());
@@ -91,7 +81,8 @@ public class ModelTransformerTest {
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
         assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
-        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class),
+                Matchers.not(Optional.empty()));
         assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyTrait"));
         assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyOtherTrait"));
         assertTrue(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyTrait")).isPresent());
@@ -142,7 +133,7 @@ public class ModelTransformerTest {
         assertThat(result.toSet(), Matchers.not(Matchers.hasItem(mixin2)));
         assertThat(result.toSet(), Matchers.not(Matchers.hasItem(mixin3)));
         assertThat(result.getShape(concrete.getId()).get(),
-                   Matchers.equalTo(concrete.toBuilder().flattenMixins().build()));
+                Matchers.equalTo(concrete.toBuilder().flattenMixins().build()));
     }
 
     @Test
@@ -200,19 +191,19 @@ public class ModelTransformerTest {
 
     public static String[] flattenShapesData() {
         return new String[] {
-            "loads-mixins",
-            "mixins-with-members",
-            "mixins-with-members-and-traits",
-            "mixins-with-member-override-1",
-            "mixins-with-member-override-2",
-            "mixins-with-member-override-3",
-            "mixins-with-member-override-4",
-            "mixins-with-mixin-local-traits",
-            "operations",
-            "resources",
-            "services",
-            "idl-mixins-redefine-member",
-            "enum-mixins"
+                "loads-mixins",
+                "mixins-with-members",
+                "mixins-with-members-and-traits",
+                "mixins-with-member-override-1",
+                "mixins-with-member-override-2",
+                "mixins-with-member-override-3",
+                "mixins-with-member-override-4",
+                "mixins-with-mixin-local-traits",
+                "operations",
+                "resources",
+                "services",
+                "idl-mixins-redefine-member",
+                "enum-mixins"
         };
     }
 }

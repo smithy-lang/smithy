@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
@@ -19,7 +18,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * or are located in a region other than the partition's default global region.
  */
 public final class PartitionEndpointSpecialCase
-    implements FromSourceLocation, ToNode, ToSmithyBuilder<PartitionEndpointSpecialCase> {
+        implements FromSourceLocation, ToNode, ToSmithyBuilder<PartitionEndpointSpecialCase> {
 
     private static final String ENDPOINT = "endpoint";
     private static final String REGION = "region";
@@ -78,21 +77,21 @@ public final class PartitionEndpointSpecialCase
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-            .withMember(ENDPOINT, endpoint)
-            .withMember(REGION, region)
-            .withMember(DUAL_STACK, dualStack.toString())
-            .withMember(FIPS, fips.toString())
-            .build();
+                .withMember(ENDPOINT, endpoint)
+                .withMember(REGION, region)
+                .withMember(DUAL_STACK, dualStack.toString())
+                .withMember(FIPS, fips.toString())
+                .build();
     }
 
     @Override
     public Builder toBuilder() {
         return new Builder()
-            .endpoint(endpoint)
-            .region(region)
-            .dualStack(dualStack)
-            .fips(fips)
-            .sourceLocation(sourceLocation);
+                .endpoint(endpoint)
+                .region(region)
+                .dualStack(dualStack)
+                .fips(fips)
+                .sourceLocation(sourceLocation);
     }
 
     @Override
@@ -109,12 +108,12 @@ public final class PartitionEndpointSpecialCase
     public static PartitionEndpointSpecialCase fromNode(Node node) {
         ObjectNode objectNode = node.expectObjectNode();
         return builder()
-            .sourceLocation(objectNode.getSourceLocation())
-            .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
-            .region(objectNode.expectStringMember(REGION).getValue())
-            .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
-            .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
-            .build();
+                .sourceLocation(objectNode.getSourceLocation())
+                .endpoint(objectNode.expectStringMember(ENDPOINT).getValue())
+                .region(objectNode.expectStringMember(REGION).getValue())
+                .dualStack(objectNode.getBooleanMemberOrDefault(DUAL_STACK, null))
+                .fips(objectNode.getBooleanMemberOrDefault(FIPS, null))
+                .build();
     }
 
     public static Builder builder() {

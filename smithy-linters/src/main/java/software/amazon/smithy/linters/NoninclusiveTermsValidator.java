@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.linters;
 
 import java.util.ArrayList;
@@ -43,11 +32,14 @@ import software.amazon.smithy.utils.StringUtils;
  */
 public final class NoninclusiveTermsValidator extends AbstractValidator {
     static final Map<String, List<String>> BUILT_IN_NONINCLUSIVE_TERMS = MapUtils.of(
-            "master", ListUtils.of("primary", "parent", "main"),
-            "slave", ListUtils.of("secondary", "replica", "clone", "child"),
-            "blacklist", ListUtils.of("denyList"),
-            "whitelist", ListUtils.of("allowList")
-        );
+            "master",
+            ListUtils.of("primary", "parent", "main"),
+            "slave",
+            ListUtils.of("secondary", "replica", "clone", "child"),
+            "blacklist",
+            ListUtils.of("denyList"),
+            "whitelist",
+            ListUtils.of("allowList"));
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
@@ -98,7 +90,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
             if (config.getTerms().isEmpty()) {
                 //This configuration combination makes the validator a no-op.
                 throw new IllegalArgumentException("Cannot set 'excludeDefaults' to true and leave "
-                                                 + "'terms' empty or unspecified.");
+                        + "'terms' empty or unspecified.");
             }
             termsMap = Collections.unmodifiableMap(config.getTerms());
         }
@@ -141,9 +133,11 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
         return events;
     }
 
-    private ValidationEvent constructValidationEvent(TextInstance instance,
-                                                     List<String> replacements,
-                                                     String matchedText) {
+    private ValidationEvent constructValidationEvent(
+            TextInstance instance,
+            List<String> replacements,
+            String matchedText
+    ) {
         String replacementAddendum = getReplacementAddendum(matchedText, replacements);
         switch (instance.getLocationType()) {
             case NAMESPACE:
@@ -154,7 +148,9 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                         .id(getName() + "." + NAMESPACE + "." + instance.getText()
                                 + "." + matchedText.toLowerCase(Locale.US))
                         .message(String.format("%s namespace uses a non-inclusive term `%s`.%s",
-                                instance.getText(), matchedText, replacementAddendum))
+                                instance.getText(),
+                                matchedText,
+                                replacementAddendum))
                         .build();
             case APPLIED_TRAIT:
                 ValidationEvent validationEvent =
@@ -163,7 +159,9 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                 if (instance.getTraitPropertyPath().isEmpty()) {
                     return validationEvent.toBuilder()
                             .message(String.format("'%s' trait has a value that contains a non-inclusive term `%s`.%s",
-                                    idiomaticTraitName, matchedText, replacementAddendum))
+                                    idiomaticTraitName,
+                                    matchedText,
+                                    replacementAddendum))
                             .id(getName() + "." + TRAIT + "."
                                     + matchedText.toLowerCase(Locale.US) + "." + idiomaticTraitName)
                             .build();
@@ -172,7 +170,10 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                     return validationEvent.toBuilder()
                             .message(String.format(
                                     "'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
-                                    idiomaticTraitName, valuePropertyPathFormatted, matchedText, replacementAddendum))
+                                    idiomaticTraitName,
+                                    valuePropertyPathFormatted,
+                                    matchedText,
+                                    replacementAddendum))
                             .id(getName() + "." + TRAIT + "." + matchedText.toLowerCase(Locale.US)
                                     + "." + idiomaticTraitName + "." + valuePropertyPathFormatted)
                             .build();
@@ -183,8 +184,10 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                         instance.getShape().getSourceLocation(),
                         String.format("%s shape uses a non-inclusive term `%s`.%s",
                                 StringUtils.capitalize(instance.getShape().getType().toString()),
-                                matchedText, replacementAddendum),
-                        SHAPE, matchedText.toLowerCase(Locale.US));
+                                matchedText,
+                                replacementAddendum),
+                        SHAPE,
+                        matchedText.toLowerCase(Locale.US));
         }
     }
 
@@ -196,7 +199,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                 .collect(Collectors.toList());
         String replacementAddendum = !replacements.isEmpty()
                 ? String.format(" Consider using one of the following terms instead: %s",
-                ValidationUtils.tickedList(caseCorrectedEntryValue))
+                        ValidationUtils.tickedList(caseCorrectedEntryValue))
                 : "";
         return replacementAddendum;
     }

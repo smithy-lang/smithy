@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -57,9 +46,11 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             model.getShape(shape.getInputShape()).ifPresent(input -> {
                 NodeValidationVisitor validator;
                 if (example.getAllowConstraintErrors() && !isErrorDefined) {
-                    events.add(error(shape, trait, String.format(
-                            "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
-                            example.getTitle())));
+                    events.add(error(shape,
+                            trait,
+                            String.format(
+                                    "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
+                                    example.getTitle())));
                 }
                 validator = createVisitor("input", example.getInput(), model, shape, example);
                 List<ValidationEvent> inputValidationEvents = input.accept(validator);
@@ -67,30 +58,43 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             });
 
             if (isOutputDefined && isErrorDefined) {
-                events.add(error(shape, trait, String.format(
-                        "Example: `%s` has both output and error defined, only one should be present.",
-                        example.getTitle())));
+                events.add(error(shape,
+                        trait,
+                        String.format(
+                                "Example: `%s` has both output and error defined, only one should be present.",
+                                example.getTitle())));
             } else if (isOutputDefined) {
                 model.getShape(shape.getOutputShape()).ifPresent(output -> {
                     NodeValidationVisitor validator = createVisitor(
-                            "output", example.getOutput().get(), model, shape, example);
+                            "output",
+                            example.getOutput().get(),
+                            model,
+                            shape,
+                            example);
                     events.addAll(output.accept(validator));
                 });
             } else if (isErrorDefined) {
                 ExamplesTrait.ErrorExample errorExample = example.getError().get();
                 Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
                 if (errorShape.isPresent() && (
-                        // The error is directly bound to the operation.
-                        shape.getErrors().contains(errorExample.getShapeId())
+                // The error is directly bound to the operation.
+                shape.getErrors().contains(errorExample.getShapeId())
                         // The error is bound to all services that contain the operation.
                         || servicesContainError(model, shape, errorExample.getShapeId()))) {
                     NodeValidationVisitor validator = createVisitor(
-                            "error", errorExample.getContent(), model, shape, example);
+                            "error",
+                            errorExample.getContent(),
+                            model,
+                            shape,
+                            example);
                     events.addAll(errorShape.get().accept(validator));
                 } else {
-                    events.add(error(shape, trait, String.format(
-                            "Error parameters provided for operation without the `%s` error: `%s`",
-                            errorExample.getShapeId(), example.getTitle())));
+                    events.add(error(shape,
+                            trait,
+                            String.format(
+                                    "Error parameters provided for operation without the `%s` error: `%s`",
+                                    errorExample.getShapeId(),
+                                    example.getTitle())));
                 }
             }
         }

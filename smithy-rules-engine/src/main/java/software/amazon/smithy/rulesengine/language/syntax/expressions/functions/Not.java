@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -52,7 +51,8 @@ public final class Not extends LibraryFunction {
     @Override
     protected Type typeCheckLocal(Scope<Type> scope) {
         // Not must be typechecked in an interior scope because information doesn't flow back out of `not`.
-        return scope.inScope(() -> context("while typechecking `not`", this,
+        return scope.inScope(() -> context("while typechecking `not`",
+                this,
                 () -> expectOneArgument().typeCheck(scope).expectBooleanType()));
     }
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +46,6 @@ public class ExcludeShapesByTraitTest {
                 // Relative IDs are assumed to be in "smithy.api".
                 "internal",
                 // Absolute IDs are used as-is.
-                "smithy.api#internal"
-        );
+                "smithy.api#internal");
     }
 }

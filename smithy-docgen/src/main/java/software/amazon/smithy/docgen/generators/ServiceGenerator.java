@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.generators;
 
 import java.util.function.Consumer;
@@ -122,8 +121,9 @@ public final class ServiceGenerator implements Consumer<GenerateServiceDirective
         writer.openHeading("Auth");
 
         var index = ServiceIndex.of(context.model());
-        writer.putContext("optional", index.getEffectiveAuthSchemes(service, AuthSchemeMode.NO_AUTH_AWARE)
-                .containsKey(NoAuthTrait.ID));
+        writer.putContext("optional",
+                index.getEffectiveAuthSchemes(service, AuthSchemeMode.NO_AUTH_AWARE)
+                        .containsKey(NoAuthTrait.ID));
         writer.putContext("multipleSchemes", authSchemes.size() > 1);
         writer.write("""
                 Operations on the service ${?optional}may optionally${/optional}${^optional}MUST${/optional} \

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +24,10 @@ public class DefaultRefStrategyTest {
     @Test
     public void usesDefaultPointer() {
         RefStrategy ref = RefStrategy.createDefaultStrategy(
-                Model.builder().build(), new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+                Model.builder().build(),
+                new JsonSchemaConfig(),
+                propertyNamingStrategy,
+                alwaysTrue());
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"));
 
         assertThat(pointer, equalTo("#/definitions/Foo"));

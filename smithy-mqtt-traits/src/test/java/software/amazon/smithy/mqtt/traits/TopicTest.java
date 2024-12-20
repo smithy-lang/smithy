@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.mqtt.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -68,10 +57,11 @@ public class TopicTest {
         Topic topic = Topic.parse("foo/bar/baz");
 
         assertThat(topic.toString(), equalTo("foo/bar/baz"));
-        assertThat(topic.getLevels(), contains(
-                new Topic.Level("foo"),
-                new Topic.Level("bar"),
-                new Topic.Level("baz")));
+        assertThat(topic.getLevels(),
+                contains(
+                        new Topic.Level("foo"),
+                        new Topic.Level("bar"),
+                        new Topic.Level("baz")));
         assertThat(topic.conflictsWith(topic), is(true));
         assertThat(topic.getLabels(), empty());
         assertFalse(topic.hasLabel("foo"));
@@ -85,14 +75,16 @@ public class TopicTest {
         assertThat(topic, equalTo(topic));
         assertThat(topic.toString(), equalTo("foo/{foo}/bar/{baz}"));
 
-        assertThat(topic.getLevels(), contains(
-                new Topic.Level("foo"),
-                new Topic.Level("foo", true),
-                new Topic.Level("bar"),
-                new Topic.Level("baz", true)));
-        assertThat(topic.getLabels(), contains(
-                new Topic.Level("foo", true),
-                new Topic.Level("baz", true)));
+        assertThat(topic.getLevels(),
+                contains(
+                        new Topic.Level("foo"),
+                        new Topic.Level("foo", true),
+                        new Topic.Level("bar"),
+                        new Topic.Level("baz", true)));
+        assertThat(topic.getLabels(),
+                contains(
+                        new Topic.Level("foo", true),
+                        new Topic.Level("baz", true)));
 
         assertTrue(topic.hasLabel("foo"));
         assertTrue(topic.hasLabel("baz"));

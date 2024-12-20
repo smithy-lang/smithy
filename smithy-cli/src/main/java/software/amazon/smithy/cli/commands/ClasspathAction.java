@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.io.File;
@@ -87,16 +76,19 @@ class ClasspathAction implements CommandAction {
                 if (!dependencies.isEmpty()) {
                     throw new DependencyResolverException(String.format(
                             "%s is set to 'forbid', but the following Maven dependencies are defined in "
-                            + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
-                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
+                                    + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
+                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                            dependencies));
                 }
                 break;
             case "ignore":
                 if (!dependencies.isEmpty()) {
                     LOGGER.warning(() -> String.format(
                             "%s is set to 'ignore', and the following Maven dependencies are defined in "
-                            + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
-                            + "the classpath.", EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
+                                    + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
+                                    + "the classpath.",
+                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                            dependencies));
                 }
                 break;
             case "standard":
@@ -104,13 +96,16 @@ class ClasspathAction implements CommandAction {
                 break;
             default:
                 throw new CliError(String.format("Unknown %s setting: '%s'",
-                                                 EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencyMode));
+                        EnvironmentVariable.SMITHY_DEPENDENCY_MODE,
+                        dependencyMode));
         }
 
         if (useIsolation) {
             long start = System.nanoTime();
-            List<Path> files = resolveDependencies(buildOptions, smithyBuildConfig, env,
-                                                   smithyBuildConfig.getMaven().get());
+            List<Path> files = resolveDependencies(buildOptions,
+                    smithyBuildConfig,
+                    env,
+                    smithyBuildConfig.getMaven().get());
             long end = System.nanoTime();
             LOGGER.fine(() -> "Dependency resolution time in ms: " + ((end - start) / 1000000));
             new IsolatedRunnable(files, env.classLoader(), consumer).run();

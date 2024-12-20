@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,8 +23,9 @@ public class SmithyBuildTest {
 
     @Test
     public void canSetSpecificConfigFile() {
-        IntegUtils.run("simple-config-sources", ListUtils.of("build", "-c", "smithy-build.json"),
-                       this::doSimpleBuildAssertions);
+        IntegUtils.run("simple-config-sources",
+                ListUtils.of("build", "-c", "smithy-build.json"),
+                this::doSimpleBuildAssertions);
     }
 
     @Test
@@ -94,10 +99,11 @@ public class SmithyBuildTest {
     public void failsWhenConfigIsProvidedAndDisabled() {
         // Disable the config file detection and don't pass model via positional arguments.
         // This causes main.smithy to not be loaded.
-        IntegUtils.run("simple-config-sources", ListUtils.of("build", "--no-config", "-c", "smithy-build.json"),
-                       result -> {
-            assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("Invalid combination of --no-config and --config"));
-        });
+        IntegUtils.run("simple-config-sources",
+                ListUtils.of("build", "--no-config", "-c", "smithy-build.json"),
+                result -> {
+                    assertThat(result.getExitCode(), equalTo(1));
+                    assertThat(result.getOutput(), containsString("Invalid combination of --no-config and --config"));
+                });
     }
 }

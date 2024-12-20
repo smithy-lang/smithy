@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.ArrayList;
@@ -43,18 +42,23 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
 
                     // It's possible for an operation defined to not be in the service closure.
                     if (!operationNameMap.containsKey(operationName)) {
-                        events.add(error(serviceShape, testOperationInput,
+                        events.add(error(serviceShape,
+                                testOperationInput,
                                 String.format("Test case operation `%s` does not exist in service `%s`",
-                                        operationName, serviceShape.getId())));
+                                        operationName,
+                                        serviceShape.getId())));
                     }
 
                     // Still emit events if the operation exists, but was just not bound.
                     if (operationNameMap.containsKey(operationName)) {
                         StructureShape inputShape = model.expectShape(
-                                operationNameMap.get(operationName).getInputShape(), StructureShape.class);
+                                operationNameMap.get(operationName).getInputShape(),
+                                StructureShape.class);
 
-                        List<ValidationEvent> operationInputEvents = validateOperationInput(model, serviceShape,
-                                inputShape, testOperationInput);
+                        List<ValidationEvent> operationInputEvents = validateOperationInput(model,
+                                serviceShape,
+                                inputShape,
+                                testOperationInput);
 
                         // Error test cases may use invalid inputs as the mechanism to trigger their error,
                         // so lower the severity before emitting.

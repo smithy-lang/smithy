@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.node;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -160,7 +149,7 @@ public class NodeTest {
         assertThat(node.getMember("bar").get(), instanceOf(BooleanNode.class));
         assertThat(node.getMember("foo").get().expectArrayNode().get(0).get(), instanceOf(NumberNode.class));
         assertThat(node.getMember("foo").get().expectArrayNode().get(1).get().expectObjectNode().getMembers().keySet(),
-                   contains(Node.from("a"), Node.from("baz")));
+                contains(Node.from("a"), Node.from("baz")));
         assertThat(node.getMember("foo").get().expectArrayNode().get(2).get(), instanceOf(BooleanNode.class));
     }
 
@@ -172,13 +161,13 @@ public class NodeTest {
 
         assertThat(node.getMembers().keySet(), contains(Node.from("foo"), Node.from("bar")));
         assertThat(node.getMember("foo").get().expectArrayNode().get(1).get().expectObjectNode().getMembers().keySet(),
-                   contains(Node.from("baz"), Node.from("a")));
+                contains(Node.from("baz"), Node.from("a")));
     }
 
     @Test
     public void prettyPrintsJson() {
         assertThat(Node.prettyPrintJson(Node.parse("{\"foo\": true}")),
-                   equalTo(String.format("{%n    \"foo\": true%n}")));
+                equalTo(String.format("{%n    \"foo\": true%n}")));
     }
 
     @Test

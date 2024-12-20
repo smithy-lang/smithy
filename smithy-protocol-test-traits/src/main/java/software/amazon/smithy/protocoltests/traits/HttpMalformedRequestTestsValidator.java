@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
@@ -40,11 +29,16 @@ public final class HttpMalformedRequestTestsValidator extends AbstractValidator 
             shape.getTrait(HttpMalformedRequestTestsTrait.class).ifPresent(trait -> {
                 trait.getParameterizedTestCases().forEach(testCase -> {
                     if (!testCase.getTestParameters().isEmpty()) {
-                        Set<Integer> sizes = testCase.getTestParameters().values()
-                                .stream().map(List::size).collect(Collectors.toSet());
+                        Set<Integer> sizes = testCase.getTestParameters()
+                                .values()
+                                .stream()
+                                .map(List::size)
+                                .collect(Collectors.toSet());
                         if (sizes.size() != 1) {
-                            events.add(error(shape, trait.getSourceLocation(), "Each list associated to a key "
-                                    + "in `testParameters` must be of the same length."));
+                            events.add(error(shape,
+                                    trait.getSourceLocation(),
+                                    "Each list associated to a key "
+                                            + "in `testParameters` must be of the same length."));
                         }
                     }
                 });

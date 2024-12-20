@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
@@ -125,30 +124,30 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
             // Track if we've got a non-input relationship and a trait that's ignored outside input.
             // Continue so we don't emit a duplicate for non-top-level.
             if (relationship.getRelationshipType() != RelationshipType.INPUT
-                    && !ignoredOutsideInputTraits.isEmpty()
-            ) {
+                    && !ignoredOutsideInputTraits.isEmpty()) {
                 ignoredRelationships.merge(relationship.getRelationshipType(),
-                        ListUtils.of(relationship.getShape().getId()), this::mergeShapeIdLists);
+                        ListUtils.of(relationship.getShape().getId()),
+                        this::mergeShapeIdLists);
                 continue;
             }
 
             // Track if we've got a non-output relationship and a trait that's ignored outside output.
             // Continue so we don't emit a duplicate for non-top-level.
             if (relationship.getRelationshipType() != RelationshipType.OUTPUT
-                    && !ignoredOutsideOutputTraits.isEmpty()
-            ) {
+                    && !ignoredOutsideOutputTraits.isEmpty()) {
                 ignoredRelationships.merge(relationship.getRelationshipType(),
-                        ListUtils.of(relationship.getShape().getId()), this::mergeShapeIdLists);
+                        ListUtils.of(relationship.getShape().getId()),
+                        this::mergeShapeIdLists);
                 continue;
             }
 
             // Track if there are non-top-level relationship and any HTTP member binding trait.
             if (relationship.getRelationshipType() != RelationshipType.INPUT
                     && relationship.getRelationshipType() != RelationshipType.OUTPUT
-                    && relationship.getRelationshipType() != RelationshipType.ERROR
-            ) {
+                    && relationship.getRelationshipType() != RelationshipType.ERROR) {
                 ignoredRelationships.merge(relationship.getRelationshipType(),
-                        ListUtils.of(relationship.getShape().getId()), this::mergeShapeIdLists);
+                        ListUtils.of(relationship.getShape().getId()),
+                        this::mergeShapeIdLists);
             }
         }
 
@@ -200,8 +199,10 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
     private String formatIgnoredRelationships(Map<RelationshipType, List<ShapeId>> ignoredRelationships) {
         List<String> relationshipTypeBindings = new ArrayList<>();
         for (Map.Entry<RelationshipType, List<ShapeId>> ignoredRelationshipType : ignoredRelationships.entrySet()) {
-            StringBuilder stringBuilder = new StringBuilder(ignoredRelationshipType.getKey().toString()
-                            .toLowerCase(Locale.US).replace("_", " "));
+            StringBuilder stringBuilder = new StringBuilder(ignoredRelationshipType.getKey()
+                    .toString()
+                    .toLowerCase(Locale.US)
+                    .replace("_", " "));
             Set<String> bindings = new TreeSet<>();
             for (ShapeId binding : ignoredRelationshipType.getValue()) {
                 bindings.add(binding.toString());

@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +40,7 @@ public class ModelSerializerTest {
     @TestFactory
     public Stream<DynamicTest> generateV2RoundTripTests() throws IOException, URISyntaxException {
         return Files.list(Paths.get(
-                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v2").toURI()))
+                SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v2").toURI()))
                 .filter(path -> !path.toString().endsWith(".1.0.json"))
                 .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTripV2(path)));
     }
@@ -64,7 +53,7 @@ public class ModelSerializerTest {
     @TestFactory
     public Stream<DynamicTest> generateV1RoundTripTests() throws IOException, URISyntaxException {
         return Files.list(Paths.get(
-                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v1").toURI()))
+                SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v1").toURI()))
                 .filter(path -> !path.toString().endsWith(".2.0.json"))
                 .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTripV1(path)));
     }
@@ -126,7 +115,7 @@ public class ModelSerializerTest {
 
         assertThat(result.getMember("metadata"), not(Optional.empty()));
         assertThat(result.getMember("metadata").get().expectObjectNode().getMember("foo"),
-                   equalTo(Optional.of(Node.from("baz"))));
+                equalTo(Optional.of(Node.from("baz"))));
         assertThat(result.getMember("metadata").get().expectObjectNode().getMember("bar"), is(Optional.empty()));
     }
 
@@ -228,10 +217,10 @@ public class ModelSerializerTest {
         ObjectNode result = serializer.serialize(model);
 
         assertThat(NodePointer.parse("/shapes/com.foo#Example")
-                           .getValue(result)
-                           .expectObjectNode()
-                           .getStringMap(),
-                   not(hasKey("version")));
+                .getValue(result)
+                .expectObjectNode()
+                .getStringMap(),
+                not(hasKey("version")));
     }
 
     @Test
@@ -261,18 +250,22 @@ public class ModelSerializerTest {
         Node node = ModelSerializer.builder().build().serialize(model);
 
         assertThat(NodePointer.parse("/shapes/smithy.example#Set/type")
-                           .getValue(node).expectStringNode().getValue(), equalTo("list"));
+                .getValue(node)
+                .expectStringNode()
+                .getValue(), equalTo("list"));
         assertThat(NodePointer.parse("/shapes/smithy.example#Set/traits/smithy.api#uniqueItems")
-                           .getValue(node).isNullNode(), equalTo(false));
+                .getValue(node)
+                .isNullNode(), equalTo(false));
     }
 
     @Test
     public void serializesResourceProperties() {
         Map<String, ShapeId> properties = new TreeMap<>();
         properties.put("fooProperty", ShapeId.from("ns.foo#Shape"));
-        ResourceShape shape = ResourceShape.builder().id("ns.foo#Bar")
-            .properties(properties)
-            .build();
+        ResourceShape shape = ResourceShape.builder()
+                .id("ns.foo#Bar")
+                .properties(properties)
+                .build();
         Model model = Model.builder().addShape(shape).build();
         Node node = ModelSerializer.builder().build().serialize(model);
         Node expectedNode = Node.parse("{\"smithy\":\"2.0\",\"shapes\":{\"ns.foo#Bar\":" +

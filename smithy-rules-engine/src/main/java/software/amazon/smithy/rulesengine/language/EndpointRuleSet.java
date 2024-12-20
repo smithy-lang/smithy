@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
@@ -356,11 +355,11 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
 
         private void objectNode(ObjectNode node, String parentPath) {
             boolean isEndpointRuleObject = node
-                .getMember(TYPE)
-                .map(n -> n.asStringNode()
-                    .map(s -> s.getValue().equals(ENDPOINT))
-                    .orElse(false))
-                .orElse(false);
+                    .getMember(TYPE)
+                    .map(n -> n.asStringNode()
+                            .map(s -> s.getValue().equals(ENDPOINT))
+                            .orElse(false))
+                    .orElse(false);
             if (isEndpointRuleObject) {
                 Endpoint endpoint = Endpoint.fromNode(node.expectMember(ENDPOINT));
                 visitedEndpoints.put(parentPath + "/" + ENDPOINT, endpoint);

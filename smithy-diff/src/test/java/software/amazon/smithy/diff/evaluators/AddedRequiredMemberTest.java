@@ -1,4 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.diff.evaluators;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
@@ -12,14 +19,12 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.Severity;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 public class AddedRequiredMemberTest {
     @Test
     public void addingRequiredTraitWithoutDefaultIsAnError() {
         StringShape s = StringShape.builder().id("smithy.example#Str").build();
-        StructureShape a = StructureShape.builder().id("smithy.example#A")
+        StructureShape a = StructureShape.builder()
+                .id("smithy.example#A")
                 .build();
         SourceLocation source = new SourceLocation("main.smithy", 1, 2);
         MemberShape member = MemberShape.builder()
@@ -28,7 +33,8 @@ public class AddedRequiredMemberTest {
                 .addTrait(new RequiredTrait())
                 .source(source)
                 .build();
-        StructureShape b = StructureShape.builder().id("smithy.example#A")
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
                 .addMember(member)
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
@@ -37,7 +43,12 @@ public class AddedRequiredMemberTest {
 
         assertThat(TestHelper.findEvents(result.getDiffEvents(), Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getShapeId().get().toString(),
+        assertThat(
+                TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember")
+                        .get(0)
+                        .getShapeId()
+                        .get()
+                        .toString(),
                 equalTo("smithy.example#A$foo"));
         assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getMessage(),
                 equalTo("Adding a new member with the `required` trait " +
@@ -49,9 +60,11 @@ public class AddedRequiredMemberTest {
     @Test
     public void addingRequiredTraitWithDefaultIsOk() {
         StringShape s = StringShape.builder().id("smithy.example#Str").build();
-        StructureShape a = StructureShape.builder().id("smithy.example#A")
+        StructureShape a = StructureShape.builder()
+                .id("smithy.example#A")
                 .build();
-        StructureShape b = StructureShape.builder().id("smithy.example#A")
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
                 .addMember("foo", s.getId(), b2 -> {
                     b2.addTrait(new RequiredTrait());
                     b2.addTrait(new DefaultTrait(new StringNode("default", SourceLocation.NONE)));
@@ -67,11 +80,14 @@ public class AddedRequiredMemberTest {
     @Test
     public void addingRequiredTraitToExistingMember() {
         StringShape s = StringShape.builder().id("smithy.example#Str").build();
-        StructureShape a = StructureShape.builder().id("smithy.example#A")
+        StructureShape a = StructureShape.builder()
+                .id("smithy.example#A")
                 .addMember("foo", s.getId())
                 .build();
-        StructureShape b = StructureShape.builder().id("smithy.example#A")
-                .addMember("foo", s.getId(),
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
+                .addMember("foo",
+                        s.getId(),
                         b2 -> b2.addTrait(new RequiredTrait()))
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
@@ -84,7 +100,8 @@ public class AddedRequiredMemberTest {
     @Test
     public void addingNewStructureWithRequiredMemberIsOk() {
         StringShape s = StringShape.builder().id("smithy.example#Str").build();
-        StructureShape b = StructureShape.builder().id("smithy.example#A")
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
                 .addMember("foo", s.getId(), b2 -> b2.addTrait(new RequiredTrait()))
                 .build();
         Model model1 = Model.builder().addShapes(s).build();

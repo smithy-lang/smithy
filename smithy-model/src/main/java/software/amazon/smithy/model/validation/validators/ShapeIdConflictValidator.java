@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -47,14 +36,17 @@ public final class ShapeIdConflictValidator extends AbstractValidator {
         for (Map.Entry<String, Collection<ShapeId>> entry : conflicts.entrySet()) {
             if (entry.getValue().size() > 1) {
                 for (ShapeId value : entry.getValue()) {
-                    String collideString = entry.getValue().stream()
+                    String collideString = entry.getValue()
+                            .stream()
                             .filter(id -> !id.equals(value))
                             .sorted()
                             .map(id -> "`" + id + "`")
                             .collect(Collectors.joining(", "));
-                    events.add(error(model.expectShape(value), String.format(
-                            "Shape ID `%s` conflicts with other shape IDs in the model: [%s]",
-                            value, collideString)));
+                    events.add(error(model.expectShape(value),
+                            String.format(
+                                    "Shape ID `%s` conflicts with other shape IDs in the model: [%s]",
+                                    value,
+                                    collideString)));
                 }
             }
         }

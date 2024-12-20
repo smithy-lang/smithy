@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.protocoltests.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,11 +23,11 @@ public class TraitTest {
 
     @BeforeAll
     public static void before() {
-         appliesToModel = Model.assembler()
-                 .discoverModels()
-                 .addImport(TraitTest.class.getResource("test-with-appliesto.smithy"))
-                 .assemble()
-                 .unwrap();
+        appliesToModel = Model.assembler()
+                .discoverModels()
+                .addImport(TraitTest.class.getResource("test-with-appliesto.smithy"))
+                .assemble()
+                .unwrap();
     }
 
     @Test
@@ -119,14 +123,14 @@ public class TraitTest {
                 .expectTrait(HttpResponseTestsTrait.class);
 
         assertThat(getCaseIds(requestTrait.getTestCasesFor(AppliesTo.CLIENT)),
-                   containsInAnyOrder("say_hello_all", "say_hello_client"));
+                containsInAnyOrder("say_hello_all", "say_hello_client"));
         assertThat(getCaseIds(requestTrait.getTestCasesFor(AppliesTo.SERVER)),
-                   containsInAnyOrder("say_hello_all", "say_hello_server"));
+                containsInAnyOrder("say_hello_all", "say_hello_server"));
 
         assertThat(getCaseIds(responseTrait.getTestCasesFor(AppliesTo.CLIENT)),
-                   containsInAnyOrder("say_goodbye_all", "say_goodbye_client"));
+                containsInAnyOrder("say_goodbye_all", "say_goodbye_client"));
         assertThat(getCaseIds(responseTrait.getTestCasesFor(AppliesTo.SERVER)),
-                   containsInAnyOrder("say_goodbye_all", "say_goodbye_server"));
+                containsInAnyOrder("say_goodbye_all", "say_goodbye_server"));
     }
 
     private List<String> getCaseIds(List<? extends HttpMessageTestCase> cases) {

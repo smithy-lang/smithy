@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import static software.amazon.smithy.diff.evaluators.ChangedShapeType.expectedStringToEnumChange;
@@ -77,7 +66,8 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
 
         for (int enumIndex = 0; enumIndex < oldTrait.getValues().size(); enumIndex++) {
             EnumDefinition definition = oldTrait.getValues().get(enumIndex);
-            Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
+            Optional<EnumDefinition> maybeNewValue = newTrait.getValues()
+                    .stream()
                     .filter(d -> d.getValue().equals(definition.getValue()))
                     .findFirst();
 
@@ -89,8 +79,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                 .shape(change.getNewShape())
                                 .sourceLocation(oldTrait.getSourceLocation())
                                 .id(getEventId() + REMOVED + enumIndex)
-                                .build()
-                );
+                                .build());
                 oldEndPosition--;
             } else {
                 EnumDefinition newValue = maybeNewValue.get();
@@ -106,8 +95,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                     .shape(change.getNewShape())
                                     .sourceLocation(change.getNewShape().getSourceLocation())
                                     .id(getEventId() + NAME_CHANGED + enumIndex)
-                                    .build()
-                    );
+                                    .build());
                 }
             }
         }
@@ -120,14 +108,14 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                             ValidationEvent.builder()
                                     .severity(Severity.ERROR)
                                     .message(String.format(
-                                    "Enum value `%s` was inserted before the end of the list of existing values. This "
-                                            + "can cause compatibility issues when ordinal values are used for "
-                                            + "iteration, serialization, etc.", definition.getValue()))
+                                            "Enum value `%s` was inserted before the end of the list of existing values. This "
+                                                    + "can cause compatibility issues when ordinal values are used for "
+                                                    + "iteration, serialization, etc.",
+                                            definition.getValue()))
                                     .shape(change.getNewShape())
                                     .sourceLocation(oldTrait.getSourceLocation())
                                     .id(getEventId() + ORDER_CHANGED + newPosition)
-                                    .build()
-                    );
+                                    .build());
                     oldEndPosition++;
                 } else {
                     SourceLocation appendedSource = newTrait.getSourceLocation();

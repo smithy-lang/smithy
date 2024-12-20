@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
@@ -55,18 +54,24 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             // Pull all the parameters used in this service related to endpoints, validating that
             // they are of matching types across the traits that can define them.
             Pair<List<ValidationEvent>, Map<String, Parameter>> errorsParamsPair = validateAndExtractParameters(
-                    model, serviceShape, topDownIndex.getContainedOperations(serviceShape));
+                    model,
+                    serviceShape,
+                    topDownIndex.getContainedOperations(serviceShape));
             errors.addAll(errorsParamsPair.getLeft());
 
             // Make sure parameters align across Params <-> RuleSet transitions.
             EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
-            errors.addAll(validateParametersMatching(serviceShape, ruleSet.getParameters(),
+            errors.addAll(validateParametersMatching(serviceShape,
+                    ruleSet.getParameters(),
                     errorsParamsPair.getRight()));
 
             // Check that tests declare required parameters, only defined parameters, etc.
             if (serviceShape.hasTrait(EndpointTestsTrait.class)) {
-                errors.addAll(validateTestsParameters(model, topDownIndex, serviceShape,
-                        serviceShape.expectTrait(EndpointTestsTrait.class), ruleSet));
+                errors.addAll(validateTestsParameters(model,
+                        topDownIndex,
+                        serviceShape,
+                        serviceShape.expectTrait(EndpointTestsTrait.class),
+                        ruleSet));
             }
         }
 
@@ -84,10 +89,11 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         if (serviceShape.hasTrait(ClientContextParamsTrait.class)) {
             ClientContextParamsTrait trait = serviceShape.expectTrait(ClientContextParamsTrait.class);
             for (Map.Entry<String, ClientContextParamDefinition> entry : trait.getParameters().entrySet()) {
-                endpointParams.put(entry.getKey(), Parameter.builder()
-                        .name(entry.getKey())
-                        .type(ParameterType.fromShapeType(entry.getValue().getType()))
-                        .build());
+                endpointParams.put(entry.getKey(),
+                        Parameter.builder()
+                                .name(entry.getKey())
+                                .type(ParameterType.fromShapeType(entry.getValue().getType()))
+                                .build());
             }
         }
 
@@ -99,14 +105,17 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     ParameterType parameterType = ParameterType.fromNode(entry.getValue().getValue());
 
                     if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
-                        errors.add(parameterError(operationShape, trait, "StaticContextParams.InconsistentType",
+                        errors.add(parameterError(operationShape,
+                                trait,
+                                "StaticContextParams.InconsistentType",
                                 String.format("Inconsistent type for `%s` parameter", name)));
                     } else {
-                        endpointParams.put(name, Parameter.builder()
-                                .name(name)
-                                .value(entry.getValue().getValue())
-                                .type(parameterType)
-                                .build());
+                        endpointParams.put(name,
+                                Parameter.builder()
+                                        .name(name)
+                                        .value(entry.getValue().getValue())
+                                        .type(parameterType)
+                                        .build());
                     }
                 }
             }
@@ -118,14 +127,16 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                             .inferParameterType(p, operationShape, model);
                     maybeType.ifPresent(parameterType -> {
                         if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
-                            errors.add(parameterError(operationShape, trait,
+                            errors.add(parameterError(operationShape,
+                                    trait,
                                     "OperationContextParams.InconsistentType",
                                     String.format("Inconsistent type for `%s` parameter", name)));
                         } else {
-                            endpointParams.put(name, Parameter.builder()
-                                    .name(name)
-                                    .type(parameterType)
-                                    .build());
+                            endpointParams.put(name,
+                                    Parameter.builder()
+                                            .name(name)
+                                            .type(parameterType)
+                                            .build());
                         }
                     });
                 });
@@ -139,20 +150,25 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     Shape targetType = model.expectShape(memberShape.getTarget());
 
                     if (!targetType.isStringShape() && !targetType.isBooleanShape()) {
-                        errors.add(parameterError(memberShape, trait, "ContextParam.UnsupportedType",
+                        errors.add(parameterError(memberShape,
+                                trait,
+                                "ContextParam.UnsupportedType",
                                 String.format("Unsupported type `%s` for `%s` parameter", targetType, name)));
                     } else {
                         ParameterType type = targetType.isStringShape() ? ParameterType.STRING : ParameterType.BOOLEAN;
 
                         if (endpointParams.containsKey(name) && type != endpointParams.get(name).getType()) {
-                            errors.add(parameterError(memberShape, trait, "ContextParam.InconsistentType",
+                            errors.add(parameterError(memberShape,
+                                    trait,
+                                    "ContextParam.InconsistentType",
                                     String.format("Inconsistent type for `%s` parameter", name)));
                         } else {
-                            endpointParams.put(name, Parameter.builder()
-                                    .name(name)
-                                    .type(type)
-                                    .sourceLocation(trait)
-                                    .build());
+                            endpointParams.put(name,
+                                    Parameter.builder()
+                                            .name(name)
+                                            .type(type)
+                                            .sourceLocation(trait)
+                                            .build());
                         }
                     }
                 }
@@ -179,13 +195,18 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             }
 
             if (!modelParams.containsKey(name)) {
-                errors.add(parameterError(serviceShape, parameter, "RuleSet.UnmatchedName",
+                errors.add(parameterError(serviceShape,
+                        parameter,
+                        "RuleSet.UnmatchedName",
                         String.format("Parameter `%s` exists in ruleset but not in service model, existing params: %s",
-                                name, String.join(", ", modelParams.keySet()))));
+                                name,
+                                String.join(", ", modelParams.keySet()))));
             } else {
                 matchedParams.add(name);
                 if (parameter.getType() != modelParams.get(name).getType()) {
-                    errors.add(parameterError(serviceShape, parameter, "RuleSet.TypeMismatch",
+                    errors.add(parameterError(serviceShape,
+                            parameter,
+                            "RuleSet.TypeMismatch",
                             String.format("Type mismatch for parameter `%s`", name)));
                 }
             }
@@ -193,10 +214,12 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             if (!matchedParams.contains(entry.getKey())) {
-                errors.add(parameterError(serviceShape, serviceShape.expectTrait(EndpointRuleSetTrait.class),
+                errors.add(parameterError(serviceShape,
+                        serviceShape.expectTrait(EndpointRuleSetTrait.class),
                         "RuleSet.UnmatchedName",
                         String.format("Parameter `%s` exists in service model but not in ruleset, existing params: %s",
-                                entry.getKey(), matchedParams)));
+                                entry.getKey(),
+                                matchedParams)));
             }
         }
 
@@ -212,8 +235,11 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> rulesetParamNames = new HashSet<>();
-        Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(model, topDownIndex,
-                serviceShape, ruleSet, trait);
+        Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(model,
+                topDownIndex,
+                serviceShape,
+                ruleSet,
+                trait);
 
         for (Parameter parameter : ruleSet.getParameters()) {
             String name = parameter.getName().toString();
@@ -222,25 +248,31 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             // All test parameter types from corresponding ruleset parameters must match in all test cases.
             if (!testSuiteHasParam) {
-                errors.add(danger(serviceShape, parameter,
+                errors.add(danger(serviceShape,
+                        parameter,
                         String.format("Parameter `%s` is never used in an `EndpointTests` test case", name))
                         .toBuilder()
-                        .id(getName() + ".TestCase.Unused").build());
+                        .id(getName() + ".TestCase.Unused")
+                        .build());
             } else {
                 for (Parameter testParam : testSuiteParams.get(name)) {
                     if (testParam.getType() != parameter.getType()) {
-                        errors.add(parameterError(serviceShape, testParam, "TestCase.TypeMismatch",
+                        errors.add(parameterError(serviceShape,
+                                testParam,
+                                "TestCase.TypeMismatch",
                                 String.format("Type mismatch for parameter `%s`, `%s` expected",
-                                        testParam.getName().toString(), parameter.getType())));
+                                        testParam.getName().toString(),
+                                        parameter.getType())));
                     }
                 }
             }
 
             // All required params from a ruleset must be present in all test cases.
             if (parameter.isRequired() && !parameter.getDefault().isPresent()
-                    && (!testSuiteHasParam || testSuiteParams.get(name).size() != trait.getTestCases().size())
-            ) {
-                errors.add(parameterError(serviceShape, parameter, "TestCase.RequiredMissing",
+                    && (!testSuiteHasParam || testSuiteParams.get(name).size() != trait.getTestCases().size())) {
+                errors.add(parameterError(serviceShape,
+                        parameter,
+                        "TestCase.RequiredMissing",
                         String.format("Required parameter `%s` is missing in at least one test case", name)));
             }
         }
@@ -248,7 +280,9 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         // There might be parameters in test cases not defined in a ruleset.
         for (Map.Entry<String, List<Parameter>> entry : testSuiteParams.entrySet()) {
             if (!rulesetParamNames.contains(entry.getKey())) {
-                errors.add(parameterError(serviceShape, entry.getValue().get(0), "TestCase.Undefined",
+                errors.add(parameterError(serviceShape,
+                        entry.getValue().get(0),
+                        "TestCase.Undefined",
                         String.format("Test parameter `%s` is not defined in ruleset", entry.getKey())));
             }
         }
@@ -290,12 +324,12 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                 for (OperationShape operationShape : topDownIndex.getContainedOperations(serviceShape)) {
                     if (operationShape.getId().getName().equals(input.getOperationName())) {
                         StructureShape inputShape = model.expectShape(
-                                operationShape.getInputShape(), StructureShape.class);
+                                operationShape.getInputShape(),
+                                StructureShape.class);
                         for (String name : inputShape.getMemberNames()) {
                             MemberShape memberShape = inputShape.getMember(name).get();
                             if (input.getOperationParams().containsMember(name)
-                                    && memberShape.hasTrait(ContextParamTrait.class)
-                            ) {
+                                    && memberShape.hasTrait(ContextParamTrait.class)) {
                                 String paramName = memberShape.expectTrait(ContextParamTrait.class).getName();
                                 testParams.add(buildParameter(paramName,
                                         input.getOperationParams().expectMember(name)));

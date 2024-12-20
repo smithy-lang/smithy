@@ -21,8 +21,8 @@ import software.amazon.smithy.utils.ListUtils;
 public class SmithyDiffTestCaseTest {
     @Test
     public void validatesThatEventsAreValid() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
-            SmithyDiffTestCase.parseValidationEvent("[ERROR] - m", "filename"));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> SmithyDiffTestCase.parseValidationEvent("[ERROR] - m", "filename"));
 
         assertTrue(e.getMessage().contains("`filename`"));
         assertTrue(e.getMessage().contains("SUPPRESSED|NOTE|WARNING|DANGER|ERROR"));
@@ -35,19 +35,19 @@ public class SmithyDiffTestCaseTest {
 
     @Test
     public void throwsOnNonExistentFiles() {
-        assertThrows(Exception.class, () ->
-            SmithyDiffTestCase.from(Paths.get("."), "nonexistent"));
+        assertThrows(Exception.class, () -> SmithyDiffTestCase.from(Paths.get("."), "nonexistent"));
     }
 
     @Test
     public void matchesMessageUsingPrefix() {
         ValidationEvent actual = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message("This is a test")
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message("This is a test")
+                .build();
         ValidationEvent expected = actual.toBuilder().message("This is").build();
-        SmithyDiffTestCase testCase = new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
+        SmithyDiffTestCase testCase =
+                new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
         SmithyDiffTestCase.Result result = testCase.createResult(Collections.singletonList(actual));
 
         assertThat(result.isInvalid(), is(false));
@@ -56,12 +56,13 @@ public class SmithyDiffTestCaseTest {
     @Test
     public void failsWhenMessageDoesNotMatchPrefix() {
         ValidationEvent actual = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message("Not a test")
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message("Not a test")
+                .build();
         ValidationEvent expected = actual.toBuilder().message("This is").build();
-        SmithyDiffTestCase testCase = new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
+        SmithyDiffTestCase testCase =
+                new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
         SmithyDiffTestCase.Result result = testCase.createResult(Collections.singletonList(actual));
 
         assertThat(result.isInvalid(), is(true));
@@ -70,11 +71,11 @@ public class SmithyDiffTestCaseTest {
     @Test
     public void matchesOnShapeId() {
         ValidationEvent actual = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message("abc")
-            .shapeId(ShapeId.from("foo.baz#Bar"))
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message("abc")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
         SmithyDiffTestCase testCase = new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(actual));
         SmithyDiffTestCase.Result result = testCase.createResult(Collections.singletonList(actual));
 
@@ -84,13 +85,14 @@ public class SmithyDiffTestCaseTest {
     @Test
     public void failsWhenShapeIdDoesNotMatch() {
         ValidationEvent actual = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message("abc")
-            .shapeId(ShapeId.from("foo.baz#Bar"))
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message("abc")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
         ValidationEvent expected = actual.toBuilder().shapeId(null).build();
-        SmithyDiffTestCase testCase = new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
+        SmithyDiffTestCase testCase =
+                new SmithyDiffTestCase(Paths.get("."), "test", Collections.singletonList(expected));
         SmithyDiffTestCase.Result result = testCase.createResult(Collections.singletonList(actual));
 
         assertThat(result.isInvalid(), is(true));
@@ -99,58 +101,59 @@ public class SmithyDiffTestCaseTest {
     @Test
     public void multilineEventsPrintedWhenFormatting() {
         ValidationEvent e1 = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message(
-                "1: first line\n"
-              + "1: second line\n"
-              + "1: third line\n")
-            .shapeId(ShapeId.from("foo.baz#Bar"))
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message(
+                        "1: first line\n"
+                                + "1: second line\n"
+                                + "1: third line\n")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
         ValidationEvent e2 = ValidationEvent.builder()
-            .id("FooBar")
-            .severity(Severity.DANGER)
-            .message(
-                "2: first line\n"
-              + "2: second line\n"
-              + "2: third line\n")
-            .shapeId(ShapeId.from("foo.baz#Bar"))
-            .build();
+                .id("FooBar")
+                .severity(Severity.DANGER)
+                .message(
+                        "2: first line\n"
+                                + "2: second line\n"
+                                + "2: third line\n")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
 
         SmithyDiffTestCase.Result result = new SmithyDiffTestCase.Result(
-            "test",
-            ListUtils.of(e1, e2),
-            ListUtils.of(e1, e2));
+                "test",
+                ListUtils.of(e1, e2),
+                ListUtils.of(e1, e2));
 
-        assertThat(result.toString(), equalTo("============================\n"
-                                            + "Model Diff Validation Result\n"
-                                            + "============================\n"
-                                            + "test\n"
-                                            + "\n"
-                                            + "Did not match the following events\n"
-                                            + "----------------------------------\n"
-                                            + "[DANGER] foo.baz#Bar: 1: first line\n"
-                                            + "1: second line\n"
-                                            + "1: third line\n"
-                                            + " | FooBar N/A:0:0\n"
-                                            + "\n"
-                                            + "[DANGER] foo.baz#Bar: 2: first line\n"
-                                            + "2: second line\n"
-                                            + "2: third line\n"
-                                            + " | FooBar N/A:0:0\n"
-                                            + "\n"
-                                            + "\n"
-                                            + "Encountered unexpected events\n"
-                                            + "-----------------------------\n"
-                                            + "[DANGER] foo.baz#Bar: 1: first line\n"
-                                            + "1: second line\n"
-                                            + "1: third line\n"
-                                            + " | FooBar N/A:0:0\n"
-                                            + "\n"
-                                            + "[DANGER] foo.baz#Bar: 2: first line\n"
-                                            + "2: second line\n"
-                                            + "2: third line\n"
-                                            + " | FooBar N/A:0:0\n"
-                                            + "\n"));
+        assertThat(result.toString(),
+                equalTo("============================\n"
+                        + "Model Diff Validation Result\n"
+                        + "============================\n"
+                        + "test\n"
+                        + "\n"
+                        + "Did not match the following events\n"
+                        + "----------------------------------\n"
+                        + "[DANGER] foo.baz#Bar: 1: first line\n"
+                        + "1: second line\n"
+                        + "1: third line\n"
+                        + " | FooBar N/A:0:0\n"
+                        + "\n"
+                        + "[DANGER] foo.baz#Bar: 2: first line\n"
+                        + "2: second line\n"
+                        + "2: third line\n"
+                        + " | FooBar N/A:0:0\n"
+                        + "\n"
+                        + "\n"
+                        + "Encountered unexpected events\n"
+                        + "-----------------------------\n"
+                        + "[DANGER] foo.baz#Bar: 1: first line\n"
+                        + "1: second line\n"
+                        + "1: third line\n"
+                        + " | FooBar N/A:0:0\n"
+                        + "\n"
+                        + "[DANGER] foo.baz#Bar: 2: first line\n"
+                        + "2: second line\n"
+                        + "2: third line\n"
+                        + " | FooBar N/A:0:0\n"
+                        + "\n"));
     }
 }

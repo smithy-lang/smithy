@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.interceptors;
 
 import software.amazon.smithy.docgen.sections.ShapeDetailsSection;
@@ -19,8 +18,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class ApiKeyAuthInterceptor implements CodeInterceptor<ShapeDetailsSection, DocWriter> {
     private static final Pair<String, String> AUTH_HEADER_REF = Pair.of(
-            "Authorization header", "https://datatracker.ietf.org/doc/html/rfc9110.html#section-11.4"
-    );
+            "Authorization header",
+            "https://datatracker.ietf.org/doc/html/rfc9110.html#section-11.4");
 
     @Override
     public Class<ShapeDetailsSection> sectionType() {

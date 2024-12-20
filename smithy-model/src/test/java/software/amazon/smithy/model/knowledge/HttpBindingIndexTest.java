@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,25 +97,36 @@ public class HttpBindingIndexTest {
         Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
         assertThat(responseBindings.size(), is(5));
-        assertThat(responseBindings.get("foo"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$foo"),
-                HttpBinding.Location.HEADER,
-                "X-Foo",
-                new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
-        assertThat(responseBindings.get("qux"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$qux"),
-                HttpBinding.Location.PREFIX_HEADERS,
-                "X-Prefix-",
-                new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
-        assertThat(responseBindings.get("baz"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$baz"),
-                HttpBinding.Location.DOCUMENT, "baz", null)));
-        assertThat(responseBindings.get("bar"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bar"),
-                HttpBinding.Location.DOCUMENT, "bar", null)));
-        assertThat(responseBindings.get("bam"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bam"),
-                HttpBinding.Location.DOCUMENT, "bam", null)));
+        assertThat(responseBindings.get("foo"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$foo"),
+                        HttpBinding.Location.HEADER,
+                        "X-Foo",
+                        new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
+        assertThat(responseBindings.get("qux"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$qux"),
+                        HttpBinding.Location.PREFIX_HEADERS,
+                        "X-Prefix-",
+                        new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
+        assertThat(responseBindings.get("baz"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$baz"),
+                        HttpBinding.Location.DOCUMENT,
+                        "baz",
+                        null)));
+        assertThat(responseBindings.get("bar"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bar"),
+                        HttpBinding.Location.DOCUMENT,
+                        "bar",
+                        null)));
+        assertThat(responseBindings.get("bam"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bam"),
+                        HttpBinding.Location.DOCUMENT,
+                        "bam",
+                        null)));
     }
 
     @Test
@@ -136,21 +136,24 @@ public class HttpBindingIndexTest {
         Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
         assertThat(responseBindings.entrySet(), hasSize(3));
-        assertThat(responseBindings.get("foo"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$foo"),
-                HttpBinding.Location.HEADER,
-                "X-Foo",
-                new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
-        assertThat(responseBindings.get("qux"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$qux"),
-                HttpBinding.Location.PREFIX_HEADERS,
-                "X-Prefix-",
-                new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
-        assertThat(responseBindings.get("baz"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$baz"),
-                HttpBinding.Location.PAYLOAD,
-                "baz",
-                new HttpPayloadTrait())));
+        assertThat(responseBindings.get("foo"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$foo"),
+                        HttpBinding.Location.HEADER,
+                        "X-Foo",
+                        new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
+        assertThat(responseBindings.get("qux"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$qux"),
+                        HttpBinding.Location.PREFIX_HEADERS,
+                        "X-Prefix-",
+                        new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
+        assertThat(responseBindings.get("baz"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$baz"),
+                        HttpBinding.Location.PAYLOAD,
+                        "baz",
+                        new HttpPayloadTrait())));
     }
 
     @Test
@@ -160,11 +163,12 @@ public class HttpBindingIndexTest {
         Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
         assertThat(responseBindings.size(), is(1));
-        assertThat(responseBindings.get("Status"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#StructureWithBoundResponseCode$Status"),
-                HttpBinding.Location.RESPONSE_CODE,
-                "Status",
-                new HttpResponseCodeTrait())));
+        assertThat(responseBindings.get("Status"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#StructureWithBoundResponseCode$Status"),
+                        HttpBinding.Location.RESPONSE_CODE,
+                        "Status",
+                        new HttpResponseCodeTrait())));
     }
 
     @Test
@@ -182,9 +186,12 @@ public class HttpBindingIndexTest {
         Map<String, HttpBinding> bindings = index.getRequestBindings(id);
 
         assertThat(bindings.entrySet(), hasSize(1));
-        assertThat(bindings.get("baz"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#WithLabelsInput$baz"),
-                HttpBinding.Location.LABEL, "baz", null)));
+        assertThat(bindings.get("baz"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#WithLabelsInput$baz"),
+                        HttpBinding.Location.LABEL,
+                        "baz",
+                        null)));
     }
 
     @Test
@@ -193,12 +200,18 @@ public class HttpBindingIndexTest {
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
         Map<String, HttpBinding> bindings = index.getRequestBindings(id);
 
-        assertThat(bindings.get("baz"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$baz"),
-                HttpBinding.Location.QUERY, "baz", new HttpQueryTrait("baz"))));
-        assertThat(bindings.get("bar"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$bar"),
-                HttpBinding.Location.QUERY, "bar", new HttpQueryTrait("bar"))));
+        assertThat(bindings.get("baz"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$baz"),
+                        HttpBinding.Location.QUERY,
+                        "baz",
+                        new HttpQueryTrait("baz"))));
+        assertThat(bindings.get("bar"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$bar"),
+                        HttpBinding.Location.QUERY,
+                        "bar",
+                        new HttpQueryTrait("bar"))));
     }
 
     @Test
@@ -207,9 +220,12 @@ public class HttpBindingIndexTest {
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
         Map<String, HttpBinding> bindings = index.getRequestBindings(id);
 
-        assertThat(bindings.get("corge"), equalTo(new HttpBinding(
-                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$corge"),
-                HttpBinding.Location.QUERY_PARAMS, "corge", new HttpQueryParamsTrait())));
+        assertThat(bindings.get("corge"),
+                equalTo(new HttpBinding(
+                        expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$corge"),
+                        HttpBinding.Location.QUERY_PARAMS,
+                        "corge",
+                        new HttpQueryParamsTrait())));
     }
 
     @Test
@@ -227,10 +243,10 @@ public class HttpBindingIndexTest {
         StructureShape structure = StructureShape.builder()
                 .id("ns.foo#Input")
                 .addMember(MemberShape.builder()
-                                   .id("ns.foo#Input$bar")
-                                   .target("ns.foo#String")
-                                   .addTrait(new HttpPayloadTrait())
-                                   .build())
+                        .id("ns.foo#Input$bar")
+                        .target("ns.foo#String")
+                        .addTrait(new HttpPayloadTrait())
+                        .build())
                 .addMember(MemberShape.builder().id("ns.foo#Input$baz").target("ns.foo#String").build())
                 .build();
         StringShape string = StringShape.builder().id("ns.foo#String").build();
@@ -383,7 +399,9 @@ public class HttpBindingIndexTest {
                 .unwrap();
         HttpBindingIndex index = HttpBindingIndex.of(model);
         TimestampFormatTrait.Format format = index.determineTimestampFormat(
-                member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.DATE_TIME);
+                member,
+                HttpBinding.Location.HEADER,
+                TimestampFormatTrait.Format.DATE_TIME);
 
         assertThat(format, equalTo(TimestampFormatTrait.Format.EPOCH_SECONDS));
     }
@@ -402,8 +420,10 @@ public class HttpBindingIndexTest {
         HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
-                member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.EPOCH_SECONDS),
-                   equalTo(TimestampFormatTrait.Format.HTTP_DATE));
+                member,
+                HttpBinding.Location.HEADER,
+                TimestampFormatTrait.Format.EPOCH_SECONDS),
+                equalTo(TimestampFormatTrait.Format.HTTP_DATE));
     }
 
     @Test
@@ -424,7 +444,9 @@ public class HttpBindingIndexTest {
         HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
-                value, HttpBinding.Location.PREFIX_HEADERS, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                value,
+                HttpBinding.Location.PREFIX_HEADERS,
+                TimestampFormatTrait.Format.EPOCH_SECONDS),
                 equalTo(TimestampFormatTrait.Format.HTTP_DATE));
     }
 
@@ -442,11 +464,15 @@ public class HttpBindingIndexTest {
         HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
-                member, HttpBinding.Location.QUERY, TimestampFormatTrait.Format.EPOCH_SECONDS),
-                   equalTo(TimestampFormatTrait.Format.DATE_TIME));
+                member,
+                HttpBinding.Location.QUERY,
+                TimestampFormatTrait.Format.EPOCH_SECONDS),
+                equalTo(TimestampFormatTrait.Format.DATE_TIME));
         assertThat(index.determineTimestampFormat(
-                member, HttpBinding.Location.LABEL, TimestampFormatTrait.Format.EPOCH_SECONDS),
-                   equalTo(TimestampFormatTrait.Format.DATE_TIME));
+                member,
+                HttpBinding.Location.LABEL,
+                TimestampFormatTrait.Format.EPOCH_SECONDS),
+                equalTo(TimestampFormatTrait.Format.DATE_TIME));
     }
 
     @Test
@@ -463,7 +489,9 @@ public class HttpBindingIndexTest {
         HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
-                member, HttpBinding.Location.DOCUMENT, TimestampFormatTrait.Format.EPOCH_SECONDS),
-                   equalTo(TimestampFormatTrait.Format.EPOCH_SECONDS));
+                member,
+                HttpBinding.Location.DOCUMENT,
+                TimestampFormatTrait.Format.EPOCH_SECONDS),
+                equalTo(TimestampFormatTrait.Format.EPOCH_SECONDS));
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,11 +48,13 @@ public class SelectTest {
     @Test
     public void selectsTraits() {
         List<String> args = Arrays.asList("select",
-                                          // Can use just shape names, or an absolute shape ID. Including a trait
-                                          // here doesn't mean a shape in the result is required to have the trait.
-                                          "--show-traits", "length, range, smithy.api#documentation",
-                                          // Every match has to have length or range, but documentation is optional.
-                                          "--selector", ":is([trait|length], [trait|range])");
+                // Can use just shape names, or an absolute shape ID. Including a trait
+                // here doesn't mean a shape in the result is required to have the trait.
+                "--show-traits",
+                "length, range, smithy.api#documentation",
+                // Every match has to have length or range, but documentation is optional.
+                "--selector",
+                ":is([trait|length], [trait|range])");
         IntegUtils.run("simple-config-sources", args, result -> {
             assertThat(result.getExitCode(), equalTo(0));
             String content = result.getOutput().trim();

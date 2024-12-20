@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.node;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -142,45 +146,46 @@ public class NodeMapperTest {
         NodeMapper mapper = new NodeMapper();
         Node result = mapper.serialize(new KitchenSink());
 
-        Node.assertEquals(result, Node.parse("{\n"
-                                             + "  \"long\": 4,\n"
-                                             + "  \"float\": 5.0,\n"
-                                             + "  \"string\": \"string\",\n"
-                                             + "  \"shapeId\": \"foo.baz#Bar\",\n"
-                                             + "  \"double\": 6.0,\n"
-                                             + "  \"boolean\": true,\n"
-                                             + "  \"enum\": \"array\",\n"
-                                             + "  \"int\": 3,\n"
-                                             + "  \"presentString\": \"present\",\n"
-                                             + "  \"short\": 2,\n"
-                                             + "  \"boolean2\": true,\n"
-                                             + "  \"byte\": 1,\n"
-                                             + "  \"map\": {\n"
-                                             + "    \"b\": [\n"
-                                             + "      \"2\",\n"
-                                             + "      \"3\"\n"
-                                             + "    ],\n"
-                                             + "    \"a\": [\n"
-                                             + "      \"1\",\n"
-                                             + "      \"2\"\n"
-                                             + "    ]\n"
-                                             + "  },\n"
-                                             + "  \"complexList\": [\n"
-                                             + "    [\n"
-                                             + "      \"a\",\n"
-                                             + "      \"b\"\n"
-                                             + "    ],\n"
-                                             + "    [\n"
-                                             + "      \"c\",\n"
-                                             + "      \"d\"\n"
-                                             + "    ]\n"
-                                             + "  ],\n"
-                                             + "  \"falseBoolean\": false,\n"
-                                             + "  \"stringIterable\": [\n"
-                                             + "    \"foo\",\n"
-                                             + "    \"baz\"\n"
-                                             + "  ]\n"
-                                             + "}"));
+        Node.assertEquals(result,
+                Node.parse("{\n"
+                        + "  \"long\": 4,\n"
+                        + "  \"float\": 5.0,\n"
+                        + "  \"string\": \"string\",\n"
+                        + "  \"shapeId\": \"foo.baz#Bar\",\n"
+                        + "  \"double\": 6.0,\n"
+                        + "  \"boolean\": true,\n"
+                        + "  \"enum\": \"array\",\n"
+                        + "  \"int\": 3,\n"
+                        + "  \"presentString\": \"present\",\n"
+                        + "  \"short\": 2,\n"
+                        + "  \"boolean2\": true,\n"
+                        + "  \"byte\": 1,\n"
+                        + "  \"map\": {\n"
+                        + "    \"b\": [\n"
+                        + "      \"2\",\n"
+                        + "      \"3\"\n"
+                        + "    ],\n"
+                        + "    \"a\": [\n"
+                        + "      \"1\",\n"
+                        + "      \"2\"\n"
+                        + "    ]\n"
+                        + "  },\n"
+                        + "  \"complexList\": [\n"
+                        + "    [\n"
+                        + "      \"a\",\n"
+                        + "      \"b\"\n"
+                        + "    ],\n"
+                        + "    [\n"
+                        + "      \"c\",\n"
+                        + "      \"d\"\n"
+                        + "    ]\n"
+                        + "  ],\n"
+                        + "  \"falseBoolean\": false,\n"
+                        + "  \"stringIterable\": [\n"
+                        + "    \"foo\",\n"
+                        + "    \"baz\"\n"
+                        + "  ]\n"
+                        + "}"));
     }
 
     private static final class KitchenSink {
@@ -367,12 +372,12 @@ public class NodeMapperTest {
 
         NodeSerializationException e = Assertions.assertThrows(
                 NodeSerializationException.class,
-                () -> mapper.serialize(tc)
-        );
+                () -> mapper.serialize(tc));
 
-        assertThat(e.getMessage(), equalTo(
-                "Error serializing `throws` field of software.amazon.smithy.model.node.NodeMapperTest$ThrowingClass "
-                + "using getThrows(): Nope!"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Error serializing `throws` field of software.amazon.smithy.model.node.NodeMapperTest$ThrowingClass "
+                                + "using getThrows(): Nope!"));
     }
 
     @Test
@@ -403,8 +408,7 @@ public class NodeMapperTest {
         }
     }
 
-    public static final class EmptyPojo {
-    }
+    public static final class EmptyPojo {}
 
     @Test
     public void canDisableToNodeInsideOfClass() {
@@ -457,8 +461,9 @@ public class NodeMapperTest {
         Node baz = Node.parse("{\"foo\": \"hi\", \"baz\": 10, \"inner\": {\"inner\": {\"noSetter!\": \"inn!\"}}}");
         Baz result = new NodeMapper().deserialize(baz, Baz.class);
 
-        assertThat(result.toString(), equalTo(
-                "Baz{foo='hi', baz=10, inner=Baz{foo='null', baz=0, inner=Baz{foo='null', baz=0, inner=null}}}"));
+        assertThat(result.toString(),
+                equalTo(
+                        "Baz{foo='hi', baz=10, inner=Baz{foo='null', baz=0, inner=Baz{foo='null', baz=0, inner=null}}}"));
     }
 
     @Test
@@ -471,9 +476,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(baz, Baz.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/inner/inner) [1, 59]: unable to find setter method for `noSetter!` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$Baz"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/inner/inner) [1, 59]: unable to find setter method for `noSetter!` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$Baz"));
     }
 
     private static final class SimpleString {
@@ -496,9 +502,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(Node.objectNode(), FailingFromNode.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FailingFromNode "
-                + "from {}: Unable to deserialize Node using fromNode method: nope"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FailingFromNode "
+                                + "from {}: Unable to deserialize Node using fromNode method: nope"));
     }
 
     private static final class FailingFromNode {
@@ -517,9 +524,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, BadTypeFromNode.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$BadTypeFromNode"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$BadTypeFromNode"));
     }
 
     private static final class BadTypeFromNode {
@@ -538,9 +546,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, NonStaticFromNode.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$NonStaticFromNode"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$NonStaticFromNode"));
     }
 
     private static final class NonStaticFromNode {
@@ -559,9 +568,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, NonNodeFromNode.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$NonNodeFromNode"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$NonNodeFromNode"));
     }
 
     private static final class NonNodeFromNode {
@@ -580,9 +590,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, MultiArgFromNode.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$MultiArgFromNode"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$MultiArgFromNode"));
     }
 
     private static final class MultiArgFromNode {
@@ -617,10 +628,11 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, ClassThrowingBuilderMethod.class));
 
-        assertThat(e.getMessage(), startsWith(
-                "Deserialization error at (/): unable to create "
-                + "software.amazon.smithy.model.node.NodeMapperTest$ClassThrowingBuilderMethod from "
-                + "{\"foo\":\"foo\"}: Unable to deserialize Node using a builder: nope"));
+        assertThat(e.getMessage(),
+                startsWith(
+                        "Deserialization error at (/): unable to create "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$ClassThrowingBuilderMethod from "
+                                + "{\"foo\":\"foo\"}: Unable to deserialize Node using a builder: nope"));
     }
 
     private static final class ClassThrowingBuilderMethod {
@@ -646,9 +658,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, NonStaticBuilderMethod.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/) [1, 9]: unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$NonStaticBuilderMethod"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/) [1, 9]: unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$NonStaticBuilderMethod"));
     }
 
     private static final class NonStaticBuilderMethod {
@@ -674,9 +687,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(value, BuilderBadReturnType.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/) [1, 9]: unable to find setter method for `foo` on "
-                + "software.amazon.smithy.model.node.NodeMapperTest$BuilderBadReturnType"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/) [1, 9]: unable to find setter method for `foo` on "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$BuilderBadReturnType"));
     }
 
     private static final class BuilderBadReturnType {
@@ -777,7 +791,7 @@ public class NodeMapperTest {
         Node value = Node.parse("[true, false, true]");
 
         assertThat(new NodeMapper().deserializeCollection(value, List.class, Boolean.class),
-                   contains(true, false, true));
+                contains(true, false, true));
     }
 
     @Test
@@ -879,9 +893,10 @@ public class NodeMapperTest {
             mapper.deserialize(value, PojoWithCollection.class);
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create "
-                + "software.amazon.smithy.model.node.NodeMapperTest$PojoWithCollection from [\"a\",\"b\"]"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$PojoWithCollection from [\"a\",\"b\"]"));
     }
 
     @Test
@@ -892,10 +907,11 @@ public class NodeMapperTest {
             mapper.deserialize(value, ThrowingCollectionOnAdd.class);
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create "
-                + "software.amazon.smithy.model.node.NodeMapperTest$ThrowingCollectionOnAdd from [\"a\",\"b\"]: "
-                + "Cannot add a"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$ThrowingCollectionOnAdd from [\"a\",\"b\"]: "
+                                + "Cannot add a"));
     }
 
     public static final class ThrowingCollectionOnAdd extends ArrayList<String> {
@@ -913,10 +929,11 @@ public class NodeMapperTest {
             mapper.deserialize(value, ThrowingCollectionOnCreate.class);
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create "
-                + "software.amazon.smithy.model.node.NodeMapperTest$ThrowingCollectionOnCreate from [\"a\",\"b\"]: "
-                + "Unable to deserialize array into Collection: nope"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$ThrowingCollectionOnCreate from [\"a\",\"b\"]: "
+                                + "Unable to deserialize array into Collection: nope"));
     }
 
     public static final class ThrowingCollectionOnCreate extends ArrayList<String> {
@@ -933,9 +950,10 @@ public class NodeMapperTest {
             mapper.deserialize(value, NonZeroArgConstructorCollection.class);
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Unable to find a zero-arg constructor for Collection "
-                + "software.amazon.smithy.model.node.NodeMapperTest$NonZeroArgConstructorCollection"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Unable to find a zero-arg constructor for Collection "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$NonZeroArgConstructorCollection"));
     }
 
     public static final class NonZeroArgConstructorCollection extends ArrayList<String> {
@@ -1058,9 +1076,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(object, NoZeroArgCtorMap.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Unable to find a zero-arg constructor for Map "
-                + "software.amazon.smithy.model.node.NodeMapperTest$NoZeroArgCtorMap"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Unable to find a zero-arg constructor for Map "
+                                + "software.amazon.smithy.model.node.NodeMapperTest$NoZeroArgCtorMap"));
     }
 
     private static final class NoZeroArgCtorMap extends HashMap<String, String> {
@@ -1076,9 +1095,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(object, BadMapCtor.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$BadMapCtor "
-                + "from {}: Unable to deserialize object into Map: nope"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$BadMapCtor "
+                                + "from {}: Unable to deserialize object into Map: nope"));
     }
 
     private static final class BadMapCtor extends HashMap<String, String> {
@@ -1096,8 +1116,9 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserializeMap(object, Map.class, String.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/foo): unable to create java.lang.String from 10"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/foo): unable to create java.lang.String from 10"));
     }
 
     @Test
@@ -1203,10 +1224,10 @@ public class NodeMapperTest {
         @Override
         public String toString() {
             return "Baz{" +
-                   "foo='" + foo + '\'' +
-                   ", baz=" + baz +
-                   ", inner=" + inner +
-                   '}';
+                    "foo='" + foo + '\'' +
+                    ", baz=" + baz +
+                    ", inner=" + inner +
+                    '}';
         }
     }
 
@@ -1218,9 +1239,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(Node.objectNode(), FailingCtor.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FailingCtor "
-                + "from {}: Unable to deserialize a Node when invoking target constructor: nope"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FailingCtor "
+                                + "from {}: Unable to deserialize a Node when invoking target constructor: nope"));
     }
 
     public static final class FailingCtor {
@@ -1249,8 +1271,9 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserializeInto(node, baz));
 
-        assertThat(e.getMessage(), startsWith(
-                "Deserialization error at (/foo): unable to create java.lang.String from true"));
+        assertThat(e.getMessage(),
+                startsWith(
+                        "Deserialization error at (/foo): unable to create java.lang.String from true"));
     }
 
     @Test
@@ -1330,7 +1353,8 @@ public class NodeMapperTest {
         }
     }
 
-    private static class SourceLocationBearerTrait extends AbstractTrait implements ToSmithyBuilder<SourceLocationBearerTrait> {
+    private static class SourceLocationBearerTrait extends AbstractTrait
+            implements ToSmithyBuilder<SourceLocationBearerTrait> {
         public static final ShapeId ID = ShapeId.from("smithy.test#sourceLocationBearer");
         private final String foo;
 
@@ -1391,9 +1415,10 @@ public class NodeMapperTest {
                 NodeDeserializationException.class,
                 () -> mapper.deserialize(Node.from("invalid"), FooEnum.class));
 
-        assertThat(e.getMessage(), equalTo(
-                "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FooEnum "
-                + "from \"invalid\": Expected one of the following enum strings: [foo, Baz, BAR]"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Deserialization error at (/): unable to create software.amazon.smithy.model.node.NodeMapperTest$FooEnum "
+                                + "from \"invalid\": Expected one of the following enum strings: [foo, Baz, BAR]"));
     }
 
     private enum FooEnum {
@@ -1554,9 +1579,10 @@ public class NodeMapperTest {
     public void deserializesMapOfShapeIdToShapeType() {
         NodeMapper mapper = new NodeMapper();
         Node input = Node.objectNode()
-                .withMember("shapeTypes", Node.objectNode()
-                        .withMember("smithy.example#A", "union")
-                        .withMember("smithy.example#B", "string"));
+                .withMember("shapeTypes",
+                        Node.objectNode()
+                                .withMember("smithy.example#A", "union")
+                                .withMember("smithy.example#B", "string"));
         ShapeIdMap result = mapper.deserialize(input, ShapeIdMap.class);
 
         assertThat(result.getShapeTypes().keySet().iterator().next(), instanceOf(ShapeId.class));
@@ -1584,14 +1610,17 @@ public class NodeMapperTest {
     public void deserializesNestedGenericTypes() {
         NodeMapper mapper = new NodeMapper();
         Node input = Node.objectNode()
-                .withMember("shapeTypes", Node.objectNode()
-                        .withMember("smithy.example#A", Node.arrayNode(Node.objectNode()
-                                .withMember("smithy.example#B", "string"))));
+                .withMember("shapeTypes",
+                        Node.objectNode()
+                                .withMember("smithy.example#A",
+                                        Node.arrayNode(Node.objectNode()
+                                                .withMember("smithy.example#B", "string"))));
         ComplicatedShapeIdMap result = mapper.deserialize(input, ComplicatedShapeIdMap.class);
 
         assertThat(result.getShapeTypes(), hasKey(ShapeId.from("smithy.example#A")));
-        assertThat(result.getShapeTypes(), hasValue(ListUtils.of(
-                MapUtils.of(ShapeId.from("smithy.example#B"), ShapeType.STRING))));
+        assertThat(result.getShapeTypes(),
+                hasValue(ListUtils.of(
+                        MapUtils.of(ShapeId.from("smithy.example#B"), ShapeType.STRING))));
     }
 
     public static final class ComplicatedShapeIdMap {

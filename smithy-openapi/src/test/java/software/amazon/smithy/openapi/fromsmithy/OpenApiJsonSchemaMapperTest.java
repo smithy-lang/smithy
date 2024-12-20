@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.openapi.fromsmithy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,8 +26,6 @@ import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
-import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -403,7 +390,8 @@ public class OpenApiJsonSchemaMapperTest {
                 .addTrait(TraitDefinition.builder().build())
                 .addTrait(SpecificationExtensionTrait.builder().as("x-important-metadata").build())
                 .build();
-        DynamicTrait extensionTraitInstance = new DynamicTrait(extensionTraitShape.getId(), StringNode.from("string content"));
+        DynamicTrait extensionTraitInstance =
+                new DynamicTrait(extensionTraitShape.getId(), StringNode.from("string content"));
         IntegerShape integerShape = IntegerShape.builder().id("a.b#Integer").build();
         StructureShape structure = StructureShape.builder()
                 .id("a.b#Struct")
@@ -420,8 +408,12 @@ public class OpenApiJsonSchemaMapperTest {
                 .convertShape(structure);
 
         assertThat(
-                document.getRootSchema().getExtension("x-important-metadata").get().toNode().expectStringNode().getValue(),
-                equalTo("string content")
-        );
+                document.getRootSchema()
+                        .getExtension("x-important-metadata")
+                        .get()
+                        .toNode()
+                        .expectStringNode()
+                        .getValue(),
+                equalTo("string content"));
     }
 }

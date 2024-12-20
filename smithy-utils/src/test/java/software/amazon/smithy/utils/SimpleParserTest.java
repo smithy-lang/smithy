@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,8 +44,9 @@ public class SimpleParserTest {
             new SimpleParser("foo").expect('!', '?');
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Syntax error at line 1, column 1: Found 'f', but expected one of the following tokens: '!' '?'"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Syntax error at line 1, column 1: Found 'f', but expected one of the following tokens: '!' '?'"));
     }
 
     @Test
@@ -50,8 +55,9 @@ public class SimpleParserTest {
             new SimpleParser("").expect('!', '?');
         });
 
-        assertThat(e.getMessage(), equalTo(
-                "Syntax error at line 1, column 1: Found '[EOF]', but expected one of the following tokens: '!' '?'"));
+        assertThat(e.getMessage(),
+                equalTo(
+                        "Syntax error at line 1, column 1: Found '[EOF]', but expected one of the following tokens: '!' '?'"));
     }
 
     @Test

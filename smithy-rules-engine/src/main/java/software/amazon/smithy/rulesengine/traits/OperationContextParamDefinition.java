@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
@@ -54,8 +53,7 @@ public final class OperationContextParamDefinition implements ToSmithyBuilder<Op
     public static final class Builder implements SmithyBuilder<OperationContextParamDefinition> {
         private String path;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder path(String path) {
             this.path = path;

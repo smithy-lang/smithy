@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.cli.commands;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,7 +9,6 @@ import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.utils.StringUtils;
-
 
 interface ProgressStyle {
 
@@ -31,7 +29,7 @@ interface ProgressStyle {
             @Override
             public void updateAction(Command.Env env, AtomicInteger tracker) {
                 int tickCount = tracker.getAndIncrement();
-                int tickNumber =  tickCount % (TICKER_LENGTH + 1);
+                int tickNumber = tickCount % (TICKER_LENGTH + 1);
                 String loadStr = StringUtils.repeat(PROGRESS_CHAR, tickNumber)
                         + StringUtils.repeat(" ", TICKER_LENGTH - tickNumber);
                 try (ColorBuffer buffer = getBuffer(env)) {

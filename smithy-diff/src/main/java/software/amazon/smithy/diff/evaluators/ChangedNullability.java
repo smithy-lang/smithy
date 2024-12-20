@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
@@ -52,20 +41,19 @@ public class ChangedNullability extends AbstractDiffEvaluator {
         Set<ValidationEvent> events = new HashSet<>();
 
         Stream.concat(
-            // Get members that changed.
-            differences.changedShapes(MemberShape.class),
-            // Get members of structures that added/removed the input trait.
-            changedInputMembers(differences)
-        ).forEach(change -> {
-            // If NullableIndex says the nullability of a member changed, then that's a breaking change.
-            MemberShape oldShape = change.getOldShape();
-            MemberShape newShape = change.getNewShape();
-            boolean wasNullable = oldIndex.isMemberNullable(oldShape);
-            boolean isNowNullable = newIndex.isMemberNullable(newShape);
-            if (wasNullable != isNowNullable) {
-                createErrors(differences, change, wasNullable, events);
-            }
-        });
+                // Get members that changed.
+                differences.changedShapes(MemberShape.class),
+                // Get members of structures that added/removed the input trait.
+                changedInputMembers(differences)).forEach(change -> {
+                    // If NullableIndex says the nullability of a member changed, then that's a breaking change.
+                    MemberShape oldShape = change.getOldShape();
+                    MemberShape newShape = change.getNewShape();
+                    boolean wasNullable = oldIndex.isMemberNullable(oldShape);
+                    boolean isNowNullable = newIndex.isMemberNullable(newShape);
+                    if (wasNullable != isNowNullable) {
+                        createErrors(differences, change, wasNullable, events);
+                    }
+                });
 
         return new ArrayList<>(events);
     }
@@ -74,7 +62,9 @@ public class ChangedNullability extends AbstractDiffEvaluator {
         return differences.changedShapes(StructureShape.class)
                 .filter(change -> change.isTraitAdded(InputTrait.ID) || change.isTraitRemoved(InputTrait.ID))
                 // Find all members that existed before and exist now.
-                .flatMap(change -> change.getNewShape().members().stream()
+                .flatMap(change -> change.getNewShape()
+                        .members()
+                        .stream()
                         .map(newMember -> {
                             MemberShape old = change.getOldShape().getAllMembers().get(newMember.getMemberName());
                             return old == null ? null : new ChangedShape<>(old, newMember);
@@ -91,57 +81,86 @@ public class ChangedNullability extends AbstractDiffEvaluator {
         MemberShape oldMember = change.getOldShape();
         MemberShape newMember = change.getNewShape();
         String message = String.format("Member `%s` changed from %s to %s: ",
-                                       oldMember.getMemberName(),
-                                       wasNullable ? "nullable" : "non-nullable",
-                                       wasNullable ? "non-nullable" : "nullable");
+                oldMember.getMemberName(),
+                wasNullable ? "nullable" : "non-nullable",
+                wasNullable ? "non-nullable" : "nullable");
         boolean oldHasInput = hasInputTrait(differences.getOldModel(), oldMember);
         boolean newHasInput = hasInputTrait(differences.getNewModel(), newMember);
         ShapeId shape = change.getShapeId();
         SourceLocation oldMemberSourceLocation = oldMember.getSourceLocation();
         Shape newTarget = differences.getNewModel().expectShape(newMember.getTarget());
         List<ValidationEvent> eventsToAdd = new ArrayList<>();
-        SourceLocation newMemberContainerSource = differences.getNewModel().expectShape(newMember.getContainer())
+        SourceLocation newMemberContainerSource = differences.getNewModel()
+                .expectShape(newMember.getContainer())
                 .getSourceLocation();
 
         if (oldHasInput && !newHasInput) {
             // If there was an input trait before, but not now, then the nullability must have
             // changed from nullable to non-nullable.
-            eventsToAdd.add(emit(Severity.ERROR, "RemovedInputTrait", shape, newMemberContainerSource, message,
-                            "The @input trait was removed from " + newMember.getContainer()));
+            eventsToAdd.add(emit(Severity.ERROR,
+                    "RemovedInputTrait",
+                    shape,
+                    newMemberContainerSource,
+                    message,
+                    "The @input trait was removed from " + newMember.getContainer()));
         } else if (!oldHasInput && newHasInput) {
             // If there was no input trait before, but there is now, then the nullability must have
             // changed from non-nullable to nullable.
-            eventsToAdd.add(emit(Severity.DANGER, "AddedInputTrait", shape, newMemberContainerSource, message,
-                            "The @input trait was added to " + newMember.getContainer()));
+            eventsToAdd.add(emit(Severity.DANGER,
+                    "AddedInputTrait",
+                    shape,
+                    newMemberContainerSource,
+                    message,
+                    "The @input trait was added to " + newMember.getContainer()));
         } else if (!newHasInput) {
             // Can't add clientOptional to a preexisting required member.
             if (change.isTraitAdded(ClientOptionalTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
-                eventsToAdd.add(emit(Severity.ERROR, "AddedClientOptionalTrait", shape, oldMemberSourceLocation,
-                        message, "The @clientOptional trait was added to a @required member."));
+                eventsToAdd.add(emit(Severity.ERROR,
+                        "AddedClientOptionalTrait",
+                        shape,
+                        oldMemberSourceLocation,
+                        message,
+                        "The @clientOptional trait was added to a @required member."));
             }
             // Can't add required to a member unless the member is marked as @clientOptional or part of @input.
             if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
-                eventsToAdd.add(emit(Severity.ERROR, "AddedRequiredTrait", shape, oldMemberSourceLocation, message,
-                                "The @required trait was added to a member."));
+                eventsToAdd.add(emit(Severity.ERROR,
+                        "AddedRequiredTrait",
+                        shape,
+                        oldMemberSourceLocation,
+                        message,
+                        "The @required trait was added to a member."));
             }
             // Can't add the default trait to a member unless the member was previously required.
             if (change.isTraitAdded(DefaultTrait.ID) && !change.isTraitRemoved(RequiredTrait.ID)) {
-                eventsToAdd.add(emit(Severity.ERROR, "AddedDefaultTrait", shape, oldMemberSourceLocation, message,
-                                "The @default trait was added to a member that was not previously @required."));
+                eventsToAdd.add(emit(Severity.ERROR,
+                        "AddedDefaultTrait",
+                        shape,
+                        oldMemberSourceLocation,
+                        message,
+                        "The @default trait was added to a member that was not previously @required."));
             }
             // Can only remove the required trait if the member was nullable or replaced by the default trait.
             if (change.isTraitRemoved(RequiredTrait.ID)
                     && !newMember.hasTrait(DefaultTrait.ID)
                     && !oldMember.hasTrait(ClientOptionalTrait.ID)) {
                 if (newTarget.isStructureShape() || newTarget.isUnionShape()) {
-                    eventsToAdd.add(emit(Severity.WARNING, "RemovedRequiredTrait.StructureOrUnion", shape,
-                                    oldMemberSourceLocation, message, "The @required trait was removed from a member "
+                    eventsToAdd.add(emit(Severity.WARNING,
+                            "RemovedRequiredTrait.StructureOrUnion",
+                            shape,
+                            oldMemberSourceLocation,
+                            message,
+                            "The @required trait was removed from a member "
                                     + "that targets a " + newTarget.getType() + ". This is backward compatible in "
                                     + "generators that always treat structures and unions as optional "
                                     + "(e.g., AWS generators)"));
                 } else {
-                    eventsToAdd.add(emit(Severity.ERROR, "RemovedRequiredTrait", shape, oldMemberSourceLocation,
-                                    message, "The @required trait was removed and not replaced with the @default "
+                    eventsToAdd.add(emit(Severity.ERROR,
+                            "RemovedRequiredTrait",
+                            shape,
+                            oldMemberSourceLocation,
+                            message,
+                            "The @required trait was removed and not replaced with the @default "
                                     + "trait and @addedDefault trait."));
                 }
             }

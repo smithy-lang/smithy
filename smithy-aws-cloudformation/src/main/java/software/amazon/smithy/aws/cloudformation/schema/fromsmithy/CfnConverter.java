@@ -1,18 +1,7 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 
 import java.util.ArrayList;
@@ -220,8 +209,13 @@ public final class CfnConverter {
         Model updatedModel = model.toBuilder().addShape(pseudoResource).build();
         jsonSchemaConverterBuilder.model(updatedModel);
 
-        Context context = new Context(updatedModel, serviceShape, resourceShape, cfnResource,
-                pseudoResource, config, jsonSchemaConverterBuilder.build());
+        Context context = new Context(updatedModel,
+                serviceShape,
+                resourceShape,
+                cfnResource,
+                pseudoResource,
+                config,
+                jsonSchemaConverterBuilder.build());
 
         return new ConversionEnvironment(context, mappers);
     }
@@ -257,7 +251,8 @@ public final class CfnConverter {
 
         private ConversionEnvironment(
                 Context context,
-                List<CfnMapper> mappers) {
+                List<CfnMapper> mappers
+        ) {
             this.context = context;
             this.mappers = mappers;
         }
@@ -265,7 +260,8 @@ public final class CfnConverter {
 
     private ResourceSchema convertResource(ConversionEnvironment environment, ResourceShape resourceShape) {
         Context context = environment.context;
-        JsonSchemaConverter jsonSchemaConverter = context.getJsonSchemaConverter().toBuilder()
+        JsonSchemaConverter jsonSchemaConverter = context.getJsonSchemaConverter()
+                .toBuilder()
                 .rootShape(context.getResourceStructure())
                 .build();
         SchemaDocument document = jsonSchemaConverter.convert();
@@ -313,7 +309,8 @@ public final class CfnConverter {
 
     private String resolveResourceTypeName(
             ConversionEnvironment environment,
-            CfnResourceTrait resourceTrait) {
+            CfnResourceTrait resourceTrait
+    ) {
         CfnConfig config = environment.context.getConfig();
         ServiceShape serviceShape = environment.context.getModel().expectShape(config.getService(), ServiceShape.class);
         Optional<ServiceTrait> serviceTrait = serviceShape.getTrait(ServiceTrait.class);

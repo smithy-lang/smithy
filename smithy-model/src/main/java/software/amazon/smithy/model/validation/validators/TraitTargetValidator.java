@@ -1,18 +1,7 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
@@ -79,10 +68,11 @@ public final class TraitTargetValidator extends AbstractValidator {
     private void validateMixinsUsedAsTraits(Shape traitShape, Set<Shape> appliedTo, List<ValidationEvent> events) {
         if (traitShape.hasTrait(MixinTrait.class)) {
             for (Shape shape : appliedTo) {
-                events.add(error(shape, String.format(
-                        "Trait `%s` is a mixin and cannot be applied to `%s`.",
-                        Trait.getIdiomaticTraitName(traitShape.getId()),
-                        shape.getId())));
+                events.add(error(shape,
+                        String.format(
+                                "Trait `%s` is a mixin and cannot be applied to `%s`.",
+                                Trait.getIdiomaticTraitName(traitShape.getId()),
+                                shape.getId())));
             }
         }
     }
@@ -102,12 +92,14 @@ public final class TraitTargetValidator extends AbstractValidator {
                 if (!matches.contains(shape)) {
                     // Strip out newlines with successive spaces.
                     String sanitized = SANITIZE.matcher(selector.toString()).replaceAll(" ");
-                    events.add(error(shape, shape.findTrait(traitId).get(), String.format(
-                            "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
-                            + "to shapes that match the following selector: %s",
-                            Trait.getIdiomaticTraitName(traitId),
-                            shape.getId(),
-                            sanitized)));
+                    events.add(error(shape,
+                            shape.findTrait(traitId).get(),
+                            String.format(
+                                    "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
+                                            + "to shapes that match the following selector: %s",
+                                    Trait.getIdiomaticTraitName(traitId),
+                                    shape.getId(),
+                                    sanitized)));
                 }
             }
         }

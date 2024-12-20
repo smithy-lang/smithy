@@ -1,18 +1,7 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import java.io.Serializable;
@@ -109,14 +98,22 @@ public enum SmithyIdlComponentOrder {
      */
     private static final class PreferredShapeComparator implements Comparator<Shape>, Serializable {
         private static final Map<ShapeType, Integer> PRIORITY = MapUtils.of(
-                ShapeType.SERVICE, 0,
-                ShapeType.RESOURCE, 1,
-                ShapeType.OPERATION, 2,
-                ShapeType.STRUCTURE, 3,
-                ShapeType.UNION, 4,
-                ShapeType.LIST, 5,
-                ShapeType.SET, 6,
-                ShapeType.MAP, 7);
+                ShapeType.SERVICE,
+                0,
+                ShapeType.RESOURCE,
+                1,
+                ShapeType.OPERATION,
+                2,
+                ShapeType.STRUCTURE,
+                3,
+                ShapeType.UNION,
+                4,
+                ShapeType.LIST,
+                5,
+                ShapeType.SET,
+                6,
+                ShapeType.MAP,
+                7);
 
         @Override
         public int compare(Shape s1, Shape s2) {

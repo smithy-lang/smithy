@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,12 +38,13 @@ public class ContextualValidationEventFormatterTest {
 
         assertThat(format, startsWith("ERROR: example.smithy#Foo (foo)"));
         assertThat(format, containsString(String.format("%n     @ ")));
-        assertThat(format, endsWith(String.format(
-                "%n     |"
-                + "%n   3 | structure Foo {"
-                + "%n     | ^"
-                + "%n     = This is the message"
-                + "%n")));
+        assertThat(format,
+                endsWith(String.format(
+                        "%n     |"
+                                + "%n   3 | structure Foo {"
+                                + "%n     | ^"
+                                + "%n     = This is the message"
+                                + "%n")));
     }
 
     @Test
@@ -53,10 +58,10 @@ public class ContextualValidationEventFormatterTest {
 
         String format = new ContextualValidationEventFormatter().format(event);
 
-        assertThat(format, equalTo(String.format(
-                "ERROR: - (foo)"
-                + "%n     = This is the message"
-                + "%n")
-        ));
+        assertThat(format,
+                equalTo(String.format(
+                        "ERROR: - (foo)"
+                                + "%n     = This is the message"
+                                + "%n")));
     }
 }

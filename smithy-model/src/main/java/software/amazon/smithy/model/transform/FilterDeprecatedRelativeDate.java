@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.transform;
 
 import java.util.HashSet;
@@ -18,8 +17,7 @@ final class FilterDeprecatedRelativeDate {
     private static final Logger LOGGER = Logger.getLogger(FilterDeprecatedRelativeDate.class.getName());
     // YYYY-MM-DD calendar date with optional hyphens.
     private static final Pattern ISO_8601_DATE_REGEX = Pattern.compile(
-            "^([0-9]{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])$"
-    );
+            "^([0-9]{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])$");
 
     private final String relativeDate;
 
@@ -27,8 +25,7 @@ final class FilterDeprecatedRelativeDate {
         if (relativeDate != null && !isIso8601Date(relativeDate)) {
             throw new IllegalArgumentException("Provided relativeDate: `"
                     + relativeDate
-                    + "` does not match ISO8601 calendar date format (YYYY-MM-DD)."
-            );
+                    + "` does not match ISO8601 calendar date format (YYYY-MM-DD).");
         }
         this.relativeDate = relativeDate != null ? relativeDate.replace("-", "") : null;
     }
@@ -52,8 +49,7 @@ final class FilterDeprecatedRelativeDate {
                 if (relativeDate.compareTo(since.replace("-", "")) > 0) {
                     LOGGER.fine("Filtering deprecated shape: `"
                             + shape + "`"
-                            + ". Shape was deprecated as of: " + since
-                    );
+                            + ". Shape was deprecated as of: " + since);
                     shapesToRemove.add(shape);
                 }
             }

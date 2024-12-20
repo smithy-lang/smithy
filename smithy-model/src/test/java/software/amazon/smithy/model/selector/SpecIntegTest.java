@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,7 +29,7 @@ public class SpecIntegTest {
 
     @BeforeAll
     public static void before() {
-        attributeExistenceModel =  Model.assembler()
+        attributeExistenceModel = Model.assembler()
                 .addImport(SelectorTest.class.getResource("attribute-existence.smithy"))
                 .assemble()
                 .unwrap();
@@ -39,16 +43,16 @@ public class SpecIntegTest {
     public void attributeExistence_MatchesShapesWithTrait() {
         // Simple existence check.
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|deprecated]"),
-                   containsInAnyOrder("smithy.example#DeprecatedString"));
+                containsInAnyOrder("smithy.example#DeprecatedString"));
 
         // Empty tags traits still exist.
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|tags]"),
-                   containsInAnyOrder("smithy.example#MyString2"));
+                containsInAnyOrder("smithy.example#MyString2"));
 
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|enum]"),
-                   containsInAnyOrder("smithy.example#MyString3",
-                                      "smithy.example#MyString4",
-                                      "smithy.example#MyString5"));
+                containsInAnyOrder("smithy.example#MyString3",
+                        "smithy.example#MyString4",
+                        "smithy.example#MyString5"));
     }
 
     @Test
@@ -58,27 +62,27 @@ public class SpecIntegTest {
 
         // An empty projection does not exist.
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|enum|(values)]"),
-                   containsInAnyOrder("smithy.example#MyString3",
-                                      "smithy.example#MyString4",
-                                      "smithy.example#MyString5"));
+                containsInAnyOrder("smithy.example#MyString3",
+                        "smithy.example#MyString4",
+                        "smithy.example#MyString5"));
 
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|enum|(values)|tags]"),
-                   containsInAnyOrder("smithy.example#MyString5"));
+                containsInAnyOrder("smithy.example#MyString5"));
 
         // An empty projection does not exist.
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|enum|(values)|tags|(values)]"),
-                   containsInAnyOrder("smithy.example#MyString5"));
+                containsInAnyOrder("smithy.example#MyString5"));
     }
 
     @Test
     public void allowedTags_MatchesShapesThatViolateExample() {
         Set<String> ids = SelectorTest.ids(allowedTagsModel,
                 "service\n"
-                + "[trait|smithy.example#allowedTags]\n"
-                + "$service(*)\n"
-                + "~>\n"
-                + "[trait|tags]\n"
-                + ":not([@: @{trait|tags|(values)} = @{var|service|trait|smithy.example#allowedTags|(values)}])");
+                        + "[trait|smithy.example#allowedTags]\n"
+                        + "$service(*)\n"
+                        + "~>\n"
+                        + "[trait|tags]\n"
+                        + ":not([@: @{trait|tags|(values)} = @{var|service|trait|smithy.example#allowedTags|(values)}])");
 
         assertThat(ids, contains("smithy.example#OperationD"));
     }
@@ -87,21 +91,21 @@ public class SpecIntegTest {
     public void allowedTags_illustratesWhyProjectionComparatorsExist() {
         Set<String> noneMatch = SelectorTest.ids(allowedTagsModel,
                 "service\n"
-                + "[trait|smithy.example#allowedTags]\n"
-                + "$service(*)\n"
-                + "~>\n"
-                + "[trait|enum]\n"
-                + ":not([@: @{trait|enum|(values)|tags|(values)}"
-                + "         = @{var|service|trait|smithy.example#allowedTags|(values)}])");
+                        + "[trait|smithy.example#allowedTags]\n"
+                        + "$service(*)\n"
+                        + "~>\n"
+                        + "[trait|enum]\n"
+                        + ":not([@: @{trait|enum|(values)|tags|(values)}"
+                        + "         = @{var|service|trait|smithy.example#allowedTags|(values)}])");
 
         Set<String> notWhatWeWanted = SelectorTest.ids(allowedTagsModel,
                 "service\n"
-                + "[trait|smithy.example#allowedTags]\n"
-                + "$service(*)\n"
-                + "~>\n"
-                + "[trait|enum]\n"
-                + "[@: @{trait|enum|(values)|tags|(values)}"
-                + "    != @{var|service|trait|smithy.example#allowedTags|(values)}]");
+                        + "[trait|smithy.example#allowedTags]\n"
+                        + "$service(*)\n"
+                        + "~>\n"
+                        + "[trait|enum]\n"
+                        + "[@: @{trait|enum|(values)|tags|(values)}"
+                        + "    != @{var|service|trait|smithy.example#allowedTags|(values)}]");
 
         assertThat(noneMatch, empty());
         assertThat(notWhatWeWanted, containsInAnyOrder("smithy.example#GoodEnum", "smithy.example#BadEnum"));
@@ -111,12 +115,12 @@ public class SpecIntegTest {
     public void allowedTags_matchesEnumsUsingSubset() {
         Set<String> ids = SelectorTest.ids(allowedTagsModel,
                 "service\n"
-                + "[trait|smithy.example#allowedTags]\n"
-                + "$service(*)\n"
-                + "~>\n"
-                + "[trait|enum]\n"
-                + ":not([@: @{trait|enum|(values)|tags|(values)}"
-                + "         {<} @{var|service|trait|smithy.example#allowedTags|(values)}])");
+                        + "[trait|smithy.example#allowedTags]\n"
+                        + "$service(*)\n"
+                        + "~>\n"
+                        + "[trait|enum]\n"
+                        + ":not([@: @{trait|enum|(values)|tags|(values)}"
+                        + "         {<} @{var|service|trait|smithy.example#allowedTags|(values)}])");
 
         assertThat(ids, contains("smithy.example#BadEnum"));
     }

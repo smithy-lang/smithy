@@ -1,18 +1,7 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *   http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.shapes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,12 +58,12 @@ public class EnumShapeTest {
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("foo")
+                                .value("bar")
+                                .build()));
     }
 
     @Test
@@ -89,12 +78,12 @@ public class EnumShapeTest {
         assertEquals(shape.getMember("foo").get(), member);
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("foo")
+                                .value("bar")
+                                .build()));
     }
 
     @Test
@@ -112,12 +101,12 @@ public class EnumShapeTest {
         assertEquals(shape.getMember("foo").get(), expected);
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("foo")
-                        .value("foo")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("foo")
+                                .value("foo")
+                                .build()));
     }
 
     @Test
@@ -287,8 +276,8 @@ public class EnumShapeTest {
                         .id("ns.foo#bar$baz")
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build()
-        )).build();
+                        .build()))
+                .build();
 
         assertEquals(shape.getMember("foo").get(),
                 MemberShape.builder()
@@ -305,16 +294,16 @@ public class EnumShapeTest {
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build(),
-                EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("foo")
+                                .value("bar")
+                                .build(),
+                        EnumDefinition.builder()
+                                .name("baz")
+                                .value("bam")
+                                .build()));
     }
 
     @Test
@@ -331,8 +320,7 @@ public class EnumShapeTest {
                         .id("ns.foo#bar$baz")
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("bam").build())
-                        .build()
-        ));
+                        .build()));
 
         EnumShape shape = builder.removeMember("foo").build();
 
@@ -346,12 +334,12 @@ public class EnumShapeTest {
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("baz")
+                                .value("bam")
+                                .build()));
     }
 
     @Test
@@ -373,12 +361,12 @@ public class EnumShapeTest {
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("baz")
-                        .value("bam")
-                        .build()
-        ));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(),
+                ListUtils.of(
+                        EnumDefinition.builder()
+                                .name("baz")
+                                .value("bam")
+                                .build()));
     }
 
     @Test

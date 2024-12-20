@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.traitcodegen.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,58 +67,76 @@ public class CreatesTraitTest {
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
                 // Document traits
-                Arguments.of(DocumentTrait.ID, Node.objectNodeBuilder()
-                        .withMember("metadata", "woo")
-                        .withMember("more", "yay")
-                        .build()
-                ),
+                Arguments.of(DocumentTrait.ID,
+                        Node.objectNodeBuilder()
+                                .withMember("metadata", "woo")
+                                .withMember("more", "yay")
+                                .build()),
                 Arguments.of(StructWithNestedDocumentTrait.ID,
-                        ObjectNode.objectNodeBuilder().withMember("doc", ObjectNode.builder()
-                                .withMember("foo", "bar").withMember("fizz", "buzz").build()).build()),
+                        ObjectNode.objectNodeBuilder()
+                                .withMember("doc",
+                                        ObjectNode.builder()
+                                                .withMember("foo", "bar")
+                                                .withMember("fizz", "buzz")
+                                                .build())
+                                .build()),
                 // Enums
                 Arguments.of(StringEnumTrait.ID, Node.from("no")),
                 Arguments.of(IntEnumTrait.ID, Node.from(2)),
                 Arguments.of(SuitTrait.ID, Node.from("clubs")),
-                Arguments.of(EnumListMemberTrait.ID, ObjectNode.objectNodeBuilder()
-                        .withMember("value", ArrayNode.fromStrings("some", "none", "some"))
-                        .build()),
+                Arguments.of(EnumListMemberTrait.ID,
+                        ObjectNode.objectNodeBuilder()
+                                .withMember("value", ArrayNode.fromStrings("some", "none", "some"))
+                                .build()),
                 // Lists
-                Arguments.of(NumberListTrait.ID, ArrayNode.fromNodes(
-                        Node.from(1), Node.from(2), Node.from(3))
-                ),
+                Arguments.of(NumberListTrait.ID,
+                        ArrayNode.fromNodes(
+                                Node.from(1),
+                                Node.from(2),
+                                Node.from(3))),
                 Arguments.of(StringListTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
-                Arguments.of(StructureListTrait.ID, ArrayNode.fromNodes(
-                        ListMember.builder().a("first").b(1).c("other").build().toNode(),
-                        ListMember.builder().a("second").b(2).c("more").build().toNode()
-                )),
-                Arguments.of(DocumentListTrait.ID, ArrayNode.fromNodes(
-                        ObjectNode.builder().withMember("a", "b").build(),
-                        ObjectNode.builder().withMember("c", "d").withMember("e", "f").build()
-                )),
+                Arguments.of(StructureListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ListMember.builder().a("first").b(1).c("other").build().toNode(),
+                                ListMember.builder().a("second").b(2).c("more").build().toNode())),
+                Arguments.of(DocumentListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ObjectNode.builder().withMember("a", "b").build(),
+                                ObjectNode.builder().withMember("c", "d").withMember("e", "f").build())),
                 // Maps
-                Arguments.of(StringStringMapTrait.ID, StringStringMapTrait.builder()
-                        .putValues("a", "first").putValues("b", "other").build().toNode()
-                ),
-                Arguments.of(StringToStructMapTrait.ID, StringToStructMapTrait.builder()
-                        .putValues("one", MapValue.builder().a("foo").b(2).build())
-                        .putValues("two", MapValue.builder().a("bar").b(4).build())
-                        .build().toNode()
-                ),
-                Arguments.of(StringDocumentMapTrait.ID, StringDocumentMapTrait.builder()
-                        .putValues("a", ObjectNode.builder().withMember("a", "a").build().toNode())
-                        .putValues("b", ObjectNode.builder().withMember("b", "b").build().toNode())
-                        .putValues("string", Node.from("stuff"))
-                        .putValues("number", Node.from(1))
-                        .build().toNode()
-                ),
+                Arguments.of(StringStringMapTrait.ID,
+                        StringStringMapTrait.builder()
+                                .putValues("a", "first")
+                                .putValues("b", "other")
+                                .build()
+                                .toNode()),
+                Arguments.of(StringToStructMapTrait.ID,
+                        StringToStructMapTrait.builder()
+                                .putValues("one", MapValue.builder().a("foo").b(2).build())
+                                .putValues("two", MapValue.builder().a("bar").b(4).build())
+                                .build()
+                                .toNode()),
+                Arguments.of(StringDocumentMapTrait.ID,
+                        StringDocumentMapTrait.builder()
+                                .putValues("a", ObjectNode.builder().withMember("a", "a").build().toNode())
+                                .putValues("b", ObjectNode.builder().withMember("b", "b").build().toNode())
+                                .putValues("string", Node.from("stuff"))
+                                .putValues("number", Node.from(1))
+                                .build()
+                                .toNode()),
                 // Mixins
                 Arguments.of(StructureListWithMixinMemberTrait.ID,
                         ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
-                Arguments.of(StructWithMixinTrait.ID, StructWithMixinTrait.builder()
-                        .d("d").build().toNode()),
+                Arguments.of(StructWithMixinTrait.ID,
+                        StructWithMixinTrait.builder()
+                                .d("d")
+                                .build()
+                                .toNode()),
                 // Naming Conflicts
-                Arguments.of(SnakeCaseStructureTrait.ID, ObjectNode.builder()
-                        .withMember("snake_case_member", "stuff").build()),
+                Arguments.of(SnakeCaseStructureTrait.ID,
+                        ObjectNode.builder()
+                                .withMember("snake_case_member", "stuff")
+                                .build()),
                 // Numbers
                 Arguments.of(BigDecimalTrait.ID, Node.from(1)),
                 Arguments.of(BigIntegerTrait.ID, Node.from(1)),
@@ -126,38 +148,39 @@ public class CreatesTraitTest {
                 Arguments.of(ShortTrait.ID, Node.from(1)),
                 // Structures
                 Arguments.of(BasicAnnotationTrait.ID, Node.objectNode()),
-                Arguments.of(StructureTrait.ID, StructureTrait.builder()
-                        .fieldA("a")
-                        .fieldB(true)
-                        .fieldC(NestedA.builder()
-                                .fieldN("nested")
-                                .fieldQ(false)
-                                .fieldZ(NestedB.B)
+                Arguments.of(StructureTrait.ID,
+                        StructureTrait.builder()
+                                .fieldA("a")
+                                .fieldB(true)
+                                .fieldC(NestedA.builder()
+                                        .fieldN("nested")
+                                        .fieldQ(false)
+                                        .fieldZ(NestedB.B)
+                                        .build())
+                                .fieldD(ListUtils.of("a", "b", "c"))
+                                .fieldE(MapUtils.of("a", "one", "b", "two"))
                                 .build()
-                        )
-                        .fieldD(ListUtils.of("a", "b", "c"))
-                        .fieldE(MapUtils.of("a", "one", "b", "two"))
-                        .build().toNode()
-                ),
+                                .toNode()),
                 // Timestamps
                 Arguments.of(TimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(DateTimeTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(HttpDateTimestampTrait.ID, Node.from("Tue, 29 Apr 2014 18:30:38 GMT")),
                 Arguments.of(EpochSecondsTimestampTrait.ID, Node.from(1515531081.123)),
                 // Unique Items (sets)
-                Arguments.of(NumberSetTrait.ID, ArrayNode.fromNodes(
-                        Node.from(1), Node.from(2), Node.from(3))
-                ),
+                Arguments.of(NumberSetTrait.ID,
+                        ArrayNode.fromNodes(
+                                Node.from(1),
+                                Node.from(2),
+                                Node.from(3))),
                 Arguments.of(StringSetTrait.ID, ArrayNode.fromStrings("a", "b", "c")),
-                Arguments.of(StructureSetTrait.ID, ArrayNode.fromNodes(
-                        SetMember.builder().a("first").b(1).c("other").build().toNode(),
-                        SetMember.builder().a("second").b(2).c("more").build().toNode()
-                )),
+                Arguments.of(StructureSetTrait.ID,
+                        ArrayNode.fromNodes(
+                                SetMember.builder().a("first").b(1).c("other").build().toNode(),
+                                SetMember.builder().a("second").b(2).c("more").build().toNode())),
                 // Strings
                 Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
                 // Defaults
-                Arguments.of(StructDefaultsTrait.ID, Node.objectNode())
-        );
+                Arguments.of(StructDefaultsTrait.ID, Node.objectNode()));
     }
 
     @ParameterizedTest

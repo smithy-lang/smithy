@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.traits;
 
 import java.util.List;
@@ -85,9 +84,9 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
         }
         EndpointTestCase that = (EndpointTestCase) o;
         return Objects.equals(getDocumentation(), that.getDocumentation())
-               && Objects.equals(getParams(), that.getParams())
-               && Objects.equals(getOperationInputs(), that.getOperationInputs())
-               && Objects.equals(getExpect(), that.getExpect());
+                && Objects.equals(getParams(), that.getParams())
+                && Objects.equals(getOperationInputs(), that.getOperationInputs())
+                && Objects.equals(getExpect(), that.getExpect());
     }
 
     public static final class Builder implements SmithyBuilder<EndpointTestCase> {
@@ -97,8 +96,7 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
         private ObjectNode params = ObjectNode.objectNode();
         private EndpointTestExpectation expect;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder sourceLocation(FromSourceLocation sourceLocation) {
             this.sourceLocation = sourceLocation.getSourceLocation();

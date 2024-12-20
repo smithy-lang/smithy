@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections;
 
 import software.amazon.smithy.docgen.DocGenerationContext;
@@ -36,5 +35,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *     example of adding details to an auth trait's docs based on its values.
  */
 @SmithyUnstableApi
-public record AuthSection(DocGenerationContext context, ServiceShape service) implements CodeSection {
-}
+public record AuthSection(DocGenerationContext context, ServiceShape service) implements CodeSection {}

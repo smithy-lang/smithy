@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
@@ -30,8 +29,9 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            events.addAll(validateRuleSetBuiltIns(serviceShape, serviceShape.expectTrait(EndpointRuleSetTrait.class)
-                    .getEndpointRuleSet()));
+            events.addAll(validateRuleSetBuiltIns(serviceShape,
+                    serviceShape.expectTrait(EndpointRuleSetTrait.class)
+                            .getEndpointRuleSet()));
         }
 
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
@@ -58,8 +58,13 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             int inputIndex = 0;
             for (EndpointTestOperationInput operationInput : testCase.getOperationInputs()) {
                 for (StringNode builtInNode : operationInput.getBuiltInParams().getMembers().keySet()) {
-                    validateBuiltIn(serviceShape, builtInNode.getValue(), operationInput, "TestCase",
-                                    String.valueOf(testIndex), "Inputs", String.valueOf(inputIndex))
+                    validateBuiltIn(serviceShape,
+                            builtInNode.getValue(),
+                            operationInput,
+                            "TestCase",
+                            String.valueOf(testIndex),
+                            "Inputs",
+                            String.valueOf(inputIndex))
                             .ifPresent(events::add);
                 }
                 inputIndex++;
@@ -76,9 +81,12 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             String... eventIdSuffixes
     ) {
         if (!EndpointRuleSet.hasBuiltIn(builtInName)) {
-            return Optional.of(error(serviceShape, source, String.format(
+            return Optional.of(error(serviceShape,
+                    source,
+                    String.format(
                             "The `%s` built-in used is not registered, valid built-ins: %s",
-                            builtInName, EndpointRuleSet.getKeyString()),
+                            builtInName,
+                            EndpointRuleSet.getKeyString()),
                     String.join(".", Arrays.asList(eventIdSuffixes))));
         }
         return Optional.empty();

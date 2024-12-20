@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import software.amazon.smithy.model.SourceException;
@@ -56,7 +55,8 @@ public enum ParameterType {
         }
         throw new RuleError(new SourceException(
                 String.format("Unexpected parameter type `%s`. Expected `string`, `boolean`, or `stringArray`.",
-                        value), node));
+                        value),
+                node));
     }
 
     /**
@@ -79,13 +79,15 @@ public enum ParameterType {
                 if (!memberNode.isStringNode()) {
                     throw new RuleError(new SourceException(
                             String.format("Unexpected array member parameter type `%s`. Expected a string.",
-                                    memberNode.getType()), memberNode));
+                                    memberNode.getType()),
+                            memberNode));
                 }
             });
             return STRING_ARRAY;
         }
         throw new RuleError(new SourceException(
-                String.format("Unexpected parameter type `%s`. Expected a string or boolean.", node.getType()), node));
+                String.format("Unexpected parameter type `%s`. Expected a string or boolean.", node.getType()),
+                node));
     }
 
     /**

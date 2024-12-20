@@ -1,18 +1,7 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.HashMap;
@@ -53,8 +42,9 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
      * TODO: Does this need to be made protocol-specific?
      */
     private static final ObjectNode DEFAULT_GATEWAY_RESPONSE = Node.objectNode()
-            .withMember("responseTemplates", Node.objectNode()
-                    .withMember("application/json", "{\"message\":$context.error.messageString}"));
+            .withMember("responseTemplates",
+                    Node.objectNode()
+                            .withMember("application/json", "{\"message\":$context.error.messageString}"));
 
     private static final ObjectNode DEFAULT_GATEWAY_RESPONSES = Node.objectNodeBuilder()
             .withMember("DEFAULT_4XX", DEFAULT_GATEWAY_RESPONSE)
@@ -72,7 +62,8 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
-        return context.getService().getTrait(CorsTrait.class)
+        return context.getService()
+                .getTrait(CorsTrait.class)
                 .map(corsTrait -> updateModel(context, openapi, corsTrait))
                 .orElse(openapi);
     }
@@ -108,7 +99,9 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
             corsHeaders.put(CorsHeader.ALLOW_CREDENTIALS, "true");
         }
 
-        return gatewayResponses.getMembers().entrySet().stream()
+        return gatewayResponses.getMembers()
+                .entrySet()
+                .stream()
                 .collect(ObjectNode.collect(Map.Entry::getKey, entry -> {
                     return updateGatewayResponse(context, trait, corsHeaders, entry.getValue().expectObjectNode());
                 }));

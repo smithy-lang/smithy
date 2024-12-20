@@ -1,4 +1,17 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.cli.commands;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -12,15 +25,6 @@ import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LockFileTest {
     @Test
@@ -69,9 +73,9 @@ public class LockFileTest {
         List<ResolvedArtifact> artifactList = ListUtils.of(
                 ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-aws-traits:1.37.0",
                         Node.objectNodeBuilder()
-                        .withMember("path", "/a")
-                        .withMember("sha1", "badSum")
-                        .build()));
+                                .withMember("path", "/a")
+                                .withMember("sha1", "badSum")
+                                .build()));
         Assertions.assertThrows(CliError.class, () -> lock.validateArtifacts(artifactList));
     }
 
@@ -95,14 +99,14 @@ public class LockFileTest {
         assertFalse(lockFileOptional.isPresent());
     }
 
-
     private Node getNode() {
         return Node.objectNodeBuilder()
                 .withMember("version", "1.0")
                 .withMember("configHash", -1856284556)
                 .withMember("repositories", ArrayNode.fromNodes(Node.from("repo")))
-                .withMember("artifacts", Node.objectNode()
-                        .withMember("software.amazon.smithy:smithy-aws-traits:1.37.0",
+                .withMember("artifacts",
+                        Node.objectNode()
+                                .withMember("software.amazon.smithy:smithy-aws-traits:1.37.0",
                                         Node.objectNode().withMember("sha1", "sum")))
                 .build();
     }

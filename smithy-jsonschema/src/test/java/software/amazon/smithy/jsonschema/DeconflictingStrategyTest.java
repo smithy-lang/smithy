@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,7 +77,9 @@ public class DeconflictingStrategyTest {
         Model model = Model.assembler().addShapes(a).assemble().unwrap();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
-        RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
+        RefStrategy.createDefaultStrategy(model,
+                new JsonSchemaConfig(),
+                propertyNamingStrategy,
                 new JsonSchemaConverter.FilterPreludeUnit(false));
     }
 
@@ -85,7 +91,9 @@ public class DeconflictingStrategyTest {
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
         Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
-            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
+            RefStrategy.createDefaultStrategy(model,
+                    new JsonSchemaConfig(),
+                    propertyNamingStrategy,
                     new JsonSchemaConverter.FilterPreludeUnit(false));
         });
     }
@@ -96,7 +104,7 @@ public class DeconflictingStrategyTest {
         Model model = Model.assembler().addShapes(a).assemble().unwrap();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-            .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         assertThat(strategy.toPointer(a.getId()), equalTo("#/definitions/Severity"));
     }
 

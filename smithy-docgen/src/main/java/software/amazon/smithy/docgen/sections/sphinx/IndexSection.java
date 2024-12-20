@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.docgen.sections.sphinx;
 
 import java.nio.file.Path;
@@ -25,6 +24,4 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public record IndexSection(
         DocGenerationContext context,
         Path directory,
-        Set<Path> sourceFiles
-) implements CodeSection {
-}
+        Set<Path> sourceFiles) implements CodeSection {}

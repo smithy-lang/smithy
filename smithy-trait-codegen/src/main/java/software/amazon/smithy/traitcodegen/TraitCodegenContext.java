@@ -2,7 +2,6 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.traitcodegen;
 
 import java.util.List;
@@ -28,18 +27,20 @@ public final class TraitCodegenContext implements CodegenContext<TraitCodegenSet
     private final List<TraitCodegenIntegration> integrations;
     private final WriterDelegator<TraitCodegenWriter> writerDelegator;
 
-    TraitCodegenContext(Model model,
-                                TraitCodegenSettings settings,
-                                SymbolProvider symbolProvider,
-                                FileManifest fileManifest,
-                                List<TraitCodegenIntegration> integrations
+    TraitCodegenContext(
+            Model model,
+            TraitCodegenSettings settings,
+            SymbolProvider symbolProvider,
+            FileManifest fileManifest,
+            List<TraitCodegenIntegration> integrations
     ) {
         this.model = model;
         this.settings = settings;
         this.symbolProvider = symbolProvider;
         this.fileManifest = fileManifest;
         this.integrations = integrations;
-        this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider,
+        this.writerDelegator = new WriterDelegator<>(fileManifest,
+                symbolProvider,
                 new TraitCodegenWriter.Factory(settings));
     }
 
