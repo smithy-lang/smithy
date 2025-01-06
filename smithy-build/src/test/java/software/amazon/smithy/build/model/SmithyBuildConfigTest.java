@@ -123,7 +123,8 @@ public class SmithyBuildConfigTest {
         // Did the array and string values in it expand?
         assertThat(transform.getArgs(),
                 equalTo(Node.objectNode()
-                        .withMember("tags", Node.fromStrings("Hi", "compoundTagFromEnv", "HiAndTagFromEnv", "${BAZ}"))));
+                        .withMember("tags",
+                                Node.fromStrings("Hi", "compoundTagFromEnv", "HiAndTagFromEnv", "${BAZ}"))));
     }
 
     @Test
