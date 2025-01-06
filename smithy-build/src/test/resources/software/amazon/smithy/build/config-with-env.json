@@ -9,6 +9,7 @@
             "tags": [
               "${FOO}",
               "compound${BAR}",
+              "${FOO}And${BAR}",
               "\\${BAZ}"
             ]
           }

@@ -69,7 +69,7 @@ final class SmithyBuildUtils {
      */
     private static final class VariableExpander extends NodeVisitor.Default<Node> {
 
-        private static final Pattern INLINE = Pattern.compile("(?:^|[^\\\\])\\$\\{(.+)}");
+        private static final Pattern INLINE = Pattern.compile("(?:^|[^\\\\])\\$\\{([^}]+)}");
         private static final Pattern ESCAPED_INLINE = Pattern.compile("\\\\\\$");
 
         @Override
