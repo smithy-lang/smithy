@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 1.54.0 (2025-01-08)
+
+### Features
+* Added multiselect and filter to supported `operationContextParams` paths ([#2442](https://github.com/smithy-lang/smithy/pull/2442))
+* Integrated Spotless formatter into build logic to automatically format Java and Kotlin code ([#2485](https://github.com/smithy-lang/smithy/pull/2485)
+* Added help text to `ResourceOperationInputOutput` event ([#2489](https://github.com/smithy-lang/smithy/pull/2489))
+* Added `smithy-docgen` package that enables the generation of a service documentation site from a smithy model ([#2488](https://github.com/smithy-lang/smithy/pull/2488))
+* Updated `ShouldHaveUsedTimestampValidator` to reduce false positives ([#2480](https://github.com/smithy-lang/smithy/pull/2480))
+* Added service ID to tagging validator error messages to aid debugging ([#2483](https://github.com/smithy-lang/smithy/pull/2483))
+
+### Bug Fixes
+* Corrected variable expansion logic in CLI to support multiple variables ([#2495](https://github.com/smithy-lang/smithy/pull/2495))
+* Added missing getters to CloudFormation `ResourceSchema` ([#2486](https://github.com/smithy-lang/smithy/pull/2486))
+* Converted blob default values to Base64 for protocol tests ([#2474](https://github.com/smithy-lang/smithy/pull/2474))
+* Fixed smoke test validator to correctly enforce unique test case ids ([#2482](https://github.com/smithy-lang/smithy/pull/2482))
+
+### Documentation
+* Updated Smithy logo in documentation ([#2478](https://github.com/smithy-lang/smithy/pull/2478), [#2479](https://github.com/smithy-lang/smithy/pull/2479))
+
+### Other
+* Updated build logic to now require JDK17+ for development ([#2487](https://github.com/smithy-lang/smithy/pull/2487))
+* Migrated Gradle build logic to use conventions plugins ([#2484](https://github.com/smithy-lang/smithy/pull/2484))
+
 ## 1.53.0 (2024-11-18)
 
 ### Features
