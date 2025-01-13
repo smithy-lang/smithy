@@ -59,7 +59,7 @@ if (project.hasProperty("release.main")) {
     apply(plugin = "org.jreleaser")
 
     // Workaround for https://github.com/jreleaser/jreleaser/issues/1492
-    tasks.register("clean")
+    // tasks.register("clean")
 
     configure<JReleaserExtension> {
         dryrun = false
