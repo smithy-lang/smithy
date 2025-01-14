@@ -647,8 +647,13 @@ The return value for an identifier is the value associated with the identifier. 
 exist in the JSON document, than a null value is returned.</li>
 <li><a class="reference external" href="https://jmespath.org/specification.html#subexpressions">Sub Expressions</a> - a combination of two expressions separated by the <code class="docutils literal notranslate"><span class="pre">.</span></code> char.
 Example:  <code class="docutils literal notranslate"><span class="pre">grandparent.parent.child</span></code></li>
-<li><a class="reference external" href="https://jmespath.org/specification.html#wildcard-expressions">Wildcard Expressions</a> - Creates a projection over the values in an array or map.
+<li><a class="reference external" href="https://jmespath.org/specification.html#wildcard-expressions">Wildcard Expressions</a> - creates a projection over the values in an array or map.
 Remaining expressions are evaluated against each returned element.</li>
+<li><a class="reference external" href="https://jmespath.org/specification.html#multiselect-list">MultiSelect List</a> - extract a subset of elements from a JSON document.  Each expression is evaluated
+against the JSON document.  A Multiselect list with <code class="docutils literal notranslate"><span class="pre">N</span></code> expressions will result in a list of
+length <code class="docutils literal notranslate"><span class="pre">N</span></code>.</li>
+<li><a class="reference external" href="https://jmespath.org/specification.html#flatten-operator">Flatten Operator</a> - merge sublists in the current result into a single list. Subsequent operations are
+projected onto the flattened list with the same semantics as a wildcard expression.</li>
 <li><a class="reference external" href="https://jmespath.org/specification.html#keys">Keys function</a> - return a list of the keys in a map.  This is the only supported function but is required
 for binding to key values.</li>
 </ul>
@@ -739,7 +744,7 @@ two colon <code class="docutils literal notranslate"><span class="pre">:</span><
 add the <a class="reference internal" href="../../aws/rules-engine/built-ins.html#rules-engine-aws-built-ins"><span class="std std-ref">AWS rules engine built-ins</span></a>.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.53.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.54.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 </div>
