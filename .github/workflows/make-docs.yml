@@ -20,6 +20,12 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     steps:
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: 'corretto'
+
     - name: Checkout repo 
       uses: actions/checkout@v4
     - name: Setup
