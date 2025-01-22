@@ -68,9 +68,9 @@ unauthenticated request.
 -------------------------
 
 Trait summary
-    The ``aws.auth#sigv4a`` trait adds support for AWS Signature Version 4
-    Asymmetric (SigV4A), an extension of `AWS signature version 4`_ (SigV4), to
-    a service.
+    The ``aws.auth#sigv4a`` trait adds support for
+    `AWS Signature Version 4 Asymmetric (SigV4A)`_, an extension of
+    `AWS signature version 4`_ (SigV4), to a service.
 Trait selector
     ``service[trait|aws.auth#sigv4]``
 Trait value
@@ -211,6 +211,7 @@ Trait value
 
 
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
+.. _AWS Signature Version 4 Asymmetric (SigV4A): https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html#how-sigv4a-works
 .. _credential scope: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
 .. _Amazon Cognito User Pools: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html
 .. _canonical request: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
