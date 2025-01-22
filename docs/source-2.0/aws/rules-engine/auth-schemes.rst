@@ -6,8 +6,8 @@ AWS rules engine authentication scheme validators
 
 AWS-specific rules engine library :ref:`authentication scheme validators <rules-engine-endpoint-rule-set-endpoint-authschemes>`
 make it possible to validate configurations for AWS authentication schemes like
-`AWS signature version 4`_. An additional dependency is required to access
-these validators
+`AWS signature version 4`_ and `AWS signature version 4a`_. An additional
+dependency is required to access these validators.
 
 The following example adds ``smithy-aws-endpoints`` as a dependency to a Smithy project:
 
@@ -117,3 +117,4 @@ Properties
 
 
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
+.. _AWS signature version 4a: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html#how-sigv4a-works
