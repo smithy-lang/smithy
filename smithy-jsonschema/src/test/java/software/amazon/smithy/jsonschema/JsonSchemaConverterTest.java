@@ -818,6 +818,43 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void supportsDefaultEnumStrategy() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("string-enums.smithy"))
+                .assemble()
+                .unwrap();
+
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("string-enums.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void supportsOneOfEnumStrategy() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("string-enums.smithy"))
+                .assemble()
+                .unwrap();
+
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setEnumStrategy(JsonSchemaConfig.EnumStrategy.ONE_OF);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .config(config)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("string-enums-one-of.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
     public void intEnumsCanBeDisabled() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("int-enums.smithy"))

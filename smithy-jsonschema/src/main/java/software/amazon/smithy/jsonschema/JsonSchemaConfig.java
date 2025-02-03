@@ -85,11 +85,42 @@ public class JsonSchemaConfig {
         }
     }
 
+    /**
+     * Configures how Smithy enum shapes are converted to JSON Schema
+     */
+    public enum EnumStrategy {
+
+        /**
+         * Converts to a schema that uses enum, which contains an array of strings
+         *
+         * <p>This is the default setting used if not configured.
+         */
+        ENUM("enum"),
+
+        /**
+         * Converts to a schema that uses oneOf, with an array of const strings and optional
+         * descriptions for documentation purposes
+         */
+        ONE_OF("oneOf");
+
+        private final String stringValue;
+
+        EnumStrategy(String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
+        }
+    }
+
     private boolean alphanumericOnlyRefs;
     private boolean useJsonName;
     private TimestampFormatTrait.Format defaultTimestampFormat = TimestampFormatTrait.Format.DATE_TIME;
     private UnionStrategy unionStrategy = UnionStrategy.ONE_OF;
     private MapStrategy mapStrategy = MapStrategy.PROPERTY_NAMES;
+    private EnumStrategy enumStrategy = EnumStrategy.ENUM;
     private String definitionPointer;
     private ObjectNode schemaDocumentExtensions = Node.objectNode();
     private ObjectNode extensions = Node.objectNode();
@@ -184,6 +215,18 @@ public class JsonSchemaConfig {
      */
     public void setMapStrategy(MapStrategy mapStrategy) {
         this.mapStrategy = mapStrategy;
+    }
+
+    public EnumStrategy getEnumStrategy() {
+        return enumStrategy;
+    }
+
+    /**
+     * Configures how Smithy enum shapes ae converted to JSON Schema
+     * @param enumStrategy The enum strategy to use
+     */
+    public void setEnumStrategy(EnumStrategy enumStrategy) {
+        this.enumStrategy = enumStrategy;
     }
 
     public String getDefinitionPointer() {
