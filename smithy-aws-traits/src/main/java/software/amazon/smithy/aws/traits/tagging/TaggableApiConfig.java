@@ -117,22 +117,22 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
         private ShapeId listTagsApi;
         private SourceLocation sourceLocation = SourceLocation.none();
 
-        Builder tagApi(ShapeId tagApi) {
+        public Builder tagApi(ShapeId tagApi) {
             this.tagApi = tagApi;
             return this;
         }
 
-        Builder untagApi(ShapeId untagApi) {
+        public Builder untagApi(ShapeId untagApi) {
             this.untagApi = untagApi;
             return this;
         }
 
-        Builder listTagsApi(ShapeId listTagsApi) {
+        public Builder listTagsApi(ShapeId listTagsApi) {
             this.listTagsApi = listTagsApi;
             return this;
         }
 
-        Builder sourceLocation(SourceLocation sourceLocation) {
+        public Builder sourceLocation(SourceLocation sourceLocation) {
             this.sourceLocation = sourceLocation;
             return this;
         }
