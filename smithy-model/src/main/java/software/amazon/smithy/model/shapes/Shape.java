@@ -210,7 +210,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @param shape Shape to create a builder from.
      * @param <B> Shape builder to create.
      * @param <S> Shape that is being converted to a builder.
-     * @return Returns a shape fro the given shape.
+     * @return Returns a shape builder from the given shape.
      */
     @SuppressWarnings("unchecked")
     public static <B extends AbstractShapeBuilder<B, S>, S extends Shape> B shapeToBuilder(S shape) {
