@@ -963,14 +963,14 @@ input to an operation bound to the <code class="docutils literal notranslate"><s
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the member annotated has a default value
 for that property of the CloudFormation resource. Thus,
-when this trait annotates an <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure member,
+when this trait annotates an <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure member,
 it indicates that the CloudFormation property generated
 from that member has a default value in the CloudFormation
 schema. This trait can be used to indicate that an output
 field with a value may return a default value assigned
 by the service.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">resource</span> <span class="pre">&gt;</span> <span class="pre">operation</span> <span class="pre">-[output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
-<p><em>Only applicable to members of &#64;output operations</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">resource</span> <span class="pre">&gt;</span> <span class="pre">operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p><em>Only applicable to members of &#64;input or &#64;output operations</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
