@@ -661,16 +661,16 @@ The following example defines a CloudFormation resource that has the
 Summary
     Indicates that the member annotated has a default value
     for that property of the CloudFormation resource. Thus,
-    when this trait annotates an ``@output`` structure member,
+    when this trait annotates an ``@input`` or ``@output`` structure member,
     it indicates that the CloudFormation property generated
     from that member has a default value in the CloudFormation
     schema. This trait can be used to indicate that an output
     field with a value may return a default value assigned
     by the service.
 Trait selector
-    ``resource > operation -[output]-> structure > member``
+    ``resource > operation -[input, output]-> structure > member``
 
-    *Only applicable to members of @output operations*
+    *Only applicable to members of @input or @output operations*
 Value type
     Annotation trait
 
