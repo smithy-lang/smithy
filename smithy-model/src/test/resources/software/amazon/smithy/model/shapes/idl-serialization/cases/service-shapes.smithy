@@ -23,6 +23,10 @@ resource MyResource {
     identifiers: {
         id: String
     }
+    properties: {
+        value: String
+        other: String
+    }
     put: ResourceOperation
     create: EmptyOperation
     read: ReadonlyResourceOperation
@@ -38,10 +42,6 @@ resource MyResource {
     resources: [
         SubResource
     ]
-    properties: {
-        value: String
-        other: String
-    }
 }
 
 resource SubResource {
