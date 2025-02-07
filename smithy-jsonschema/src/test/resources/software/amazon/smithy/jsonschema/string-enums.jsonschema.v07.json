@@ -1,0 +1,20 @@
+{
+    "definitions": {
+        "Foo": {
+            "type": "object",
+            "properties": {
+                "bar": {
+                    "$ref": "#/definitions/TestEnum"
+                }
+            }
+        },
+        "TestEnum": {
+            "type": "string",
+            "enum": [
+                "Foo",
+                "Bar"
+            ],
+            "description": "This is a test enum"
+        }
+    }
+}

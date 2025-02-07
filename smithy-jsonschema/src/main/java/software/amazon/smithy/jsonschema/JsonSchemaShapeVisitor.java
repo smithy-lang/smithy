@@ -7,11 +7,13 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node.NonNumericFloat;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -19,6 +21,7 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -245,6 +248,43 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 return buildSchema(shape, createBuilder(shape, "object").type(null).oneOf(schemas));
             default:
                 throw new SmithyJsonSchemaException(String.format("Unsupported union strategy: %s", unionStrategy));
+        }
+    }
+
+    @Override
+    public Schema enumShape(EnumShape shape) {
+        JsonSchemaConfig.EnumStrategy enumStrategy = converter.getConfig().getEnumStrategy();
+
+        switch (enumStrategy) {
+            case ENUM:
+                return super.enumShape(shape);
+            case ONE_OF:
+                Map<String, String> enumValues = shape.getEnumValues();
+                List<Schema> schemas = new ArrayList<>();
+
+                for (Map.Entry<String, MemberShape> entry : shape.getAllMembers().entrySet()) {
+                    String memberName = entry.getKey();
+                    MemberShape member = entry.getValue();
+                    Schema enumSchema = Schema.builder()
+                            .constValue(StringNode.from(enumValues.get(memberName)))
+                            .description(member.getTrait(DocumentationTrait.class)
+                                    .map(DocumentationTrait::getValue)
+                                    .orElse(null))
+                            .build();
+
+                    schemas.add(enumSchema);
+                }
+
+                return buildSchema(shape,
+                        Schema.builder()
+                                .description(shape.getTrait(DocumentationTrait.class)
+                                        .map(DocumentationTrait::getValue)
+                                        .orElse(null))
+                                .type("string")
+                                .oneOf(schemas));
+            default: {
+                throw new SmithyJsonSchemaException(String.format("Unsupported enum strategy: %s", enumStrategy));
+            }
         }
     }
 
