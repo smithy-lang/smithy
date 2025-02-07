@@ -837,6 +837,11 @@ public final class SmithyIdlModelSerializer {
                                 entry.getValue()));
                 codeWriter.closeBlock("}");
             }
+            if (shape.hasProperties()) {
+                codeWriter.openBlock("properties: {");
+                shape.getProperties().forEach((name, shapeId) -> codeWriter.write("$L: $I", name, shapeId));
+                codeWriter.closeBlock("}");
+            }
 
             shape.getPut().ifPresent(shapeId -> codeWriter.write("put: $I", shapeId));
             shape.getCreate().ifPresent(shapeId -> codeWriter.write("create: $I", shapeId));
@@ -847,11 +852,6 @@ public final class SmithyIdlModelSerializer {
             codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
             codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
-            if (shape.hasProperties()) {
-                codeWriter.openBlock("properties: {");
-                shape.getProperties().forEach((name, shapeId) -> codeWriter.write("$L: $I", name, shapeId));
-                codeWriter.closeBlock("}");
-            }
             codeWriter.closeBlock("}");
             codeWriter.write("");
             return null;
