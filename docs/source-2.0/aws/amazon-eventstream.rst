@@ -24,8 +24,6 @@ extended to support them:
 
 * Message fragmentation, or streaming a single payload as multiple messages.
 * Relaying events over an unordered, unreliable transport such as UDP.
-* Relaying events over a datagram-oriented protocol, such as
-  :rfc:`WebSocket <6455>`.
 
 The :rfc:`media type <6838>` for this format is
 ``application/vnd.amazon.eventstream``.
@@ -40,7 +38,8 @@ The wire format is structured as a sequence of binary messages. This
 specification adopts the presentation language of
 :rfc:`RFC 5246 section 4 <5246#section-4>` to describe the format of these
 messages. This language is a type of psuedocode similar to C used to define
-serialized binary representations of messages.
+serialized binary representations of messages. Note that all integer types are
+in network byte order, or big-endian.
 
 .. _amazon-eventstream-message-format:
 
@@ -48,12 +47,17 @@ Message Format
 ==============
 
 The wire format is structured as a sequence of messages. Messages consist of two
-sections: the prelude and the data. The prelude section contains the total
-length of the message and the the total length of the message's headers. The
+sections: the prelude and the data. The prelude section contains a 4-byte
+unsigned integer representing the total length of the message and a four-byte
+unsigned integer representing the total length of the message's headers. The
 data section consists of the :ref:`headers <amazon-eventstream-headers-format>`
-followed by a payload. Both sections end with a four-byte :rfc:`CRC32 <3385>`
-checksum, which is the checksum of all the data from the start of the message to
-the start of the checksum.
+followed by a payload.
+
+Both sections end with a four-byte unsigned integer representing a
+:rfc:`CRC32 <3385>` checksum, which is the checksum of all the data from the
+start of the message to the start of the checksum. Both clients and servers MUST
+validate these checksums. If either checksum is invalid, the stream MUST be
+terminated.
 
 .. code-block:: text
 
@@ -85,15 +89,69 @@ Headers Format
 Headers are used to annotate a message with arbitrary metadata, such as
 timestamps, message type information, additional payload checksums, and so on.
 Headers are key-value pairs where the key is a UTF-8 string and the value is one
-of several possible types. Note that this is distinct from HTTP headers, whose
-values are always bytes (usually UTF-8 encoded strings). Any given header name
-MUST only appear once in a message. The oder in which headers are encoded is
-meaningless; implementations MAY NOT preserve header order across encoding or
-decoding.
+of several possible data types. Note that this is distinct from HTTP headers,
+whose values are always bytes (usually UTF-8 encoded strings). Any given header
+name MUST only appear once in a message.
 
-Header values are prefixed with a type. The set of types is fixed and not open
-to extension. Implementations SHOULD bind header types to the corresponding
-types in their programming language.
+On the wire, each header begins with a one-byte unsigned integer that indicates
+the number of UTF-8 encoded bytes used by the header's name. Header names MUST
+be at least one byte long. This length prefix if followed by the UTF-8 header
+name.
+
+The name of the header is followed by a one-byte unsigned integer representing
+the header's data type. The set of types is fixed and not open to extension.
+Implementations SHOULD bind header types to the corresponding types in their
+programming language. The following table shows the available types and their
+indicators.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Indicator
+      - Data Type
+      - Description
+    * - ``0``
+      - Boolean ``true``
+      - No value bytes follow this type.
+    * - ``1``
+      - Boolean ``false``
+      - No value bytes follow this type.
+    * - ``2``
+      - ``byte``
+      - 
+    * - ``3``
+      - ``short``
+      -
+    * - ``4``
+      - ``integer``
+      -
+    * - ``5``
+      - ``long``
+      -
+    * - ``6``
+      - ``byte_array``
+      - This corresponds to Smithy's :ref:`blob <blob>` type. The value is
+        prefixed by a two-byte unsigned integer that indicates the length in
+        bytes of the following value.
+    * - ``7``
+      - ``string``
+      - The value is prefixed by a two-byte unsigned integer that indicates the
+        length in bytes of the following value.
+    * - ``8``
+      - ``timestamp``
+      - The value is an 8-byte unsigned integer representing the number of
+        **milliseconds** that have elapsed since 00:00:00 Coordinated Universal
+        Time (UTC), Thursday, 1 January 1970.
+
+        .. warning::
+            The unit of this value is **milliseconds**, NOT seconds. This is
+            unlike the ``epoch-seconds``
+            :ref:`timestamp format <timestampFormat-trait>`, which is in
+            **seconds**.
+    * - ``9``
+      - ``uuid``
+      - An :rfc:`9562` UUID in binary format.
 
 .. code-block:: text
 
@@ -142,6 +200,21 @@ types in their programming language.
         } value;
     } HeaderValue;
 
+An event MAY have any number of headers. The order in which headers are encoded
+is meaningless; implementations MAY NOT preserve header order across encoding or
+decoding.
+
+Diagram
+=======
+
+The following diagram shows the components that make up a message and a header.
+The header depicted in this diagram is a string header; other header types have
+different value layouts.
+
+.. image:: ./amazon-eventstream-frame-diagram.png
+    :width: 714
+    :alt: A schematic of the components of an event with a string header.
+
 .. _amazon-eventstream-semantics:
 
 ----------------------
@@ -157,9 +230,12 @@ initial response events. Each event category has its own semantic requirements.
 Message Events
 ==============
 
-Message events are events that represent an event union member whose target does
-not have the :ref:`error trait <error-trait>`. All message events share the
-following headers:
+The set of modeled events that may be sent over an event stream are defined by a
+union with the :ref:`@streaming trait <event-streams>`, where each member of the
+union is a different type of event. Message events are events that represent an
+event union member whose target does not have the
+:ref:`error trait <error-trait>`. All message events share the following
+headers:
 
 .. list-table::
     :header-rows: 1
