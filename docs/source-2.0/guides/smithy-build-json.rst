@@ -1518,6 +1518,28 @@ key is not in the provided ``keys`` list.
         }
     }
 
+.. _flattenAndRemoveMixins:
+
+flattenAndRemoveMixins
+----------------------
+
+Flattens :ref:`mixins <Mixins>` out of the model and into their local shapes.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "flattenAndRemoveMixins"
+                    }
+                ]
+            }
+        }
+    }
+
 .. _flattenNamespaces:
 
 flattenNamespaces
