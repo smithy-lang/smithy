@@ -153,6 +153,12 @@ Read more
     ts-ssdk/index
 
 .. toctree::
+    :caption: Languages
+    :maxdepth: 1
+
+    java/index
+
+.. toctree::
     :caption: Project
     :maxdepth: 1
 
