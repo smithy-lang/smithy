@@ -67,47 +67,37 @@ def __load_version():
     with open('../../VERSION', 'r') as file:
         return file.read().replace('\n', '')
 
-# We use the __smithy_version__ placeholder in documentation to represent
-# the current Smithy library version number. This is found and replaced
-# using a source-read pre-processor so that the generated documentation
-# always references the current VERSION.
-smithy_version = __load_version()
-smithy_version_placeholder = "__smithy_version__"
-
-## Find the latest version of the gradle plugin from github
+# Find the latest version of the gradle plugin from github
 def __load_gradle_version():
     return requests.get('https://api.github.com/repos/smithy-lang/smithy-gradle-plugin/tags').json()[0]['name']
 
-# We use the __smithy_gradle_version__ placeholder in documentation to represent
-# the current gradle plugin version number. This is found and replaced
-# using a source-read pre-processor so that the generated documentation
-# always references the latest release of the gradle plugin
-smithy_gradle_plugin_version = __load_gradle_version()
-smithy_gradle_version_placeholder = "__smithy_gradle_version__"
-
-## Find the latest version of the typescript codegen plugin from maven repo
+# Find the latest version of the typescript codegen plugin from maven repo
 def __load_typescript_codegen_version():
     return requests.get('https://search.maven.org/solrsearch/select?q=g:"software.amazon.smithy.typescript"'
         + '+AND+a:"smithy-typescript-codegen"&wt=json').json()['response']['docs'][0]['latestVersion']
 
-# We use the __smithy_typescript_version__ placeholder in documentation to represent
-# the current gradle plugin version number. This is found and replaced
+# Find the latest version of smithy-java from github
+def __load_java_version():
+    return requests.get('https://api.github.com/repos/smithy-lang/smithy-java/tags').json()[0]['name']
+
+# We use this list of replacements to replace placeholder values in the documentation
+# with computed values. These are found and replaced
 # using a source-read pre-processor so that the generated documentation
-# always references the latest release of the gradle plugin
-smithy_typescript_codegen_version = __load_typescript_codegen_version()
-smithy_typescript_version_placeholder = "__smithy_typescript_version__"
+# always uses the latest computed value for the placeholder.
+replacements = [
+    ("__smithy_version__", __load_version()),
+    ("__smithy_gradle_version__", __load_gradle_version()),
+    ("__smithy_typescript_version__", __load_typescript_codegen_version()),
+    ("__smithy_java_version__", __load_java_version())
+]
 
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer)
     sphinx.connect('source-read', source_read_handler)
-    print("Finding and replacing '" + smithy_version_placeholder + "' with '" + smithy_version + "'")
-    print("Finding and replacing '" + smithy_gradle_version_placeholder + "' with '" + smithy_gradle_plugin_version + "'")
-    print("Finding and replacing '" + smithy_typescript_version_placeholder + "' with '" + smithy_typescript_codegen_version + "'")
+    for placeholder, replacement in replacements:
+        print("Finding and replacing '" + placeholder + "' with '" + replacement + "'")
 
-
-# Rewrites __smithy_version__ to the version found in ../VERSION and
-# rewrites __smithy_gradle_version__ to the latest version found on Github
+# Rewrites placeholders with computed value
 def source_read_handler(app, docname, source):
-    source[0] = source[0].replace(smithy_version_placeholder, smithy_version)
-    source[0] = source[0].replace(smithy_gradle_version_placeholder, smithy_gradle_plugin_version)
-    source[0] = source[0].replace(smithy_typescript_version_placeholder, smithy_typescript_codegen_version)
+    for placeholder, replacement in replacements:
+        source[0] = source[0].replace(placeholder, replacement)
