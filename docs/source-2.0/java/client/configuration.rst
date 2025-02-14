@@ -118,17 +118,17 @@ To create a custom protocol, implement the ``ClientProtocol`` interface from the
     If you are writing a service that uses a custom HTTP protocol, you may extend the ``HttpClientProtocol``
     and use one of the codecs provided by Smithy Java to get started.
 
-Default protocols are discovered via Service Provider Interface (SPI).  To use a custom protocol as a default, you
+Protocols are discovered via Service Provider Interface (SPI).  To use a custom protocol, you
 must implement a protocol factory that implements ``ClientProtocolFactory``.
 Once you have defined your factory, add it’s fully qualified name to the service provider file
 (``META-INF/services/software.amazon.smithy.java.runtime.client.core.ClientProtocolFactory``).
-A default protocol must have a corresponding protocol trait applied to the service shape being generated.
+As a reminder, make sure the custom protocol trait is applied to the service shape.
 
 Codec‘s are used by client and server protocols for generic (de)serialization of types into wire data, such as JSON
 Protocols SHOULD use an appropriate codec for (de)serialization where possible.
 Smithy Java provides XML, JSON, and CBOR codecs.
 
-When writing a custom protocol, we recommend writing compliance tests that can be used to validate the protocol across
+When writing a custom protocol, we recommend writing compliance tests, which are used to validate the protocol across
 multiple language implementations. The ``protocol-test-harness`` package provides a `JUnit5 <https://junit.org/junit5/>`_
 test harness for running protocol compliance tests with Smithy Java.
 
@@ -177,7 +177,7 @@ To set a default transport, add the following to your :ref:`smithy-build.json <s
 .. admonition:: Important
     :class: note
 
-    Transports set as the default still need to implement the ``ClientTransportFactory`` service provider to
+    Transports MUST implement the ``ClientTransportFactory`` service provider to
     be discoverable by the code generation plugin.
 
 Provided transports
