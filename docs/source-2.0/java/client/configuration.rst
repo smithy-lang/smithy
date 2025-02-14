@@ -306,7 +306,7 @@ Before we can add any auth scheme implementations to our generated client we mus
 
 Authentication schemes are effectively part of your services interface and so (outside of testing)
 SHOULD always be modeled in your Smithy model using a trait. See the :ref:`@authDefinition <authDefinition-trait>`
- trait for more information on how to define a custom auth scheme in your Smithy model.
+trait for more information on how to define a custom auth scheme in your Smithy model.
 
 Now that we have added our auth trait to the Smithy model we need to add a corresponding auth scheme implementation
 to our client’s dependencies. The ``client-http package`` provides an ``HttpApiKeyAuthScheme`` implementation corresponding
