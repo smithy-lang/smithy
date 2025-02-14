@@ -2,7 +2,8 @@
 Client User Guide
 =================
 
-This guide walks through how to use `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ to generate Java clients from a Smithy model of a service.
+This guide walks through how to use `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ to generate
+Java clients from a Smithy model of a service.
 
 .. warning::
 

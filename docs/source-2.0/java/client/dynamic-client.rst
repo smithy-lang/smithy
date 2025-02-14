@@ -2,7 +2,9 @@
 Dynamic Client
 ==============
 
-The dynamic client is used to interact with services without a code-generated client. The dynamic client loads Smithy models at runtime, converting them to a schema-based client. Users can call a modeled service using document types as input and output.
+The dynamic client is used to interact with services without a code-generated client.
+The dynamic client loads Smithy models at runtime, converting them to a schema-based client.
+Users can call a modeled service using document types as input and output.
 
 .. warning::
 
@@ -52,7 +54,8 @@ Now, create the ``DynamicClient`` instance for this model and service:
         .endpointResolver(EndpointResolver.staticEndpoint("https://api.cafe.example.com"))
         .build();
 
-Now, create an input to call the service. Input is defined using a ``Document`` that mirrors what you'd see in the Smithy model.
+Now, create an input to call the service. Input is defined using a ``Document`` that mirrors what you'd
+see in the Smithy model.
 
 .. code-block:: java
 

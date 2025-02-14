@@ -37,8 +37,10 @@ and execute build plugins.
 
 Add the following dependencies to your project:
 
-    1. Add the codegen `plugins`_ package as a ``smithyBuild`` dependency of your project. This makes the codegen plugins discoverable by the Smithy build task.
-    2. Add the `client-core`_ package as a runtime dependency of your package. The  ``client-core``` package is the only required dependency for all generated clients.
+    1. Add the codegen `plugins`_ package as a ``smithyBuild`` dependency of your project. This makes the codegen
+       plugins discoverable by the Smithy build task.
+    2. Add the `client-core`_ package as a runtime dependency of your package.
+       The  ``client-core``` package is the only required dependency for all generated clients.
     3. Add any additional dependencies used by your client, such as protocols or auth schemes.
 
 .. code-block:: kotlin
@@ -84,10 +86,9 @@ your :ref:`smithy-build <smithy-build>` config:
 Add generated code to the Java sourceSet
 ----------------------------------------
 
-Now the package is configured to generate client source code.
-However, the generated client code must be added to a `sourceSet <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html>`_
-to be compiled by Gradle. To add the generated client code to the ``main`` sourceSet, update your Gradle build script to
-include the following:
+Now the package is configured to generate client source code. However, the generated client code must be added to
+a `sourceSet <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html>`_ to be compiled by Gradle.
+To add the generated client code to the ``main`` sourceSet, update your Gradle build script to include the following:
 
 .. code-block:: kotlin
    :caption: build.gradle.kts

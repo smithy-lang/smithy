@@ -5,7 +5,8 @@ Customizing Client Behavior
 Request-Level Overrides
 -----------------------
 
-Smithy Java supports client configuration overrides that are applied to a single request. Create and use an override as follows:
+Smithy Java supports client configuration overrides that are applied to a single request.
+Create and use an override as follows:
 
 .. code-block:: java
 
@@ -50,7 +51,8 @@ The following hooks are supported:
 * **modifyBeforeDeserialization** - hook called before the response is deserialized
 * **readBeforeDeserialization** - called before the response is deserialized
 * **readAfterDeserialization** - called after the transport response message is deserialized
-* **modifyBeforeAttemptCompletion** - hook called when an attempt is completed. This method can modify and return a new output or error matching the currently executing operation
+* **modifyBeforeAttemptCompletion** - hook called when an attempt is completed. This method can
+  modify and return a new output or error matching the currently executing operation
 * **readAfterAttempt** - hook called when an attempt is completed
 * **modifyBeforeCompletion** - hook called when an execution is completed
 * **readAfterExecution** - called when an execution is completed
@@ -100,7 +102,8 @@ To apply a plugins to a client at runtime use the ``addPlugin`` method on the cl
 .. admonition:: Important
     :class: note
 
-    Plugins are run only at client build time if added to the client builder or once before executing a call if they are included in a RequestOverrideConfig.
+    Plugins are run only at client build time if added to the client builder or once before executing a call if
+    they are included in a RequestOverrideConfig.
 
 Default Plugins
 ^^^^^^^^^^^^^^^

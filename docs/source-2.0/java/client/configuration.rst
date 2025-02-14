@@ -75,7 +75,7 @@ For example to use the RPC v2 CBOR protocol with your service you would add the 
 Provided protocols
 ^^^^^^^^^^^^^^^^^^
 
-The Smithy Java framework provides the following pre-built protocols:
+The Smithy Java framework provides the following protocols:
 
 .. list-table::
     :header-rows: 1
@@ -89,22 +89,22 @@ The Smithy Java framework provides the following pre-built protocols:
     * - rpcv2Cbor
       - Smithy
       - ``smithy.protocols#rpcv2Cbor``
-      - RPC-based protocol over HTTP that sends requests and responses with CBOR payloads.
+      - HTTP RPC protocol that sends requests and responses with CBOR payloads.
       - ``client-rpcv2-cbor``
     * - AWS JSON 1.1
       - AWS
       - ``aws.protocols#awsJson1_1``
-      - HTTP protocol that sends "POST" requests and responses with JSON documents.
+      - HTTP protocol that sends "POST" requests and responses with JSON payloads.
       - ``aws-client-awsjson``
     * - AWS Rest JSON 1.0
       - AWS
       - ``aws.protocols#restJson1``
-      - HTTP-based protocol that sends JSON requests and responses
+      - HTTP protocol that sends requests and responses with JSON payloads
       - ``aws-client-awsjson``
     * - AWS Rest XML
       - AWS
       - ``aws.protocols#restXml``
-      - HTTP-based protocol that sends XML requests and responses
+      - HTTP protocol that sends requests and responses with XML payloads.
       - ``aws-client-restxml``
 
 Writing custom protocols
@@ -123,12 +123,13 @@ Once you have defined your factory, add it’s fully qualified name to the servi
 (``META-INF/services/software.amazon.smithy.java.runtime.client.core.ClientProtocolFactory``).
 A default protocol must have a corresponding protocol trait applied to the service shape being generated.
 
-Smithy Java codec‘s are used by both client and server protocols for generic (de)serialization of generated types into wire data such as JSON.
-Protocols SHOULD use an appropriate codec for (de)serialization where possible. Smithy-Java provides XML, JSON, and CBOR codecs.
+Smithy Java codec‘s are used by both client and server protocols for generic (de)serialization of generated types
+into wire data such as JSON. Protocols SHOULD use an appropriate codec for (de)serialization where possible.
+Smithy-Java provides XML, JSON, and CBOR codecs.
 
 When writing a custom protocol, we recommend writing compliance tests that can be used to validate the protocol across
-multiple language implementations. The ``protocol-test-harness`` package provides a JUnit5 test harness for
-running protocol compliance tests with Smithy Java.
+multiple language implementations. The ``protocol-test-harness`` package provides a `JUnit5 <https://junit.org/junit5/>`_
+test harness for running protocol compliance tests with Smithy Java.
 
 .. _java-client-transports:
 
@@ -136,7 +137,7 @@ running protocol compliance tests with Smithy Java.
 Transports
 ----------
 
-Transports manages connections, and handle the sending/receiving of serialized requests/responses.
+Transports manage connections, and handle the sending/receiving of serialized requests/responses.
 
 ``ClientTransport``'s can also configure default functionality like adding a user-agent header for HTTP request
 by modifying the client builder using the ``configureClient`` method.
@@ -151,7 +152,7 @@ by modifying the client builder using the ``configureClient`` method.
 Transport Discovery
 ^^^^^^^^^^^^^^^^^^^
 
-Transport implementations can be automatically discovered by client code generators and dynamic clients via SPI.
+Transport implementations can be discovered by client code generators and dynamic clients via SPI.
 To make a transport implementation discoverable, implement the ``ClientTransportFactory`` service provider.
 
 If no transport is set on a client, the client will attempt to resolve a transport compatible with the current protocol
@@ -160,7 +161,7 @@ from the discoverable transport implementations.
 Setting a default transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To set a default, add the following to your :ref:`smithy-build.json <smithy-build>`:
+To set a default transport, add the following to your :ref:`smithy-build.json <smithy-build>`:
 
 .. code-block:: json
     :caption: smithy-build.json
@@ -193,11 +194,13 @@ Auth Schemes
 
 Auth schemes add authentication/authorization information to a client request. The composition of auth schemes includes:
 
-1. Scheme ID - A unique identifier for the authentication scheme that should correspond to the ID of a Smithy trait defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait)
+1. Scheme ID - A unique identifier for the authentication scheme that should correspond to the ID of a Smithy trait
+defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait)
 2. Identity resolver - An API to acquire the customer's identity
 3. Signer - An API to sign requests using the resolved identity.
 
-Auth schemes can be manually registered on a client at runtime or can be automatically registered by the client code generation plugin. To register an auth scheme at runtime:
+Auth schemes can be manually registered on a client at runtime or can be automatically registered by the client code
+generation plugin. To register an auth scheme at runtime:
 
 .. code-block:: java
 
@@ -272,9 +275,9 @@ Provided Auth Schemes
 
 A number of auth schemes are provided by default in the ``client-http`` package. These include:
 
-*  :ref:`httpBearerAuth <httpBearerAuth-trait>` - Supports HTTP Bearer Authentication as defined in RFC 6750.
+*  :ref:`httpBearerAuth <httpBearerAuth-trait>` - Supports HTTP Bearer authentication as defined in RFC 6750.
 *  :ref:`httpApiKeyAuth <httpApiKeyAuth-trait>` - Supports HTTP authentication using an API key sent in a header or query string parameter.
-*  :ref:`httpBasicAuth <httpBasicAuth-trait>` - Indicates that a service supports HTTP Basic Authentication as defined in RFC 2617.
+*  :ref:`httpBasicAuth <httpBasicAuth-trait>` - Supports HTTP Basic authentication as defined in RFC 2617.
 
 Add the ``client-http`` package as a dependency of your project to make these auth schemes available in your service.
 
@@ -301,8 +304,8 @@ Before we can add any auth scheme implementations to our generated client we mus
     }
 
 Authentication schemes are effectively part of your services interface and so (outside of testing)
-SHOULD always be modeled in your Smithy model using a trait. See the auth definition trait for more information
-on how to define a custom auth scheme in your Smithy model.
+SHOULD always be modeled in your Smithy model using a trait. See the :ref:`@authDefinition <authDefinition-trait>`
+ trait for more information on how to define a custom auth scheme in your Smithy model.
 
 Now that we have added our auth trait to the Smithy model we need to add a corresponding AuthScheme implementation
 to our client’s dependencies. The ``client-http package`` provides an ``HttpApiKeyAuthScheme`` implementation corresponding
@@ -373,7 +376,7 @@ Endpoint Resolver
 -----------------
 
 Endpoint resolvers determine the endpoint to use for an operation. For example, an endpoint resolver could
- determine what subdomain to use, i.e. ``us-east-2.myservice.com`` based on a region setting on the client.
+determine what subdomain to use, i.e. ``us-east-2.myservice.com`` based on a region setting on the client.
 
 To set a static endpoint for a client use the following client builder setter:
 
@@ -426,7 +429,6 @@ For example we would write a custom setting as:
         Context.Key<String> MY_PROPERTY = Context.key("A custom string configuration property");
 
         default B custom(String custom) {
-            // ADD ANY VALIDATION OF THE VALUE HERE
             return putConfig(MY_PROPERTY, custom);
         }
     }
@@ -501,5 +503,7 @@ When the ``SigV4Settings`` interface is added to the codegen configuration as a 
 
 .. tip::
 
-    Create a custom setting class for your organization that aggregates all common settings for your clients. This minimizes the number of code generation configurations you need to provide to create a functional client. Add new settings to the aggregate setting to add them to clients without changing the codegen configuration.
+    Create a custom setting class for your organization that aggregates all common settings for your clients.
+    This minimizes the number of code generation configurations you need to provide to create a functional client.
+    Add new settings to the aggregate setting to add them to clients without changing the codegen configuration.
 
