@@ -190,18 +190,18 @@ Provided transports
 .. _java-client-authSchemes:
 
 ------------
-Auth Schemes
+Auth schemes
 ------------
 
-Auth schemes add authentication/authorization information to a client request. The composition of auth schemes includes:
+Auth schemes add authentication/authorization information to a client request. An auth scheme is composed of:
 
-1. Scheme ID - A unique identifier for the authentication scheme that should correspond to the ID of a Smithy trait
+1. Scheme ID - A unique identifier for the auth scheme. It SHOULD correspond to the ID of a Smithy trait
 defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait).
 2. Identity resolver - An API to acquire the customer's identity.
 3. Signer - An API to sign requests using the resolved identity.
 
-Auth schemes can be manually registered on a client at runtime or can be automatically registered by the client code
-generation plugin. To register an auth scheme at runtime:
+Auth Schemes may be registered by the client at runtime. To register an auth scheme,
+use the ``putSupportedAuthSchemes`` method:
 
 .. code-block:: java
 
@@ -258,7 +258,7 @@ overriding any auth trait specified on a service.
     operation OperationB {}
 
 https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-auth-trait
-See :ref:`Auth trait <auth-trait>` for a more thorough discussion on how auth schemes are resolved.
+See :ref:`@auth <auth-trait>` trait for a more thorough discussion on how auth schemes are resolved.
 
 Identity resolution
 ^^^^^^^^^^^^^^^^^^^
@@ -282,7 +282,7 @@ A number of auth schemes are provided by default in the ``client-http`` package.
 
 Add the ``client-http`` package as a dependency of your project to make these auth schemes available in your service.
 
-Worked example: Adding HTTP API key Authentication
+Worked example: Adding HTTP API key authentication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Consider a Smithy modeled API for a service, ``ExampleService``. We would like to enable users of our generated SDK
@@ -308,7 +308,7 @@ Authentication schemes are effectively part of your services interface and so (o
 SHOULD always be modeled in your Smithy model using a trait. See the :ref:`@authDefinition <authDefinition-trait>`
  trait for more information on how to define a custom auth scheme in your Smithy model.
 
-Now that we have added our auth trait to the Smithy model we need to add a corresponding AuthScheme implementation
+Now that we have added our auth trait to the Smithy model we need to add a corresponding auth scheme implementation
 to our client’s dependencies. The ``client-http package`` provides an ``HttpApiKeyAuthScheme`` implementation corresponding
 to the ``@httpApiKeyAuth`` trait.
 
