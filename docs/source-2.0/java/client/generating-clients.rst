@@ -86,7 +86,7 @@ Add generated code to the Java sourceSet
 
 Now the package is configured to generate client source code.
 However, the generated client code must be added to a `sourceSet <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html>`_
-to be compiled by Gradle. To add the generated client code to the ``main`` sourceSet update your Gradle build script to
+to be compiled by Gradle. To add the generated client code to the ``main`` sourceSet, update your Gradle build script to
 include the following:
 
 .. code-block:: kotlin

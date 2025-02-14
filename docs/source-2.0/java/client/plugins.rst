@@ -9,7 +9,7 @@ MockPlugin
 ----------
 
 The ``MockPlugin`` intercepts client requests and returns pre-defined mock responses, shapes, or exceptions.
-The plugin facilitates testing client request/responses without the need to set up a Mock Server.
+The plugin facilitates testing client request/responses without the need to set up a mock server.
 
 Usage
 ^^^^^

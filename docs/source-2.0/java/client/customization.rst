@@ -18,7 +18,7 @@ Smithy Java supports client configuration overrides that are applied to a single
     var fooOutput = client.callFoo(fooInput, requestOverride);
 
 Each generated client will also generate a client-specific ``RequestOverride`` class that includes any custom
-configuration settings. To get a client-specific override builder use the ``.requestOverrideBuilder`` on the
+configuration settings. To get a client-specific override builder, use the ``.requestOverrideBuilder`` on the
 generated client:
 
 .. code-block:: java
@@ -81,7 +81,7 @@ Plugins
 Plugins implement the ``ClientPlugin`` interface to modify client configuration when the client is created or when
 an operation is called (if added to a ``RequestOverrideConfig``).
 
-Plugins set IdentityResolvers, EndpointResolvers, Interceptors, AuthSchemeResolvers,
+Plugins set ``IdentityResolvers``, ``EndpointResolvers``, ``Interceptors``, ``AuthSchemeResolvers``,
 and other client configuration in a repeatable way.
 
 .. tip::
@@ -89,7 +89,7 @@ and other client configuration in a repeatable way.
     Create one or more common plugins for your organization to apply a standard configuration to generated clients.
 
 
-To apply a plugins to a client at runtime use the addPlugin method on the client builder:
+To apply a plugins to a client at runtime use the ``addPlugin`` method on the client builder:
 
 .. code-block:: java
 
