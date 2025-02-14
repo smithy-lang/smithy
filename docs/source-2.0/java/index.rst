@@ -6,6 +6,7 @@ Java
     :maxdepth: 1
 
     quickstart
+    client/index
 
 .. toctree::
     :caption: References
