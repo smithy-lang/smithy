@@ -6,14 +6,11 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.beryx.runtime.RuntimeTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.model.Active
-import org.jreleaser.model.Distribution
-import org.jreleaser.model.Stereotype
+import org.gradle.crypto.checksum.Checksum
 
 plugins {
     application
-    alias(libs.plugins.jreleaser) apply false
+    alias(libs.plugins.checksum)
     alias(libs.plugins.runtime)
     alias(libs.plugins.shadow)
     id("smithy.module-conventions")
@@ -260,113 +257,40 @@ tasks {
         // Runtime images need to be created before integration tests can run.
         dependsOn(runtime)
     }
-}
 
-// ------ Setup Jreleaser -------
-if (project.hasProperty("release.cli")) {
-    apply(plugin = "org.jreleaser")
-
-    tasks.named("assembleDist") {
-        doFirst {
-            // This is a workaround for a weird behavior.
-            // https://github.com/jreleaser/jreleaser/issues/1292
-            mkdir("$buildDir/jreleaser")
-        }
-        dependsOn("runtimeZip")
+    signing {
+        val signingKey: String? by project
+        val signingPassword: String? by project
+        useInMemoryPgpKeys(signingKey, signingPassword)
     }
 
-    configure<JReleaserExtension> {
-        gitRootSearch = true
-        dryrun = false
+    // Unfortunately, runtime plugin doesn't model the images as outputs, so we have to hardcode this
+    val imageZips =
+        runtime.imageDir.files(
+            "smithy-cli-darwin-aarch64.zip",
+            "smithy-cli-darwin-x86_64.zip",
+            "smithy-cli-linux-aarch64.zip",
+            "smithy-cli-linux-x86_64.zip",
+            "smithy-cli-windows-x64.zip",
+        )
 
-        project {
-            website = "https://smithy.io"
-            authors = listOf("Smithy")
-            vendor = "Smithy"
-            license = "Apache-2.0"
-            description = "Smithy CLI - A CLI for building, validating, querying, and iterating on Smithy models"
-            copyright = "2019"
-        }
+    // Generate a sha256 checksum file for each zip
+    val checksumImages by registering(Checksum::class) {
+        dependsOn(runtimeZip)
+        checksumAlgorithm = Checksum.Algorithm.SHA256
+        outputDirectory = runtime.imageDir
+        inputFiles.setFrom(imageZips)
+    }
 
-        checksum {
-            individual = true
-            files = false
-        }
+    // Generate an ascii-armored sig file for each zip
+    val signImages by registering(Sign::class) {
+        dependsOn(checksumImages)
+        sign(*imageZips.files.toTypedArray())
+    }
 
-        release {
-            github {
-                overwrite = true
-                tagName = "{{projectVersion}}"
-                skipTag = true
-                releaseName = "Smithy CLI v{{{projectVersion}}}"
-                changelog {
-                    // For now, we won't have a changelog added to the release. In the future, we could create a changelog-snippet
-                    // from the real changelog as part of a command hook prior to the release step
-                    enabled = false
-                }
-                commitAuthor {
-                    name = "smithy-automation"
-                    email = "github-smithy-automation@amazon.com"
-                }
-            }
-        }
-
-        files {
-            active = Active.ALWAYS
-            artifact {
-                // We'll include the VERSION file in the release artifacts so that the version can be easily
-                // retrieving by hitting the GitHub `releases/latest` url
-                setPath("../VERSION")
-                extraProperties.put("skipSigning", true)
-            }
-        }
-
-        platform {
-            // These replacements are for the names of files that are released, *not* for names within this build config
-            replacements =
-                mapOf(
-                    "osx" to "darwin",
-                    "aarch_64" to "aarch64",
-                    "windows_x86_64" to "windows_x64",
-                )
-        }
-
-        distributions {
-            create("smithy") {
-                distributionType = Distribution.DistributionType.JLINK
-                stereotype = Stereotype.CLI
-
-                artifact {
-                    path = layout.buildDirectory.file("image/smithy-cli-linux-x86_64.zip")
-                    platform = ("linux-x86_64")
-                }
-
-                artifact {
-                    path = layout.buildDirectory.file("image/smithy-cli-linux-aarch64.zip")
-                    platform = ("linux-aarch_64")
-                }
-
-                artifact {
-                    path = layout.buildDirectory.file("image/smithy-cli-darwin-x86_64.zip")
-                    platform = ("osx-x86_64")
-                }
-
-                artifact {
-                    path = layout.buildDirectory.file("image/smithy-cli-darwin-aarch64.zip")
-                    platform = ("osx-aarch_64")
-                }
-
-                artifact {
-                    path = layout.buildDirectory.file("image/smithy-cli-windows-x64.zip")
-                    platform = ("windows-x86_64")
-                }
-            }
-        }
-
-        signing {
-            active = Active.RELEASE
-            armored = true
-            verify = true
-        }
+    // A wrapper task generates, checksums, and signs the image zipfiles
+    // Not necessary, but a little clearer than just signImages
+    val images by registering {
+        dependsOn(runtimeZip, checksumImages, signImages)
     }
 }

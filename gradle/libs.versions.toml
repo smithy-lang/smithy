@@ -17,6 +17,7 @@ shadow = "8.3.5"
 api-guardian = "1.1.2"
 jreleaser = "1.15.0"
 runtime = "1.13.1"
+gradle-checksum = "1.4.0"
 
 [libraries]
 prettier4j = { module = "com.opencastsoftware:prettier4j", version.ref = "prettier4j" }
@@ -55,3 +56,4 @@ smithy-jar = { id = "software.amazon.smithy.gradle.smithy-jar", version.ref = "s
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
 runtime = { id = "org.beryx.runtime", version.ref = "runtime"}
+checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-checksum" }
