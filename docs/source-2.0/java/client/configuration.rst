@@ -60,7 +60,7 @@ To configure the client plugin with a default protocol, add the protocol’s ful
     }
 
 All protocols used for your service SHOULD use have an associated protocol trait applied to the service shape.
-For example to use the rpcv2 protocol with your service you would add the associated protocol trait to your Smithy model:
+For example to use the RPC v2 CBOR protocol with your service you would add the associated protocol trait to your Smithy model:
 
 .. code-block:: smithy
     :caption: model.smithy
@@ -107,14 +107,14 @@ The Smithy Java framework provides the following pre-built protocols:
       - HTTP-based protocol that sends XML requests and responses
       - ``aws-client-restxml``
 
-Writing  custom protocols
+Writing custom protocols
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To create a custom protocol, implement the ``ClientProtocol`` interface from the client-core package.
 
 .. tip::
 
-    If you are writing a service that uses a custom HTTP protocol, you can extend the HttpClientProtocol
+    If you are writing a service that uses a custom HTTP protocol, you can extend the ``HttpClientProtocol``
     and use one of the codecs provided by Smithy Java to get started.
 
 Default protocols are discovered via Service Provider Interface (SPI).  To use a custom protocol as a default, you
@@ -144,7 +144,7 @@ by modifying the client builder using the ``configureClient`` method.
 .. admonition:: Important
     :class: note
 
-    When overriding the configureClient method of a ClientTransport, you need to also call the configureClient
+    When overriding the ``configureClient`` method of a ``ClientTransport``, you need to also call the ``configureClient``
     method of the ``MessageExchange``, if you want it to take effect. This allows for transports to override
     or even completely remove ``MessageExchange``-wide functionality.
 
@@ -191,13 +191,13 @@ Provided transports
 Auth Schemes
 ------------
 
-Auth schemes add authentication/authorization information to a client request. The composition of Auth schemes includes:
+Auth schemes add authentication/authorization information to a client request. The composition of auth schemes includes:
 
 1. Scheme ID - A unique identifier for the authentication scheme that should correspond to the ID of a Smithy trait defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait)
 2. Identity resolver - An API to acquire the customer's identity
 3. Signer - An API to sign requests using the resolved identity.
 
-Auth Schemes can be manually registered on a client at runtime or can be automatically registered by the client code generation plugin. To register an auth scheme at runtime:
+Auth schemes can be manually registered on a client at runtime or can be automatically registered by the client code generation plugin. To register an auth scheme at runtime:
 
 .. code-block:: java
 
@@ -208,15 +208,15 @@ Auth Schemes can be manually registered on a client at runtime or can be automat
 Automatic registration
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The Client code generation plugin can discover Auth Schemes on the classpath. If a discovered auth scheme’s ID matches
+The Client code generation plugin can discover auth schemes on the classpath. If a discovered auth scheme’s ID matches
 an auth scheme ID in the Smithy model it will be automatically registered in the generated client.
 
-To add an auth scheme automatically to a generated client based on a trait in the model, the auth scheme must provided
+To add an auth scheme automatically to a generated client based on a trait in the model, the auth scheme must provide
 an ``AuthSchemeFactory`` implementation and register that implementation via SPI. Smithy Java client codegen will
 automatically search the classpath for relevant ``AuthSchemeFactory``` implementations and attempt to match those with
 a corresponding trait in the model.
 
-Effective Auth schemes
+Effective auth schemes
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Operations may have one or more “effective auth schemes” that could be used to authenticate a request.
@@ -259,18 +259,18 @@ See :ref:`Auth trait <auth-trait>` for a more thorough discussion on how auth sc
 Identity resolution
 ^^^^^^^^^^^^^^^^^^^
 
-To use an auth-scheme in a client, the client must register a corresponding identity resolver
+To use an auth scheme in a client, the client must register a corresponding identity resolver
 that provides a compatible identity class. Auth schemes can provide a default resolver themselves
 or clients can register resolvers via the client builder or via a client plugin.
 
 .. tip::
 
-    Multiple Identity resolvers can be chained together using the IdentityResolver.chain method.
+    Multiple identity resolvers can be chained together using the IdentityResolver.chain method.
 
 Provided Auth Schemes
 ^^^^^^^^^^^^^^^^^^^^^
 
-A number of auth schemes are provided by default in the client-http package. These include:
+A number of auth schemes are provided by default in the ``client-http`` package. These include:
 
 *  :ref:`httpBearerAuth <httpBearerAuth-trait>` - Supports HTTP Bearer Authentication as defined in RFC 6750.
 *  :ref:`httpApiKeyAuth <httpApiKeyAuth-trait>` - Supports HTTP authentication using an API key sent in a header or query string parameter.
@@ -283,10 +283,10 @@ Worked Example: Adding HTTP API Key Authentication
 
 Consider a Smithy modeled API for a service, ``ExampleService``. We would like to enable users of our generated SDK
 to authenticate to the API using an API key sent via an ``x-api-key`` HTTP header.
-Smithy Java already provides an ``httpApiKeyAuth`` Auth Scheme that we can use to allow
-this API Key authentication.
+Smithy Java already provides an ``httpApiKeyAuth`` auth scheme that we can use to allow
+this API key authentication.
 
-Before we can add any Auth Scheme implementations to our generated client we must first add the associated
+Before we can add any auth scheme implementations to our generated client we must first add the associated
 :ref:`@httpApiKeyAuth <httpApiKeyAuth-trait>` scheme trait to our service model.
 
 .. code-block:: smithy
@@ -305,8 +305,8 @@ SHOULD always be modeled in your Smithy model using a trait. See the auth defini
 on how to define a custom auth scheme in your Smithy model.
 
 Now that we have added our auth trait to the Smithy model we need to add a corresponding AuthScheme implementation
-to our client’s dependencies. The client-http package provides an ``HttpApiKeyAuthScheme`` implementation corresponding
-to the @httpApiKeyAuth trait.
+to our client’s dependencies. The ``client-http package`` provides an ``HttpApiKeyAuthScheme`` implementation corresponding
+to the ``@httpApiKeyAuth`` trait.
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
@@ -329,7 +329,7 @@ For testing purposes we will provide a static resolver as follows:
 
     var client = ExampleService.builder()
             .addIdentityResolver(
-                IdentityResolver.of(new ApiKeyIdentity.create("example-api-key")
+                IdentityResolver.of(new ApiKeyIdentity.create("example-api-key"))
             )
             .build()
 
@@ -466,7 +466,7 @@ Composing Settings
 
 Some features require multiple custom settings. Because custom settings are simply Java interfaces, we can compose them.
 
-For example, the SigV4 Auth scheme requires that a region setting and clock setting be set on a client as well
+For example, the SigV4 auth scheme requires that a region setting and clock setting be set on a client as well
 as an additional settings, the signing name of the service. We can define the ``SigV4Settings`` interface as follows:
 
 .. code-block:: java
