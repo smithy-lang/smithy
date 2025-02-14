@@ -70,8 +70,7 @@ For example to use the rpcv2 protocol with your service you would add the associ
 
 .. tip::
 
-    The built-in rpcv2-cbor protocol is a generic binary protocol provided by Smithy Java that can be a
-    good choice for services that want a fast, compact data format.
+    The rpcv2-cbor protocol is a generic binary protocol and is good choice for services that want a fast, compact data format.
 
 Provided protocols
 ^^^^^^^^^^^^^^^^^^
