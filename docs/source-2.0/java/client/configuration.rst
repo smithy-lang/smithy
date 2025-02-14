@@ -59,8 +59,9 @@ To configure the client plugin with a default protocol, add the protocol’s ful
         }
     }
 
-All protocols used for your service SHOULD use have an associated protocol trait applied to the service shape.
-For example to use the RPC v2 CBOR protocol with your service you would add the associated protocol trait to your Smithy model:
+
+A service declares compatible protocols by applying the corresponding protocol trait on the service shape.
+For example, if a service supports the rpcV2 protocol, it MUST have the protocol trait applied:
 
 .. code-block:: smithy
     :caption: model.smithy
@@ -114,7 +115,7 @@ To create a custom protocol, implement the ``ClientProtocol`` interface from the
 
 .. tip::
 
-    If you are writing a service that uses a custom HTTP protocol, you can extend the ``HttpClientProtocol``
+    If you are writing a service that uses a custom HTTP protocol, you may extend the ``HttpClientProtocol``
     and use one of the codecs provided by Smithy Java to get started.
 
 Default protocols are discovered via Service Provider Interface (SPI).  To use a custom protocol as a default, you
@@ -123,8 +124,8 @@ Once you have defined your factory, add it’s fully qualified name to the servi
 (``META-INF/services/software.amazon.smithy.java.runtime.client.core.ClientProtocolFactory``).
 A default protocol must have a corresponding protocol trait applied to the service shape being generated.
 
-Smithy Java codec‘s are used by both client and server protocols for generic (de)serialization of generated types
-into wire data such as JSON. Protocols SHOULD use an appropriate codec for (de)serialization where possible.
+Codec‘s are used by client and server protocols for generic (de)serialization of types into wire data, such as JSON
+Protocols SHOULD use an appropriate codec for (de)serialization where possible.
 Smithy Java provides XML, JSON, and CBOR codecs.
 
 When writing a custom protocol, we recommend writing compliance tests that can be used to validate the protocol across
@@ -195,8 +196,8 @@ Auth Schemes
 Auth schemes add authentication/authorization information to a client request. The composition of auth schemes includes:
 
 1. Scheme ID - A unique identifier for the authentication scheme that should correspond to the ID of a Smithy trait
-defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait)
-2. Identity resolver - An API to acquire the customer's identity
+defining an auth scheme (see: https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-authdefinition-trait).
+2. Identity resolver - An API to acquire the customer's identity.
 3. Signer - An API to sign requests using the resolved identity.
 
 Auth schemes can be manually registered on a client at runtime or can be automatically registered by the client code
