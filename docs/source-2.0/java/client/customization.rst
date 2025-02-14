@@ -2,7 +2,7 @@
 Customizing Client Behavior
 ===========================
 
-Request-Level Overrides
+Request-level overrides
 -----------------------
 
 Smithy Java supports client configuration overrides that are applied to a single request.
@@ -105,7 +105,7 @@ To apply a plugins to a client at runtime use the ``addPlugin`` method on the cl
     Plugins are run only at client build time if added to the client builder or once before executing a call if
     they are included in a RequestOverrideConfig.
 
-Default Plugins
+Default plugins
 ^^^^^^^^^^^^^^^
 
 Plugins can be applied by default at client instantiation. To apply a plugin by default , add the plugin’s

@@ -13,7 +13,7 @@ and can be executed with both `Gradle <https://gradle.org/>`_ (recommended) or t
     if you do not already have the CLI installed.
 
 -----------------------------------
-Initial setup: Gradle (Recommended)
+Initial setup: Gradle (recommended)
 -----------------------------------
 
 To generated a Java client for a service, first create a new Smithy Gradle project.
@@ -112,7 +112,7 @@ To add the generated client code to the ``main`` sourceSet, update your Gradle b
     }
 
 ---------------
-Generating Code
+Generating code
 ---------------
 
 To generate and compile your client code run a build from the root of your Gradle project:
@@ -125,7 +125,7 @@ Building the project will generate code into the
 ``build/smithy-projections/<project-name>/source/java-client-codegen/`` directory.
 
 ----------------
-Complete Example
+Complete example
 ----------------
 
 The following Gradle build script, and ``smithy-build.json`` files provide a complete example of how to configure a

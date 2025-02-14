@@ -125,7 +125,7 @@ A default protocol must have a corresponding protocol trait applied to the servi
 
 Smithy Java codec‘s are used by both client and server protocols for generic (de)serialization of generated types
 into wire data such as JSON. Protocols SHOULD use an appropriate codec for (de)serialization where possible.
-Smithy-Java provides XML, JSON, and CBOR codecs.
+Smithy Java provides XML, JSON, and CBOR codecs.
 
 When writing a custom protocol, we recommend writing compliance tests that can be used to validate the protocol across
 multiple language implementations. The ``protocol-test-harness`` package provides a `JUnit5 <https://junit.org/junit5/>`_
@@ -149,7 +149,7 @@ by modifying the client builder using the ``configureClient`` method.
     method of the ``MessageExchange``, if you want it to take effect. This allows for transports to override
     or even completely remove ``MessageExchange``-wide functionality.
 
-Transport Discovery
+Transport discovery
 ^^^^^^^^^^^^^^^^^^^
 
 Transport implementations can be discovered by client code generators and dynamic clients via SPI.
@@ -270,7 +270,7 @@ or clients can register resolvers via the client builder or via a client plugin.
 
     Multiple identity resolvers can be chained together using the IdentityResolver.chain method.
 
-Provided Auth Schemes
+Provided auth schemes
 ^^^^^^^^^^^^^^^^^^^^^
 
 A number of auth schemes are provided by default in the ``client-http`` package. These include:
@@ -281,7 +281,7 @@ A number of auth schemes are provided by default in the ``client-http`` package.
 
 Add the ``client-http`` package as a dependency of your project to make these auth schemes available in your service.
 
-Worked Example: Adding HTTP API Key Authentication
+Worked example: Adding HTTP API key Authentication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Consider a Smithy modeled API for a service, ``ExampleService``. We would like to enable users of our generated SDK
@@ -372,7 +372,7 @@ Smithy Java also allows identity resolvers to be chained together if we want to 
 .. _java-client-endpoints:
 
 -----------------
-Endpoint Resolver
+Endpoint resolver
 -----------------
 
 Endpoint resolvers determine the endpoint to use for an operation. For example, an endpoint resolver could
@@ -393,7 +393,7 @@ To set a static endpoint for a client use the following client builder setter:
 .. _java-client-context:
 
 -------------------
-Context  Properties
+Context properties
 -------------------
 
 Smithy Java clients allow users to add any configurations to a typed property bag, via the putConfig method.
@@ -413,7 +413,7 @@ Configuration parameters can be set on a client using a typed property key via t
         .putContext(MY_PROPERTY, "value")
         .build();
 
-Custom Builder Setters
+Custom builder setters
 ^^^^^^^^^^^^^^^^^^^^^^
 
 For common settings on a client, it is often desirable to use specifically-named setter methods such as .region("us-east-1")
@@ -463,7 +463,7 @@ Now we can use our new setting as follows:
     Default settings are typically paired with a default plugin to add the configuration and behavior of a feature
     (respectively) to a client by default.
 
-Composing Settings
+Composing settings
 ^^^^^^^^^^^^^^^^^^
 
 Some features require multiple custom settings. Because custom settings are simply Java interfaces, we can compose them.
