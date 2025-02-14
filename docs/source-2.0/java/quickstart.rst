@@ -5,8 +5,8 @@ Java Quickstart
 This guide introduces `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ with a simple working example of a generated server and client.
 
 For this example, imagine that you are the proud owner of a coffee shop.
-You have a Smithy-modeled API that allows your customers to order some java from their Java apps.
-Users can use the generated SDK to list available coffees, order a coffee, and track the status of their order.
+Your API allows your customers to order some _java_ from their Java applications.
+Users can use your SDK to list available coffees, order a coffee, and track the status of their order.
 
 .. admonition:: Review
     :class: tip
@@ -106,7 +106,7 @@ This will start the coffee shop server on port ``8888`` and log the following to
     Timestamps are omitted from console logs for the sake of brevity.
 
 
-To confirm the service is working, request the menu
+To confirm the service is working, request the menu:
 
 .. code-block:: sh
 
@@ -151,9 +151,9 @@ In a separate terminal, execute the client application:
 
 The client application will use a code-generated Java SDK for the coffee shop service to:
 
-1. Create a new coffee order for a refreshing COLD_BREW coffee.
-2. Wait a few seconds for the order to complete
-3. Call the service again to get the order
+1. Create a new coffee order for a refreshing COLD_BREW coffee,
+2. Wait a few seconds for the order to complete, and
+3. Call the service again to get the order.
 
 The client terminal will print the following to the console (your order ID will differ):
 
@@ -169,17 +169,17 @@ The client terminal will print the following to the console (your order ID will 
 Make a change to the service
 ----------------------------
 
-In this section you will update the Coffee shop server application to support additional functionality.
+In this section, you will update the Coffee shop server application to support additional functionality.
 We would like to add a new operation to our service that allows users to get the hours of our cafe.
 
-The new operation, ``GetHours`` should be bound directly to our service shape, take no input, and should return an output
-with both the opening and closing times. We will host this operation on the route ``/hours``  and the reported hours
-will be expressed in whole hours using 24hr time (i.e. 1PM is 13).
+The new operation, ``GetHours``, should be bound directly to our service shape, take no input, and should return an output
+with both the opening and closing times. We will host this operation on the route ``/hours`` , and the reported hours
+will be expressed in hours using 24hr time (i.e. 1PM is 13).
 
 Model Update
 ============
 
-First, the new operation must be added to our service model in the smithy package.
+First, the new operation must be added to our service model in the smithy package:
 
 .. code-block:: diff
     :caption: smithy/model/main.smithy
@@ -212,7 +212,7 @@ First, the new operation must be added to our service model in the smithy packag
 Server Update
 =============
 
-With our service model updated, we now need to add the new functionality to our server. First, rebuild the project:
+With our service model updated, we need to add the new functionality to our server. First, rebuild the project:
 
 .. code-block:: sh
 
@@ -231,7 +231,7 @@ This will fail with a compilation error:
       location: interface GetHoursStage
 
 Smithy Java **requires** that an implementation of a generated operation interface be registered with the server for
-every operation defined in service model. Let’s add the required implementation.
+every operation defined in service model. Let’s add the required implementation:
 
 .. code-block:: java
     :caption: server/src/main/java/io/smithy/java/server/example/GetHoursOperation.java
@@ -246,7 +246,7 @@ every operation defined in service model. Let’s add the required implementatio
         }
     }
 
-And register this operation with our service:
+Next, register this operation with our service:
 
 .. code-block:: diff
     :caption: server/src/main/java/io/smithy/java/server/example/CafeService.java
@@ -263,7 +263,7 @@ Now, re-start our server
 
     ./gradlew server:run
 
-We can now test the new operation using curl:
+Finally, we can test the new operation using curl:
 
 .. code-block:: sh
 
@@ -279,7 +279,7 @@ Which will return the hours of our Cafe:
 Client Update
 =============
 
-What if we want to call our newly created operation from our client application?
+What if we want to call our new operation from our client application?
 The client code generator will automatically add the ``getHours`` operation to the generated client,
 we just need to call it in our client application:
 
@@ -289,7 +289,7 @@ we just need to call it in our client application:
     public static void main(String[] args) throws InterruptedException {
     +   LOGGER.info(client.getHours(GetHoursInput.builder().build()).toString());
 
-Now, with the server still running, call our client one more time:
+With the server still running, call our client one more time:
 
 .. code-block:: sh
 
