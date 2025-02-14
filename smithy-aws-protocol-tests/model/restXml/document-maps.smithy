@@ -653,10 +653,11 @@ apply NestedXmlMaps @httpResponseTests([
 /// Nested Xml Maps with key/values with @xmlName
 @http(uri: "/NestedXmlMapWithXmlName", method: "POST")
 operation NestedXmlMapWithXmlName {
-    input: NestedXmlMapWithXmlNameInputOutput
-    output: NestedXmlMapWithXmlNameInputOutput
+    input := with [NestedXmlMapWithXmlNameInputOutput] {}
+    output := with [NestedXmlMapWithXmlNameInputOutput] {}
 }
 
+@mixin
 structure NestedXmlMapWithXmlNameInputOutput {
     nestedXmlMapWithXmlNameMap: NestedXmlMapWithXmlNameMap
 }
@@ -684,7 +685,7 @@ apply NestedXmlMapWithXmlName @httpRequestTests([
         method: "POST",
         uri: "/NestedXmlMapWithXmlName",
         body: """
-            <NestedXmlMapWithXmlNameInputOutput>
+            <NestedXmlMapWithXmlNameRequest>
                 <nestedXmlMapWithXmlNameMap>
                     <entry>
                         <OuterKey>foo</OuterKey>
@@ -713,7 +714,7 @@ apply NestedXmlMapWithXmlName @httpRequestTests([
                         </value>
                     </entry>
                 </nestedXmlMapWithXmlNameMap>
-            </NestedXmlMapWithXmlNameInputOutput>
+            </NestedXmlMapWithXmlNameRequest>
         """,
         bodyMediaType: "application/xml",
         headers: {
@@ -741,7 +742,7 @@ apply NestedXmlMapWithXmlName @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-            <NestedXmlMapWithXmlNameInputOutput>
+            <NestedXmlMapWithXmlNameResponse>
                 <nestedXmlMapWithXmlNameMap>
                     <entry>
                         <OuterKey>foo</OuterKey>
@@ -770,7 +771,7 @@ apply NestedXmlMapWithXmlName @httpResponseTests([
                         </value>
                     </entry>
                 </nestedXmlMapWithXmlNameMap>
-            </NestedXmlMapWithXmlNameInputOutput>
+            </NestedXmlMapWithXmlNameResponse>
         """
         bodyMediaType: "application/xml",
         headers: {
