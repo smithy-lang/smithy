@@ -5,7 +5,7 @@ Java Quickstart
 This guide introduces `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ with a simple working example of a generated server and client.
 
 For this example, imagine that you are the proud owner of a coffee shop.
-Your API allows your customers to order some _java_ from their Java applications.
+Your API allows your customers to order some *java* from their Java applications.
 Users can use your SDK to list available coffees, order a coffee, and track the status of their order.
 
 .. admonition:: Review
