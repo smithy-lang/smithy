@@ -48,8 +48,7 @@ For example:
         errors: [NotFound]
     }
 
-The waiter-codegen integration can be used to automatically generate waiters from waitable trait
-definitions in your Smithy model. To add the integration to your project (using the Smithy Gradle plugins):
+Using the waiters integration, you can automatically generate waiters from instances of the waitable trait in your Smithy model. If you are using the Smithy Gradle plugins, you can add this integration to your project like so:
 
 .. code-block:: kotlin
    :caption: build.gradle.kts
@@ -63,12 +62,10 @@ definitions in your Smithy model. To add the integration to your project (using 
         implementation("software.amazon.smithy.java:waiters:__smithy_java_version__")
     }
 
-This will cause your client code generator to create a waiter container class call ``<ServiceName>Waiters``
-in your generated client package. This container provides a method per waiter defined in your smithy model
-that returns a pre-configured ``Waiter``` instance base on the configuration set in your Smithy model.
+The code generator will create a class named ``<ServiceName>Waiters`` in the client package.
+This class provides a method per waiter defined in your smithy model. The methods return ``Waiter``` instances based on the configuration set in your Smithy model.
 
-You can get an instance of this waiter container for a client by calling the ``waiters()`` method added
-to clients by this integration.
+To get an instance of a waiter, call the ``waiters()`` method on the client object:
 
 .. code-block:: java
 

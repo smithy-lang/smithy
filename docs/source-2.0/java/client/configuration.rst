@@ -2,13 +2,13 @@
 Configuring Clients
 ===================
 
-Generated Smithy Java clients are composed of a number of runtime-configurable components:
+Smithy Java clients are composed of several components which are configurable at runtime:
 
 * :ref:`Protocols <java-client-protocols>` - Defines how to serialize and deserialize a client request.
 * :ref:`Transports <java-client-transports>` - Manages connections and the sending of data on the wire.
-* :ref:`Auth Schemes <java-client-authSchemes>` - Add authentication/authorization information to a client request.
+* :ref:`Auth Schemes <java-client-authSchemes>` - Adds authentication/authorization information to a client request.
 * :ref:`Endpoint Resolvers <java-client-endpoints>` - Resolves the service endpoint to call.
-* :ref:`Context Properties <java-client-context>` - Set typed properties on the client.
+* :ref:`Context Properties <java-client-context>` - Sets typed properties on the client.
 
 .. _java-client-protocols:
 
@@ -27,7 +27,7 @@ The Smithy IDL is protocol-agnostic and allows a service to support any number o
 (de)serialization of data. Like the Smithy IDL, Smithy Java clients are also protocol-agnostic and allow users
 to configure a protocol at runtime.
 
-To set a protocol  at runtime, add the protocol to the client builder as follows:
+To set a protocol at runtime, add the protocol to the client builder:
 
 .. code-block:: java
     :caption: Set protocol at runtime
@@ -44,9 +44,9 @@ To set a protocol  at runtime, add the protocol to the client builder as follows
 Set a default protocol
 ^^^^^^^^^^^^^^^^^^^^^^
 
-While users may want to set a different protocol at runtime, it is typically desirable for generated clients to have a default protocol that can be used without any client configuration.
+While users can set protocols at runtime, a default protocol should be set when generating the client:
 
-To configure the client code generation plugin to set a default protocol, add the protocol’s fully qualified Smithy ID to the  protocol setting in the smithy-build.json configuration file.
+To configure the client plugin with a default protocol, add the protocol’s fully qualified Smithy ID to the protocol setting in the smithy-build.json configuration file:
 
 .. code-block:: json
     :caption: smithy-build.json
