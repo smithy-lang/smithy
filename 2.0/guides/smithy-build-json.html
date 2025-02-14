@@ -298,6 +298,15 @@
 </ul>
 </li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+</ul>
+</li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
@@ -569,9 +578,9 @@ requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id16">
-<table border="1" class="docutils align-default" id="id16">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id16" title="Permalink to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id17">
+<table border="1" class="docutils align-default" id="id17">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id17" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -1971,8 +1980,26 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </pre></div>
 </div>
 </div>
+<div class="section" id="flattenandremovemixins">
+<span id="id10"></span><h3>flattenAndRemoveMixins<a class="headerlink" href="#flattenandremovemixins" title="Permalink to this heading">#</a></h3>
+<p>Flattens <a class="reference internal" href="../spec/mixins.html#mixins"><span class="std std-ref">mixins</span></a> out of the model and into their local shapes.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;flattenAndRemoveMixins&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="flattennamespaces">
-<span id="id10"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
+<span id="id11"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2321,7 +2348,7 @@ files have access to the following environment variables:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id11"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
+<span id="id12"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -2342,7 +2369,7 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id12"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id13"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file. By default the serialized model excludes <a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
@@ -2360,12 +2387,12 @@ to the <code class="docutils literal notranslate"><span class="pre">smithy-build
 </div>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id13"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id14"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id14"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id15"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2383,7 +2410,7 @@ ignored. A Smithy manifest file is stored in a JAR as <code class="docutils lite
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
 </div>
 <div class="section" id="run-plugin">
-<span id="id15"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this heading">#</a></h3>
+<span id="id16"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
 useful when integrating Smithy's build process with Smithy implementations
 that are not written in Java.</p>
@@ -2608,6 +2635,7 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
 <li><a class="reference internal" href="#includetraitsbytag">includeTraitsByTag</a></li>
 <li><a class="reference internal" href="#excludemetadata">excludeMetadata</a></li>
 <li><a class="reference internal" href="#includemetadata">includeMetadata</a></li>
+<li><a class="reference internal" href="#flattenandremovemixins">flattenAndRemoveMixins</a></li>
 <li><a class="reference internal" href="#flattennamespaces">flattenNamespaces</a></li>
 <li><a class="reference internal" href="#removetraitdefinitions">removeTraitDefinitions</a></li>
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>

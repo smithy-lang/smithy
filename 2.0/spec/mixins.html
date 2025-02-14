@@ -298,6 +298,15 @@
 </ul>
 </li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+</ul>
+</li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
@@ -767,7 +776,13 @@ members.</p>
 <h3><span class="section-number">5.7.1. </span>Service mixins<a class="headerlink" href="#service-mixins" title="Permalink to this heading">#</a></h3>
 <p>Service shapes with the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> may define any property. For
 example, in the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAOutput</span>
+}
+
+<span class="kd">structure </span><span class="nc">OperationAInput</span><span class="w"> </span>{}
+<span class="kd">structure </span><span class="nc">OperationAOutput</span><span class="w"> </span>{}
 
 <span class="nt">@mixin</span>
 <span class="kd">service </span><span class="nc">A</span><span class="w"> </span>{
@@ -775,14 +790,18 @@ example, in the following model:</p>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]
 }
 
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationBInput</span>
+}
+
+<span class="kd">structure </span><span class="nc">OperationBInput</span><span class="w"> </span>{}
 
 <span class="nt">@mixin</span>
 <span class="kd">service </span><span class="nc">B</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A</span>]<span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperA&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperB&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationARequest&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResult&quot;</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationB</span>]
 }
@@ -792,26 +811,36 @@ example, in the following model:</p>
 <span class="kd">service </span><span class="nc">C</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">B</span>]<span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpA&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpC&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResponse&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationBInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationBRequest&quot;</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationC</span>]
 }
 </pre></div>
 </div>
 <p>The flattened equivalent of <code class="docutils literal notranslate"><span class="pre">C</span></code> with no mixins is:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAOutput</span>
+}
 
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
+<span class="kd">structure </span><span class="nc">OperationAInput</span><span class="w"> </span>{}
+<span class="kd">structure </span><span class="nc">OperationAOutput</span><span class="w"> </span>{}
+
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationBInput</span>
+}
+
+<span class="kd">structure </span><span class="nc">OperationBInput</span><span class="w"> </span>{}
 
 <span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
 
 <span class="kd">service </span><span class="nc">C</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpA&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperB&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpC&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationARequest&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResponse&quot;</span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationBInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationBRequest&quot;</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span>]
 }
@@ -854,7 +883,7 @@ input and output shapes to be shared goes against the goal of the
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
-<span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span>]
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span>]
 }
 
 <span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
