@@ -51,6 +51,10 @@ public class IamResourceTraitValidator extends AbstractValidator {
     }
 
     private List<String> parseArnComponents(String arnTemplate) {
-        return Arrays.asList(arnTemplate.split("/"));
+        List<String> components = new ArrayList<>();
+        for (String component : arnTemplate.split("/")) {
+            components.addAll(Arrays.asList(component.split(":")));
+        }
+        return components;
     }
 }

@@ -1,53 +1,67 @@
 $version: "2"
+
 namespace smithy.example
 
 use aws.api#arn
+use aws.api#service
+use aws.iam#defineConditionKeys
+use aws.iam#iamResource
 
-@aws.api#service(sdkId: "My")
-@aws.iam#defineConditionKeys("foo:baz": {type: "String", documentation: "Foo baz"})
+@service(sdkId: "My")
+@defineConditionKeys(
+    "foo:baz": { type: "String", documentation: "Foo baz" }
+)
 service MyService {
-    version: "2019-02-20",
+    version: "2019-02-20"
     resources: [
-        BadIamResourceName,
-        Beer,
-        InvalidResource,
+        BadIamResourceName
+        Beer
+        InvalidResource
         ShouldNotThrowAnError
+        ColonResource
+        CombinedResource
     ]
 }
 
-@aws.iam#iamResource(name: "bad-iam-resourceName")
+@iamResource(name: "bad-iam-resourceName")
 @arn(template: "bad-iam-resource-name/{id}")
 resource BadIamResourceName {
-    identifiers: {
-        id: String
-    }
+    identifiers: { id: String }
 }
 
-@aws.iam#iamResource(name: "beer")
+@iamResource(name: "beer")
 @arn(template: "beer/{beerId}")
 resource Beer {
-    identifiers: {
-        beerId: String
-    }
-    resources: [IncompatibleResourceName]
+    identifiers: { beerId: String }
+    resources: [
+        IncompatibleResourceName
+    ]
 }
 
 @arn(template: "beer/{beerId}/incompatible-resource-name")
-@aws.iam#iamResource(name: "IncompatibleResourceName")
+@iamResource(name: "IncompatibleResourceName")
 resource IncompatibleResourceName {
-    identifiers: {
-        beerId: String
-    }
+    identifiers: { beerId: String }
 }
 
-@aws.iam#iamResource(name: "invalidResource")
+@iamResource(name: "invalidResource")
 @arn(template: "invalid-resource")
 resource InvalidResource {}
 
-@aws.iam#iamResource(name: "shouldNotThrowError")
+@iamResource(name: "shouldNotThrowError")
 @arn(template: "{arn}", absolute: true)
 resource ShouldNotThrowAnError {
-    identifiers: {
-        arn: String
-    }
+    identifiers: { arn: String }
+}
+
+@iamResource(name: "colon")
+@arn(template: "colon:{fooId}")
+resource ColonResource {
+    identifiers: { fooId: String }
+}
+
+@iamResource(name: "combined")
+@arn(template: "combined:{fooId}/{barId}")
+resource CombinedResource {
+    identifiers: { fooId: String, barId: String }
 }
