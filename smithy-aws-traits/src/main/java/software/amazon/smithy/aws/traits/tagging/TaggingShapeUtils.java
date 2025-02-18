@@ -18,6 +18,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Logic for validating that a shape looks like a tag.
@@ -30,7 +31,7 @@ final class TaggingShapeUtils {
     private static final Pattern TAG_PROPERTY_REGEX = Pattern
             .compile("^[T|t]ag(s|[L|l]ist)$");
     private static final Pattern RESOURCE_ARN_REGEX = Pattern
-            .compile("^([R|r]esource)?([A|a]rn|ARN)$");
+            .compile("^([R|r]esource)?([A|a]rn|ARN)?$");
     private static final Pattern TAG_KEYS_REGEX = Pattern
             .compile("^[T|t]ag[K|k]eys$");
 
@@ -41,16 +42,6 @@ final class TaggingShapeUtils {
         return "[T|t]ags";
     }
 
-    // Recommended name is more limited than the accepted regular expression.
-    static String getDesiredArnName() {
-        return "[R|r]esourceArn";
-    }
-
-    // Recommended name is more limited than the accepted regular expression.
-    static String getDesiredTagKeysName() {
-        return "[T|t]agKeys";
-    }
-
     // Used to validate tag property name and tag member name.
     static boolean isTagDesiredName(String memberName) {
         return TAG_PROPERTY_REGEX.matcher(memberName).matches();
@@ -58,7 +49,14 @@ final class TaggingShapeUtils {
 
     // Used for checking if member name is good for resource ARN input.
     static boolean isArnMemberDesiredName(String memberName) {
-        return RESOURCE_ARN_REGEX.matcher(memberName).matches();
+        if (StringUtils.isEmpty(memberName)) {
+            return false;
+        }
+
+        return memberName
+                .replaceFirst("^[R|r]esource", "")
+                .replaceFirst("[A|a]rn|ARN$", "")
+                .isEmpty();
     }
 
     // Used for checking if member name is good for tag keys input for untag operation.
@@ -66,7 +64,7 @@ final class TaggingShapeUtils {
         return TAG_KEYS_REGEX.matcher(memberName).matches();
     }
 
-    static boolean hasResourceArnInput(Map<String, MemberShape> inputMembers, Model model) {
+    private static boolean hasResourceArnInput(Map<String, MemberShape> inputMembers, Model model) {
         for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
             if (isArnMemberDesiredName(memberEntry.getKey())
                     && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()) {
@@ -89,7 +87,7 @@ final class TaggingShapeUtils {
         return verifyTagListShape(model, tagShape) || verifyTagMapShape(model, tagShape);
     }
 
-    static boolean verifyTagListShape(Model model, Shape tagShape) {
+    private static boolean verifyTagListShape(Model model, Shape tagShape) {
         if (tagShape.isListShape()) {
             ListShape listShape = tagShape.asListShape().get();
             Shape listTargetShape = model.expectShape(listShape.getMember().getTarget());
@@ -108,7 +106,7 @@ final class TaggingShapeUtils {
         return false;
     }
 
-    static boolean verifyTagMapShape(Model model, Shape tagShape) {
+    private static boolean verifyTagMapShape(Model model, Shape tagShape) {
         if (tagShape.isMapShape()) {
             MapShape mapShape = tagShape.asMapShape().get();
             Shape valueTargetShape = model.expectShape(mapShape.getValue().getTarget());
@@ -189,7 +187,7 @@ final class TaggingShapeUtils {
         return false;
     }
 
-    static boolean isTagPropertyInShape(
+    private static boolean isTagPropertyInShape(
             String tagPropertyName,
             Shape shape,
             PropertyBindingIndex propertyBindingIndex
