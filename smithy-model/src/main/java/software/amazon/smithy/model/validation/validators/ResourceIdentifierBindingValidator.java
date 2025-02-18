@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -189,7 +190,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 // Get their operation shapes.
                 .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find collection operations which improperly bind all the resource identifiers.
-                .filter(operation -> hasAllIdentifiersBound(resource, operation, identifierIndex))
+                .filter(operation -> hasAllIdentifiersBound(model, resource, operation, identifierIndex))
                 .map(operation -> error(operation,
                         format(
                                 "This operation is bound as a collection operation on the `%s` resource, but it improperly "
@@ -210,7 +211,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 // Get their operation shapes.
                 .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find instance operations which do not bind all of the resource identifiers.
-                .filter(operation -> !hasAllIdentifiersBound(resource, operation, bindingIndex))
+                .filter(operation -> !hasAllIdentifiersBound(model, resource, operation, bindingIndex))
                 .map(operation -> {
                     String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
                     String boundIds = createBindingMessage(bindingIndex.getOperationInputBindings(resource, operation));
@@ -227,13 +228,24 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     }
 
     private boolean hasAllIdentifiersBound(
+            Model model,
             ResourceShape resource,
             OperationShape operation,
             IdentifierBindingIndex bindingIndex
     ) {
-        return bindingIndex.getOperationInputBindings(resource, operation)
-                .keySet()
-                .containsAll(resource.getIdentifiers().keySet());
+        StructureShape inputShape = model.expectShape(operation.getInputShape(), StructureShape.class);
+        Map<String, String> bindings = bindingIndex.getOperationInputBindings(resource, operation);
+        for (Map.Entry<String, ShapeId> identifier : resource.getIdentifiers().entrySet()) {
+            if (!bindings.containsKey(identifier.getKey())) {
+                return false;
+            }
+
+            MemberShape identifierMember = inputShape.getMember(bindings.get(identifier.getKey())).get();
+            if (!identifierMember.getTarget().equals(identifier.getValue())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String createBindingMessage(Map<String, ?> bindings) {

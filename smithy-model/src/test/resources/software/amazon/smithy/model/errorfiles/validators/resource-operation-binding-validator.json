@@ -27,6 +27,14 @@
                 {
                     "target": "ns.foo#ValidResourceOperation2"
                 }
+            ],
+            "collectionOperations": [
+                {
+                    "target": "ns.foo#ValidResourceOperation3"
+                },
+                {
+                    "target": "ns.foo#ValidResourceOperation4"
+                }
             ]
         },
         "ns.foo#ValidResourceOperation1": {
@@ -80,6 +88,47 @@
                 "smithy.api#output": {}
             }
         },
+        "ns.foo#ValidResourceOperation3": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ValidResourceOperation3Input"
+            }
+        },
+        "ns.foo#ValidResourceOperation3Input": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#OtherString",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#ValidResourceOperation4": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ValidResourceOperation4Input"
+            }
+        },
+        "ns.foo#ValidResourceOperation4Input": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {},
+                        "smithy.api#suppress": ["MemberShouldReferenceResource"]
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
         "ns.foo#InvalidResource": {
             "type": "resource",
             "identifiers": {
@@ -130,7 +179,7 @@
             "type": "structure",
             "members": {
                 "bar": {
-                    "target": "smithy.api#String",
+                    "target": "ns.foo#OtherString",
                     "traits": {
                         "smithy.api#required": {}
                     }
@@ -145,6 +194,9 @@
             "traits": {
                 "smithy.api#output": {}
             }
+        },
+        "ns.foo#OtherString": {
+            "type": "string"
         }
     }
 }
