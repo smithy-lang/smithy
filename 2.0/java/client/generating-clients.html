@@ -377,7 +377,7 @@ if you do not already have the CLI installed.</p>
 <div class="section" id="initial-setup-gradle-recommended">
 <h2>Initial setup: Gradle (recommended)<a class="headerlink" href="#initial-setup-gradle-recommended" title="Permalink to this heading">#</a></h2>
 <p>To generate a Java client for a service, start by creating a new Smithy Gradle project.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">init`</span></code> CLI command can be used to create a new Smithy Gradle project:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">init</span></code> CLI command can be used to create a new Smithy Gradle project:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>smithy<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>quickstart-gradle
 </pre></div>
 </div>
@@ -396,10 +396,10 @@ containing Smithy models. For example:</p>
 and execute build plugins:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
-<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="w"> </span>plugins {
-<span class="w"> </span>    `java-library`
-<span class="w"> </span>+    id(&quot;software.amazon.smithy.gradle.smithy-base&quot;) version &quot;1.2.0&quot;
-<span class="w"> </span>}
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
+<span class="w"> </span>   `java-library`
+<span class="gi">+    id(&quot;software.amazon.smithy.gradle.smithy-base&quot;) version &quot;1.2.0&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -438,16 +438,16 @@ The <code class="docutils literal notranslate"><span class="pre">smithy-base`</s
 your <a class="reference internal" href="../../guides/smithy-build-json.html#smithy-build"><span class="std std-ref">smithy-build</span></a> config:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
-<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="w"> </span>{
-<span class="w"> </span>  &quot;version&quot;: &quot;1.0&quot;,
-<span class="w"> </span>  &quot;plugins&quot;: {
-<span class="w"> </span>+    &quot;java-client-codegen&quot;: {
-<span class="w"> </span>+      &quot;service&quot;: &quot;com.example#CoffeeShop&quot;, // &lt;- Replace with your service&#39;s ID
-<span class="w"> </span>+      // Generated Java code will use this as the root package namespace
-<span class="w"> </span>+      &quot;namespace&quot;: &quot;com.example.cafe&quot;
-<span class="w"> </span>+    }
-<span class="w"> </span>  }
-<span class="w"> </span>}
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>{
+<span class="w"> </span> &quot;version&quot;: &quot;1.0&quot;,
+<span class="w"> </span> &quot;plugins&quot;: {
+<span class="gi">+    &quot;java-client-codegen&quot;: {</span>
+<span class="gi">+      &quot;service&quot;: &quot;com.example#CoffeeShop&quot;, // &lt;- Replace with your service&#39;s ID</span>
+<span class="gi">+      // Generated Java code will use this as the root package namespace</span>
+<span class="gi">+      &quot;namespace&quot;: &quot;com.example.cafe&quot;</span>
+<span class="gi">+    }</span>
+<span class="w"> </span> }
+}
 </pre></div>
 </div>
 </div>
@@ -510,35 +510,35 @@ Gradle project to generate a Smithy Java client:</p>
 <span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add the client-core dependency needed by the generated code</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-core:0.0.1&quot;&quot;)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-core:0.0.1&quot;</span><span class="p">)</span>
 
-<span class="s">     // Also add your protocol implementations or auth schemes as dependencies</span>
-<span class="s">     implementation(&quot;</span><span class="n">com</span><span class="p">.</span><span class="na">example</span><span class="p">:</span><span class="n">my</span><span class="o">-</span><span class="n">protocol</span><span class="p">:</span><span class="m">1.0</span><span class="p">.</span><span class="m">0</span><span class="s">&quot;)</span>
-<span class="s">     implementation(&quot;</span><span class="n">com</span><span class="p">.</span><span class="na">example</span><span class="p">:</span><span class="n">my</span><span class="o">-</span><span class="n">auth</span><span class="o">-</span><span class="n">scheme</span><span class="p">:</span><span class="m">1.0</span><span class="p">.</span><span class="m">0</span><span class="s">&quot;)</span>
-<span class="s"> }</span>
+<span class="w">     </span><span class="c1">// Also add your protocol implementations or auth schemes as dependencies</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-protocol:1.0.0&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-auth-scheme:1.0.0&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="p">}</span>
 
-<span class="s"> // Add generated Java sources to the main sourceSet so they are compiled alongside</span>
-<span class="s"> // any other java code in your package</span>
-<span class="s"> afterEvaluate {</span>
-<span class="s">     val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), &quot;</span><span class="n">java</span><span class="o">-</span><span class="n">client</span><span class="o">-</span><span class="n">codegen</span><span class="s">&quot;)</span>
-<span class="s">     sourceSets {</span>
-<span class="s">         main {</span>
-<span class="s">             java {</span>
-<span class="s">                 srcDir(clientPath)</span>
-<span class="s">             }</span>
-<span class="s">         }</span>
-<span class="s">     }</span>
-<span class="s"> }</span>
+<span class="w"> </span><span class="c1">// Add generated Java sources to the main sourceSet so they are compiled alongside</span>
+<span class="w"> </span><span class="c1">// any other java code in your package</span>
+<span class="w"> </span><span class="n">afterEvaluate</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="kd">val</span><span class="w"> </span><span class="nv">clientPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smithy</span><span class="p">.</span><span class="na">getPluginProjectionPath</span><span class="p">(</span><span class="n">smithy</span><span class="p">.</span><span class="na">sourceProjection</span><span class="p">.</span><span class="na">get</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;java-client-codegen&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">sourceSets</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="n">main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">             </span><span class="n">java</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                 </span><span class="n">srcDir</span><span class="p">(</span><span class="n">clientPath</span><span class="p">)</span>
+<span class="w">             </span><span class="p">}</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
 
-<span class="s"> // Ensure client files are generated before java compilation is executed.</span>
-<span class="s"> tasks.named(&quot;</span><span class="n">compileJava</span><span class="s">&quot;) {</span>
-<span class="s">     dependsOn(&quot;</span><span class="n">smithyBuild</span><span class="s">&quot;)</span>
-<span class="s"> }</span>
+<span class="w"> </span><span class="c1">// Ensure client files are generated before java compilation is executed.</span>
+<span class="w"> </span><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">&quot;compileJava&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;smithyBuild&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="p">}</span>
 
-<span class="s"> repositories {</span>
-<span class="s">     mavenLocal()</span>
-<span class="s">     mavenCentral()</span>
-<span class="s"> }</span>
+<span class="w"> </span><span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">mavenLocal</span><span class="p">()</span>
+<span class="w">     </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
