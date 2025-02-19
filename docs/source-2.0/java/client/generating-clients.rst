@@ -3,12 +3,12 @@ Generating Clients
 ==================
 
 The Smithy Java :ref:`build plugin <plugins>`, ``java-client-codegen``, generates Java clients from Smithy models,
-and can be executed with both `Gradle <https://gradle.org/>`_ (recommended) or the :ref:`Smithy CLI <smithy-cli>`.
+and can be executed with `Gradle <https://gradle.org/>`_ (recommended) or the :ref:`Smithy CLI <smithy-cli>`.
 
 .. admonition:: Important
     :class: note
 
-    The Smithy CLI is a prerequisite for this guide when using the ``smithy init``` commands.
+    The Smithy CLI is a prerequisite for this guide.
     See the :doc:`Smithy CLI installation guide <../../guides/smithy-cli/cli_installation>`
     if you do not already have the CLI installed.
 
@@ -16,7 +16,7 @@ and can be executed with both `Gradle <https://gradle.org/>`_ (recommended) or t
 Initial setup: Gradle (recommended)
 -----------------------------------
 
-To generated a Java client for a service, first create a new Smithy Gradle project.
+To generate a Java client for a service, start by creating a new Smithy Gradle project:
 
 .. tip::
 
@@ -25,7 +25,7 @@ To generated a Java client for a service, first create a new Smithy Gradle proje
     basic Smithy Gradle project.
 
 Apply the `smithy-base`_ plugin to your Gradle build script to build your Smithy model
-and execute build plugins.
+and execute build plugins:
 
 .. code-block:: diff
    :caption: build.gradle.kts
@@ -86,9 +86,10 @@ your :ref:`smithy-build <smithy-build>` config:
 Add generated code to the Java sourceSet
 ----------------------------------------
 
-Now the package is configured to generate client source code. However, the generated client code must be added to
-a `sourceSet <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html>`_ to be compiled by Gradle.
-To add the generated client code to the ``main`` sourceSet, update your Gradle build script to include the following:
+Your package is now configured to generate Java client source code. However, the generated code must be
+added to a `sourceSet <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html>`_ to be
+compiled by Gradle. To add the generated code to the ``main`` sourceSet, add the following to your
+Gradle build script:
 
 .. code-block:: kotlin
    :caption: build.gradle.kts
@@ -115,20 +116,20 @@ To add the generated client code to the ``main`` sourceSet, update your Gradle b
 Generating code
 ---------------
 
-To generate and compile your client code run a build from the root of your Gradle project:
+To generate and compile your client code, run a build from the root of your Gradle project:
 
 .. code-block:: sh
 
     ./gradlew clean build
 
-Building the project will generate code into the
+Building the project will generate code in the
 ``build/smithy-projections/<project-name>/source/java-client-codegen/`` directory.
 
 ----------------
 Complete example
 ----------------
 
-The following Gradle build script, and ``smithy-build.json`` files provide a complete example of how to configure a
+The following Gradle build script and ``smithy-build.json`` files provide a complete example of how to configure a
 Gradle project to generate a Smithy Java client:
 
 .. code-block:: kotlin

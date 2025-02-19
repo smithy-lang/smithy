@@ -22,7 +22,7 @@ Add the dynamic-client module as a dependency of your project:
         implementation("software.amazon.smithy.java:dynamicclient:__smithy_java_version__")
     }
 
-Then, load the Smithy model for use by the dynamic client.
+Then, load a Smithy model:
 
 .. code-block:: java
 
@@ -35,8 +35,7 @@ Then, load the Smithy model for use by the dynamic client.
         .assemble()
         .unwrap();
 
-Then, select the service to call. This should be a service shape in the loaded model,
-in this case a ``CoffeeShop`` service.
+Then, select a service shape in the loaded model to call. In this case, the ``CoffeeShop`` service:
 
 .. code-block:: java
 
@@ -54,8 +53,8 @@ Now, create the ``DynamicClient`` instance for this model and service:
         .endpointResolver(EndpointResolver.staticEndpoint("https://api.cafe.example.com"))
         .build();
 
-Now, create an input to call the service. Input is defined using a ``Document`` that mirrors what you'd
-see in the Smithy model.
+To call the service, create an input using a ``Document`` that mirrors what's defined in the Smithy model.
+The ``Document.createFromObject`` method can create a ``Document`` from a map:
 
 .. code-block:: java
 

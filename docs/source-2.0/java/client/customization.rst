@@ -51,7 +51,7 @@ The following hooks are supported:
 * **modifyBeforeDeserialization** - called before the response is deserialized
 * **readBeforeDeserialization** - called before the response is deserialized
 * **readAfterDeserialization** - called after the transport response message is deserialized
-* **modifyBeforeAttemptCompletion** - hook called when an attempt is completed. This method can
+* **modifyBeforeAttemptCompletion** - called when an attempt is completed. This method can
   modify and return a new output or error matching the currently executing operation
 * **readAfterAttempt** - called when an attempt is completed
 * **modifyBeforeCompletion** - called when an execution is completed
