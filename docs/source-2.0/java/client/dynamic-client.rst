@@ -53,6 +53,12 @@ Now, create the ``DynamicClient`` instance for this model and service:
         .endpointResolver(EndpointResolver.staticEndpoint("https://api.cafe.example.com"))
         .build();
 
+.. admonition:: Important
+    :class: note
+
+    If an explicit protocol and transport are not provided to the builder, the builder will attempt to find protocol
+    and transport implementations on the classpath that match the protocol traits attached to the service.
+
 To call the service, create an input using a ``Document`` that mirrors what's defined in the Smithy model.
 The ``Document.createFromObject`` method can create a ``Document`` from a map:
 
@@ -61,11 +67,3 @@ The ``Document.createFromObject`` method can create a ``Document`` from a map:
     var input = Document.createFromObject(Map.of("coffeeType", "COLD_BREW"));
     var result = client.call("CreateOrder", input).get();
     System.out.println(result);
-
-.. admonition:: Important
-    :class: note
-
-    If an explicit protocol and transport are not provided to the builder, the builder will attempt to find protocol
-    and transport implementations on the classpath that match the protocol traits attached to the service.
-
-

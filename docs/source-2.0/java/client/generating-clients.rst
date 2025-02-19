@@ -16,13 +16,26 @@ and can be executed with `Gradle <https://gradle.org/>`_ (recommended) or the :r
 Initial setup: Gradle (recommended)
 -----------------------------------
 
-To generate a Java client for a service, start by creating a new Smithy Gradle project:
+To generate a Java client for a service, start by creating a new Smithy Gradle project.
 
-.. tip::
+The ``smithy init``` CLI command can be used to create a new Smithy Gradle project:
 
-    Use the ``smithy init``` CLI command to create a new Smithy project.
-    The command ``smithy init -t quickstart-gradle`` will create a new
-    basic Smithy Gradle project.
+.. code-block:: sh
+
+    smithy init -t quickstart-gradle
+
+A Smithy Gradle project should contain a Gradle settings file, a Gradle build script,
+a :ref:`smithy-build.json <smithy-build>` configuration file, and a `model/` directory
+containing Smithy models. For example:
+
+.. code-block:: sh
+
+    my-project/
+    ├── model/
+    │   ├── ...
+    ├── smithy-build.json
+    ├── build.gradle.kts
+    └── settings.gradle
 
 Apply the `smithy-base`_ plugin to your Gradle build script to build your Smithy model
 and execute build plugins:

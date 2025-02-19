@@ -212,13 +212,10 @@ use the ``putSupportedAuthSchemes`` method:
 Automatic registration
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The Client code generation plugin can discover auth schemes on the classpath. If a discovered auth scheme’s ID matches
-an auth scheme ID in the Smithy model it will be automatically registered in the generated client.
-
-To add an auth scheme automatically to a generated client based on a trait in the model, the auth scheme must provide
-an ``AuthSchemeFactory`` implementation and register that implementation via SPI. Smithy Java client codegen will
-automatically search the classpath for relevant ``AuthSchemeFactory``` implementations and attempt to match those with
-a corresponding trait in the model.
+The Client code generation plugin can discover auth schemes on the classpath. To be discoverable, the auth scheme
+must provide an ``AuthSchemeFactory`` implementation and register that implementation via SPI. Smithy Java client
+codegen plugin will automatically search the classpath for relevant ``AuthSchemeFactory``` implementations and attempt
+to match those with a corresponding trait in the model.
 
 Effective auth schemes
 ^^^^^^^^^^^^^^^^^^^^^^
