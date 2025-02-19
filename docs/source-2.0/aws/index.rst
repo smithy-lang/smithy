@@ -11,6 +11,7 @@ AWS integrations
     aws-iam
     amazon-apigateway
     aws-cloudformation
+    amazon-eventstream
 
 AWS Protocols
 =============
