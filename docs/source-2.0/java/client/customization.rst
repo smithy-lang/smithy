@@ -18,7 +18,7 @@ Create and use an override as follows:
 
     var fooOutput = client.callFoo(fooInput, requestOverride);
 
-Each generated client will also generate a client-specific ``RequestOverride`` class that includes any custom
+Each generated client will contain a client-specific ``RequestOverride`` class that includes any custom
 configuration settings. To get a client-specific override builder, use the ``.requestOverrideBuilder`` on the
 generated client:
 
@@ -48,13 +48,13 @@ The following hooks are supported:
 * **modifyBeforeTransmit** - called before the transport request message is sent to the service
 * **readBeforeTransmit** - called before the transport request message is sent to the * service
 * **readAfterTransmit** - called after the transport request message is sent to the service and a transport response message is received
-* **modifyBeforeDeserialization** - hook called before the response is deserialized
+* **modifyBeforeDeserialization** - called before the response is deserialized
 * **readBeforeDeserialization** - called before the response is deserialized
 * **readAfterDeserialization** - called after the transport response message is deserialized
 * **modifyBeforeAttemptCompletion** - hook called when an attempt is completed. This method can
   modify and return a new output or error matching the currently executing operation
-* **readAfterAttempt** - hook called when an attempt is completed
-* **modifyBeforeCompletion** - hook called when an execution is completed
+* **readAfterAttempt** - called when an attempt is completed
+* **modifyBeforeCompletion** - called when an execution is completed
 * **readAfterExecution** - called when an execution is completed
 
 Interceptors implement the ``ClientInterceptor`` interface and override one or more hook methods.
@@ -83,7 +83,7 @@ Plugins
 Plugins implement the ``ClientPlugin`` interface to modify client configuration when the client is created or when
 an operation is called (if added to a ``RequestOverrideConfig``).
 
-Plugins set ``IdentityResolvers``, ``EndpointResolvers``, ``Interceptors``, ``AuthSchemeResolvers``,
+Plugins may set ``IdentityResolvers``, ``EndpointResolvers``, ``Interceptors``, ``AuthSchemeResolvers``,
 and other client configuration in a repeatable way.
 
 .. tip::
@@ -91,7 +91,7 @@ and other client configuration in a repeatable way.
     Create one or more common plugins for your organization to apply a standard configuration to generated clients.
 
 
-To apply a plugins to a client at runtime use the ``addPlugin`` method on the client builder:
+To apply a plugins to a client at runtime, use the ``addPlugin`` method on the client builder:
 
 .. code-block:: java
 
@@ -102,13 +102,13 @@ To apply a plugins to a client at runtime use the ``addPlugin`` method on the cl
 .. admonition:: Important
     :class: note
 
-    Plugins are run only at client build time if added to the client builder or once before executing a call if
-    they are included in a RequestOverrideConfig.
+    Plugins are run once at client build time if added to the client builder, or each time a request is made if
+    added through a ``RequestOverrideConfig``.
 
 Default plugins
 ^^^^^^^^^^^^^^^
 
-Plugins can be applied by default at client instantiation. To apply a plugin by default , add the plugin’s
+Plugins can be applied by default at client instantiation. To apply a plugin by default, add the plugin’s
 fully qualified name to the ``defaultPlugins``` setting to your :ref`smithy-build <smithy-build>` configuration:
 
 .. code-block:: json
@@ -124,7 +124,6 @@ fully qualified name to the ``defaultPlugins``` setting to your :ref`smithy-buil
 .. admonition:: Important
     :class: note
 
-    Because default plugins need to be instantiated with no user input they must have a public,
-    zero-arg constructor defined. The code generator will check for an empty constructor when
-    resolving default plugins and fail if none is found.
+    Plugins must have a public, zero-arg constructor defined. The code generator will check for an
+    empty constructor when resolving default plugins and fail if one is not found.
 
