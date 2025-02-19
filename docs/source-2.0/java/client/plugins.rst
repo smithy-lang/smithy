@@ -65,8 +65,7 @@ The ``UserAgentPlugin``adds a default ``User-Agent`` header to an HTTP request i
 
 .. note::
 
-    This plugin is applied by default by the ``HttpMessageExchange`` and any ``ClientTransport``‘s that use
-    the exchange.
+    This plugin is applied by default by all built-in HTTP transports.
 
 The added agent header has the form:
 
