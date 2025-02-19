@@ -469,8 +469,7 @@ Composing settings
 
 Some features require multiple custom settings. Because custom settings are simply Java interfaces, we can compose them.
 
-For example, the SigV4 auth scheme requires that a region setting and clock setting be set on a client as well
-as an additional settings, the signing name of the service. We can define the ``SigV4Settings`` interface as follows:
+For example, the SigV4 auth scheme requires that region, clock, and signing name settings be configured on a client. We can define the ``SigV4Settings`` interface as follows:
 
 .. code-block:: java
     :caption: composed setting
@@ -499,8 +498,8 @@ as an additional settings, the signing name of the service. We can define the ``
         }
     }
 
-When the ``SigV4Settings`` interface is added to the codegen configuration as a default setting it will also add the
-``ClockSetting`` and ``RegionSetting`` setters to the generated client’s builder.
+When the ``SigV4Settings`` interface is added to the codegen configuration as a default setting, the
+``ClockSetting`` and ``RegionSetting`` setters will be included in the generated client’s builder.
 
 .. tip::
 
