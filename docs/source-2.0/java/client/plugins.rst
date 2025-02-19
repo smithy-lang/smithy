@@ -2,7 +2,7 @@
 Client Plugins
 ==============
 
-Smithy Java provides a number of built-in client plugins that add functionality to generated clients.
+Smithy Java provides a number of client plugins that add functionality to generated clients.
 
 ----------
 MockPlugin
@@ -61,7 +61,7 @@ Use the plugin to return canned responses from the http client:
 UserAgentPlugin
 ---------------
 
-Adds a default ``User-Agent`` header to an HTTP request if none is set.
+The ``UserAgentPlugin``adds a default ``User-Agent`` header to an HTTP request if none is set.
 
 .. note::
 
