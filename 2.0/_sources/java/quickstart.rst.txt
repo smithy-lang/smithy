@@ -2,28 +2,34 @@
 Java Quickstart
 ===============
 
-This guide introduces `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ with a simple working example of a generated server and client.
+This guide introduces `Smithy Java <https://github.com/smithy-lang/smithy-java>`_ with a simple working example of a
+generated server and client.
 
 For this example, imagine that you are the proud owner of a coffee shop.
-Your API allows your customers to order some _java_ from their Java applications.
+Your API allows your customers to order some *java* from their Java applications.
 Users can use your SDK to list available coffees, order a coffee, and track the status of their order.
 
 .. admonition:: Review
     :class: tip
 
-    If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the Smithy :doc:`../quickstart`.
+    If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the
+    Smithy :doc:`../quickstart`.
 
 -------------
 Prerequisites
 -------------
 
-* Ensure you have `JDK 17 <https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html>`_ or higher installed. Older Java versions are not supported by Smithy Java.
-* Ensure you have the the Smithy CLI installed. Run ``smithy --version`` to confirm the CLI is correctly installed. If you need to install the CLI, see :doc:`Smithy CLI Installation <../guides/smithy-cli/cli_installation>`.
+* Ensure you have `JDK 17 <https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html>`_ or higher
+  installed. Older Java versions are not supported by Smithy Java.
+* Ensure you have the the Smithy CLI installed. Run ``smithy --version`` to confirm the CLI is correctly installed.
+  If you need to install the CLI, see :doc:`Smithy CLI Installation <../guides/smithy-cli/cli_installation>`.
 
 ------
 Set Up
 ------
-Clone the quickstart example template using the Smithy CLI ``init`` command and change to the cloned directory:
+
+Clone the `quickstart example template <https://github.com/smithy-lang/smithy-examples/tree/main/smithy-java-examples/quickstart-java>`_
+using the Smithy CLI ``init`` command and change to the cloned directory:
 
 .. code-block:: sh
 
@@ -59,7 +65,8 @@ From the root of the example project, build the project using Gradle:
 Service Model
 -------------
 
-The Smithy API model for our service can be found in the model package. This model defines the interface of our service and guides the generation of client and server code.
+The Smithy API model for our service can be found in the model package. This model defines the interface of our service and
+guides the generation of client and server code.
 
 The service provides a few capabilities:
 
@@ -80,7 +87,9 @@ The service has the ``@restJson1`` protocol trait applied indicating that the se
         ...
     }
 
-Protocols define the rules and conventions for serializing and de-serializing data when communicating between client and server.
+Protocols define the rules and conventions for serializing and de-serializing data when communicating between
+client and server.
+
 Services can support multiple protocols at once.
 
 -------------------

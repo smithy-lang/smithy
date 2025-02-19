@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Java" href="index.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Client User Guide" href="client/index.html" /><link rel="prev" title="Java" href="index.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Java Quickstart - Smithy 2.0</title>
@@ -302,6 +302,15 @@
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Java</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Java Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="client/generating-clients.html">Generating Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client/codegen-integrations.html">Codegen Integrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client/dynamic-client.html">Dynamic Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client/configuration.html">Configuring Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client/customization.html">Customizing Client Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client/plugins.html">Client Plugins</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
 </ul>
@@ -357,24 +366,29 @@
         <article role="main">
           <div class="section" id="java-quickstart">
 <h1>Java Quickstart<a class="headerlink" href="#java-quickstart" title="Permalink to this heading">#</a></h1>
-<p>This guide introduces <a class="reference external" href="https://github.com/smithy-lang/smithy-java">Smithy Java</a> with a simple working example of a generated server and client.</p>
+<p>This guide introduces <a class="reference external" href="https://github.com/smithy-lang/smithy-java">Smithy Java</a> with a simple working example of a
+generated server and client.</p>
 <p>For this example, imagine that you are the proud owner of a coffee shop.
-Your API allows your customers to order some _java_ from their Java applications.
+Your API allows your customers to order some <em>java</em> from their Java applications.
 Users can use your SDK to list available coffees, order a coffee, and track the status of their order.</p>
 <div class="tip admonition">
 <p class="first admonition-title">Review</p>
-<p class="last">If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the Smithy <a class="reference internal" href="../quickstart.html"><span class="doc">Quick start</span></a>.</p>
+<p class="last">If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the
+Smithy <a class="reference internal" href="../quickstart.html"><span class="doc">Quick start</span></a>.</p>
 </div>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
-<li>Ensure you have <a class="reference external" href="https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html">JDK 17</a> or higher installed. Older Java versions are not supported by Smithy Java.</li>
-<li>Ensure you have the the Smithy CLI installed. Run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--version</span></code> to confirm the CLI is correctly installed. If you need to install the CLI, see <a class="reference internal" href="../guides/smithy-cli/cli_installation.html"><span class="doc">Smithy CLI Installation</span></a>.</li>
+<li>Ensure you have <a class="reference external" href="https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html">JDK 17</a> or higher
+installed. Older Java versions are not supported by Smithy Java.</li>
+<li>Ensure you have the the Smithy CLI installed. Run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--version</span></code> to confirm the CLI is correctly installed.
+If you need to install the CLI, see <a class="reference internal" href="../guides/smithy-cli/cli_installation.html"><span class="doc">Smithy CLI Installation</span></a>.</li>
 </ul>
 </div>
 <div class="section" id="set-up">
 <h2>Set Up<a class="headerlink" href="#set-up" title="Permalink to this heading">#</a></h2>
-<p>Clone the quickstart example template using the Smithy CLI <code class="docutils literal notranslate"><span class="pre">init</span></code> command and change to the cloned directory:</p>
+<p>Clone the <a class="reference external" href="https://github.com/smithy-lang/smithy-examples/tree/main/smithy-java-examples/quickstart-java">quickstart example template</a>
+using the Smithy CLI <code class="docutils literal notranslate"><span class="pre">init</span></code> command and change to the cloned directory:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>smithy<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>smithy-java-quickstart<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>smithy-java-quickstart
 </pre></div>
 </div>
@@ -403,7 +417,8 @@ Users can use your SDK to list available coffees, order a coffee, and track the 
 </div>
 <div class="section" id="service-model">
 <h2>Service Model<a class="headerlink" href="#service-model" title="Permalink to this heading">#</a></h2>
-<p>The Smithy API model for our service can be found in the model package. This model defines the interface of our service and guides the generation of client and server code.</p>
+<p>The Smithy API model for our service can be found in the model package. This model defines the interface of our service and
+guides the generation of client and server code.</p>
 <p>The service provides a few capabilities:</p>
 <ul class="simple">
 <li>Get a menu of available coffees with descriptions</li>
@@ -423,8 +438,9 @@ Users can use your SDK to list available coffees, order a coffee, and track the 
 </pre></div>
 </div>
 </div>
-<p>Protocols define the rules and conventions for serializing and de-serializing data when communicating between client and server.
-Services can support multiple protocols at once.</p>
+<p>Protocols define the rules and conventions for serializing and de-serializing data when communicating between
+client and server.</p>
+<p>Services can support multiple protocols at once.</p>
 </div>
 <div class="section" id="running-the-project">
 <h2>Running the project<a class="headerlink" href="#running-the-project" title="Permalink to this heading">#</a></h2>
@@ -638,7 +654,15 @@ we just need to call it in our client application:</p>
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="client/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Client User Guide</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="index.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
