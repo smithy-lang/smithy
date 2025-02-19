@@ -143,10 +143,10 @@ final class GetterGenerator implements Runnable {
                                 "}",
                                 symbolProvider.toSymbol(member),
                                 symbolProvider.toMemberName(member),
-                                () -> writer.write("return $1L == null ? $2T.empty$3L() : $1L;",
+                                () -> writer.write("return $1L == null ? $2T.$3L() : $1L;",
                                         symbolProvider.toMemberName(member),
                                         Collections.class,
-                                        isListShape ? "List" : "Map"));
+                                        isListShape ? "emptyList" : "emptyMap"));
                     }
                 } else {
                     writer.openBlock("public $T get$U() {",
