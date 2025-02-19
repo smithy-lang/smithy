@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.util.Collections;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -136,12 +137,16 @@ final class GetterGenerator implements Runnable {
                     // If the member targets a collection shape and is optional then generate an unwrapped
                     // getter as a convenience method as well.
                     Shape target = model.expectShape(member.getTarget());
-                    if (target.isListShape() || target.isMapShape()) {
+                    boolean isListShape = target.isListShape();
+                    if (isListShape || target.isMapShape()) {
                         writer.openBlock("public $T get$UOrEmpty() {",
                                 "}",
                                 symbolProvider.toSymbol(member),
                                 symbolProvider.toMemberName(member),
-                                () -> writer.write("return $L;", symbolProvider.toMemberName(member)));
+                                () -> writer.write("return $1L == null ? $2T.empty$3L() : $1L;",
+                                        symbolProvider.toMemberName(member),
+                                        Collections.class,
+                                        isListShape ? "List" : "Map"));
                     }
                 } else {
                     writer.openBlock("public $T get$U() {",
