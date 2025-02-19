@@ -109,7 +109,7 @@ Default plugins
 ^^^^^^^^^^^^^^^
 
 Plugins can be applied by default at client instantiation. To apply a plugin by default, add the plugin’s
-fully qualified name to the ``defaultPlugins``` setting to your :ref`smithy-build <smithy-build>` configuration:
+fully qualified name to the ``defaultPlugins`` setting to your :ref`smithy-build <smithy-build>` configuration:
 
 .. code-block:: json
     :caption: smithy-build.json

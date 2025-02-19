@@ -18,7 +18,7 @@ Initial setup: Gradle (recommended)
 
 To generate a Java client for a service, start by creating a new Smithy Gradle project.
 
-The ``smithy init``` CLI command can be used to create a new Smithy Gradle project:
+The ``smithy init`` CLI command can be used to create a new Smithy Gradle project:
 
 .. code-block:: sh
 
@@ -43,10 +43,10 @@ and execute build plugins:
 .. code-block:: diff
    :caption: build.gradle.kts
 
-    plugins {
-        `java-library`
-    +    id("software.amazon.smithy.gradle.smithy-base") version "__smithy_gradle_version__"
-    }
+   plugins {
+       `java-library`
+   +    id("software.amazon.smithy.gradle.smithy-base") version "__smithy_gradle_version__"
+   }
 
 Add the following dependencies to your project:
 
@@ -84,16 +84,16 @@ your :ref:`smithy-build <smithy-build>` config:
 .. code-block:: diff
    :caption: smithy-build.json
 
-    {
-      "version": "1.0",
-      "plugins": {
-    +    "java-client-codegen": {
-    +      "service": "com.example#CoffeeShop", // <- Replace with your service's ID
-    +      // Generated Java code will use this as the root package namespace
-    +      "namespace": "com.example.cafe"
-    +    }
-      }
-    }
+   {
+     "version": "1.0",
+     "plugins": {
+   +    "java-client-codegen": {
+   +      "service": "com.example#CoffeeShop", // <- Replace with your service's ID
+   +      // Generated Java code will use this as the root package namespace
+   +      "namespace": "com.example.cafe"
+   +    }
+     }
+   }
 
 ----------------------------------------
 Add generated code to the Java sourceSet
@@ -162,7 +162,7 @@ Gradle project to generate a Smithy Java client:
         implementation("...")
 
         // Add the client-core dependency needed by the generated code
-        implementation("software.amazon.smithy.java:client-core:__smithy_java_version__"")
+        implementation("software.amazon.smithy.java:client-core:__smithy_java_version__")
 
         // Also add your protocol implementations or auth schemes as dependencies
         implementation("com.example:my-protocol:1.0.0")
