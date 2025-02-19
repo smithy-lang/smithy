@@ -44,7 +44,7 @@ To set a protocol at runtime, add the protocol to the client builder:
 Set a default protocol
 ^^^^^^^^^^^^^^^^^^^^^^
 
-While users can set protocols at runtime, a default protocol should be set when generating the client:
+While users can set protocols at runtime, a default protocol should be set when generating the client.
 
 To configure the client plugin with a default protocol, add the protocol’s fully qualified Smithy ID to the protocol setting in the smithy-build.json configuration file:
 
@@ -111,7 +111,7 @@ The Smithy Java framework provides the following protocols:
 Writing custom protocols
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To create a custom protocol, implement the ``ClientProtocol`` interface from the client-core package.
+To create a custom protocol, implement the ``ClientProtocol`` interface from the ``client-core`` package.
 
 .. tip::
 
@@ -140,7 +140,7 @@ Transports
 
 Transports manage connections, and handle the sending/receiving of serialized requests/responses.
 
-``ClientTransport``'s can also configure default functionality like adding a user-agent header for HTTP request
+``ClientTransport``'s can also configure default functionality like adding a user-agent header for an HTTP request
 by modifying the client builder using the ``configureClient`` method.
 
 .. admonition:: Important
@@ -269,7 +269,7 @@ or clients can register resolvers via the client builder or via a client plugin.
 
 .. tip::
 
-    Multiple identity resolvers can be chained together using the IdentityResolver.chain method.
+    Multiple identity resolvers can be chained together using the ``IdentityResolver.chain`` method.
 
 Provided auth schemes
 ^^^^^^^^^^^^^^^^^^^^^
@@ -291,7 +291,7 @@ Smithy Java already provides an ``httpApiKeyAuth`` auth scheme that we can use t
 this API key authentication.
 
 Before we can add any auth scheme implementations to our generated client we must first add the associated
-:ref:`@httpApiKeyAuth <httpApiKeyAuth-trait>` scheme trait to our service model.
+:ref:`@httpApiKeyAuth <httpApiKeyAuth-trait>` scheme trait to our service model:
 
 .. code-block:: smithy
     :caption: model.smithy
@@ -310,7 +310,7 @@ trait for more information on how to define a custom auth scheme in your Smithy 
 
 Now that we have added our auth trait to the Smithy model we need to add a corresponding auth scheme implementation
 to our client’s dependencies. The ``client-http package`` provides an ``HttpApiKeyAuthScheme`` implementation corresponding
-to the ``@httpApiKeyAuth`` trait.
+to the ``@httpApiKeyAuth`` trait:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
@@ -363,7 +363,7 @@ Or, we could create a custom resolver that resolves the ``ApiKeyIdentity`` from 
             return CompletableFuture.completedFuture(IdentityResult.of(ApiKeyIdentity.create(apiKey)));
         }
 
-Smithy Java also allows identity resolvers to be chained together if we want to check multiple locations for the client.
+Smithy Java also allows identity resolvers to be chained together if we want to check multiple locations for the client:
 
 .. code-block:: java
     :caption: Chaining identity resolvers
@@ -417,7 +417,7 @@ Configuration parameters can be set on a client using a typed property key via t
 Custom builder setters
 ^^^^^^^^^^^^^^^^^^^^^^
 
-For common settings on a client, it is often desirable to use specifically-named setter methods such as .region("us-east-1")
+For common settings on a client, it is often desirable to use specifically-named setter methods such as ``.region("us-east-1")``
 rather than requiring users to know the specific context property to use for a configuration parameter.
 The ``ClientSetting`` interface can be used to create a custom setter that for client builders.
 

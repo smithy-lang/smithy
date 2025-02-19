@@ -51,7 +51,7 @@ For example:
     }
 
 Using the waiters integration, you can automatically generate waiters from instances
-of the waitable trait in your Smithy model. If you are using the Smithy Gradle plugins,
+of the ``waitable`` trait in your Smithy model. If you are using the Smithy Gradle plugins,
 you can add this integration to your project like so:
 
 .. code-block:: kotlin

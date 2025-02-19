@@ -19,7 +19,7 @@ Create and use an override as follows:
     var fooOutput = client.callFoo(fooInput, requestOverride);
 
 Each generated client will contain a client-specific ``RequestOverride`` class that includes any custom
-configuration settings. To get a client-specific override builder, use the ``.requestOverrideBuilder`` on the
+configuration settings. To get a client-specific override builder, use the ``.requestOverrideBuilder`` method on the
 generated client:
 
 .. code-block:: java
