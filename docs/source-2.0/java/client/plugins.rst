@@ -61,7 +61,7 @@ Use the plugin to return canned responses from the http client:
 UserAgentPlugin
 ---------------
 
-The ``UserAgentPlugin``adds a default ``User-Agent`` header to an HTTP request if none is set.
+The ``UserAgentPlugin`` adds a default ``User-Agent`` header to an HTTP request if none is set.
 
 .. note::
 
