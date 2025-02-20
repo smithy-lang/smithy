@@ -6,6 +6,7 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import static software.amazon.smithy.openapi.OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -130,16 +131,15 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
         if (context.getConfig().getOnErrorStatusConflict() != null
                 && context.getConfig().getOnErrorStatusConflict().equals(ONE_OF)
                 && targetsSyntheticError(cleanedShape, context)) {
-            UnionShape.Builder asUnion = UnionShape.builder().id(cleanedShape.getId());
             UnionShape targetUnion = context.getModel()
                     .expectShape(
                             cleanedShape.getAllMembers().values().stream().findFirst().get().getTarget(),
                             UnionShape.class);
+            List<Schema> oneOfMembers = new ArrayList<>();
             for (MemberShape member : targetUnion.getAllMembers().values()) {
-                String name = member.getMemberName();
-                asUnion.addMember(member.toBuilder().id(cleanedShape.getId().withMember(name)).build());
+                oneOfMembers.add(context.createRef(member));
             }
-            return context.getJsonSchemaConverter().convertShape(asUnion.build()).getRootSchema();
+            return Schema.builder().type(null).oneOf(oneOfMembers).build();
         }
         return context.getJsonSchemaConverter().convertShape(cleanedShape).getRootSchema();
     }
