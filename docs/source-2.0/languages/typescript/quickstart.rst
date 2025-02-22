@@ -1,6 +1,6 @@
-===============
+=====================
 TypeScript Quickstart
-===============
+=====================
 
 This guide introduces `Smithy TypeScript <https://github.com/smithy-lang/smithy-typescript>`_ with a simple working example of a
 generated server and client.
@@ -23,6 +23,7 @@ Prerequisites
 * `Node.js (>= 16) <https://nodejs.org/en/download>`_ and `yarn <https://yarnpkg.com/getting-started/install>`_
 * Ensure you have the Smithy CLI installed. Run ``smithy --version`` to confirm the CLI is correctly installed.
   If you need to install the CLI, see :doc:`Smithy CLI Installation <../guides/smithy-cli/cli_installation>`.
+
 .. warning:: This project was made for Mac/Linux, it may not build correctly on Windows.
 
 ------
