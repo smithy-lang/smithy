@@ -157,6 +157,7 @@ Read more
     :maxdepth: 1
 
     java/index
+    typescript/index
 
 .. toctree::
     :caption: Project
