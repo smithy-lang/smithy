@@ -13,7 +13,7 @@ Users can use your SDK to list available coffees, order a coffee, and track the 
     :class: tip
 
     If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the
-    Smithy :doc:`../quickstart`.
+    Smithy :doc:`/quickstart`.
 
 -------------
 Prerequisites
@@ -22,7 +22,7 @@ Prerequisites
 * Ensure you have `JDK 17 <https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html>`_ or higher
   installed. Older Java versions are not supported by Smithy Java.
 * Ensure you have the the Smithy CLI installed. Run ``smithy --version`` to confirm the CLI is correctly installed.
-  If you need to install the CLI, see :doc:`Smithy CLI Installation <../guides/smithy-cli/cli_installation>`.
+  If you need to install the CLI, see :doc:`Smithy CLI Installation </guides/smithy-cli/cli_installation>`.
 
 ------
 Set Up
