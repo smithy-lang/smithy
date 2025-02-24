@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="TypeScript" href="../../typescript/index.html" /><link rel="prev" title="Customizing Client Behavior" href="customization.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Dynamic Client" href="dynamic-client.html" /><link rel="prev" title="Customizing Client Behavior" href="customization.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Client Plugins - Smithy 2.0</title>
@@ -296,11 +296,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../quickstart.html">Java Quickstart</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Client User Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="generating-clients.html">Generating Clients</a></li>
-<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dynamic-client.html">Dynamic Client</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dynamic-client.html">Dynamic Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -450,7 +450,7 @@ The plugin facilitates testing client request/responses without the need to set 
 <p class="last">This plugin is applied by default by all built-in HTTP transports.</p>
 </div>
 <p>The added agent header has the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="o">-</span><span class="n">java</span><span class="o">/&lt;</span><span class="n">smithy</span><span class="o">&gt;</span> <span class="n">ua</span><span class="o">/&lt;</span><span class="n">ua</span><span class="o">&gt;</span> <span class="n">os</span><span class="o">/&lt;</span><span class="n">family</span><span class="o">&gt;</span><span class="c1">#&lt;version&gt; lang/java#&lt;version&gt; m/&lt;features&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="o">-</span><span class="n">java</span><span class="o">/&lt;</span><span class="n">smithy</span><span class="o">&gt;</span> <span class="n">ua</span><span class="o">/&lt;</span><span class="n">ua</span><span class="o">&gt;</span> <span class="n">os</span><span class="o">/&lt;</span><span class="n">os</span><span class="o">-</span><span class="n">family</span><span class="o">&gt;</span><span class="c1">#&lt;os-version&gt; lang/java#&lt;java-version&gt; m/&lt;features&gt;</span>
 </pre></div>
 </div>
 <div class="table-wrapper colwidths-given docutils container">
@@ -479,11 +479,15 @@ The plugin facilitates testing client request/responses without the need to set 
 <td><code class="docutils literal notranslate"><span class="pre">macos</span></code></td>
 <td>Operating system client is running on</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">version</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">os-version</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">14.6.1</span></code></td>
-<td>version of OS or Language the client is running on.</td>
+<td>version of OS client is running on.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">features</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">java-version</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">17.2.0</span></code></td>
+<td>version of Java client is running on.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">features</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">a,b</span></code></td>
 <td>Comma-separated list of feature Ids</td>
 </tr>
@@ -518,12 +522,12 @@ See the <a class="reference external" href="https://docs.aws.amazon.com/sdkref/l
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../typescript/index.html">
+          <a class="next-page" href="dynamic-client.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">TypeScript</div>
+                <div class="title">Dynamic Client</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

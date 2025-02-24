@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Configuring Clients" href="configuration.html" /><link rel="prev" title="Codegen Integrations" href="codegen-integrations.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Codegen Integrations" href="codegen-integrations.html" /><link rel="prev" title="Client Plugins" href="plugins.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>Dynamic Client - Smithy 2.0</title>
@@ -296,11 +296,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../quickstart.html">Java Quickstart</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Client User Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="generating-clients.html">Generating Clients</a></li>
-<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Dynamic Client</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Dynamic Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -429,9 +429,6 @@ Users can call a modeled service using document types as input and output.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DynamicClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">shapeId</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">protocol</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">RestJsonClientProtocol</span><span class="p">(</span><span class="n">shapeId</span><span class="p">))</span>
-<span class="w">    </span><span class="p">.</span><span class="na">transport</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">JavaHttpClientTransport</span><span class="p">())</span>
-<span class="w">    </span><span class="p">.</span><span class="na">endpointResolver</span><span class="p">(</span><span class="n">EndpointResolver</span><span class="p">.</span><span class="na">staticEndpoint</span><span class="p">(</span><span class="s">&quot;https://api.cafe.example.com&quot;</span><span class="p">))</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -447,6 +444,18 @@ The <code class="docutils literal notranslate"><span class="pre">Document.create
 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
 </pre></div>
 </div>
+<p>Dynamic clients, like generated clients, support the runtime configuration of protocols,
+transports, auth schemes, and endpoint resolvers:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DynamicClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">shapeId</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">protocol</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">RestJsonClientProtocol</span><span class="p">(</span><span class="n">shapeId</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">transport</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">JavaHttpClientTransport</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addPlugin</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyPlugin</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">endpointResolver</span><span class="p">(</span><span class="n">EndpointResolver</span><span class="p">.</span><span class="na">staticEndpoint</span><span class="p">(</span><span class="s">&quot;https://api.cafe.example.com&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -455,23 +464,23 @@ The <code class="docutils literal notranslate"><span class="pre">Document.create
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="configuration.html">
+          <a class="next-page" href="codegen-integrations.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Configuring Clients</div>
+                <div class="title">Codegen Integrations</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="codegen-integrations.html">
+          <a class="prev-page" href="plugins.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Codegen Integrations</div>
+                <div class="title">Client Plugins</div>
                 
               </div>
             </a>

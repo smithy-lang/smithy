@@ -71,7 +71,7 @@ The added agent header has the form:
 
 .. code-block::
 
-    smithy-java/<smithy> ua/<ua> os/<family>#<version> lang/java#<version> m/<features>
+    smithy-java/<smithy> ua/<ua> os/<os-family>#<os-version> lang/java#<java-version> m/<features>
 
 .. list-table::
     :header-rows: 1
@@ -89,9 +89,12 @@ The added agent header has the form:
     * - ``os-family``
       - ``macos``
       - Operating system client is running on
-    * - ``version``
+    * - ``os-version``
       - ``14.6.1``
-      - version of OS or Language the client is running on.
+      - version of OS client is running on.
+    * - ``java-version``
+      - ``17.2.0``
+      - version of Java client is running on.
     * - ``features``
       - ``a,b``
       - Comma-separated list of feature Ids
