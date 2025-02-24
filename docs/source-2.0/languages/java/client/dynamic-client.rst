@@ -48,9 +48,6 @@ Now, create the ``DynamicClient`` instance for this model and service:
     var client = DynamicClient.builder()
         .service(shapeId)
         .model(model)
-        .protocol(new RestJsonClientProtocol(shapeId))
-        .transport(new JavaHttpClientTransport())
-        .endpointResolver(EndpointResolver.staticEndpoint("https://api.cafe.example.com"))
         .build();
 
 .. admonition:: Important
@@ -67,3 +64,17 @@ The ``Document.createFromObject`` method can create a ``Document`` from a map:
     var input = Document.createFromObject(Map.of("coffeeType", "COLD_BREW"));
     var result = client.call("CreateOrder", input).get();
     System.out.println(result);
+
+Dynamic clients, like generated clients, support the runtime configuration of protocols,
+transports, auth schemes, and endpoint resolvers:
+
+.. code-block:: java
+
+    var client = DynamicClient.builder()
+        .service(shapeId)
+        .model(model)
+        .protocol(new RestJsonClientProtocol(shapeId))
+        .transport(new JavaHttpClientTransport())
+        .addPlugin(new MyPlugin())
+        .endpointResolver(EndpointResolver.staticEndpoint("https://api.cafe.example.com"))
+        .build();

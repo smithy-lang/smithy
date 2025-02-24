@@ -17,9 +17,8 @@ For a general introduction the the Smithy Java framework, see the Smithy :doc:`.
     :maxdepth: 1
 
     generating-clients
-    codegen-integrations
-    dynamic-client
     configuration
     customization
     plugins
-
+    dynamic-client
+    codegen-integrations
