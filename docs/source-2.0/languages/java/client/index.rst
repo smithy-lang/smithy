@@ -9,7 +9,7 @@ Java clients from a Smithy model of a service.
 
     Smithy Java is currently in Developer Preview. All interfaces are subject to change.
 
-For a general overview of the Smithy IDL, see the Smithy :doc:`../../quickstart` Guide
+For a general overview of the Smithy IDL, see the Smithy :doc:`/quickstart` Guide
 
 For a general introduction the the Smithy Java framework, see the Smithy :doc:`../quickstart` Guide.
 

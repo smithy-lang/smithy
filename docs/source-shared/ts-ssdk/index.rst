@@ -1,6 +1,6 @@
-######################################
-Smithy Server Generator for TypeScript
-######################################
+###############################
+Server Generator for TypeScript
+###############################
 
 The Smithy Server Generator for TypeScript is Smithy's officially-supported way to write web services in TypeScript.
 

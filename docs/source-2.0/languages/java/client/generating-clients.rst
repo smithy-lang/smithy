@@ -9,7 +9,7 @@ and can be executed with `Gradle <https://gradle.org/>`_ (recommended) or the :r
     :class: note
 
     The Smithy CLI is a prerequisite for this guide.
-    See the :doc:`Smithy CLI installation guide <../../guides/smithy-cli/cli_installation>`
+    See the :doc:`Smithy CLI installation guide </guides/smithy-cli/cli_installation>`
     if you do not already have the CLI installed.
 
 -----------------------------------
