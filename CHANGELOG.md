@@ -1,5 +1,35 @@
 # Smithy Changelog
 
+## 1.55.0 (2025-02-27)
+
+### Features
+
+* Added support for `oneOf` enumStrategy in `smithy-jsonschema` ([#2504](https://github.com/smithy-lang/smithy/pull/2504))
+* Updated `TaggableApiConfig` builder methods visibility to public ([#2506](https://github.com/smithy-lang/smithy/pull/2506))
+* Added `flattenAndRemoveMixins` build transform ([#2516](https://github.com/smithy-lang/smithy/pull/2516))
+* Added ability to model more complex ARN templates in the `@arn` trait ([#2527](https://github.com/smithy-lang/smithy/pull/2527))
+* Expanded the list of allowed member names in tag shapes ([#2528](https://github.com/smithy-lang/smithy/pull/2528))
+* Added `primaryIdentifier` field to the `cfnResource` trait to indicate an unconventional primary identifier ([#2539](https://github.com/smithy-lang/smithy/pull/2539))
+
+### Bug Fixes
+
+* Fixed malformed CBOR body in `rpcv2Cbor` test ([#2502](https://github.com/smithy-lang/smithy/pull/2502))
+* Fixed serialization order of resource properties in the IDL ([#2513](https://github.com/smithy-lang/smithy/pull/2513))
+* Fixed `restXml` protocol test to be consistent with other tests and be less confusing ([#2520](https://github.com/smithy-lang/smithy/pull/2520))
+* Fixed validation of shape ids for resource identifier bindings ([#2526](https://github.com/smithy-lang/smithy/pull/2526))
+* Fixed bug where null was being returned instead of empty collection in trait-codegen ([#2530](https://github.com/smithy-lang/smithy/pull/2530))
+* Fixed bug where documentation was being applied twice with dynamic documentation trait in the idl-serializer ([#2544](https://github.com/smithy-lang/smithy/pull/2544))
+
+### Documentation
+
+* Added links to SigV4a spec ([#2503](https://github.com/smithy-lang/smithy/pull/2503))
+* Fixed `cfnDefaultValue` trait selector documentation to match what is defined in code ([#2509](https://github.com/smithy-lang/smithy/pull/2509))
+* Added a Smithy Java quickstart guide ([#2517](https://github.com/smithy-lang/smithy/pull/2517), [#2521](https://github.com/smithy-lang/smithy/pull/2521), [#2525](https://github.com/smithy-lang/smithy/pull/2525))
+* Fixed incorrect examples and typos in mixin specification ([#2518](https://github.com/smithy-lang/smithy/pull/2518))
+* Added a Smithy Java client user-guide ([#2522](https://github.com/smithy-lang/smithy/pull/2522), [#2531](https://github.com/smithy-lang/smithy/pull/2531), [#2533](https://github.com/smithy-lang/smithy/pull/2533))
+* Added documentation placeholders for other languages ([#2534](https://github.com/smithy-lang/smithy/pull/2534))
+
+
 ## 1.54.0 (2025-01-08)
 
 ### Features
