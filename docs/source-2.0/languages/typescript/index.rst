@@ -5,6 +5,7 @@ TypeScript
 .. toctree::
     :maxdepth: 1
 
+    quickstart
     ts-ssdk/index
 
 .. toctree::
