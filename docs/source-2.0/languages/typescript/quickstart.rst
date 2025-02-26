@@ -6,23 +6,23 @@ This guide introduces `Smithy TypeScript <https://github.com/smithy-lang/smithy-
 generated server and client.
 
 For this example, imagine that you are the proud owner of a coffee shop.
-Your API allows your customers to order some *typescript* from their TypeScript applications.
+Your API allows your customers to order some *java* from their TypeScript applications.
 Users can use your SDK to list available coffees, order a coffee, and track the status of their order.
 
 .. admonition:: Review
     :class: tip
 
     If you are new to Smithy or just need a refresher on the basics, you may find it helpful to work through the
-    Smithy :doc:`../quickstart`.
+    Smithy :doc:`/quickstart`.
 
 -------------
 Prerequisites
 -------------
 
-* :doc:`Smithy CLI <../guides/smithy-cli/cli_installation>`
+* :doc:`Smithy CLI </guides/smithy-cli/cli_installation>`
 * `Node.js (>= 16) <https://nodejs.org/en/download>`_ and `yarn <https://yarnpkg.com/getting-started/install>`_
 * Ensure you have the Smithy CLI installed. Run ``smithy --version`` to confirm the CLI is correctly installed.
-  If you need to install the CLI, see :doc:`Smithy CLI Installation <../guides/smithy-cli/cli_installation>`.
+  If you need to install the CLI, see :doc:`Smithy CLI Installation </guides/smithy-cli/cli_installation>`.
 
 .. warning:: This project was made for Mac/Linux, it may not build correctly on Windows.
 
@@ -86,8 +86,6 @@ The service has the ``@restJson1`` protocol trait applied indicating that the se
 
 Protocols define the rules and conventions for serializing and de-serializing data when communicating between
 client and server.
-
-Services can support multiple protocols at once.
 
 From the root of the example project, build the service model using Gradle:
 
@@ -272,7 +270,7 @@ Finally, we can test the new operation using curl:
 
 Which will return the hours of our Cafe:
 
-.. code-block:: java
+.. code-block:: sh
     :caption: ``curl`` output
 
     {"opensAt":9,"closesAt":16}
@@ -312,5 +310,6 @@ A new log line will now appear, listing the cafe’s hours:
 ----------
 Next steps
 ----------
-
+* Explore other examples: :doc:`Smithy TypeScript Full Stack Application </tutorials/full-stack-tutorial>`
+* Check out the SSDK: :doc:`TypeScript SSDK <ts-ssdk/index>`
 * Discover the Smithy ecosystem: `Awesome-Smithy <https://github.com/smithy-lang/awesome-smithy>`_
