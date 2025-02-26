@@ -174,6 +174,14 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                                 });
                     }
 
+                    // If the primary identifier is rerouted, the derived identifiers are
+                    // additional identifiers for the resource.
+                    if (trait.getPrimaryIdentifier().isPresent()) {
+                        CfnResource tempResource = builder.build();
+                        builder.addAdditionalIdentifier(SetUtils.copyOf(tempResource.getPrimaryIdentifiers()));
+                        builder.primaryIdentifiers(SetUtils.of(trait.getPrimaryIdentifier().get()));
+                    }
+
                     resourceDefinitions.put(resourceId, builder.build());
                 });
     }

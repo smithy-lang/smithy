@@ -1,0 +1,5 @@
+[ERROR] smithy.example#BarResource: The alternative resource primary identifier, `barArn`, must be a property of the resource. | CfnResourceProperty
+[ERROR] smithy.example#BazResource: The alternative resource primary identifier, `bazArn`, targets a `integer` shape, it must target a `string`. | CfnResourceProperty
+[WARNING] smithy.example#FooResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait.aws.cloudformation#cfnResource
+[WARNING] smithy.example#BarResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait.aws.cloudformation#cfnResource
+[WARNING] smithy.example#BazResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait.aws.cloudformation#cfnResource

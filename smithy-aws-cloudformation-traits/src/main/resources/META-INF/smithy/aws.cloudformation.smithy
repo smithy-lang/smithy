@@ -6,8 +6,8 @@ namespace aws.cloudformation
 /// additional identifier for the resource.
 @unstable
 @trait(
-    selector: "structure > :test(member > string)",
-    conflicts: [cfnExcludeProperty],
+    selector: "structure > :test(member > string)"
+    conflicts: [cfnExcludeProperty]
     breakingChanges: [{change: "remove"}]
 )
 structure cfnAdditionalIdentifier {}
@@ -16,7 +16,7 @@ structure cfnAdditionalIdentifier {}
 /// to differ from a structure member name used in the model.
 @unstable
 @trait(
-    selector: "structure > member",
+    selector: "structure > member"
     breakingChanges: [{change: "any"}]
 )
 string cfnName
@@ -25,12 +25,12 @@ string cfnName
 /// CloudFormation resource definitions.
 @unstable
 @trait(
-    selector: "structure > member",
+    selector: "structure > member"
     conflicts: [
-        cfnAdditionalIdentifier,
-        cfnMutability,
+        cfnAdditionalIdentifier
+        cfnMutability
         cfnDefaultValue
-    ],
+    ]
     breakingChanges: [{change: "add"}]
 )
 structure cfnExcludeProperty {}
@@ -39,7 +39,7 @@ structure cfnExcludeProperty {}
 /// for the property of the CloudFormation resource.
 @unstable
 @trait(
-    selector: "resource > operation -[input, output]-> structure > member",
+    selector: "resource > operation -[input, output]-> structure > member"
     conflicts: [cfnExcludeProperty]
 )
 structure cfnDefaultValue {}
@@ -48,7 +48,7 @@ structure cfnDefaultValue {}
 /// when part of a CloudFormation resource.
 @unstable
 @trait(
-    selector: "structure > member",
+    selector: "structure > member"
     conflicts: [cfnExcludeProperty]
 )
 enum cfnMutability {
@@ -86,16 +86,22 @@ enum cfnMutability {
 /// Indicates that a Smithy resource is a CloudFormation resource.
 @unstable
 @trait(
-    selector: "resource",
+    selector: "resource"
     breakingChanges: [{change: "presence"}]
 )
 structure cfnResource {
     /// Provides a custom CloudFormation resource name.
-    name: String,
+    name: String
 
     /// A list of additional shape IDs of structures that will have their
     /// properties added to the CloudFormation resource.
-    additionalSchemas: StructureIdList,
+    additionalSchemas: StructureIdList
+
+    /// An alternative resource property to use as the primary identifier
+    /// for the CloudFormation resource. The value MUST be the name of a
+    /// property on the resource shape that targets a string shape.
+    @deprecated(message: "Prefer the resource's identifiers when generating resource schemas.")
+    primaryIdentifier: String
 }
 
 @private

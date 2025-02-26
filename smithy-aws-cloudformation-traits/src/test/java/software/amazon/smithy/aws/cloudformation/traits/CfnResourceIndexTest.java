@@ -28,6 +28,7 @@ public class CfnResourceIndexTest {
     private static final ShapeId FOO = ShapeId.from("smithy.example#FooResource");
     private static final ShapeId BAR = ShapeId.from("smithy.example#BarResource");
     private static final ShapeId BAZ = ShapeId.from("smithy.example#BazResource");
+    private static final ShapeId TAD = ShapeId.from("smithy.example#TadResource");
 
     private static Model model;
     private static CfnResourceIndex cfnResourceIndex;
@@ -118,7 +119,20 @@ public class CfnResourceIndexTest {
         bazResource.readOnlyProperties = SetUtils.of("bazId", "bazImplicitReadProperty");
         bazResource.writeOnlyProperties = SetUtils.of("bazImplicitWriteProperty");
 
-        return ListUtils.of(fooResource, barResource, bazResource);
+        ResourceData tadResource = new ResourceData();
+        tadResource.resourceId = TAD;
+        tadResource.identifiers = SetUtils.of("tadArn");
+        tadResource.additionalIdentifiers = ListUtils.of(SetUtils.of("tadId"));
+        tadResource.mutabilities = MapUtils.of(
+                "tadId",
+                SetUtils.of(Mutability.READ),
+                "tadArn",
+                SetUtils.of(Mutability.READ));
+        tadResource.createOnlyProperties = SetUtils.of();
+        tadResource.readOnlyProperties = SetUtils.of("tadId", "tadArn");
+        tadResource.writeOnlyProperties = SetUtils.of();
+
+        return ListUtils.of(fooResource, tadResource, bazResource, tadResource);
     }
 
     @ParameterizedTest

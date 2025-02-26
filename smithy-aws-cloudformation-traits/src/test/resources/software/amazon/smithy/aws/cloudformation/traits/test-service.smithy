@@ -9,225 +9,260 @@ use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnDefaultValue
 
 service TestService {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [
-        FooResource,
-        BarResource,
-    ],
+        FooResource
+        BarResource
+        TadResource
+    ]
 }
 
 /// The Foo resource is cool.
 @cfnResource
 resource FooResource {
     identifiers: {
-        fooId: FooId,
-    },
-    create: CreateFooOperation,
-    read: GetFooOperation,
-    update: UpdateFooOperation,
+        fooId: FooId
+    }
+    create: CreateFooOperation
+    read: GetFooOperation
+    update: UpdateFooOperation
 }
 
 operation CreateFooOperation {
-    input: CreateFooRequest,
-    output: CreateFooResponse,
+    input: CreateFooRequest
+    output: CreateFooResponse
 }
 
 structure CreateFooRequest {
-    fooValidCreateProperty: String,
+    fooValidCreateProperty: String
 
-    fooValidCreateReadProperty: String,
+    fooValidCreateReadProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 structure CreateFooResponse {
-    fooId: FooId,
+    fooId: FooId
 }
 
 @readonly
 operation GetFooOperation {
-    input: GetFooRequest,
-    output: GetFooResponse,
+    input: GetFooRequest
+    output: GetFooResponse
 }
 
 structure GetFooRequest {
     @required
-    fooId: FooId,
+    fooId: FooId
 }
 
 structure GetFooResponse {
     @cfnDefaultValue
-    fooId: FooId,
+    fooId: FooId
 
-    fooValidReadProperty: String,
+    fooValidReadProperty: String
 
-    fooValidCreateReadProperty: String,
+    fooValidCreateReadProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 operation UpdateFooOperation {
-    input: UpdateFooRequest,
-    output: UpdateFooResponse,
+    input: UpdateFooRequest
+    output: UpdateFooResponse
 }
 
 structure UpdateFooRequest {
     @required
-    fooId: FooId,
+    fooId: FooId
 
     @cfnMutability("write")
-    fooValidWriteProperty: String,
+    fooValidWriteProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
 structure UpdateFooResponse {
-    fooId: FooId,
+    fooId: FooId
 
-    fooValidReadProperty: String,
+    fooValidReadProperty: String
 
-    fooValidFullyMutableProperty: ComplexProperty,
+    fooValidFullyMutableProperty: ComplexProperty
 }
 
-/// A Bar resource, not that kind of bar though.
+/// A Bar resource not that kind of bar though.
 @cfnResource(name: "Bar", additionalSchemas: [ExtraBarRequest])
 resource BarResource {
     identifiers: {
-        barId: BarId,
-    },
-    put: PutBarOperation,
-    read: GetBarOperation,
-    operations: [ExtraBarOperation],
-    resources: [BazResource],
+        barId: BarId
+    }
+    put: PutBarOperation
+    read: GetBarOperation
+    operations: [ExtraBarOperation]
+    resources: [BazResource]
 }
 
 @idempotent
 operation PutBarOperation {
-    input: PutBarRequest,
+    input: PutBarRequest
 }
 
 structure PutBarRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
-    barImplicitFullProperty: String,
+    barImplicitFullProperty: String
 }
 
 @readonly
 operation GetBarOperation {
-    input: GetBarRequest,
-    output: GetBarResponse,
+    input: GetBarRequest
+    output: GetBarResponse
 }
 
 structure GetBarRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
     @cfnAdditionalIdentifier
-    arn: String,
+    arn: String
 }
 
 structure GetBarResponse {
-    barId: BarId,
-    barImplicitReadProperty: String,
-    barImplicitFullProperty: String,
+    barId: BarId
+    barImplicitReadProperty: String
+    barImplicitFullProperty: String
 
     @cfnMutability("full")
-    barExplicitMutableProperty: String,
+    barExplicitMutableProperty: String
 }
 
 operation ExtraBarOperation {
-    input: ExtraBarRequest,
+    input: ExtraBarRequest
 }
 
 structure ExtraBarRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
-    barValidAdditionalProperty: String,
+    barValidAdditionalProperty: String
 
     @cfnExcludeProperty
-    barValidExcludedProperty: String,
+    barValidExcludedProperty: String
 }
 
 /// This is an herb.
 @cfnResource("name": "Basil")
 resource BazResource {
     identifiers: {
-        barId: BarId,
-        bazId: BazId,
-    },
-    create: CreateBazOperation,
-    read: GetBazOperation,
-    update: UpdateBazOperation,
+        barId: BarId
+        bazId: BazId
+    }
+    create: CreateBazOperation
+    read: GetBazOperation
+    update: UpdateBazOperation
 }
 
 operation CreateBazOperation {
-    input: CreateBazRequest,
-    output: CreateBazResponse,
+    input: CreateBazRequest
+    output: CreateBazResponse
 }
 
 structure CreateBazRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
-    bazExplicitMutableProperty: String,
-    bazImplicitCreateProperty: String,
-    bazImplicitFullyMutableProperty: String,
-    bazImplicitWriteProperty: String,
+    bazExplicitMutableProperty: String
+    bazImplicitCreateProperty: String
+    bazImplicitFullyMutableProperty: String
+    bazImplicitWriteProperty: String
 }
 
 structure CreateBazResponse {
-    barId: BarId,
-    bazId: BazId,
+    barId: BarId
+    bazId: BazId
 }
 
 @readonly
 operation GetBazOperation {
-    input: GetBazRequest,
-    output: GetBazResponse,
+    input: GetBazRequest
+    output: GetBazResponse
 }
 
 structure GetBazRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
     @required
-    bazId: BazId,
+    bazId: BazId
 }
 
 structure GetBazResponse {
-    barId: BarId,
-    bazId: BazId,
+    barId: BarId
+    bazId: BazId
 
     @cfnMutability("full")
-    bazExplicitMutableProperty: String,
-    bazImplicitCreateProperty: String,
-    bazImplicitReadProperty: String,
-    bazImplicitFullyMutableProperty: String,
+    bazExplicitMutableProperty: String
+    bazImplicitCreateProperty: String
+    bazImplicitReadProperty: String
+    bazImplicitFullyMutableProperty: String
 }
 
 operation UpdateBazOperation {
-    input: UpdateBazRequest,
-    output: UpdateBazResponse,
+    input: UpdateBazRequest
+    output: UpdateBazResponse
 }
 
 structure UpdateBazRequest {
     @required
-    barId: BarId,
+    barId: BarId
 
     @required
-    bazId: BazId,
+    bazId: BazId
 
-    bazImplicitWriteProperty: String,
-    bazImplicitFullyMutableProperty: String,
+    bazImplicitWriteProperty: String
+    bazImplicitFullyMutableProperty: String
 }
 
 structure UpdateBazResponse {
-    barId: BarId,
-    bazId: BazId,
-    bazImplicitWriteProperty: String,
-    bazImplicitFullyMutableProperty: String,
+    barId: BarId
+    bazId: BazId
+    bazImplicitWriteProperty: String
+    bazImplicitFullyMutableProperty: String
+}
+
+@cfnResource(primaryIdentifier: "tadArn")
+resource TadResource {
+    identifiers: {
+        tadId: String
+    }
+    properties: {
+        tadArn: String
+    }
+    create: CreateTad
+    read: GetTad
+}
+
+operation CreateTad {
+    input := {}
+    output := {
+        @required
+        tadId: String
+        tadArn: String
+    }
+}
+
+@readonly
+operation GetTad {
+    input := {
+        @required
+        tadId: String
+    }
+    output := {
+        @required
+        tadId: String
+        tadArn: String
+    }
 }
 
 string FooId
@@ -237,6 +272,6 @@ string BarId
 string BazId
 
 structure ComplexProperty {
-    property: String,
-    another: String,
+    property: String
+    another: String
 }
