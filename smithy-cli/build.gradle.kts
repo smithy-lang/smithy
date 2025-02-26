@@ -88,9 +88,15 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 // This is needed in order for integration tests to find the CLI runtime image
 val smithyBinary =
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy.bat").get().asFile.path
+        layout.buildDirectory
+            .file("image/smithy-cli-$imageOs/bin/smithy.bat")
+            .get()
+            .asFile.path
     } else {
-        layout.buildDirectory.file("image/smithy-cli-$imageOs/bin/smithy").get().asFile.path
+        layout.buildDirectory
+            .file("image/smithy-cli-$imageOs/bin/smithy")
+            .get()
+            .asFile.path
     }
 System.setProperty("SMITHY_BINARY", smithyBinary)
 
@@ -142,9 +148,10 @@ runtime {
     // is configured for the runtime
     // NOTE: For the runtime task, you *must* have the right JDK set up in your environment (17 at the time of writing)
     javaHome =
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
-        }.map { it.metadata.installationPath.asFile.path }
+        javaToolchains
+            .launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(imageJreVersion))
+            }.map { it.metadata.installationPath.asFile.path }
 }
 
 tasks {
