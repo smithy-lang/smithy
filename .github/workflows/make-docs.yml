@@ -26,6 +26,11 @@ jobs:
         java-version: 17
         distribution: 'corretto'
 
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: latest
+
     - name: Checkout repo 
       uses: actions/checkout@v4
     - name: Setup
