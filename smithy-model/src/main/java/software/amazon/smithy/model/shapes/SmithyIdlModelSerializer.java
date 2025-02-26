@@ -707,7 +707,7 @@ public final class SmithyIdlModelSerializer {
 
             traits.values()
                     .stream()
-                    .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
+                    .filter(trait -> noSpecialDocsSyntax || !trait.toShapeId().equals(DocumentationTrait.ID))
                     // The default and enumValue traits are serialized using the assignment syntactic sugar.
                     .filter(trait -> {
                         if (trait instanceof EnumValueTrait) {

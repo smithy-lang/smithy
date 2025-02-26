@@ -13,6 +13,8 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,9 +31,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
@@ -134,7 +138,7 @@ public class SmithyIdlModelSerializerTest {
                 .assemble()
                 .unwrap();
         SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
-                .traitFilter(trait -> !(trait instanceof DocumentationTrait))
+                .traitFilter(trait -> !trait.toShapeId().equals(DocumentationTrait.ID))
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
         for (String output : serialized.values()) {
@@ -344,5 +348,25 @@ public class SmithyIdlModelSerializerTest {
         String expected = IoUtils.readUtf8Url(getClass().getResource("idl-serialization/coerced-io/after.smithy"))
                 .replace("\r\n", "\n");
         assertEquals(expected, modelResult);
+    }
+
+    @Test
+    public void docsNotDuplicateDocsForDynamicDocTrait() {
+        Model model = Model.builder()
+                .addShape(StructureShape.builder()
+                        .id("test#test")
+                        .addTrait(
+                                new DynamicTrait(
+                                        ShapeId.from("smithy.api#documentation"),
+                                        Node.from("hello")))
+                        .build())
+                .build();
+        Map<Path, String> serialized = SmithyIdlModelSerializer.builder().build().serialize(model);
+        String modelResult = serialized.values().iterator().next().replace("\r\n", "\n");
+
+        // IDL serializer will serialize docs with the special syntax, so we can check that it does not also add
+        // the doc trait itself
+        assertFalse(modelResult.contains("@documentation"));
+        assertTrue(modelResult.contains("/// hello"));
     }
 }
