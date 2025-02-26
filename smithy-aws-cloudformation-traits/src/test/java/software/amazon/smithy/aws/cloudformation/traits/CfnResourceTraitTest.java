@@ -7,6 +7,7 @@ package software.amazon.smithy.aws.cloudformation.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,6 +37,14 @@ public class CfnResourceTraitTest {
         assertThat(barTrait.getName().get(), equalTo("CustomResource"));
         assertFalse(barTrait.getAdditionalSchemas().isEmpty());
         assertThat(barTrait.getAdditionalSchemas(), contains(ShapeId.from("smithy.example#ExtraBarRequest")));
+
+        Shape tadResource = result.expectShape(ShapeId.from("smithy.example#TadResource"));
+        assertTrue(tadResource.hasTrait(CfnResourceTrait.class));
+        CfnResourceTrait tadTrait = tadResource.expectTrait(CfnResourceTrait.class);
+        assertFalse(tadTrait.getName().isPresent());
+        assertTrue(tadTrait.getAdditionalSchemas().isEmpty());
+        assertTrue(tadTrait.getPrimaryIdentifier().isPresent());
+        assertEquals("tadArn", tadTrait.getPrimaryIdentifier().get());
     }
 
     @Test

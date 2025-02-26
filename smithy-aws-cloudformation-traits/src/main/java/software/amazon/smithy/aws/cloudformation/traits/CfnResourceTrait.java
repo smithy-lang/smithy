@@ -25,11 +25,13 @@ public final class CfnResourceTrait extends AbstractTrait
 
     private final String name;
     private final List<ShapeId> additionalSchemas;
+    private final String primaryIdentifier;
 
     private CfnResourceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         name = builder.name;
         additionalSchemas = ListUtils.copyOf(builder.additionalSchemas);
+        primaryIdentifier = builder.primaryIdentifier;
     }
 
     /**
@@ -48,6 +50,15 @@ public final class CfnResourceTrait extends AbstractTrait
      */
     public List<ShapeId> getAdditionalSchemas() {
         return additionalSchemas;
+    }
+
+    /**
+     * Gets the alternative resource property to use as the primary identifier for the CloudFormation resource.
+     *
+     * @return Returns the optional alternative primary identifier.
+     */
+    public Optional<String> getPrimaryIdentifier() {
+        return Optional.ofNullable(primaryIdentifier);
     }
 
     public static Builder builder() {
@@ -83,6 +94,7 @@ public final class CfnResourceTrait extends AbstractTrait
     public static final class Builder extends AbstractTraitBuilder<CfnResourceTrait, Builder> {
         private String name;
         private final List<ShapeId> additionalSchemas = new ArrayList<>();
+        private String primaryIdentifier;
 
         private Builder() {}
 
@@ -104,6 +116,11 @@ public final class CfnResourceTrait extends AbstractTrait
         public Builder additionalSchemas(List<ShapeId> additionalSchemas) {
             this.additionalSchemas.clear();
             this.additionalSchemas.addAll(additionalSchemas);
+            return this;
+        }
+
+        public Builder primaryIdentifier(String primaryIdentifier) {
+            this.primaryIdentifier = primaryIdentifier;
             return this;
         }
     }
