@@ -31,7 +31,7 @@ merge-versions:
 	cp -R "build/1.0/html" "build/html/1.0"
 	cp -R "build/2.0/html" "build/html/2.0"
 	cp -R root/* "build/html"
-	cp -R "landing-page/dist/" "build/html/"
+	cp -R landing-page/dist/* "build/html/"
 
 openhtml:
 	open "build/html/index.html"
