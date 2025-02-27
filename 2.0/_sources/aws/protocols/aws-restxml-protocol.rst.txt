@@ -55,6 +55,8 @@ list they understand when connecting to a service. A client SHOULD assume
 that a service supports ``http/1.1`` when no ``http`` or ``eventStreamHttp``
 values are provided.
 
+Event streaming uses the :ref:`amazon-eventstream` format.
+
 The following example defines a service that uses ``aws.protocols#restXml``.
 
 .. code-block:: smithy

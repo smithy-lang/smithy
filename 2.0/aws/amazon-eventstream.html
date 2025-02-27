@@ -1,0 +1,1005 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS Protocols" href="protocols/index.html" /><link rel="prev" title="AWS CloudFormation Traits" href="aws-cloudformation.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+        <title>Amazon Event Stream Specification - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #f8f8f8;
+  --color-announcement-text: #383838;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: ##1a1c1e;;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: ##1a1c1e;;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/smithy.svg" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/smithy-dark.svg" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Linting Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">AWS integrations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Amazon Event Stream Specification</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../languages/java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/generating-clients.html">Generating Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/configuration.html">Configuring Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/codegen-integrations.html">Codegen Integrations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-typescript">Source code</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/aws/amazon-eventstream.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="amazon-event-stream-specification">
+<span id="amazon-eventstream"></span><h1>Amazon Event Stream Specification<a class="headerlink" href="#amazon-event-stream-specification" title="Permalink to this heading">#</a></h1>
+<p>This specification describes the <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>
+<a class="reference internal" href="../spec/streaming.html#event-streams"><span class="std std-ref">event stream</span></a> encoding, a generic data encoding designed
+to support bidirectional datagram-oriented communication on top of an existing,
+reliable, stream-oriented protocol. This is the encoding used by AWS services,
+regardless of protocol.</p>
+<p>The encoding provides several capabilities:</p>
+<ul class="simple">
+<li>Message framing and delineation, so that discrete datagrams can be transmitted
+over a stream-oriented protocol.</li>
+<li>Comprehensive integrity checks, ensuring that corruption can always be
+recognized and handled immediately.</li>
+<li>Extensible message metadata.</li>
+<li>Efficient binary framing and encoding.</li>
+</ul>
+<p>The encoding does NOT provide the following capabilities, though it could be
+extended to support them:</p>
+<ul class="simple">
+<li>Message fragmentation, or streaming a single payload as multiple messages.</li>
+<li>Relaying events over an unordered, unreliable transport such as UDP.</li>
+</ul>
+<p>The <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6838.html"><strong>media type</strong></a> for this format is
+<code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code>.</p>
+<div class="section" id="wire-format">
+<span id="amazon-eventstream-wire-format"></span><h2>Wire Format<a class="headerlink" href="#wire-format" title="Permalink to this heading">#</a></h2>
+<p>The wire format is structured as a sequence of binary messages. This
+specification adopts the presentation language of
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5246.html#section-4"><strong>RFC 5246 section 4</strong></a> to describe the format of these
+messages. This language is a type of psuedocode similar to C used to define
+serialized binary representations of messages. Note that all integer types are
+in network byte order, or big-endian.</p>
+<div class="section" id="message-format">
+<span id="amazon-eventstream-message-format"></span><h3>Message Format<a class="headerlink" href="#message-format" title="Permalink to this heading">#</a></h3>
+<p>The wire format is structured as a sequence of messages. Messages consist of two
+sections: the prelude and the data. The prelude section contains a four-byte
+unsigned integer representing the total length of the message and a four-byte
+unsigned integer representing the total length of the message's headers. The
+data section consists of the <a class="reference internal" href="#amazon-eventstream-headers-format"><span class="std std-ref">headers</span></a>
+followed by a payload.</p>
+<p>Both sections end with a four-byte unsigned integer representing a
+<span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3385.html"><strong>CRC32</strong></a> checksum, which is the checksum of all the data from the
+start of the message to the start of the checksum. Both clients and servers MUST
+validate these checksums. If either checksum is invalid, the stream MUST be
+terminated.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>struct {
+    uint32 total_length;
+    uint32 headers_length;
+    uint32 prelude_crc;
+
+    byte headers[headers_length];
+    byte payload[total_length - headers_length - sizeof(total_length) - sizeof(headers_length) - sizeof(prelude_crc) - sizeof(message_crc)];
+    uint32 message_crc;
+} Message;
+</pre></div>
+</div>
+<p>Additionally, the message has the following size restrictions:</p>
+<ul class="simple">
+<li>The payload of a message MUST NOT exceed 25,165,824 bytes (24 MB).</li>
+<li>The encoded headers of a message MUST NOT exceed 131,072 bytes (128 kB). Note
+that the in-memory representation of the headers, once decoded, may legally
+exceed this value.</li>
+</ul>
+<p>Services MUST validate these additional size restrictions. Clients MUST NOT
+validate them.</p>
+</div>
+<div class="section" id="headers-format">
+<span id="amazon-eventstream-headers-format"></span><h3>Headers Format<a class="headerlink" href="#headers-format" title="Permalink to this heading">#</a></h3>
+<p>Headers are used to annotate a message with arbitrary metadata, such as
+timestamps, message type information, additional payload checksums, and so on.
+Headers are key-value pairs where the key is a UTF-8 string and the value is one
+of several possible data types. Note that this is distinct from HTTP headers,
+whose values are always bytes (usually UTF-8 encoded strings). Any given header
+name MUST only appear once in a message.</p>
+<p>On the wire, each header begins with a one-byte unsigned integer that indicates
+the number of UTF-8 encoded bytes used by the header's name. Header names MUST
+be at least one byte long. This length prefix is followed by the UTF-8 header
+name.</p>
+<p>The name of the header is followed by a one-byte unsigned integer indicating
+the header's data type. The set of types is fixed and not open to extension.
+Implementations SHOULD bind header types to the corresponding types in their
+programming language. The following table shows the available types and their
+indicators.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Indicator</th>
+<th class="head">Data Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td>Boolean <code class="docutils literal notranslate"><span class="pre">true</span></code></td>
+<td>No value bytes follow this type.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td>Boolean <code class="docutils literal notranslate"><span class="pre">false</span></code></td>
+<td>No value bytes follow this type.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">byte</span></code></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">short</span></code></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">long</span></code></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">6</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">byte_array</span></code></td>
+<td>This corresponds to Smithy's <a class="reference internal" href="../spec/simple-types.html#blob"><span class="std std-ref">blob</span></a> type. The value is
+prefixed by a two-byte unsigned integer that indicates the length in
+bytes of the following value.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">7</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The value is prefixed by a two-byte unsigned integer that indicates the
+length in bytes of the following value.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">8</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></td>
+<td><p class="first">The value is an 8-byte unsigned integer representing the number of
+<strong>milliseconds</strong> that have elapsed since 00:00:00 Coordinated Universal
+Time (UTC), Thursday, 1 January 1970.</p>
+<div class="last admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The unit of this value is <strong>milliseconds</strong>, NOT seconds. This is
+unlike the <code class="docutils literal notranslate"><span class="pre">epoch-seconds</span></code>
+<a class="reference internal" href="../spec/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestamp format</span></a>, which is in
+<strong>seconds</strong>.</p>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">9</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">uuid</span></code></td>
+<td>An <span class="target" id="index-3"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9562.html"><strong>RFC 9562</strong></a> UUID in binary format.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>struct {
+    struct {
+        utf8 name&lt;1..255&gt;;
+    } header_name;
+    HeaderValueType type;
+    HeaderValue header_value;
+} Header;
+
+enum {
+    boolean_true(0),
+    boolean_false(1),
+    byte(2),
+    short(3),
+    integer(4),
+    long(5),
+    byte_array(6),
+    string(7),
+    timestamp(8),
+    uuid(9)
+} HeaderValueType;
+
+struct {
+    select (HeaderValueType) {
+        case boolean_true:
+        case boolean_false:
+            struct {};
+        case byte:
+            int8 value;
+        case short:
+            int16 value;
+        case integer:
+            int32 value;
+        case long:
+            int64 value;
+        case byte_array:
+            byte data&lt;1..2^15-1&gt;;
+        case string:
+            utf8 data&lt;1..2^15-1&gt;;
+        case timestamp:
+            int64 millis_since_epoch;
+        case uuid:
+            byte value[16];
+    } value;
+} HeaderValue;
+</pre></div>
+</div>
+<p>An event MAY have any number of headers. The order in which headers are encoded
+is meaningless; implementations MAY NOT preserve header order across encoding or
+decoding.</p>
+</div>
+<div class="section" id="diagram">
+<h3>Diagram<a class="headerlink" href="#diagram" title="Permalink to this heading">#</a></h3>
+<p>The following diagram shows the components that make up a message and a header.
+The header depicted in this diagram is a string header; other header types have
+different value layouts.</p>
+<a class="reference internal image-reference" href="../_images/amazon-eventstream-frame-diagram.png"><img alt="A schematic of the components of an event with a string header." src="../_images/amazon-eventstream-frame-diagram.png" style="width: 714px;" /></a>
+</div>
+</div>
+<div class="section" id="amazon-event-semantics">
+<span id="amazon-eventstream-semantics"></span><h2>Amazon Event Semantics<a class="headerlink" href="#amazon-event-semantics" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">application/vnd.amazon.eventstream</span></code> wire format is a generic encoding.
+There are additional semantic requirements when using this format with AWS
+protocols. Events are categorized into one of five categories: message events,
+modeled error events, unmodeled error events, initial request events, and
+initial response events. Each event category has its own semantic requirements.</p>
+<div class="section" id="message-events">
+<h3>Message Events<a class="headerlink" href="#message-events" title="Permalink to this heading">#</a></h3>
+<p>The set of modeled events that may be sent over an event stream are defined by a
+union with the <a class="reference internal" href="../spec/streaming.html#event-streams"><span class="std std-ref">&#64;streaming trait</span></a>, where each member of the
+union is a different type of event. Message events are events that represent an
+event union member whose target does not have the
+<a class="reference internal" href="../spec/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. All message events share the following
+headers:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:message-type</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header MUST always be <code class="docutils literal notranslate"><span class="pre">event</span></code>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">:event-type</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header is the name of the member that
+targets the event shape.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:content-type</span></code></td>
+<td>string</td>
+<td>The value of this header is the <span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6838.html"><strong>media type</strong></a> of the
+payload. This value follows the rules of the particular service
+protocol being used. For example, a JSON payload MAY use a
+<code class="docutils literal notranslate"><span class="pre">:content-type</span></code> of <code class="docutils literal notranslate"><span class="pre">application/json</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For example, take the following model that depicts an event stream bound to a
+service with a JSON-based protocol:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">ExampleEventStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">structure</span><span class="p">:</span><span class="w"> </span><span class="vc">StructureEvent</span>
+<span class="w">    </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="vc">StringEvent</span>
+<span class="w">    </span><span class="py">blob</span><span class="p">:</span><span class="w"> </span><span class="vc">BlobEvent</span>
+<span class="w">    </span><span class="py">headersOnly</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadersOnlyEvent</span>
+}
+
+<span class="kd">structure </span><span class="nc">StructureEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">structure </span><span class="nc">StringEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">structure </span><span class="nc">BlobEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span>
+}
+
+<span class="kd">structure </span><span class="nc">HeadersOnlyEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">sequenceNum</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
+</pre></div>
+</div>
+<p>The different events of this event stream would be serialized as shown below.
+Note that these samples are in a human-readable format rather than the encoded
+wire format. In particular, note that the binary payload of the third event is
+represented here in base64 encoding even though on the wire it would not be
+base64 encoded. Each event is delineated by a long line.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-------------------------------------------------------------------------------
+:message-type: event
+:event-type: structure
+:content-type: application/json
+
+{&quot;foo&quot;:&quot;bar&quot;}
+-------------------------------------------------------------------------------
+:message-type: event
+:event-type: string
+:content-type: text/plain
+
+Arbitrary text
+-------------------------------------------------------------------------------
+:message-type: event
+:event-type: blob
+:content-type: application/octet-stream
+
+IkFyYml0cmFyeSBiaW5hcnkiCg==
+-------------------------------------------------------------------------------
+:message-type: event
+:event-type: headersOnly
+sequenceNum: 4
+</pre></div>
+</div>
+</div>
+<div class="section" id="modeled-error-events">
+<h3>Modeled Error Events<a class="headerlink" href="#modeled-error-events" title="Permalink to this heading">#</a></h3>
+<p>Modeled error events are events that represent an event union member whose
+target has the <a class="reference internal" href="../spec/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. All modeled error events share
+the following headers:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:message-type</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header MUST always be <code class="docutils literal notranslate"><span class="pre">exception</span></code>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">:exception-type</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header is the name of the member that
+targets the error shape.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:content-type</span></code></td>
+<td>string</td>
+<td>The value of this header is the <span class="target" id="index-5"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6838.html"><strong>media type</strong></a> of the
+payload. This value follows the rules of the particular service
+protocol being used. For example, a JSON payload MAY use a
+<code class="docutils literal notranslate"><span class="pre">:content-type</span></code> of <code class="docutils literal notranslate"><span class="pre">application/json</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For example, take the following model that depicts an event stream bound to a
+service with a JSON-based protocol:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">EventStreamWithError</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">modeledError</span><span class="p">:</span><span class="w"> </span><span class="vc">MyError</span>
+}
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">MyError</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>An event representing the <code class="docutils literal notranslate"><span class="pre">modeledError</span></code> event might look like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-------------------------------------------------------------------------------
+:message-type: exception
+:exception-type: modeledError
+:content-type: application/json
+
+{&quot;message&quot;:&quot;...&quot;}
+</pre></div>
+</div>
+</div>
+<div class="section" id="unmodeled-error-events">
+<h3>Unmodeled Error Events<a class="headerlink" href="#unmodeled-error-events" title="Permalink to this heading">#</a></h3>
+<p>In addition to modeled errors, servers MAY serialize unmodeled error events.
+These generally represent unexpected errors. All unmodeled error events share
+the following headers:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:message-type</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header MUST always be <code class="docutils literal notranslate"><span class="pre">error</span></code>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">:error-code</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header is a string containing the name,
+type, or category of the error.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">:error-message</span></code></td>
+<td>string</td>
+<td><strong>Required</strong>. The value of this header is a human-readable error
+message.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following is an example unmodeled error:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-------------------------------------------------------------------------------
+:message-type: error
+:error-code: InternalError
+:error-message: An internal server error occurred.
+</pre></div>
+</div>
+</div>
+<div class="section" id="initial-message-events">
+<h3>Initial Message Events<a class="headerlink" href="#initial-message-events" title="Permalink to this heading">#</a></h3>
+<p>In REST protocols (<a class="reference internal" href="protocols/aws-restjson1-protocol.html#aws-restjson1-protocol"><span class="std std-ref">AWS restJson1</span></a>,
+<a class="reference internal" href="protocols/aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml</span></a>), initial messages are bound to HTTP
+requests and responses. Members of the input and output structures for services
+using these protocols MUST NOT be bound to the HTTP body. They MAY be bound to
+any other part of the HTTP message, such as the headers, URI, or query string.</p>
+<p>In RPC protocols (<a class="reference internal" href="protocols/aws-json-1_0-protocol.html#aws-json-1-0"><span class="std std-ref">AWS JSON 1.0</span></a>,
+<a class="reference internal" href="protocols/aws-json-1_1-protocol.html#aws-json-1-1"><span class="std std-ref">AWS JSON 1.1</span></a>,
+<a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html#smithy-rpc-v2-cbor"><span class="std std-ref">Smithy RPC v2 CBOR</span></a>), initial messages take the form
+of message events with the event types <code class="docutils literal notranslate"><span class="pre">initial-request</span></code> for request streams
+and <code class="docutils literal notranslate"><span class="pre">initial-response</span></code> for response streams. Every member of the input or
+output structure except for the event stream member MUST be serialized into the
+event payload.</p>
+<p>The following example is a simplified excerpt from the Amazon Kinesis model for
+the operation <code class="docutils literal notranslate"><span class="pre">GetRecordStream</span></code>. This service uses the
+<a class="reference internal" href="protocols/aws-json-1_1-protocol.html#aws-json-1-1"><span class="std std-ref">AWS JSON 1.1</span></a> protocol.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">GetRecordStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">ShardIterator</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">streamLifetimeInMinutes</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">        </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRecordsEventStream</span>
+<span class="w">    </span>}
+}
+
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">GetRecordsEventStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">recordsListEvent</span><span class="p">:</span><span class="w"> </span><span class="vc">RecordsListEvent</span>
+}
+
+<span class="kd">structure </span><span class="nc">RecordsListEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRecordsOutput</span>
+}
+</pre></div>
+</div>
+<p>This operation is a simplex (uni-directional) stream. The request therefore is
+no different than a conventional HTTP RPC request:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">kinesis.us-west-2.amazonaws.com</span>
+<span class="na">User-Agent</span><span class="o">:</span> <span class="l">&lt;UserAgentString&gt;</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/x-amz-json-1.1</span>
+<span class="na">Authorization</span><span class="o">:</span> <span class="l">&lt;AuthParams&gt;</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">Keep-Alive</span>
+<span class="na">X-Amz-Date</span><span class="o">:</span> <span class="l">&lt;Date&gt;</span>
+<span class="na">X-Amz-Target</span><span class="o">:</span> <span class="l">Kinesis_20131202.GetRecordStream</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">224</span>
+
+{&quot;ShardIterator&quot;:&quot;...&quot;}
+</pre></div>
+</div>
+<p>The response is an event stream, so it begins with an <code class="docutils literal notranslate"><span class="pre">initial-response</span></code>
+event:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">x-amzn-RequestId</span><span class="o">:</span> <span class="l">&lt;RequestId&gt;</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/vnd.amazon.eventstream</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">&lt;Date&gt;</span>
+
+-------------------------------------------------------------------------------
+:message-type: event
+:event-type: initial-response
+:content-type: application/json
+
+{&quot;streamLifetimeInMinutes&quot;:5}
+-------------------------------------------------------------------------------
+:message-type: event
+:event-type: recordsListEvent
+:content-type: application/json
+
+{
+    &quot;MillisBehindLatest&quot;: 2100,
+    &quot;NextShardIterator&quot;: &quot;...&quot;,
+    &quot;Records&quot;: [
+        {
+        &quot;Data&quot;: &quot;XzxkYXRhPl8w&quot;,
+        &quot;PartitionKey&quot;: &quot;partitionKey&quot;,
+        &quot;ApproximateArrivalTimestamp&quot;: 1.441215410867E9,
+        &quot;SequenceNumber&quot;: &quot;21269319989652663814458848515492872193&quot;
+        }
+    ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="protocols/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">AWS Protocols</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="aws-cloudformation.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">AWS CloudFormation Traits</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Amazon Event Stream Specification</a><ul>
+<li><a class="reference internal" href="#wire-format">Wire Format</a><ul>
+<li><a class="reference internal" href="#message-format">Message Format</a></li>
+<li><a class="reference internal" href="#headers-format">Headers Format</a></li>
+<li><a class="reference internal" href="#diagram">Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#amazon-event-semantics">Amazon Event Semantics</a><ul>
+<li><a class="reference internal" href="#message-events">Message Events</a></li>
+<li><a class="reference internal" href="#modeled-error-events">Modeled Error Events</a></li>
+<li><a class="reference internal" href="#unmodeled-error-events">Unmodeled Error Events</a></li>
+<li><a class="reference internal" href="#initial-message-events">Initial Message Events</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    </body>
+</html>

@@ -55,6 +55,11 @@ supports the following members:
         Members of these structures with the same names MUST resolve to the
         same target. See :ref:`aws-cloudformation-property-deriviation` for
         more information.
+    * - primaryIdentifier
+      - ``string``
+      - **Deprecated** An alternative resource property to use as the primary
+        identifier for the CloudFormation resource. The value MUST be the name
+        of a property on the resource shape that targets a string shape.
 
 The following example defines a simple resource that is also a CloudFormation
 resource:

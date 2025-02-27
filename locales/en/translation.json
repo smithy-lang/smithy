@@ -1,0 +1,108 @@
+{
+  "navigation": {
+    "Get Started": "Quickstart",
+    "githubLabel": "Smithy's GitHub page",
+    "getStartedAlt": "Get started with Smithy",
+    "logoAlt": "Smithy's logo: A red anvil with white text 'Smithy'"
+  },
+  "menu": {
+    "title": "Menu",
+    "Get Started": "Quickstart",
+    "items": [
+      {
+        "title": "Quickstart",
+        "href": "/2.0/quickstart.html",
+        "className": "sm:hidden"
+      },
+      { "title": "Documentation", "href": "/2.0/index.html" },
+      {
+        "title": "Examples",
+        "href": "https://github.com/smithy-lang/smithy-examples"
+      },
+      {
+        "title": "Ecosystem",
+        "href": "https://github.com/smithy-lang/awesome-smithy"
+      }
+    ]
+  },
+  "title": {
+    "lineOne": "Build services.",
+    "lineTwo": "Build customers.",
+    "tagline": "Build with Smithy.",
+    "subtitle": "Modeling a service should be as easy, no matter the interface. Smithy is extensible, typesafe, protocol agnostic, and powers services at AWS."
+  },
+  "subHeading": {
+    "model": "Model",
+    "build": "build",
+    "validate": "validate",
+    "transform": "transform",
+    "share": "share",
+    "section1": {
+      "title": "Model",
+      "description": "Build APIs your customers will love using the Smithy Interface Definition Language (IDL).\n\nThe Smithy IDL provides an intuitive syntax that codifies best practices learned from years of experience building services and SDKs in over a dozen programming languages.\n\nUse Smithy's extensible model validation tools to ensure the quality and consistency of your APIs. Customizable linting, validation, and backwards-compatibility checks integrate with your IDE and CI/CD pipelines so you catch API quality issues before your customers do."
+    },
+    "section2": {
+      "title": "Build",
+      "description": "Smithy's build tool integrations and plugin system make it easy to get started generating code from a Smithy model. Use one of the many open-source plugins for Smithy or create your own to make everything from model diagrams to SDKs.\n\nWrite your API model once and generate clients, servers, and documentation for multiple programming languages with Smithy's CLI."
+    }
+  },
+  "informationCircles": {
+    "clients": { "title": "Clients", "description": "" },
+    "servers": { "title": "Servers", "description": "" }
+  },
+  "heroQuote": {
+    "partOne": "Smithy is the cornerstone of cross-team collaboration in our organization.",
+    "partTwo": "The simplicity of the base language, rich extensibility options and the ease of writing correct tooling - all of these make it a must-try for organizations that want to evolve their APIs safely and efficiently.",
+    "author": "SiriusXM"
+  },
+  "featuresList": {
+    "title": "Features",
+    "one": "Protocol-agnostic",
+    "two": "Codify and enforce API governance ",
+    "three": "Designed to evolve",
+    "four": "Resource based",
+    "oneDescription": "Smithy is designed to work with any programming language, describe services running in any environment, and work with any kind of transport or serialization format.",
+    "twoDescription": "Customizable API standards help to automatically ensure that APIs meet customer expectations. Validation rules can be shared and applied to all APIs in an organization.",
+    "threeDescription": "Smithy is extended through traits. Smithy's extensible meta-model can evolve and capture more information about services without breaking changes.",
+    "fourDescription": "Smithy models are defined by resources and operations. Defining services with resources helps lead to better APIs and provides rich information for model transformations."
+  },
+  "supportedLanguages": {
+    "Source": "Source",
+    "java": { "alt": "Duke, the Java mascot", "trademark": "" },
+    "ts": { "alt": "TypeScript Logo", "trademark": "" },
+    "rust": {
+      "alt": "Rust logo",
+      "trademark": "Rust Logo by The Rust Foundation, used under CC-BY."
+    },
+    "scala": {
+      "alt": "Scala logo",
+      "trademark": "The Scala logo is a trademark of EPFL."
+    },
+    "go": {
+      "alt": "Go logo",
+      "trademark": "The Go Logo is a trademark of Google."
+    },
+    "ruby": {
+      "alt": "Ruby logo",
+      "trademark": "The Ruby logo is Copyright © 2006, Yukihiro Matsumoto."
+    },
+    "kotlin": {
+      "alt": "Kotlin logo",
+      "trademark": "The Kotlin logo is a trademark of The Kotlin Foundation."
+    },
+    "swift": {
+      "alt": "Swift logo",
+      "trademark": "The Swift logo is a trademark of Apple Inc."
+    },
+    "dafny": { "alt": "Dafny logo", "trademark": "" },
+    "python": {
+      "alt": "Python logo",
+      "trademark": "The Python logo is a registered trademark of the Python Software Foundation."
+    }
+  },
+  "footer": {
+    "Copyright Smithy": "Copyright Smithy",
+    "logoAlt": "Smithy's logo mark: A red anvil",
+    "disclaimer": "Full license details are available at the respective project websites."
+  }
+}

@@ -265,6 +265,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../aws-iam.html">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../amazon-eventstream.html">Amazon Event Stream Specification</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">AWS Protocols</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">AWS JSON 1.0 protocol</a></li>
@@ -400,7 +401,7 @@
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.54.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.55.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -439,6 +440,7 @@ also appear in <code class="docutils literal notranslate"><span class="pre">http
 list they understand when connecting to a service. A client SHOULD assume
 that a service supports <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when no <code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code>
 values are provided.</p>
+<p>Event streaming uses the <a class="reference internal" href="../amazon-eventstream.html#amazon-eventstream"><span class="std std-ref">Amazon Event Stream Specification</span></a> format.</p>
 <p>The following example defines a service that uses <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 

@@ -265,6 +265,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
@@ -458,7 +459,7 @@ for these build-only dependencies.</p>
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.54.0&quot;)</span>
+<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.55.0&quot;)</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -467,9 +468,9 @@ for these build-only dependencies.</p>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.54.0&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.55.0&quot;)
 
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.54.0&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.55.0&quot;)
 <span class="gi">+   smithyBuild(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
 }
 </pre></div>
@@ -488,7 +489,7 @@ dependencies {
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.54.0&#39;</span>
+<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.55.0&#39;</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -497,9 +498,9 @@ dependencies {
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.54.0&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.55.0&#39;
 
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.54.0&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.55.0&#39;
 <span class="gi">+   smithyBuild &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
 }
 </pre></div>

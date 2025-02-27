@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS Protocols" href="protocols/index.html" /><link rel="prev" title="Amazon API Gateway traits" href="amazon-apigateway.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Amazon Event Stream Specification" href="amazon-eventstream.html" /><link rel="prev" title="Amazon API Gateway traits" href="amazon-apigateway.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
         <title>AWS CloudFormation Traits - Smithy 2.0</title>
@@ -265,6 +265,7 @@
 <li class="toctree-l2"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amazon-eventstream.html">Amazon Event Stream Specification</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
@@ -438,6 +439,12 @@ will have their properties added to the CloudFormation resource.
 Members of these structures with the same names MUST resolve to the
 same target. See <a class="reference internal" href="#aws-cloudformation-property-deriviation"><span class="std std-ref">Resource properties</span></a> for
 more information.</td>
+</tr>
+<tr class="row-even"><td>primaryIdentifier</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Deprecated</strong> An alternative resource property to use as the primary
+identifier for the CloudFormation resource. The value MUST be the name
+of a property on the resource shape that targets a string shape.</td>
 </tr>
 </tbody>
 </table>
@@ -1332,12 +1339,12 @@ can be annotated for CloudFormation resource generation.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="protocols/index.html">
+          <a class="next-page" href="amazon-eventstream.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">AWS Protocols</div>
+                <div class="title">Amazon Event Stream Specification</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -265,6 +265,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
@@ -401,7 +402,7 @@ protocol is used to expose services that serialize RPC payloads as CBOR.</p>
 responses with CBOR payloads.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.54.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.55.0/smithy-protocol-tests/model/rpcv2Cbor">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.protocols#rpcv2Cbor</span></code> is a structure that supports the following
 members:</p>
@@ -440,6 +441,7 @@ also appear in <code class="docutils literal notranslate"><span class="pre">http
 list they understand when connecting to a service. A client SHOULD assume
 that a service supports <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when no <code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code>
 values are provided.</p>
+<p>Event streaming uses the <a class="reference internal" href="../../aws/amazon-eventstream.html#amazon-eventstream"><span class="std std-ref">Amazon Event Stream Specification</span></a> format.</p>
 <p>The following example defines a service that uses
 <code class="docutils literal notranslate"><span class="pre">smithy.protocols#rpcv2Cbor</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
