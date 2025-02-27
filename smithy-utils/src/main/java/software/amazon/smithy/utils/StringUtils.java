@@ -637,7 +637,7 @@ public final class StringUtils {
      * </pre>
      *
      * <p>Note: this method does not support padding with
-     * <a href="http://www.unicode.org/glossary/#supplementary_character">Unicode Supplementary Characters</a>
+     * <a href="https://www.unicode.org/glossary/#supplementary_character">Unicode Supplementary Characters</a>
      * as they require a pair of {@code char}s to be represented.
      * If you are needing to support full I18N of your applications
      * consider using {@link #repeat(String, int)} instead.
@@ -1079,14 +1079,14 @@ public final class StringUtils {
      *   <td>"Here is one line of\ntext that is going\nto be wrapped after\n20 columns."</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>"Click here to jump to the commons website - https://commons.apache.org"</td>
      *   <td>20</td>
-     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttps://commons.apache.org"</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here, http://commons.apache.org, to jump to the commons website"</td>
+     *   <td>"Click here, https://commons.apache.org, to jump to the commons website"</td>
      *   <td>20</td>
-     *   <td>"Click here,\nhttp://commons.apache.org,\nto jump to the\ncommons website"</td>
+     *   <td>"Click here,\nhttps://commons.apache.org,\nto jump to the\ncommons website"</td>
      *  </tr>
      * </table>
      *
@@ -1154,18 +1154,18 @@ public final class StringUtils {
      *   + systemNewLine + "to be wrapped after" + systemNewLine + "20 columns."</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>"Click here to jump to the commons website - https://commons.apache.org"</td>
      *   <td>20</td>
      *   <td>"\n"</td>
      *   <td>false</td>
-     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttps://commons.apache.org"</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>"Click here to jump to the commons website - https://commons.apache.org"</td>
      *   <td>20</td>
      *   <td>"\n"</td>
      *   <td>true</td>
-     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apach\ne.org"</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttps://commons.apach\ne.org"</td>
      *  </tr>
      * </table>
      *
@@ -1245,20 +1245,20 @@ public final class StringUtils {
      *   + systemNewLine + "to be wrapped after" + systemNewLine + "20 columns."</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>"Click here to jump to the commons website - https://commons.apache.org"</td>
      *   <td>20</td>
      *   <td>"\n"</td>
      *   <td>false</td>
      *   <td>" "</td>
-     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttps://commons.apache.org"</td>
      *  </tr>
      *  <tr>
-     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>"Click here to jump to the commons website - https://commons.apache.org"</td>
      *   <td>20</td>
      *   <td>"\n"</td>
      *   <td>true</td>
      *   <td>" "</td>
-     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apach\ne.org"</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttps://commons.apach\ne.org"</td>
      *  </tr>
      *  <tr>
      *   <td>"flammable/inflammable"</td>
@@ -1435,8 +1435,8 @@ public final class StringUtils {
      * This implementation follows from Algorithms on Strings, Trees and
      * Sequences by Dan Gusfield and Chas Emerick's implementation of the
      * Levenshtein distance algorithm from <a
-     * href="http://www.merriampark.com/ld.htm"
-     * >http://www.merriampark.com/ld.htm</a>
+     * href="https://www.merriampark.com/ld.htm"
+     * >https://www.merriampark.com/ld.htm</a>
      * </p>
      *
      * <pre>
