@@ -6,7 +6,7 @@ This guide introduces `Smithy TypeScript <https://github.com/smithy-lang/smithy-
 generated server and client.
 
 For this example, imagine that you are the proud owner of a coffee shop.
-Your API allows your customers to order some *java* from their TypeScript applications.
+Your API allows your customers to order coffee from their TypeScript applications.
 Users can use your SDK to list available coffees, order a coffee, and track the status of their order.
 
 .. admonition:: Review
@@ -255,6 +255,11 @@ every operation defined in service model. Let’s add the required implementatio
             closesAt: 16
         }
     }
+
+.. tip::
+
+    Don't forget to  include the `GetHoursOutput` type in your `import`.
+
 
 Now, re-start our server:
 
