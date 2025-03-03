@@ -18,6 +18,7 @@
 * Fixed `restXml` protocol test to be consistent with other tests and be less confusing ([#2520](https://github.com/smithy-lang/smithy/pull/2520))
 * Fixed validation of shape ids for resource identifier bindings ([#2526](https://github.com/smithy-lang/smithy/pull/2526))
 * Fixed bug where null was being returned instead of empty collection in trait-codegen ([#2530](https://github.com/smithy-lang/smithy/pull/2530))
+* Fixed conversion of `oneOf` errors so that they are treated as untagged unions ([#2532](https://github.com/smithy-lang/smithy/pull/2532))
 * Fixed bug where documentation was being applied twice with dynamic documentation trait in the idl-serializer ([#2544](https://github.com/smithy-lang/smithy/pull/2544))
 
 ### Documentation
