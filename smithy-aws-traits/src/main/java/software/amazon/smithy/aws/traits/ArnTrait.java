@@ -149,15 +149,23 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     @Override
     protected Node createNode() {
-        return Node.objectNodeBuilder()
+        ObjectNode.Builder builder = ObjectNode.builder()
                 .sourceLocation(getSourceLocation())
                 .withMember(TEMPLATE, Node.from(getTemplate()))
-                .withMember(ABSOLUTE, Node.from(isAbsolute()))
-                .withMember(NO_ACCOUNT, Node.from(isNoAccount()))
-                .withMember(NO_REGION, Node.from(isNoRegion()))
-                .withOptionalMember(RESOURCE_DELIMITER, getResourceDelimiter())
-                .withMember(REUSABLE, Node.from(isReusable()))
-                .build();
+                .withOptionalMember(RESOURCE_DELIMITER, getResourceDelimiter());
+        if (absolute) {
+            builder.withMember(ABSOLUTE, true);
+        }
+        if (noRegion) {
+            builder.withMember(NO_REGION, true);
+        }
+        if (noAccount) {
+            builder.withMember(NO_ACCOUNT, true);
+        }
+        if (reusable) {
+            builder.withMember(REUSABLE, true);
+        }
+        return builder.build();
     }
 
     @Override

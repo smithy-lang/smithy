@@ -11,7 +11,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.TraitService;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -59,10 +58,14 @@ public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilde
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(MapUtils.of(), getSourceLocation())
+        ObjectNode.Builder builder = ObjectNode.builder()
+                .sourceLocation(getSourceLocation())
                 .withOptionalMember("property", getProperty().map(Node::from))
-                .withOptionalMember("apiConfig", getApiConfig().map(TaggableApiConfig::toNode))
-                .withMember("disableSystemTags", getDisableSystemTags());
+                .withOptionalMember("apiConfig", getApiConfig().map(TaggableApiConfig::toNode));
+        if (disableSystemTags) {
+            builder.withMember("disableSystemTags", true);
+        }
+        return builder.build();
     }
 
     public static Builder builder() {
