@@ -112,13 +112,15 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
 
     @Override
     public Node toNode() {
-        return Node.objectNodeBuilder()
+        ObjectNode.Builder builder = ObjectNode.builder()
                 .withMember(TYPE, Node.from(type))
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
                 .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
-                .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
-                .withMember(REQUIRED, isRequired())
-                .build();
+                .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from));
+        if (required) {
+            builder.withMember(REQUIRED, true);
+        }
+        return builder.build();
     }
 
     @Override

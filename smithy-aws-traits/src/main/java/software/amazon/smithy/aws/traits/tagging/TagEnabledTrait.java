@@ -10,7 +10,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.TraitService;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -28,8 +27,12 @@ public final class TagEnabledTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withMember("disableDefaultOperations", getDisableDefaultOperations());
+        ObjectNode.Builder builder = ObjectNode.builder()
+                .sourceLocation(getSourceLocation());
+        if (disableDefaultOperations) {
+            builder.withMember("disableDefaultOperations", true);
+        }
+        return builder.build();
     }
 
     public boolean getDisableDefaultOperations() {

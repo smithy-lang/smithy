@@ -7,6 +7,7 @@ package software.amazon.smithy.aws.iam.traits;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
@@ -85,10 +86,14 @@ public final class IamResourceTrait extends AbstractTrait
 
     @Override
     protected Node createNode() {
-        NodeMapper mapper = new NodeMapper();
-        mapper.disableToNodeForClass(IamResourceTrait.class);
-        mapper.setOmitEmptyValues(true);
-        return mapper.serialize(this).expectObjectNode();
+        ObjectNode.Builder builder = ObjectNode.builder()
+                .sourceLocation(getSourceLocation())
+                .withOptionalMember("name", getName().map(Node::from))
+                .withOptionalMember("relativeDocumentation", getRelativeDocumentation().map(Node::from));
+        if (disableConditionKeyInheritance) {
+            builder.withMember("disableConditionKeyInheritance", true);
+        }
+        return builder.build();
     }
 
     @Override
