@@ -777,6 +777,7 @@ A name is assumed to represent a time value if it:
 * Begins or ends with the word "date"
 * Ends with the word "at"
 * Ends with the word "on"
+* Ends with the word "since"
 * Contains the exact string "timestamp" or "Timestamp"
 
 For the purpose of this validator, words are matched case insensitively. Words
