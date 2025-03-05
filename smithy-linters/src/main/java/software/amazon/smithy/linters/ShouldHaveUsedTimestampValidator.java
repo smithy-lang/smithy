@@ -45,6 +45,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  *     <li>Begins or Ends with the word "date"</li>
  *     <li>Ends with the word "at"</li>
  *     <li>Ends with the word "on"</li>
+ *     <li>Ends with the word "since"</li>
  * </ul>
  *
  * <p>When checking for one of the above words, the first character may be
@@ -87,7 +88,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             Pattern.compile("^.*([a-z]T|_[Tt])ime$"), // ends with the word "time"
             Pattern.compile("^.*([a-z]D|_[Dd])ate$"), // ends with the word "date"
             Pattern.compile("^.*([a-z]A|_[Aa])t$"), // ends with the word "at"
-            Pattern.compile("^.*([a-z]O|_[Oo])n$") // ends with the word "on"
+            Pattern.compile("^.*([a-z]O|_[Oo])n$"), // ends with the word "on"
+            Pattern.compile("^.*([a-z]S|_[Ss])ince$") // ends with the word "since"
     );
 
     private final List<Pattern> patterns = new ArrayList<>(DEFAULT_PATTERNS);
