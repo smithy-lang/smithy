@@ -9,15 +9,15 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
+import software.amazon.smithy.model.knowledge.IdentifierBindingIndex.BindingType;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -28,9 +28,6 @@ import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.FunctionalUtils;
-import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that operations bound to resource shapes have identifier
@@ -122,31 +119,26 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
 
     private void validateOperationBindings(Model model, List<ValidationEvent> events) {
         IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
-        Stream.of(
-                model.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateResource(model, resource, bindingIndex)),
-                model.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateCollectionBindings(model, resource, bindingIndex)),
-                model.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateInstanceBindings(model, resource, bindingIndex)))
-                .flatMap(Function.identity())
-                .forEach(events::add);
+        for (ResourceShape resource : model.getResourceShapes()) {
+            validateResource(model, resource, bindingIndex, events);
+            validateCollectionBindings(model, resource, bindingIndex, events);
+            validateInstanceBindings(model, resource, bindingIndex, events);
+        }
     }
 
-    private Stream<ValidationEvent> validateResource(
+    private void validateResource(
             Model model,
             ResourceShape parent,
-            IdentifierBindingIndex bindingIndex
+            IdentifierBindingIndex bindingIndex,
+            List<ValidationEvent> events
     ) {
-        return parent.getResources()
-                .stream()
-                .flatMap(childId -> OptionalUtils.stream(model.getShape(childId).flatMap(Shape::asResourceShape)))
-                .flatMap(child -> child.getAllOperations()
-                        .stream()
-                        .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
-                        .map(operation -> Pair.of(child, operation)))
-                .flatMap(pair -> OptionalUtils.stream(
-                        validateOperation(parent, pair.getLeft(), pair.getRight(), bindingIndex)));
+        for (ShapeId childId : parent.getResources()) {
+            ResourceShape child = model.expectShape(childId, ResourceShape.class);
+            for (ShapeId operationId : child.getAllOperations()) {
+                OperationShape operation = model.expectShape(operationId, OperationShape.class);
+                validateOperation(parent, child, operation, bindingIndex).ifPresent(events::add);
+            }
+        }
     }
 
     private Optional<ValidationEvent> validateOperation(
@@ -155,18 +147,15 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             OperationShape operation,
             IdentifierBindingIndex bindingIndex
     ) {
-        if (bindingIndex.getOperationBindingType(child, operation) != IdentifierBindingIndex.BindingType.NONE) {
+        if (bindingIndex.getOperationBindingType(child, operation) != BindingType.NONE) {
             Set<String> bindings = bindingIndex.getOperationInputBindings(child, operation).keySet();
-            Set<String> missing = parent.getIdentifiers()
-                    .keySet()
-                    .stream()
-                    .filter(FunctionalUtils.not(bindings::contains))
-                    .collect(Collectors.toSet());
+            Set<String> missing = new LinkedHashSet<>(parent.getIdentifiers().keySet());
+            missing.removeAll(bindings);
             if (!missing.isEmpty()) {
                 return Optional.of(error(operation,
                         String.format(
-                                "This operation is bound to the `%s` resource, which is a child of the `%s` resource, and "
-                                        + "it is missing the following resource identifier bindings of `%s`: [%s]",
+                                "This operation is bound to the `%s` resource, which is a child of the `%s` resource, "
+                                        + "and it is missing the following resource identifier bindings of `%s`: [%s]",
                                 child.getId(),
                                 parent.getId(),
                                 parent.getId(),
@@ -177,54 +166,55 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
         return Optional.empty();
     }
 
-    private Stream<ValidationEvent> validateCollectionBindings(
+    private void validateCollectionBindings(
             Model model,
             ResourceShape resource,
-            IdentifierBindingIndex identifierIndex
+            IdentifierBindingIndex bindingIndex,
+            List<ValidationEvent> events
     ) {
-        return resource.getAllOperations()
-                .stream()
-                // Find all collection operations bound to the resource.
-                .filter(operation -> identifierIndex.getOperationBindingType(resource,
-                        operation) == IdentifierBindingIndex.BindingType.COLLECTION)
-                // Get their operation shapes.
-                .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
-                // Find collection operations which improperly bind all the resource identifiers.
-                .filter(operation -> hasAllIdentifiersBound(model, resource, operation, identifierIndex))
-                .map(operation -> error(operation,
+        for (ShapeId operationId : resource.getAllOperations()) {
+            if (bindingIndex.getOperationBindingType(resource, operationId) != BindingType.COLLECTION) {
+                continue;
+            }
+
+            OperationShape operation = model.expectShape(operationId, OperationShape.class);
+            if (hasAllIdentifiersBound(model, resource, operation, bindingIndex)) {
+                events.add(error(operation,
                         format(
-                                "This operation is bound as a collection operation on the `%s` resource, but it improperly "
-                                        + "binds all of the identifiers of the resource to members of the operation input.",
+                                "This operation is bound as a collection operation on the `%s` resource, but it "
+                                        + "improperly binds all of the identifiers of the resource to members of the "
+                                        + "operation input.",
                                 resource.getId())));
+            }
+        }
     }
 
-    private Stream<ValidationEvent> validateInstanceBindings(
+    private void validateInstanceBindings(
             Model model,
             ResourceShape resource,
-            IdentifierBindingIndex bindingIndex
+            IdentifierBindingIndex bindingIndex,
+            List<ValidationEvent> events
     ) {
-        return resource.getAllOperations()
-                .stream()
-                // Find all instance operations bound to the resource.
-                .filter(operation -> bindingIndex.getOperationBindingType(resource,
-                        operation) == IdentifierBindingIndex.BindingType.INSTANCE)
-                // Get their operation shapes.
-                .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
-                // Find instance operations which do not bind all of the resource identifiers.
-                .filter(operation -> !hasAllIdentifiersBound(model, resource, operation, bindingIndex))
-                .map(operation -> {
-                    String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
-                    String boundIds = createBindingMessage(bindingIndex.getOperationInputBindings(resource, operation));
-                    return error(operation,
-                            format(
-                                    "This operation does not form a valid instance operation when bound to resource `%s`. "
-                                            + "All of the identifiers of the resource were not implicitly or explicitly bound "
-                                            + "to the input of the operation. Expected the following identifier bindings: "
-                                            + "[%s]. Found the following identifier bindings: [%s]",
-                                    resource.getId(),
-                                    expectedIdentifiers,
-                                    boundIds));
-                });
+        for (ShapeId operationId : resource.getAllOperations()) {
+            if (bindingIndex.getOperationBindingType(resource, operationId) != BindingType.INSTANCE) {
+                continue;
+            }
+
+            OperationShape operation = model.expectShape(operationId, OperationShape.class);
+            if (!hasAllIdentifiersBound(model, resource, operation, bindingIndex)) {
+                String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
+                String boundIds = createBindingMessage(bindingIndex.getOperationInputBindings(resource, operation));
+                events.add(error(operation,
+                        format(
+                                "This operation does not form a valid instance operation when bound to resource `%s`. "
+                                        + "All of the identifiers of the resource were not implicitly or explicitly "
+                                        + "bound to the input of the operation. Expected the following identifier "
+                                        + "bindings: [%s]. Found the following identifier bindings: [%s]",
+                                resource.getId(),
+                                expectedIdentifiers,
+                                boundIds)));
+            }
+        }
     }
 
     private boolean hasAllIdentifiersBound(
