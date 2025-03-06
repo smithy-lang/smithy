@@ -9,8 +9,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +43,11 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AuthDefinitionTrait;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 public class RemoveShapesTest {
 
@@ -180,6 +184,31 @@ public class RemoveShapesTest {
                 .addMember(b)
                 .build();
         assertContainerMembersAreRemoved(container, Arrays.asList(a, b));
+    }
+
+    @Test
+    public void removesOperationComponentsWhenStructureRemoved() {
+        ShapeId operationId = ShapeId.fromParts("ns.foo", "C");
+        StructureShape a = StructureShape.builder().id("ns.foo#A").build();
+        StructureShape b = StructureShape.builder()
+                .id("ns.foo#A")
+                .addTrait(new ErrorTrait("client"))
+                .build();
+        OperationShape c = OperationShape.builder()
+                .id(operationId)
+                .input(a)
+                .output(a)
+                .addError(b)
+                .build();
+
+        Model model = Model.builder().addShapes(a, b, c).build();
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.removeShapes(model, ListUtils.of(a, b));
+
+        assertEquals(1, result.shapes().count());
+        assertFalse(result.expectShape(operationId, OperationShape.class).getInput().isPresent());
+        assertFalse(result.expectShape(operationId, OperationShape.class).getOutput().isPresent());
+        assertTrue(result.expectShape(operationId, OperationShape.class).getErrors().isEmpty());
     }
 
     @Test
