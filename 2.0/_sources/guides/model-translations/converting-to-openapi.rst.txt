@@ -776,6 +776,30 @@ unionStrategy (``string``)
             }
         }
 
+.. _generate-openapi-jsonschema-setting-enumStrategy:
+
+enumStrategy (``string``)
+    Configures how Smithy enum shapes are converted to JSON Schema.
+
+    This property must be a string set to one of the following values:
+
+    * ``enum``: Converts to a string schema that use the "enum" property. This
+      is the default setting used if not configured.
+    * ``oneOf``: Converts to a schema that uses "oneOf".
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "enumStrategy": "oneOf"
+                }
+            }
+        }
+
 .. _generate-openapi-jsonschema-setting-mapStrategy:
 
 mapStrategy (``string``)
