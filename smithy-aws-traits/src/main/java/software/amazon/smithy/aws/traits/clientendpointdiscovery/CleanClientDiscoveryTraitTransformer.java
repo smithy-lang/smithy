@@ -15,7 +15,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -27,16 +26,18 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlugin {
     @Override
     public Model onRemove(ModelTransformer transformer, Collection<Shape> shapes, Model model) {
+        // Short circuit if the traits aren't applied.
+        if (!model.isTraitApplied(ClientEndpointDiscoveryTrait.class)
+                && !model.isTraitApplied(ClientDiscoveredEndpointTrait.class)) {
+            return model;
+        }
+
         Set<ShapeId> removedOperations = shapes.stream()
                 .filter(Shape::isOperationShape)
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
-        Set<ShapeId> removedErrors = shapes.stream()
-                .filter(shape -> shape.hasTrait(ErrorTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
 
-        Set<Shape> servicesToUpdate = getServicesToUpdate(model, removedOperations, removedErrors);
+        Set<Shape> servicesToUpdate = getServicesToUpdate(model, removedOperations);
         Set<Shape> shapesToUpdate = new HashSet<>(servicesToUpdate);
 
         Set<Shape> operationsToUpdate = getOperationsToUpdate(
@@ -51,7 +52,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
         return transformer.replaceShapes(model, shapesToUpdate);
     }
 
-    private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations, Set<ShapeId> removedErrors) {
+    private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations) {
         Set<Shape> result = new HashSet<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
             ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
