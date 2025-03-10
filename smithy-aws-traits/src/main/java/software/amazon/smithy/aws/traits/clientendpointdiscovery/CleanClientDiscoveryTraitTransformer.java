@@ -31,12 +31,8 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
                 .filter(Shape::isOperationShape)
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
-        Set<ShapeId> removedErrors = shapes.stream()
-                .filter(shape -> shape.hasTrait(ErrorTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
 
-        Set<Shape> servicesToUpdate = getServicesToUpdate(model, removedOperations, removedErrors);
+        Set<Shape> servicesToUpdate = getServicesToUpdate(model, removedOperations);
         Set<Shape> shapesToUpdate = new HashSet<>(servicesToUpdate);
 
         Set<Shape> operationsToUpdate = getOperationsToUpdate(
@@ -51,7 +47,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
         return transformer.replaceShapes(model, shapesToUpdate);
     }
 
-    private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations, Set<ShapeId> removedErrors) {
+    private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations) {
         Set<Shape> result = new HashSet<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
             ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);

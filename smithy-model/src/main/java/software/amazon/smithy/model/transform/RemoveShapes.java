@@ -8,8 +8,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Removes shapes from a model while ensuring that relationships to/from
@@ -44,10 +47,12 @@ final class RemoveShapes {
             removed.addAll(removedShape.members());
         }
 
+        Set<ShapeId> removedIds = removed.stream().map(Shape::getId).collect(Collectors.toSet());
+
         Model result = builder.build();
 
         for (ModelTransformerPlugin plugin : plugins) {
-            result = plugin.onRemove(transformer, removed, result);
+            result = plugin.onRemove(transformer, removed, removedIds, result);
         }
 
         return result;

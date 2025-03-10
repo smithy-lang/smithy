@@ -5,8 +5,11 @@
 package software.amazon.smithy.model.transform;
 
 import java.util.Collection;
+import java.util.Set;
+
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Plugin service used with ModelTransformer.
@@ -26,5 +29,9 @@ public interface ModelTransformerPlugin {
      */
     default Model onRemove(ModelTransformer transformer, Collection<Shape> removed, Model model) {
         return model;
+    }
+
+    default Model onRemove(ModelTransformer transformer, Collection<Shape> removed, Set<ShapeId> removedIds, Model model) {
+        return onRemove(transformer, removed, model);
     }
 }
