@@ -38,7 +38,7 @@ public final class TagEnabledServiceValidator extends AbstractValidator {
 
         int taggableResourceCount = 0;
         for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
-            if (resource.hasTrait(TaggableTrait.class)) {
+            if (resource.hasTrait(TaggableTrait.ID)) {
                 ++taggableResourceCount;
             }
         }

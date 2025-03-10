@@ -25,13 +25,13 @@ public class SupportedPrincipalTypesTraitTest {
         Shape myService = result.expectShape(ShapeId.from("smithy.example#MyService"));
         Shape myOperation = result.expectShape(ShapeId.from("smithy.example#MyOperation"));
 
-        assertTrue(myService.hasTrait(SupportedPrincipalTypesTrait.class));
+        assertTrue(myService.hasTrait(SupportedPrincipalTypesTrait.ID));
         assertThat(myService.expectTrait(SupportedPrincipalTypesTrait.class).getValues(),
                 containsInAnyOrder(
                         "IAMUser",
                         "IAMRole"));
 
-        assertTrue(myOperation.hasTrait(SupportedPrincipalTypesTrait.class));
+        assertTrue(myOperation.hasTrait(SupportedPrincipalTypesTrait.ID));
         assertThat(myOperation.expectTrait(SupportedPrincipalTypesTrait.class).getValues(),
                 containsInAnyOrder(
                         "Root",

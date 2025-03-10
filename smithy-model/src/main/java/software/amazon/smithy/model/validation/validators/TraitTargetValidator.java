@@ -66,7 +66,7 @@ public final class TraitTargetValidator extends AbstractValidator {
     }
 
     private void validateMixinsUsedAsTraits(Shape traitShape, Set<Shape> appliedTo, List<ValidationEvent> events) {
-        if (traitShape.hasTrait(MixinTrait.class)) {
+        if (traitShape.hasTrait(MixinTrait.ID)) {
             for (Shape shape : appliedTo) {
                 events.add(error(shape,
                         String.format(

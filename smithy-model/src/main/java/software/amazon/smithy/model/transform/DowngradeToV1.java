@@ -126,7 +126,7 @@ final class DowngradeToV1 {
 
         for (StructureShape structure : model.getStructureShapes()) {
             for (MemberShape member : structure.getAllMembers().values()) {
-                if (member.hasTrait(ClientOptionalTrait.class)) {
+                if (member.hasTrait(ClientOptionalTrait.ID)) {
                     updates.add(member.toBuilder().removeTrait(ClientOptionalTrait.ID).build());
                 }
             }

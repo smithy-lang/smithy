@@ -296,7 +296,7 @@ final class MigrateCommand implements Command {
 
         @Override
         protected Void getDefault(Shape shape) {
-            if (shape.hasTrait(BoxTrait.class)) {
+            if (shape.hasTrait(BoxTrait.ID)) {
                 writer.eraseTrait(shape, shape.expectTrait(BoxTrait.class));
             } else if (hasSyntheticDefault(shape)) {
                 addDefault(shape, shape.getType());
@@ -314,7 +314,7 @@ final class MigrateCommand implements Command {
                 addDefault(shape, completeModel.expectShape(shape.getTarget()).getType());
             }
 
-            if (shape.hasTrait(BoxTrait.class)) {
+            if (shape.hasTrait(BoxTrait.ID)) {
                 writer.eraseTrait(shape, shape.expectTrait(BoxTrait.class));
             }
         }
@@ -337,7 +337,7 @@ final class MigrateCommand implements Command {
             }
             String defaultValue = "";
             // Boxed members get a null default.
-            if (shape.hasTrait(BoxTrait.class)) {
+            if (shape.hasTrait(BoxTrait.ID)) {
                 defaultValue = "null";
             } else {
                 switch (targetType) {

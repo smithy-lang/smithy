@@ -118,7 +118,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             events.add(warning(shape, trait, semantics.warningWhenModeled, method));
         }
 
-        boolean isReadonly = shape.getTrait(ReadonlyTrait.class).isPresent();
+        boolean isReadonly = shape.hasTrait(ReadonlyTrait.ID);
         if (semantics.isReadonly != null && semantics.isReadonly != isReadonly) {
             events.add(warning(shape,
                     trait,
@@ -129,7 +129,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
                     isReadonly ? UNNECESSARY_READONLY_TRAIT : MISSING_READONLY_TRAIT));
         }
 
-        boolean isIdempotent = shape.getTrait(IdempotentTrait.class).isPresent();
+        boolean isIdempotent = shape.hasTrait(IdempotentTrait.ID);
         if (semantics.isIdempotent != null && semantics.isIdempotent != isIdempotent) {
             events.add(warning(shape,
                     trait,

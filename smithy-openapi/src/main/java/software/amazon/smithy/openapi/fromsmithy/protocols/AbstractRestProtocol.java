@@ -138,7 +138,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         bindingIndex.determineRequestContentType(operationShape, documentMediaType)
                 .ifPresent(c -> headers.addAll(ProtocolUtils.CONTENT_HEADERS));
 
-        if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
+        if (operationShape.hasTrait(HttpChecksumRequiredTrait.ID)) {
             headers.add("Content-Md5");
         }
         return headers;
@@ -653,7 +653,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             StructureShape shape,
             Map<String, ResponseObject> responses
     ) {
-        Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
+        Shape operationOrError = shape.hasTrait(ErrorTrait.ID) ? shape : operation;
         String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
         ResponseObject response = createResponse(
                 context,
@@ -690,7 +690,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     ) {
         List<HttpBinding> bindings = HttpBindingIndex.of(context.getModel())
                 .getResponseBindings(operationOrError, HttpBinding.Location.HEADER);
-        MessageType type = !operationOrError.hasTrait(ErrorTrait.class) ? MessageType.RESPONSE : MessageType.ERROR;
+        MessageType type = !operationOrError.hasTrait(ErrorTrait.ID) ? MessageType.RESPONSE : MessageType.ERROR;
         return createHeaderParameters(context, bindings, type, operationOrError, operation);
     }
 
@@ -749,7 +749,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        MessageType type = !operationOrError.hasTrait(ErrorTrait.class) ? MessageType.RESPONSE : MessageType.ERROR;
+        MessageType type = !operationOrError.hasTrait(ErrorTrait.ID) ? MessageType.RESPONSE : MessageType.ERROR;
         MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operationOrError, shape -> {
             String shapeName = context.getService().getContextualName(shape.getId());
             return shape instanceof OperationShape

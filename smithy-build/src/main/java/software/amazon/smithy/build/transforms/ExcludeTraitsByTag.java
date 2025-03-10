@@ -72,7 +72,7 @@ public final class ExcludeTraitsByTag extends BackwardCompatHelper<ExcludeTraits
 
     private boolean removeIfPredicate(Shape shape, Collection<String> tags) {
         return !Prelude.isPreludeShape(shape)
-                && shape.hasTrait(TraitDefinition.class)
+                && shape.hasTrait(TraitDefinition.ID)
                 && hasAnyTag(shape, tags);
     }
 

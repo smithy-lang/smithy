@@ -20,7 +20,7 @@ final class FlattenAndRemoveMixins {
         List<ShapeId> toRemove = new ArrayList<>();
 
         for (Shape shape : model.toSet()) {
-            if (shape.hasTrait(MixinTrait.class)) {
+            if (shape.hasTrait(MixinTrait.ID)) {
                 toRemove.add(shape.getId());
             } else if (!shape.getMixins().isEmpty()) {
                 updatedShapes.add(Shape.shapeToBuilder(shape).flattenMixins().build());

@@ -114,9 +114,9 @@ public class DowngradeToV1Test {
         assertThat(downgraded.expectShape(resource.getId(), ResourceShape.class).getProperties(),
                 Matchers.anEmptyMap());
 
-        assertThat(downgraded.expectShape(input.getMember("foo").get().getId()).hasTrait(PropertyTrait.class),
+        assertThat(downgraded.expectShape(input.getMember("foo").get().getId()).hasTrait(PropertyTrait.ID),
                 Matchers.is(false));
-        assertThat(downgraded.expectShape(input.getMember("baz").get().getId()).hasTrait(NotPropertyTrait.class),
+        assertThat(downgraded.expectShape(input.getMember("baz").get().getId()).hasTrait(NotPropertyTrait.ID),
                 Matchers.is(false));
     }
 
@@ -185,38 +185,38 @@ public class DowngradeToV1Test {
 
         // A Root level shape with a 1.0 non-zero value drops the default value and is boxed
         ShapeId integerShape = ShapeId.from("smithy.example#MyInteger");
-        assertThat(downgraded.expectShape(integerShape).hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(downgraded.expectShape(integerShape).hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(downgraded.expectShape(integerShape).hasTrait(BoxTrait.class), Matchers.is(true));
+        assertThat(downgraded.expectShape(integerShape).hasTrait(DefaultTrait.ID), Matchers.is(false));
+        assertThat(downgraded.expectShape(integerShape).hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(downgraded.expectShape(integerShape).hasTrait(BoxTrait.ID), Matchers.is(true));
 
         // A Root level shape with a 1.0 zero value keeps the default value
         ShapeId zeroIntegerShape = ShapeId.from("smithy.example#ZeroInteger");
-        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(DefaultTrait.class), Matchers.is(true));
+        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(DefaultTrait.ID), Matchers.is(true));
         assertThat(downgraded.expectShape(zeroIntegerShape)
                 .expectTrait(DefaultTrait.class)
                 .toNode()
                 .expectNumberNode()
                 .getValue(),
                 Matchers.is(0L));
-        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(downgraded.expectShape(zeroIntegerShape).hasTrait(BoxTrait.ID), Matchers.is(false));
 
         // A Root level shape with no default value is boxed
         ShapeId boxedIntegerShape = ShapeId.from("smithy.example#BoxedInteger");
-        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(BoxTrait.class), Matchers.is(true));
+        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(DefaultTrait.ID), Matchers.is(false));
+        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(downgraded.expectShape(boxedIntegerShape).hasTrait(BoxTrait.ID), Matchers.is(true));
 
         // StructureShape still exists
         StructureShape dStruct = downgraded.expectShape(ShapeId.from("smithy.example#Struct"), StructureShape.class);
 
         // A Member that targets a shape with a 1.0 non-zero value drops the default value and is not boxed
-        assertThat(dStruct.getAllMembers().get("foo").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("foo").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("foo").hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("foo").hasTrait(DefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("foo").hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("foo").hasTrait(BoxTrait.ID), Matchers.is(false));
 
         // A Member that targets a shape with a matching default 1.0 zero value keeps the default value
-        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(DefaultTrait.class), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(DefaultTrait.ID), Matchers.is(true));
         assertThat(dStruct.getAllMembers()
                 .get("zeroTargetZeroMember")
                 .expectTrait(DefaultTrait.class)
@@ -224,12 +224,12 @@ public class DowngradeToV1Test {
                 .expectNumberNode()
                 .getValue(),
                 Matchers.is(0L));
-        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("zeroTargetZeroMember").hasTrait(BoxTrait.ID), Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(DefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(DefaultTrait.ID),
                 Matchers.is(true));
         assertThat(
                 dStruct.getAllMembers()
@@ -238,27 +238,27 @@ public class DowngradeToV1Test {
                         .toNode()
                         .isNullNode(),
                 Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(BoxTrait.class), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("zeroTargetBoxedMember").hasTrait(BoxTrait.ID), Matchers.is(true));
 
         // A Member that has a target shape with no default value drops the default value
-        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(DefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(DefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(BoxTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("boxedTargetZeroMember").hasTrait(BoxTrait.ID), Matchers.is(false));
 
         // A Member that has a target shape with no default value drops the default value
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(DefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(DefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(BoxTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetNonzeroMember").hasTrait(BoxTrait.ID),
                 Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(DefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(DefaultTrait.ID),
                 Matchers.is(true));
         assertThat(
                 dStruct.getAllMembers()
@@ -267,33 +267,33 @@ public class DowngradeToV1Test {
                         .toNode()
                         .isNullNode(),
                 Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(BoxTrait.class), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("boxedTargetBoxedMember").hasTrait(BoxTrait.ID), Matchers.is(true));
 
         // A Member that has no default value has no default trait and the member is not boxed
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(DefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(DefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(AddedDefaultTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(AddedDefaultTrait.ID),
                 Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(BoxTrait.class),
+        assertThat(dStruct.getAllMembers().get("boxedTargetImplicitBoxedMember").hasTrait(BoxTrait.ID),
                 Matchers.is(false));
 
         // A Member that has a default value of null keeps the default value of null and is boxed
-        assertThat(dStruct.getAllMembers().get("baz").hasTrait(DefaultTrait.class), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("baz").hasTrait(DefaultTrait.ID), Matchers.is(true));
         assertThat(dStruct.getAllMembers().get("baz").expectTrait(DefaultTrait.class).toNode().isNullNode(),
                 Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("baz").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("baz").hasTrait(BoxTrait.class), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("baz").hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("baz").hasTrait(BoxTrait.ID), Matchers.is(true));
 
         // A Member with the addedDefault trait drops both the default and addedDefault trait
-        assertThat(dStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("bar").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("bar").hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
 
         // A Member keeps the required trait and drops the clientOptional trait
-        assertThat(dStruct.getAllMembers().get("bam").hasTrait(DefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("bam").hasTrait(AddedDefaultTrait.class), Matchers.is(false));
-        assertThat(dStruct.getAllMembers().get("bam").hasTrait(RequiredTrait.class), Matchers.is(true));
-        assertThat(dStruct.getAllMembers().get("bam").hasTrait(ClientOptionalTrait.class), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("bam").hasTrait(DefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("bam").hasTrait(AddedDefaultTrait.ID), Matchers.is(false));
+        assertThat(dStruct.getAllMembers().get("bam").hasTrait(RequiredTrait.ID), Matchers.is(true));
+        assertThat(dStruct.getAllMembers().get("bam").hasTrait(ClientOptionalTrait.ID), Matchers.is(false));
     }
 }

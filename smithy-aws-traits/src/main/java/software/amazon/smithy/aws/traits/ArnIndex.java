@@ -43,7 +43,7 @@ public final class ArnIndex implements KnowledgeIndex {
         // Pre-compute all of the ARN templates in a service shape.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         List<ServiceShape> services = model.shapes(ServiceShape.class)
-                .filter(shape -> shape.hasTrait(ServiceTrait.class))
+                .filter(shape -> shape.hasTrait(ServiceTrait.ID))
                 .collect(Collectors.toList());
 
         templates = unmodifiableMap(services.stream()

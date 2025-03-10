@@ -34,7 +34,7 @@ public final class DeprecatedTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
-            if (trait.hasTrait(DeprecatedTrait.class)) {
+            if (trait.hasTrait(DeprecatedTrait.ID)) {
                 // Don't emit for deprecation warnings that are handled by some other validation.
                 if (HANDLED_ELSEWHERE.contains(trait.toShapeId())) {
                     continue;

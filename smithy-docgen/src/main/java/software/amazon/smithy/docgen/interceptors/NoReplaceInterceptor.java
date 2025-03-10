@@ -29,7 +29,7 @@ abstract class NoReplaceInterceptor<S extends CodeSection> implements CodeInterc
         var shape = getShape(section);
         var resource = getResource(getContext(section), shape);
         return resource.isPresent()
-                && resource.get().hasTrait(NoReplaceTrait.class)
+                && resource.get().hasTrait(NoReplaceTrait.ID)
                 && resource.get().getPut().map(put -> put.equals(shape.getId())).orElse(false);
     }
 

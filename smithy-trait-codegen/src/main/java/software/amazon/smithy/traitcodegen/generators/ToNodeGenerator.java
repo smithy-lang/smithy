@@ -59,7 +59,7 @@ final class ToNodeGenerator implements Runnable {
     @Override
     public void run() {
         writer.override();
-        writer.openBlock(shape.hasTrait(TraitDefinition.class) ? "protected $T createNode() {" : "public $T toNode() {",
+        writer.openBlock(shape.hasTrait(TraitDefinition.ID) ? "protected $T createNode() {" : "public $T toNode() {",
                 "}",
                 Node.class,
                 () -> shape.accept(new CreateNodeBodyGenerator()));
@@ -125,7 +125,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void enumShape(EnumShape shape) {
-            if (shape.hasTrait(TraitDefinition.class)) {
+            if (shape.hasTrait(TraitDefinition.ID)) {
                 writer.write("return $T.from(value);", Node.class);
             } else {
                 toStringCreator();
@@ -136,7 +136,7 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             writer.write("return $T.objectNodeBuilder()", Node.class).indent();
-            if (shape.hasTrait(TraitDefinition.class)) {
+            if (shape.hasTrait(TraitDefinition.ID)) {
                 // If the shape is a trait we need to add the source location of trait to the
                 // generated node.
                 writer.writeInline(".sourceLocation(getSourceLocation())");
@@ -166,7 +166,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            if (shape.hasTrait(TimestampFormatTrait.class)) {
+            if (shape.hasTrait(TimestampFormatTrait.ID)) {
                 switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                     case EPOCH_SECONDS:
                         writer.write("return new $T(value.getEpochSecond(), getSourceLocation());",
@@ -210,7 +210,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
-            if (shape.hasTrait(IdRefTrait.class)) {
+            if (shape.hasTrait(IdRefTrait.ID)) {
                 toStringMapper();
             } else {
                 fromNodeMapper();
@@ -256,7 +256,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void memberShape(MemberShape shape) {
-            if (shape.hasTrait(IdRefTrait.class)) {
+            if (shape.hasTrait(IdRefTrait.ID)) {
                 toStringMapper();
             } else {
                 model.expectShape(shape.getTarget()).accept(this);
@@ -296,7 +296,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            if (shape.hasTrait(TimestampFormatTrait.class)) {
+            if (shape.hasTrait(TimestampFormatTrait.ID)) {
                 switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                     case EPOCH_SECONDS:
                         writer.write("$T.from($L.getEpochSecond())", Node.class, varName);

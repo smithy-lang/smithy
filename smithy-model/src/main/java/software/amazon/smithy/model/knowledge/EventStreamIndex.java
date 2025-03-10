@@ -52,7 +52,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
     ) {
         for (MemberShape member : shape.getAllMembers().values()) {
             Shape target = model.expectShape(member.getTarget());
-            if (target.hasTrait(StreamingTrait.class) && target.isUnionShape()) {
+            if (target.hasTrait(StreamingTrait.ID) && target.isUnionShape()) {
                 createEventStreamInfo(model, operation, shape, member).ifPresent(info -> {
                     infoMap.put(operation.getId(), info);
                 });

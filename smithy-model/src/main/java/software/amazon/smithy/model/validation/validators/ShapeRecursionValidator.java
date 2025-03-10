@@ -79,7 +79,7 @@ public final class ShapeRecursionValidator extends AbstractValidator {
     private void validateStructurePaths(PathFinder finder, Model model, List<ValidationEvent> events) {
         finder.relationshipFilter(rel -> {
             if (rel.getShape().isStructureShape()) {
-                return rel.getNeighborShape().get().hasTrait(RequiredTrait.class);
+                return rel.getNeighborShape().get().hasTrait(RequiredTrait.ID);
             } else {
                 return rel.getShape().isMemberShape();
             }

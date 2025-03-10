@@ -26,20 +26,20 @@ public class CfnResourceTraitTest {
                 .unwrap();
 
         Shape fooResource = result.expectShape(ShapeId.from("smithy.example#FooResource"));
-        assertTrue(fooResource.hasTrait(CfnResourceTrait.class));
+        assertTrue(fooResource.hasTrait(CfnResourceTrait.ID));
         CfnResourceTrait fooTrait = fooResource.expectTrait(CfnResourceTrait.class);
         assertFalse(fooTrait.getName().isPresent());
         assertTrue(fooTrait.getAdditionalSchemas().isEmpty());
 
         Shape barResource = result.expectShape(ShapeId.from("smithy.example#BarResource"));
-        assertTrue(barResource.hasTrait(CfnResourceTrait.class));
+        assertTrue(barResource.hasTrait(CfnResourceTrait.ID));
         CfnResourceTrait barTrait = barResource.expectTrait(CfnResourceTrait.class);
         assertThat(barTrait.getName().get(), equalTo("CustomResource"));
         assertFalse(barTrait.getAdditionalSchemas().isEmpty());
         assertThat(barTrait.getAdditionalSchemas(), contains(ShapeId.from("smithy.example#ExtraBarRequest")));
 
         Shape tadResource = result.expectShape(ShapeId.from("smithy.example#TadResource"));
-        assertTrue(tadResource.hasTrait(CfnResourceTrait.class));
+        assertTrue(tadResource.hasTrait(CfnResourceTrait.ID));
         CfnResourceTrait tadTrait = tadResource.expectTrait(CfnResourceTrait.class);
         assertFalse(tadTrait.getName().isPresent());
         assertTrue(tadTrait.getAdditionalSchemas().isEmpty());

@@ -55,7 +55,7 @@ public class UniqueSmokeTestCaseIdValidator extends AbstractValidator {
     private void addValidationEventsForShapes(Set<OperationShape> shapes, List<ValidationEvent> events) {
         Map<String, List<Shape>> testCaseIdsToOperations = new HashMap<>();
         for (Shape shape : shapes) {
-            if (!shape.isOperationShape() || !shape.hasTrait(SmokeTestsTrait.class)) {
+            if (!shape.isOperationShape() || !shape.hasTrait(SmokeTestsTrait.ID)) {
                 continue;
             }
 

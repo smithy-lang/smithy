@@ -166,7 +166,7 @@ public final class CfnConverter {
         // Create an environment for each of the resources to be converted with.
         List<ConversionEnvironment> environments = new ArrayList<>();
         for (ResourceShape resourceShape : resourceShapes) {
-            if (resourceShape.getTrait(CfnResourceTrait.class).isPresent()) {
+            if (resourceShape.hasTrait(CfnResourceTrait.ID)) {
                 ConversionEnvironment environment = createConversionEnvironment(model, serviceShape, resourceShape);
                 environments.add(environment);
             }

@@ -43,7 +43,7 @@ public final class TaggingMapper implements CfnMapper {
             StructureShape.Builder builder
     ) {
         String tagMemberName = getTagMemberName(config, resource);
-        if (resource.hasTrait(TaggableTrait.class)) {
+        if (resource.hasTrait(TaggableTrait.ID)) {
             AwsTagIndex tagIndex = AwsTagIndex.of(model);
             TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
             CfnResourceIndex resourceIndex = CfnResourceIndex.of(model);
@@ -68,7 +68,7 @@ public final class TaggingMapper implements CfnMapper {
     @Override
     public ResourceSchema after(Context context, ResourceSchema resourceSchema) {
         ResourceShape resourceShape = context.getResource();
-        if (!resourceShape.hasTrait(TaggableTrait.class)) {
+        if (!resourceShape.hasTrait(TaggableTrait.ID)) {
             return resourceSchema;
         }
 

@@ -587,7 +587,7 @@ public final class CodegenDirector<
 
         @Override
         public Void structureShape(StructureShape shape) {
-            if (shape.hasTrait(ErrorTrait.class)) {
+            if (shape.hasTrait(ErrorTrait.ID)) {
                 LOGGER.finest(() -> "Generating error " + shape.getId());
                 directedCodegen.generateError(new GenerateErrorDirective<>(context, serviceShape, shape));
             } else {

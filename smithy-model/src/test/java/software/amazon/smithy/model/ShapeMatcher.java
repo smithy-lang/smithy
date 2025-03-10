@@ -86,7 +86,7 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
     public static ShapeMatcher<MemberShape> memberIsNullable(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
                 .description("Member is marked with @required or @default trait")
-                .addAssertion(member -> !member.hasTrait(RequiredTrait.class),
+                .addAssertion(member -> !member.hasTrait(RequiredTrait.ID),
                         member -> "Member is marked with the @required trait")
                 .addAssertion(member -> {
                     DefaultTrait trait = member.getTrait(DefaultTrait.class).orElse(null);

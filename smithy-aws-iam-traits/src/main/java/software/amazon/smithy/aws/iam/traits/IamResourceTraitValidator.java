@@ -28,7 +28,7 @@ public class IamResourceTraitValidator extends AbstractValidator {
         for (ResourceShape resource : model.getResourceShapesWithTrait(IamResourceTrait.class)) {
             // If the resource has both the IamResourceTrait and Arn trait,
             // check that the resource name is consistent between the two traits
-            if (resource.hasTrait(ArnTrait.class)) {
+            if (resource.hasTrait(ArnTrait.ID)) {
                 String resourceName = resource.expectTrait(IamResourceTrait.class)
                         .getName()
                         .orElseGet(() -> StringUtils.lowerCase(resource.getId().getName()));

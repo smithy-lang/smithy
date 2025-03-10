@@ -37,7 +37,7 @@ public class FilterShapesTest {
         StringShape b = StringShape.builder().id(bId).build();
         Model model = Model.builder().addShapes(a, b).build();
         Model result = ModelTransformer.create()
-                .filterShapes(model, shape -> !shape.getTrait(SensitiveTrait.class).isPresent());
+                .filterShapes(model, shape -> !shape.hasTrait(SensitiveTrait.class));
 
         assertThat(result.shapes().count(), Matchers.is(1L));
         assertThat(result.getShape(bId), Matchers.not(Optional.empty()));

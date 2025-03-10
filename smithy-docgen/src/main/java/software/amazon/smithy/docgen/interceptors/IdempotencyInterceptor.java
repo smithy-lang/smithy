@@ -43,7 +43,7 @@ public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetail
         var model = section.context().model();
         var operationIndex = OperationIndex.of(model);
 
-        if (shape.hasTrait(IdempotencyTokenTrait.class)
+        if (shape.hasTrait(IdempotencyTokenTrait.ID)
                 && operationIndex.isInputStructure(shape.asMemberShape().get().getContainer())) {
             return true;
         }
@@ -64,7 +64,7 @@ public final class IdempotencyInterceptor implements CodeInterceptor<ShapeDetail
     private Optional<MemberShape> getIdempotencyToken(Model model, OperationShape operation) {
         var input = model.expectShape(operation.getInputShape());
         for (var member : input.members()) {
-            if (member.hasTrait(IdempotencyTokenTrait.class)) {
+            if (member.hasTrait(IdempotencyTokenTrait.ID)) {
                 return Optional.of(member);
             }
         }

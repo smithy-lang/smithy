@@ -46,7 +46,7 @@ public final class ChangedShapeType extends AbstractDiffEvaluator {
         // Smithy diff doesn't raise an issue if a set is changed to a list and the list
         // has the uniqueItems trait. Set is deprecated and this is a recommended change.
         if (oldType == ShapeType.SET && newType == ShapeType.LIST) {
-            return diff.getNewShape().hasTrait(UniqueItemsTrait.class);
+            return diff.getNewShape().hasTrait(UniqueItemsTrait.ID);
         }
 
         return false;

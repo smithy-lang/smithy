@@ -67,7 +67,7 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
 
     @Override
     public Void listShape(ListShape shape) {
-        if (!shape.hasTrait(UniqueItemsTrait.class)
+        if (!shape.hasTrait(UniqueItemsTrait.ID)
                 && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))) {
             writer.openBlock("public $1T($1B values, $2T sourceLocation) {",
                     "}",
@@ -170,7 +170,7 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     private void writeConstructorWithBuilder() {
         writer.openBlock("private $T(Builder builder) {", "}", symbol, () -> {
             // If the shape is a trait include the source location. Nested shapes don't have a separate source location.
-            if (shape.hasTrait(TraitDefinition.class)) {
+            if (shape.hasTrait(TraitDefinition.ID)) {
                 writer.writeWithNoFormatting("super(ID, builder.getSourceLocation());");
             }
             shape.accept(new InitializerVisitor());

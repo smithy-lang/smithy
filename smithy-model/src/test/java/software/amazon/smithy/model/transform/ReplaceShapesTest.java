@@ -319,14 +319,14 @@ public class ReplaceShapesTest {
                 .get()
                 .getMember("a")
                 .get()
-                .hasTrait(RequiredTrait.class));
+                .hasTrait(RequiredTrait.ID));
         assertTrue(result.getShape(containerId)
                 .get()
                 .asStructureShape()
                 .get()
                 .getMember("b")
                 .get()
-                .hasTrait(RequiredTrait.class));
+                .hasTrait(RequiredTrait.ID));
     }
 
     @Test

@@ -33,17 +33,17 @@ final class AddClientOptional {
             MemberShape member = (MemberShape) shape;
 
             // Don't do anything if it's already marked with clientOptional.
-            if (member.hasTrait(ClientOptionalTrait.class)) {
+            if (member.hasTrait(ClientOptionalTrait.ID)) {
                 return member;
             }
 
             Shape container = model.expectShape(member.getContainer());
             Shape target = model.expectShape(member.getTarget());
 
-            boolean hasInputTrait = container.hasTrait(InputTrait.class);
+            boolean hasInputTrait = container.hasTrait(InputTrait.ID);
             boolean targetsShapeWithNoZeroValue = target.isStructureShape() || target.isUnionShape();
             boolean isEffectivelyClientOptional = hasInputTrait
-                    || !(member.hasTrait(RequiredTrait.class) || member.hasTrait(DefaultTrait.class))
+                    || !(member.hasTrait(RequiredTrait.ID) || member.hasTrait(DefaultTrait.ID))
                     || (targetsShapeWithNoZeroValue && applyWhenNoDefaultValue);
 
             if (isEffectivelyClientOptional) {

@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -103,7 +104,7 @@ public final class TargetValidator extends AbstractValidator {
         RelationshipType relType = rel.getRelationshipType();
 
         if (relType != RelationshipType.MIXIN && relType.getDirection() == RelationshipDirection.DIRECTED) {
-            if (target.hasTrait(TraitDefinition.class)) {
+            if (target.hasTrait(TraitDefinition.ID)) {
                 events.add(error(shape,
                         format(
                                 "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
@@ -115,7 +116,7 @@ public final class TargetValidator extends AbstractValidator {
             }
 
             // Ignoring members with the mixin trait, forbid shapes to reference mixins except as mixins.
-            if (!target.isMemberShape() && target.hasTrait(MixinTrait.class)) {
+            if (!target.isMemberShape() && target.hasTrait(MixinTrait.ID)) {
                 events.add(error(shape,
                         format(
                                 "Illegal %s reference to mixin `%s`; shapes marked with the mixin trait can only be "
@@ -158,7 +159,7 @@ public final class TargetValidator extends AbstractValidator {
                 // Input/output must target structures and cannot have the error trait.
                 if (target.getType() != ShapeType.STRUCTURE) {
                     events.add(badType(shape, target, relType, ShapeType.STRUCTURE));
-                } else if (target.findTrait("error").isPresent()) {
+                } else if (target.hasTrait(ErrorTrait.ID)) {
                     events.add(inputOutputWithErrorTrait(shape, target, rel.getRelationshipType()));
                 }
                 break;
@@ -166,7 +167,7 @@ public final class TargetValidator extends AbstractValidator {
                 // Errors must target a structure with the error trait.
                 if (target.getType() != ShapeType.STRUCTURE) {
                     events.add(badType(shape, target, relType, ShapeType.STRUCTURE));
-                } else if (!target.findTrait("error").isPresent()) {
+                } else if (!target.hasTrait(ErrorTrait.ID)) {
                     events.add(errorNoTrait(shape, target.getId()));
                 }
                 break;
@@ -187,7 +188,7 @@ public final class TargetValidator extends AbstractValidator {
                 }
                 break;
             case MIXIN:
-                if (!target.hasTrait(MixinTrait.class)) {
+                if (!target.hasTrait(MixinTrait.ID)) {
                     events.add(error(shape,
                             format(
                                     "Attempted to use %s as a mixin, but it is not marked with the mixin trait",
@@ -205,7 +206,7 @@ public final class TargetValidator extends AbstractValidator {
             RelationshipType relType,
             List<ValidationEvent> events
     ) {
-        if (!target.hasTrait(DeprecatedTrait.class)) {
+        if (!target.hasTrait(DeprecatedTrait.ID)) {
             return;
         }
 

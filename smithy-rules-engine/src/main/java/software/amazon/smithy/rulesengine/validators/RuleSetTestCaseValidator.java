@@ -24,7 +24,7 @@ public class RuleSetTestCaseValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            if (serviceShape.hasTrait(EndpointTestsTrait.class)) {
+            if (serviceShape.hasTrait(EndpointTestsTrait.ID)) {
                 EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
                 EndpointTestsTrait testsTrait = serviceShape.expectTrait(EndpointTestsTrait.class);
 

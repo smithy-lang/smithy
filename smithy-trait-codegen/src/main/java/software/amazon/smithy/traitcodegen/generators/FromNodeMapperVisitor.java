@@ -134,7 +134,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void stringShape(StringShape shape) {
-        if (shape.hasTrait(IdRefTrait.class)) {
+        if (shape.hasTrait(IdRefTrait.ID)) {
             writer.write("$T.fromNode($L)", ShapeId.class, varName);
         } else {
             writer.write("$L.expectStringNode().getValue()", varName);
@@ -150,7 +150,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void timestampShape(TimestampShape shape) {
-        if (shape.hasTrait(TimestampFormatTrait.class)) {
+        if (shape.hasTrait(TimestampFormatTrait.ID)) {
             switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
                 case EPOCH_SECONDS:
                     writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
@@ -184,7 +184,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void memberShape(MemberShape shape) {
-        if (shape.hasTrait(IdRefTrait.class)) {
+        if (shape.hasTrait(IdRefTrait.ID)) {
             writer.write("$T.fromNode($L)", ShapeId.class, varName);
         } else {
             model.expectShape(shape.getTarget()).accept(this);

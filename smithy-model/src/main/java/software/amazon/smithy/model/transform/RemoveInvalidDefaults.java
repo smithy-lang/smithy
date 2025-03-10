@@ -62,7 +62,7 @@ final class RemoveInvalidDefaults {
             MemberShape member = shape.asMemberShape().get();
             boolean targetHasDefault = model.getShape(member.getTarget())
                     // Treat target shapes that will have their default removed as if it doesn't have a default.
-                    .filter(target -> !otherShapes.contains(target) && target.hasTrait(DefaultTrait.class))
+                    .filter(target -> !otherShapes.contains(target) && target.hasTrait(DefaultTrait.ID))
                     .isPresent();
             if (targetHasDefault) {
                 return member.toBuilder().addTrait(new DefaultTrait(Node.nullNode())).build();

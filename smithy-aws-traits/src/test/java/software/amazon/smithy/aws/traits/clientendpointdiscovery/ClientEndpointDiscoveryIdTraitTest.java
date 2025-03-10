@@ -41,7 +41,7 @@ public class ClientEndpointDiscoveryIdTraitTest {
                 .getMember("Id")
                 .get();
 
-        assertTrue(member.getTrait(ClientEndpointDiscoveryIdTrait.class).isPresent());
+        assertTrue(member.hasTrait(ClientEndpointDiscoveryIdTrait.ID));
     }
 
     @Test

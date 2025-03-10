@@ -19,9 +19,9 @@ final class MakeIdempotencyTokenClientOptional {
     public static Model transform(Model model) {
         return ModelTransformer.create().mapShapes(model, shape -> {
             if (shape.isMemberShape()
-                    && shape.hasTrait(RequiredTrait.class)
-                    && shape.hasTrait(IdempotencyTokenTrait.class)
-                    && !shape.hasTrait(ClientOptionalTrait.class)) {
+                    && shape.hasTrait(RequiredTrait.ID)
+                    && shape.hasTrait(IdempotencyTokenTrait.ID)
+                    && !shape.hasTrait(ClientOptionalTrait.ID)) {
                 return Shape.shapeToBuilder(shape).addTrait(new ClientOptionalTrait()).build();
             }
             return shape;

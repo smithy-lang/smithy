@@ -72,7 +72,7 @@ public final class IncludeTraitsByTag extends BackwardCompatHelper<IncludeTraits
 
     private boolean removeIfPredicate(Shape shape, Collection<String> tags) {
         return !Prelude.isPreludeShape(shape)
-                && shape.hasTrait(TraitDefinition.class)
+                && shape.hasTrait(TraitDefinition.ID)
                 && !hasAnyTag(shape, tags);
     }
 

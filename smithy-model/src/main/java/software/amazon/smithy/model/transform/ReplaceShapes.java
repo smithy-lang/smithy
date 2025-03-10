@@ -165,7 +165,7 @@ final class ReplaceShapes {
 
         // Add shapes that are mixins or use mixins.
         for (Shape shape : model.toSet()) {
-            if (!shape.isMemberShape() && (shape.hasTrait(MixinTrait.class) || !shape.getMixins().isEmpty())) {
+            if (!shape.isMemberShape() && (shape.hasTrait(MixinTrait.ID) || !shape.getMixins().isEmpty())) {
                 sorter.enqueue(shape);
             }
         }

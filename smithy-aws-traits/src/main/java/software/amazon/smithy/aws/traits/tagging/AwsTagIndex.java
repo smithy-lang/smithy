@@ -301,7 +301,7 @@ public final class AwsTagIndex implements KnowledgeIndex {
             // Put is always a create operation
             resourceIsTagOnCreate.add(resource.getId());
             // and it's also an update when not annotated with `@noReplace`.
-            if (!resource.hasTrait(NoReplaceTrait.class)) {
+            if (!resource.hasTrait(NoReplaceTrait.ID)) {
                 resourceIsTagOnUpdate.add(resource.getId());
             }
         }

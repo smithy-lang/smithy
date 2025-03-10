@@ -32,7 +32,7 @@ public final class HttpPayloadInterceptor extends ProtocolTraitInterceptor<HttpP
     void write(DocWriter writer, String previousText, ProtocolSection section, HttpPayloadTrait trait) {
         var target = section.context().model().expectShape(section.shape().asMemberShape().get().getTarget());
         writer.pushState();
-        writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.class));
+        writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.ID));
         writer.write("""
                 This is bound directly to the HTTP message body without wrapping.${?requiresLength} \
                 Its size must be sent as the value of the $` header.${/requiresLength}

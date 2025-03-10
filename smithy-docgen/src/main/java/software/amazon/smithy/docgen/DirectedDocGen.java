@@ -55,7 +55,7 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
     @Override
     public void generateStructure(GenerateStructureDirective<DocGenerationContext, DocSettings> directive) {
         // Input and output structures are documented alongside the relevant operations.
-        if (directive.shape().hasTrait(InputTrait.class) || directive.shape().hasTrait(OutputTrait.class)) {
+        if (directive.shape().hasTrait(InputTrait.ID) || directive.shape().hasTrait(OutputTrait.ID)) {
             return;
         }
         new StructuredShapeGenerator(directive.context()).accept(directive.shape(), MemberListingType.MEMBERS);

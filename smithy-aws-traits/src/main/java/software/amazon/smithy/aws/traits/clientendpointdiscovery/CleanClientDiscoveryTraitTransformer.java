@@ -72,7 +72,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
         ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
         Set<ShapeId> stillBoundOperations = model.shapes(ServiceShape.class)
                 // Get all endpoint discovery services
-                .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.class))
+                .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.ID))
                 .map(Shape::getId)
                 // Get those services who aren't having their discovery traits removed
                 .filter(service -> !updatedServices.contains(service))
@@ -96,7 +96,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
     private Set<Shape> getMembersToUpdate(Model model, Set<ShapeId> updatedOperations) {
         Set<ShapeId> stillBoundMembers = model.shapes(OperationShape.class)
                 // Get all endpoint discovery operations
-                .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
+                .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.ID))
                 // Filter out the ones which are having their endpoint discovery traits removed
                 .filter(operation -> !updatedOperations.contains(operation.getId()))
                 // Get the input shapes of those operations
@@ -109,7 +109,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
 
         return model.shapes(MemberShape.class)
                 // Get all members which have the endpoint discovery id trait
-                .filter(member -> member.hasTrait(ClientEndpointDiscoveryIdTrait.class))
+                .filter(member -> member.hasTrait(ClientEndpointDiscoveryIdTrait.ID))
                 // Get those which are on structures that aren't still bound to endpoint discovery operations
                 .filter(member -> !stillBoundMembers.contains(member.getId()))
                 // Remove the trait

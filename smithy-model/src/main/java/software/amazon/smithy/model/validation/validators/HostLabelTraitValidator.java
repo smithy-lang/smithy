@@ -103,7 +103,7 @@ public final class HostLabelTraitValidator extends AbstractValidator {
                 .collect(Collectors.toSet());
 
         for (MemberShape member : input.getAllMembers().values()) {
-            if (member.hasTrait(HostLabelTrait.class)) {
+            if (member.hasTrait(HostLabelTrait.ID)) {
                 HostLabelTrait trait = member.expectTrait(HostLabelTrait.class);
                 labels.remove(member.getMemberName());
                 if (!hostPrefix.getLabel(member.getMemberName()).isPresent()) {

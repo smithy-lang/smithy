@@ -118,7 +118,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
-        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.hasTrait(SuppressTrait.ID));
         assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
     }
 
@@ -133,7 +133,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
-        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.hasTrait(SuppressTrait.ID));
         assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
     }
 
@@ -149,7 +149,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
-        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.hasTrait(SuppressTrait.ID));
         assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
     }
 
@@ -165,7 +165,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
-        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.hasTrait(SuppressTrait.ID));
         assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
     }
 
@@ -713,9 +713,9 @@ public class ModelAssemblerTest {
 
         // Ensure that traits across each duplicate are all merged together.
         StructureShape shape = result.unwrap().expectShape(ShapeId.from("foo.baz#Foo"), StructureShape.class);
-        assertTrue(shape.hasTrait(DeprecatedTrait.class));
+        assertTrue(shape.hasTrait(DeprecatedTrait.ID));
         assertTrue(shape.getMember("foo").isPresent());
-        assertTrue(shape.getMember("foo").get().hasTrait(InternalTrait.class));
+        assertTrue(shape.getMember("foo").get().hasTrait(InternalTrait.ID));
     }
 
     @Test
@@ -778,7 +778,7 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertTrue(model.expectShape(id).findTrait(traitId).isPresent());
+        assertTrue(model.expectShape(id).hasTrait(traitId));
         assertThat(model.expectShape(id).findTrait(traitId).get(), instanceOf(DynamicTrait.class));
     }
 
@@ -890,7 +890,7 @@ public class ModelAssemblerTest {
         assertThat(f.getMemberNames(), contains("a", "b", "c", "d", "e", "f"));
         assertThat(f.getMember("a").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
         assertThat(f.getMember("c").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
-        assertTrue(f.getMember("c").get().hasTrait(InternalTrait.class));
+        assertTrue(f.getMember("c").get().hasTrait(InternalTrait.ID));
     }
 
     @Test
@@ -1072,13 +1072,13 @@ public class ModelAssemblerTest {
     public void findsBoxTraitOnPreludeShapes() {
         Model model = Model.assembler().assemble().unwrap();
 
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Boolean")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Byte")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Short")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Integer")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Long")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Float")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(ShapeId.from("smithy.api#Double")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Boolean")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Byte")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Short")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Integer")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Long")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Float")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Double")).hasTrait(BoxTrait.ID), is(true));
     }
 
     @Test
@@ -1149,13 +1149,13 @@ public class ModelAssemblerTest {
         ShapeId fooMember = ShapeId.from("smithy.example#Struct$foo");
         ShapeId barMember = ShapeId.from("smithy.example#Struct$bar");
         ShapeId boxedMember = ShapeId.from("smithy.example#Struct$boxed");
-        assertThat(model.expectShape(boxDouble).hasTrait(DefaultTrait.class), is(false));
-        assertThat(model.expectShape(primitiveDouble).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(fooMember).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(barMember).hasTrait(DefaultTrait.class), is(false));
-        assertThat(model.expectShape(boxedMember).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(boxDouble).hasTrait(DefaultTrait.ID), is(false));
+        assertThat(model.expectShape(primitiveDouble).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(fooMember).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(barMember).hasTrait(DefaultTrait.ID), is(false));
+        assertThat(model.expectShape(boxedMember).hasTrait(DefaultTrait.ID), is(true));
         assertThat(model.expectShape(boxedMember).expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
-        assertThat(model.expectShape(boxedMember).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(boxedMember).hasTrait(BoxTrait.ID), is(true));
     }
 
     @Test
@@ -1235,18 +1235,18 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         // MixedInteger and MixinInteger have synthetic box traits.
-        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixinInteger")).hasTrait(BoxTrait.class), is(true));
-        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixedInteger")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixinInteger")).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixedInteger")).hasTrait(BoxTrait.ID), is(true));
 
         // MixinStruct$bar and MixedStruct$bar have synthetic box traits.
         StructureShape mixinStruct = model1.expectShape(ShapeId.from("smithy.example#MixinStruct"),
                 StructureShape.class);
         StructureShape mixedStruct = model1.expectShape(ShapeId.from("smithy.example#MixedStruct"),
                 StructureShape.class);
-        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
-        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
-        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
-        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(BoxTrait.ID), is(true));
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.ID), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(BoxTrait.ID), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.ID), is(true));
 
         // Now ensure round-tripping results in the same model.
         Node serialized = ModelSerializer.builder().build().serialize(model1);

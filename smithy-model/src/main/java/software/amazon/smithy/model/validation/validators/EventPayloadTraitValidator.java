@@ -61,6 +61,6 @@ public final class EventPayloadTraitValidator extends AbstractValidator {
     }
 
     private boolean isMarked(Shape s) {
-        return s.getTrait(EventHeaderTrait.class).isPresent() || s.getTrait(EventPayloadTrait.class).isPresent();
+        return s.hasTrait(EventHeaderTrait.ID) || s.hasTrait(EventPayloadTrait.ID);
     }
 }

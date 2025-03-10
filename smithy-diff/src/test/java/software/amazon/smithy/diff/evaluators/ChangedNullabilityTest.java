@@ -308,10 +308,10 @@ public class ChangedNullabilityTest {
         });
 
         // First, spot check that the transform worked and the models are different.
-        assertThat(old.expectShape(bazId).hasTrait(BoxTrait.class), is(false));
-        assertThat(newModel.expectShape(bazId).hasTrait(BoxTrait.class), is(true));
-        assertThat(old.expectShape(bamId).hasTrait(BoxTrait.class), is(false));
-        assertThat(newModel.expectShape(bamId).hasTrait(BoxTrait.class), is(true));
+        assertThat(old.expectShape(bazId).hasTrait(BoxTrait.ID), is(false));
+        assertThat(newModel.expectShape(bazId).hasTrait(BoxTrait.ID), is(true));
+        assertThat(old.expectShape(bamId).hasTrait(BoxTrait.ID), is(false));
+        assertThat(newModel.expectShape(bamId).hasTrait(BoxTrait.ID), is(true));
 
         List<ValidationEvent> events = ModelDiff.compare(old, newModel);
 

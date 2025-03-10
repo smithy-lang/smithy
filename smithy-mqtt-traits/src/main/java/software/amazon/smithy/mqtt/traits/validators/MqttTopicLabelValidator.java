@@ -51,11 +51,11 @@ public class MqttTopicLabelValidator extends AbstractValidator {
     }
 
     private static TopicCollection createTopics(OperationShape shape) {
-        if (shape.hasTrait(SubscribeTrait.class)) {
+        if (shape.hasTrait(SubscribeTrait.ID)) {
             SubscribeTrait trait = shape.expectTrait(SubscribeTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
-        } else if (shape.hasTrait(PublishTrait.class)) {
+        } else if (shape.hasTrait(PublishTrait.ID)) {
             PublishTrait trait = shape.expectTrait(PublishTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
@@ -70,7 +70,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (MemberShape member : input.getAllMembers().values()) {
-            if (member.hasTrait(TopicLabelTrait.class)) {
+            if (member.hasTrait(TopicLabelTrait.ID)) {
                 if (labels.contains(member.getMemberName())) {
                     labels.remove(member.getMemberName());
                 } else {

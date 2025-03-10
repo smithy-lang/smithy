@@ -28,8 +28,8 @@ public class AddClientOptionalTest {
         Model model2 = ModelTransformer.create().addClientOptional(model, false);
         StructureShape struct2 = model2.expectShape(structure.getId(), StructureShape.class);
 
-        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.class));
-        assertTrue(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.class));
+        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.ID));
+        assertTrue(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.ID));
     }
 
     @Test
@@ -43,8 +43,8 @@ public class AddClientOptionalTest {
         Model model2 = ModelTransformer.create().addClientOptional(model, false);
         StructureShape struct2 = model2.expectShape(structure.getId(), StructureShape.class);
 
-        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.class));
-        assertFalse(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.class));
+        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.ID));
+        assertFalse(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.ID));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class AddClientOptionalTest {
         Model model2 = ModelTransformer.create().addClientOptional(model, true);
         StructureShape struct2 = model2.expectShape(structure.getId(), StructureShape.class);
 
-        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.class));
-        assertFalse(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.class));
-        assertTrue(struct2.getMember("baz").get().hasTrait(ClientOptionalTrait.class));
+        assertTrue(struct2.getMember("foo").get().hasTrait(ClientOptionalTrait.ID));
+        assertFalse(struct2.getMember("bar").get().hasTrait(ClientOptionalTrait.ID));
+        assertTrue(struct2.getMember("baz").get().hasTrait(ClientOptionalTrait.ID));
     }
 }

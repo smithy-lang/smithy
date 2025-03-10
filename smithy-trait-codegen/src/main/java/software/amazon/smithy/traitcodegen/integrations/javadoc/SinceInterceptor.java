@@ -30,6 +30,6 @@ final class SinceInterceptor implements CodeInterceptor.Appender<JavaDocSection,
 
     @Override
     public boolean isIntercepted(JavaDocSection section) {
-        return section.shape().hasTrait(SinceTrait.class);
+        return section.shape().hasTrait(SinceTrait.ID);
     }
 }

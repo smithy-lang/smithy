@@ -99,7 +99,7 @@ final class CreateDedicatedInputAndOutput {
             StructureShape input,
             NeighborProvider reverse
     ) {
-        if (input.hasTrait(InputTrait.class)) {
+        if (input.hasTrait(InputTrait.ID)) {
             return renameShapeIfNeeded(model, input, operation, inputSuffix);
         } else if (isDedicatedHeuristic(operation, input, reverse)) {
             LOGGER.fine(() -> "Attaching the @input trait to " + input.getId());
@@ -116,7 +116,7 @@ final class CreateDedicatedInputAndOutput {
             StructureShape output,
             NeighborProvider reverse
     ) {
-        if (output.hasTrait(OutputTrait.class)) {
+        if (output.hasTrait(OutputTrait.ID)) {
             return renameShapeIfNeeded(model, output, operation, outputSuffix);
         } else if (isDedicatedHeuristic(operation, output, reverse)) {
             LOGGER.fine(() -> "Attaching the @output trait to " + output.getId());

@@ -22,7 +22,7 @@ public final class RemovedShape extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()
-                .filter(shape -> !shape.hasTrait(PrivateTrait.class))
+                .filter(shape -> !shape.hasTrait(PrivateTrait.ID))
                 .filter(shape -> !isMemberOfRemovedShape(shape, differences))
                 .map(shape -> isInconsequentialType(shape)
                         ? ValidationEvent.builder()

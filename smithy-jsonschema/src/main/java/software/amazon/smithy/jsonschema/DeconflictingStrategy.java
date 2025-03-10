@@ -86,7 +86,7 @@ final class DeconflictingStrategy implements RefStrategy {
                 || shape.isServiceShape()
                 || shape.isOperationShape()
                 || shape.isMemberShape()
-                || (Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class));
+                || (Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.ID));
     }
 
     private String deconflict(Shape shape, String pointer, Map<String, ShapeId> reversePointers) {

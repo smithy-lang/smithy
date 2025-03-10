@@ -39,7 +39,7 @@ public final class DefaultValueInUpdateValidator extends AbstractValidator {
             StructureShape input = model.expectShape(operation.getInputShape(), StructureShape.class);
 
             for (MemberShape member : input.getAllMembers().values()) {
-                if (member.hasTrait(DefaultTrait.class)) {
+                if (member.hasTrait(DefaultTrait.ID)) {
                     defaultedMembers.add(member.getMemberName());
                 }
             }

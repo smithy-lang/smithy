@@ -60,7 +60,7 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
         Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         headers.addAll(super.getProtocolRequestHeaders(context, operationShape));
         headers.addAll(AWS_REQUEST_HEADERS);
-        if (operationShape.hasTrait(ClientDiscoveredEndpointTrait.class)) {
+        if (operationShape.hasTrait(ClientDiscoveredEndpointTrait.ID)) {
             headers.add("X-Amz-Api-Version");
         }
         return headers;

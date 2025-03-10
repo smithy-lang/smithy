@@ -145,7 +145,7 @@ public final class OperationIndex implements KnowledgeIndex {
      * @return Returns true if the structure is used as input.
      */
     public boolean isInputStructure(ToShapeId structureId) {
-        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(InputTrait.class)) {
+        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(InputTrait.ID)) {
             return true;
         }
 
@@ -238,7 +238,7 @@ public final class OperationIndex implements KnowledgeIndex {
      * @return Returns true if the structure is used as output.
      */
     public boolean isOutputStructure(ToShapeId structureId) {
-        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(OutputTrait.class)) {
+        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(OutputTrait.ID)) {
             return true;
         }
 

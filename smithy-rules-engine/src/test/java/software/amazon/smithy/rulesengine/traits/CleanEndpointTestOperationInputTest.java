@@ -40,9 +40,9 @@ public class CleanEndpointTestOperationInputTest {
         assertTrue(transformed.getShape(SERVICE_ID).isPresent());
 
         ServiceShape mainService = model.expectShape(SERVICE_ID, ServiceShape.class);
-        assertTrue(mainService.hasTrait(EndpointTestsTrait.class));
+        assertTrue(mainService.hasTrait(EndpointTestsTrait.ID));
         ServiceShape transformedService = transformed.expectShape(SERVICE_ID, ServiceShape.class);
-        assertTrue(transformedService.hasTrait(EndpointTestsTrait.class));
+        assertTrue(transformedService.hasTrait(EndpointTestsTrait.ID));
 
         Node.assertEquals(transformedService.expectTrait(EndpointTestsTrait.class).toNode(),
                 mainService.expectTrait(EndpointTestsTrait.class).toNode());
@@ -56,7 +56,7 @@ public class CleanEndpointTestOperationInputTest {
         assertTrue(transformed.getShape(SERVICE_ID).isPresent());
 
         ServiceShape transformedService = transformed.expectShape(SERVICE_ID, ServiceShape.class);
-        assertTrue(transformedService.hasTrait(EndpointTestsTrait.class));
+        assertTrue(transformedService.hasTrait(EndpointTestsTrait.ID));
 
         EndpointTestsTrait trait = transformedService.expectTrait(EndpointTestsTrait.class);
         assertEquals(1, trait.getTestCases().size());
@@ -82,7 +82,7 @@ public class CleanEndpointTestOperationInputTest {
         assertTrue(transformed.getShape(SERVICE_ID).isPresent());
 
         ServiceShape transformedService = transformed.expectShape(SERVICE_ID, ServiceShape.class);
-        assertTrue(transformedService.hasTrait(EndpointTestsTrait.class));
+        assertTrue(transformedService.hasTrait(EndpointTestsTrait.ID));
 
         EndpointTestsTrait trait = transformedService.expectTrait(EndpointTestsTrait.class);
         assertEquals(0, trait.getTestCases().size());

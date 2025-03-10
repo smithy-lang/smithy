@@ -106,7 +106,7 @@ final class ModelInteropTransformer {
             Node defaultValue = getDefaultValueOfType(member, target.getType());
             builder.addTrait(new DefaultTrait(defaultValue));
             shapeUpgrades.add(builder.build());
-        } else if (member.hasTrait(BoxTrait.class)) {
+        } else if (member.hasTrait(BoxTrait.ID)) {
             // Add a default trait to the member set to null to indicate it was boxed in v1.
             MemberShape.Builder builder = member.toBuilder();
             builder.addTrait(new DefaultTrait(new NullNode(member.getSourceLocation())));
@@ -169,7 +169,7 @@ final class ModelInteropTransformer {
     // The addedDefault trait implies that a member did not previously have a default, and a default value
     // was added later. In this case, naive box implementation can assume the member is boxed.
     private boolean isMemberInherentlyBoxedInV1(MemberShape member) {
-        return member.hasTrait(AddedDefaultTrait.class);
+        return member.hasTrait(AddedDefaultTrait.ID);
     }
 
     // If the member has a default trait set to the zero value, then consider the member

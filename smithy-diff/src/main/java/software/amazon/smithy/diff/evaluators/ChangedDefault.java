@@ -62,7 +62,7 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
                         newTrait,
                         "Adding the @default trait to a root-level shape will break previously generated "
                                 + "code. Added @default: " + Node.printJson(newTrait.toNode())));
-            } else if (!change.getNewShape().hasTrait(AddedDefaultTrait.class)) {
+            } else if (!change.getNewShape().hasTrait(AddedDefaultTrait.ID)) {
                 if (!newTrait.toNode().isNullNode()) {
                     events.add(error(change.getNewShape(),
                             newTrait,

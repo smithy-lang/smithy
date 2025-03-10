@@ -30,15 +30,15 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         if (shape instanceof TimestampShape) {
             // Don't validate the timestamp target if a referring member had the timestampFormat trait.
             boolean fromMemberWithTrait = context.getReferringMember()
-                    .filter(member -> member.hasTrait(TimestampFormatTrait.class))
+                    .filter(member -> member.hasTrait(TimestampFormatTrait.ID))
                     .isPresent();
             if (!fromMemberWithTrait) {
                 validate(shape, shape.getTrait(TimestampFormatTrait.class).orElse(null), value, emitter);
             }
-        } else if (shape instanceof MemberShape && shape.getTrait(TimestampFormatTrait.class).isPresent()) {
+        } else if (shape instanceof MemberShape && shape.hasTrait(TimestampFormatTrait.ID)) {
             // Only perform timestamp format validation on a member when it references
             // a timestamp shape and the member has an explicit timestampFormat trait.
-            validate(shape, shape.getTrait(TimestampFormatTrait.class).get(), value, emitter);
+            validate(shape, shape.expectTrait(TimestampFormatTrait.class), value, emitter);
         }
     }
 

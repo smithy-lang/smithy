@@ -19,7 +19,7 @@ public final class WaitableTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes(OperationShape.class)
-                .filter(operation -> operation.hasTrait(WaitableTrait.class))
+                .filter(operation -> operation.hasTrait(WaitableTrait.ID))
                 .flatMap(operation -> validateOperation(model, operation).stream())
                 .collect(Collectors.toList());
     }

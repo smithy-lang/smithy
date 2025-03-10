@@ -42,7 +42,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
             Map<ShapeId, PaginationInfo> mappings = new HashMap<>();
             for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
-                if (operation.hasTrait(PaginatedTrait.class)) {
+                if (operation.hasTrait(PaginatedTrait.ID)) {
                     PaginatedTrait merged = operation.expectTrait(PaginatedTrait.class).merge(serviceTrait);
                     create(model, service, opIndex, operation, merged).ifPresent(info -> {
                         mappings.put(info.getOperation().getId(), info);

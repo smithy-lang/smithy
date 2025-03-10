@@ -275,12 +275,12 @@ public final class ServiceIndex implements KnowledgeIndex {
     private boolean hasOptionalAuth(ToShapeId operation) {
         return getModel()
                 .getShape(operation.toShapeId())
-                .filter(shape -> shape.hasTrait(OptionalAuthTrait.class))
+                .filter(shape -> shape.hasTrait(OptionalAuthTrait.ID))
                 .isPresent();
     }
 
     private static Map<ShapeId, Trait> getAuthTraitValues(Shape service, Shape subject) {
-        if (!subject.hasTrait(AuthTrait.class)) {
+        if (!subject.hasTrait(AuthTrait.ID)) {
             return null;
         }
 

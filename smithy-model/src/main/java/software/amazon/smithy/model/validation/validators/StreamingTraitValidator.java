@@ -61,8 +61,8 @@ public final class StreamingTraitValidator extends AbstractValidator {
     private void validateBlobTargetsAreNonOptional(Model model, List<ValidationEvent> events) {
         for (MemberShape member : model.toSet(MemberShape.class)) {
             Shape target = model.expectShape(member.getTarget());
-            if (target.isBlobShape() && target.hasTrait(StreamingTrait.class)
-                    && !(member.hasTrait(RequiredTrait.class) || member.hasTrait(DefaultTrait.class))) {
+            if (target.isBlobShape() && target.hasTrait(StreamingTrait.ID)
+                    && !(member.hasTrait(RequiredTrait.ID) || member.hasTrait(DefaultTrait.ID))) {
                 events.add(error(member,
                         "Members that target blobs marked with the `streaming` trait MUST also be "
                                 + "marked with the `required` or `default` trait."));
@@ -85,10 +85,10 @@ public final class StreamingTraitValidator extends AbstractValidator {
         Walker walker = new Walker(model);
         for (ServiceShape service : servicesWithPayloadSupportingProtocols) {
             walker.iterateShapes(service).forEachRemaining(shape -> {
-                if (shape.isMemberShape() && !shape.hasTrait(HttpPayloadTrait.class)) {
+                if (shape.isMemberShape() && !shape.hasTrait(HttpPayloadTrait.ID)) {
                     MemberShape member = shape.asMemberShape().get();
                     Shape target = model.expectShape(member.getTarget());
-                    if (target.hasTrait(StreamingTrait.class)) {
+                    if (target.hasTrait(StreamingTrait.ID)) {
                         events.add(error(member,
                                 String.format(
                                         "Member `%s` referencing @streaming shape `%s` must have the @httpPayload trait, "
@@ -132,7 +132,7 @@ public final class StreamingTraitValidator extends AbstractValidator {
                     case MIXIN:
                         break;
                     case OUTPUT:
-                        if (target.hasTrait(RequiresLengthTrait.class)) {
+                        if (target.hasTrait(RequiresLengthTrait.ID)) {
                             events.add(error(rel.getNeighborShape().get(),
                                     String.format(
                                             "Structures that contain a reference to a stream marked with the "

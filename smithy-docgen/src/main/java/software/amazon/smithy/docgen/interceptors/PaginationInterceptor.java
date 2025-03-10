@@ -25,7 +25,7 @@ public final class PaginationInterceptor implements CodeInterceptor<ShapeDetails
 
     @Override
     public boolean isIntercepted(ShapeDetailsSection section) {
-        return section.shape().isOperationShape() && section.shape().hasTrait(PaginatedTrait.class);
+        return section.shape().isOperationShape() && section.shape().hasTrait(PaginatedTrait.ID);
     }
 
     @Override

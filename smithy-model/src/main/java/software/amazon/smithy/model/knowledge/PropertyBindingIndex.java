@@ -178,8 +178,8 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
         Model model = getModel();
         return model.getShapesWithTrait(NotPropertyTrait.class)
                 .stream()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
-                .map(shape -> shape.toShapeId())
+                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
+                .map(Shape::toShapeId)
                 .collect(Collectors.toSet());
     }
 
@@ -188,13 +188,13 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     }
 
     private boolean doesNotRequireProperty(MemberShape memberShape) {
-        return notPropertyMetaTraitSet.stream().anyMatch(traitId -> memberShape.hasTrait(traitId));
+        return notPropertyMetaTraitSet.stream().anyMatch(memberShape::hasTrait);
     }
 
     private StructureShape getPropertiesShape(Collection<MemberShape> members, StructureShape presumedShape) {
         Model model = getModel();
         for (MemberShape member : members) {
-            if (member.hasTrait(NestedPropertiesTrait.class)) {
+            if (member.hasTrait(NestedPropertiesTrait.ID)) {
                 Shape shape = model.expectShape(member.getTarget());
                 if (shape.isStructureShape()) {
                     return shape.asStructureShape().get();
