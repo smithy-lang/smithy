@@ -237,7 +237,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
     private List<Map<String, ShapeId>> computeResourceAdditionalIdentifiers(StructureShape readInput) {
         List<Map<String, ShapeId>> identifiers = new ArrayList<>();
         for (MemberShape member : readInput.members()) {
-            if (!member.hasTrait(CfnAdditionalIdentifierTrait.class)) {
+            if (!member.hasTrait(CfnAdditionalIdentifierTrait.ID)) {
                 continue;
             }
 

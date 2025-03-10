@@ -26,7 +26,7 @@ public final class RequestCompressionInterceptor implements CodeInterceptor<Shap
 
     @Override
     public boolean isIntercepted(ShapeDetailsSection section) {
-        return section.shape().hasTrait(RequestCompressionTrait.class);
+        return section.shape().hasTrait(RequestCompressionTrait.ID);
     }
 
     @Override

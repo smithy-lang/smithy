@@ -25,7 +25,7 @@ public final class RecommendedInterceptor implements CodeInterceptor<ShapeSubhea
 
     @Override
     public boolean isIntercepted(ShapeSubheadingSection section) {
-        return section.shape().hasTrait(RecommendedTrait.class);
+        return section.shape().hasTrait(RecommendedTrait.ID);
     }
 
     @Override

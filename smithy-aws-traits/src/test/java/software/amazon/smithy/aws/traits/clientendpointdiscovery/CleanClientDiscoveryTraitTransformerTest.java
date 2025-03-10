@@ -50,11 +50,11 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asMemberShape)
                 .get();
 
-        assertFalse(service.hasTrait(ClientEndpointDiscoveryTrait.class));
+        assertFalse(service.hasTrait(ClientEndpointDiscoveryTrait.ID));
         // discovery is required for this operation, so it keeps the trait
-        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertFalse(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertFalse(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
+        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
+        assertFalse(putOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
+        assertFalse(putId.hasTrait(ClientEndpointDiscoveryIdTrait.ID));
     }
 
     @Test
@@ -89,10 +89,10 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asMemberShape)
                 .get();
 
-        assertTrue(service.hasTrait(ClientEndpointDiscoveryTrait.class));
-        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertTrue(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
+        assertTrue(service.hasTrait(ClientEndpointDiscoveryTrait.ID));
+        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
+        assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
+        assertTrue(putId.hasTrait(ClientEndpointDiscoveryIdTrait.ID));
     }
 
     @Test
@@ -117,8 +117,8 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
+        assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
+        assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.ID));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asMemberShape)
                 .get();
 
-        assertTrue(id.hasTrait(ClientEndpointDiscoveryIdTrait.class));
+        assertTrue(id.hasTrait(ClientEndpointDiscoveryIdTrait.ID));
 
     }
 }

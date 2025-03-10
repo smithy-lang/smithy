@@ -77,8 +77,8 @@ final class AddRequestValidators implements ApiGatewayMapper {
 
         // Check if the service has a request validator.
         String serviceValidator = null;
-        if (context.getService().getTrait(RequestValidatorTrait.class).isPresent()) {
-            serviceValidator = context.getService().getTrait(RequestValidatorTrait.class).get().getValue();
+        if (context.getService().hasTrait(RequestValidatorTrait.ID)) {
+            serviceValidator = context.getService().expectTrait(RequestValidatorTrait.class).getValue();
             validators.add(serviceValidator);
         }
 

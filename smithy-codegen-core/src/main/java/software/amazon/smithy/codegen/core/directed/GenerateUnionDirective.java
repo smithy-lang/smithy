@@ -29,6 +29,6 @@ public final class GenerateUnionDirective<C extends CodegenContext<S, ?, ?>, S>
      * @return Returns true if this is an event stream.
      */
     public boolean isEventStream() {
-        return shape().hasTrait(StreamingTrait.class);
+        return shape().hasTrait(StreamingTrait.ID);
     }
 }

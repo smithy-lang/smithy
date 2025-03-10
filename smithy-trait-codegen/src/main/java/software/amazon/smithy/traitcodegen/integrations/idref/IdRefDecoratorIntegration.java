@@ -62,7 +62,7 @@ public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
     }
 
     private Symbol provideSymbol(Shape shape, SymbolProvider symbolProvider, Model model) {
-        if (shape.hasTrait(IdRefTrait.class)) {
+        if (shape.hasTrait(IdRefTrait.ID)) {
             return SHAPE_ID_SYMBOL;
         } else if (shape.isMemberShape()) {
             Shape target = model.expectShape(shape.asMemberShape().orElseThrow(RuntimeException::new).getTarget());

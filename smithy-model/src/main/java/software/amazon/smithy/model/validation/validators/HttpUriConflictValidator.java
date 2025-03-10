@@ -52,7 +52,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
         List<OperationShape> operations = new ArrayList<>();
         for (OperationShape operation : TopDownIndex.of(model).getContainedOperations(service)) {
-            if (operation.hasTrait(HttpTrait.class)) {
+            if (operation.hasTrait(HttpTrait.ID)) {
                 operations.add(operation);
             }
         }
@@ -79,7 +79,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
         List<Pair<ShapeId, UriPattern>> allowableConflicts = new ArrayList<>();
 
         for (OperationShape other : operations) {
-            if (other != operation && other.hasTrait(HttpTrait.class)) {
+            if (other != operation && other.hasTrait(HttpTrait.ID)) {
                 HttpTrait otherHttpTrait = other.expectTrait(HttpTrait.class);
                 if (otherHttpTrait.getMethod().equals(method)
                         && otherHttpTrait.getUri().conflictsWith(pattern)
@@ -210,7 +210,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     private Map<String, Pattern> getHostLabelPatterns(Model model, OperationShape operation) {
         Map<String, Pattern> result = new HashMap<>();
         for (MemberShape member : OperationIndex.of(model).expectInputShape(operation).getAllMembers().values()) {
-            if (member.hasTrait(HostLabelTrait.class) && member.hasTrait(PatternTrait.class)) {
+            if (member.hasTrait(HostLabelTrait.ID) && member.hasTrait(PatternTrait.ID)) {
                 result.put(member.getMemberName(), member.expectTrait(PatternTrait.class).getPattern());
             }
         }

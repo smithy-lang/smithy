@@ -111,7 +111,7 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
             Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices
     ) {
         return model.shapes(OperationShape.class)
-                .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
+                .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.ID))
                 .map(operation -> {
                     List<ClientEndpointDiscoveryInfo> infos = endpointDiscoveryServices.keySet()
                             .stream()

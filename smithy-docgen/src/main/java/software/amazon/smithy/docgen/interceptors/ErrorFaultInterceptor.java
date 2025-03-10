@@ -23,7 +23,7 @@ public final class ErrorFaultInterceptor implements CodeInterceptor<ShapeSubhead
 
     @Override
     public boolean isIntercepted(ShapeSubheadingSection section) {
-        return section.shape().hasTrait(ErrorTrait.class);
+        return section.shape().hasTrait(ErrorTrait.ID);
     }
 
     @Override

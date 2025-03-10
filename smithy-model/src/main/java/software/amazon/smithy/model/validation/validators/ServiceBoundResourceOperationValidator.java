@@ -81,7 +81,7 @@ public final class ServiceBoundResourceOperationValidator extends AbstractValida
 
     private boolean isImplicitIdentifierBinding(MemberShape member, ResourceShape resource) {
         return resource.getIdentifiers().containsKey(member.getMemberName())
-                && member.getTrait(RequiredTrait.class).isPresent()
+                && member.hasTrait(RequiredTrait.ID)
                 && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
     }
 }

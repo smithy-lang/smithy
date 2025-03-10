@@ -23,7 +23,7 @@ public final class RetryableInterceptor implements CodeInterceptor.Prepender<Sha
 
     @Override
     public boolean isIntercepted(ShapeSubheadingSection section) {
-        return section.shape().hasTrait(RetryableTrait.class);
+        return section.shape().hasTrait(RetryableTrait.ID);
     }
 
     @Override

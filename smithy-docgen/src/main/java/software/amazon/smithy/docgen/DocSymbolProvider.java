@@ -160,10 +160,10 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
         var operationIndex = OperationIndex.of(model);
         for (var operation : model.getOperationShapes()) {
             operationIndex.getInputShape(operation)
-                    .filter(i -> i.hasTrait(InputTrait.class))
+                    .filter(i -> i.hasTrait(InputTrait.ID))
                     .ifPresent(i -> operationIoMap.put(i.getId(), operation));
             operationIndex.getOutputShape(operation)
-                    .filter(i -> i.hasTrait(OutputTrait.class))
+                    .filter(i -> i.hasTrait(OutputTrait.ID))
                     .ifPresent(i -> operationIoMap.put(i.getId(), operation));
         }
         return Map.copyOf(operationIoMap);
@@ -196,8 +196,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
     @Override
     public Symbol structureShape(StructureShape shape) {
         var builder = getSymbolBuilder(shape);
-        if (shape.hasTrait(TraitDefinition.class)) {
-            if (shape.hasTrait(AuthDefinitionTrait.class)) {
+        if (shape.hasTrait(TraitDefinition.ID)) {
+            if (shape.hasTrait(AuthDefinitionTrait.ID)) {
                 builder.definitionFile(getDefinitionFile(SERVICE_FILE));
             }
             return builder.build();

@@ -150,14 +150,14 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
 
     private boolean isImplicitIdentifierBinding(MemberShape member, ResourceShape resource) {
         return resource.getIdentifiers().containsKey(member.getMemberName())
-                && member.getTrait(RequiredTrait.class).isPresent()
+                && member.hasTrait(RequiredTrait.ID)
                 && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
     }
 
     private Map<String, String> computeBindings(ResourceShape resource, StructureShape shape) {
         Map<String, String> bindings = new HashMap<>();
         for (MemberShape member : shape.getAllMembers().values()) {
-            if (member.hasTrait(ResourceIdentifierTrait.class)) {
+            if (member.hasTrait(ResourceIdentifierTrait.ID)) {
                 // Mark as a binding if the member has an explicit @resourceIdentifier trait.
                 String bindingName = member.expectTrait(ResourceIdentifierTrait.class).getValue();
                 // Override any implicit bindings with explicit trait bindings.

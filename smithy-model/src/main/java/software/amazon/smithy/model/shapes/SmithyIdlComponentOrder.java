@@ -118,11 +118,11 @@ public enum SmithyIdlComponentOrder {
         @Override
         public int compare(Shape s1, Shape s2) {
             // Traits go first
-            if (s1.hasTrait(TraitDefinition.class) || s2.hasTrait(TraitDefinition.class)) {
-                if (!s1.hasTrait(TraitDefinition.class)) {
+            if (s1.hasTrait(TraitDefinition.ID) || s2.hasTrait(TraitDefinition.ID)) {
+                if (!s1.hasTrait(TraitDefinition.ID)) {
                     return 1;
                 }
-                if (!s2.hasTrait(TraitDefinition.class)) {
+                if (!s2.hasTrait(TraitDefinition.ID)) {
                     return -1;
                 }
                 // The other sorting rules don't matter for traits.

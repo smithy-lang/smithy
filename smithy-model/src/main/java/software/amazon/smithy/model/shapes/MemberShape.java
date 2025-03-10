@@ -7,6 +7,7 @@ package software.amazon.smithy.model.shapes;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -81,7 +82,7 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
      * @return Returns true if the member has the required trait.
      */
     public boolean isRequired() {
-        return findTrait("required").isPresent();
+        return hasTrait(RequiredTrait.ID);
     }
 
     /**

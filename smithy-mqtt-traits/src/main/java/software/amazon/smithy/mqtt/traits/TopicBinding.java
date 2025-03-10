@@ -78,9 +78,9 @@ public final class TopicBinding<T extends Trait> {
      * @return Returns the optionally found MQTT binding trait.
      */
     public static Optional<? extends Trait> getOperationMqttTrait(Shape operation) {
-        if (operation.hasTrait(PublishTrait.class)) {
+        if (operation.hasTrait(PublishTrait.ID)) {
             return operation.getTrait(PublishTrait.class);
-        } else if (operation.hasTrait(SubscribeTrait.class)) {
+        } else if (operation.hasTrait(SubscribeTrait.ID)) {
             return operation.getTrait(SubscribeTrait.class);
         } else {
             return Optional.empty();

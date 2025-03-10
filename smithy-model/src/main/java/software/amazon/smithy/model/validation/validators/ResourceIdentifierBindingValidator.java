@@ -102,7 +102,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
         // Ensure no two members use a resourceIdentifier trait to bind to
         // the same identifier.
         for (MemberShape member : structure.members()) {
-            if (member.hasTrait(ResourceIdentifierTrait.class)) {
+            if (member.hasTrait(ResourceIdentifierTrait.ID)) {
                 explicitBindings.computeIfAbsent(member.expectTrait(ResourceIdentifierTrait.class).getValue(),
                         k -> new HashSet<>()).add(member.getMemberName());
             }

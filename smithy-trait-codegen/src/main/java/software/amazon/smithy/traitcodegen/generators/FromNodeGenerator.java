@@ -197,7 +197,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         // If the trait has the timestamp format trait then we only need a single
         // way to deserialize the input node. Without the timestamp format trait
         // timestamp should be able to handle both epoch seconds and date time formats.
-        if (shape.hasTrait(TimestampFormatTrait.class)) {
+        if (shape.hasTrait(TimestampFormatTrait.ID)) {
             writer.write("return new $T($C, node.getSourceLocation());",
                     symbol,
                     (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node")));

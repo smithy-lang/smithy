@@ -50,7 +50,7 @@ public final class RequestCompressionTraitValidator extends AbstractValidator {
         StructureShape inputShape = model.expectShape(operationShape.getInputShape(), StructureShape.class);
         for (MemberShape memberShape : inputShape.members()) {
             Shape targetShape = model.expectShape(memberShape.getTarget());
-            if (targetShape.hasTrait(StreamingTrait.class) && targetShape.hasTrait(RequiresLengthTrait.class)) {
+            if (targetShape.hasTrait(StreamingTrait.ID) && targetShape.hasTrait(RequiresLengthTrait.ID)) {
                 events.add(error(operationShape,
                         String.format(
                                 "The `requestCompression` trait can only be applied to operations which do not have "

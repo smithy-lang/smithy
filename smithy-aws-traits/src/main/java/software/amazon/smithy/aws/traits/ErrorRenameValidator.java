@@ -79,7 +79,7 @@ public final class ErrorRenameValidator extends AbstractValidator {
         renames.keySet().forEach(shapeId -> {
             Optional<Shape> shape = model.getShape(shapeId);
 
-            if (!shape.isPresent() || !shape.get().hasTrait(ErrorTrait.class)) {
+            if (!shape.isPresent() || !shape.get().hasTrait(ErrorTrait.ID)) {
                 return;
             }
 

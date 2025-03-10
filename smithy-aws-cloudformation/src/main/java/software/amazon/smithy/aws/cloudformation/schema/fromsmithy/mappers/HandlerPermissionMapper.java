@@ -56,7 +56,7 @@ final class HandlerPermissionMapper implements CfnMapper {
                 .orElse(SetUtils.of());
         createPermissions.addAll(putPermissions);
         // Put operations without the noReplace trait are used for updates.
-        if (!resource.hasTrait(NoReplaceTrait.class)) {
+        if (!resource.hasTrait(NoReplaceTrait.ID)) {
             updatePermissions.addAll(putPermissions);
         }
 

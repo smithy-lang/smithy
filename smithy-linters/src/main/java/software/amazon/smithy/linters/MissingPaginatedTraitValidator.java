@@ -168,7 +168,7 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         OperationIndex operationIndex = OperationIndex.of(model);
         return model.shapes(OperationShape.class)
-                .filter(shape -> !shape.getTrait(PaginatedTrait.class).isPresent())
+                .filter(shape -> !shape.hasTrait(PaginatedTrait.ID))
                 .flatMap(shape -> validateShape(model, operationIndex, shape))
                 .collect(Collectors.toList());
     }

@@ -29,7 +29,7 @@ public final class XmlNameInterceptor extends ProtocolTraitInterceptor<XmlNameTr
     @Override
     public boolean isIntercepted(ProtocolSection section) {
         // The xmlName trait uniquely doesn't inherit values from the target as a member.
-        return super.isIntercepted(section) && section.shape().hasTrait(XmlNameTrait.class);
+        return super.isIntercepted(section) && section.shape().hasTrait(XmlNameTrait.ID);
     }
 
     @Override

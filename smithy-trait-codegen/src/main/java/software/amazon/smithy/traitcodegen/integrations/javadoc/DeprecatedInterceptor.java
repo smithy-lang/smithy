@@ -36,6 +36,6 @@ final class DeprecatedInterceptor implements CodeInterceptor.Appender<JavaDocSec
 
     @Override
     public boolean isIntercepted(JavaDocSection section) {
-        return section.shape().hasTrait(DeprecatedTrait.class);
+        return section.shape().hasTrait(DeprecatedTrait.ID);
     }
 }

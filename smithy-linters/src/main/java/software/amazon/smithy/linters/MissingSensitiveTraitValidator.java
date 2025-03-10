@@ -131,9 +131,9 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
                 Shape containingShape = model.expectShape(memberShape.getContainer());
                 Shape targetShape = model.expectShape(memberShape.getTarget());
 
-                if (!containingShape.hasTrait(SensitiveTrait.class)
+                if (!containingShape.hasTrait(SensitiveTrait.ID)
                         && !containingShape.isEnumShape()
-                        && !targetShape.hasTrait(SensitiveTrait.class)) {
+                        && !targetShape.hasTrait(SensitiveTrait.ID)) {
                     Optional<ValidationEvent> optionalValidationEvent =
                             detectSensitiveTerms(memberShape.getMemberName(), memberShape);
                     optionalValidationEvent.ifPresent(validationEvents::add);
@@ -141,7 +141,7 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
             } else if (!shape.isOperationShape()
                     && !shape.isServiceShape()
                     && !shape.isResourceShape()
-                    && !shape.hasTrait(SensitiveTrait.class)) {
+                    && !shape.hasTrait(SensitiveTrait.ID)) {
                 Optional<ValidationEvent> optionalValidationEvent =
                         detectSensitiveTerms(shape.toShapeId().getName(), shape);
                 optionalValidationEvent.ifPresent(validationEvents::add);

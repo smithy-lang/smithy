@@ -177,7 +177,7 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
         return structure.getAllMembers()
                 .values()
                 .stream()
-                .filter(member -> member.hasTrait(HttpHeaderTrait.class))
+                .filter(member -> member.hasTrait(HttpHeaderTrait.ID))
                 .collect(groupingBy(shape -> shape.expectTrait(HttpHeaderTrait.class).getValue().toLowerCase(Locale.US),
                         mapping(MemberShape::getMemberName, toList())))
                 .entrySet()

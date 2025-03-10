@@ -59,7 +59,7 @@ final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sch
     @Override
     public Schema timestampShape(TimestampShape shape) {
         // Use the referenced shape as-is since it defines an explicit format.
-        if (member.hasTrait(TimestampFormatTrait.class)) {
+        if (member.hasTrait(TimestampFormatTrait.ID)) {
             return schema;
         }
 

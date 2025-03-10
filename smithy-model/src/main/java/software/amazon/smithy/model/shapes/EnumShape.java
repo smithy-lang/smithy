@@ -285,7 +285,7 @@ public final class EnumShape extends StringShape {
                 .orElse(Collections.emptyList());
 
         builder.tags(tags);
-        if (member.hasTrait(InternalTrait.class) && !tags.contains("internal")) {
+        if (member.hasTrait(InternalTrait.ID) && !tags.contains("internal")) {
             builder.addTag("internal");
         }
         return builder.build();

@@ -31,7 +31,7 @@ public class IamActionTraitTest {
 
         Shape fooOperation = result.expectShape(ID);
 
-        assertTrue(fooOperation.hasTrait(IamActionTrait.class));
+        assertTrue(fooOperation.hasTrait(IamActionTrait.ID));
         IamActionTrait trait = fooOperation.expectTrait(IamActionTrait.class);
         assertEquals(trait.getName().get(), "foo");
         assertEquals(trait.getDocumentation().get(), "docs");

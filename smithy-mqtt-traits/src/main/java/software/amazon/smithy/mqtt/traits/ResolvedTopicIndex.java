@@ -52,11 +52,11 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
         OperationIndex operationIndex = OperationIndex.of(model);
 
         model.shapes(OperationShape.class).forEach(operation -> {
-            if (operation.hasTrait(PublishTrait.class)) {
-                PublishTrait trait = operation.getTrait(PublishTrait.class).get();
+            if (operation.hasTrait(PublishTrait.ID)) {
+                PublishTrait trait = operation.expectTrait(PublishTrait.class);
                 createPublishBindings(operationIndex, operation, trait);
-            } else if (operation.hasTrait(SubscribeTrait.class)) {
-                SubscribeTrait trait = operation.getTrait(SubscribeTrait.class).get();
+            } else if (operation.hasTrait(SubscribeTrait.ID)) {
+                SubscribeTrait trait = operation.expectTrait(SubscribeTrait.class);
                 StructureShape input = operationIndex.expectInputShape(operation);
                 createSubscribeBinding(input, eventStreamIndex, operation, trait);
             }

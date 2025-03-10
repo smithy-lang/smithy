@@ -130,7 +130,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol listShape(ListShape shape) {
-        if (shape.hasTrait(UniqueItemsTrait.class)) {
+        if (shape.hasTrait(UniqueItemsTrait.ID)) {
             return TraitCodegenUtils.fromClass(Set.class)
                     .toBuilder()
                     .addReference(toSymbol(shape.getMember()))

@@ -86,7 +86,7 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
     private List<MemberShape> getDiscoveryIds(OperationIndex opIndex, OperationShape operation) {
         List<MemberShape> discoveryIds = new ArrayList<>();
         for (MemberShape member : opIndex.expectInputShape(operation).getAllMembers().values()) {
-            if (member.hasTrait(ClientEndpointDiscoveryIdTrait.class)) {
+            if (member.hasTrait(ClientEndpointDiscoveryIdTrait.ID)) {
                 discoveryIds.add(member);
             }
         }

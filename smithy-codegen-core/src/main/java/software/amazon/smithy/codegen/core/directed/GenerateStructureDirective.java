@@ -28,7 +28,7 @@ public final class GenerateStructureDirective<C extends CodegenContext<S, ?, ?>,
     /**
      * Check if this is a shape used exclusively for input.
      *
-     * <p>This is equivalent to calling {@code shape().hasTrait(InputTrait.class)}.
+     * <p>This is equivalent to calling {@code shape().hasTrait(InputTrait.ID)}.
      *
      * <p>Use the {@link CodegenDirector#createDedicatedInputsAndOutputs()} method
      * to ensure that every operation has a unique input shape marked with the
@@ -38,13 +38,13 @@ public final class GenerateStructureDirective<C extends CodegenContext<S, ?, ?>,
      * @see ModelTransformer#createDedicatedInputAndOutput
      */
     public boolean isInputShape() {
-        return shape().hasTrait(InputTrait.class);
+        return shape().hasTrait(InputTrait.ID);
     }
 
     /**
      * Check if this is a shape used exclusively for output.
      *
-     * <p>This is equivalent to calling {@code shape().hasTrait(OutputTrait.class)}.
+     * <p>This is equivalent to calling {@code shape().hasTrait(OutputTrait.ID)}.
      *
      * <p>Use the {@link CodegenDirector#createDedicatedInputsAndOutputs()} method
      * to ensure that every operation has a unique output shape marked with the
@@ -54,6 +54,6 @@ public final class GenerateStructureDirective<C extends CodegenContext<S, ?, ?>,
      * @see ModelTransformer#createDedicatedInputAndOutput
      */
     public boolean isOutputShape() {
-        return shape().hasTrait(OutputTrait.class);
+        return shape().hasTrait(OutputTrait.ID);
     }
 }

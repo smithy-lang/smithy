@@ -28,8 +28,8 @@ public class MakeIdempotencyTokenClientOptionalTest {
         Shape input = result.expectShape(operationInput);
         Shape member = result.expectShape(input.getMember("token").get().getId());
 
-        assertTrue(member.hasTrait(ClientOptionalTrait.class));
-        assertTrue(member.hasTrait(RequiredTrait.class));
-        assertTrue(member.hasTrait(IdempotencyTokenTrait.class));
+        assertTrue(member.hasTrait(ClientOptionalTrait.ID));
+        assertTrue(member.hasTrait(RequiredTrait.ID));
+        assertTrue(member.hasTrait(IdempotencyTokenTrait.ID));
     }
 }

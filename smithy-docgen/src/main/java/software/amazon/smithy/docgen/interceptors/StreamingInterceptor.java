@@ -35,7 +35,7 @@ public class StreamingInterceptor implements CodeInterceptor.Appender<ShapeDetai
                 .orElse(section.shape());
         if (target.isBlobShape()) {
             writer.pushState();
-            writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.class));
+            writer.putContext("requiresLength", target.hasTrait(RequiresLengthTrait.ID));
             writer.openAdmonition(NoticeType.IMPORTANT);
             writer.write("""
                     The data in this member is potentially very large and therefore must be streamed and not \

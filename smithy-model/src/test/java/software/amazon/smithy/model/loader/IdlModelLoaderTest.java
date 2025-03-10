@@ -386,7 +386,7 @@ public class IdlModelLoaderTest {
         ShapeId myInteger = ShapeId.from("smithy.example#MyInteger");
         assertThat(model.getShape(myInteger).isPresent(), is(true));
         // Ensure recovery happened on the docs trait, capturing it on the shape.
-        assertThat(model.expectShape(myInteger).hasTrait(DocumentationTrait.class), is(true));
+        assertThat(model.expectShape(myInteger).hasTrait(DocumentationTrait.ID), is(true));
 
         boolean foundSyntax = false;
         boolean foundTrait = false;
@@ -416,7 +416,7 @@ public class IdlModelLoaderTest {
 
         ShapeId myString = ShapeId.from("smithy.example#MyString");
         assertThat(model.getShape(myString).isPresent(), is(true));
-        assertThat(model.expectShape(myString).hasTrait(ExternalDocumentationTrait.class), is(false));
+        assertThat(model.expectShape(myString).hasTrait(ExternalDocumentationTrait.ID), is(false));
 
         boolean foundSyntax = result.getValidationEvents()
                 .stream()

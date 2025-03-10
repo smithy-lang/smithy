@@ -25,7 +25,7 @@ public final class XmlFlattenedTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (MemberShape member : model.getMemberShapesWithTrait(XmlFlattenedTrait.class)) {
             // Don't emit the event if they're being explicit about the xmlName on this member
-            if (member.hasTrait(XmlNameTrait.class)) {
+            if (member.hasTrait(XmlNameTrait.ID)) {
                 continue;
             }
 
@@ -39,7 +39,7 @@ public final class XmlFlattenedTraitValidator extends AbstractValidator {
     }
 
     private void validateMemberTargetingList(MemberShape member, ListShape targetList, List<ValidationEvent> events) {
-        if (targetList.getMember().hasTrait(XmlNameTrait.class)) {
+        if (targetList.getMember().hasTrait(XmlNameTrait.ID)) {
             XmlNameTrait xmlName = targetList.getMember().expectTrait(XmlNameTrait.class);
             if (!member.getMemberName().equals(xmlName.getValue())) {
                 events.add(warning(member,

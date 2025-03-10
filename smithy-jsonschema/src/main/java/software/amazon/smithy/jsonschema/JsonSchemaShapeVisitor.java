@@ -84,7 +84,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     @Override
     public Schema listShape(ListShape shape) {
         Schema.Builder builder = createBuilder(shape, "array").items(createRef(shape.getMember()));
-        if (shape.hasTrait(UniqueItemsTrait.class)) {
+        if (shape.hasTrait(UniqueItemsTrait.ID)) {
             builder.uniqueItems(true);
         }
         return buildSchema(shape, builder);
@@ -95,7 +95,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             return member.accept(this);
         } else {
             Schema.Builder refBuilder = Schema.builder().ref(converter.toPointer(member.getTarget()));
-            if (member.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
+            if (member.hasTrait(DeprecatedTrait.ID) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
                 refBuilder.deprecated(true);
             }
 
@@ -104,7 +104,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             }
 
             // Wrap the ref and default in an allOf if disableDefaultValues has been not been disabled on config.
-            if (member.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
+            if (member.hasTrait(DefaultTrait.ID) && !converter.getConfig().getDisableDefaultValues()) {
                 Schema def = Schema.builder().defaultValue(member.expectTrait(DefaultTrait.class).toNode()).build();
                 return Schema.builder().allOf(ListUtils.of(refBuilder.build(), def)).build();
             }
@@ -353,7 +353,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             }
         });
 
-        if (shape.hasTrait(UniqueItemsTrait.class)) {
+        if (shape.hasTrait(UniqueItemsTrait.ID)) {
             builder.uniqueItems(true);
         }
 
@@ -365,11 +365,11 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
             builder.intEnumValues(shape.asIntEnumShape().get().getEnumValues().values());
         }
 
-        if (shape.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
+        if (shape.hasTrait(DefaultTrait.ID) && !converter.getConfig().getDisableDefaultValues()) {
             builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
         }
 
-        if (shape.hasTrait(DeprecatedTrait.class) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
+        if (shape.hasTrait(DeprecatedTrait.ID) && getJsonSchemaVersion() != JsonSchemaVersion.DRAFT07) {
             builder.deprecated(true);
         }
 

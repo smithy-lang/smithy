@@ -66,7 +66,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     errorsParamsPair.getRight()));
 
             // Check that tests declare required parameters, only defined parameters, etc.
-            if (serviceShape.hasTrait(EndpointTestsTrait.class)) {
+            if (serviceShape.hasTrait(EndpointTestsTrait.ID)) {
                 errors.addAll(validateTestsParameters(model,
                         topDownIndex,
                         serviceShape,
@@ -86,7 +86,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         List<ValidationEvent> errors = new ArrayList<>();
         Map<String, Parameter> endpointParams = new HashMap<>();
 
-        if (serviceShape.hasTrait(ClientContextParamsTrait.class)) {
+        if (serviceShape.hasTrait(ClientContextParamsTrait.ID)) {
             ClientContextParamsTrait trait = serviceShape.expectTrait(ClientContextParamsTrait.class);
             for (Map.Entry<String, ClientContextParamDefinition> entry : trait.getParameters().entrySet()) {
                 endpointParams.put(entry.getKey(),
@@ -144,7 +144,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             StructureShape input = model.expectShape(operationShape.getInputShape(), StructureShape.class);
             for (MemberShape memberShape : input.members()) {
-                if (memberShape.hasTrait(ContextParamTrait.class)) {
+                if (memberShape.hasTrait(ContextParamTrait.ID)) {
                     ContextParamTrait trait = memberShape.expectTrait(ContextParamTrait.class);
                     String name = trait.getName();
                     Shape targetType = model.expectShape(memberShape.getTarget());
@@ -329,7 +329,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                         for (String name : inputShape.getMemberNames()) {
                             MemberShape memberShape = inputShape.getMember(name).get();
                             if (input.getOperationParams().containsMember(name)
-                                    && memberShape.hasTrait(ContextParamTrait.class)) {
+                                    && memberShape.hasTrait(ContextParamTrait.ID)) {
                                 String paramName = memberShape.expectTrait(ContextParamTrait.class).getName();
                                 testParams.add(buildParameter(paramName,
                                         input.getOperationParams().expectMember(name)));

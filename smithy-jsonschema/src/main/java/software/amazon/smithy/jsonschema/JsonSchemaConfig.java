@@ -380,7 +380,7 @@ public class JsonSchemaConfig {
      * @return Returns the optionally detected format.
      */
     public Optional<String> detectJsonTimestampFormat(Shape shape) {
-        if (shape.isTimestampShape() || shape.hasTrait(TimestampFormatTrait.class)) {
+        if (shape.isTimestampShape() || shape.hasTrait(TimestampFormatTrait.ID)) {
             return Optional.of(shape.getTrait(TimestampFormatTrait.class)
                     .map(TimestampFormatTrait::getValue)
                     .orElseGet(() -> getDefaultTimestampFormat().toString()));

@@ -68,13 +68,13 @@ public class XmlFlattenedInterceptor implements CodeInterceptor<ProtocolSection,
     private Pair<String, String> getRef(DocGenerationContext context, Shape shape) {
         var target = context.model().expectShape(shape.asMemberShape().get().getTarget());
         if (target.isMapShape()) {
-            if (shape.hasTrait(XmlFlattenedTrait.class)) {
+            if (shape.hasTrait(XmlFlattenedTrait.ID)) {
                 return FLAT_MAP_REF;
             }
             return WRAPPED_MAP_REF;
         }
 
-        if (shape.hasTrait(XmlFlattenedTrait.class)) {
+        if (shape.hasTrait(XmlFlattenedTrait.ID)) {
             return FLAT_LIST_REF;
         }
         return WRAPPED_LIST_REF;

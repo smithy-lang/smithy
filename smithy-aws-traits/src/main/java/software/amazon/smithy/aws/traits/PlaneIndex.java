@@ -135,9 +135,9 @@ public final class PlaneIndex implements KnowledgeIndex {
     }
 
     private Plane extractPlane(Shape shape) {
-        if (shape.hasTrait(ControlPlaneTrait.class)) {
+        if (shape.hasTrait(ControlPlaneTrait.ID)) {
             return Plane.CONTROL;
-        } else if (shape.hasTrait(DataPlaneTrait.class)) {
+        } else if (shape.hasTrait(DataPlaneTrait.ID)) {
             return Plane.DATA;
         } else {
             return null;

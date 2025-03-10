@@ -27,7 +27,7 @@ public class IamResourceTraitTest {
 
         Shape superResource = result.expectShape(ID);
 
-        assertTrue(superResource.hasTrait(IamResourceTrait.class));
+        assertTrue(superResource.hasTrait(IamResourceTrait.ID));
         assertEquals(superResource.expectTrait(IamResourceTrait.class).getName().get(), "super");
         assertEquals(superResource.expectTrait(IamResourceTrait.class).getRelativeDocumentation().get(),
                 "API-Super.html");

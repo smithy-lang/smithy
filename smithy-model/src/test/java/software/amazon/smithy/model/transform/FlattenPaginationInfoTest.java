@@ -28,7 +28,7 @@ public class FlattenPaginationInfoTest {
         Model result = ModelTransformer.create().flattenPaginationInfoIntoOperations(before, service);
 
         Shape resultService = result.expectShape(serviceId);
-        assertFalse(resultService.hasTrait(PaginatedTrait.class));
+        assertFalse(resultService.hasTrait(PaginatedTrait.ID));
 
         Shape resultOperation = result.expectShape(operationId);
         PaginatedTrait resultTrait = resultOperation.expectTrait(PaginatedTrait.class);

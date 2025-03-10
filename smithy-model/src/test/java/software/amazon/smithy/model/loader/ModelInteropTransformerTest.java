@@ -96,8 +96,8 @@ public class ModelInteropTransformerTest {
         assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), targetsShape(result, "PrimitiveInteger"));
 
         Shape shape = result.getResult().get().expectShape(ShapeId.from("smithy.example#Foo$boxedMember"));
-        assertThat(shape.hasTrait(BoxTrait.class), is(true));
-        assertThat(shape.hasTrait(DefaultTrait.class), is(true));
+        assertThat(shape.hasTrait(BoxTrait.ID), is(true));
+        assertThat(shape.hasTrait(DefaultTrait.ID), is(true));
         assertThat(shape.expectTrait(DefaultTrait.class).toNode().isNullNode(), is(true));
 
         assertThat(ShapeId.from("smithy.example#Foo$previouslyBoxedTarget"), not(addedDefaultTrait(result)));
@@ -180,7 +180,7 @@ public class ModelInteropTransformerTest {
     private static Matcher<ShapeId> addedDefaultTrait(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
                 .description("member to have a default trait")
-                .addAssertion(member -> member.hasTrait(DefaultTrait.class),
+                .addAssertion(member -> member.hasTrait(DefaultTrait.ID),
                         member -> "no @default trait")
                 .build();
     }
@@ -320,9 +320,9 @@ public class ModelInteropTransformerTest {
         ShapeId primitiveInteger = ShapeId.from("smithy.example#PrimitiveInteger");
         ShapeId fooBam = ShapeId.from("smithy.example#Foo$bam");
 
-        assertThat(model.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(foo).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(fooBaz).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(myInteger).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(foo).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(fooBaz).hasTrait(BoxTrait.ID), is(true));
 
         Node serialized = ModelSerializer.builder().build().serialize(model);
         String raw = Node.prettyPrintJson(serialized);
@@ -331,22 +331,22 @@ public class ModelInteropTransformerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model2.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
-        assertThat(model2.expectShape(myInteger).hasTrait(DefaultTrait.class), is(false));
-        assertThat(model2.expectShape(foo).hasTrait(BoxTrait.class), is(false));
-        assertThat(model2.expectShape(fooBaz).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model2.expectShape(myInteger).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model2.expectShape(myInteger).hasTrait(DefaultTrait.ID), is(false));
+        assertThat(model2.expectShape(foo).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model2.expectShape(fooBaz).hasTrait(DefaultTrait.ID), is(true));
         assertThat(model2.expectShape(fooBaz).expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
 
         // This member gets a synthetic box trait because the default value is set to null.
-        assertThat(model2.expectShape(fooBaz).hasTrait(BoxTrait.class), is(true));
+        assertThat(model2.expectShape(fooBaz).hasTrait(BoxTrait.ID), is(true));
 
         // Primitive integer gets a synthetic default trait and no box trait.
-        assertThat(model2.expectShape(primitiveInteger).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model2.expectShape(primitiveInteger).hasTrait(BoxTrait.class), is(false));
+        assertThat(model2.expectShape(primitiveInteger).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model2.expectShape(primitiveInteger).hasTrait(BoxTrait.ID), is(false));
 
         // The member referring to PrimitiveInteger gets a synthetic default trait and no box trait.
-        assertThat(model2.expectShape(fooBam).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model2.expectShape(fooBam).hasTrait(BoxTrait.class), is(false));
+        assertThat(model2.expectShape(fooBam).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model2.expectShape(fooBam).hasTrait(BoxTrait.ID), is(false));
     }
 
     @Test
@@ -424,46 +424,46 @@ public class ModelInteropTransformerTest {
         ShapeId fooPrimitiveIntEnum = ShapeId.from("smithy.example#Foo$PrimitiveIntEnum");
 
         // Do not box strings for v1 compatibility.
-        assertThat(model.expectShape(defaultString).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(fooDefaultString).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(fooDefaultString).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(defaultString).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(defaultString).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(fooDefaultString).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(fooDefaultString).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(defaultString).hasTrait(DefaultTrait.ID), is(true));
 
         // Add box to BoxedInteger because it has no default trait.
-        assertThat(model.expectShape(boxedInteger).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedInteger).hasTrait(BoxTrait.class), is(false)); // no need to box member too
-        assertThat(model.expectShape(boxedInteger).hasTrait(DefaultTrait.class), is(false));
-        assertThat(model.expectShape(fooBoxedInteger).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(boxedInteger).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedInteger).hasTrait(BoxTrait.ID), is(false)); // no need to box member too
+        assertThat(model.expectShape(boxedInteger).hasTrait(DefaultTrait.ID), is(false));
+        assertThat(model.expectShape(fooBoxedInteger).hasTrait(DefaultTrait.ID), is(false));
 
         // Add box to BoxedIntegerWithDefault because it has a default that isn't the v1 zero value.
-        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
-        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(BoxTrait.ID), is(false)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(DefaultTrait.ID), is(true));
 
         // No box trait on PrimitiveInteger because it has a zero value default.
-        assertThat(model.expectShape(primitiveInteger).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(primitiveInteger).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(primitiveInteger).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(primitiveInteger).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(DefaultTrait.ID), is(true));
 
         // Add box to BoxedIntEnum because it has no default trait.
-        assertThat(model.expectShape(boxedIntEnum).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
-        assertThat(model.expectShape(boxedIntEnum).hasTrait(DefaultTrait.class), is(false));
-        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(boxedIntEnum).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(BoxTrait.ID), is(false)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntEnum).hasTrait(DefaultTrait.ID), is(false));
+        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(DefaultTrait.ID), is(false));
 
         // Add box to BoxedIntEnumWithDefault because it has a default that isn't the v1 zero value.
-        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
-        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(BoxTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(BoxTrait.ID), is(false)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(DefaultTrait.ID), is(true));
 
         // No box trait on PrimitiveIntEnum because it has a zero value default.
-        assertThat(model.expectShape(primitiveIntEnum).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(BoxTrait.class), is(false));
-        assertThat(model.expectShape(primitiveIntEnum).hasTrait(DefaultTrait.class), is(true));
-        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(primitiveIntEnum).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(BoxTrait.ID), is(false));
+        assertThat(model.expectShape(primitiveIntEnum).hasTrait(DefaultTrait.ID), is(true));
+        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(DefaultTrait.ID), is(true));
     }
 
     @Test
@@ -478,7 +478,7 @@ public class ModelInteropTransformerTest {
         ShapeId shapeId1 = ShapeId.from("smithy.example#MyLong1");
         Shape shape1 = model1.expectShape(shapeId1);
 
-        assertThat(shape1.hasTrait(RangeTrait.class), is(true));
+        assertThat(shape1.hasTrait(RangeTrait.ID), is(true));
         // Make sure the range trait wasn't modified.
         assertThat(shape1.expectTrait(RangeTrait.class).getMin().get().toString(), equalTo("1"));
         assertThat(result.getValidationEvents()

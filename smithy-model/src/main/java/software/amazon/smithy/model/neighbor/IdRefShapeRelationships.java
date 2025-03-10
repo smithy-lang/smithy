@@ -43,7 +43,7 @@ final class IdRefShapeRelationships {
     Map<ShapeId, Set<Relationship>> getRelationships() {
         PathFinder finder = PathFinder.create(model);
         for (Shape traitDef : model.getShapesWithTrait(TraitDefinition.class)) {
-            if (traitDef.hasTrait(IdRefTrait.class)) {
+            if (traitDef.hasTrait(IdRefTrait.ID)) {
                 // PathFinder doesn't handle the case where the trait def has the idRef
                 NodeQuery query = new NodeQuery().self();
                 addRelationships(traitDef, query);

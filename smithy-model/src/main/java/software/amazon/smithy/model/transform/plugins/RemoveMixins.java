@@ -32,7 +32,7 @@ public final class RemoveMixins implements ModelTransformerPlugin {
         Map<Shape, Set<Shape>> mixinShapesToRemove = new HashMap<>();
 
         for (Shape removedShape : shapes) {
-            if (removedShape.hasTrait(MixinTrait.class) && !removedShape.isMemberShape()) {
+            if (removedShape.hasTrait(MixinTrait.ID) && !removedShape.isMemberShape()) {
                 // Remove the mixin from any shape that uses it.
                 Stream.concat(model.shapes(StructureShape.class), model.shapes(UnionShape.class)).forEach(shape -> {
                     if (shape.getMixins().contains(removedShape.getId())) {

@@ -59,7 +59,7 @@ final class HeaderSchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sc
     // created if the format was not explicitly set.
     @Override
     public Schema timestampShape(TimestampShape shape) {
-        if (member.hasTrait(TimestampFormatTrait.class)) {
+        if (member.hasTrait(TimestampFormatTrait.ID)) {
             return schema;
         }
 
@@ -72,7 +72,7 @@ final class HeaderSchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sc
     @Override
     public Schema stringShape(StringShape shape) {
         // String shapes with the mediaType trait must be base64 encoded.
-        return shape.hasTrait(MediaTypeTrait.class)
+        return shape.hasTrait(MediaTypeTrait.ID)
                 ? schema.toBuilder().ref(null).type("string").format("byte").build()
                 : schema;
     }

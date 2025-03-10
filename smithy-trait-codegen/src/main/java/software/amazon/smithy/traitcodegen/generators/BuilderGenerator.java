@@ -102,7 +102,7 @@ final class BuilderGenerator implements Runnable {
     }
 
     private void writeBuilderInterface() {
-        if (baseShape.hasTrait(TraitDefinition.class)) {
+        if (baseShape.hasTrait(TraitDefinition.ID)) {
             if (TraitCodegenUtils.isJavaStringList(baseShape, symbolProvider)) {
                 writer.write("extends $T.Builder<$T, Builder> {", StringListTrait.class, symbol);
             } else {
@@ -131,7 +131,7 @@ final class BuilderGenerator implements Runnable {
                 () -> {
                     writer.writeInlineWithNoFormatting("return builder()");
                     writer.indent();
-                    if (baseShape.hasTrait(TraitDefinition.class)) {
+                    if (baseShape.hasTrait(TraitDefinition.ID)) {
                         writer.writeInlineWithNoFormatting(".sourceLocation(getSourceLocation())");
                     }
                     if (baseShape.members().isEmpty()) {
@@ -503,7 +503,7 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void timestampShape(TimestampShape timestampShape) {
-            if (member.hasTrait(TimestampFormatTrait.class)) {
+            if (member.hasTrait(TimestampFormatTrait.ID)) {
                 switch (member.expectTrait(TimestampFormatTrait.class).getFormat()) {
                     case EPOCH_SECONDS:
                         writer.writeInline(

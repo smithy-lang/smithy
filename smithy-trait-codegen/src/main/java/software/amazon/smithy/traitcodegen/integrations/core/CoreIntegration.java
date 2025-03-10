@@ -57,7 +57,7 @@ public final class CoreIntegration implements TraitCodegenIntegration {
         return new SymbolProvider() {
             @Override
             public Symbol toSymbol(Shape shape) {
-                if (shape.hasTrait(TraitDefinition.class)) {
+                if (shape.hasTrait(TraitDefinition.ID)) {
                     return getTraitSymbol(settings, shape, symbolProvider.toSymbol(shape));
                 }
                 return symbolProvider.toSymbol(shape);

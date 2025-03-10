@@ -125,7 +125,7 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
     }
 
     private void ignoreReferencedResources(Shape shape, Set<ShapeId> resourcesToIgnore) {
-        if (shape.hasTrait(ReferencesTrait.class)) {
+        if (shape.hasTrait(ReferencesTrait.ID)) {
             for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class)
                     .getReferences()) {
                 resourcesToIgnore.add(reference.getResource());

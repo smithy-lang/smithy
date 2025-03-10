@@ -47,7 +47,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 .map(ExternalDocumentation::toNode)
                 .ifPresent(docs -> builder.putExtension("externalDocs", docs));
 
-        if (shape.hasTrait(DeprecatedTrait.class)) {
+        if (shape.hasTrait(DeprecatedTrait.ID)) {
             builder.putExtension("deprecated", Node.from(true));
         }
 
@@ -77,7 +77,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 config.detectJsonTimestampFormat(shape)
                         .filter(format -> format.equals(TimestampFormatTrait.EPOCH_SECONDS))
                         .ifPresent(format -> builder.format("double"));
-            } else if (shape.hasTrait(SensitiveTrait.class)) {
+            } else if (shape.hasTrait(SensitiveTrait.ID)) {
                 builder.format("password");
             }
         }

@@ -451,7 +451,7 @@ public final class OpenApiConverter {
                 PathItem.Builder pathItem = paths.computeIfAbsent(result.getUri(), (uri) -> PathItem.builder());
 
                 // Mark the operation deprecated if the trait's present.
-                if (shape.hasTrait(DeprecatedTrait.class)) {
+                if (shape.hasTrait(DeprecatedTrait.ID)) {
                     result.getOperation().deprecated(true);
                 }
 

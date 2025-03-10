@@ -131,7 +131,7 @@ public class ShapeTest {
         assertFalse(shape.hasTrait("notThere"));
 
         assertTrue(shape.getTrait(DocumentationTrait.class).isPresent());
-        assertTrue(shape.hasTrait(DocumentationTrait.class));
+        assertTrue(shape.hasTrait(DocumentationTrait.ID));
         assertTrue(shape.findTrait("documentation").isPresent());
         assertTrue(shape.findTrait("smithy.api#documentation").isPresent());
         assertTrue(shape.findTrait("documentation").get() instanceof DocumentationTrait);

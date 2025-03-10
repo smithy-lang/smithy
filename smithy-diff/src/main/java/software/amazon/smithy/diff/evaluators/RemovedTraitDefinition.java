@@ -18,7 +18,7 @@ public final class RemovedTraitDefinition extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
                 .map(shape -> ValidationEvent.builder()
                         .id(getEventId())
                         .severity(Severity.ERROR)

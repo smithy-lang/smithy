@@ -50,7 +50,7 @@ public final class Prelude {
      */
     public static boolean isPublicPreludeShape(ToShapeId id) {
         return getPreludeModel().getShape(id.toShapeId())
-                .filter(shape -> !shape.hasTrait(PrivateTrait.class))
+                .filter(shape -> !shape.hasTrait(PrivateTrait.ID))
                 .isPresent();
     }
 

@@ -49,7 +49,7 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
             StructureShape output,
             List<ValidationEvent> events
     ) {
-        if (!input.hasTrait(InputTrait.class)) {
+        if (!input.hasTrait(InputTrait.ID)) {
             events.add(warning(input,
                     String.format(
                             "This structure is the input of `%s`, but it is not marked with the "
@@ -61,7 +61,7 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
                     operation.getId().getName()));
         }
 
-        if (!output.hasTrait(OutputTrait.class)) {
+        if (!output.hasTrait(OutputTrait.ID)) {
             events.add(warning(output,
                     String.format(
                             "This structure is the output of `%s`, but it is not marked with "

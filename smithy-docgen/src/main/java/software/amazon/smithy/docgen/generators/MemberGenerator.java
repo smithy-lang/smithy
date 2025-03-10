@@ -353,7 +353,7 @@ public final class MemberGenerator implements Runnable {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            if (member.hasTrait(EnumValueTrait.class)) {
+            if (member.hasTrait(EnumValueTrait.ID)) {
                 var trait = member.expectTrait(EnumValueTrait.class);
                 if (trait.getIntValue().isPresent()) {
                     writer.writeInline("$`", trait.expectIntValue());

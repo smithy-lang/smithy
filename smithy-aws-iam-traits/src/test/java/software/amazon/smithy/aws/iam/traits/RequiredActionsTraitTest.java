@@ -25,7 +25,7 @@ public class RequiredActionsTraitTest {
 
         Shape myOperation = result.expectShape(ShapeId.from("smithy.example#MyOperation"));
 
-        assertTrue(myOperation.hasTrait(RequiredActionsTrait.class));
+        assertTrue(myOperation.hasTrait(RequiredActionsTrait.ID));
         assertThat(myOperation.expectTrait(RequiredActionsTrait.class).getValues(),
                 containsInAnyOrder(
                         "iam:PassRole",

@@ -35,10 +35,10 @@ public final class TaggableResourceValidator extends AbstractValidator {
         for (ServiceShape service : model.getServiceShapes()) {
             for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
                 boolean resourceLikelyTaggable = false;
-                if (resource.hasTrait(TaggableTrait.class)) {
+                if (resource.hasTrait(TaggableTrait.ID)) {
                     events.addAll(validateResource(model, resource, service, tagIndex));
                     resourceLikelyTaggable = true;
-                } else if (resource.hasTrait(ArnTrait.class) && tagIndex.serviceHasTagApis(service)) {
+                } else if (resource.hasTrait(ArnTrait.ID) && tagIndex.serviceHasTagApis(service)) {
                     // If a resource does not have the taggable trait, but has an ARN, and the service has tag
                     // operations, it is most likely a mistake.
                     events.add(warning(resource, "Resource is likely missing `aws.api#taggable` trait."));
@@ -46,7 +46,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
                 }
 
                 // It's possible the resource was marked as taggable but the service isn't tagEnabled.
-                if (resourceLikelyTaggable && !service.hasTrait(TagEnabledTrait.class)) {
+                if (resourceLikelyTaggable && !service.hasTrait(TagEnabledTrait.ID)) {
                     events.add(warning(service,
                             "Service has resources with `aws.api#taggable` applied but does not "
                                     + "have the `aws.api#tagEnabled` trait."));
@@ -81,7 +81,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
         boolean isServiceWideTaggable = awsTagIndex.serviceHasTagApis(service.getId());
         boolean isInstanceOpTaggable = isTaggableViaInstanceOperations(model, resource);
 
-        if (isServiceWideTaggable && !isInstanceOpTaggable && !resource.hasTrait(ArnTrait.class)) {
+        if (isServiceWideTaggable && !isInstanceOpTaggable && !resource.hasTrait(ArnTrait.ID)) {
             events.add(error(resource,
                     "Resource is taggable only via service-wide tag operations."
                             + " It must use the `aws.api@arn` trait."));

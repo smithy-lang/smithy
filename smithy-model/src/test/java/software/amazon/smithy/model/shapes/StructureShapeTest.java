@@ -133,9 +133,9 @@ public class StructureShapeTest {
                 .addTrait(new DocumentationTrait("hi"))
                 .build();
 
-        assertTrue(concrete.hasTrait(SensitiveTrait.class));
-        assertTrue(concrete.hasTrait(DeprecatedTrait.class));
-        assertTrue(concrete.hasTrait(DocumentationTrait.class));
+        assertTrue(concrete.hasTrait(SensitiveTrait.ID));
+        assertTrue(concrete.hasTrait(DeprecatedTrait.ID));
+        assertTrue(concrete.hasTrait(DocumentationTrait.ID));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class StructureShapeTest {
         StructureShape updated = concrete.toBuilder().addMember(updatedA).build();
 
         assertThat(updated.getMemberNames(), contains("a"));
-        assertTrue(updated.getMember("a").get().hasTrait(SensitiveTrait.class));
+        assertTrue(updated.getMember("a").get().hasTrait(SensitiveTrait.ID));
         assertThat(updated.getMember("a").get().getMixins(), contains(mixin1.getMember("a").get().getId()));
     }
 
@@ -218,10 +218,10 @@ public class StructureShapeTest {
                 .addMixin(mixin1)
                 .build();
 
-        assertTrue(concrete.getMember("a").get().hasTrait(SensitiveTrait.class));
+        assertTrue(concrete.getMember("a").get().hasTrait(SensitiveTrait.ID));
         assertThat(concrete.getMember("a").get().getMixins(), contains(mixin1.getMember("a").get().getId()));
 
-        assertTrue(concrete.getMember("b").get().hasTrait(SensitiveTrait.class));
+        assertTrue(concrete.getMember("b").get().hasTrait(SensitiveTrait.ID));
         assertThat(concrete.getMember("b").get().getMixins(), contains(mixin1.getMember("b").get().getId()));
     }
 

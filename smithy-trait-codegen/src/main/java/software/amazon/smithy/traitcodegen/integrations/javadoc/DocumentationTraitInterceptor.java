@@ -34,6 +34,6 @@ final class DocumentationTraitInterceptor implements CodeInterceptor<JavaDocSect
 
     @Override
     public boolean isIntercepted(JavaDocSection section) {
-        return section.shape().hasTrait(DocumentationTrait.class);
+        return section.shape().hasTrait(DocumentationTrait.ID);
     }
 }

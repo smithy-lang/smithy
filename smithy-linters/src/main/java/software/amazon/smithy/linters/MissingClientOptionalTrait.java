@@ -80,13 +80,13 @@ public final class MissingClientOptionalTrait extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         for (MemberShape member : model.getMemberShapes()) {
-            if (member.hasTrait(ClientOptionalTrait.class)) {
+            if (member.hasTrait(ClientOptionalTrait.ID)) {
                 continue;
             }
-            if (member.hasTrait(DefaultTrait.class) && config.onRequiredOrDefault) {
+            if (member.hasTrait(DefaultTrait.ID) && config.onRequiredOrDefault) {
                 events.add(danger(member, "@default members must also be marked with the @clientOptional trait"));
             }
-            if (member.hasTrait(RequiredTrait.class)) {
+            if (member.hasTrait(RequiredTrait.ID)) {
                 if (config.onRequiredOrDefault) {
                     events.add(danger(member, "@required members must also be marked with the @clientOptional trait"));
                 } else if (config.onRequiredStructureOrUnion && isTargetingStructureOrUnion(model, member)) {

@@ -28,7 +28,7 @@ public final class RemoveTraits implements ModelTransformerPlugin {
         // Find all shapes with the "@trait" trait to ensure references to it are removed
         // from other shapes.
         Set<ShapeId> removedTraits = shapes.stream()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 

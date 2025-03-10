@@ -34,6 +34,6 @@ final class ExternalDocumentationInterceptor implements CodeInterceptor.Appender
 
     @Override
     public boolean isIntercepted(JavaDocSection section) {
-        return section.shape().hasTrait(ExternalDocumentationTrait.class);
+        return section.shape().hasTrait(ExternalDocumentationTrait.ID);
     }
 }

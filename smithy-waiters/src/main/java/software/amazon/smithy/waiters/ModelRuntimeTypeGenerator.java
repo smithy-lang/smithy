@@ -217,7 +217,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
         // Create a random string that does not exceed or go under the length trait.
         int chars = 2;
 
-        if (shape.hasTrait(LengthTrait.class)) {
+        if (shape.hasTrait(LengthTrait.ID)) {
             LengthTrait trait = shape.expectTrait(LengthTrait.class);
             if (trait.getMin().isPresent()) {
                 chars = Math.max(chars, trait.getMin().get().intValue());
@@ -234,7 +234,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
         // Create a random string that does not exceed or go under the range trait.
         double i = 8;
 
-        if (shape.hasTrait(RangeTrait.class)) {
+        if (shape.hasTrait(RangeTrait.ID)) {
             RangeTrait trait = shape.expectTrait(RangeTrait.class);
             if (trait.getMin().isPresent()) {
                 i = Math.max(i, trait.getMin().get().doubleValue());

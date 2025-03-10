@@ -26,7 +26,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
     @Override
     public void accept(GenerateTraitDirective directive) {
-        if (directive.shape().hasTrait(TraitDefinition.class)) {
+        if (directive.shape().hasTrait(TraitDefinition.ID)) {
             new TraitGenerator().accept(directive);
         } else {
             directive.shape().accept(new NestedShapeGenerator(directive));

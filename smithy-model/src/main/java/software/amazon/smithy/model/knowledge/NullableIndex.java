@@ -52,7 +52,7 @@ public class NullableIndex implements KnowledgeIndex {
         CLIENT {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                if (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class)) {
+                if (member.hasTrait(ClientOptionalTrait.ID) || container.hasTrait(InputTrait.ID)) {
                     return true;
                 }
 
@@ -86,7 +86,7 @@ public class NullableIndex implements KnowledgeIndex {
         CLIENT_ZERO_VALUE_V1 {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                return container.hasTrait(InputTrait.class)
+                return container.hasTrait(InputTrait.ID)
                         || CLIENT_ZERO_VALUE_V1_NO_INPUT.isStructureMemberOptional(container, member, target);
             }
         },
@@ -101,7 +101,7 @@ public class NullableIndex implements KnowledgeIndex {
         CLIENT_ZERO_VALUE_V1_NO_INPUT {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                if (member.hasTrait(AddedDefaultTrait.class) || member.hasTrait(ClientOptionalTrait.class)) {
+                if (member.hasTrait(AddedDefaultTrait.ID) || member.hasTrait(ClientOptionalTrait.ID)) {
                     return true;
                 }
 
@@ -128,7 +128,7 @@ public class NullableIndex implements KnowledgeIndex {
                 // 1. Does the member have the required trait? Stop further checks, it's non-optional.
                 // 2. Does the member have a default trait set to null? Stop further checks, it's optional.
                 // 3. Does the member have a default trait not set to null? Stop further checks, it's non-optional.
-                return !member.hasTrait(RequiredTrait.class) && !member.hasNonNullDefault();
+                return !member.hasTrait(RequiredTrait.ID) && !member.hasNonNullDefault();
             }
         };
 
@@ -180,7 +180,7 @@ public class NullableIndex implements KnowledgeIndex {
                 // fall-through.
             case LIST:
                 // Map values and list members are only null if they have the @sparse trait.
-                return container.hasTrait(SparseTrait.class);
+                return container.hasTrait(SparseTrait.ID);
             default:
                 return false;
         }
@@ -221,7 +221,7 @@ public class NullableIndex implements KnowledgeIndex {
             case LONG:
             case FLOAT:
             case DOUBLE:
-                return shape.hasTrait(BoxTrait.class);
+                return shape.hasTrait(BoxTrait.ID);
             default:
                 return true;
         }
@@ -246,7 +246,7 @@ public class NullableIndex implements KnowledgeIndex {
                 } // fall-through
             case LIST:
                 // Sparse lists and maps are considered nullable.
-                return container.hasTrait(SparseTrait.class);
+                return container.hasTrait(SparseTrait.ID);
             default:
                 return false;
         }

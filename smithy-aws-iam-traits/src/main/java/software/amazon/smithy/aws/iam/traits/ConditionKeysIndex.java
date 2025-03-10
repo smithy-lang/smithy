@@ -174,8 +174,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
         // Continue recursing into resources and computing keys.
         subject.asResourceShape().ifPresent(resource -> {
-            boolean disableConditionKeyInference = resource.hasTrait(DisableConditionKeyInferenceTrait.class)
-                    || service.hasTrait(DisableConditionKeyInferenceTrait.class);
+            boolean disableConditionKeyInference = resource.hasTrait(DisableConditionKeyInferenceTrait.ID)
+                    || service.hasTrait(DisableConditionKeyInferenceTrait.ID);
 
             // Add any inferred resource identifiers to the resource and to the service-wide definitions.
             Map<String, String> childIdentifiers = !disableConditionKeyInference
@@ -218,7 +218,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 // Only infer identifiers introduced by a child. Children should
                 // use their parent identifiers and not duplicate them.
                 ConditionKeyDefinition.Builder builder = ConditionKeyDefinition.builder();
-                if (shape.hasTrait(ArnReferenceTrait.class)) {
+                if (shape.hasTrait(ArnReferenceTrait.ID)) {
                     // Use an ARN type if the targeted shape has the arnReference trait.
                     builder.type(ARN_TYPE);
                 } else {

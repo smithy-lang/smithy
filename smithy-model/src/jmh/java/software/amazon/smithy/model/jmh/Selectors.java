@@ -121,10 +121,10 @@ public class Selectors {
         return model.shapes(ServiceShape.class).flatMap(service -> {
             Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
             // Stop early if there are no bindings at all in the model for any operation.
-            if (operations.stream().noneMatch(o -> o.hasTrait(HttpTrait.class))) {
+            if (operations.stream().noneMatch(o -> o.hasTrait(HttpTrait.ID))) {
                 return Stream.empty();
             }
-            return operations.stream().filter(shape -> !shape.hasTrait(HttpTrait.class));
+            return operations.stream().filter(shape -> !shape.hasTrait(HttpTrait.ID));
         })
                 .collect(Collectors.toSet());
     }

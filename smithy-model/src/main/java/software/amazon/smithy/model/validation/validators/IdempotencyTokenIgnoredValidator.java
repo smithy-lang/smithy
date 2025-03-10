@@ -43,7 +43,7 @@ public final class IdempotencyTokenIgnoredValidator extends AbstractValidator {
         for (MemberShape memberShape : model.getMemberShapesWithTrait(IdempotencyTokenTrait.class)) {
             Shape container = model.expectShape(memberShape.getContainer());
             // Skip non-structures (invalid) and mixins (handled at mixed site).
-            if (!container.isStructureShape() || container.hasTrait(MixinTrait.class)) {
+            if (!container.isStructureShape() || container.hasTrait(MixinTrait.ID)) {
                 continue;
             }
             Trait trait = memberShape.expectTrait(IdempotencyTokenTrait.class);

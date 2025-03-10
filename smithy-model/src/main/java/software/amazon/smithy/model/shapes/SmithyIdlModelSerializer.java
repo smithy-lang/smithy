@@ -635,7 +635,7 @@ public final class SmithyIdlModelSerializer {
                     for (MemberShape member : members) {
                         serializeTraits(member.getAllTraits(), TraitFeature.MEMBER);
                         String assignment = "";
-                        if (member.hasTrait(DefaultTrait.class)) {
+                        if (member.hasTrait(DefaultTrait.ID)) {
                             assignment = " = " + Node.printJson(member.expectTrait(DefaultTrait.class).toNode());
                         }
                         codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), assignment);

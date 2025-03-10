@@ -37,7 +37,7 @@ public final class UnionValidator extends AbstractValidator {
     }
 
     private void validateUnionMemberTarget(MemberShape member, Shape target, List<ValidationEvent> events) {
-        if (target.hasTrait(DefaultTrait.class)) {
+        if (target.hasTrait(DefaultTrait.ID)) {
             events.add(note(member,
                     String.format(
                             "This union member targets `%s`, a shape with a default value of `%s`. Note that "
@@ -50,7 +50,7 @@ public final class UnionValidator extends AbstractValidator {
     }
 
     private void validateUnionMember(MemberShape member, List<ValidationEvent> events) {
-        if (member.hasTrait(BoxTrait.class)) {
+        if (member.hasTrait(BoxTrait.ID)) {
             events.add(warning(member,
                     member.expectTrait(BoxTrait.class),
                     "Invalid box trait found on a union member. The box trait on union members "

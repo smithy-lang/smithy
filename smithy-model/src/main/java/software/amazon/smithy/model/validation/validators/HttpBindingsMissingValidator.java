@@ -71,7 +71,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
     }
 
     private boolean hasBindings(OperationShape op) {
-        return op.getTrait(HttpTrait.class).isPresent();
+        return op.hasTrait(HttpTrait.ID);
     }
 
     private List<ValidationEvent> validateOperations(
@@ -81,7 +81,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
             String reason
     ) {
         return operations.stream()
-                .filter(operation -> !operation.getTrait(HttpTrait.class).isPresent())
+                .filter(operation -> !operation.hasTrait(HttpTrait.ID))
                 .map(operation -> createEvent(severity,
                         operation,
                         operation.getSourceLocation(),

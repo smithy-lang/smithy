@@ -73,7 +73,7 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
         for (MemberShape memberShape : model.getMemberShapes()) {
             Shape container = model.expectShape(memberShape.getContainer());
             // Skip non-structures (invalid) and mixins (handled at mixed site).
-            if (!container.isStructureShape() || container.hasTrait(MixinTrait.class)) {
+            if (!container.isStructureShape() || container.hasTrait(MixinTrait.ID)) {
                 continue;
             }
 

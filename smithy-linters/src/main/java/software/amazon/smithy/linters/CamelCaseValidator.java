@@ -127,7 +127,7 @@ public final class CamelCaseValidator extends AbstractValidator {
         // Normal shapes are expected to be upper camel.
         model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
-                .filter(shape -> !shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> !shape.hasTrait(TraitDefinition.ID))
                 .filter(shape -> !MemberNameHandling.UPPER.getRegex().matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape,
                         format(
@@ -139,9 +139,9 @@ public final class CamelCaseValidator extends AbstractValidator {
 
         // Trait shapes are expected to be lower camel.
         model.shapes()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
-                .filter(shape -> !shape.hasTrait(AuthDefinitionTrait.class))
-                .filter(shape -> !shape.hasTrait(ProtocolDefinitionTrait.class))
+                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
+                .filter(shape -> !shape.hasTrait(AuthDefinitionTrait.ID))
+                .filter(shape -> !shape.hasTrait(ProtocolDefinitionTrait.ID))
                 .filter(shape -> !MemberNameHandling.LOWER.getRegex().matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape,
                         format(

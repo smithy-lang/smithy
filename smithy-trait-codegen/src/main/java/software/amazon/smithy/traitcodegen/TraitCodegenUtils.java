@@ -112,7 +112,7 @@ public final class TraitCodegenUtils {
      */
     public static boolean isJavaStringList(Shape shape, SymbolProvider symbolProvider) {
         return shape.isListShape()
-                && !shape.hasTrait(UniqueItemsTrait.class)
+                && !shape.hasTrait(UniqueItemsTrait.ID)
                 && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
                         shape.asListShape().get().getMember()));
     }

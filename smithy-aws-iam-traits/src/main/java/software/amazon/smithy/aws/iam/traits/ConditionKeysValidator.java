@@ -40,13 +40,13 @@ public final class ConditionKeysValidator extends AbstractValidator {
         OperationIndex operationIndex = OperationIndex.of(model);
 
         return model.shapes(ServiceShape.class)
-                .filter(service -> service.hasTrait(ServiceTrait.class))
+                .filter(service -> service.hasTrait(ServiceTrait.ID))
                 .flatMap(service -> {
                     List<ValidationEvent> results = new ArrayList<>();
                     Set<String> knownKeys = conditionIndex.getDefinedConditionKeys(service).keySet();
                     Set<String> serviceResolvedKeys = Collections.emptySet();
 
-                    if (service.hasTrait(ServiceResolvedConditionKeysTrait.class)) {
+                    if (service.hasTrait(ServiceResolvedConditionKeysTrait.ID)) {
                         ServiceResolvedConditionKeysTrait trait =
                                 service.expectTrait(ServiceResolvedConditionKeysTrait.class);
                         //assign so we can compare against condition key values for any intersection
@@ -83,7 +83,7 @@ public final class ConditionKeysValidator extends AbstractValidator {
                         }
 
                         for (MemberShape memberShape : operationIndex.getInputMembers(operation).values()) {
-                            if (memberShape.hasTrait(ConditionKeyValueTrait.class)) {
+                            if (memberShape.hasTrait(ConditionKeyValueTrait.ID)) {
                                 ConditionKeyValueTrait trait = memberShape.expectTrait(ConditionKeyValueTrait.class);
                                 String conditionKey = trait.getValue();
                                 if (!knownKeys.contains(conditionKey)) {

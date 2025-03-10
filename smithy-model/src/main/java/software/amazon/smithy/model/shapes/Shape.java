@@ -262,7 +262,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @return Returns true if the shape has the given trait.
      */
     public boolean hasTrait(ShapeId id) {
-        return findTrait(id).isPresent();
+        return traits.containsKey(id);
     }
 
     /**
