@@ -23,11 +23,11 @@ import software.amazon.smithy.model.transform.ModelTransformerPlugin;
  */
 public final class CleanOperationStructures implements ModelTransformerPlugin {
     @Override
-    public Model onRemove(ModelTransformer transformer, Collection<Shape> removed, Model model) {
-        return transformer.replaceShapes(model, getModifiedOperations(model, removed));
+    public Model onRemove(ModelTransformer transformer, Collection<Shape> removed, Set<ShapeId> removedIds, Model model) {
+        return transformer.replaceShapes(model, getModifiedOperations(model, removedIds));
     }
 
-    private Collection<Shape> getModifiedOperations(Model model, Collection<Shape> removed) {
+    private Collection<Shape> getModifiedOperations(Model model, Set<ShapeId> removed) {
         return model.shapes(OperationShape.class)
                 .flatMap(operation -> {
                     OperationShape result = transformErrors(removed, operation);
@@ -38,27 +38,23 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
                 .collect(Collectors.toList());
     }
 
-    private OperationShape transformInput(Collection<Shape> removed, OperationShape operation) {
-        for (Shape remove : removed) {
-            if (remove.getId().equals(operation.getInputShape())) {
-                return operation.toBuilder().input(null).build();
-            }
+    private OperationShape transformInput(Set<ShapeId> removed, OperationShape operation) {
+        if (removed.contains(operation.getInputShape())) {
+            return operation.toBuilder().input(null).build();
         }
         return operation;
     }
 
-    private OperationShape transformOutput(Collection<Shape> removed, OperationShape operation) {
-        for (Shape remove : removed) {
-            if (remove.getId().equals(operation.getOutputShape())) {
-                return operation.toBuilder().output(null).build();
-            }
+    private OperationShape transformOutput(Set<ShapeId> removed, OperationShape operation) {
+        if (removed.contains(operation.getOutputShape())) {
+            return operation.toBuilder().output(null).build();
         }
         return operation;
     }
 
-    private OperationShape transformErrors(Collection<Shape> removed, OperationShape operation) {
+    private OperationShape transformErrors(Set<ShapeId> removed, OperationShape operation) {
         Set<ShapeId> errors = new HashSet<>(operation.getErrors());
-        removed.forEach(shape -> errors.remove(shape.getId()));
+        errors.removeAll(removed);
 
         if (new ArrayList<>(errors).equals(operation.getErrors())) {
             return operation;
