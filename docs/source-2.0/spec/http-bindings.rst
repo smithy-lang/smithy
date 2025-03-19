@@ -643,8 +643,8 @@ Conflicts with
    :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
 
-``httpHeader`` serialization rules:
------------------------------------
+Serialization rules
+-------------------
 
 * When a :ref:`list <list>` shape is targeted, each member of the shape is
   serialized as a separate HTTP header either by concatenating the values
@@ -792,8 +792,8 @@ Applying the ``httpLabel`` trait to members
 * If the corresponding URI label in the operation is greedy, then the
   ``httpLabel`` trait MUST target a member that targets a ``string`` shape.
 
-``httpLabel`` serialization rules
----------------------------------
+Serialization rules
+-------------------
 
 - ``boolean`` values are serialized as ``true`` or ``false``.
 - ``timestamp`` values are serialized as an :rfc:`3339` string by default
@@ -935,7 +935,6 @@ Structurally exclusive
 
 Given the following Smithy model:
 
-
 .. code-block:: smithy
 
     @readonly
@@ -974,6 +973,56 @@ An example HTTP request would be serialized as:
     Host: <server>
     X-Foo-first: hi
     X-Foo-second: there
+
+Given the following Smithy model that also uses the ``httpHeader`` trait:
+
+.. code-block:: smithy
+
+    @readonly
+    @http(method: "GET", uri: "/myOperation")
+    operation MyOperation {
+        input: MyOperationInput
+    }
+
+    @input
+    structure MyOperationInput {
+        @httpPrefixHeaders("X-Foo-")
+        headers: MapOfStrings
+
+        @httpHeader("X-Foo-Value")
+        foo: String
+    }
+
+    map MapOfStrings {
+        key: String
+        value: String
+    }
+
+And given the following input to ``MyOperation``:
+
+.. code-block:: json
+
+    {
+        "headers": {
+            "Value": "not sent"
+        }
+        "foo": "resolved"
+    }
+
+An example HTTP request would be serialized as:
+
+::
+
+    GET /myOperation
+    Host: <server>
+    X-Foo-Value: resolved
+
+.. note::
+
+    If using both ``httpPrefixHeaders`` and ``httpHeader``, placing the member
+    that uses ``httpPrefixHeaders`` ahead of those that use ``httpHeader`` can
+    help readers understand the precedence for
+    :ref:`serializing HTTP messages. <serializing-http-messages>`
 
 Disambiguation of ``httpPrefixHeaders``
 ---------------------------------------
@@ -1134,7 +1183,7 @@ target input map as query string parameters in an HTTP request:
 
     @input
     structure ListThingsInput {
-        @httpQueryParams()
+        @httpQueryParams
         myParams: MapOfStrings
     }
 
@@ -1142,6 +1191,56 @@ target input map as query string parameters in an HTTP request:
         key: String
         value: String
     }
+
+
+Given the following Smithy model that also uses the ``httpQuery`` trait:
+
+.. code-block:: smithy
+
+    @readonly
+    @http(method: "GET", uri: "/myOperation")
+    operation MyOperation {
+        input: MyOperationInput
+    }
+
+    @input
+    structure MyOperationInput {
+        @httpQueryParams
+        query: MapOfStrings
+
+        @httpQuery
+        foo: String
+    }
+
+    map MapOfStrings {
+        key: String
+        value: String
+    }
+
+And given the following input to ``MyOperation``:
+
+.. code-block:: json
+
+    {
+        "query": {
+            "foo": "not sent"
+        }
+        "foo": "resolved"
+    }
+
+An example HTTP request would be serialized as:
+
+::
+
+    GET /myOperation?foo=resolved
+    Host: <server>
+
+.. note::
+
+    If using both ``httpQueryParams`` and ``httpQuery``, placing the member
+    that uses ``httpQueryParams`` ahead of those that use ``httpQuery`` can
+    help readers understand the precedence for
+    :ref:`serializing HTTP messages. <serializing-http-messages>`
 
 Serialization rules
 -------------------
@@ -1378,6 +1477,7 @@ See
         output: PutSomethingOutput
     }
 
+.. _serializing-http-messages:
 
 Serializing HTTP messages
 =========================
@@ -1393,14 +1493,14 @@ parameters:
    corresponding structure member by name:
 
    1. If the member has the ``httpLabel`` trait, expand the value into the URI.
-   2. If the member has the ``httpQuery`` trait, serialize the value into the
-      HTTP request as a query string parameter.
-   3. If the member has the ``httpQueryParams`` trait, serialize the values into
+   2. If the member has the ``httpQueryParams`` trait, serialize the values into
       the HTTP request as query string parameters.
-   4. If the member has the ``httpHeader`` trait, serialize the value in an
-      HTTP header using the value of the ``httpHeader`` trait.
-   5. If the member has the ``httpPrefixHeaders`` trait and the value is a map,
+   3. If the member has the ``httpQuery`` trait, serialize the value into the
+      HTTP request as a query string parameter.
+   4. If the member has the ``httpPrefixHeaders`` trait and the value is a map,
       serialize the map key value pairs as prefixed HTTP headers.
+   5. If the member has the ``httpHeader`` trait, serialize the value in an
+      HTTP header using the value of the ``httpHeader`` trait.
    6. If the member has the ``httpPayload`` trait, serialize the value as the
       body of the request.
    7. If the member has no bindings, serialize the key-value pair as part of a
@@ -1418,10 +1518,10 @@ parameters:
 3. Iterate over all of the key-value pairs of the parameters and find the
    corresponding structure member by name:
 
-   1. If the member has the ``httpHeader`` trait, serialize the value in an
-      HTTP header using the value of the ``httpHeader`` trait.
-   2. If the member has the ``httpPrefixHeaders`` trait and the value is a map,
+   1. If the member has the ``httpPrefixHeaders`` trait and the value is a map,
       serialize the map key value pairs as prefixed HTTP headers.
+   2. If the member has the ``httpHeader`` trait, serialize the value in an
+      HTTP header using the value of the ``httpHeader`` trait.
    3. If the member has the ``httpPayload`` trait, serialize the value as the
       body of the response.
    4. If the member has no bindings, serialize the key-value pair as part of a
