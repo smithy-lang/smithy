@@ -3,4 +3,4 @@
 [WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTagging
 [WARNING] example.weather#Weather: Service marked `aws.api#tagEnabled` trait does not have consistent tagging operations implemented: {TagResource, UntagResource, and ListTagsForResource}. | TagEnabledService
 [ERROR] example.weather#City: Tag property must be a list shape targeting a member containing a pair of strings, or a Map shape targeting a string member. | TagResourcePropertyType
-[ERROR] example.weather#City: Resource does not have tagging CRUD operations and is not compatible with service-wide tagging operations for service `example.weather#Weather`. | TaggableResource
+[DANGER] example.weather#City: Resource does not have tagging CRUD operations and is not compatible with service-wide tagging operations for service `example.weather#Weather`. | TaggableResource

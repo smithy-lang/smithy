@@ -88,7 +88,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
         }
 
         if (!isServiceWideTaggable && !isInstanceOpTaggable) {
-            events.add(error(resource,
+            events.add(danger(resource,
                     String.format("Resource does not have tagging CRUD operations and is not"
                             + " compatible with service-wide tagging operations"
                             + " for service `%s`.",
