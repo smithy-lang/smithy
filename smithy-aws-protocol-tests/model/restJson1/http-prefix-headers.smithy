@@ -149,3 +149,105 @@ structure HttpPrefixHeadersInResponseOutput {
     @httpPrefixHeaders("")
     prefixHeaders: StringMap,
 }
+
+/// Clients that perform this test extract all headers from the response.
+@readonly
+@http(uri: "/HttpEmptyPrefixHeaders", method: "GET")
+operation HttpEmptyPrefixHeaders  {
+    input := {
+        @httpPrefixHeaders("")
+        prefixHeaders: StringMap
+
+        @httpHeader("hello")
+        specificHeader: String
+    }
+    output := {
+        @httpPrefixHeaders("")
+        prefixHeaders: StringMap
+
+        @httpHeader("hello")
+        specificHeader: String
+    }
+}
+
+apply HttpEmptyPrefixHeaders @httpRequestTests([
+    {
+        id: "RestJsonHttpEmptyPrefixHeadersRequestClient"
+        documentation: "Serializes all request headers, using specific when present"
+        protocol: restJson1
+        method: "GET"
+        uri: "/HttpEmptyPrefixHeaders"
+        body: ""
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "Hello"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "client"
+    }
+    {
+        id: "RestJsonHttpEmptyPrefixHeadersRequestServer"
+        documentation: "Deserializes all request headers with the same for prefix and specific"
+        protocol: restJson1
+        method: "GET"
+        uri: "/HttpEmptyPrefixHeaders"
+        body: ""
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "There"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "server"
+    }
+])
+
+apply HttpEmptyPrefixHeaders @httpResponseTests([
+    {
+        id: "RestJsonHttpEmptyPrefixHeadersResponseClient"
+        documentation: "Deserializes all response headers with the same for prefix and specific"
+        protocol: restJson1
+        code: 200
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "There"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "client"
+    }
+    {
+        id: "RestJsonHttpEmptyPrefixHeadersResponseServer"
+        documentation: "Serializes all response headers, using specific when present"
+        protocol: restJson1
+        code: 200
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "Hello"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "server"
+    }
+])
