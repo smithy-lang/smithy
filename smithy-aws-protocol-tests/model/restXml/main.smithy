@@ -48,6 +48,7 @@ service RestXml {
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
+        HttpEmptyPrefixHeaders,
 
         // @httpPayload tests
         HttpPayloadTraits,

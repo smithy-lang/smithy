@@ -6,6 +6,7 @@ $version: "2.0"
 namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
+use aws.protocoltests.shared#StringMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -122,3 +123,105 @@ map FooPrefixHeaders {
     key: String,
     value: String,
 }
+
+/// Clients that perform this test extract all headers from the response.
+@readonly
+@http(uri: "/HttpEmptyPrefixHeaders", method: "GET")
+operation HttpEmptyPrefixHeaders  {
+    input := {
+        @httpPrefixHeaders("")
+        prefixHeaders: StringMap
+
+        @httpHeader("hello")
+        specificHeader: String
+    }
+    output := {
+        @httpPrefixHeaders("")
+        prefixHeaders: StringMap
+
+        @httpHeader("hello")
+        specificHeader: String
+    }
+}
+
+apply HttpEmptyPrefixHeaders @httpRequestTests([
+    {
+        id: "HttpEmptyPrefixHeadersRequestClient"
+        documentation: "Serializes all request headers, using specific when present"
+        protocol: restXml
+        method: "GET"
+        uri: "/HttpEmptyPrefixHeaders"
+        body: ""
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "Hello"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "client"
+    }
+    {
+        id: "HttpEmptyPrefixHeadersRequestServer"
+        documentation: "Deserializes all request headers with the same for prefix and specific"
+        protocol: restXml
+        method: "GET"
+        uri: "/HttpEmptyPrefixHeaders"
+        body: ""
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "There"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "server"
+    }
+])
+
+apply HttpEmptyPrefixHeaders @httpResponseTests([
+    {
+        id: "HttpEmptyPrefixHeadersResponseClient"
+        documentation: "Deserializes all response headers with the same for prefix and specific"
+        protocol: restXml
+        code: 200
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "There"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "client"
+    }
+    {
+        id: "HttpEmptyPrefixHeadersResponseServer"
+        documentation: "Serializes all response headers, using specific when present"
+        protocol: restXml
+        code: 200
+        headers: {
+            "x-foo": "Foo",
+            "hello": "There"
+        }
+        params: {
+            prefixHeaders: {
+                "x-foo": "Foo",
+                "hello": "Hello"
+            }
+            specificHeader: "There"
+        }
+        appliesTo: "server"
+    }
+])

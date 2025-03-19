@@ -54,6 +54,7 @@ service RestJson {
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
         HttpPrefixHeadersInResponse,
+        HttpEmptyPrefixHeaders,
 
         // @httpPayload tests
         HttpPayloadTraits,
