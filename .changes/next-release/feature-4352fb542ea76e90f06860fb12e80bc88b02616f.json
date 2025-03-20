@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add breakingChanges to the removal of sigv4 and sigv4a traits",
+  "pull_requests": []
+}
