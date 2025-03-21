@@ -23,7 +23,17 @@ structure cognitoUserPools {
     traits: [unsignedPayload]
 )
 @externalDocumentation(Reference: "https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html")
-@trait(selector: "service")
+@trait(
+    selector: "service"
+    breakingChanges: [
+        {
+            change: "remove",
+            message: """
+                Removing the existing authentication scheme is not backward compatible \
+                and can break existing clients' authentication."""
+        }
+    ]
+)
 structure sigv4 {
     /// The signature version 4 service signing name to use in the credential
     /// scope when signing requests. This value SHOULD match the `arnNamespace`
@@ -46,7 +56,17 @@ structure sigv4 {
     Reference: "https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html"
     Examples: "https://github.com/aws-samples/sigv4a-signing-examples"
 )
-@trait(selector: "service[trait|aws.auth#sigv4]")
+@trait(
+    selector: "service[trait|aws.auth#sigv4]"
+    breakingChanges: [
+        {
+            change: "remove",
+            message: """
+                Removing the existing authentication scheme is not backward compatible \
+                and can break existing clients' authentication."""
+        }
+    ]
+)
 structure sigv4a {
     /// The signature version 4a service signing name to use in the credential
     /// scope when signing requests. This value SHOULD match the `arnNamespace`

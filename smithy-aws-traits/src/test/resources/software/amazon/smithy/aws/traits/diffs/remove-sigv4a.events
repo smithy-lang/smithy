@@ -1,0 +1,7 @@
+[ERROR] ns.foo#Service: Removed trait `aws.auth#sigv4a`. Previous trait value: 
+```
+{
+    "name": "service"
+}
+```
+; Removing the existing authentication scheme is not backward compatible and can break existing clients' authentication. | TraitBreakingChange.Remove
