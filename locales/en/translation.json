@@ -27,7 +27,7 @@
   },
   "title": {
     "lineOne": "Build services.",
-    "lineTwo": "Build customers.",
+    "lineTwo": "Build SDKs.",
     "tagline": "Build with Smithy.",
     "subtitle": "Modeling a service should be easy, no matter the interface. Smithy is extensible, typesafe, protocol agnostic, and powers services at AWS."
   },

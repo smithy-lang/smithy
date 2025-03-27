@@ -1111,8 +1111,8 @@ case-insensitively unique across all other members of the structure.</dd>
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
-<div class="section" id="httpheader-serialization-rules">
-<h3><span class="section-number">14.3.1. </span><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> serialization rules:<a class="headerlink" href="#httpheader-serialization-rules" title="Permalink to this heading">#</a></h3>
+<div class="section" id="serialization-rules">
+<h3><span class="section-number">14.3.1. </span>Serialization rules<a class="headerlink" href="#serialization-rules" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li>When a <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a> shape is targeted, each member of the shape is
 serialized as a separate HTTP header either by concatenating the values
@@ -1271,8 +1271,8 @@ structure with the <code class="docutils literal notranslate"><span class="pre">
 <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST target a member that targets a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape.</li>
 </ul>
 </div>
-<div class="section" id="httplabel-serialization-rules">
-<h3><span class="section-number">14.4.3. </span><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> serialization rules<a class="headerlink" href="#httplabel-serialization-rules" title="Permalink to this heading">#</a></h3>
+<div class="section" id="id7">
+<h3><span class="section-number">14.4.3. </span>Serialization rules<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-5"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC 3339</strong></a> string by default
@@ -1294,7 +1294,7 @@ is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httppayload-trait">
-<span id="smithy-api-httppayload-trait"></span><span id="id7"></span><h2><span class="section-number">14.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait<a class="headerlink" href="#httppayload-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httppayload-trait"></span><span id="id8"></span><h2><span class="section-number">14.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait<a class="headerlink" href="#httppayload-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a single structure member to the body of an HTTP message.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
@@ -1352,8 +1352,8 @@ output of an operation or a structure targeted by the <a class="reference intern
 then all other structure members MUST be bound to a <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>
 or <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>.</p>
 </div>
-<div class="section" id="serialization-rules">
-<h3><span class="section-number">14.5.3. </span>Serialization rules<a class="headerlink" href="#serialization-rules" title="Permalink to this heading">#</a></h3>
+<div class="section" id="id9">
+<h3><span class="section-number">14.5.3. </span>Serialization rules<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
 <li>When a string or blob member is referenced, the raw value is serialized
 as the body of the message.</li>
@@ -1370,7 +1370,7 @@ in any other context and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpprefixheaders-trait">
-<span id="smithy-api-httpprefixheaders-trait"></span><span id="id8"></span><h2><span class="section-number">14.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait<a class="headerlink" href="#httpprefixheaders-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpprefixheaders-trait"></span><span id="id10"></span><h2><span class="section-number">14.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait<a class="headerlink" href="#httpprefixheaders-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1425,13 +1425,52 @@ name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <span class="n">X</span><span class="o">-</span><span class="n">Foo</span><span class="o">-</span><span class="n">second</span><span class="p">:</span> <span class="n">there</span>
 </pre></div>
 </div>
+<p>Given the following Smithy model that also uses the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/myOperation&quot;</span>)
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
+<span class="w">    </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span>
+
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo-Value&quot;</span>)
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">map </span><span class="nc">MapOfStrings</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>And given the following input to <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;headers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;Value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not sent&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resolved&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An example HTTP request would be serialized as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">myOperation</span>
+<span class="n">Host</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">server</span><span class="o">&gt;</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Foo</span><span class="o">-</span><span class="n">Value</span><span class="p">:</span> <span class="n">resolved</span>
+</pre></div>
+</div>
 <div class="section" id="disambiguation-of-httpprefixheaders">
 <h3><span class="section-number">14.6.1. </span>Disambiguation of <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code><a class="headerlink" href="#disambiguation-of-httpprefixheaders" title="Permalink to this heading">#</a></h3>
 <p>In order to differentiate <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> from other headers, when
-<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> are used, no other <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> bindings can
-start with the same prefix provided in <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait. If
-<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> is set to an empty string, then no other members can be
-bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> are used with a non-empty string, no other
+<a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> bindings can start with the same prefix provided in
+<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> is set to an empty string, then other members can be
+bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>. However, this can lead to ambiguity on the source of
+provided header values.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> is only considered when applied to top-level members
@@ -1441,7 +1480,7 @@ meaning in any other context and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpquery-trait">
-<span id="smithy-api-httpquery-trait"></span><span id="id9"></span><h2><span class="section-number">14.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait<a class="headerlink" href="#httpquery-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpquery-trait"></span><span id="id11"></span><h2><span class="section-number">14.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait<a class="headerlink" href="#httpquery-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1483,8 +1522,8 @@ request:</p>
 }
 </pre></div>
 </div>
-<div class="section" id="id10">
-<h3><span class="section-number">14.7.1. </span>Serialization rules<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h3>
+<div class="section" id="id12">
+<h3><span class="section-number">14.7.1. </span>Serialization rules<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li>&quot;&amp;&quot; is used to separate query string parameter key-value pairs.</li>
 <li>&quot;=&quot; is used to separate query string parameter names from values.</li>
@@ -1535,7 +1574,7 @@ path.</p>
 </div>
 </div>
 <div class="section" id="httpqueryparams-trait">
-<span id="smithy-api-httpqueryparams-trait"></span><span id="id11"></span><h2><span class="section-number">14.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpqueryparams-trait"></span><span id="id13"></span><h2><span class="section-number">14.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to query string parameters.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
@@ -1563,7 +1602,7 @@ target input map as query string parameters in an HTTP request:</p>
 
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">ListThingsInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQueryParams</span>()
+<span class="w">    </span><span class="nt">@httpQueryParams</span>
 <span class="w">    </span><span class="py">myParams</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span>
 }
 
@@ -1573,8 +1612,44 @@ target input map as query string parameters in an HTTP request:</p>
 }
 </pre></div>
 </div>
-<div class="section" id="id12">
-<h3><span class="section-number">14.8.1. </span>Serialization rules<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
+<p>Given the following Smithy model that also uses the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/myOperation&quot;</span>)
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpQueryParams</span>
+<span class="w">    </span><span class="py">query</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span>
+
+<span class="w">    </span><span class="nt">@httpQuery</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">map </span><span class="nc">MapOfStrings</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>And given the following input to <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not sent&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resolved&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An example HTTP request would be serialized as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /myOperation?foo=resolved
+Host: &lt;server&gt;
+</pre></div>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">14.8.1. </span>Serialization rules<a class="headerlink" href="#id14" title="Permalink to this heading">#</a></h3>
 <p>See the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> serialization rules that define how the keys and values of the
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
@@ -1667,7 +1742,7 @@ is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="httpresponsecode-trait">
-<span id="smithy-api-httpresponsecode-trait"></span><span id="id13"></span><h2><span class="section-number">14.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait<a class="headerlink" href="#httpresponsecode-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpresponsecode-trait"></span><span id="id15"></span><h2><span class="section-number">14.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait<a class="headerlink" href="#httpresponsecode-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to the HTTP response status code so that an
 HTTP response status code can be set dynamically at runtime to something
@@ -1700,7 +1775,7 @@ and is simply ignored.</p>
 </div>
 </div>
 <div class="section" id="cors-trait">
-<span id="smithy-api-cors-trait"></span><span id="id14"></span><h2><span class="section-number">14.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-cors-trait"></span><span id="id16"></span><h2><span class="section-number">14.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines how a service supports cross-origin resource sharing</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
@@ -1764,7 +1839,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
-<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id15"></span><h2><span class="section-number">14.11. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait<a class="headerlink" href="#httpchecksumrequired-trait" title="Permalink to this heading">#</a></h2>
+<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id17"></span><h2><span class="section-number">14.11. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait<a class="headerlink" href="#httpchecksumrequired-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation requires a checksum in its HTTP request. By
 default, the checksum used for a service is a MD5 checksum passed in the
@@ -1782,7 +1857,7 @@ Content-MD5 header.</dd>
 </div>
 </div>
 <div class="section" id="serializing-http-messages">
-<h2><span class="section-number">14.12. </span>Serializing HTTP messages<a class="headerlink" href="#serializing-http-messages" title="Permalink to this heading">#</a></h2>
+<span id="id18"></span><h2><span class="section-number">14.12. </span>Serializing HTTP messages<a class="headerlink" href="#serializing-http-messages" title="Permalink to this heading">#</a></h2>
 <p>The following steps are taken to serialize an HTTP request given a map of
 parameters:</p>
 <ol class="arabic simple">
@@ -1793,14 +1868,14 @@ trait.</li>
 <li>Iterate over all of the key-value pairs of the parameters and find the
 corresponding structure member by name:<ol class="arabic">
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait, expand the value into the URI.</li>
-<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait, serialize the value into the
-HTTP request as a query string parameter.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait, serialize the values into
 the HTTP request as query string parameters.</li>
-<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait, serialize the value in an
-HTTP header using the value of the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait.</li>
+<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait, serialize the value into the
+HTTP request as a query string parameter.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait and the value is a map,
 serialize the map key value pairs as prefixed HTTP headers.</li>
+<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait, serialize the value in an
+HTTP header using the value of the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait, serialize the value as the
 body of the request.</li>
 <li>If the member has no bindings, serialize the key-value pair as part of a
@@ -1819,10 +1894,10 @@ code to 400 if the error trait is &quot;client&quot; or to 500 if the error trai
 &quot;server&quot;.</li>
 <li>Iterate over all of the key-value pairs of the parameters and find the
 corresponding structure member by name:<ol class="arabic">
-<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait, serialize the value in an
-HTTP header using the value of the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait and the value is a map,
 serialize the map key value pairs as prefixed HTTP headers.</li>
+<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait, serialize the value in an
+HTTP header using the value of the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait, serialize the value as the
 body of the response.</li>
 <li>If the member has no bindings, serialize the key-value pair as part of a
@@ -1972,21 +2047,21 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 </ul>
 </li>
 <li><a class="reference internal" href="#httpheader-trait">14.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a><ul>
-<li><a class="reference internal" href="#httpheader-serialization-rules">14.3.1. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> serialization rules:</a></li>
+<li><a class="reference internal" href="#serialization-rules">14.3.1. Serialization rules</a></li>
 <li><a class="reference internal" href="#restricted-http-headers">14.3.2. Restricted HTTP headers</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httplabel-trait">14.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a><ul>
 <li><a class="reference internal" href="#relationship-to-http-trait">14.4.1. Relationship to <span class="xref std std-ref">http-trait</span></a></li>
 <li><a class="reference internal" href="#applying-the-httplabel-trait-to-members">14.4.2. Applying the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait to members</a></li>
-<li><a class="reference internal" href="#httplabel-serialization-rules">14.4.3. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> serialization rules</a></li>
+<li><a class="reference internal" href="#id7">14.4.3. Serialization rules</a></li>
 <li><a class="reference internal" href="#httplabel-is-only-used-on-top-level-input">14.4.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> is only used on top-level input</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httppayload-trait">14.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a><ul>
 <li><a class="reference internal" href="#protocol-specific-document-payloads">14.5.1. Protocol-specific document payloads</a></li>
 <li><a class="reference internal" href="#binding-members-to-httppayload">14.5.2. Binding members to <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code></a></li>
-<li><a class="reference internal" href="#serialization-rules">14.5.3. Serialization rules</a></li>
+<li><a class="reference internal" href="#id9">14.5.3. Serialization rules</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpprefixheaders-trait">14.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a><ul>
@@ -1994,12 +2069,12 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 </ul>
 </li>
 <li><a class="reference internal" href="#httpquery-trait">14.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a><ul>
-<li><a class="reference internal" href="#id10">14.7.1. Serialization rules</a></li>
+<li><a class="reference internal" href="#id12">14.7.1. Serialization rules</a></li>
 <li><a class="reference internal" href="#httpquery-is-only-used-on-top-level-input">14.7.2. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> is only used on top-level input</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpqueryparams-trait">14.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a><ul>
-<li><a class="reference internal" href="#id12">14.8.1. Serialization rules</a></li>
+<li><a class="reference internal" href="#id14">14.8.1. Serialization rules</a></li>
 <li><a class="reference internal" href="#httpqueryparams-is-only-used-on-top-level-input">14.8.2. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> is only used on top-level input</a></li>
 </ul>
 </li>
