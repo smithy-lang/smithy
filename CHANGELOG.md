@@ -1,5 +1,31 @@
 # Smithy Changelog
 
+## 1.56.0 (2025-03-27)
+
+### Features
+
+- Added `FlattenAndRemoveMixins` transform to list of provided build transforms ([#2552](https://github.com/smithy-lang/smithy/pull/2552))
+- Added `Since` suffix to timestamp linter for better timestamp validation ([#2554](https://github.com/smithy-lang/smithy/pull/2554))
+- Improved performance by preferring `ShapeId` for `hasTrait` lookups instead of class-based lookups ([#2562](https://github.com/smithy-lang/smithy/pull/2562))
+- Improved `CleanClientDiscoveryTraitTransformer` implementation by adding short ciruit if ClientDiscovery traits are not applied ([#2559](https://github.com/smithy-lang/smithy/pull/2559))
+- Make IDL serialization clearer by skipping to serialize default boolean values ([#2553](https://github.com/smithy-lang/smithy/pull/2553))
+- Optimized `ModelTransformPlugin` and `ResourceIdentifierBindingValidator` to use fewer intermediate objects and streams.([#2561](https://github.com/smithy-lang/smithy/pull/2561))
+- Added `breakingChanges` property to the removal of sigv4 and sigv4a traits ([#2567](https://github.com/smithy-lang/smithy/pull/2567))
+- Relaxed constraints on `httpPrefixHeaders` trait to have `NOTE` severity during validation when the prefix is set to empty string ([#2565])(https://github.com/smithy-lang/smithy/pull/2565))
+
+### Bug Fixes
+
+- Relaxed on `TaggableResource` instance validation by lowering the severity from `ERROR` to `DANGER` when a resource does not have instance operations for manipulating tags and service level tagging operations are not present ([#2566](https://github.com/smithy-lang/smithy/pull/2566))
+- Fixed OpenAPI conversion by using `ShapeId` instead of name, reducing unnecessary object creation ([#2560](https://github.com/smithy-lang/smithy/pull/2560))
+
+
+### Documentation
+
+- Added TypeScript quickstart pages to provide tutorial for users to generate clients and SDKs with Smithy TypeScript ([#2536](https://github.com/smithy-lang/smithy/pull/2536))
+- Added documentation for OpenAPI `enumStrategy` setting to clarify configuration options ([#2551](https://github.com/smithy-lang/smithy/pull/2551))
+- Added new Smithy landing page for improved user experience ([#2543](https://github.com/smithy-lang/smithy/pull/2543))
+
+
 ## 1.55.0 (2025-02-27)
 
 ### Features
