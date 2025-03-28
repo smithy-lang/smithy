@@ -54,10 +54,17 @@ final class AstCommand implements Command {
         static final String FLATTEN_OPTION = "--flatten";
         private boolean flatten = false;
 
+        static final String INCLUDE_PRELUDE_OPTION = "--include-prelude";
+        private boolean includePrelude = false;
+
         @Override
         public boolean testOption(String name) {
             if (FLATTEN_OPTION.equals(name)) {
                 flatten = true;
+                return true;
+            }
+            if (INCLUDE_PRELUDE_OPTION.equals(name)) {
+                includePrelude = true;
                 return true;
             }
             return false;
@@ -66,6 +73,7 @@ final class AstCommand implements Command {
         @Override
         public void registerHelp(HelpPrinter printer) {
             printer.option(FLATTEN_OPTION, null, "Flattens and removes mixins from the model.");
+            printer.option(INCLUDE_PRELUDE_OPTION, null, "Includes the prelude shapes in the model.");
         }
     }
 
@@ -80,8 +88,8 @@ final class AstCommand implements Command {
                 .defaultSeverity(Severity.DANGER)
                 .build();
 
-        ModelSerializer serializer = ModelSerializer.builder().build();
         Options options = arguments.getReceiver(Options.class);
+        ModelSerializer serializer = ModelSerializer.builder().includePrelude(options.includePrelude).build();
         if (options.flatten) {
             model = ModelTransformer.create().flattenAndRemoveMixins(model);
         }
