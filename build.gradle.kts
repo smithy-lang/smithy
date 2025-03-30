@@ -18,7 +18,7 @@ import org.jreleaser.model.Active
 
 plugins {
     java
-    alias(libs.plugins.jreleaser) apply false
+    alias(libs.plugins.jreleaser)
 }
 
 // Load the Smithy version from VERSION.
@@ -53,23 +53,14 @@ afterEvaluate {
     }
 }
 
-// We're using JReleaser in the smithy-cli subproject, so we want to have a flag to control
-// which JReleaser configuration to use to prevent conflicts
-if (project.hasProperty("release.main")) {
     apply(plugin = "org.jreleaser")
-
-    // Workaround for https://github.com/jreleaser/jreleaser/issues/1492
-    tasks.register("clean")
 
     configure<JReleaserExtension> {
         dryrun = false
 
-        // Used for creating and pushing the version tag, but this configuration ensures that
-        // an actual GitHub release isn't created (since the CLI release does that)
         release {
-            github {
-                skipRelease = true
-                tagName = "{{projectVersion}}"
+            generic {
+                enabled = false
             }
         }
 
@@ -103,4 +94,4 @@ if (project.hasProperty("release.main")) {
             }
         }
     }
-}
+
