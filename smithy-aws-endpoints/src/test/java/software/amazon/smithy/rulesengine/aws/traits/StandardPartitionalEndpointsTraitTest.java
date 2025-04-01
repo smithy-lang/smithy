@@ -46,6 +46,19 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(case2.getDualStack(), true);
         assertEquals(case2.getRegion(), "us-west-2");
         assertNull(case2.getFips());
+
+        trait = getTraitFromService(model, "ns.foo#Service3");
+
+        assertEquals(trait.getEndpointPatternType(), EndpointPatternType.AWS_RECOMMENDED);
+        assertEquals(trait.getPartitionEndpointSpecialCases().size(), 1);
+
+        cases = trait.getPartitionEndpointSpecialCases().get("aws");
+
+        case1 = cases.get(0);
+        assertEquals(case1.getEndpoint(), "https://myservice.{dnsSuffix}");
+        assertEquals(case1.getRegion(), "us-west-2");
+        assertNull(case1.getDualStack());
+        assertNull(case1.getFips());
     }
 
     private StandardPartitionalEndpointsTrait getTraitFromService(Model model, String service) {

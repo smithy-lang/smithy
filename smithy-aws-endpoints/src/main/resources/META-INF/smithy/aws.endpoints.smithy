@@ -106,8 +106,11 @@ structure standardPartitionalEndpoints {
 
 @private
 enum PartitionEndpointPattern {
+    @deprecated(since: "2025-04-01", message: "Not recommended to use. Use AWS_RECOMMENDED instead")
     SERVICE_DNSSUFFIX = "service_dnsSuffix"
+    @deprecated(since: "2025-04-01", message: "Not recommended to use. Use AWS_RECOMMENDED instead")
     SERVICE_REGION_DNSSUFFIX = "service_region_dnsSuffix"
+    AWS_RECOMMENDED = "aws_recommended"
 }
 
 @private
