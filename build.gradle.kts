@@ -53,45 +53,43 @@ afterEvaluate {
     }
 }
 
-    apply(plugin = "org.jreleaser")
+configure<JReleaserExtension> {
+    dryrun = false
 
-    configure<JReleaserExtension> {
-        dryrun = false
-
-        release {
-            generic {
-                enabled = false
-            }
+    release {
+        generic {
+            skipTag = true
         }
+    }
 
-        // Used to announce a release to configured announcers.
-        // https://jreleaser.org/guide/latest/reference/announce/index.html
-        announce {
-            active = Active.NEVER
-        }
+    // Used to announce a release to configured announcers.
+    // https://jreleaser.org/guide/latest/reference/announce/index.html
+    announce {
+        active = Active.NEVER
+    }
 
-        // Signing configuration.
-        // https://jreleaser.org/guide/latest/reference/signing.html
-        signing {
-            active = Active.ALWAYS
-            armored = true
-        }
+    // Signing configuration.
+    // https://jreleaser.org/guide/latest/reference/signing.html
+    signing {
+        active = Active.ALWAYS
+        armored = true
+    }
 
-        // Configuration for deploying to Maven Central.
-        // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
-        deploy {
-            maven {
-                nexus2 {
-                    create("maven-central") {
-                        active = Active.ALWAYS
-                        url = "https://aws.oss.sonatype.org/service/local"
-                        snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
-                        closeRepository = true
-                        releaseRepository = true
-                        stagingRepository(stagingDir().get().asFile.path)
-                    }
+    // Configuration for deploying to Maven Central.
+    // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active = Active.ALWAYS
+                    url = "https://aws.oss.sonatype.org/service/local"
+                    snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository(stagingDir().get().asFile.path)
                 }
             }
         }
     }
+}
 
