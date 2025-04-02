@@ -18,7 +18,7 @@ import org.jreleaser.model.Active
 
 plugins {
     java
-    alias(libs.plugins.jreleaser) apply false
+    alias(libs.plugins.jreleaser)
 }
 
 // Load the Smithy version from VERSION.
@@ -53,54 +53,43 @@ afterEvaluate {
     }
 }
 
-// We're using JReleaser in the smithy-cli subproject, so we want to have a flag to control
-// which JReleaser configuration to use to prevent conflicts
-if (project.hasProperty("release.main")) {
-    apply(plugin = "org.jreleaser")
+configure<JReleaserExtension> {
+    dryrun = false
 
-    // Workaround for https://github.com/jreleaser/jreleaser/issues/1492
-    tasks.register("clean")
-
-    configure<JReleaserExtension> {
-        dryrun = false
-
-        // Used for creating and pushing the version tag, but this configuration ensures that
-        // an actual GitHub release isn't created (since the CLI release does that)
-        release {
-            github {
-                skipRelease = true
-                tagName = "{{projectVersion}}"
-            }
+    release {
+        generic {
+            skipTag = true
         }
+    }
 
-        // Used to announce a release to configured announcers.
-        // https://jreleaser.org/guide/latest/reference/announce/index.html
-        announce {
-            active = Active.NEVER
-        }
+    // Used to announce a release to configured announcers.
+    // https://jreleaser.org/guide/latest/reference/announce/index.html
+    announce {
+        active = Active.NEVER
+    }
 
-        // Signing configuration.
-        // https://jreleaser.org/guide/latest/reference/signing.html
-        signing {
-            active = Active.ALWAYS
-            armored = true
-        }
+    // Signing configuration.
+    // https://jreleaser.org/guide/latest/reference/signing.html
+    signing {
+        active = Active.ALWAYS
+        armored = true
+    }
 
-        // Configuration for deploying to Maven Central.
-        // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
-        deploy {
-            maven {
-                nexus2 {
-                    create("maven-central") {
-                        active = Active.ALWAYS
-                        url = "https://aws.oss.sonatype.org/service/local"
-                        snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
-                        closeRepository = true
-                        releaseRepository = true
-                        stagingRepository(stagingDir().get().asFile.path)
-                    }
+    // Configuration for deploying to Maven Central.
+    // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active = Active.ALWAYS
+                    url = "https://aws.oss.sonatype.org/service/local"
+                    snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository(stagingDir().get().asFile.path)
                 }
             }
         }
     }
 }
+
