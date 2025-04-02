@@ -81,6 +81,7 @@ structure trait {
     selector: String
 
     /// Whether or not only a single member in a shape can have this trait.
+    /// This only has an effect on members of structure shapes.
     structurallyExclusive: StructurallyExclusive
 
     /// The traits that this trait conflicts with.
