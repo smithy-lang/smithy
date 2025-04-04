@@ -21,8 +21,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class SphinxMarkdownWriter extends MarkdownWriter {
 
-    private boolean isNewTabGroup = true;
-
     /**
      * Constructs a SphinxMarkdownWriter.
      *
@@ -65,27 +63,19 @@ public final class SphinxMarkdownWriter extends MarkdownWriter {
 
     @Override
     public DocWriter openTabGroup() {
-        isNewTabGroup = true;
+        write("::::{tab-set}");
         return this;
     }
 
     @Override
     public DocWriter closeTabGroup() {
-        isNewTabGroup = true;
+        write("::::");
         return this;
     }
 
     @Override
     public DocWriter openTab(String title) {
-        write(":::{tab} $L", title);
-        if (isNewTabGroup) {
-            // The inline tab plugin will automatically gather tabs into groups so long
-            // as no other elements separate them, so to make sure we never accidentally
-            // merge what should be two groups, we add this directive config to opening
-            // tabs to ensure a new group gets created.
-            write(":new-set:\n");
-            isNewTabGroup = false;
-        }
+        write(":::{tab-item} $L", title);
         return this;
     }
 
