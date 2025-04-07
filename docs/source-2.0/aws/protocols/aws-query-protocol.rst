@@ -562,7 +562,7 @@ Summary
     :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`, and ``Fault`` is
     one of ``Sender`` or ``Receiver``.
 Trait selector
-    ``service [trait|awsJson1_0]``
+    ``service :test([trait|aws.protocols#awsJson1_0], [trait|smithy.protocols#rpcv2Cbor])``
 Value type
     Annotation trait
 
