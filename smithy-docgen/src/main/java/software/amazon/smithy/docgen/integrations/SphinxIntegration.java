@@ -98,7 +98,6 @@ public final class SphinxIntegration implements DocIntegration {
     private static final List<String> MARKDOWN_REQUIREMENTS = parseRequirements("requirements-markdown.txt");
 
     private static final List<String> BASE_EXTENSIONS = List.of(
-            "sphinx_inline_tabs",
             "sphinx_copybutton",
             "sphinx_design");
     private static final List<String> MARKDOWN_EXTENSIONS = List.of(
