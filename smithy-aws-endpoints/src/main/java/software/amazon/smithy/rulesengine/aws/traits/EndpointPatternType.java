@@ -12,10 +12,15 @@ import software.amazon.smithy.model.node.StringNode;
  */
 public enum EndpointPatternType {
     /** An endpoint with pattern `{service}.{dnsSuffix}`.*/
+    @Deprecated
     SERVICE_DNSSUFFIX("service_dnsSuffix"),
 
     /** An endpoint with pattern `{service}.{region}.{dnsSuffix}`. */
-    SERVICE_REGION_DNSSUFFIX("service_region_dnsSuffix");
+    @Deprecated
+    SERVICE_REGION_DNSSUFFIX("service_region_dnsSuffix"),
+
+    /** Uses the up-to-date standards for each AWS partition */
+    AWS_RECOMMENDED("aws_recommended");
 
     private final String name;
 
