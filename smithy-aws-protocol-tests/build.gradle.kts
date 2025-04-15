@@ -14,9 +14,9 @@ extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
 
 dependencies {
     implementation(project(path = ":smithy-cli", configuration = "shadow"))
-    implementation(project(":smithy-protocol-test-traits"))
-    implementation(project(":smithy-protocol-traits"))
-    implementation(project(":smithy-aws-traits"))
+    api(project(":smithy-aws-traits"))
+    api(project(":smithy-protocol-test-traits"))
+    api(project(":smithy-protocol-traits"))
     api(project(":smithy-validation-model"))
 }
 
