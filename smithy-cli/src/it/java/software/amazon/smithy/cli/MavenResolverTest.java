@@ -9,8 +9,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.mockserver.integration.ClientAndProxy.startClientAndProxy;
-import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +17,6 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.mockserver.integration.ClientAndProxy;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
@@ -77,7 +74,7 @@ public class MavenResolverTest {
     public void usesCustomRepoWithAuth() {
         ClientAndServer mockServer = null;
         try {
-            mockServer = startClientAndServer(1234);
+            mockServer = ClientAndServer.startClientAndServer(1234);
             mockServer.when(
                     HttpRequest
                             .request()
@@ -120,10 +117,10 @@ public class MavenResolverTest {
     @Test
     public void usesProxyConfiguration() {
         ClientAndServer mockServer = null;
-        ClientAndProxy proxyServer = null;
+        ClientAndServer proxyServer = null;
         try {
-            mockServer = startClientAndServer(1234);
-            proxyServer = startClientAndProxy(2323);
+            mockServer = ClientAndServer.startClientAndServer(1234);
+            proxyServer = ClientAndServer.startClientAndServer(2323);
 
             HttpRequest request = HttpRequest.request()
                     .withMethod("GET")
@@ -162,10 +159,10 @@ public class MavenResolverTest {
     @Test
     public void usesProxyConfigurationFromEnv() {
         ClientAndServer mockServer = null;
-        ClientAndProxy proxyServer = null;
+        ClientAndServer proxyServer = null;
         try {
-            mockServer = startClientAndServer(1234);
-            proxyServer = startClientAndProxy(2323);
+            mockServer = ClientAndServer.startClientAndServer(1234);
+            proxyServer = ClientAndServer.startClientAndServer(2323);
 
             HttpRequest request = HttpRequest.request()
                     .withMethod("GET")
