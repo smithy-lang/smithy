@@ -61,13 +61,14 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                                 testOperationInput);
 
                         // Error test cases may use invalid inputs as the mechanism to trigger their error,
-                        // so lower the severity before emitting.
-                        if (testCase.getExpect().getError().isPresent()) {
-                            for (ValidationEvent event : operationInputEvents) {
-                                events.add(event.toBuilder().severity(Severity.WARNING).build());
+                        // so lower the severity before emitting. All other events here should be raised to
+                        // DANGER level as well.
+                        for (ValidationEvent event : operationInputEvents) {
+                            if (event.getSeverity() == Severity.WARNING
+                                    || event.getSeverity() == Severity.NOTE
+                                    || testCase.getExpect().getError().isPresent()) {
+                                events.add(event.toBuilder().severity(Severity.DANGER).build());
                             }
-                        } else {
-                            events.addAll(operationInputEvents);
                         }
                     }
                 }
