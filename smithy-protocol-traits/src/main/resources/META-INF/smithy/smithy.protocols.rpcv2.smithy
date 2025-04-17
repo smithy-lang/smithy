@@ -18,7 +18,8 @@ use smithy.api#httpError
 @traitValidators(
     "rpcv2Cbor.NoDocuments": {
          selector: "service ~> member :test(> document)"
-         message: "This protocol does not support document types"
+         message: "This protocol does not support document types in most possible scenarios."
+         severity: "DANGER"
     }
 )
 structure rpcv2Cbor {
