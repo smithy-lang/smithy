@@ -69,7 +69,7 @@ public class MavenResolverTest {
     public void failsWhenBadVersionRequested() {
         IntegUtils.run("bad-smithy-version", ListUtils.of("validate"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("software.amazon.smithy:smithy-model:jar:[999.999.999]"));
+            assertThat(result.getOutput(), containsString("software.amazon.smithy:smithy-model:jar:999.999.999"));
         });
     }
 
