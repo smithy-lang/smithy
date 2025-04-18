@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
@@ -19,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.function.Consumer;
 
 /**
  * A {@link FileManifest} that doesn't actually store files on disk.
@@ -126,6 +129,13 @@ public final class MockManifest implements FileManifest {
         } catch (IOException e) {
             throw new SmithyBuildException("Unable to write contents of file `" + path + "`: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void writeUsing(Path path, Consumer<Writer> consumer) {
+        Writer writer = new StringWriter();
+        consumer.accept(writer);
+        writeFile(path, writer.toString());
     }
 
     /**
