@@ -92,16 +92,4 @@ final class DefaultFileManifest implements FileManifest {
             throw new SmithyBuildException("Unable to write contents of file `" + path + "`: " + e.getMessage(), e);
         }
     }
-
-    @Override
-    public void writeUsing(Path path, Consumer<Writer> consumer) {
-        path = addFile(path);
-
-        try (Writer writer = Files.newBufferedWriter(path)) {
-            consumer.accept(writer);
-            writer.write('\n');
-        } catch (IOException e) {
-            throw new SmithyBuildException("Unable to create a write to file `" + path + "`: " + e.getMessage(), e);
-        }
-    }
 }
