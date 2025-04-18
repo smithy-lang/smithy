@@ -12,7 +12,6 @@
 
 - Updated `restXml` protocol tests to align with other XML tests ([#2583](https://github.com/smithy-lang/smithy/pull/2583))
 
-
 ### Documentation
 
 - Fixed waiter examples that included wrong members ([2594](https://github.com/smithy-lang/smithy/pull/2594))
