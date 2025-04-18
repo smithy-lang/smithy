@@ -29,3 +29,18 @@ service Service1 {
 service Service2 {
     version: "2021-06-29"
 }
+
+@standardPartitionalEndpoints(
+    endpointPatternType: "aws_recommended",
+    partitionEndpointSpecialCases: {
+        "aws": [
+            {
+                endpoint: "https://myservice.{dnsSuffix}",
+                region: "us-west-2"
+            },
+        ]
+    }
+)
+service Service3 {
+    version: "2025-01-01"
+}
