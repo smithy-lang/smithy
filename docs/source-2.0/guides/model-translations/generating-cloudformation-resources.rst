@@ -189,294 +189,312 @@ Resource Schemas that it generates.
     You typically only need to configure the ``service`` and
     ``organizationName`` settings to generate Resource Schemas.
 
-The following settings are supported:
-
 .. _generate-cloudformation-setting-service:
 
 service (``string``)
-    **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
-    For example, ``smithy.example#Queues``.
+--------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+**Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
+For example, ``smithy.example#Queues``.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy"
             }
         }
+    }
 
 .. _generate-cloudformation-setting-organizationName:
 
 organizationName (``string``)
-    The ``Organization`` component of the resource's `type name`_. Defaults to
-    "AWS" if the :ref:`aws.api#service-trait` is present, otherwise is
-    **required**.
+-----------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+The ``Organization`` component of the resource's `type name`_. Defaults to
+"AWS" if the :ref:`aws.api#service-trait` is present, otherwise is
+**required**.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy"
             }
         }
+    }
 
 .. _generate-cloudformation-setting-serviceName:
 
 serviceName (``string``)
-    Allows overriding the ``Service`` component of the resource's `type name`_.
-    This value defaults to the :ref:`cloudFormationName property of the
-    aws.api#service trait <service-cloudformation-name>` if present, or the
-    shape name of the specified service shape otherwise.
+------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Allows overriding the ``Service`` component of the resource's `type name`_.
+This value defaults to the :ref:`cloudFormationName property of the
+aws.api#service trait <service-cloudformation-name>` if present, or the
+shape name of the specified service shape otherwise.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#QueueService",
-                    "organizationName": "Smithy",
-                    "serviceName": "Queues"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#QueueService",
+                "organizationName": "Smithy",
+                "serviceName": "Queues"
             }
         }
+    }
 
 .. _generate-cloudformation-setting-externalDocs:
 
 externalDocs (``[string]``)
-    Limits the source of generated `"documentationUrl" fields`__ to the
-    specified priority ordered list of names in an :ref:`externaldocumentation-trait`.
-    This list is case insensitive. By default, this is a list of the following
-    values: "Documentation Url", "DocumentationUrl", "API Reference", "User
-    Guide", "Developer Guide", "Reference", and "Guide".
+---------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Limits the source of generated `"documentationUrl" fields`__ to the
+specified priority ordered list of names in an :ref:`externaldocumentation-trait`.
+This list is case insensitive. By default, this is a list of the following
+values: "Documentation Url", "DocumentationUrl", "API Reference", "User
+Guide", "Developer Guide", "Reference", and "Guide".
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "externalDocs": [
-                        "Documentation Url",
-                        "Custom"
-                    ]
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "externalDocs": [
+                    "Documentation Url",
+                    "Custom"
+                ]
             }
         }
+    }
 
 .. __: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-documentationUrl
 
 .. _generate-cloudformation-setting-sourceDocs:
 
 sourceDocs (``[string]``)
-    Limits the source of generated `"sourceUrl" fields`__ to the specified
-    priority ordered list of names in an :ref:`externaldocumentation-trait`.
-    This list is case insensitive. By default, this is a list of the following
-    values: "Source Url", "SourceUrl", "Source", and "Source Code".
+-------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Limits the source of generated `"sourceUrl" fields`__ to the specified
+priority ordered list of names in an :ref:`externaldocumentation-trait`.
+This list is case insensitive. By default, this is a list of the following
+values: "Source Url", "SourceUrl", "Source", and "Source Code".
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "sourceDocs": [
-                        "Source Url",
-                        "Custom"
-                    ]
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "sourceDocs": [
+                    "Source Url",
+                    "Custom"
+                ]
             }
         }
+    }
 
 .. __: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-sourceUrl
 
 .. _generate-cloudformation-setting-jsonAdd:
 
-jsonAdd (``Map<String, Map<String, Node>>``)
-    Adds or replaces the JSON value in the generated Resource Schemas at the
-    given JSON pointer locations with a different JSON value. The value must be
-    a map where each key is a resource shape ID. The value is a map where each
-    key is a valid JSON pointer string as defined in :rfc:`6901`. Each value in
-    the nested map is the JSON value to add or replace at the given target.
+jsonAdd (``map<string, map<string, any>>``)
+--------------------------------------------
 
-    Values are added using similar semantics of the "add" operation of
-    JSON Patch, as specified in :rfc:`6902`, with the exception that adding
-    properties to an undefined object will create nested objects in the
-    result as needed.
+Adds or replaces the JSON value in the generated Resource Schemas at the
+given JSON pointer locations with a different JSON value. The value must be
+a map where each key is a resource shape ID. The value is a map where each
+key is a valid JSON pointer string as defined in :rfc:`6901`. Each value in
+the nested map is the JSON value to add or replace at the given target.
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Values are added using similar semantics of the "add" operation of
+JSON Patch, as specified in :rfc:`6902`, with the exception that adding
+properties to an undefined object will create nested objects in the
+result as needed.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "jsonAdd": {
-                        "smithy.example#Queue": {
-                            "/info/title": "Replaced title value",
-                            "/info/nested/foo": {
-                                "hi": "Adding this object created intermediate objects too!"
-                            },
-                            "/info/nested/foo/baz": true
-                        }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "jsonAdd": {
+                    "smithy.example#Queue": {
+                        "/info/title": "Replaced title value",
+                        "/info/nested/foo": {
+                            "hi": "Adding this object created intermediate objects too!"
+                        },
+                        "/info/nested/foo/baz": true
                     }
                 }
             }
         }
+    }
 
 .. _generate-cloudformation-setting-disableHandlerPermissionGeneration:
 
 disableHandlerPermissionGeneration (``boolean``)
-    Sets whether to disable generating ``handler`` ``permission`` lists for
-    Resource Schemas. By default, handler permissions lists are automatically
-    added to schemas based on :ref:`lifecycle-operations` and permissions
-    listed in the :ref:`requiredActions property of the aws.iam#iamAction
-    trait <aws.iam#iamAction-trait>` on the operation. See `the handlers
-    section`_ in the CloudFormation Resource Schemas documentation for more
-    information.
+------------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets whether to disable generating ``handler`` ``permission`` lists for
+Resource Schemas. By default, handler permissions lists are automatically
+added to schemas based on :ref:`lifecycle-operations` and permissions
+listed in the :ref:`requiredActions property of the aws.iam#iamAction
+trait <aws.iam#iamAction-trait>` on the operation. See `the handlers
+section`_ in the CloudFormation Resource Schemas documentation for more
+information.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "disableHandlerPermissionGeneration": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "disableHandlerPermissionGeneration": true
             }
         }
+    }
 
-    CloudFormation Resource Schema handlers determine what provisioning actions
-    can be performed for the resource. The handlers utilized by CloudFormation
-    align with some :ref:`lifecycle-operations`. These operations can also
-    define other permission actions required to invoke them with the :ref:`requiredActions
-    property of the aws.iam#iamAction trait <aws.iam#iamAction-trait>`
+CloudFormation Resource Schema handlers determine what provisioning actions
+can be performed for the resource. The handlers utilized by CloudFormation
+align with some :ref:`lifecycle-operations`. These operations can also
+define other permission actions required to invoke them with the :ref:`requiredActions
+property of the aws.iam#iamAction trait <aws.iam#iamAction-trait>`
 
-    When handler permission generation is enabled, all the actions required to
-    invoke the operations related to the handler, including the actions for the
-    operations themselves, are used to populate permission lists:
+When handler permission generation is enabled, all the actions required to
+invoke the operations related to the handler, including the actions for the
+operations themselves, are used to populate permission lists:
 
-    .. code-block:: json
+.. code-block:: json
 
 
-        "handlers": {
-            "create": {
-                "permissions": [
-                    "dependency:GetDependencyComponent",
-                    "queues:CreateQueue"
-                ]
-            },
-            "read": {
-                "permissions": [
-                    "queues:GetQueue"
-                ]
-            },
-            "update": {
-                "permissions": [
-                    "dependency:GetDependencyComponent",
-                    "queues:UpdateQueue"
-                ]
-            },
-            "delete": {
-                "permissions": [
-                    "queues:DeleteQueue"
-                ]
-            },
-            "list": {
-                "permissions": [
-                    "queues:ListQueues"
-                ]
-            }
+    "handlers": {
+        "create": {
+            "permissions": [
+                "dependency:GetDependencyComponent",
+                "queues:CreateQueue"
+            ]
         },
+        "read": {
+            "permissions": [
+                "queues:GetQueue"
+            ]
+        },
+        "update": {
+            "permissions": [
+                "dependency:GetDependencyComponent",
+                "queues:UpdateQueue"
+            ]
+        },
+        "delete": {
+            "permissions": [
+                "queues:DeleteQueue"
+            ]
+        },
+        "list": {
+            "permissions": [
+                "queues:ListQueues"
+            ]
+        }
+    },
 
 .. _generate-cloudformation-setting-disableDeprecatedPropertyGeneration:
 
 disableDeprecatedPropertyGeneration (``boolean``)
-    Sets whether to disable generating ``deprecatedProperties`` for Resource
-    Schemas. By default, deprecated members are automatically added to the
-    ``deprecatedProperties`` schema property. See `the deprecatedProperties
-    section`_ in the CloudFormation Resource Schemas documentation for more
-    information.
+-------------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets whether to disable generating ``deprecatedProperties`` for Resource
+Schemas. By default, deprecated members are automatically added to the
+``deprecatedProperties`` schema property. See `the deprecatedProperties
+section`_ in the CloudFormation Resource Schemas documentation for more
+information.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "disableDeprecatedPropertyGeneration": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "disableDeprecatedPropertyGeneration": true
             }
         }
+    }
 
 .. _generate-cloudformation-setting-disableRequiredPropertyGeneration:
 
 disableRequiredPropertyGeneration (``boolean``)
-    Sets whether to disable generating ``required`` for Resource Schemas. By
-    default, required members are automatically added to the ``required``
-    schema property. See `the required property section`_ in the CloudFormation
-    Resource Schemas documentation for more information.
+-----------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets whether to disable generating ``required`` for Resource Schemas. By
+default, required members are automatically added to the ``required``
+schema property. See `the required property section`_ in the CloudFormation
+Resource Schemas documentation for more information.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "disableRequiredPropertyGeneration": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "disableRequiredPropertyGeneration": true
             }
         }
+    }
 
 .. _generate-cloudformation-setting-disableCapitalizedProperties:
 
 disableCapitalizedProperties (``boolean``)
-    Sets whether to disable automatically capitalizing names of properties of
-    Resource Schemas. By default, property names of resource schemas are
-    capitalized if no :ref:`cfnName <aws.cloudformation#cfnName-trait>` trait
-    is applied.
+------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets whether to disable automatically capitalizing names of properties of
+Resource Schemas. By default, property names of resource schemas are
+capitalized if no :ref:`cfnName <aws.cloudformation#cfnName-trait>` trait
+is applied.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "disableCapitalizedProperties": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "disableCapitalizedProperties": true
             }
         }
+    }
 
 ----------------------------------
 JSON schema configuration settings
@@ -485,91 +503,99 @@ JSON schema configuration settings
 .. _generate-cloudformation-jsonschema-setting-defaultTimestampFormat:
 
 defaultTimestampFormat (``string``)
-    Sets the assumed :ref:`timestampFormat-trait` value for timestamps with
-    no explicit timestampFormat trait. The provided value is expected to be
-    a string. Defaults to "date-time" if not set. Can be set to "date-time",
-    "epoch-seconds", or "http-date".
+-----------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets the assumed :ref:`timestampFormat-trait` value for timestamps with
+no explicit timestampFormat trait. The provided value is expected to be
+a string. Defaults to "date-time" if not set. Can be set to "date-time",
+"epoch-seconds", or "http-date".
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "defaultTimestampFormat": "epoch-seconds"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "defaultTimestampFormat": "epoch-seconds"
             }
         }
+    }
 
 .. _generate-cloudformation-jsonschema-setting-schemaDocumentExtensions:
 
-schemaDocumentExtensions (``Map<String, any>``)
-    Adds custom top-level key-value pairs to all of the generated
-    CloudFormation Resource Schemas. Any existing value is overwritten.
+schemaDocumentExtensions (``map<string, any>``)
+-----------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Adds custom top-level key-value pairs to all of the generated
+CloudFormation Resource Schemas. Any existing value is overwritten.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "schemaDocumentExtensions": {
-                        "x-my-custom-top-level-property": "Hello!",
-                        "x-another-custom-top-level-property": {
-                            "can be": ["complex", "value", "too!"]
-                        }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "schemaDocumentExtensions": {
+                    "x-my-custom-top-level-property": "Hello!",
+                    "x-another-custom-top-level-property": {
+                        "can be": ["complex", "value", "too!"]
                     }
                 }
             }
         }
+    }
 
 .. _generate-cloudformation-jsonschema-setting-disableFeatures:
 
 disableFeatures (``[string]``)
-    Disables JSON schema and CloudFormation schema property names from
-    appearing in the generated CloudFormation Resource Schemas.
+------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Disables JSON schema and CloudFormation schema property names from
+appearing in the generated CloudFormation Resource Schemas.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "disableFeatures": ["propertyNames"]
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "disableFeatures": ["propertyNames"]
             }
         }
+    }
 
 .. _generate-cloudformation-jsonschema-setting-useIntegerType:
 
 useIntegerType (``boolean``)
-    Set to true to use the ``integer`` type when converting ``byte``, ``short``,
-    ``integer``, and ``long`` shapes.
+----------------------------
 
-    By default, these shape types are converted with a type of ``number``.
+Set to true to use the ``integer`` type when converting ``byte``, ``short``,
+``integer``, and ``long`` shapes.
 
-    .. code-block:: json
-        :caption: smithy-build.json
+By default, these shape types are converted with a type of ``number``.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "cloudformation": {
-                    "service": "smithy.example#Queues",
-                    "organizationName": "Smithy",
-                    "useIntegerType": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "cloudformation": {
+                "service": "smithy.example#Queues",
+                "organizationName": "Smithy",
+                "useIntegerType": true
             }
         }
+    }
 
 .. _generate-cloudformation-other-traits:
 
