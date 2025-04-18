@@ -1,5 +1,23 @@
 # Smithy Changelog
 
+## 1.57.0 (2025-03-27)
+
+### Features
+
+- Increase validation event severity for input name-value validation for the endpoint tests trait ([#2593](https://github.com/smithy-lang/smithy/pull/2593))
+- Added nascent document type support for RPC v2 CBOR ([#2595](https://github.com/smithy-lang/smithy/pull/2595))
+- Enabled AWS query compatibility for RPC v2 CBOR ([#2579](https://github.com/smithy-lang/smithy/pull/2579))
+
+### Bug Fixes
+
+- Updated `restXml` protocol tests to align with other XML tests ([#2583](https://github.com/smithy-lang/smithy/pull/2583))
+
+
+### Documentation
+
+- Fixed waiter examples that included wrong members ([2594](https://github.com/smithy-lang/smithy/pull/2594))
+
+
 ## 1.56.0 (2025-03-27)
 
 ### Features
