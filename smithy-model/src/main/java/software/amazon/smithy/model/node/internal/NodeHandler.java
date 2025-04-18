@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.node.internal;
 
 import java.io.StringWriter;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import software.amazon.smithy.model.SourceLocation;
@@ -43,6 +44,12 @@ public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode
         JsonWriter jsonWriter = new PrettyPrintWriter(writer, indentString);
         node.accept(new NodeWriter(jsonWriter));
         return writer.toString();
+    }
+
+    @SmithyInternalApi
+    public static void prettyPrintToWriter(Node node, String indentString, Writer writer) {
+        JsonWriter jsonWriter = new PrettyPrintWriter(writer, indentString);
+        node.accept(new NodeWriter(jsonWriter));
     }
 
     @Override

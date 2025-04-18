@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -17,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Consumer;
 
 /**
  * @see FileManifest#create
@@ -88,6 +90,18 @@ final class DefaultFileManifest implements FileManifest {
             return path;
         } catch (IOException e) {
             throw new SmithyBuildException("Unable to write contents of file `" + path + "`: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void writeUsing(Path path, Consumer<Writer> consumer) {
+        path = addFile(path);
+
+        try (Writer writer = Files.newBufferedWriter(path)) {
+            consumer.accept(writer);
+            writer.write('\n');
+        } catch (IOException e) {
+            throw new SmithyBuildException("Unable to create a write to file `" + path + "`: " + e.getMessage(), e);
         }
     }
 }

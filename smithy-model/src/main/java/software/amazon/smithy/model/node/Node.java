@@ -7,6 +7,7 @@ package software.amazon.smithy.model.node;
 import static java.lang.String.format;
 
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -142,6 +143,27 @@ public abstract class Node implements FromSourceLocation, ToNode {
      */
     public static String prettyPrintJson(Node node, String indentString) {
         return NodeHandler.prettyPrint(node, indentString);
+    }
+
+    /**
+     * Writes the contents of a pretty-printed Node to the given writer.
+     *
+     * @param node Node to write.
+     * @param writer Writer to write to.
+     */
+    public static void prettyPrintJsonToWriter(Node node, Writer writer) {
+        NodeHandler.prettyPrintToWriter(node, "    ", writer);
+    }
+
+    /**
+     * Writes the contents of a pretty-printed Node to the given writer.
+     *
+     * @param node Node to write.
+     * @param indentString String to use for indention.
+     * @param writer Writer to write to.
+     */
+    public static void prettyPrintJsonToWriter(Node node, String indentString, Writer writer) {
+        NodeHandler.prettyPrintToWriter(node, indentString, writer);
     }
 
     /**
