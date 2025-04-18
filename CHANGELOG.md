@@ -4,6 +4,7 @@
 
 ### Features
 
+- Added `aws_recommended` as a partitional endpoint pattern type ([#2575](https://github.com/smithy-lang/smithy/pull/2575))
 - Increase validation event severity for input name-value validation for the endpoint tests trait ([#2593](https://github.com/smithy-lang/smithy/pull/2593))
 - Added nascent document type support for RPC v2 CBOR ([#2595](https://github.com/smithy-lang/smithy/pull/2595))
 - Enabled AWS query compatibility for RPC v2 CBOR ([#2579](https://github.com/smithy-lang/smithy/pull/2579))
