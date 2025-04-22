@@ -567,9 +567,6 @@ apply MalformedLengthQueryString @httpMalformedRequestTests([
             queryParams: [
                 "string"
             ],
-            headers: {
-                "content-type": "application/json"
-            },
         },
         response: {
             code: 400,
