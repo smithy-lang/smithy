@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/smithy-call/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -447,10 +447,10 @@ you can add this integration to your project like so:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// Add codegen integration as a smithy-build dependency so it can be</span>
 <span class="w">     </span><span class="c1">// discovered by the client codegen plugin</span>
-<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java.codegen:waiters:0.0.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java.codegen:waiters:smithy-call&quot;</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add waiters core package as a runtime dependency</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:waiters:0.0.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:waiters:smithy-call&quot;</span><span class="p">)</span>
 <span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>

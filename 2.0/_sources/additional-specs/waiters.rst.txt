@@ -605,7 +605,7 @@ triggered if the ``status`` property equals ``failed``.
 
     @waitable(
         ThingExists: {
-            description: "Waits until a thing has been created"
+            documentation: "Waits until a thing has been created"
             acceptors: [
                 // Fail-fast if the thing transitions to a "failed" state.
                 {
@@ -831,7 +831,7 @@ the ``StartResource`` API operation.
 
     @waitable(
         ResourceRunning: {
-            description: "Waits for the resource to be running"
+            documentation: "Waits for the resource to be running"
             acceptors: [
                 {
                     state: "failure"

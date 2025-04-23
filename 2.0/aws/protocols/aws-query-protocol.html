@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/smithy-call/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -1105,7 +1105,7 @@ an <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamesp
 <p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.56.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.57.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -1203,7 +1203,7 @@ without removing values defined in the <code class="docutils literal notranslate
 <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">awsQueryError</span></a>, and <code class="docutils literal notranslate"><span class="pre">Fault</span></code> is
 one of <code class="docutils literal notranslate"><span class="pre">Sender</span></code> or <code class="docutils literal notranslate"><span class="pre">Receiver</span></code>.</p>
 </dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|awsJson1_0]</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">:test([trait|aws.protocols#awsJson1_0],</span> <span class="pre">[trait|smithy.protocols#rpcv2Cbor])</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>

@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/smithy-call/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -655,9 +655,7 @@ and a single endpoint should be resolved per partition.</dd>
 <tbody valign="top">
 <tr class="row-even"><td>endpointPatternType</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong> The pattern type to use for the partition endpoint.  This value can be set to <code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code> to
-use the <code class="docutils literal notranslate"><span class="pre">https://{service}.{dnsSuffix}</span></code> pattern or <code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code> to use
-<code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code>.</td>
+<td><strong>Required</strong> The pattern type to use for the partition endpoint.  This value should be set to <code class="docutils literal notranslate"><span class="pre">aws_recommended</span></code> in almost all cases.</td>
 </tr>
 <tr class="row-odd"><td>partitionEndpointSpecialCases</td>
 <td><code class="docutils literal notranslate"><span class="pre">map</span></code> of partition to <a class="reference internal" href="#partitionendpointspecialcase-object">PartitionEndpointSpecialCase object</a></td>
@@ -672,30 +670,25 @@ service's standard patterns or are located in a region other than the partition'
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#aws-endpoints-standardregionalendpoints-trait"><span class="std std-ref">aws.endpoints#standardRegionalEndpoints trait</span></a></dd>
 </dl>
 <p>Partitional services (also known as &quot;global&quot; services) resolve a single endpoint per partition.
-That single endpoint is located in the partition's <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>. Partitional
-services should follow one of two standard patterns:</p>
-<ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">https://{service}.{dnsSuffix}</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code></li>
-</ul>
-<p>The following example defines a partitional service that uses <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code>:</p>
+That single endpoint is located in the partition's <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>.</p>
+<p>The following example defines a partitional service that uses AWS recommended patterns for each partition:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.endpoints#standardPartitionalEndpoints</span>
 
-<span class="nt">@standardPartitionalEndpoints</span>(<span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service_dnsSuffix&quot;</span>)
+<span class="nt">@standardPartitionalEndpoints</span>(<span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws_recommended&quot;</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
 }
 </pre></div>
 </div>
-<p>Services should follow the standard patterns; however, occasionally there are special cases.
+<p>Services should follow the standard patterns set by the DNS naming guidelines; however, occasionally there are special cases.
 The following example defines a partitional service that uses a special case pattern in
 the <code class="docutils literal notranslate"><span class="pre">aws</span></code> partition and uses a non-standard global region in the <code class="docutils literal notranslate"><span class="pre">aws-cn</span></code> partition:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardPartitionalEndpoints</span>(
-<span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service_dnsSuffix&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws_recommended&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="py">partitionEndpointSpecialCases</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myservice.global.amazonaws.com&quot;</span>}]<span class="p">,</span>
 <span class="w">        </span><span class="vc">aws-cn</span><span class="p">:</span><span class="w"> </span>[{<span class="py">region</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cn-north-1&quot;</span>}]
