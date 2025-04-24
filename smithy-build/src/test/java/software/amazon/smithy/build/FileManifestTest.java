@@ -73,11 +73,11 @@ public class FileManifestTest {
     @Test
     public void writesJsonFiles() throws IOException {
         FileManifest a = FileManifest.create(outputDirectory);
-        a.writeJson("foo/file.json", Node.objectNode());
+        Path resolved = a.writeJson("foo/file.json", Node.objectNode());
 
-        assertThat(Files.isDirectory(outputDirectory.resolve("foo")), is(true));
-        assertThat(Files.isRegularFile(outputDirectory.resolve("foo/file.json")), is(true));
-        assertThat(new String(Files.readAllBytes(outputDirectory.resolve("foo/file.json"))), equalTo("{}\n"));
+        assertThat(resolved, equalTo(outputDirectory.resolve("foo/file.json")));
+        assertThat(Files.isRegularFile(resolved), is(true));
+        assertThat(new String(Files.readAllBytes(resolved)), equalTo("{}\n"));
     }
 
     @Test
@@ -106,5 +106,21 @@ public class FileManifestTest {
         a.writeFile("test.txt", getClass(), "simple-config.json");
 
         assertThat(Files.isRegularFile(outputDirectory.resolve("test.txt")), is(true));
+    }
+
+    @Test
+    public void writesWithWriter() throws IOException {
+        FileManifest a = FileManifest.create(outputDirectory);
+        Path resolved = a.writeUsing(Paths.get("foo/bar.txt"), (w) -> {
+            try {
+                w.write("foo");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        assertThat(resolved, equalTo(outputDirectory.resolve("foo/bar.txt")));
+        assertThat(Files.isRegularFile(resolved), is(true));
+        assertThat(new String(Files.readAllBytes(resolved)).trim(), equalTo("foo"));
     }
 }

@@ -132,10 +132,10 @@ public final class MockManifest implements FileManifest {
     }
 
     @Override
-    public void writeUsing(Path path, Consumer<Writer> consumer) {
+    public Path writeUsing(Path path, Consumer<Writer> consumer) {
         Writer writer = new StringWriter();
         consumer.accept(writer);
-        writeFile(path, writer.toString());
+        return writeFile(path, writer.toString());
     }
 
     /**
