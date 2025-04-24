@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.57.1 (2025-04-21)
+
+### Bug Fixes
+
+- Fixed an issue where `FileManifest::writeJson` would return a relative path instead of an absolute one ([#2602](https://github.com/smithy-lang/smithy/pull/2602))
+
 ## 1.57.0 (2025-04-21)
 
 ### Features
