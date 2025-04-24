@@ -215,8 +215,7 @@ public interface FileManifest {
      */
     @SuppressWarnings("unused")
     default Path writeJson(Path path, Node node) {
-        writeUsing(path, (writer) -> Node.prettyPrintJsonToWriter(node, writer));
-        return path;
+        return writeUsing(path, (writer) -> Node.prettyPrintJsonToWriter(node, writer));
     }
 
     /**
@@ -236,16 +235,19 @@ public interface FileManifest {
      *
      * @param path Relative path to write to.
      * @param consumer Node data to write to JSON.
+     * @return Returns the resolved path.
      */
-    default void writeUsing(Path path, Consumer<Writer> consumer) {
-        path = addFile(path);
+    default Path writeUsing(Path path, Consumer<Writer> consumer) {
+        Path resolved = addFile(path);
 
-        try (Writer writer = Files.newBufferedWriter(path)) {
+        try (Writer writer = Files.newBufferedWriter(resolved)) {
             consumer.accept(writer);
             writer.write('\n');
         } catch (IOException e) {
-            throw new SmithyBuildException("Unable to create a write to file `" + path + "`: " + e.getMessage(), e);
+            throw new SmithyBuildException("Unable to create a write to file `" + resolved + "`: " + e.getMessage(), e);
         }
+
+        return resolved;
     }
 
     /**
