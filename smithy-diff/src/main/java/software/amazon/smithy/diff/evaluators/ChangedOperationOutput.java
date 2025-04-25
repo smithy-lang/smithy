@@ -19,12 +19,21 @@ public final class ChangedOperationOutput extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)
                 .filter(change -> !change.getOldShape().getOutputShape().equals(change.getNewShape().getOutputShape()))
-                .map(change -> error(change.getNewShape(),
-                        String.format(
-                                "Changed operation output of `%s` from `%s` to `%s`",
-                                change.getShapeId(),
-                                change.getOldShape().getOutputShape(),
-                                change.getNewShape().getOutputShape())))
+                .map(change -> {
+                    ValidationEvent.Builder eventBuilder = error(change.getNewShape(),
+                            String.format(
+                                    "Changed operation output of `%s` from `%s` to `%s`",
+                                    change.getShapeId(),
+                                    change.getOldShape().getOutputShape(),
+                                    change.getNewShape().getOutputShape()))
+                            .toBuilder();
+                    return eventBuilder
+                            .id(String.format("%s.From.%s.To.%s",
+                                    getEventId(),
+                                    change.getOldShape().getOutputShape(),
+                                    change.getNewShape().getOutputShape()))
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 }

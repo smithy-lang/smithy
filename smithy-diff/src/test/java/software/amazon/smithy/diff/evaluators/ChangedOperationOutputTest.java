@@ -27,6 +27,24 @@ public class ChangedOperationOutputTest {
         Model modelB = Model.assembler().addShapes(o2, b).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedOperationOutput").size(), equalTo(1));
+        List<ValidationEvent> expectedEvents = TestHelper.findEvents(events, "ChangedOperationOutput");
+        assertThat(expectedEvents.size(), equalTo(1));
+        ValidationEvent event = expectedEvents.get(0);
+        assertThat(event.getId(), equalTo("ChangedOperationOutput.From.foo.baz#A.To.foo.baz#B"));
+    }
+
+    @Test
+    public void detectWhenOperationOutputIsAdded() {
+        OperationShape o1 = OperationShape.builder().id("foo.baz#Bar").build();
+        OperationShape o2 = OperationShape.builder().id("foo.baz#Bar").output(ShapeId.from("foo.baz#B")).build();
+        StructureShape b = StructureShape.builder().id("foo.baz#B").build();
+        Model modelA = Model.assembler().addShapes(o1).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(o2, b).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        List<ValidationEvent> expectedEvents = TestHelper.findEvents(events, "ChangedOperationOutput");
+        assertThat(expectedEvents.size(), equalTo(1));
+        ValidationEvent event = expectedEvents.get(0);
+        assertThat(event.getId(), equalTo("ChangedOperationOutput.From.smithy.api#Unit.To.foo.baz#B"));
     }
 }
