@@ -63,3 +63,42 @@ jobs:
       with:
         name: built-docs
         path: docs/build/html
+
+  build-api-models-aws:
+    runs-on: ubuntu-latest
+    name: Build AWS API Models
+    steps:
+      - name: Checkout Smithy
+        uses: actions/checkout@v4
+        with:
+          path: 'smithy'
+
+      - name: Checkout api-models-aws
+        uses: actions/checkout@v4
+        with:
+          repository: aws/api-models-aws
+          path: api-models-aws
+
+      - uses: gradle/wrapper-validation-action@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'corretto'
+
+      - name: Publish Smithy to Maven local
+        run: cd smithy && ./gradlew clean build pTML -PnoFormat
+
+      - name: Update Smithy version
+        run: |
+          SMITHY_VERSION=$(cat ./smithy/VERSION) \
+          && sed -i "s/smithy = \"[^\"]*\"/smithy = \"$SMITHY_VERSION\"/g" ./api-models-aws/gradle/libs.versions.toml
+
+      - name: Check that the Smithy version was updated properly
+        run: |
+          SMITHY_VERSION=$(cat ./smithy/VERSION) \
+          && grep "smithy = \"$SMITHY_VERSION\"" ./api-models-aws/gradle/libs.versions.toml
+
+      - name: Build AWS API Models
+        run: cd api-models-aws && ./gradlew clean build
