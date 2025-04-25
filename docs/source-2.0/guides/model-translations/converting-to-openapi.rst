@@ -1606,128 +1606,145 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 Amazon API Gateway configuration settings
 =========================================
 
+.. _generate-openapi-apigateway-setting-apiGatewayDefault:
+
 apiGatewayDefaults (``string``)
-    Sets recommended default configuration settings and allows for those defaults
-    to be disabled.
+-------------------------------
 
-    This setting can be set to one of the following:
+Sets recommended default configuration settings and allows for those defaults
+to be disabled.
 
-    * ``2023-08-11`` Set the defaults described below.
-    * ``DISABLED`` Disables setting defaults.
+This setting can be set to one of the following:
 
-    The ``2023-08-11`` version sets the following configuration settings:
+* ``2023-08-11`` Set the defaults described below.
+* ``DISABLED`` Disables setting defaults.
 
-    * :ref:`alphanumericOnlyRefs <generate-openapi-jsonschema-setting-alphanumericOnlyRefs>`: ``true``
-    * :ref:`disableDefaultValues <generate-openapi-setting-disableDefaultValues>`: ``true``
-    * :ref:`disableIntegerFormat <generate-openapi-setting-disableIntegerFormat>`: ``true``
-    * :ref:`disableFeatures <generate-openapi-jsonschema-setting-disableFeatures>`: ``["default"]``
+The ``2023-08-11`` version sets the following configuration settings:
 
-    .. important::
+* :ref:`alphanumericOnlyRefs <generate-openapi-jsonschema-setting-alphanumericOnlyRefs>`: ``true``
+* :ref:`disableDefaultValues <generate-openapi-setting-disableDefaultValues>`: ``true``
+* :ref:`disableIntegerFormat <generate-openapi-setting-disableIntegerFormat>`: ``true``
+* :ref:`disableFeatures <generate-openapi-jsonschema-setting-disableFeatures>`: ``["default"]``
 
-        This setting should be set explicitly to one of the allowed values.
-        If omitted, it will default to ``2023-08-11``.
+.. important::
 
-    .. code-block:: json
-        :caption: smithy-build.json
+    This setting should be set explicitly to one of the allowed values.
+    If omitted, it will default to ``2023-08-11``.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "apiGatewayDefaults": "2023-08-11"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "apiGatewayDefaults": "2023-08-11"
             }
         }
+    }
+
+.. _generate-openapi-apigateway-setting-apiGatewayType:
 
 apiGatewayType (``string``)
-    Defines the type of API Gateway to define in the generated OpenAPI model.
-    This setting influences which API Gateway specific plugins apply
-    to the generated OpenAPI model.
+---------------------------
 
-    This setting can be set to one of the following:
+Defines the type of API Gateway to define in the generated OpenAPI model.
+This setting influences which API Gateway specific plugins apply
+to the generated OpenAPI model.
 
-    * ``REST``: Generates a `REST API`_. This is the default setting if not
-      configured.
-    * ``HTTP``: Generates an `HTTP API`_.
-    * ``DISABLED``: Disables all API Gateway modifications made to the
-      OpenAPI model. This is useful if ``software.amazon.smithy:smithy-aws-apigateway-openapi``
-      is inadvertently placed on the classpath by a dependency.
+This setting can be set to one of the following:
 
-    .. code-block:: json
-        :caption: smithy-build.json
+* ``REST``: Generates a `REST API`_. This is the default setting if not
+  configured.
+* ``HTTP``: Generates an `HTTP API`_.
+* ``DISABLED``: Disables all API Gateway modifications made to the
+  OpenAPI model. This is useful if ``software.amazon.smithy:smithy-aws-apigateway-openapi``
+  is inadvertently placed on the classpath by a dependency.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "apiGatewayType": "REST"
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "apiGatewayType": "REST"
             }
         }
+    }
+
+.. _generate-openapi-apigateway-setting-disableCloudFormationSubstitution:
 
 disableCloudFormationSubstitution (``boolean``)
-    Disables automatically converting ``${}`` templates in specific properties
-    into CloudFormation intrinsic functions.
+-----------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Disables automatically converting ``${}`` templates in specific properties
+into CloudFormation intrinsic functions.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "disableCloudFormationSubstitution": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "disableCloudFormationSubstitution": true
             }
         }
+    }
 
-    .. seealso:: :ref:`openapi-cfn-substitutions`
+.. seealso:: :ref:`openapi-cfn-substitutions`
 
+.. _generate-openapi-apigateway-setting-additionalAllowedCorsHeaders:
 
 additionalAllowedCorsHeaders (``[string]``)
-    Sets additional allowed CORS headers on the preflight requests. If this
-    option is not set, the default ``amz-sdk-invocation-id`` and ``amz-sdk-request``
-    headers will be added. By setting this option to an empty array, those default
-    headers will be omitted.
+-------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Sets additional allowed CORS headers on the preflight requests. If this
+option is not set, the default ``amz-sdk-invocation-id`` and ``amz-sdk-request``
+headers will be added. By setting this option to an empty array, those default
+headers will be omitted.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "additionalAllowedCorsHeaders": ["foo-header", "bar-header"]
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "additionalAllowedCorsHeaders": ["foo-header", "bar-header"]
             }
         }
+    }
 
 
 .. _generate-openapi-apigateway-setting-syncCorsPreflightIntegration:
 
 syncCorsPreflightIntegration (``boolean``)
-    Set to true to sync CORS preflight integration request templates with all possible content-types
-    from other methods within the same path resource.
+------------------------------------------
 
-    .. code-block:: json
-        :caption: smithy-build.json
+Set to true to sync CORS preflight integration request templates with all possible content-types
+from other methods within the same path resource.
 
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "example.weather#Weather",
-                    "syncCorsPreflightIntegration": true
-                }
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "syncCorsPreflightIntegration": true
             }
         }
+    }
 
-    With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
-    will be set to ``never``.
+With this enabled, the `integration's passthroughBehavior`_ for CORS preflight integration
+will be set to ``never``.
 
 Binary types
 ============
