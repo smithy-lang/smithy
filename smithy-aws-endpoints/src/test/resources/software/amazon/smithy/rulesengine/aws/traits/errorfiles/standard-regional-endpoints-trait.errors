@@ -1,1 +1,0 @@
-[WARNING] smithy.example#MyService: This shape applies a trait that is unstable: aws.endpoints#standardRegionalEndpoints | UnstableTrait.aws.endpoints#standardRegionalEndpoints

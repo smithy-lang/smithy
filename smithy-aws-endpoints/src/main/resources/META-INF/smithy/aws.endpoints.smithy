@@ -20,7 +20,6 @@ structure endpointsModifier { }
     breakingChanges: [{change: "remove"}]
 )
 @endpointsModifier
-@unstable
 structure standardRegionalEndpoints {
     /// A map of partition to partition special cases -
     /// endpoints for a partition that do not follow the standard patterns.
@@ -92,7 +91,6 @@ structure RegionSpecialCase {
     breakingChanges: [{change: "any"}]
 )
 @endpointsModifier
-@unstable
 structure standardPartitionalEndpoints {
     /// The pattern type to use for the partition endpoint.
     @required
@@ -146,7 +144,6 @@ structure PartitionEndpointSpecialCase {
     breakingChanges: [{change: "any"}]
 )
 @endpointsModifier
-@unstable
 structure dualStackOnlyEndpoints { }
 
 /// Marks that a services has hand written endpoint rules.
