@@ -27,11 +27,16 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
     }
 
     private Collection<Shape> getModifiedOperations(Model model, Collection<Shape> removed) {
+        Set<ShapeId> removedIds = new HashSet<>();
+        for (Shape shape : removed) {
+            removedIds.add(shape.getId());
+        }
+
         List<Shape> modifiedShapes = new ArrayList<>();
         for (OperationShape operation : model.getOperationShapes()) {
-            OperationShape.Builder builder = transformInput(removed, operation);
-            builder = transformOutput(removed, operation, builder);
-            builder = transformErrors(removed, operation, builder);
+            OperationShape.Builder builder = transformInput(removedIds, operation);
+            builder = transformOutput(removedIds, operation, builder);
+            builder = transformErrors(removedIds, operation, builder);
             if (builder != null) {
                 modifiedShapes.add(builder.build());
             }
@@ -39,46 +44,37 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
         return modifiedShapes;
     }
 
-    private OperationShape.Builder transformInput(
-            Collection<Shape> removed,
-            OperationShape operation
-    ) {
-        for (Shape remove : removed) {
-            if (remove.getId().equals(operation.getInputShape())) {
-                OperationShape.Builder builder = operation.toBuilder();
-                builder.input(null);
-                return builder;
-            }
+    private OperationShape.Builder transformInput(Set<ShapeId> removed, OperationShape operation) {
+        if (removed.contains(operation.getInputShape())) {
+            OperationShape.Builder builder = operation.toBuilder();
+            builder.input(null);
+            return builder;
         }
         return null;
     }
 
     private OperationShape.Builder transformOutput(
-            Collection<Shape> removed,
+            Set<ShapeId> removed,
             OperationShape operation,
             OperationShape.Builder builder
     ) {
-        for (Shape remove : removed) {
-            if (remove.getId().equals(operation.getOutputShape())) {
-                if (builder == null) {
-                    builder = operation.toBuilder();
-                }
-                builder.output(null);
-                return builder;
+        if (removed.contains(operation.getOutputShape())) {
+            if (builder == null) {
+                builder = operation.toBuilder();
             }
+            builder.output(null);
+            return builder;
         }
         return builder;
     }
 
     private OperationShape.Builder transformErrors(
-            Collection<Shape> removed,
+            Set<ShapeId> removed,
             OperationShape operation,
             OperationShape.Builder builder
     ) {
         Set<ShapeId> errors = new HashSet<>(operation.getErrors());
-        for (Shape remove : removed) {
-            errors.remove(remove.getId());
-        }
+        errors.removeAll(removed);
 
         if (errors.size() != operation.getErrors().size()) {
             if (builder == null) {
