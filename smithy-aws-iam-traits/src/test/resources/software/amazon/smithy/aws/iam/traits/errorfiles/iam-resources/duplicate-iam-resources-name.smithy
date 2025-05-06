@@ -21,7 +21,7 @@ resource Beer {}
 @aws.iam#iamResource(name: "Beer")
 resource BadIamResourceName1 {}
 
-@aws.iam#iamResource(name: "Beer")
+@aws.iam#iamResource(name: "beer")
 resource BadIamResourceName2 {}
 
 @aws.iam#iamResource(name: "shouldNotThrowErrorSecond")
