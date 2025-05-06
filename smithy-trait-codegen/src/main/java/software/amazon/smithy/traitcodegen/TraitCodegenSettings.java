@@ -29,7 +29,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class TraitCodegenSettings {
-    private static final String SMITHY_MODEL_NAMESPACE = "software.amazon.smithy";
     private static final String SMITHY_API_NAMESPACE = "smithy";
 
     private final String packageName;
@@ -55,9 +54,6 @@ public final class TraitCodegenSettings {
             List<String> excludeTags
     ) {
         this.packageName = Objects.requireNonNull(packageName);
-        if (packageName.startsWith(SMITHY_MODEL_NAMESPACE)) {
-            throw new IllegalArgumentException("The `software.amazon.smithy` package namespace is reserved.");
-        }
         this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
         if (smithyNamespace.startsWith(SMITHY_API_NAMESPACE)) {
             throw new IllegalArgumentException("The `smithy` namespace is reserved.");
