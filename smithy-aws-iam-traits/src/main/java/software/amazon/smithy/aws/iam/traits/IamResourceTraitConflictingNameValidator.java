@@ -9,6 +9,7 @@ import static software.amazon.smithy.model.validation.ValidationUtils.tickedList
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -38,7 +39,7 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
         List<ValidationEvent> events = new ArrayList<>();
         Map<String, List<ShapeId>> resourceMap = new HashMap<>();
         for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
-            String resourceName = IamResourceTrait.resolveResourceName(resource);
+            String resourceName = IamResourceTrait.resolveResourceName(resource).toLowerCase(Locale.US);
             resourceMap.computeIfAbsent(resourceName, k -> new ArrayList<>()).add(resource.getId());
         }
         resourceMap.entrySet()
@@ -46,8 +47,9 @@ public class IamResourceTraitConflictingNameValidator extends AbstractValidator 
                 .filter(entry -> entry.getValue().size() > 1)
                 .map(entry -> error(service,
                         String.format(
-                                "Multiple IAM resources defined with the same IAM resource name is not allowed in a service "
-                                        + "closure, but found multiple resources named `%s` in the service `%s`: [%s]",
+                                "Multiple IAM resources defined with the same IAM resource name is not allowed in a "
+                                        + "service closure, but found multiple resources case-insensitively named `%s` "
+                                        + "in the service `%s`: [%s]",
                                 entry.getKey(),
                                 service.getId(),
                                 tickedList(entry.getValue()))))
