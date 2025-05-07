@@ -25,7 +25,7 @@ import software.amazon.smithy.utils.StringUtils;
  */
 public final class EndpointValue extends Value {
     private static final String PROPERTIES = "properties";
-    private static final String URL = "URL";
+    private static final String URL = "url";
     private static final String HEADERS = "headers";
     private static final List<String> NODE_PROPERTIES = ListUtils.of(PROPERTIES, URL, HEADERS);
 
@@ -60,14 +60,14 @@ public final class EndpointValue extends Value {
         ObjectNode objectNode = node.expectObjectNode("endpoints are object nodes");
         objectNode.expectNoAdditionalProperties(NODE_PROPERTIES);
 
-        objectNode.expectStringMember("url", builder::url);
+        objectNode.expectStringMember(URL, builder::url);
         objectNode.getObjectMember(PROPERTIES, props -> {
             for (Map.Entry<String, Node> entry : props.getStringMap().entrySet()) {
                 builder.putProperty(entry.getKey(), Value.fromNode(entry.getValue()));
             }
         });
 
-        objectNode.getObjectMember("headers", headers -> {
+        objectNode.getObjectMember(HEADERS, headers -> {
             for (Map.Entry<String, Node> entry : headers.getStringMap().entrySet()) {
                 builder.putHeader(entry.getKey(),
                         entry.getValue()
