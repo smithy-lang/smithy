@@ -16,12 +16,13 @@ string actionPermissionDescription
 /// Applies condition keys by name to a resource or operation.
 @trait(selector: ":test(resource, operation)")
 list conditionKeys {
-    member: IamIdentifier
+    member: ConditionKeyName
 }
 
 /// Uses the associated member’s value as this condition key’s value.
 /// Needed when the member name doesn't match the condition key name.
 @trait(selector: "member")
+@pattern("^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$")
 string conditionKeyValue
 
 /// Defines the set of condition keys that appear within a service in addition to
@@ -85,7 +86,7 @@ list requiredActions {
 /// as opposed to being pulled from the request.
 @trait(selector: "service")
 list serviceResolvedConditionKeys {
-    member: IamIdentifier
+    member: ConditionKeyName
 }
 
 /// The principal types that can use the service or operation.

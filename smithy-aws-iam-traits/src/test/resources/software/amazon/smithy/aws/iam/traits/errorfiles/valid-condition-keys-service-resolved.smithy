@@ -1,16 +1,15 @@
 $version: "2.0"
-
 namespace smithy.example
 
-@aws.api#service(sdkId: "My")
-@aws.iam#defineConditionKeys(
-    "smithy:ServiceResolveContextKey": { type: "String" }
+use aws.api#service
+use aws.iam#defineConditionKeys
+use aws.iam#serviceResolvedConditionKeys
+
+@service(sdkId: "My", arnNamespace: "myservice")
+@defineConditionKeys(
+    "myservice:ServiceResolveContextKey": { type: "String" }
 )
-@aws.iam#serviceResolvedConditionKeys(["smithy:ServiceResolveContextKey"])
+@serviceResolvedConditionKeys(["ServiceResolveContextKey"])
 service MyService {
     version: "2019-02-20",
-    operations: [Echo]
 }
-
-
-operation Echo {}
