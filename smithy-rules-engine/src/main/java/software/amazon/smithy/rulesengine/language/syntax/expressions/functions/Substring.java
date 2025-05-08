@@ -97,30 +97,42 @@ public final class Substring extends LibraryFunction {
             int startIndex = arguments.get(1).expectIntegerValue().getValue();
             int stopIndex = arguments.get(2).expectIntegerValue().getValue();
             boolean reverse = arguments.get(3).expectBooleanValue().getValue();
-
-            for (int i = 0; i < str.length(); i++) {
-                char ch = str.charAt(i);
-                if (!(ch <= 127)) {
-                    return Value.emptyValue();
-                }
-            }
-
-            if (startIndex >= stopIndex || str.length() < stopIndex) {
-                return Value.emptyValue();
-            }
-
-            if (!reverse) {
-                return Value.stringValue(str.substring(startIndex, stopIndex));
-            } else {
-                int revStart = str.length() - stopIndex;
-                int revStop = str.length() - startIndex;
-                return Value.stringValue(str.substring(revStart, revStop));
-            }
+            String result = getSubstring(str, startIndex, stopIndex, reverse);
+            return result == null ? Value.emptyValue() : Value.stringValue(result);
         }
 
         @Override
         public Substring createFunction(FunctionNode functionNode) {
             return new Substring(functionNode);
+        }
+    }
+
+    /**
+     * Get the substring of {@code value} using the same logic as the substring function.
+     *
+     * @param value Value to get the substring of.
+     * @param startIndex Start index.
+     * @param stopIndex Stop index.
+     * @param reverse True if the slice is from the end.
+     * @return the substring value or null.
+     */
+    public static String getSubstring(String value, int startIndex, int stopIndex, boolean reverse) {
+        for (int i = 0; i < value.length(); i++) {
+            if (!(value.charAt(i) <= 127)) {
+                return null;
+            }
+        }
+
+        if (startIndex >= stopIndex || value.length() < stopIndex) {
+            return null;
+        }
+
+        if (!reverse) {
+            return value.substring(startIndex, stopIndex);
+        } else {
+            int revStart = value.length() - stopIndex;
+            int revStop = value.length() - startIndex;
+            return value.substring(revStart, revStop);
         }
     }
 }
