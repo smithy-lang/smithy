@@ -113,7 +113,7 @@ public final class Substring extends LibraryFunction {
      * @param value Value to get the substring of.
      * @param startIndex Start index.
      * @param stopIndex Stop index.
-     * @param reverse True if the slice if from the end.
+     * @param reverse True if the slice is from the end.
      * @return the substring value or null.
      */
     public static String getSubstring(String value, int startIndex, int stopIndex, boolean reverse) {
