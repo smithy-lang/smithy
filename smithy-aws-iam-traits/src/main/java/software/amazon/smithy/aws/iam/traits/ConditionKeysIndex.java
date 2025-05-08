@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.aws.traits.ArnReferenceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
@@ -21,7 +22,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -47,13 +47,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             if (service.hasTrait(DefineConditionKeysTrait.ID)) {
                 DefineConditionKeysTrait trait = service.expectTrait(DefineConditionKeysTrait.class);
                 for (Map.Entry<String, ConditionKeyDefinition> entry : trait.getConditionKeys().entrySet()) {
-                    // If no colon is present, we infer that this condition key is for the
-                    // current service and apply its ARN namespace.
-                    String key = entry.getKey();
-                    if (!key.contains(":")) {
-                        key = arnNamespace + ":" + key;
-                    }
-                    serviceKeys.put(key, entry.getValue());
+                    serviceKeys.put(resolveFullConditionKey(service, entry.getKey()), entry.getValue());
                 }
             }
             serviceConditionKeys.put(service.getId(), serviceKeys);
@@ -75,11 +69,20 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         return model.getKnowledge(ConditionKeysIndex.class, ConditionKeysIndex::new);
     }
 
+    static String resolveFullConditionKey(ServiceShape service, String conditionKey) {
+        // If no colon is present, we infer that this condition key is for the
+        // current service and apply its ARN namespace.
+        if (conditionKey.contains(":")) {
+            return conditionKey;
+        }
+        return service.expectTrait(ServiceTrait.class).getArnNamespace() + ":" + conditionKey;
+    }
+
     /**
-     * Get all of the explicit and inferred condition keys used in the entire service.
+     * Get all the explicit and inferred condition keys used in the entire service.
      *
      * <p>The result does not include global condition keys like "aws:accountId".
-     * Use {@link #getConditionKeyNames} to find all of the condition keys used
+     * Use {@link #getConditionKeyNames} to find all the condition keys used
      * but not necessarily defined for a service.
      *
      * @param service Service shape/shapeId to get.
@@ -90,21 +93,25 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
     }
 
     /**
-     * Get all of the condition key names used in a service.
+     * Get all the condition key names used in a service.
      *
      * @param service Service shape/shapeId use to scope the result.
      * @return Returns the conditions keys of the service or an empty map when not found.
      */
     public Set<String> getConditionKeyNames(ToShapeId service) {
-        return resourceConditionKeys.getOrDefault(service.toShapeId(), MapUtils.of())
-                .values()
-                .stream()
-                .flatMap(Set::stream)
-                .collect(SetUtils.toUnmodifiableSet());
+        if (!resourceConditionKeys.containsKey(service.toShapeId())) {
+            return SetUtils.of();
+        }
+
+        Set<String> names = new HashSet<>();
+        for (Set<String> resourceKeyNames : resourceConditionKeys.get(service.toShapeId()).values()) {
+            names.addAll(resourceKeyNames);
+        }
+        return names;
     }
 
     /**
-     * Get all of the defined condition keys used in an operation or resource, including
+     * Get all the defined condition keys used in an operation or resource, including
      * any inferred keys and keys inherited by parent resource bindings.
      *
      * @param service Service shape/shapeId use to scope the result.
@@ -119,11 +126,11 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
     }
 
     /**
-     * Get all of the defined condition keys used in an operation or resource, including
+     * Get all the defined condition keys used in an operation or resource, including
      * any inferred keys and keys inherited by parent resource bindings.
      *
      * <p>The result does not include global condition keys like "aws:accountId".
-     * Use {@link #getConditionKeyNames} to find all of the condition keys used
+     * Use {@link #getConditionKeyNames} to find all the condition keys used
      * but not necessarily defined for a resource or operation.
      *
      * @param service Service shape/shapeId use to scope the result.
@@ -170,7 +177,9 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             definitions.addAll(parentDefinitions);
         }
         resourceConditionKeys.get(service.getId()).put(subject.getId(), definitions);
-        subject.getTrait(ConditionKeysTrait.class).ifPresent(trait -> definitions.addAll(trait.getValues()));
+        if (subject.hasTrait(ConditionKeysTrait.ID)) {
+            definitions.addAll(subject.expectTrait(ConditionKeysTrait.class).resolveConditionKeys(service));
+        }
 
         // Continue recursing into resources and computing keys.
         subject.asResourceShape().ifPresent(resource -> {
@@ -183,18 +192,23 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                     : MapUtils.of();
 
             // Compute the keys of each child operation, passing no keys.
-            resource.getAllOperations()
-                    .stream()
-                    .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
-                    .forEach(child -> compute(model, service, arnRoot, child, resource));
+            for (ShapeId operationId : resource.getOperations()) {
+                Optional<Shape> operationOptional = model.getShape(operationId);
+                if (operationOptional.isPresent()) {
+                    compute(model, service, arnRoot, operationOptional.get(), resource);
+                }
+            }
 
             // Child resources always inherit the identifiers of the parent.
             definitions.addAll(childIdentifiers.values());
 
             // Compute the keys of each child resource.
-            resource.getResources().stream().flatMap(id -> OptionalUtils.stream(model.getShape(id))).forEach(child -> {
-                compute(model, service, arnRoot, child, resource, definitions);
-            });
+            for (ShapeId resourceId : resource.getResources()) {
+                Optional<Shape> resourceOptional = model.getShape(resourceId);
+                if (resourceOptional.isPresent()) {
+                    compute(model, service, arnRoot, resourceOptional.get(), resource, definitions);
+                }
+            }
         });
     }
 
@@ -230,7 +244,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 builder.documentation(shape.getTrait(DocumentationTrait.class)
                         .map(DocumentationTrait::getValue)
                         .orElse(computeIdentifierDocs(resource, childId)));
-                // The identifier name is comprised of "[arn service]:[Resource name][uppercase identifier name]
+                // The identifier name consists of "[arn service]:[Resource name][uppercase identifier name]".
                 String computeIdentifierName = computeIdentifierName(arnRoot, resource, childId);
                 // Add the computed identifier binding and resolved context key to the result map.
                 result.put(childId, computeIdentifierName);

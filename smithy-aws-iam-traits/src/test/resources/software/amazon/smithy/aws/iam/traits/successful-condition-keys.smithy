@@ -27,7 +27,7 @@ service MyService {
   resources: [Resource1]
 }
 
-@conditionKeys(["aws:accountId", "myservice:bar"])
+@conditionKeys(["aws:accountId", "bar"])
 operation Operation1 {}
 
 @conditionKeys(["aws:accountId", "foo:baz"])
