@@ -1,5 +1,6 @@
 software.amazon.smithy.aws.iam.traits.ConditionKeysValidator
+software.amazon.smithy.aws.iam.traits.ConditionKeyValueTraitValidator
+software.amazon.smithy.aws.iam.traits.DefineConditionKeysTraitValidator
 software.amazon.smithy.aws.iam.traits.IamActionValidator
 software.amazon.smithy.aws.iam.traits.IamResourceTraitValidator
-software.amazon.smithy.aws.iam.traits.DefineConditionKeysTraitValidator
 software.amazon.smithy.aws.iam.traits.IamResourceTraitConflictingNameValidator

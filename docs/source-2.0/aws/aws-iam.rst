@@ -605,6 +605,10 @@ Members not annotated with the ``conditionKeyValue`` trait, default to the
 condition keys defined with the ``conditionKeyValue`` trait MUST also be
 defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
 
+Any ``conditionKeyValue`` trait applied to a member that is not a top-level
+input member to an operation will be ignored. Multiple members within a
+top-level input structure MUST NOT supply the value for the same condition key.
+
 The value MUST be a valid IAM identifier or name of a condition key,
 meaning it must adhere to the following regular expression:
 ``"^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$"``. If only a condition key
