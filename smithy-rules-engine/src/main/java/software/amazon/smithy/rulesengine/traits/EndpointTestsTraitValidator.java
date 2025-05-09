@@ -68,6 +68,8 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                                     || event.getSeverity() == Severity.NOTE
                                     || testCase.getExpect().getError().isPresent()) {
                                 events.add(event.toBuilder().severity(Severity.DANGER).build());
+                            } else {
+                                events.add(event);
                             }
                         }
                     }

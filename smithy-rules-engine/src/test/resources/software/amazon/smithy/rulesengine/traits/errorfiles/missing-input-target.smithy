@@ -19,7 +19,7 @@ apply InvalidService @endpointTests({
             operationInputs: [
                 {
                     operationName: "GetThing"
-                    operationParams: { fizz: "something", buzz: "a buzz value" }
+                    operationParams: { fizz: "something", buzz: 1 }
                 }
             ]
             expect: {
