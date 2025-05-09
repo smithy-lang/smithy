@@ -31,7 +31,7 @@ public final class EndpointTestsTest {
         EndpointTestsTrait ruleSetTrait = serviceShape.getTrait(EndpointTestsTrait.class).get();
         List<EndpointTestCase> testCases = ruleSetTrait.getTestCases();
 
-        assertThat(2, equalTo(testCases.size()));
+        assertThat(3, equalTo(testCases.size()));
         assertThat(EndpointTestCase.builder()
                 .documentation("a documentation string")
                 .params(ObjectNode.builder()
