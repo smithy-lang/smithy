@@ -2,12 +2,14 @@ $version: "2.0"
 
 namespace smithy.example
 
+use aws.api#service
 use aws.iam#conditionKeyValue
+use aws.iam#defineConditionKeys
 
-@aws.iam#defineConditionKeys(
-    "smithy:ActionContextKey1": { type: "String" }
+@defineConditionKeys(
+    "myservice:ActionContextKey1": { type: "String" }
 )
-@aws.api#service(sdkId: "My")
+@service(sdkId: "My", arnNamespace: "myservice")
 service MyService {
     version: "2019-02-20",
     operations: [Echo]
@@ -15,7 +17,13 @@ service MyService {
 
 operation Echo {
     input := {
-        @aws.iam#conditionKeyValue("smithy:InvalidConditionKey")
+        @conditionKeyValue("myservice:InvalidConditionKey")
         id1: String
+
+        @conditionKeyValue("myservice:ActionContextKey1")
+        id2: String
+
+        @conditionKeyValue("myservice:ActionContextKey1")
+        id3: String
     }
 }
