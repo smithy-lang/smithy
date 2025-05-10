@@ -119,6 +119,15 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
     }
 
     /**
+     * Gets the parameter name.
+     *
+     * @return returns the parameter name as a {@link String}.
+     */
+    public String getNameString() {
+        return name.toString();
+    }
+
+    /**
      * Gets the parameter in template form.
      *
      * @return returns the template form of the parameter.

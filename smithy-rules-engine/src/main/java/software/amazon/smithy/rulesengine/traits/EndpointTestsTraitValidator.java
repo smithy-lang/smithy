@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -17,6 +18,8 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -36,7 +39,28 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                 operationNameMap.put(operationShape.getId().getName(), operationShape);
             }
 
+            // Precompute the built-ins and their default states, as this will
+            // be used frequently in downstream validation.
+            List<Parameter> builtInParamsWithDefaults = new ArrayList<>();
+            List<Parameter> builtInParamsWithoutDefaults = new ArrayList<>();
+            EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
+            for (Parameter parameter : ruleSet.getParameters()) {
+                if (parameter.isBuiltIn()) {
+                    if (parameter.getDefault().isPresent()) {
+                        builtInParamsWithDefaults.add(parameter);
+                    } else {
+                        builtInParamsWithoutDefaults.add(parameter);
+                    }
+                }
+            }
+
             for (EndpointTestCase testCase : serviceShape.expectTrait(EndpointTestsTrait.class).getTestCases()) {
+                // If values for built-in parameters don't match the default, they MUST
+                // be specified in the operation inputs. Precompute the ones that don't match
+                // and capture their value.
+                Map<Parameter, Node> builtInParamsWithNonDefaultValues =
+                        getBuiltInParamsWithNonDefaultValues(builtInParamsWithDefaults, testCase);
+
                 for (EndpointTestOperationInput testOperationInput : testCase.getOperationInputs()) {
                     String operationName = testOperationInput.getOperationName();
 
@@ -47,30 +71,24 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                                 String.format("Test case operation `%s` does not exist in service `%s`",
                                         operationName,
                                         serviceShape.getId())));
+                        continue;
                     }
 
                     // Still emit events if the operation exists, but was just not bound.
-                    if (operationNameMap.containsKey(operationName)) {
-                        StructureShape inputShape = model.expectShape(
-                                operationNameMap.get(operationName).getInputShape(),
-                                StructureShape.class);
+                    validateConfiguredBuiltInValues(serviceShape,
+                            builtInParamsWithNonDefaultValues,
+                            testOperationInput,
+                            events);
+                    validateBuiltInsWithoutDefaultsHaveValues(serviceShape,
+                            builtInParamsWithoutDefaults,
+                            testCase,
+                            testOperationInput,
+                            events);
 
-                        List<ValidationEvent> operationInputEvents = validateOperationInput(model,
-                                serviceShape,
-                                inputShape,
-                                testOperationInput);
-
-                        // Error test cases may use invalid inputs as the mechanism to trigger their error,
-                        // so lower the severity before emitting. All other events here should be raised to
-                        // DANGER level as well.
-                        for (ValidationEvent event : operationInputEvents) {
-                            if (event.getSeverity() == Severity.WARNING
-                                    || event.getSeverity() == Severity.NOTE
-                                    || testCase.getExpect().getError().isPresent()) {
-                                events.add(event.toBuilder().severity(Severity.DANGER).build());
-                            }
-                        }
-                    }
+                    StructureShape inputShape = model.expectShape(
+                            operationNameMap.get(operationName).getInputShape(),
+                            StructureShape.class);
+                    validateOperationInput(model, serviceShape, inputShape, testCase, testOperationInput, events);
                 }
             }
         }
@@ -78,11 +96,78 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
         return events;
     }
 
-    private List<ValidationEvent> validateOperationInput(
+    private Map<Parameter, Node> getBuiltInParamsWithNonDefaultValues(
+            List<Parameter> builtInParamsWithDefaults,
+            EndpointTestCase testCase
+    ) {
+        Map<Parameter, Node> builtInParamsWithNonDefaultValues = new HashMap<>();
+        for (Parameter parameter : builtInParamsWithDefaults) {
+            String parameterName = parameter.getName().toString();
+            Node defaultValue = parameter.getDefault().get().toNode();
+
+            // Consider a parameter non-matching if the built-in's default and its
+            // value in this test case aren't the same.
+            if (testCase.getParams().containsMember(parameterName)
+                    && !testCase.getParams().expectMember(parameterName).equals(defaultValue)) {
+                builtInParamsWithNonDefaultValues.put(parameter, testCase.getParams().expectMember(parameterName));
+            }
+        }
+        return builtInParamsWithNonDefaultValues;
+    }
+
+    private void validateConfiguredBuiltInValues(
+            ServiceShape serviceShape,
+            Map<Parameter, Node> builtInParamsWithNonDefaultValues,
+            EndpointTestOperationInput testOperationInput,
+            List<ValidationEvent> events
+    ) {
+        for (Map.Entry<Parameter, Node> builtInParasWithNonDefaultValue : builtInParamsWithNonDefaultValues
+                .entrySet()) {
+            String builtInName = builtInParasWithNonDefaultValue.getKey().getBuiltIn().get();
+            // Emit if either the built-in with a non-matching value isn't
+            // specified or the value set for it doesn't match.
+            if (!testOperationInput.getBuiltInParams().containsMember(builtInName)
+                    || !testOperationInput.getBuiltInParams()
+                            .expectMember(builtInName)
+                            .equals(builtInParasWithNonDefaultValue.getValue())) {
+                events.add(error(serviceShape,
+                        testOperationInput,
+                        String.format("Test case does not supply the `%s` value for the `%s` parameter's "
+                                + "`%s` built-in.",
+                                Node.printJson(builtInParasWithNonDefaultValue.getValue()),
+                                builtInParasWithNonDefaultValue.getKey().getNameString(),
+                                builtInParasWithNonDefaultValue.getKey().getBuiltIn().get())));
+            }
+        }
+    }
+
+    private void validateBuiltInsWithoutDefaultsHaveValues(
+            ServiceShape serviceShape,
+            List<Parameter> builtInParamsWithoutDefaults,
+            EndpointTestCase testCase,
+            EndpointTestOperationInput testOperationInput,
+            List<ValidationEvent> events
+    ) {
+        for (Parameter parameter : builtInParamsWithoutDefaults) {
+            if (testCase.getParams().containsMember(parameter.getNameString())
+                    && !testOperationInput.getBuiltInParams().containsMember(parameter.getBuiltIn().get())) {
+                events.add(error(serviceShape,
+                        testOperationInput,
+                        String.format("Operation input does not supply a value for the `%s` built-in parameter "
+                                + "and the `%s` parameter does not set a default.",
+                                parameter.getBuiltIn().get(),
+                                parameter.getName())));
+            }
+        }
+    }
+
+    private void validateOperationInput(
             Model model,
             ServiceShape serviceShape,
             StructureShape inputShape,
-            EndpointTestOperationInput testOperationInput
+            EndpointTestCase testCase,
+            EndpointTestOperationInput testOperationInput,
+            List<ValidationEvent> events
     ) {
         NodeValidationVisitor validator = NodeValidationVisitor.builder()
                 .model(model)
@@ -92,6 +177,18 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                 .startingContext("The operationInput value for an endpoint test "
                         + "does not match the operation's input shape")
                 .build();
-        return inputShape.accept(validator);
+
+        // Error test cases may use invalid inputs as the mechanism to trigger their error,
+        // so lower the severity before emitting. All other events here should be raised to
+        // DANGER level as well.
+        for (ValidationEvent event : inputShape.accept(validator)) {
+            if (event.getSeverity() == Severity.WARNING
+                    || event.getSeverity() == Severity.NOTE
+                    || testCase.getExpect().getError().isPresent()) {
+                events.add(event.toBuilder().severity(Severity.DANGER).build());
+            } else {
+                events.add(event);
+            }
+        }
     }
 }

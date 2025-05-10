@@ -1,0 +1,3 @@
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[ERROR] smithy.example#ExampleService: Operation input does not supply a value for the `SDK::Endpoint` built-in parameter and the `endpoint` parameter does not set a default. | EndpointTestsTrait

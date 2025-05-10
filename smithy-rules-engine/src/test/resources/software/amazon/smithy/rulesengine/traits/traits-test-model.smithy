@@ -130,6 +130,33 @@ apply ExampleService @endpointTests({
                 }
             }
         }
+        {
+            "params": {
+                "stringFoo": "c d",
+                "boolFoo": true,
+            },
+            "operationInputs": [{
+                "operationName": "GetThing",
+                "clientParams": {
+                    "stringFoo": "client value"
+                },
+                "operationParams": {
+                    "buzz": "a buzz value",
+                    "fizz": "a required value"
+                },
+                "builtInParams": {}
+            }],
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com",
+                    "properties": {},
+                    "headers": {
+                        "single": ["foo"],
+                        "multi": ["foo", "bar", "baz"]
+                    }
+                }
+            }
+        }
     ]
 })
 

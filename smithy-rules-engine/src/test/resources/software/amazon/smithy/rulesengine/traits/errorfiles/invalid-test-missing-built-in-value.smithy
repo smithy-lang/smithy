@@ -12,16 +12,16 @@ use smithy.rules#endpointTests
             type: "string"
             builtIn: "SDK::Endpoint"
             documentation: "docs"
-            default: "https://example.com"
-            required: true
         }
     }
     rules: [
         {
-            conditions: []
             documentation: "Passthrough"
-            error: "Failed to resolve."
-            type: "error"
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+            }
+            type: "endpoint"
         }
     ]
 })
@@ -29,30 +29,29 @@ use smithy.rules#endpointTests
     version: "1.0"
     testCases: [
         {
+            params: {
+                endpoint: "https://example.com"
+            }
             operationInputs: [{
                 operationName: "GetThing"
-                operationParams: {
-                    "buzz": "a buzz value"
-                }
             }]
             expect: {
-                error: "Failed to resolve."
+                endpoint: {
+                    url: "https://example.com"
+                }
             }
         }
     ]
 })
 @suppress(["RuleSetParameter.TestCase.Unused"])
-service InvalidService {
-    version: "2022-01-01"
+service ExampleService {
+    version: "2020-07-02"
     operations: [GetThing]
 }
 
-@readonly
 operation GetThing {
     input := {
-        @required
         fizz: String
-        buzz: String
-        fuzz: String
     }
 }
+
