@@ -85,6 +85,7 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
     @Override
     public Builder toBuilder() {
         return new Builder()
+                .sourceLocation(getSourceLocation())
                 .partitionSpecialCases(partitionSpecialCases)
                 .regionSpecialCases(regionSpecialCases);
     }

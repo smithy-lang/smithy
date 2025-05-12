@@ -30,7 +30,7 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(trait,
                 new StandardPartitionalEndpointsTrait.Provider()
                         .createTrait(StandardPartitionalEndpointsTrait.ID,
-                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                                trait.toBuilder().build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
@@ -54,7 +54,7 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(trait,
                 new StandardPartitionalEndpointsTrait.Provider()
                         .createTrait(StandardPartitionalEndpointsTrait.ID,
-                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                                trait.toBuilder().build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service3");
 
@@ -72,7 +72,7 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(trait,
                 new StandardPartitionalEndpointsTrait.Provider()
                         .createTrait(StandardPartitionalEndpointsTrait.ID,
-                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                                trait.toBuilder().build().toNode()));
     }
 
     private StandardPartitionalEndpointsTrait getTraitFromService(Model model, String service) {
