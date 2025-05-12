@@ -119,7 +119,8 @@ public class SmithyTestCaseTest {
         SmithyTestCase.Result result = new SmithyTestCase.Result(
                 "/foo/bar.json",
                 ListUtils.of(e1, e2),
-                ListUtils.of(e1, e2));
+                ListUtils.of(e1, e2),
+                ListUtils.of());
 
         assertThat(result.toString(),
                 equalTo("=======================\n"
@@ -136,6 +137,11 @@ public class SmithyTestCaseTest {
                         + "Encountered unexpected events\n"
                         + "-----------------------------\n"
                         + "[DANGER] foo.baz#Bar: a | FooBar N/A:0:0\n"
-                        + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n\n"));
+                        + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n"
+                        + "\n"
+                        + "\n"
+                        + "Actual events\n"
+                        + "-------------\n"
+                        + "\n"));
     }
 }
