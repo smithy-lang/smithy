@@ -176,6 +176,7 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                 .eventShapeId(serviceShape.toShapeId())
                 .startingContext("The operationInput value for an endpoint test "
                         + "does not match the operation's input shape")
+                .addFeature(NodeValidationVisitor.Feature.DISALLOW_UNKNOWN_STRUCTURE_MEMBERS)
                 .build();
 
         // Error test cases may use invalid inputs as the mechanism to trigger their error,

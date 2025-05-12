@@ -108,6 +108,7 @@ public class SmokeTestCaseValidator extends AbstractValidator {
                 .eventId(getName())
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .addFeature(NodeValidationVisitor.Feature.ALLOW_OPTIONAL_NULLS)
+                .addFeature(NodeValidationVisitor.Feature.DISALLOW_UNKNOWN_STRUCTURE_MEMBERS)
                 .build();
     }
 }
