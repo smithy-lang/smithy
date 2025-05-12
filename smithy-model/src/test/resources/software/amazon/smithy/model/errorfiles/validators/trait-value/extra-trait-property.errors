@@ -1,1 +1,1 @@
-[WARNING] smithy.example#MyInteger: Error validating trait `range`: Invalid structure member `maxx` found for `smithy.api#range` | TraitValue.smithy.api#range.maxx
+[WARNING] smithy.example#MyInteger: Error validating trait `range`: Member `maxx` does not exist in `smithy.api#range` | TraitValue.UnknownMember.smithy.api#range.maxx
