@@ -1,11 +1,11 @@
 [ERROR] ns.foo#Operation2: Error parameters provided for operation without the `ns.foo#OperationError` error: `Testing 5` | ExamplesTrait
-[DANGER] ns.foo#Operation2: Example input of `Testing 4`: Member `foo` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember
-[DANGER] ns.foo#Operation2: Example output of `Testing 4`: Member `bam` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember
+[WARNING] ns.foo#Operation2: Example input of `Testing 4`: Member `foo` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember
+[WARNING] ns.foo#Operation2: Example output of `Testing 4`: Member `bam` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember
 [ERROR] ns.foo#Operation: Example: `Testing 3` has both output and error defined, only one should be present. | ExamplesTrait
 [ERROR] ns.foo#Operation: Example input of `Testing 2`: Missing required structure member `foo` for `ns.foo#OperationInput` | ExamplesTrait
-[DANGER] ns.foo#Operation: Example output of `Testing 2`: Member `additional` does not exist in `ns.foo#OperationOutput` | ExamplesTrait.UnknownMember
+[WARNING] ns.foo#Operation: Example output of `Testing 2`: Member `additional` does not exist in `ns.foo#OperationOutput` | ExamplesTrait.UnknownMember
 [ERROR] ns.foo#Operation: Example output of `Testing 2`: Missing required structure member `bam` for `ns.foo#OperationOutput` | ExamplesTrait
-[DANGER] ns.foo#Operation: Example error of `Testing 1`: Member `extra` does not exist in `ns.foo#OperationError` | ExamplesTrait.UnknownMember
+[WARNING] ns.foo#Operation: Example error of `Testing 1`: Member `extra` does not exist in `ns.foo#OperationError` | ExamplesTrait.UnknownMember
 [ERROR] ns.foo#Operation: Example: `Testing 4` has allowConstraintErrors enabled, so error must be defined. | ExamplesTrait
 [WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMin: Value provided for `ns.foo#OperationInput$blobMin` must have at least 3 bytes, but the provided value only has 1 bytes | ExamplesTrait
 [WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMax: Value provided for `ns.foo#OperationInput$blobMax` must have no more than 3 bytes, but the provided value has 6 bytes | ExamplesTrait

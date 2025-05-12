@@ -138,8 +138,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .eventShapeId(shape.getId())
                 .value(value)
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")
-                .eventId(getName())
-                .addFeature(NodeValidationVisitor.Feature.DISALLOW_UNKNOWN_STRUCTURE_MEMBERS);
+                .eventId(getName());
         if (example.getAllowConstraintErrors()) {
             builder.addFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS);
         }

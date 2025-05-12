@@ -106,14 +106,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          *
          * <p>By default, null values are not allowed for optional types.
          */
-        ALLOW_OPTIONAL_NULLS,
-
-        /**
-         * Emit a DANGER when an unknown member is found for a structure shape.
-         *
-         * <p>By default, unknown members produce a warning to allow adding new members safely.
-         */
-        DISALLOW_UNKNOWN_STRUCTURE_MEMBERS;
+        ALLOW_OPTIONAL_NULLS;
 
         public static Feature fromNode(Node node) {
             return Feature.valueOf(node.expectStringNode().getValue());
@@ -332,11 +325,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         String entryKey = entry.getKey();
                         Node entryValue = entry.getValue();
                         if (!members.containsKey(entryKey)) {
-                            Severity severity =
-                                    this.validationContext.hasFeature(Feature.DISALLOW_UNKNOWN_STRUCTURE_MEMBERS)
-                                            ? Severity.DANGER
-                                            : Severity.WARNING;
-                            events.add(unknownMember(entryKey, shape, severity));
+                            events.add(unknownMember(entryKey, shape, Severity.WARNING));
                         } else {
                             events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                         }
