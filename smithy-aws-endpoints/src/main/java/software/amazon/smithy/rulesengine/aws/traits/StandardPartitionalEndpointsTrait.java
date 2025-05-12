@@ -81,6 +81,24 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
                 .endpointPatternType(endpointPatternType);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StandardPartitionalEndpointsTrait that = (StandardPartitionalEndpointsTrait) o;
+        return partitionEndpointSpecialCases.equals(that.partitionEndpointSpecialCases)
+                && endpointPatternType.equals(that.endpointPatternType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(partitionEndpointSpecialCases, endpointPatternType);
+    }
+
     public static Builder builder() {
         return new Builder();
     }

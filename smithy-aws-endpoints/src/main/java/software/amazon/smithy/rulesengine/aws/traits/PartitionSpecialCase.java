@@ -84,6 +84,25 @@ public final class PartitionSpecialCase implements FromSourceLocation, ToNode, T
         return FromSourceLocation.super.getSourceLocation();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PartitionSpecialCase that = (PartitionSpecialCase) o;
+        return Objects.equals(endpoint, that.endpoint)
+                && Objects.equals(dualStack, that.dualStack)
+                && Objects.equals(fips, that.fips);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endpoint, dualStack, fips);
+    }
+
     /**
      * Creates a {@link PartitionSpecialCase} instance from the given Node information.
      *

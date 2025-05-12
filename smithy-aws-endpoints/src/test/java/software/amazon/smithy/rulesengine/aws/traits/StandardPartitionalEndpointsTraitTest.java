@@ -27,6 +27,10 @@ class StandardPartitionalEndpointsTraitTest {
 
         assertEquals(trait.getEndpointPatternType(), EndpointPatternType.SERVICE_DNSSUFFIX);
         assertEquals(trait.getPartitionEndpointSpecialCases().size(), 0);
+        assertEquals(trait,
+                new StandardPartitionalEndpointsTrait.Provider()
+                        .createTrait(StandardPartitionalEndpointsTrait.ID,
+                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
@@ -47,6 +51,11 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(case2.getRegion(), "us-west-2");
         assertNull(case2.getFips());
 
+        assertEquals(trait,
+                new StandardPartitionalEndpointsTrait.Provider()
+                        .createTrait(StandardPartitionalEndpointsTrait.ID,
+                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+
         trait = getTraitFromService(model, "ns.foo#Service3");
 
         assertEquals(trait.getEndpointPatternType(), EndpointPatternType.AWS_RECOMMENDED);
@@ -59,6 +68,11 @@ class StandardPartitionalEndpointsTraitTest {
         assertEquals(case1.getRegion(), "us-west-2");
         assertNull(case1.getDualStack());
         assertNull(case1.getFips());
+
+        assertEquals(trait,
+                new StandardPartitionalEndpointsTrait.Provider()
+                        .createTrait(StandardPartitionalEndpointsTrait.ID,
+                                trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
     }
 
     private StandardPartitionalEndpointsTrait getTraitFromService(Model model, String service) {

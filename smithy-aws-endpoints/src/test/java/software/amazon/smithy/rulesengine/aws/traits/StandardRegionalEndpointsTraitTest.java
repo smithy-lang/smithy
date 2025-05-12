@@ -27,11 +27,17 @@ class StandardRegionalEndpointsTraitTest {
 
         assertEquals(trait.getPartitionSpecialCases().size(), 0);
         assertEquals(trait.getRegionSpecialCases().size(), 0);
+        assertEquals(trait,
+                new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
+                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
         assertEquals(trait.getPartitionSpecialCases().size(), 0);
         assertEquals(trait.getRegionSpecialCases().size(), 0);
+        assertEquals(trait,
+                new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
+                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service3");
 
@@ -50,7 +56,13 @@ class StandardRegionalEndpointsTraitTest {
         assertNull(partitionSpecialCase2.getFips());
 
         List<RegionSpecialCase> regionSpecialCases = trait.getRegionSpecialCases().get("us-east-1");
-        assertEquals(regionSpecialCases.size(), 0);
+        assertEquals(regionSpecialCases.size(), 1);
+        RegionSpecialCase regionSpecialCase = regionSpecialCases.get(0);
+        assertEquals(regionSpecialCase.getEndpoint(), "https://myservice.amazonaws.com");
+        assertEquals(regionSpecialCase.getDualStack(), true);
+        assertEquals(trait,
+                new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
+                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
 
         Node.assertEquals(trait.toNode(), trait.toBuilder().build().toNode());
     }

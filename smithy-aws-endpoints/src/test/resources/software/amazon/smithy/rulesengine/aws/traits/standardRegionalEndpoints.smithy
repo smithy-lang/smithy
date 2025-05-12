@@ -29,6 +29,10 @@ service Service2 {
     },
     regionSpecialCases: {
         "us-east-1": [
+            {
+                endpoint: "https://myservice.amazonaws.com",
+                dualStack: true
+            }
         ]
     }
 )

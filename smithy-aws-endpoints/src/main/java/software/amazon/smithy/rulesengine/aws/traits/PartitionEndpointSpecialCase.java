@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -77,11 +78,16 @@ public final class PartitionEndpointSpecialCase
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(ENDPOINT, endpoint)
-                .withMember(REGION, region)
-                .withMember(DUAL_STACK, dualStack.toString())
-                .withMember(FIPS, fips.toString())
+                .withOptionalMember(ENDPOINT, Optional.ofNullable(endpoint).map(Node::from))
+                .withOptionalMember(REGION, Optional.ofNullable(region).map(Node::from))
+                .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
+                .withOptionalMember(FIPS, Optional.ofNullable(fips).map(Node::from))
                 .build();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endpoint, region, dualStack, fips);
     }
 
     @Override
@@ -97,6 +103,21 @@ public final class PartitionEndpointSpecialCase
     @Override
     public SourceLocation getSourceLocation() {
         return FromSourceLocation.super.getSourceLocation();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PartitionEndpointSpecialCase that = (PartitionEndpointSpecialCase) o;
+        return Objects.equals(endpoint, that.endpoint)
+                && Objects.equals(region, that.region)
+                && Objects.equals(dualStack, that.dualStack)
+                && Objects.equals(fips, that.fips);
     }
 
     /**
