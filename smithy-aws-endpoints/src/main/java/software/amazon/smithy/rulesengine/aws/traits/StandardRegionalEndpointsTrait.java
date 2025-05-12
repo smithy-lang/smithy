@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -86,6 +87,24 @@ public final class StandardRegionalEndpointsTrait extends AbstractTrait
         return new Builder()
                 .partitionSpecialCases(partitionSpecialCases)
                 .regionSpecialCases(regionSpecialCases);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StandardRegionalEndpointsTrait that = (StandardRegionalEndpointsTrait) o;
+        return partitionSpecialCases.equals(that.partitionSpecialCases)
+                && regionSpecialCases.equals(that.regionSpecialCases);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(partitionSpecialCases, regionSpecialCases);
     }
 
     public static Builder builder() {

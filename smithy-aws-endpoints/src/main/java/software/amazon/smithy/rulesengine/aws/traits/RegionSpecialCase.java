@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -75,9 +76,10 @@ public final class RegionSpecialCase implements FromSourceLocation, ToNode, ToSm
     public Node toNode() {
         return Node.objectNodeBuilder()
                 .withMember(ENDPOINT, endpoint)
-                .withMember(DUAL_STACK, dualStack.toString())
-                .withMember(FIPS, fips.toString())
-                .withMember(SIGNING_REGION, signingRegion)
+                .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
+                .withOptionalMember(FIPS, Optional.ofNullable(fips).map(Node::from))
+                .withOptionalMember(DUAL_STACK, Optional.ofNullable(dualStack).map(Node::from))
+                .withOptionalMember(SIGNING_REGION, Optional.ofNullable(signingRegion).map(Node::from))
                 .build();
     }
 
@@ -94,6 +96,26 @@ public final class RegionSpecialCase implements FromSourceLocation, ToNode, ToSm
     @Override
     public SourceLocation getSourceLocation() {
         return FromSourceLocation.super.getSourceLocation();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RegionSpecialCase that = (RegionSpecialCase) o;
+        return Objects.equals(endpoint, that.endpoint)
+                && Objects.equals(dualStack, that.dualStack)
+                && Objects.equals(fips, that.fips)
+                && Objects.equals(signingRegion, that.signingRegion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endpoint, dualStack, fips, signingRegion);
     }
 
     /**
