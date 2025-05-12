@@ -86,11 +86,6 @@ public final class PartitionEndpointSpecialCase
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(endpoint, region, dualStack, fips);
-    }
-
-    @Override
     public Builder toBuilder() {
         return new Builder()
                 .endpoint(endpoint)
@@ -118,6 +113,11 @@ public final class PartitionEndpointSpecialCase
                 && Objects.equals(region, that.region)
                 && Objects.equals(dualStack, that.dualStack)
                 && Objects.equals(fips, that.fips);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endpoint, region, dualStack, fips);
     }
 
     /**
