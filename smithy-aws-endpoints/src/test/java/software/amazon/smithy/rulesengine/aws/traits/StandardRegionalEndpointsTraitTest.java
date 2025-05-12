@@ -29,7 +29,7 @@ class StandardRegionalEndpointsTraitTest {
         assertEquals(trait.getRegionSpecialCases().size(), 0);
         assertEquals(trait,
                 new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
-                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                        trait.toBuilder().build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
@@ -37,7 +37,7 @@ class StandardRegionalEndpointsTraitTest {
         assertEquals(trait.getRegionSpecialCases().size(), 0);
         assertEquals(trait,
                 new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
-                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                        trait.toBuilder().build().toNode()));
 
         trait = getTraitFromService(model, "ns.foo#Service3");
 
@@ -62,7 +62,7 @@ class StandardRegionalEndpointsTraitTest {
         assertEquals(regionSpecialCase.getDualStack(), true);
         assertEquals(trait,
                 new StandardRegionalEndpointsTrait.Provider().createTrait(StandardRegionalEndpointsTrait.ID,
-                        trait.toBuilder().sourceLocation(trait.getSourceLocation()).build().toNode()));
+                        trait.toBuilder().build().toNode()));
 
         Node.assertEquals(trait.toNode(), trait.toBuilder().build().toNode());
     }

@@ -77,6 +77,7 @@ public final class StandardPartitionalEndpointsTrait extends AbstractTrait
     @Override
     public Builder toBuilder() {
         return new Builder()
+                .sourceLocation(getSourceLocation())
                 .partitionEndpointSpecialCases(partitionEndpointSpecialCases)
                 .endpointPatternType(endpointPatternType);
     }
