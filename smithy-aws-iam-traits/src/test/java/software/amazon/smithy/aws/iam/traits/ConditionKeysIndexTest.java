@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -63,6 +64,20 @@ public class ConditionKeysIndexTest {
                 "This is Foo");
         assertThat(index.getDefinedConditionKeys(service, ShapeId.from("smithy.example#GetResource2")).keySet(),
                 is(empty()));
+    }
+
+    @Test
+    public void getsConditionKeysFromResourceCollectionOperations() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("resource-condition-keys.smithy"))
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+        ShapeId service = ShapeId.from("ns.example#MyService");
+        ShapeId operation = ShapeId.from("ns.example#MyOperation");
+        ConditionKeysIndex index = ConditionKeysIndex.of(model);
+        Set<String> result = index.getConditionKeyNames(service, operation);
+        assertThat(result, containsInAnyOrder("aws:accountId", "s3:bucket"));
     }
 
     @Test
