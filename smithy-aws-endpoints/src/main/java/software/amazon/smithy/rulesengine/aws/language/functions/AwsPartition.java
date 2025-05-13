@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.aws.language.functions.partition.Partition;
 import software.amazon.smithy.rulesengine.aws.language.functions.partition.PartitionOutputs;
@@ -49,6 +48,7 @@ public final class AwsPartition extends LibraryFunction {
     // the `evaluate` method below.
     private static final List<Partition> PARTITIONS = new ArrayList<>();
     private static final Map<String, Partition> REGION_MAP = new HashMap<>();
+    private static Partition AWS_PARTITION;
 
     static {
         PARTITIONS.addAll(Partitions.fromNode(
@@ -62,7 +62,7 @@ public final class AwsPartition extends LibraryFunction {
     }
 
     /**
-     * Overrides the partitions provided by default.
+     * Overrides the partitions provided by default. (changing this is not thread-safe).
      *
      * @param partitions A list of partitions to set.
      */
@@ -75,7 +75,11 @@ public final class AwsPartition extends LibraryFunction {
 
     private static void initializeRegionMap() {
         REGION_MAP.clear();
+        AWS_PARTITION = null;
         for (Partition partition : PARTITIONS) {
+            if (partition.getId().equals("aws")) {
+                AWS_PARTITION = partition;
+            }
             for (String region : partition.getRegions().keySet()) {
                 REGION_MAP.put(region, partition);
             }
@@ -146,25 +150,11 @@ public final class AwsPartition extends LibraryFunction {
 
             // Known region
             matchedPartition = REGION_MAP.get(regionName);
-            if (matchedPartition == null) {
-                // Try matching on region name pattern
-                for (Partition partition : PARTITIONS) {
-                    Pattern regex = Pattern.compile(partition.getRegionRegex());
-                    if (regex.matcher(regionName).matches()) {
-                        matchedPartition = partition;
-                        inferred = true;
-                        break;
-                    }
-                }
-            }
 
-            // Default to the `aws` partition.
             if (matchedPartition == null) {
-                for (Partition partition : PARTITIONS) {
-                    if (partition.getId().equals("aws")) {
-                        matchedPartition = partition;
-                        break;
-                    }
+                matchedPartition = findPartition(regionName);
+                if (matchedPartition != null) {
+                    inferred = true;
                 }
             }
 
@@ -194,5 +184,33 @@ public final class AwsPartition extends LibraryFunction {
         public AwsPartition createFunction(FunctionNode functionNode) {
             return new AwsPartition(functionNode);
         }
+    }
+
+    /**
+     * Attempts to find the partition a region is in or likely in.
+     *
+     * @param regionName Name of the region to match against.
+     * @return the matched partition, or null if none was found.
+     */
+    public static Partition findPartition(String regionName) {
+        if (regionName == null) {
+            return null;
+        }
+
+        // Known region
+        Partition matchedPartition = REGION_MAP.get(regionName);
+        if (matchedPartition != null) {
+            return matchedPartition;
+        }
+
+        // Try matching on region name pattern
+        for (Partition partition : PARTITIONS) {
+            if (partition.getCompiledRegionRegex().matcher(regionName).matches()) {
+                return partition;
+            }
+        }
+
+        // Default to the `aws` partition if present, or null if not.
+        return AWS_PARTITION;
     }
 }
