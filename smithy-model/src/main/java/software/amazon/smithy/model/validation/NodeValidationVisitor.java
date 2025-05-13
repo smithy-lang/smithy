@@ -325,11 +325,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         String entryKey = entry.getKey();
                         Node entryValue = entry.getValue();
                         if (!members.containsKey(entryKey)) {
-                            String message = String.format(
-                                    "Invalid structure member `%s` found for `%s`",
-                                    entryKey,
-                                    shape.getId());
-                            events.add(event(message, Severity.WARNING, shape.getId().toString(), entryKey));
+                            events.add(unknownMember(entryKey, shape, Severity.WARNING));
                         } else {
                             events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                         }
@@ -364,10 +360,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                             String entryKey = entry.getKey();
                             Node entryValue = entry.getValue();
                             if (!members.containsKey(entryKey)) {
-                                events.add(event(String.format(
-                                        "Invalid union member `%s` found for `%s`",
-                                        entryKey,
-                                        shape.getId())));
+                                events.add(unknownMember(entryKey, shape, Severity.ERROR));
                             } else {
                                 events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                             }
@@ -461,6 +454,14 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> invalidSchema(Shape shape) {
         return ListUtils.of(event("Encountered invalid shape type: " + shape.getType()));
+    }
+
+    private ValidationEvent unknownMember(String memberName, Shape shape, Severity severity) {
+        return event(String.format("Member `%s` does not exist in `%s`", memberName, shape.getId()),
+                severity,
+                "UnknownMember",
+                shape.getId().toString(),
+                memberName);
     }
 
     private ValidationEvent event(String message, String... additionalEventIdParts) {

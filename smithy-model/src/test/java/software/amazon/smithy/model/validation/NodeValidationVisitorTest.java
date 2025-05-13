@@ -423,7 +423,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Structure", "{\"foo\": \"test\"}", null},
                 {"ns.foo#Structure",
                         "{\"foo\": \"test\", \"invalid\": true}",
-                        new String[] {"Invalid structure member `invalid` found for `ns.foo#Structure`"}},
+                        new String[] {"Member `invalid` does not exist in `ns.foo#Structure`"}},
                 {"ns.foo#Structure", "{\"foo\": \"test\", \"baz\": \"baz\"}", null},
                 {"ns.foo#Structure",
                         "{\"foo\": \"test\", \"baz\": \"baz\", \"bar\": [\"a\", \"b\"], \"bam\": {\"foo\": \"test\"}}",
@@ -459,7 +459,7 @@ public class NodeValidationVisitorTest {
                                 "foo: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
                 {"ns.foo#TaggedUnion",
                         "{\"invalid\": true}",
-                        new String[] {"Invalid union member `invalid` found for `ns.foo#TaggedUnion`"}},
+                        new String[] {"Member `invalid` does not exist in `ns.foo#TaggedUnion`"}},
 
                 // http-date
                 {"ns.foo#HttpDate", "\"Tue, 29 Apr 2014 18:30:38 GMT\"", null},

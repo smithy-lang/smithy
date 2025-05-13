@@ -1,3 +1,3 @@
 [WARNING] smithy.example#InvalidService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
 [WARNING] smithy.example#InvalidService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
-[DANGER] smithy.example#InvalidService: The operationInput value for an endpoint test does not match the operation's input shape: Invalid structure member `fizz` found for `smithy.example#GetThingInput` | EndpointTestsTrait.smithy.example#GetThingInput.fizz
+[DANGER] smithy.example#InvalidService: The operationInput value for an endpoint test does not match the operation's input shape: Member `fizz` does not exist in `smithy.example#GetThingInput` | EndpointTestsTrait.UnknownMember.smithy.example#GetThingInput.fizz

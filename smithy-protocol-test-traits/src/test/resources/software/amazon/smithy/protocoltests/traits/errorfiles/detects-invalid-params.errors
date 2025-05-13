@@ -1,3 +1,3 @@
 [ERROR] smithy.example#MyError: smithy.test#httpResponseTests.0.params.foo: Expected number value for integer shape, `smithy.api#Integer`; found string value, `Hi` | HttpResponseTestsError
-[WARNING] smithy.example#SayGoodbye: smithy.test#httpResponseTests.0.params: Invalid structure member `invalid` found for `smithy.example#SayGoodbyeOutput` | HttpResponseTestsOutput
+[WARNING] smithy.example#SayGoodbye: smithy.test#httpResponseTests.0.params: Member `invalid` does not exist in `smithy.example#SayGoodbyeOutput` | HttpResponseTestsOutput.UnknownMember
 [ERROR] smithy.example#SayHello: smithy.test#httpRequestTests.0.params.badType: Expected boolean value for boolean shape, `smithy.api#Boolean`; found string value, `hi` | HttpRequestTestsInput
