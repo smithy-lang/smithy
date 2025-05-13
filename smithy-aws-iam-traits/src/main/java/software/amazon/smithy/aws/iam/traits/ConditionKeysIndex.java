@@ -192,7 +192,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                     : MapUtils.of();
 
             // Compute the keys of each child operation, passing no keys.
-            for (ShapeId operationId : resource.getOperations()) {
+            for (ShapeId operationId : resource.getAllOperations()) {
                 Optional<Shape> operationOptional = model.getShape(operationId);
                 if (operationOptional.isPresent()) {
                     compute(model, service, arnRoot, operationOptional.get(), resource);
