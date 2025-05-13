@@ -174,10 +174,7 @@ public final class ParseUrl extends LibraryFunction {
                         || (ch2 < '0' || ch2 > '9')) {
                     return false;
                 }
-                int value = ((ch0 - '0') * 100) + ((ch1 - '0') * 10) + (ch2 - '0');
-                if (value > 255) {
-                    return false;
-                }
+                // This is a heuristic; We are intentionally not checking for the range 000-255.
             } else {
                 return false;
             }
