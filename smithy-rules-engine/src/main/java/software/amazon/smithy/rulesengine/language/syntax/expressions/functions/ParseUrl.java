@@ -194,15 +194,17 @@ public final class ParseUrl extends LibraryFunction {
         if (StringUtils.isBlank(path)) {
             return "/";
         } else {
-            StringBuilder builder = new StringBuilder();
-            if (!path.startsWith("/")) {
-                builder.append("/");
+            boolean startsWithSlash = path.startsWith("/");
+            boolean endsWithSlash = path.endsWith("/");
+            if (startsWithSlash && endsWithSlash) {
+                return path;
+            } else if (startsWithSlash) {
+                return path + "/";
+            } else if (endsWithSlash) {
+                return "/" + path;
+            } else {
+                return "/" + path + "/";
             }
-            builder.append(path);
-            if (!path.endsWith("/")) {
-                builder.append("/");
-            }
-            return builder.toString();
         }
     }
 }
