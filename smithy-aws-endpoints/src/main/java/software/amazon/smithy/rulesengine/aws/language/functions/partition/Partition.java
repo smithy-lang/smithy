@@ -7,6 +7,7 @@ package software.amazon.smithy.rulesengine.aws.language.functions.partition;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -34,6 +35,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
     private final Map<String, RegionOverride> regions;
     private final PartitionOutputs outputs;
     private final SourceLocation sourceLocation;
+    private Pattern compiledRegionRegex;
 
     private Partition(Builder builder) {
         this.sourceLocation = builder.getSourceLocation();
@@ -89,6 +91,20 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
      */
     public String getRegionRegex() {
         return regionRegex;
+    }
+
+    /**
+     * Get the compiled region regular expression of the partition.
+     *
+     * @return the compiled region regex.
+     */
+    public Pattern getCompiledRegionRegex() {
+        Pattern result = compiledRegionRegex;
+        if (result == null) {
+            result = Pattern.compile(regionRegex);
+            compiledRegionRegex = result;
+        }
+        return result;
     }
 
     /**
