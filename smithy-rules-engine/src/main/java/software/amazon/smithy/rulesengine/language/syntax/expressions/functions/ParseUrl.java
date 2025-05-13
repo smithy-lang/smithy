@@ -29,7 +29,7 @@ public final class ParseUrl extends LibraryFunction {
     public static final Identifier PATH = Identifier.of("path");
     public static final Identifier NORMALIZED_PATH = Identifier.of("normalizedPath");
     public static final Identifier IS_IP = Identifier.of("isIp");
-    private static final Definition DEFINITION = new Definition();
+    public static final Definition DEFINITION = new Definition();
 
     private ParseUrl(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
