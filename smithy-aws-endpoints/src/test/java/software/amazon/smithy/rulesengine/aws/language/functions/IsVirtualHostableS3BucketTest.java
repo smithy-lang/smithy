@@ -34,6 +34,7 @@ public class IsVirtualHostableS3BucketTest {
             "a.-b, true, false", // Dot followed by dash
 
             "192.168.1.1, true, false", // IP address
+            "999.999.999.999, true, false", // Invalid IP address format, but looks like an IP
             "192.168.1.word, true, true", // IP-like but with letters
 
             "a-b.c-d, true, true", // Complex valid name with dots and dashes
