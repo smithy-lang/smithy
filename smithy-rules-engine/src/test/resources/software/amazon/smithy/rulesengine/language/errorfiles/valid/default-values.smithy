@@ -140,6 +140,7 @@ use smithy.rules#staticContextParams
         }
     ]
 })
+@suppress(["RuleSetParameter.TestCase.Unused"])
 service FizzBuzz {
     version: "2022-01-01",
     operations: [GetThing]
