@@ -1,0 +1,1 @@
+[ERROR] smithy.example#InvalidService: Trait `smithy.rules#endpointTests` cannot be applied to `smithy.example#InvalidService`. This trait may only be applied to shapes that match the following selector: service[trait|smithy.rules#endpointRuleSet] | TraitTarget
