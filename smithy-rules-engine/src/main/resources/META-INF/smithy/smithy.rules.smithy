@@ -9,7 +9,7 @@ document endpointRuleSet
 
 /// Defines endpoint test-cases for validating a client's endpoint rule-set.
 @unstable
-@trait(selector: "service")
+@trait(selector: "service[trait|smithy.rules#endpointRuleSet]")
 structure endpointTests {
     /// The endpoint tests schema version.
     @required
