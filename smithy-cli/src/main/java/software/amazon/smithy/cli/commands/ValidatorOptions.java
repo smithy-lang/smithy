@@ -33,8 +33,8 @@ final class ValidatorOptions implements ArgumentReceiver {
         printer.param(SEVERITY,
                 null,
                 "SEVERITY",
-                "Set the minimum reported validation severity (one of NOTE, "
-                        + "WARNING [default setting], DANGER, ERROR).");
+                "Set the minimum reported validation severity (one of SUPPRESSED, "
+                        + "NOTE, WARNING [default setting], DANGER, ERROR).");
         printer.param(SHOW_VALIDATORS,
                 null,
                 "VALIDATORS",
