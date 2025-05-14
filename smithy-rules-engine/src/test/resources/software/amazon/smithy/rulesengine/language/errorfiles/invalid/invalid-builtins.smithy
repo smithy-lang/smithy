@@ -68,6 +68,7 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@suppress(["RuleSetParameter.TestCase.Unused"])
 service ExampleService {
     version: "2022-01-01",
     operations: [GetThing]

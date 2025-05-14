@@ -33,7 +33,6 @@ import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
-import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
@@ -67,8 +66,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             // Check that tests declare required parameters, only defined parameters, etc.
             if (serviceShape.hasTrait(EndpointTestsTrait.ID)) {
-                errors.addAll(validateTestsParameters(model,
-                        topDownIndex,
+                errors.addAll(validateTestsParameters(
                         serviceShape,
                         serviceShape.expectTrait(EndpointTestsTrait.class),
                         ruleSet));
@@ -227,19 +225,13 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateTestsParameters(
-            Model model,
-            TopDownIndex topDownIndex,
             ServiceShape serviceShape,
             EndpointTestsTrait trait,
             EndpointRuleSet ruleSet
     ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> rulesetParamNames = new HashSet<>();
-        Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(model,
-                topDownIndex,
-                serviceShape,
-                ruleSet,
-                trait);
+        Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(trait.getTestCases());
 
         for (Parameter parameter : ruleSet.getParameters()) {
             String name = parameter.getName().toString();
@@ -290,54 +282,12 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         return errors;
     }
 
-    private Map<String, List<Parameter>> extractTestSuiteParameters(
-            Model model,
-            TopDownIndex topDownIndex,
-            ServiceShape serviceShape,
-            EndpointRuleSet ruleSet,
-            EndpointTestsTrait trait
-    ) {
+    private Map<String, List<Parameter>> extractTestSuiteParameters(List<EndpointTestCase> testCases) {
         Map<String, List<Parameter>> params = new HashMap<>();
-        for (EndpointTestCase testCase : trait.getTestCases()) {
+        for (EndpointTestCase testCase : testCases) {
             List<Parameter> testParams = new ArrayList<>();
             for (Map.Entry<String, Node> entry : testCase.getParams().getStringMap().entrySet()) {
-                testParams.add(buildParameter(entry));
-            }
-
-            for (EndpointTestOperationInput input : testCase.getOperationInputs()) {
-                // These are easy, they're defined to match the clientContextParams.
-                for (Map.Entry<String, Node> entry : input.getClientParams().getStringMap().entrySet()) {
-                    testParams.add(buildParameter(entry));
-                }
-
-                // A little indirection here, since only parameters tracks the name of the built-in.
-                for (Map.Entry<String, Node> entry : input.getBuiltInParams().getStringMap().entrySet()) {
-                    for (Parameter parameter : ruleSet.getParameters()) {
-                        if (parameter.isBuiltIn() && parameter.getBuiltIn().get().equals(entry.getKey())) {
-                            testParams.add(buildParameter(entry, parameter.getName().toString()));
-                        }
-                    }
-                }
-
-                // Lots of indirection, the tests define operation inputs based on the name of the input
-                // member, but the map here needs to use the value of the parameter via contextParam.
-                for (OperationShape operationShape : topDownIndex.getContainedOperations(serviceShape)) {
-                    if (operationShape.getId().getName().equals(input.getOperationName())) {
-                        StructureShape inputShape = model.expectShape(
-                                operationShape.getInputShape(),
-                                StructureShape.class);
-                        for (String name : inputShape.getMemberNames()) {
-                            MemberShape memberShape = inputShape.getMember(name).get();
-                            if (input.getOperationParams().containsMember(name)
-                                    && memberShape.hasTrait(ContextParamTrait.ID)) {
-                                String paramName = memberShape.expectTrait(ContextParamTrait.class).getName();
-                                testParams.add(buildParameter(paramName,
-                                        input.getOperationParams().expectMember(name)));
-                            }
-                        }
-                        break;
-                    }
-                }
+                testParams.add(buildParameter(entry.getKey(), entry.getValue()));
             }
 
             for (Parameter parameter : testParams) {
@@ -346,14 +296,6 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         }
 
         return params;
-    }
-
-    private Parameter buildParameter(Map.Entry<String, Node> entry) {
-        return buildParameter(entry.getKey(), entry.getValue());
-    }
-
-    private Parameter buildParameter(Map.Entry<String, Node> entry, String name) {
-        return buildParameter(name, entry.getValue());
     }
 
     private Parameter buildParameter(String name, Node node) {

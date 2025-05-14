@@ -1,0 +1,3 @@
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[ERROR] smithy.example#ExampleService: Required parameter `endpoint` is missing in at least one test case | RuleSetParameter.TestCase.RequiredMissing
