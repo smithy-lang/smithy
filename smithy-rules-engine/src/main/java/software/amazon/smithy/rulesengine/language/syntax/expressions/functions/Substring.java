@@ -117,14 +117,14 @@ public final class Substring extends LibraryFunction {
      * @return the substring value or null.
      */
     public static String getSubstring(String value, int startIndex, int stopIndex, boolean reverse) {
+        if (startIndex >= stopIndex || value.length() < stopIndex) {
+            return null;
+        }
+
         for (int i = 0; i < value.length(); i++) {
             if (!(value.charAt(i) <= 127)) {
                 return null;
             }
-        }
-
-        if (startIndex >= stopIndex || value.length() < stopIndex) {
-            return null;
         }
 
         if (!reverse) {
