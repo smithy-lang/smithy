@@ -1,5 +1,36 @@
 # Smithy Changelog
 
+## 1.58.0 (2025-05-13)
+
+### Bug Fixes
+
+* Fixed `Node` serialization and deserialization of rules engine endpoint values. ([#2616](https://github.com/smithy-lang/smithy/pull/2616))
+* Fixed null pointer exceptions when serializing endpoints traits to nodes. ([#2629](https://github.com/smithy-lang/smithy/pull/2629))
+* Made `smithy.rules#endpointTests` have an explicit dependency on `smithy.rules#endpointRuleSet`. ([#2637](https://github.com/smithy-lang/smithy/pull/2637))
+
+### Features
+
+* Added hierarchical IDs for `ChangedOperation` diff events. ([#2607](https://github.com/smithy-lang/smithy/pull/2607))
+* Removed `@unstable` from the following traits: `@standardRegionalEndpoints`, `@standardPartitonalEndpoints`, and `@dualStackOnlyEndpoints`. ([#2608](https://github.com/smithy-lang/smithy/pull/2608))
+* Made `Dynamic` `Part`s of the rules engine public. ([#2614](https://github.com/smithy-lang/smithy/pull/2614))
+* Made validation of IAM resource names case-insensitive. ([#2615](https://github.com/smithy-lang/smithy/pull/2615))
+* Added several static utility methods to the rules engine. ([#2617](https://github.com/smithy-lang/smithy/pull/2617), [#2618](https://github.com/smithy-lang/smithy/pull/2618))
+* Made `arnNamespace` optional in IAM traits that support specifying condition keys. ([#2619](https://github.com/smithy-lang/smithy/pull/2619))
+* Added validation to ensure that the value for any condition key may only be supplied by one member in operation input. ([#2620](https://github.com/smithy-lang/smithy/pull/2620))
+* Added additional validation for the `endpointsTests` trait. ([#2622](https://github.com/smithy-lang/smithy/pull/2622))
+* Added `UnknownMember` to the event ID for node validation. ([#2630](https://github.com/smithy-lang/smithy/pull/2630))
+
+### Documentation
+
+* Added more links to OpenAPI APIGateway config. ([#2605](https://github.com/smithy-lang/smithy/pull/2605))
+* Fixed bad links in javadocs. ([#2612](https://github.com/smithy-lang/smithy/pull/2612))
+* Documented `SUPPRESSED` as a valid value for `--severity` in validate command. ([#2638](https://github.com/smithy-lang/smithy/pull/2638))
+
+### Other
+
+* Improved performance of `CleanOperationStructures`. ([#2609](https://github.com/smithy-lang/smithy/pull/2609))
+* Improved performance of several rules engine functions. ([#2633](https://github.com/smithy-lang/smithy/pull/2633), [#2634](https://github.com/smithy-lang/smithy/pull/2634), [#2635](https://github.com/smithy-lang/smithy/pull/2635), [#2636](https://github.com/smithy-lang/smithy/pull/2636))
+
 ## 1.57.1 (2025-04-21)
 
 ### Bug Fixes
