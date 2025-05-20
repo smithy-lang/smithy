@@ -288,7 +288,6 @@ apply HttpPayloadWithStructure @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "",
-        bodyMediaType: "application/json",
         params: {
             nested: null
         }
