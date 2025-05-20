@@ -281,6 +281,19 @@ apply HttpPayloadWithStructure @httpResponseTests([
     }
 ])
 
+apply HttpPayloadWithStructure @httpResponseTests([
+    {
+        id: "RestJsonHttpPayloadWithStructureAndEmptyResponseBody",
+        documentation: "Serializes a structure in the payload",
+        protocol: restJson1,
+        code: 200,
+        body: "",
+        params: {
+            nested: null
+        }
+    }
+])
+
 structure HttpPayloadWithStructureInputOutput {
     @httpPayload
     nested: NestedPayload,
