@@ -856,9 +856,13 @@ defined on the service.</p>
 <p>Condition keys derived automatically can be applied to a resource or operation
 explicitly. Condition keys applied this way MUST be either <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">inferred</span></a>
 or explicitly defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.</p>
+<p>Values in the list MUST be valid IAM identifiers or names of condition keys,
+meaning they must adhere to the following regular expression:
+<code class="docutils literal notranslate"><span class="pre">&quot;^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$&quot;</span></code>. If only a condition key
+name is specified, the service is inferred to be the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>.</p>
 <p>The following example's <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> resource has the
-<code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code> and  <code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code> condition keys. The
-<code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
+<code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code>, <code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code>, and <code class="docutils literal notranslate"><span class="pre">myservice:Baz</span></code> condition
+keys. The <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -868,13 +872,16 @@ or explicitly defined via the <a class="reference internal" href="#aws-iam-defin
 <span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
 
 <span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;myservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="nt">@defineConditionKeys</span>(
+<span class="w">    </span><span class="s2">&quot;myservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+<span class="w">    </span><span class="s2">&quot;myservice:Baz&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;myservice:Bar&quot;</span>])
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;myservice:Bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Baz&quot;</span>])
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
@@ -902,6 +909,10 @@ service, as opposed to the value being pulled from the request.</dd>
 MUST also be defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.
 <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">Inferred resource condition keys</span></a> MUST NOT be
 included with the <code class="docutils literal notranslate"><span class="pre">serviceResolvedConditionKeys</span></code> trait.</p>
+<p>Values in the list MUST be valid IAM identifiers or names of condition keys,
+meaning they must adhere to the following regular expression:
+<code class="docutils literal notranslate"><span class="pre">&quot;^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$&quot;</span></code>. If only a condition key
+name is specified, the service is inferred to be the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>.</p>
 <p>The following example defines two service-specific condition keys:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey1</span></code> is expected to be resolved by the service.</li>
@@ -918,8 +929,9 @@ included with the <code class="docutils literal notranslate"><span class="pre">s
 <span class="nt">@defineConditionKeys</span>(
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}<span class="p">,</span>
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey2&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+<span class="w">    </span><span class="s2">&quot;myservice:AnotherContextKey&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
 )
-<span class="nt">@serviceResolvedConditionKeys</span>([<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>])
+<span class="nt">@serviceResolvedConditionKeys</span>([<span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;AnotherContextKey&quot;</span>])
 <span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span>
@@ -938,6 +950,13 @@ included with the <code class="docutils literal notranslate"><span class="pre">s
 <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted member. All
 condition keys defined with the <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code> trait MUST also be
 defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.</p>
+<p>Any <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code> trait applied to a member that is not a top-level
+input member to an operation will be ignored. Multiple members within a
+top-level input structure MUST NOT supply the value for the same condition key.</p>
+<p>The value MUST be a valid IAM identifier or name of a condition key,
+meaning it must adhere to the following regular expression:
+<code class="docutils literal notranslate"><span class="pre">&quot;^(([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:)?[^:\\s]+)$&quot;</span></code>. If only a condition key
+name is specified, the service is inferred to be the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>.</p>
 <p>In the input shape for <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>, the trait <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code>
 explicitly binds <code class="docutils literal notranslate"><span class="pre">ActionContextKey1</span></code> to the field <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -951,6 +970,7 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 
 <span class="nt">@defineConditionKeys</span>(
 <span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+<span class="w">    </span><span class="s2">&quot;myservice:AnotherContextKey&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
 )
 <span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
@@ -962,6 +982,9 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 <span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@conditionKeyValue</span>(<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>)
+<span class="w">        </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">        </span><span class="nt">@conditionKeyValue</span>(<span class="s2">&quot;AnotherContextKey&quot;</span>)
 <span class="w">        </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
