@@ -79,13 +79,10 @@ configure<JReleaserExtension> {
     // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
     deploy {
         maven {
-            nexus2 {
+            mavenCentral {
                 create("maven-central") {
                     active = Active.ALWAYS
-                    url = "https://aws.oss.sonatype.org/service/local"
-                    snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
-                    closeRepository = true
-                    releaseRepository = true
+                    url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository(stagingDir().get().asFile.path)
                 }
             }
