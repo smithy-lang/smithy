@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.model.transform;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -16,6 +18,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
@@ -38,6 +41,8 @@ import software.amazon.smithy.utils.ListUtils;
  */
 public final class ModelTransformer {
     private final List<ModelTransformerPlugin> plugins;
+
+    private static final Logger LOGGER = Logger.getLogger(ModelTransformer.class.getName());
 
     private ModelTransformer(List<ModelTransformerPlugin> plugins) {
         this.plugins = ListUtils.copyOf(plugins);
@@ -114,8 +119,31 @@ public final class ModelTransformer {
         if (shapes.isEmpty()) {
             return model;
         }
-
+        validateMembersFromMixin(model, shapes);
         return new RemoveShapes(shapes, plugins).transform(this, model);
+    }
+
+    private void validateMembersFromMixin(Model model, Collection<? extends Shape> shapesToExclude) {
+        for (Shape shape : shapesToExclude) {
+            // Only validate MemberShapes
+            if (!shape.isMemberShape()) {
+                continue;
+            }
+            MemberShape memberShape = shape.asMemberShape().get();
+            Optional<Shape> container = model.getShape(memberShape.getContainer());
+            if (container.isPresent()) {
+                for (ShapeId mixinId : container.get().getMixins()) {
+                    Shape mixinShape = model.expectShape(mixinId);
+                    if (mixinShape.getMemberNames().contains(shape.getId().getMember().get())) {
+                        LOGGER.warning(format("Excluding copied mixin member `%s` from mixin shape `%s` explicitly "
+                                + "in `%s` will result in undefined behavior and an inconsistent model!",
+                                memberShape.getMemberName(),
+                                mixinShape.getId(),
+                                container.get().getId().getName()));
+                    }
+                }
+            }
+        }
     }
 
     /**
