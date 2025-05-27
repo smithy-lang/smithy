@@ -21,10 +21,12 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.analysis.HashConsGraph;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.bdd.RulesBdd;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
@@ -48,6 +50,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
     private static final String RULES = "rules";
+    private static final String BDD = "bdd";
 
     private static final class LazyEndpointComponentFactoryHolder {
         static final EndpointComponentFactory INSTANCE = EndpointComponentFactory.createServiceFactory(
@@ -58,6 +61,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private final List<Rule> rules;
     private final SourceLocation sourceLocation;
     private final String version;
+    private final RulesBdd bdd;
 
     private EndpointRuleSet(Builder builder) {
         super();
@@ -65,6 +69,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         rules = builder.rules.copy();
         sourceLocation = SmithyBuilder.requiredState("source", builder.getSourceLocation());
         version = SmithyBuilder.requiredState(VERSION, builder.version);
+        bdd = builder.bdd;
     }
 
     /**
@@ -90,12 +95,36 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
             builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
             objectNode.expectStringMember(VERSION, builder::version);
 
-            for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
-                builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
-            }
+            objectNode.getArrayMember(RULES).ifPresent(rules -> {
+                for (Node element : rules) {
+                    builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
+                }
+            });
+
+            objectNode.getObjectMember(BDD).ifPresent(o -> {
+                builder.bdd(RulesBdd.fromNode(o));
+            });
 
             return builder.build();
         });
+    }
+
+    /**
+     * Convert the endpoint ruleset to BDD form if it isn't already.
+     *
+     * @return the current ruleset if in BDD form, otherwise a new ruleset instance in BDD form.
+     */
+    public EndpointRuleSet toBddForm() {
+        if (bdd != null) {
+            return this;
+        }
+
+        return builder()
+                .version(version)
+                .parameters(parameters)
+                .bdd(new HashConsGraph(this).getBdd())
+                .sourceLocation(sourceLocation)
+                .build();
     }
 
     @Override
@@ -130,6 +159,15 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         return version;
     }
 
+    /**
+     * Get the BDD for this rule-set, if it exists.
+     *
+     * @return the optionally present BDD definitions.
+     */
+    public Optional<RulesBdd> getBdd() {
+        return Optional.ofNullable(bdd);
+    }
+
     public Type typeCheck() {
         return typeCheck(new Scope<>());
     }
@@ -151,19 +189,27 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
                 .sourceLocation(getSourceLocation())
                 .parameters(parameters)
                 .rules(rules)
-                .version(version);
+                .version(version)
+                .bdd(bdd);
     }
 
     @Override
     public Node toNode() {
-        ArrayNode.Builder rulesBuilder = ArrayNode.builder();
-        rules.forEach(rulesBuilder::withValue);
-
-        return ObjectNode.builder()
+        ObjectNode.Builder builder = ObjectNode.builder()
                 .withMember(VERSION, version)
-                .withMember(PARAMETERS, parameters)
-                .withMember(RULES, rulesBuilder.build())
-                .build();
+                .withMember(PARAMETERS, parameters);
+
+        if (!rules.isEmpty()) {
+            ArrayNode.Builder rulesBuilder = ArrayNode.builder();
+            rules.forEach(rulesBuilder::withValue);
+            builder.withMember(RULES, rulesBuilder.build());
+        }
+
+        if (bdd != null) {
+            builder.withMember(BDD, bdd.toNode());
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -175,12 +221,15 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
             return false;
         }
         EndpointRuleSet that = (EndpointRuleSet) o;
-        return rules.equals(that.rules) && parameters.equals(that.parameters) && version.equals(that.version);
+        return rules.equals(that.rules)
+               && parameters.equals(that.parameters)
+               && version.equals(that.version)
+               && Objects.equals(bdd, that.bdd);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rules, parameters, version);
+        return Objects.hash(rules, parameters, version, bdd);
     }
 
     @Override
@@ -188,8 +237,13 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("version: %s%n", version));
         builder.append("params: \n").append(StringUtils.indent(parameters.toString(), 2));
-        builder.append("rules: \n");
-        rules.forEach(rule -> builder.append(StringUtils.indent(rule.toString(), 2)));
+        if (!rules.isEmpty()) {
+            builder.append("rules: \n");
+            rules.forEach(rule -> builder.append(StringUtils.indent(rule.toString(), 2)));
+        }
+        if (bdd != null) {
+            builder.append("bdd: \n").append(bdd);
+        }
         return builder.toString();
     }
 
@@ -242,6 +296,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         private Parameters parameters;
         // Default the version to the latest.
         private String version = LATEST_VERSION;
+        private RulesBdd bdd;
 
         /**
          * Construct a builder from a {@link SourceLocation}.
@@ -307,6 +362,17 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
          */
         public Builder parameters(Parameters parameters) {
             this.parameters = parameters;
+            return this;
+        }
+
+        /**
+         * Set the BDD program of the ruleset.
+         *
+         * @param bdd BDD program.
+         * @return the {@link Builder}.
+         */
+        public Builder bdd(RulesBdd bdd) {
+            this.bdd = bdd;
             return this;
         }
 
