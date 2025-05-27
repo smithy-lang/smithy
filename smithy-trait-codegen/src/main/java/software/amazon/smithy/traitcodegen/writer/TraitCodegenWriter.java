@@ -215,17 +215,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
             // Add type references as type references (ex. `List<InnerType>`)
             StringBuilder builder = new StringBuilder();
-            builder.append(getPlaceholder(typeSymbol));
-            builder.append("<");
-            Iterator<SymbolReference> iterator = typeSymbol.getReferences().iterator();
-            while (iterator.hasNext()) {
-                String placeholder = getPlaceholder(iterator.next().getSymbol());
-                builder.append(placeholder);
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-            builder.append(">");
+            processSymbol(typeSymbol, builder);
             return builder.toString();
         }
 
@@ -241,6 +231,32 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
             // Return a placeholder value that will be filled when toString is called
             return format("$${$L:L}", normalizedSymbol.getFullName());
+        }
+
+        private boolean isGenericType(Symbol symbol) {
+            String name = symbol.getName();
+            return name.equals("List") || name.equals("Map")
+                    || name.equals("Set")
+                    || name.equals("Collection");
+        }
+
+        // Recursively process the symbols using Java Type.
+        private void processSymbol(Symbol symbol, StringBuilder builder) {
+            builder.append(getPlaceholder(symbol));
+            if (isGenericType(symbol)) {
+                builder.append("<");
+            }
+            Iterator<SymbolReference> iterator = symbol.getReferences().iterator();
+            while (iterator.hasNext()) {
+                Symbol referenceSymbol = iterator.next().getSymbol();
+                processSymbol(referenceSymbol, builder);
+                if (iterator.hasNext()) {
+                    builder.append(", ");
+                }
+            }
+            if (isGenericType(symbol)) {
+                builder.append(">");
+            }
         }
     }
 

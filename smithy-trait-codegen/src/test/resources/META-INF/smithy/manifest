@@ -15,9 +15,11 @@ lists/number-list-trait.smithy
 lists/string-list-trait.smithy
 lists/struct-list-trait.smithy
 lists/document-list-trait.smithy
+lists/nested-list-trait.smithy
 maps/string-string-map-trait.smithy
 maps/string-to-struct-map-trait.smithy
 maps/string-to-document-map-trait.smithy
+maps/nested-map-trait.smithy
 mixins/struct-with-mixin-member.smithy
 mixins/struct-with-only-mixin-member.smithy
 names/snake-case-structure.smithy
@@ -35,6 +37,7 @@ numbers/short-trait.smithy
 string-trait.smithy
 structures/annotation-trait.smithy
 structures/structure-trait.smithy
+structures/struct-with-listofmap-trait.smithy
 timestamps/date-time-format-timestamp-trait.smithy
 timestamps/epoch-seconds-format-timestamp-trait.smithy
 timestamps/http-date-format-timestamp-trait.smithy

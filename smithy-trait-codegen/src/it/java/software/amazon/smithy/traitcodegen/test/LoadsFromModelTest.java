@@ -24,9 +24,11 @@ import com.example.traits.idref.IdRefStructWithNestedIdsTrait;
 import com.example.traits.idref.NestedIdRefHolder;
 import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
+import com.example.traits.lists.NestedListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
+import com.example.traits.maps.NestedMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
@@ -45,6 +47,7 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
 import com.example.traits.timestamps.EpochSecondsTimestampTrait;
@@ -155,6 +158,10 @@ public class LoadsFromModelTest {
                                         ObjectNode.builder().withMember("a", "a").build().toNode(),
                                         ObjectNode.builder().withMember("b", "b").withMember("c", 1).build().toNode(),
                                         Node.from("string")))),
+                Arguments.of("lists/nested-list-trait.smithy",
+                        NestedListTrait.class,
+                        MapUtils.of("getValues",
+                                ListUtils.of(ListUtils.of(ListUtils.of("a"))))),
                 // Maps
                 Arguments.of("maps/string-string-map-trait.smithy",
                         StringStringMapTrait.class,
@@ -185,6 +192,16 @@ public class LoadsFromModelTest {
                                         Node.from("stuff"),
                                         "d",
                                         Node.from(1)))),
+                Arguments.of("maps/nested-map-trait.smithy",
+                        NestedMapTrait.class,
+                        MapUtils.of("getValues",
+                                MapUtils.of(
+                                        "a",
+                                        MapUtils.of(
+                                                "b",
+                                                MapUtils.of(
+                                                        "c",
+                                                        "d"))))),
                 // Mixins
                 Arguments.of("mixins/struct-with-mixin-member.smithy",
                         StructureListWithMixinMemberTrait.class,
@@ -284,6 +301,15 @@ public class LoadsFromModelTest {
                         Optional.empty(),
                         "getFieldEOrEmpty",
                         null),
+                Arguments.of("structures/struct-with-listofmap-trait.smithy",
+                        StructWithListOfMapTrait.class,
+                        MapUtils.of(
+                                "getName",
+                                Optional.of("a"),
+                                "getItems",
+                                Optional.of(
+                                        ListUtils.of(
+                                                MapUtils.of("b", "c"))))),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,

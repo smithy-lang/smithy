@@ -88,6 +88,7 @@ final class BuilderGenerator implements Runnable {
         writer.writeDocString(writer.format("Builder for {@link $T}.", symbol));
         writer.writeInline("public static final class Builder $C", (Runnable) this::writeBuilderInterface);
         writer.indent();
+        writer.newLine();
         baseShape.accept(new BuilderPropertyGenerator());
         writer.newLine();
         writer.writeWithNoFormatting("private Builder() {}").newLine();
@@ -142,6 +143,8 @@ final class BuilderGenerator implements Runnable {
                     // Set all builder properties for any members in the shape
                     if (baseShape.isListShape()) {
                         writer.writeWithNoFormatting(".values(getValues());");
+                    } else if (baseShape.isMapShape()) {
+                        writer.writeWithNoFormatting(".values(values);");
                     } else {
                         Iterator<MemberShape> memberIterator = baseShape.members().iterator();
                         while (memberIterator.hasNext()) {

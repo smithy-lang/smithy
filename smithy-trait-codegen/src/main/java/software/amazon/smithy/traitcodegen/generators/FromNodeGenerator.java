@@ -254,7 +254,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
                     fieldName,
                     memberName,
-                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
+                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n", 1)));
             return null;
         }
 
@@ -340,10 +340,23 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                     + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n",
                     "}))",
                     fieldName,
-                    () -> writer.write("builder.put$L($C, $C);\n",
-                            StringUtils.capitalize(memberName),
-                            (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
-                            (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v"))));
+                    () -> {
+                        writer.write("builder.put$L(\n", StringUtils.capitalize(memberName));
+                        writer.indent();
+                        writer.write("$C,\n",
+                                (Runnable) () -> shape.getKey()
+                                        .accept(new FromNodeMapperVisitor(writer,
+                                                model,
+                                                "k")));
+                        writer.write("$C\n",
+                                (Runnable) () -> shape.getValue()
+                                        .accept(new FromNodeMapperVisitor(writer,
+                                                model,
+                                                "v",
+                                                1)));
+                        writer.dedent();
+                        writer.write(");\n");
+                    });
             writer.enableNewlines();
             return null;
         }
