@@ -5,7 +5,7 @@ namespace test.smithy.traitcodegen.maps
 @trait
 map NestedMapTrait {
     key: String
-    value:ItemsMap
+    value: ItemsMap
 }
 
 map ItemsMap {

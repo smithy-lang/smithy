@@ -252,7 +252,7 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void mapShape(MapShape shape) {
-            String entryName = "entry" + nestedLevel;
+            String entryName = nestedLevel > 0 ? "entry" + nestedLevel : "entry";
             writer.openBlock("$L.entrySet().stream()",
                     "",
                     varName,

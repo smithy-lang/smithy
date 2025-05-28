@@ -7,9 +7,8 @@ use test.smithy.traitcodegen.structures#StructWithListOfMapTrait
 @StructWithListOfMapTrait({
     name: "a"
     items: [{
-        b:"c"
+        b: "c"
     }]
 })
 structure myStruct {
-
 }

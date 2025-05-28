@@ -6,7 +6,6 @@ package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
@@ -21,6 +20,7 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -46,6 +46,7 @@ import software.amazon.smithy.utils.StringUtils;
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
     private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
+    private static final Set<String> PARAMETERIZED_TYPE_NAMES = SetUtils.of("List", "Map", "Set", "Collection");
     private final String namespace;
     private final String fileName;
     private final TraitCodegenSettings settings;
@@ -233,28 +234,21 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             return format("$${$L:L}", normalizedSymbol.getFullName());
         }
 
-        private boolean isGenericType(Symbol symbol) {
-            String name = symbol.getName();
-            return name.equals("List") || name.equals("Map")
-                    || name.equals("Set")
-                    || name.equals("Collection");
+        private boolean isParametrized(Symbol symbol) {
+            return PARAMETERIZED_TYPE_NAMES.contains(symbol.getName());
         }
 
         // Recursively process the symbols using Java Type.
         private void processSymbol(Symbol symbol, StringBuilder builder) {
             builder.append(getPlaceholder(symbol));
-            if (isGenericType(symbol)) {
+            if (isParametrized(symbol)) {
                 builder.append("<");
-            }
-            Iterator<SymbolReference> iterator = symbol.getReferences().iterator();
-            while (iterator.hasNext()) {
-                Symbol referenceSymbol = iterator.next().getSymbol();
-                processSymbol(referenceSymbol, builder);
-                if (iterator.hasNext()) {
+                for (SymbolReference reference : symbol.getReferences()) {
+                    Symbol referenceSymbol = reference.getSymbol();
+                    processSymbol(referenceSymbol, builder);
                     builder.append(", ");
                 }
-            }
-            if (isGenericType(symbol)) {
+                builder.setLength(builder.length() - 2); // Trim the final comma.
                 builder.append(">");
             }
         }

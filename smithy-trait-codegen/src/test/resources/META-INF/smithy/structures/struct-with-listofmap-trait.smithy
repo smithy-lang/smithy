@@ -4,7 +4,7 @@ namespace test.smithy.traitcodegen.structures
 
 @trait
 structure StructWithListOfMapTrait {
-    name:String
+    name: String
     items: ItemsList
 }
 
@@ -13,6 +13,6 @@ list ItemsList {
 }
 
 map ItemsListEntry {
-    key:String,
+    key: String,
     value: String
 }
