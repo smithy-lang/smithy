@@ -80,7 +80,7 @@ without mixins:
         c: String
     }
 
-Mixins be any shape type, but they MUST NOT be applied to a shape of a
+Mixins can be any shape type, but they MUST NOT be applied to a shape of a
 different type. For example, a string mixin can be applied to a string
 shape, but not to a blob shape.
 
@@ -298,6 +298,9 @@ Alternatively, the member can be redefined if it targets the same shape:
         mixinMember: String
     }
 
+.. warning::
+
+    Removing mixed in members through transforms will result in an inconsistent model.
 
 Mixins are an implementation detail of the model
 ================================================

@@ -4,12 +4,18 @@
  */
 package software.amazon.smithy.model.transform;
 
+import static java.lang.String.format;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Removes shapes from a model while ensuring that relationships to/from
@@ -27,6 +33,8 @@ final class RemoveShapes {
     private final Collection<? extends Shape> toRemove;
     private final List<ModelTransformerPlugin> plugins;
 
+    private static final Logger LOGGER = Logger.getLogger(RemoveShapes.class.getName());
+
     RemoveShapes(Collection<? extends Shape> toRemove, List<ModelTransformerPlugin> plugins) {
         this.toRemove = toRemove;
         this.plugins = plugins;
@@ -37,6 +45,7 @@ final class RemoveShapes {
 
         // Iteratively add each shape that needs to be removed from the index using multiple rounds.
         Set<Shape> removed = new HashSet<>(toRemove);
+        validateMembersFromMixin(model, removed);
         for (Shape removedShape : toRemove) {
             builder.removeShape(removedShape.getId());
             // We don't need to remove members from the builder since
@@ -51,5 +60,28 @@ final class RemoveShapes {
         }
 
         return result;
+    }
+
+    private void validateMembersFromMixin(Model model, Collection<? extends Shape> shapesToExclude) {
+        for (Shape shape : shapesToExclude) {
+            // Only validate MemberShapes
+            if (!shape.isMemberShape()) {
+                continue;
+            }
+            MemberShape memberShape = shape.asMemberShape().get();
+            Optional<Shape> container = model.getShape(memberShape.getContainer());
+            if (container.isPresent()) {
+                for (ShapeId mixinId : container.get().getMixins()) {
+                    Shape mixinShape = model.expectShape(mixinId);
+                    if (mixinShape.getMemberNames().contains(shape.getId().getMember().get())) {
+                        LOGGER.warning(format("Removing mixed in member `%s` from mixin shape `%s` "
+                                + "in `%s` will result in an inconsistent model.",
+                                memberShape.getMemberName(),
+                                mixinShape.getId(),
+                                container.get().getId().getName()));
+                    }
+                }
+            }
+        }
     }
 }
