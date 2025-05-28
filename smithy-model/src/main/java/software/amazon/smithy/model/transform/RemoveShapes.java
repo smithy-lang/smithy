@@ -75,7 +75,7 @@ final class RemoveShapes {
             Shape mixinShape = model.expectShape(mixinId);
             if (mixinShape.getMemberNames().contains(shape.getId().getMember().get())) {
                 LOGGER.warning(format("Removing mixed in member `%s` from mixin shape `%s` "
-                                + "in `%s` will result in an inconsistent model.",
+                        + "in `%s` will result in an inconsistent model.",
                         memberShape.getMemberName(),
                         mixinShape.getId(),
                         container.getId().getName()));
