@@ -4,12 +4,17 @@
  */
 package software.amazon.smithy.model.transform;
 
+import static java.lang.String.format;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Removes shapes from a model while ensuring that relationships to/from
@@ -24,6 +29,8 @@ import software.amazon.smithy.model.shapes.Shape;
  * containing shape rather than the member.
  */
 final class RemoveShapes {
+    private static final Logger LOGGER = Logger.getLogger(RemoveShapes.class.getName());
+
     private final Collection<? extends Shape> toRemove;
     private final List<ModelTransformerPlugin> plugins;
 
@@ -38,6 +45,7 @@ final class RemoveShapes {
         // Iteratively add each shape that needs to be removed from the index using multiple rounds.
         Set<Shape> removed = new HashSet<>(toRemove);
         for (Shape removedShape : toRemove) {
+            validateShapeCopiedFromMixin(model, removedShape);
             builder.removeShape(removedShape.getId());
             // We don't need to remove members from the builder since
             // members are automatically removed with the container.
@@ -51,5 +59,27 @@ final class RemoveShapes {
         }
 
         return result;
+    }
+
+    private void validateShapeCopiedFromMixin(Model model, Shape shape) {
+        // Only validate MemberShapes
+        if (!shape.isMemberShape()) {
+            return;
+        }
+        MemberShape memberShape = shape.asMemberShape().get();
+        Shape container = model.getShape(memberShape.getContainer())
+                .orElseThrow(() -> new ModelTransformException(
+                        format("Cannot find the container shape for member `%s`.",
+                                memberShape.getMemberName())));
+        for (ShapeId mixinId : container.getMixins()) {
+            Shape mixinShape = model.expectShape(mixinId);
+            if (mixinShape.getMemberNames().contains(shape.getId().getMember().get())) {
+                LOGGER.warning(format("Removing mixed in member `%s` from mixin shape `%s` "
+                        + "in `%s` will result in an inconsistent model.",
+                        memberShape.getMemberName(),
+                        mixinShape.getId(),
+                        container.getId().getName()));
+            }
+        }
     }
 }
