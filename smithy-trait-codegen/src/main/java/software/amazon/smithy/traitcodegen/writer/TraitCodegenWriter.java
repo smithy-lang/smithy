@@ -46,7 +46,6 @@ import software.amazon.smithy.utils.StringUtils;
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
     private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
-    private static final Set<String> PARAMETERIZED_TYPE_NAMES = SetUtils.of("List", "Map", "Set", "Collection");
     private final String namespace;
     private final String fileName;
     private final TraitCodegenSettings settings;
@@ -234,14 +233,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             return format("$${$L:L}", normalizedSymbol.getFullName());
         }
 
-        private boolean isParametrized(Symbol symbol) {
-            return PARAMETERIZED_TYPE_NAMES.contains(symbol.getName());
-        }
-
         // Recursively process the symbols using Java Type.
         private void processSymbol(Symbol symbol, StringBuilder builder) {
             builder.append(getPlaceholder(symbol));
-            if (isParametrized(symbol)) {
+            if (!symbol.getReferences().isEmpty()) { // If current symbol does not have any references we should stop.
                 builder.append("<");
                 for (SymbolReference reference : symbol.getReferences()) {
                     Symbol referenceSymbol = reference.getSymbol();

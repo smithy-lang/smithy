@@ -128,7 +128,6 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
                                     nestedLevel + 1)));
             writer.dedent();
             writer.write("))");
-            writer.dedent();
         }
         return null;
     }
