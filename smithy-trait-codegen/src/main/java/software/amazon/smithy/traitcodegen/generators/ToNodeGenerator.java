@@ -73,7 +73,7 @@ final class ToNodeGenerator implements Runnable {
             writer.write("return values.stream()")
                     .indent()
                     .write(".map(s -> $C)",
-                            (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")))
+                            (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s", 1)))
                     .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
                     .dedent();
             return null;
@@ -101,10 +101,10 @@ final class ToNodeGenerator implements Runnable {
                     .write("$C, $C))",
                             (Runnable) () -> shape.getKey()
                                     .accept(
-                                            new ToNodeMapperVisitor("entry.getKey()")),
+                                            new ToNodeMapperVisitor("entry.getKey()", 1)),
                             (Runnable) () -> shape.getValue()
                                     .accept(
-                                            new ToNodeMapperVisitor("entry.getValue()")))
+                                            new ToNodeMapperVisitor("entry.getValue()", 1)))
                     .dedent()
                     .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
                             ObjectNode.class,
@@ -203,9 +203,15 @@ final class ToNodeGenerator implements Runnable {
      */
     private final class ToNodeMapperVisitor extends TraitVisitor<Void> {
         private final String varName;
+        private final int nestedLevel;
 
         ToNodeMapperVisitor(String varName) {
+            this(varName, 0);
+        }
+
+        ToNodeMapperVisitor(String varName, int nestedLevel) {
             this.varName = varName;
+            this.nestedLevel = nestedLevel;
         }
 
         @Override
@@ -226,27 +232,41 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$L.stream().map(s -> $C).collect($T.collect())",
-                    varName,
-                    (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s")),
-                    ArrayNode.class);
+            if (nestedLevel == 0) {
+                writer.write("$L.stream().map(s -> $C).collect($T.collect())",
+                        varName,
+                        (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s", nestedLevel + 1)),
+                        ArrayNode.class);
+            } else {
+                writer.write("$L.stream().map($L -> $C).collect($T.collect())",
+                        varName,
+                        "s" + nestedLevel,
+                        (Runnable) () -> shape.getMember()
+                                .accept(new ToNodeMapperVisitor("s" + nestedLevel,
+                                        nestedLevel + 1)),
+                        ArrayNode.class);
+            }
+
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
+            String entryName = nestedLevel > 0 ? "entry" + nestedLevel : "entry";
             writer.openBlock("$L.entrySet().stream()",
                     "",
                     varName,
-                    () -> writer.write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
+                    () -> writer.write(".map($L -> new $T<>(", entryName, AbstractMap.SimpleImmutableEntry.class)
                             .indent()
                             .write("$C, $C))",
                                     (Runnable) () -> shape.getKey()
-                                            .accept(
-                                                    new ToNodeMapperVisitor("entry.getKey()")),
+                                            .accept(new ToNodeMapperVisitor(
+                                                    entryName + ".getKey()",
+                                                    nestedLevel + 1)),
                                     (Runnable) () -> shape.getValue()
-                                            .accept(
-                                                    new ToNodeMapperVisitor("entry.getValue()")))
+                                            .accept(new ToNodeMapperVisitor(
+                                                    entryName + ".getValue()",
+                                                    nestedLevel + 1)))
                             .dedent()
                             .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
                                     ObjectNode.class,

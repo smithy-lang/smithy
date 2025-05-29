@@ -6,6 +6,7 @@ package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -42,11 +43,17 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     private final TraitCodegenWriter writer;
     private final Model model;
     private final String varName;
+    private final int nestedLevel;
 
     FromNodeMapperVisitor(TraitCodegenWriter writer, Model model, String varName) {
+        this(writer, model, varName, 0);
+    }
+
+    FromNodeMapperVisitor(TraitCodegenWriter writer, Model model, String varName, int nestedLevel) {
         this.writer = writer;
         this.model = model;
         this.varName = varName;
+        this.nestedLevel = nestedLevel;
     }
 
     @Override
@@ -60,21 +67,68 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         writer.write("$L.expectArrayNode()", varName);
         writer.indent();
         writer.writeWithNoFormatting(".getElements().stream()");
-        writer.write(".map(n -> $C)",
-                (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n")));
-        writer.writeWithNoFormatting(".forEach(builder::addValues);");
+        if (nestedLevel == 0) { // Triggered when shape is a member.
+            writer.write(".map(n -> $C)",
+                    (Runnable) () -> shape.getMember()
+                            .accept(new FromNodeMapperVisitor(writer,
+                                    model,
+                                    "n",
+                                    nestedLevel + 1)));
+            writer.writeWithNoFormatting(".forEach(builder::addValues);");
+        } else { // Triggered when shape is nested.
+            writer.write(".map($L -> $C)",
+                    varName + nestedLevel,
+                    (Runnable) () -> shape.getMember()
+                            .accept(new FromNodeMapperVisitor(writer,
+                                    model,
+                                    varName + nestedLevel,
+                                    nestedLevel + 1)));
+            writer.write(".collect($T.toList())", Collectors.class);
+        }
         writer.dedent();
         return null;
     }
 
     @Override
     public Void mapShape(MapShape shape) {
-        writer.openBlock("$L.expectObjectNode().getMembers().forEach((k, v) -> {",
-                "});",
-                varName,
-                () -> writer.write("builder.putValues($C, $C);",
-                        (Runnable) () -> shape.getKey().accept(new FromNodeMapperVisitor(writer, model, "k")),
-                        (Runnable) () -> shape.getValue().accept(new FromNodeMapperVisitor(writer, model, "v"))));
+        if (nestedLevel == 0) { // Triggered when shape is a member.
+            writer.openBlock("$L.expectObjectNode().getMembers().forEach((k, v) -> {",
+                    "});",
+                    varName,
+                    () -> writer.write("builder.putValues($C, $C);",
+                            (Runnable) () -> shape.getKey()
+                                    .accept(new FromNodeMapperVisitor(writer,
+                                            model,
+                                            "k")),
+                            (Runnable) () -> shape.getValue()
+                                    .accept(new FromNodeMapperVisitor(writer,
+                                            model,
+                                            "v",
+                                            nestedLevel + 1))));
+        } else { // Triggered when shape is nested.
+            String entryName = "entry" + nestedLevel;
+            writer.write("$L.expectObjectNode()", varName);
+            writer.indent();
+            writer.writeWithNoFormatting(".getMembers().entrySet().stream()");
+            writer.indent();
+            writer.write(".collect($T.toMap(", Collectors.class);
+            writer.indent();
+            writer.write("$L -> $C, ",
+                    entryName,
+                    (Runnable) () -> shape.getKey()
+                            .accept(new FromNodeMapperVisitor(writer,
+                                    model,
+                                    entryName + ".getKey()")));
+            writer.write("$L -> $C",
+                    entryName,
+                    (Runnable) () -> shape.getValue()
+                            .accept(new FromNodeMapperVisitor(writer,
+                                    model,
+                                    entryName + ".getValue()",
+                                    nestedLevel + 1)));
+            writer.dedent();
+            writer.write("))");
+        }
         return null;
     }
 

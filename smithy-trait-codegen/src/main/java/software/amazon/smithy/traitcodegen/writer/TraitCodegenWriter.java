@@ -6,7 +6,6 @@ package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
@@ -215,17 +214,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
             // Add type references as type references (ex. `List<InnerType>`)
             StringBuilder builder = new StringBuilder();
-            builder.append(getPlaceholder(typeSymbol));
-            builder.append("<");
-            Iterator<SymbolReference> iterator = typeSymbol.getReferences().iterator();
-            while (iterator.hasNext()) {
-                String placeholder = getPlaceholder(iterator.next().getSymbol());
-                builder.append(placeholder);
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-            builder.append(">");
+            processSymbol(typeSymbol, builder);
             return builder.toString();
         }
 
@@ -241,6 +230,21 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
 
             // Return a placeholder value that will be filled when toString is called
             return format("$${$L:L}", normalizedSymbol.getFullName());
+        }
+
+        // Recursively process the symbols using Java Type.
+        private void processSymbol(Symbol symbol, StringBuilder builder) {
+            builder.append(getPlaceholder(symbol));
+            if (!symbol.getReferences().isEmpty()) { // If current symbol does not have any references we should stop.
+                builder.append("<");
+                for (SymbolReference reference : symbol.getReferences()) {
+                    Symbol referenceSymbol = reference.getSymbol();
+                    processSymbol(referenceSymbol, builder);
+                    builder.append(", ");
+                }
+                builder.setLength(builder.length() - 2); // Trim the final comma.
+                builder.append(">");
+            }
         }
     }
 
