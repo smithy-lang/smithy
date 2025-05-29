@@ -20,7 +20,6 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
