@@ -67,13 +67,13 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         writer.write("$L.expectArrayNode()", varName);
         writer.indent();
         writer.writeWithNoFormatting(".getElements().stream()");
-        String lambdaVarName = nestedLevel > 0 ? "n" + nestedLevel : "n";
+        String argName = "n" + (nestedLevel > 0 ? Integer.toString(nestedLevel) : "");
         writer.write(".map($L -> $C)",
-                lambdaVarName,
+                argName,
                 (Runnable) () -> shape.getMember()
                         .accept(new FromNodeMapperVisitor(writer,
                                 model,
-                                lambdaVarName,
+                                argName,
                                 nestedLevel + 1)));
         if (nestedLevel == 0) { // Triggered when shape is a member.
             writer.writeWithNoFormatting(".forEach(builder::addValues);");
