@@ -139,7 +139,7 @@ final class ToNodeGenerator implements Runnable {
             if (shape.hasTrait(TraitDefinition.ID)) {
                 // If the shape is a trait we need to add the source location of trait to the
                 // generated node.
-                writer.writeInline(".sourceLocation(getSourceLocation())");
+                writer.writeWithNoFormatting(".sourceLocation(getSourceLocation())");
             }
             for (MemberShape mem : shape.members()) {
                 if (TraitCodegenUtils.isNullableMember(mem)) {

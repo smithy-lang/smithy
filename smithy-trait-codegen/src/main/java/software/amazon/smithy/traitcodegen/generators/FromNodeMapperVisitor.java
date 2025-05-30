@@ -58,7 +58,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void booleanShape(BooleanShape shape) {
-        writer.write("BooleanMember($1S, builder::$1L)", varName);
+        writer.write("$L.expectBooleanNode().getValue()", varName);
         return null;
     }
 
@@ -67,22 +67,17 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         writer.write("$L.expectArrayNode()", varName);
         writer.indent();
         writer.writeWithNoFormatting(".getElements().stream()");
+        String argName = "n" + (nestedLevel > 0 ? Integer.toString(nestedLevel) : "");
+        writer.write(".map($L -> $C)",
+                argName,
+                (Runnable) () -> shape.getMember()
+                        .accept(new FromNodeMapperVisitor(writer,
+                                model,
+                                argName,
+                                nestedLevel + 1)));
         if (nestedLevel == 0) { // Triggered when shape is a member.
-            writer.write(".map(n -> $C)",
-                    (Runnable) () -> shape.getMember()
-                            .accept(new FromNodeMapperVisitor(writer,
-                                    model,
-                                    "n",
-                                    nestedLevel + 1)));
             writer.writeWithNoFormatting(".forEach(builder::addValues);");
         } else { // Triggered when shape is nested.
-            writer.write(".map($L -> $C)",
-                    varName + nestedLevel,
-                    (Runnable) () -> shape.getMember()
-                            .accept(new FromNodeMapperVisitor(writer,
-                                    model,
-                                    varName + nestedLevel,
-                                    nestedLevel + 1)));
             writer.write(".collect($T.toList())", Collectors.class);
         }
         writer.dedent();

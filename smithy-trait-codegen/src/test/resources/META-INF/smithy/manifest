@@ -16,6 +16,7 @@ lists/string-list-trait.smithy
 lists/struct-list-trait.smithy
 lists/document-list-trait.smithy
 lists/nested-list-trait.smithy
+lists/nested-boolean-list-trait.smithy
 maps/string-string-map-trait.smithy
 maps/string-to-struct-map-trait.smithy
 maps/string-to-document-map-trait.smithy
