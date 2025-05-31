@@ -15,4 +15,6 @@ dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-utils"))
     api(project(":smithy-jmespath"))
+
+    testImplementation(project(":smithy-aws-endpoints"))
 }
