@@ -46,6 +46,7 @@ public final class SmithyDocPlugin implements SmithyBuildPlugin {
         DocSettings settings = runner.settings(DocSettings.class, pluginContext.getSettings());
         runner.service(settings.service());
         runner.performDefaultCodegenTransforms();
+        runner.changeStringEnumsToEnumShapes(false);
         runner.run();
         LOGGER.fine("Finished documentation generation.");
     }

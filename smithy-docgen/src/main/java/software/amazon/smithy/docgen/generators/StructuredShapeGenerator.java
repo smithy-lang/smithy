@@ -18,6 +18,7 @@ import software.amazon.smithy.docgen.sections.ShapeMembersSection;
 import software.amazon.smithy.docgen.sections.ShapeSection;
 import software.amazon.smithy.docgen.sections.ShapeSubheadingSection;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -80,6 +81,12 @@ public final class StructuredShapeGenerator implements BiConsumer<Shape, MemberL
 
     @Override
     public void accept(Shape shape, MemberListingType listingType) {
+        // Legacy enums using the trait on a string shape should be upgraded
+        // to `enum` shapes. If not, skip them here.
+        if (shape.isStringShape() && shape.hasTrait(EnumTrait.ID)) {
+            return;
+        }
+
         var symbol = context.symbolProvider().toSymbol(shape);
         context.writerDelegator().useShapeWriter(shape, writer -> {
             writer.pushState(new ShapeSection(context, shape));
