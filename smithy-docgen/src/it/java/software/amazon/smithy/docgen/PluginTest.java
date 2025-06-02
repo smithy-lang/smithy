@@ -72,6 +72,9 @@ public class PluginTest {
         assertTrue(files.contains(Path.of("/requirements.txt")));
         assertTrue(files.contains(Path.of("/content", "conf.py")));
         assertTrue(files.contains(Path.of("/content", "index.md")));
+
+        // Assert that the transform to upgrade enum strings is applied.
+        assertTrue(files.contains(Path.of("/content", "shapes", "LegacyEnumTrait.md")));
     }
 
     private static Model getModel(String path) {

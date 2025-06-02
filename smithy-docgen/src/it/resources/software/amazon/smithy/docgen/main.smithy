@@ -210,6 +210,10 @@ operation TypeRefinementTraits with [AllAuth] {
         clientOptional: String
 
         enumValue: NonMatchingEnum
+
+        legacyEnum: LegacyEnumTrait
+
+        legacyEnumThatStaysString: LegacyEnumThatStaysString
     }
 
     output := {
@@ -230,6 +234,30 @@ enum NonMatchingEnum {
     /// Note that the actual wire value is completely different.
     BAR = "example"
 }
+
+/// Some old modeled enum shape.
+@enum([
+    {
+        value: "RED"
+        name: "RED"
+    }
+    {
+        value: "GREEN"
+        name: "GREEN"
+    }
+])
+string LegacyEnumTrait
+
+/// Some old modeled enum shape without names.
+@enum([
+    {
+        value: "RED"
+    }
+    {
+        value: "GREEN"
+    }
+])
+string LegacyEnumThatStaysString
 
 /// A list that allows null values.
 @sparse
