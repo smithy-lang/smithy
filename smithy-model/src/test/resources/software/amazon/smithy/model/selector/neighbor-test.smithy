@@ -53,3 +53,10 @@ operation GetMyResource {}
 
 @idempotent
 operation DeleteMyResource {}
+
+service MyService3 {
+    version: "2025-06-03"
+    shapes: [MyStructure]
+}
+
+structure MyStructure {}

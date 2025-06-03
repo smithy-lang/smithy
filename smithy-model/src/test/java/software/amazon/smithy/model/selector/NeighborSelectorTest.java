@@ -55,4 +55,13 @@ public class NeighborSelectorTest {
                         MODEL.expectShape(ShapeId.from("smithy.example#DeleteMyResource")),
                         MODEL.expectShape(ShapeId.from("smithy.example#GetMyResource"))));
     }
+
+    @Test
+    public void serviceBoundShapes() {
+        Selector selector = Selector.parse("-[shape]->");
+
+        assertThat(selector.select(MODEL),
+                containsInAnyOrder(
+                        MODEL.expectShape(ShapeId.from("smithy.example#MyStructure"))));
+    }
 }

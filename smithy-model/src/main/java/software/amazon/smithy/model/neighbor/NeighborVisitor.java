@@ -83,6 +83,10 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
             push(result, shape, RelationshipType.ERROR, errorId);
         }
 
+        for (ShapeId shapeId : shape.getShapes()) {
+            push(result, shape, RelationshipType.SHAPE, shapeId);
+        }
+
         return result;
     }
 

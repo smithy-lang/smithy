@@ -28,6 +28,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     private final Map<ShapeId, String> introducedRename;
     private final List<ShapeId> errors;
     private final List<ShapeId> introducedErrors;
+    private final List<ShapeId> shapes;
+    private final List<ShapeId> introducedShapes;
 
     private ServiceShape(Builder builder) {
         super(builder);
@@ -39,10 +41,13 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
             introducedRename = rename;
             errors = builder.errors.copy();
             introducedErrors = errors;
+            shapes = builder.shapes.copy();
+            introducedShapes = shapes;
         } else {
             String computedVersion = "";
             Map<ShapeId, String> computedRename = new LinkedHashMap<>();
             Set<ShapeId> computedErrors = new LinkedHashSet<>();
+            Set<ShapeId> computedShapes = new LinkedHashSet<>();
 
             for (Shape shape : builder.getMixins().values()) {
                 if (shape.isServiceShape()) {
@@ -52,22 +57,26 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                     }
                     computedRename.putAll(mixin.getRename());
                     computedErrors.addAll(mixin.getErrors());
+                    computedShapes.addAll(mixin.getShapes());
                 }
             }
 
             introducedVersion = builder.version;
             introducedRename = builder.rename.copy();
             introducedErrors = builder.errors.copy();
+            introducedShapes = builder.shapes.copy();
 
             if (!introducedVersion.isEmpty()) {
                 computedVersion = introducedVersion;
             }
             computedRename.putAll(introducedRename);
             computedErrors.addAll(introducedErrors);
+            computedShapes.addAll(introducedShapes);
 
             version = computedVersion;
             rename = Collections.unmodifiableMap(computedRename);
             errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
+            shapes = Collections.unmodifiableList(new ArrayList<>(computedShapes));
         }
     }
 
@@ -82,7 +91,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                 .errors(introducedErrors)
                 .rename(introducedRename)
                 .operations(getIntroducedOperations())
-                .resources(getIntroducedResources());
+                .resources(getIntroducedResources())
+                .shapes(getIntroducedShapes());
     }
 
     @Override
@@ -180,6 +190,21 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
+     * @return The list of shapes directly bound to the service.
+     */
+    public List<ShapeId> getShapes() {
+        return shapes;
+    }
+
+    /**
+     * @return The list of shapes directly bound to the service, not inherited
+     *  from mixins.
+     */
+    public List<ShapeId> getIntroducedShapes() {
+        return introducedShapes;
+    }
+
+    /**
      * Gets the contextual name of a shape within the closure.
      *
      * <p>If there is a rename property entry for the given shape ID, then
@@ -205,6 +230,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         private String version = "";
         private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
         private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
+        private final BuilderRef<List<ShapeId>> shapes = BuilderRef.forList();
 
         @Override
         public ServiceShape build() {
@@ -342,6 +368,26 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
             rename(flatRename);
             errors(flatErrors);
             return super.flattenMixins();
+        }
+
+        public Builder shapes(Collection<ShapeId> shapeIds) {
+            shapes.clear();
+            shapeIds.forEach(this::addShape);
+            return this;
+        }
+
+        public Builder addShape(String shapeId) {
+            return addShape(ShapeId.from(shapeId));
+        }
+
+        public Builder addShape(ToShapeId shapeId) {
+            shapes.get().add(shapeId.toShapeId());
+            return this;
+        }
+
+        public Builder addShapes(Collection<ShapeId> shapeIds) {
+            shapes.get().addAll(Objects.requireNonNull(shapeIds));
+            return this;
         }
     }
 }

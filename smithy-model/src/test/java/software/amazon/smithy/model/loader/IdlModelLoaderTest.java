@@ -494,4 +494,15 @@ public class IdlModelLoaderTest {
                 .addImport(getClass().getResource("error-recovery/to-dollar.smithy"))
                 .assemble();
     }
+
+    @Test
+    public void loadsServiceWithShapes() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/service-with-shapes.smithy"))
+                .assemble()
+                .unwrap();
+
+        assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getShapes(),
+                equalTo(ListUtils.of(ShapeId.from("smithy.example#MyStructure"))));
+    }
 }

@@ -101,7 +101,8 @@ final class AstModelLoader {
             "rename",
             ERRORS,
             TRAITS,
-            MIXINS);
+            MIXINS,
+            SHAPES);
 
     private final Version modelVersion;
     private final ObjectNode model;
@@ -345,6 +346,7 @@ final class AstModelLoader {
         builder.resources(loadOptionalTargetList(id, node, "resources"));
         loadServiceRenameIntoBuilder(builder, node);
         builder.addErrors(loadOptionalTargetList(id, node, ERRORS));
+        builder.addShapes(loadOptionalTargetList(id, node, SHAPES));
         LoadOperation.DefineShape operation = createShape(builder);
         addMixins(operation, node);
         return operation;

@@ -235,7 +235,13 @@ public enum RelationshipType {
      * with {@link NeighborProvider#withIdRefRelationships(Model, NeighborProvider)}
      * in order to yield idRef relationships.
      */
-    ID_REF(null, RelationshipDirection.DIRECTED);
+    ID_REF(null, RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist between a {@link software.amazon.smithy.model.shapes.ServiceShape}
+     * and the shapes in its {@code shapes} property.
+     */
+    SHAPE("shape", RelationshipDirection.DIRECTED);
 
     private String selectorLabel;
     private RelationshipDirection direction;

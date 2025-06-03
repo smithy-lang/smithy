@@ -59,6 +59,7 @@ final class IdlModelLoader {
     private static final String VERSION_KEY = "version";
     private static final String TYPE_KEY = "type";
     private static final String ERRORS_KEY = "errors";
+    private static final String SHAPES_KEY = "shapes";
 
     /** Only allow nesting up to 64 arrays/objects in node values. */
     private static final int MAX_NESTING_LEVEL = 64;
@@ -82,7 +83,8 @@ final class IdlModelLoader {
             OPERATIONS_KEY,
             RESOURCES_KEY,
             RENAME_KEY,
-            ERRORS_KEY);
+            ERRORS_KEY,
+            SHAPES_KEY);
     private static final Set<String> SHAPE_TYPES = new HashSet<>();
 
     static {
@@ -861,6 +863,7 @@ final class IdlModelLoader {
         optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
         optionalIdList(shapeNode, ERRORS_KEY, builder::addError);
+        optionalIdList(shapeNode, SHAPES_KEY, builder::addShape);
         AstModelLoader.loadServiceRenameIntoBuilder(builder, shapeNode);
         operations.accept(operation);
     }

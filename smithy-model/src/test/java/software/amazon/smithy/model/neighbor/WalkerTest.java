@@ -17,8 +17,10 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 
 public class WalkerTest {
 
@@ -118,5 +120,23 @@ public class WalkerTest {
         walker.iterateShapes(resource).forEachRemaining(shapes::add);
 
         assertThat(shapes, containsInAnyOrder(readOperation, resource));
+    }
+
+    @Test
+    public void yieldsShapesInService() {
+        StructureShape structureShape = StructureShape.builder()
+                .id("smithy.example#MyStructure")
+                .build();
+        ServiceShape serviceShape = ServiceShape.builder()
+                .id("smithy.example#MyService")
+                .addShape(structureShape)
+                .build();
+        Model model = Model.builder().addShapes(structureShape, serviceShape).build();
+        Walker walker = new Walker(model);
+
+        List<Shape> shapes = new ArrayList<>();
+        walker.iterateShapes(serviceShape).forEachRemaining(shapes::add);
+
+        assertThat(shapes, containsInAnyOrder(structureShape, serviceShape));
     }
 }

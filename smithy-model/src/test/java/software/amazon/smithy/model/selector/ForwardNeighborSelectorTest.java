@@ -92,6 +92,6 @@ public class ForwardNeighborSelectorTest {
         Set<String> result2 = selectIds("service:not(:test(-[trait]-> [trait|protocolDefinition]))");
 
         assertThat(result1, contains("smithy.example#MyService1"));
-        assertThat(result2, contains("smithy.example#MyService2"));
+        assertThat(result2, contains("smithy.example#MyService2", "smithy.example#MyService3"));
     }
 }
