@@ -27,6 +27,7 @@ use smithy.test#httpRequestTests
 @xmlNamespace(
     uri: "http://glacier.amazonaws.com/doc/2012-06-01/",
 )
+@tags(["aws-service-test"])
 service Glacier {
     version: "2012-06-01",
     operations: [

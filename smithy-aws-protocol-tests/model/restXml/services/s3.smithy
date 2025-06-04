@@ -17,7 +17,7 @@ use aws.api#service
 use aws.auth#sigv4
 use aws.customizations#s3UnwrappedXmlOutput
 use aws.protocols#restXml
-use aws.protocols#httpChecksum
+use aws.protocoltests.config#AwsConfig
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -38,6 +38,7 @@ use smithy.test#httpResponseTests
 @xmlNamespace(
     uri: "http://s3.amazonaws.com/doc/2006-03-01/",
 )
+@tags(["aws-service-test"])
 service AmazonS3 {
     version: "2006-03-01",
     operations: [
@@ -67,7 +68,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -91,7 +92,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -118,7 +119,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -147,7 +148,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -177,7 +178,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -207,7 +208,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -238,7 +239,7 @@ service AmazonS3 {
         params: {
             Bucket: "mybucket",
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -295,7 +296,7 @@ operation ListObjectsV2 {
             Bucket: "mybucket",
             Key: "my key.txt"
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -324,7 +325,7 @@ operation ListObjectsV2 {
             Bucket: "mybucket",
             Key: "foo/bar/my key.txt"
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -360,7 +361,7 @@ operation DeleteObjectTagging {
             Bucket: "mybucket",
             Key: "../key.txt"
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {
@@ -387,7 +388,7 @@ operation DeleteObjectTagging {
             Bucket: "mybucket",
             Key: "foo/../key.txt"
         },
-        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParamsShape: AwsConfig,
         vendorParams: {
             scopedConfig: {
                 client: {

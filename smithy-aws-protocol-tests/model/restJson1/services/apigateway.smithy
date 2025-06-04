@@ -19,6 +19,7 @@ use smithy.test#httpRequestTests
 )
 @restJson1
 @title("Amazon API Gateway")
+@tags(["aws-service-test"])
 service BackplaneControlService {
     version: "2015-07-09",
     operations: [
