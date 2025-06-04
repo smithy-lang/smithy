@@ -22,6 +22,7 @@ use smithy.test#httpRequestTests
 @xmlNamespace(
     uri: "http://machinelearning.amazonaws.com/doc/2014-12-12/",
 )
+@tags(["aws-service-test"])
 service AmazonML_20141212 {
     version: "2014-12-12",
     operations: [
