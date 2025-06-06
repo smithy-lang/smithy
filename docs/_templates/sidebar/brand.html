@@ -1,0 +1,8 @@
+<a class="sidebar-brand" href="/index.html">
+  {% if theme_light_logo %}
+  <div class="sidebar-brand-icon">
+    <img class="sidebar-logo only-light" src="{{ pathto('_static/' + theme_light_logo, 1) }}" alt="Logo">
+    <img class="sidebar-logo only-dark" src="{{ pathto('_static/' + theme_dark_logo, 1) }}" alt="Logo">
+  </div>
+  {% endif %}
+</a>
