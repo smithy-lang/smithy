@@ -11,7 +11,7 @@
     "items": [
       {
         "title": "Quickstart",
-        "href": "/2.0/quickstart.html",
+        "href": "https://smithy.io/2.0/quickstart.html#weather-service",
         "className": "sm:hidden"
       },
       { "title": "Documentation", "href": "/2.0/index.html" },
@@ -20,8 +20,8 @@
         "href": "https://github.com/smithy-lang/smithy-examples"
       },
       {
-        "title": "Ecosystem",
-        "href": "https://github.com/smithy-lang/awesome-smithy"
+        "title": "Awesome Smithy",
+        "href": "https://github.com/smithy-lang/awesome-smithy?tab=readme-ov-file#awesome-smithy"
       }
     ]
   },
