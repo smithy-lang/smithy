@@ -41,7 +41,7 @@ export const useSupportedLanguages = (props?: useSupportedLanguagesProps) => {
             </a>
           </>
         ),
-        location: "https://github.com/awslabs/smithy-rs",
+        location: "https://github.com/smithy-lang/smithy-rs",
       },
       {
         src: "/icons/scala.svg",
@@ -71,21 +71,21 @@ export const useSupportedLanguages = (props?: useSupportedLanguagesProps) => {
         name: "Kotlin",
         alt: t("kotlin.alt"),
         trademark: t("kotlin.trademark"),
-        location: "https://github.com/awslabs/smithy-kotlin",
+        location: "https://github.com/smithy-lang/smithy-kotlin",
       },
       {
         src: "/icons/swift.svg",
         name: "Swift",
         alt: t("swift.alt"),
         trademark: t("swift.trademark"),
-        location: "https://github.com/awslabs/smithy-swift",
+        location: "https://github.com/smithy-lang/smithy-swift",
       },
       {
         src: "/icons/ruby.png",
         name: "Ruby",
         alt: t("ruby.alt"),
         trademark: t("ruby.trademark"),
-        location: "https://github.com/awslabs/smithy-ruby",
+        location: "https://github.com/smithy-lang/smithy-ruby",
       },
     ];
 
