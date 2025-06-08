@@ -359,7 +359,8 @@ an appropriate default value for the member:
 * enum, intEnum, union: The unknown variant. These types SHOULD define an
   unknown variant to account for receiving unknown members.
 * union: The unknown variant. Client code generators for unions SHOULD
-  define an unknown variant to account for newly added members.
+  define an unknown variant to account for newly added members. Union shape
+  members SHOULD NOT be named "Unknown" or "UnknownVariant" to avoid conflicts.
 * structure: an empty structure, if possible, otherwise a deserialization
   error.
 
