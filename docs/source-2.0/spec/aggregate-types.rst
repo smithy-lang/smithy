@@ -230,7 +230,8 @@ for the member:
 * list: []
 * map: {}
 * enum, intEnum, union: The unknown variant. These types SHOULD define an
-  unknown variant to account for receiving unknown members.
+  unknown variant to account for receiving unknown members. Union shape members
+  SHOULD NOT be named "Unknown" or "UnknownVariant" to avoid conflicts.
 * union: The unknown variant. Code generators for unions SHOULD define an
   unknown variant to account for newly added members.
 * structure: {} if possible, otherwise a deserialization error.
