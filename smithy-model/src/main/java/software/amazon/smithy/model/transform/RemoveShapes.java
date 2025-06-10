@@ -62,7 +62,6 @@ final class RemoveShapes {
     }
 
     private void validateShapeCopiedFromMixin(Model model, Shape shape) {
-        // Only validate MemberShapes
         if (!shape.isMemberShape()) {
             return;
         }
@@ -73,8 +72,7 @@ final class RemoveShapes {
                                 memberShape.getMemberName())));
         for (ShapeId mixinId : container.getMixins()) {
             Shape mixinShape = model.expectShape(mixinId);
-            // If the member is copied from a mixin and this mixin is not to be removed.
-            if (mixinShape.getMemberNames().contains(shape.getId().getMember().get())
+            if (mixinShape.getMemberNames().contains(memberShape.getMemberName())
                     && !toRemove.contains(mixinShape)) {
                 LOGGER.warning(format("Removing mixed in member `%s` from mixin shape `%s` "
                         + "in `%s` will result in an inconsistent model.",
