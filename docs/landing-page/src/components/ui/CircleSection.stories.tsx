@@ -9,9 +9,9 @@ const meta = {
     title: "hello world",
     description: "some random text",
     circleUrls: [
-      { src: "/icons/dark/swift.svg" },
-      { src: "/icons/dark/javaScript.svg" },
-      { src: "/icons/dark/rust.svg" },
+      { src: "/icons/dark/swift.svg", name: "Swift" },
+      { src: "/icons/dark/javaScript.svg", name: "JavaScript" },
+      { src: "/icons/dark/rust.svg", name: "Rust" },
     ],
   },
   parameters: {

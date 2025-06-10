@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button.tsx";
 
 export const Tagline = () => {
   const { t } = useTranslation("translation", { keyPrefix: "title" });
@@ -13,6 +14,13 @@ export const Tagline = () => {
         </span>
       </h1>
       <p className="pt-7 text-lg">{t("subtitle")}</p>
+      <div className="mt-8">
+        <a className="flex flex-col md:flex-row" href="/2.0/quickstart.html">
+          <Button variant="gradient-outline" darkBg className="hidden sm:flex">
+            Get Started
+          </Button>
+        </a>
+      </div>
     </div>
   );
 };

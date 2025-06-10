@@ -13,7 +13,6 @@ import { MenuLinks } from "./MenuLinks";
 export const TopNavigation = () => {
   const { t } = useTranslation("translation", { keyPrefix: "navigation" });
   const githubAlt = t("githubLabel");
-  const getStartedAlt = t("getStartedLabel");
   return (
     <div className="bg-smithy-black text-white h-[var(--nav-offset)] fixed top-0 z-50">
       <NavigationMenu>
@@ -33,16 +32,6 @@ export const TopNavigation = () => {
             <MenuLinks className="hover:bg-gradient-to-l hover:from-primary hover:to-secondary inline-block hover:text-transparent hover:bg-clip-text" />
           </NavigationMenuItem>
           <NavigationMenuItem className="flex-1 flex justify-end items-end">
-            <a href="/2.0/quickstart.html" aria-label={getStartedAlt}>
-              <Button
-                variant="gradient-outline"
-                darkBg
-                className="hidden sm:flex"
-                aria-label={getStartedAlt}
-              >
-                {t("Get Started")}
-              </Button>
-            </a>
             <a
               target="_black"
               rel="noopener noreferrer"

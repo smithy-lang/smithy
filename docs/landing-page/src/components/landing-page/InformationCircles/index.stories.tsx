@@ -7,6 +7,7 @@ const meta = {
   component: InformationCircles,
   args: {
     circleUrls: ["/icons/dark/swift.svg"],
+    name: "Swift",
   },
   parameters: {
     layout: "fullscreen",
