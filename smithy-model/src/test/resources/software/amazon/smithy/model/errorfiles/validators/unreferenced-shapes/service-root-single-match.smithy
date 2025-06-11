@@ -27,7 +27,7 @@ operation MyOperation {
 }
 
 structure MyAbc {
-    MyString: MyString
+    myString: MyString
 }
 
 string MyString

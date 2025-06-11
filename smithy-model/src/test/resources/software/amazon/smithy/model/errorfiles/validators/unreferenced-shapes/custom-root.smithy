@@ -20,7 +20,7 @@ structure root {}
 // Considered referenced because of the root trait.
 @root
 structure MyAbc {
-    MyString: MyString
+    myString: MyString
 }
 
 // Considered referenced because it's referenced by MyAbc$MyString

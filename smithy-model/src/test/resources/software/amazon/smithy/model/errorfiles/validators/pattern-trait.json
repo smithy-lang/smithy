@@ -4,25 +4,25 @@
         "ns.foo#Structure": {
             "type": "structure", 
             "members": {
-                "AnchoredMember": {
+                "anchoredMember": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "^[a-z]$"
                     }
                 },
-                "WithoutAnchorsMember": {
+                "withoutAnchorsMember": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "[a-z]"
                     }
                 },
-                "WithoutLeadingAnchorMember": {
+                "withoutLeadingAnchorMember": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "[a-z]$"
                     }
                 },
-                "WithoutTrailingAnchorMember": {
+                "withoutTrailingAnchorMember": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "^[a-z]"

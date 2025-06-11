@@ -4,7 +4,7 @@
         "ns.foo#Structure": {
             "type": "structure", 
             "members": {
-                "ValidMember1": {
+                "validMember1": {
                     "target": "smithy.api#Byte",
                     "traits": {
                         "smithy.api#range": {
@@ -13,7 +13,7 @@
                         }
                     }
                 }, 
-                "ValidMember2": {
+                "validMember2": {
                     "target": "smithy.api#Short",
                     "traits": {
                         "smithy.api#range": {
@@ -22,7 +22,7 @@
                         }
                     }
                 }, 
-                "ValidMember3": {
+                "validMember3": {
                     "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#range": {
@@ -31,7 +31,7 @@
                         }
                     }
                 }, 
-                "ValidMember4": {
+                "validMember4": {
                     "target": "smithy.api#Long",
                     "traits": {
                         "smithy.api#range": {
@@ -40,7 +40,7 @@
                         }
                     }
                 }, 
-                "ValidMember5": {
+                "validMember5": {
                     "target": "smithy.api#BigInteger",
                     "traits": {
                         "smithy.api#range": {
@@ -49,7 +49,7 @@
                         }
                     }
                 }, 
-                "ValidMember6": {
+                "validMember6": {
                     "target": "smithy.api#Float",
                     "traits": {
                         "smithy.api#range": {
@@ -58,7 +58,7 @@
                         }
                     }
                 }, 
-                "ValidMember7": {
+                "validMember7": {
                     "target": "smithy.api#Float",
                     "traits": {
                         "smithy.api#range": {
@@ -67,7 +67,7 @@
                         }
                     }
                 }, 
-                "ValidMember8": {
+                "validMember8": {
                     "target": "smithy.api#Double",
                     "traits": {
                         "smithy.api#range": {
@@ -76,7 +76,7 @@
                         }
                     }
                 }, 
-                "ValidMember9": {
+                "validMember9": {
                     "target": "smithy.api#Double",
                     "traits": {
                         "smithy.api#range": {
@@ -85,7 +85,7 @@
                         }
                     }
                 }, 
-                "ValidMember10": {
+                "validMember10": {
                     "target": "smithy.api#BigDecimal",
                     "traits": {
                         "smithy.api#range": {
@@ -94,7 +94,7 @@
                         }
                     }
                 }, 
-                "ValidMember11": {
+                "validMember11": {
                     "target": "smithy.api#BigDecimal",
                     "traits": {
                         "smithy.api#range": {
@@ -103,7 +103,7 @@
                         }
                     }
                 }, 
-                "ValidMember12": {
+                "validMember12": {
                     "target": "smithy.api#BigDecimal",
                     "traits": {
                         "smithy.api#range": {
@@ -112,7 +112,7 @@
                         }
                     }
                 }, 
-                "ValidMember13": {
+                "validMember13": {
                     "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#range": {
@@ -121,7 +121,7 @@
                         }
                     }
                 }, 
-                "InvalidMember1": {
+                "invalidMember1": {
                     "target": "smithy.api#Byte",
                     "traits": {
                         "smithy.api#range": {
@@ -130,7 +130,7 @@
                         }
                     }
                 }, 
-                "InvalidMember2": {
+                "invalidMember2": {
                     "target": "smithy.api#Short",
                     "traits": {
                         "smithy.api#range": {
@@ -139,7 +139,7 @@
                         }
                     }
                 }, 
-                "InvalidMember3": {
+                "invalidMember3": {
                     "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#range": {
@@ -148,7 +148,7 @@
                         }
                     }
                 }, 
-                "InvalidMember4": {
+                "invalidMember4": {
                     "target": "smithy.api#Long",
                     "traits": {
                         "smithy.api#range": {
@@ -157,7 +157,7 @@
                         }
                     }
                 }, 
-                "InvalidMember5": {
+                "invalidMember5": {
                     "target": "smithy.api#BigInteger",
                     "traits": {
                         "smithy.api#range": {
@@ -166,7 +166,7 @@
                         }
                     }
                 }, 
-                "InvalidMember6": {
+                "invalidMember6": {
                     "target": "smithy.api#BigDecimal",
                     "traits": {
                         "smithy.api#range": {

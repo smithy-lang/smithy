@@ -16,8 +16,8 @@
         "ns.foo#StreamingOperationInput": {
             "type": "structure",
             "members": {
-                "Body": {
-                    "target": "ns.foo#StreamingBlob",
+                "body": {
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
@@ -30,8 +30,8 @@
         "ns.foo#StreamingOperationOutput": {
             "type": "structure",
             "members": {
-                "Body": {
-                    "target": "ns.foo#StreamingBlob",
+                "body": {
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
@@ -41,7 +41,7 @@
                 "smithy.api#output": {}
             }
         },
-        "ns.foo#StreamingBlob": {
+        "ns.foo#streamingBlob": {
             "type": "blob",
             "traits": {
                 "smithy.api#streaming": {}
@@ -68,8 +68,8 @@
         "ns.foo#MixinStream": {
             "type": "structure",
             "members": {
-                "Body": {
-                    "target": "ns.foo#StreamingBlob",
+                "body": {
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
@@ -97,14 +97,14 @@
         "ns.foo#InvalidStreamingOperationOutput": {
             "type": "structure",
             "members": {
-                "StreamingBlob1": {
-                    "target": "ns.foo#StreamingBlob",
+                "streamingBlob1": {
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
                 },
-                "StreamingBlob2": {
-                    "target": "ns.foo#StreamingBlob",
+                "streamingBlob2": {
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
@@ -114,11 +114,11 @@
                 "smithy.api#output": {}
             }
         },
-        "ns.foo#InvalidNestedStream": {
+        "ns.foo#InvalidnestedStream": {
             "type": "structure",
             "members": {
-                "NestedStream": {
-                    "target": "ns.foo#NestedStreamContainer"
+                "nestedStream": {
+                    "target": "ns.foo#nestedStreamContainer"
                 }
             },
             "mixins": [
@@ -130,19 +130,19 @@
         "ns.foo#NestedMixinStream": {
             "type": "structure",
             "members": {
-                "Body": {
-                    "target": "ns.foo#NestedStreamContainer"
+                "body": {
+                    "target": "ns.foo#nestedStreamContainer"
                 }
             },
             "traits": {
                 "smithy.api#mixin": {}
             }
         },
-        "ns.foo#NestedStreamContainer": {
+        "ns.foo#nestedStreamContainer": {
             "type": "structure",
             "members": {
                 "nested": {
-                    "target": "ns.foo#StreamingBlob",
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }
@@ -161,7 +161,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "target": "ns.foo#StreamingBlob",
+                    "target": "ns.foo#streamingBlob",
                     "traits": {
                         "smithy.api#default": ""
                     }

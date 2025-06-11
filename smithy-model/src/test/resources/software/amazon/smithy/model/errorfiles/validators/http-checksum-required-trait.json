@@ -19,7 +19,7 @@
     "ns.foo#Input": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob"
         }
       }
@@ -27,7 +27,7 @@
     "ns.foo#Output": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob"
         }
       }
@@ -44,7 +44,7 @@
     "ns.foo#InvalidInput": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob"
         }
       },
@@ -55,7 +55,7 @@
     "ns.foo#InvalidOutput": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob"
         }
       },
@@ -66,7 +66,7 @@
     "ns.foo#InvalidError": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob"
         }
       },
@@ -78,7 +78,7 @@
     "ns.foo#InvalidStructure": {
       "type": "structure",
       "members": {
-        "Body": {
+        "body": {
           "target": "smithy.api#Blob",
           "traits": {
             "smithy.api#httpChecksumRequired": {}

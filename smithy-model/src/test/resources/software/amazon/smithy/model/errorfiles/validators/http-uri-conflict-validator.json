@@ -188,7 +188,7 @@
         "ns.foo#FooMemberInput": {
             "type": "structure",
             "members": {
-                "Id": {
+                "id": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "^.*foo.*$",
@@ -201,7 +201,7 @@
         "ns.foo#FooTargetInput": {
             "type": "structure",
             "members": {
-                "Id": {
+                "id": {
                     "target": "ns.foo#FooPatternString",
                     "traits": {
                         "smithy.api#httpLabel": {},
@@ -213,7 +213,7 @@
         "ns.foo#BarTargetInput": {
             "type": "structure",
             "members": {
-                "Id": {
+                "id": {
                     "target": "ns.foo#BarPatternString",
                     "traits": {
                         "smithy.api#httpLabel": {},
@@ -262,7 +262,7 @@
             "type": "operation",
             "traits": {
                 "smithy.api#http": {
-                    "uri": "/differing/{Id}/bar/bam/{OtherId}",
+                    "uri": "/differing/{Id}/bar/bam/{otherId}",
                     "method": "POST"
                 }
             },
@@ -285,14 +285,14 @@
         "ns.foo#BarFooTargetInput": {
             "type": "structure",
             "members": {
-                "Id": {
+                "id": {
                     "target": "ns.foo#BarPatternString",
                     "traits": {
                         "smithy.api#httpLabel": {},
                         "smithy.api#required": {}
                     }
                 },
-                "OtherId": {
+                "otherId": {
                     "target": "ns.foo#FooPatternString",
                     "traits": {
                         "smithy.api#httpLabel": {},
@@ -325,7 +325,7 @@
         "ns.foo#PatternlessInput": {
             "type": "structure",
             "members": {
-                "Id": {
+                "id": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpLabel": {},
@@ -378,18 +378,18 @@
                     "method": "PUT"
                 },
                 "smithy.api#endpoint": {
-                    "hostPrefix": "{HostLabel}."
+                    "hostPrefix": "{hostLabel}."
                 },
                 "smithy.api#idempotent": {}
             },
             "input": {
-                "target": "ns.foo#HostLabelInputWithPattern"
+                "target": "ns.foo#hostLabelInputWithPattern"
             }
         },
-        "ns.foo#HostLabelInputWithPattern": {
+        "ns.foo#hostLabelInputWithPattern": {
             "type": "structure",
             "members": {
-                "HostLabel": {
+                "hostLabel": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#hostLabel": {},
@@ -420,18 +420,18 @@
                     "method": "PUT"
                 },
                 "smithy.api#endpoint": {
-                    "hostPrefix": "{HostLabel}."
+                    "hostPrefix": "{hostLabel}."
                 },
                 "smithy.api#idempotent": {}
             },
             "input": {
-                "target": "ns.foo#HostLabelInputWithoutPattern"
+                "target": "ns.foo#hostLabelInputWithoutPattern"
             }
         },
-        "ns.foo#HostLabelInputWithoutPattern": {
+        "ns.foo#hostLabelInputWithoutPattern": {
             "type": "structure",
             "members": {
-                "HostLabel": {
+                "hostLabel": {
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#hostLabel": {},
