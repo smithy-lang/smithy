@@ -18,7 +18,7 @@ runs:
 
     - uses: actions/checkout@v4
       with:
-        repository: awslabs/smithy
+        repository: smithy-lang/smithy
         path: smithy
 
     - run: cd ./smithy && ./gradlew clean build publishToMavenLocal

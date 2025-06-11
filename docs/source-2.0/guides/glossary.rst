@@ -31,7 +31,7 @@ Glossary
         `Gradle <https://gradle.org/>`__ is a build tool for Java, Kotlin, and
         other languages. Gradle is typically the build system used to develop
         Smithy code generators. The Smithy team
-        `maintains a Gradle plugin <https://github.com/awslabs/smithy-gradle-plugin>`__ for
+        `maintains a Gradle plugin <https://github.com/smithy-lang/smithy-gradle-plugin>`__ for
         running :term:`Smithy-Build` via Gradle.
 
     Integrations

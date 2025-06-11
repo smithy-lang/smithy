@@ -748,8 +748,8 @@ the formatter by setting the format setting on the plugin extension to false:
             format = false
         }
 
-.. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
-.. _Smithy Gradle plugins: https://github.com/awslabs/smithy-gradle-plugin/
+.. _examples directory: https://github.com/smithy-lang/smithy-gradle-plugin/tree/main/examples
+.. _Smithy Gradle plugins: https://github.com/smithy-lang/smithy-gradle-plugin/
 .. _Gradle: https://gradle.org/
 .. _smithy-base: https://github.com/smithy-lang/smithy-gradle-plugin#smithy-base-plugin
 .. _smithy-jar: https://github.com/smithy-lang/smithy-gradle-plugin#smithy-jar-plugin

@@ -816,4 +816,4 @@ different services.
 
 ### What are the `@input` and `@output` traits?
 
-See https://github.com/awslabs/smithy/blob/main/designs/operation-input-output-and-unit-types.md
+See https://github.com/smithy-lang/smithy/blob/main/designs/operation-input-output-and-unit-types.md

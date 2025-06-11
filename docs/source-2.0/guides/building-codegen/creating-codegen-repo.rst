@@ -22,12 +22,12 @@ Example codegen repositories
 
 Here are a few example Smithy codegen repos created by AWS:
 
-- https://github.com/awslabs/smithy-typescript
+- https://github.com/smithy-lang/smithy-typescript
 - https://github.com/aws/smithy-go
-- https://github.com/awslabs/smithy-rs
-- https://github.com/awslabs/smithy-ruby
-- https://github.com/awslabs/smithy-kotlin
-- https://github.com/awslabs/smithy-swift
+- https://github.com/smithy-lang/smithy-rs
+- https://github.com/smithy-lang/smithy-ruby
+- https://github.com/smithy-lang/smithy-kotlin
+- https://github.com/smithy-lang/smithy-swift
 
 
 Codegen repo layout
@@ -210,7 +210,7 @@ remote repository. You can add packages to Maven local using Gradle:
     ./gradlew :smithy-mylang-codegen:pTML
 
 If you need to use unreleased changes to
-`awslabs/smithy <https://github.com/smithy-lang/smithy>`__, then clone the
+`smithy-lang/smithy <https://github.com/smithy-lang/smithy>`__, then clone the
 repository and run:
 
 .. code-block:: none
