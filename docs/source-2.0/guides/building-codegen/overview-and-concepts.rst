@@ -44,7 +44,7 @@ client using the ``foo-client-codegen`` plugin found on the classpath.
 
 .. seealso::
 
-   - `Smithy Gradle plugin <https://github.com/awslabs/smithy-gradle-plugin>`__
+   - `Smithy Gradle plugin <https://github.com/smithy-lang/smithy-gradle-plugin>`__
    - `DirectedCodegen <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java>`__
      to more easily implement codegen
    - :doc:`configuring-the-generator`
@@ -76,9 +76,9 @@ choices were made and leave a record for future contributors.
 Example Smithy codegen design documents:
 
 - https://smithy-lang.github.io/smithy-rs/design/
-- https://github.com/awslabs/smithy-kotlin/tree/main/docs/design
+- https://github.com/smithy-lang/smithy-kotlin/tree/main/docs/design
 - https://github.com/awslabs/aws-sdk-kotlin/tree/main/docs/design
-- https://github.com/awslabs/smithy-ruby/wiki
+- https://github.com/smithy-lang/smithy-ruby/wiki
 
 
 Phases of code generation

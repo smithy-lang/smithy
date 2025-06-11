@@ -16,7 +16,7 @@ use smithy.test#httpResponseTests
 /// in the `restXml` directory, but the service under test here has
 /// the `xmlNamespace` trait applied to it.
 ///
-/// See https://github.com/awslabs/smithy/issues/616
+/// See https://github.com/smithy-lang/smithy/issues/616
 @service(sdkId: "Rest Xml Protocol Namespace")
 @sigv4(name: "restxmlwithnamespace")
 @xmlNamespace(uri: "https://example.com")

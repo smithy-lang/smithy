@@ -263,7 +263,7 @@ For example:
     1. The ``enum`` implements `SymbolDependencyContainer`_, an abstraction
        for composing dependencies.
     2. This example is taken from
-       `smithy-typescript <https://github.com/awslabs/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/TypeScriptDependency.java>`__,
+       `smithy-typescript <https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/TypeScriptDependency.java>`__,
        which shows other possibilities like how to define unconditional
        dependencies that are needed by every client.
 
@@ -321,9 +321,9 @@ language are accounted for during codegen.
 A selection of existing ``SymbolProviders`` can be found at:
 
 1. TypeScript:
-   https://github.com/awslabs/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java
+   https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java
 2. Python:
-   https://github.com/awslabs/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java
+   https://github.com/smithy-lang/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java
 3. Go:
    https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java
 

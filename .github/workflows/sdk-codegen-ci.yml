@@ -25,7 +25,7 @@ jobs:
       - name: Checkout smithy-typescript
         uses: actions/checkout@v4
         with:
-          repository: awslabs/smithy-typescript
+          repository: smithy-lang/smithy-typescript
           path: smithy-typescript
 
       - name: Build smithy-typescript
@@ -105,7 +105,7 @@ jobs:
       - name: Checkout smithy-kotlin
         uses: actions/checkout@v4
         with:
-          repository: awslabs/smithy-kotlin
+          repository: smithy-lang/smithy-kotlin
           path: smithy-kotlin
 
       - name: Build smithy-kotlin
@@ -151,7 +151,7 @@ jobs:
       - name: Checkout smithy-swift
         uses: actions/checkout@v4
         with:
-          repository: awslabs/smithy-swift
+          repository: smithy-lang/smithy-swift
           path: Sources/SmithySwift/smithy-swift
 
       - name: Build smithy-swift
@@ -206,7 +206,7 @@ jobs:
       - name: Check out smithy-rs
         uses: actions/checkout@v4
         with:
-          repository: awslabs/smithy-rs
+          repository: smithy-lang/smithy-rs
           ref: main
           path: smithy-rs
 

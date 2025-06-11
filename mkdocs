@@ -25,7 +25,7 @@ fi
 
 # Clone a copy of smithy into a staging directory
 rm -rf /tmp/_smithy-docs
-git clone git@github.com:awslabs/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
+git clone git@github.com:smithy-lang/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
 cd /tmp/_smithy-docs
 git checkout gh-pages
 cd -
