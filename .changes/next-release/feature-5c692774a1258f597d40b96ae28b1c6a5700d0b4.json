@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added MemberNameValidator to enforce strict lowerCamelCase naming convention for member shapes according to Smithy Style Guide",
+  "pull_requests": []
+}
