@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 1.59.0 (2025-06-16)
+
+### Bug Fixes
+
+* Fixed generation of nested lists/maps in trait code generation. ([#2647](https://github.com/smithy-lang/smithy/pull/2647))
+* Fixed generation of boolean collections in trait code generation. ([#2652](https://github.com/smithy-lang/smithy/pull/2652))
+* Fixed enum generation in docgen. ([#2653](https://github.com/smithy-lang/smithy/pull/2653))
+
+### Features
+
+* Added a warning when mixin members are removed. ([#2644](https://github.com/smithy-lang/smithy/pull/2644))
+* Added a tag to identify service-specific protocol tests. ([#2655](https://github.com/smithy-lang/smithy/pull/2655))
+
+### Documentation
+
+* Made several improvements to the landing pages. ([#2656](https://github.com/smithy-lang/smithy/pull/2656))
+* Added guidance about generating unknown members for unions. ([#2657](https://github.com/smithy-lang/smithy/pull/2657))
+* Updated references to `awslabs` to `smithy-lang` where relevant. ([#2662](https://github.com/smithy-lang/smithy/pull/2662))
+
+### Other
+
+* Added additional protocol tests for `restJson1`. ([#2641](https://github.com/smithy-lang/smithy/pull/2641))
+
 ## 1.58.0 (2025-05-13)
 
 ### Bug Fixes
