@@ -14,3 +14,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      - dependency-name: "com.opencastsoftware:prettier4j"
+        versions: [ "0.3.1" ]
