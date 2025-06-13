@@ -21,7 +21,7 @@ import software.amazon.smithy.utils.StringUtils;
 public final class EndpointRule extends Rule {
     private final Endpoint endpoint;
 
-    EndpointRule(Rule.Builder builder, Endpoint endpoint) {
+    public EndpointRule(Rule.Builder builder, Endpoint endpoint) {
         super(builder);
         this.endpoint = endpoint;
     }
