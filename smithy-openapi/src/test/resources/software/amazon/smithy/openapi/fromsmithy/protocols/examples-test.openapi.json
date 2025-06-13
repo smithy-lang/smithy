@@ -149,7 +149,7 @@
                     "description": "withdrawTestDoc",
                     "value": {
                       "location": "Denver",
-                      "bankName": "Chase",
+                      "bank": "Chase",
                       "atmRecording": "dGVzdHZpZGVv"
                     }
                   }
@@ -470,7 +470,7 @@
           "location": {
             "type": "string"
           },
-          "bankName": {
+          "bank": {
             "type": "string"
           },
           "atmRecording": {
