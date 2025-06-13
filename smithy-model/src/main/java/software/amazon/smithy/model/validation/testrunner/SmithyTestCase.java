@@ -116,7 +116,7 @@ public final class SmithyTestCase {
                 .filter(event -> !isModelDeprecationEvent(event))
                 .collect(Collectors.toList());
 
-        return new SmithyTestCase.Result(getModelLocation(), unmatchedEvents, extraEvents);
+        return new SmithyTestCase.Result(getModelLocation(), unmatchedEvents, extraEvents, actualEvents);
     }
 
     private static boolean compareEvents(ValidationEvent expected, ValidationEvent actual) {
@@ -197,15 +197,18 @@ public final class SmithyTestCase {
         private final String modelLocation;
         private final Collection<ValidationEvent> unmatchedEvents;
         private final Collection<ValidationEvent> extraEvents;
+        private final Collection<ValidationEvent> actualEvents;
 
         Result(
                 String modelLocation,
                 Collection<ValidationEvent> unmatchedEvents,
-                Collection<ValidationEvent> extraEvents
+                Collection<ValidationEvent> extraEvents,
+                Collection<ValidationEvent> actualEvents
         ) {
             this.modelLocation = modelLocation;
             this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
             this.extraEvents = Collections.unmodifiableCollection(new TreeSet<>(extraEvents));
+            this.actualEvents = Collections.unmodifiableCollection(new TreeSet<>(actualEvents));
         }
 
         @Override
@@ -235,6 +238,13 @@ public final class SmithyTestCase {
                 }
                 builder.append('\n');
             }
+
+            builder.append("\nActual events\n"
+                    + "-------------\n");
+            for (ValidationEvent event : actualEvents) {
+                builder.append(event.toString().replace("\n", "\\n")).append("\n");
+            }
+            builder.append('\n');
 
             return builder.toString();
         }
