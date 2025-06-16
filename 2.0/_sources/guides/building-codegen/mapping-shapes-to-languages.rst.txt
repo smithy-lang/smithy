@@ -508,7 +508,7 @@ use a `TopologicalIndex <https://github.com/smithy-lang/smithy/blob/main/smithy-
 
 .. seealso::
 
-    `Rust design doc <https://github.com/awslabs/smithy-rs/blob/main/design/src/smithy/recursive_shapes.md>`__
+    `Rust design doc <https://github.com/smithy-lang/smithy-rs/blob/main/design/src/smithy/recursive_shapes.md>`__
     for how they handled recursive shapes.
 
 

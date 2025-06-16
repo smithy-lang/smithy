@@ -158,13 +158,12 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="/index.html">
   
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo only-light" src="../../_static/smithy.svg" alt="Light Logo"/>
-    <img class="sidebar-logo only-dark" src="../../_static/smithy-dark.svg" alt="Dark Logo"/>
+  <div class="sidebar-brand-icon">
+    <img class="sidebar-logo only-light" src="../../_static/smithy.svg" alt="Logo">
+    <img class="sidebar-logo only-dark" src="../../_static/smithy-dark.svg" alt="Logo">
   </div>
-  
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -371,7 +370,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/gradle-plugin/gradle-migration-guide.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/gradle-plugin/gradle-migration-guide.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -396,7 +395,7 @@
           <div class="section" id="migrating-to-gradle-plugin-version-0-10-0">
 <span id="gradle-migration-guide"></span><h1>Migrating to Gradle plugin version 0.10.0+<a class="headerlink" href="#migrating-to-gradle-plugin-version-0-10-0" title="Permalink to this heading">#</a></h1>
 <p>This guide describes how to migrate your Gradle build files
-to use the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle plugins</a> v0.10.0+ without breaking
+to use the <a class="reference external" href="https://github.com/smithy-lang/smithy-gradle-plugin/">Smithy Gradle plugins</a> v0.10.0+ without breaking
 your existing Gradle projects.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -422,7 +421,7 @@ your project.</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
 <span class="gd">-     id(&quot;software.amazon.smithy&quot;).version(&quot;0.7.0&quot;)</span>
 <span class="gi">+     `java`</span>
-<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;1.2.0&quot;)</span>
+<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;1.3.0&quot;)</span>
 }
 </pre></div>
 </div>
@@ -434,7 +433,7 @@ your project.</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
 <span class="gd">-      id &#39;software.amazon.smithy&#39; version &#39;0.7.0&#39;</span>
 <span class="gi">+      id &#39;java&#39;</span>
-<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;1.2.0&#39;</span>
+<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;1.3.0&#39;</span>
 }
 </pre></div>
 </div>
@@ -461,7 +460,7 @@ for these build-only dependencies.</p>
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.58.0&quot;)</span>
+<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.59.0&quot;)</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -470,9 +469,9 @@ for these build-only dependencies.</p>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.58.0&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.59.0&quot;)
 
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.58.0&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.59.0&quot;)
 <span class="gi">+   smithyBuild(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
 }
 </pre></div>
@@ -491,7 +490,7 @@ dependencies {
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.58.0&#39;</span>
+<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.59.0&#39;</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -500,9 +499,9 @@ dependencies {
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.58.0&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.59.0&#39;
 
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.58.0&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.59.0&#39;
 <span class="gi">+   smithyBuild &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
 }
 </pre></div>
@@ -625,7 +624,7 @@ configure the <code class="docutils literal notranslate"><span class="pre">smith
           </div>
           <div class="right-details">
             <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+              <a class="muted-link " href="https://github.com/smithy-lang/smithy" aria-label="GitHub">
                 <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
                 </svg>

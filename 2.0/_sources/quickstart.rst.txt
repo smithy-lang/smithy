@@ -760,6 +760,6 @@ The complete ``weather.smithy`` model should look like:
         }
     }
 
-.. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
-.. _Smithy Gradle Plugin: https://github.com/awslabs/smithy-gradle-plugin/
+.. _examples directory: https://github.com/smithy-lang/smithy-gradle-plugin/tree/main/examples
+.. _Smithy Gradle Plugin: https://github.com/smithy-lang/smithy-gradle-plugin/
 .. _gradle installed: https://gradle.org/install/

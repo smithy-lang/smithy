@@ -2221,7 +2221,7 @@ The conversion process is highly extensible through
 .. _x-amz-meta-* headers: https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
 .. _Amazon API Gateway extensions: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions.html
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
-.. _Smithy Gradle plugin: https://github.com/awslabs/smithy-gradle-plugin
+.. _Smithy Gradle plugin: https://github.com/smithy-lang/smithy-gradle-plugin
 .. _x-amazon-apigateway-binary-media-types: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-binary-media-types.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html

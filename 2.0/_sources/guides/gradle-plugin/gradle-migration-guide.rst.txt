@@ -182,5 +182,5 @@ configure the ``smithyBuild`` task instead. Tasks that depended on
             -tasks["smithyBuildJar"].dependsOn("otherTask")
             +tasks["jar"].dependsOn("otherTask")
 
-.. _Smithy Gradle plugins: https://github.com/awslabs/smithy-gradle-plugin/
+.. _Smithy Gradle plugins: https://github.com/smithy-lang/smithy-gradle-plugin/
 .. _Configuration: https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.Configuration.html
