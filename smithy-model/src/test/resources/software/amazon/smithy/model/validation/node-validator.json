@@ -109,8 +109,14 @@
             "type": "string",
             "traits": {
                 "smithy.api#enum": [
-                    {"value": "foo", "name": "FOO"},
-                    {"value": "bar", "name": "BAR"}
+                    {
+                        "value": "foo",
+                        "name": "FOO"
+                    },
+                    {
+                        "value": "bar",
+                        "name": "BAR"
+                    }
                 ]
             }
         },
@@ -205,6 +211,15 @@
             },
             "traits": {
                 "smithy.api#sparse": {}
+            }
+        },
+        "ns.foo#DocumentMap": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#KeyString"
+            },
+            "value": {
+                "target": "smithy.api#Document"
             }
         },
         "ns.foo#Structure": {

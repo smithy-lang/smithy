@@ -179,8 +179,9 @@ public class NullableIndex implements KnowledgeIndex {
                 }
                 // fall-through.
             case LIST:
-                // Map values and list members are only null if they have the @sparse trait.
-                return container.hasTrait(SparseTrait.ID);
+                // Map values and list members are only null if they have the @sparse trait
+                // OR if the target is a Document since Document can hold a null value
+                return container.hasTrait(SparseTrait.ID) || target.isDocumentShape();
             default:
                 return false;
         }
