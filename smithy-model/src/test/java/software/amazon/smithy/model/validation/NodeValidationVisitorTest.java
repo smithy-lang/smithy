@@ -674,7 +674,7 @@ public class NodeValidationVisitorTest {
                 containsString(
                         "a: Non-sparse map shape `ns.foo#Map` cannot contain null values"));
     }
-    
+
     @Test
     public void nullNonSparseDocumentMapValue() {
         // This should not raise any errors since null is a valid Document value
