@@ -16,7 +16,7 @@ use smithy.test#httpResponseTests
         method: "POST"
         headers: { "smithy-protocol": "rpc-v2-cbor", Accept: "application/cbor" }
         forbidHeaders: ["x-amzn-query-mode"]
-        uri: "/service/NonQueryCompatibleRpcV2Protocol/operation/QueryCompatibleOperation"
+        uri: "/service/NonQueryCompatibleRpcV2Protocol/operation/QueryIncompatibleOperation"
         body: "{}"
         bodyMediaType: "application/json"
     }
