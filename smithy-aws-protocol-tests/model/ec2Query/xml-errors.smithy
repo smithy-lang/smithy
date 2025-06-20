@@ -23,6 +23,7 @@ $version: "2.0"
 namespace aws.protocoltests.ec2
 
 use aws.protocols#ec2Query
+use aws.protocoltests.config#ErrorCodeParams
 use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
@@ -91,6 +92,10 @@ apply InvalidGreeting @httpResponseTests([
         params: {
             Message: "Hi"
         },
+        vendorParamsShape: ErrorCodeParams
+        vendorParams: {
+            code: "InvalidGreeting"
+        }
     }
 ])
 
@@ -132,6 +137,10 @@ apply ComplexError @httpResponseTests([
               </Response>
               """,
         bodyMediaType: "application/xml",
+        vendorParamsShape: ErrorCodeParams
+        vendorParams: {
+            code: "ComplexError"
+        }
     }
 ])
 
