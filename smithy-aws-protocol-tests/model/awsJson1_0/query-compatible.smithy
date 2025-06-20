@@ -37,7 +37,7 @@ apply QueryCompatibleOperation @httpRequestTests([
         documentation: "Clients for query-compatible services MUST send the x-amzn-query-mode header."
         protocol: awsJson1_0
         method: "POST"
-        headers: { "Content-Type": "application/json", "x-amzn-query-mode": "true" }
+        headers: { "Content-Type": "application/json", "x-amzn-query-mode": "true", "X-Amz-Target": "QueryCompatibleJsonRpc10.QueryIncompatibleOperation" }
         uri: "/"
         body: "{}"
         bodyMediaType: "application/json"
