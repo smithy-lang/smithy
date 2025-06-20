@@ -52,7 +52,7 @@ structure NoCustomCodeError {
 apply NoCustomCodeError @httpResponseTests([
     {
         id: "QueryCompatibleAwsJson10CborNoCustomCodeError"
-        documentation: "Parses simple RpcV2 CBOR errors with no query error code"
+        documentation: "Parses simple errors with no query error code"
         protocol: awsJson1_0
         params: { message: "Hi" }
         code: 400
@@ -77,7 +77,7 @@ structure CustomCodeError {
 apply CustomCodeError @httpResponseTests([
     {
         id: "QueryCompatibleAwsJson10CustomCodeError"
-        documentation: "Parses simple RpcV2 CBOR errors with query error code"
+        documentation: "Parses simple errors with query error code"
         protocol: awsJson1_0
         params: { message: "Hi" }
         code: 400
