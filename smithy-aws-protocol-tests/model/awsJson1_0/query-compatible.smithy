@@ -37,7 +37,7 @@ apply QueryCompatibleOperation @httpRequestTests([
         documentation: "Clients for query-compatible services MUST send the x-amzn-query-mode header."
         protocol: awsJson1_0
         method: "POST"
-        headers: { "Content-Type": "application/json", "x-amzn-query-mode": "true", "X-Amz-Target": "QueryCompatibleJsonRpc10.QueryIncompatibleOperation" }
+        headers: { "Content-Type": "application/x-amz-json-1.0", "x-amzn-query-mode": "true", "X-Amz-Target": "QueryCompatibleJsonRpc10.QueryIncompatibleOperation" }
         uri: "/"
         body: "{}"
         bodyMediaType: "application/json"
@@ -56,7 +56,7 @@ apply NoCustomCodeError @httpResponseTests([
         protocol: awsJson1_0
         params: { message: "Hi" }
         code: 400
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/x-amz-json-1.0" }
         body: """
             {
                 "__type": "aws.protocoltests.json10#NoCustomCodeError",
@@ -81,7 +81,7 @@ apply CustomCodeError @httpResponseTests([
         protocol: awsJson1_0
         params: { message: "Hi" }
         code: 400
-        headers: { "Content-Type": "application/json", "x-amzn-query-error": "Customized;Sender" }
+        headers: { "Content-Type": "application/x-amz-json-1.0", "x-amzn-query-error": "Customized;Sender" }
         body: """
             {
                 "__type": "aws.protocoltests.json10#CustomCodeError",
