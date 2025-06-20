@@ -109,3 +109,30 @@ enum RetryMode {
     STANDARD = "standard"
     ADAPTIVE = "adaptive"
 }
+
+/// Vendor params to use when making assertions about error code or query
+/// error type.
+structure ErrorCodeParams {
+    /// The error code exposed to the customer.
+    ///
+    /// If the SDK exposes the error code to customers, this value MUST be
+    /// asserted to match the exposed error code.
+    ///
+    /// This is modifiable by the awsQueryError trait. For services with
+    /// awsQueryCompatible, it will be exposed in the `x-amzn-query-error`
+    /// header which takes the form `Code;Fault`. This value represents
+    /// the `Code` portion.
+    @required
+    code: String
+
+    /// The query error type exposed to the customer.
+    ///
+    /// If the SDK exposes the query error type to customers, this value MUST be
+    /// asserted to match the exposed query error type.
+    ///
+    /// This is modifiable by the awsQueryError trait. For services with
+    /// awsQueryCompatible, it will be exposed in the `x-amzn-query-error`
+    /// header which takes the form `Code;Fault`. This value represents
+    /// the `Fault` portion.
+    type: String
+}
