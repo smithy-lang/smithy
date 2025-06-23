@@ -5,6 +5,7 @@ software.amazon.smithy.aws.traits.SdkServiceIdValidator
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryValidator
 software.amazon.smithy.aws.traits.protocols.ProtocolHttpValidator
 software.amazon.smithy.aws.traits.EventSourceValidator
+software.amazon.smithy.aws.traits.protocols.QueryErrorCodeValidator
 software.amazon.smithy.aws.traits.protocols.ProtocolHttpPayloadValidator
 software.amazon.smithy.aws.traits.tagging.ServiceTaggingValidator
 software.amazon.smithy.aws.traits.tagging.TagEnabledServiceValidator
