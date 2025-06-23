@@ -29,6 +29,7 @@ namespace aws.protocoltests.query
 
 use aws.protocols#awsQueryError
 use aws.protocols#awsQuery
+use aws.protocoltests.config#ErrorCodeParams
 use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
@@ -97,6 +98,11 @@ apply InvalidGreeting @httpResponseTests([
               </ErrorResponse>
               """,
         bodyMediaType: "application/xml",
+        vendorParamsShape: ErrorCodeParams
+        vendorParams: {
+            code: "InvalidGreeting"
+            type: "Sender"
+        }
     }
 ])
 
@@ -136,6 +142,11 @@ apply ComplexError @httpResponseTests([
               </ErrorResponse>
               """,
         bodyMediaType: "application/xml",
+        vendorParamsShape: ErrorCodeParams
+        vendorParams: {
+            code: "ComplexError"
+            type: "Sender"
+        }
     }
 ])
 
@@ -175,5 +186,10 @@ apply CustomCodeError @httpResponseTests([
               </ErrorResponse>
               """,
         bodyMediaType: "application/xml",
+        vendorParamsShape: ErrorCodeParams
+        vendorParams: {
+            code: "Customized"
+            type: "Sender"
+        }
     }
 ])
