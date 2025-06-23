@@ -21,6 +21,9 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Emits a warning if two or more error shapes share the same error code.
+ */
 @SmithyInternalApi
 public class QueryErrorCodeValidator extends AbstractValidator {
     @Override
