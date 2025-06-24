@@ -191,6 +191,7 @@ tasks {
         relocate("org.apache", "software.amazon.smithy.cli.shaded.apache")
         relocate("org.sonatype", "software.amazon.smithy.cli.shaded.sonatype")
         relocate("org.codehaus", "software.amazon.smithy.cli.shaded.codehaus")
+        relocate("org.objectweb", "software.amazon.smithy.cli.shaded.objectweb")
 
         // If other javax packages are ever pulled in, we'll need to update this list. This is more deliberate about
         // what's shaded to ensure that things like javax.net.ssl.SSLSocketFactory are not inadvertently shaded.
