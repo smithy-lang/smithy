@@ -1,5 +1,16 @@
 # Smithy Changelog
 
+## 1.60.0 (2025-06-23)
+
+### Bug Fixes
+
+* Added ASM to the relocated dependencies. ([#2676](https://github.com/smithy-lang/smithy/pull/2676))
+
+### Features
+
+* Added protocol tests for `@awsQueryCompatible`. ([#2672](https://github.com/smithy-lang/smithy/pull/2672))
+* Added validation to ensure query errors are unique. ([#2674](https://github.com/smithy-lang/smithy/pull/2674))
+
 ## 1.59.0 (2025-06-16)
 
 ### Bug Fixes
