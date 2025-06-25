@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.60.1 (2025-06-25)
+
+### Bug Fixes
+
+* Fixed body of awsQueryCompatible test. ([#2677](https://github.com/smithy-lang/smithy/pull/2677))
+
 ## 1.60.0 (2025-06-23)
 
 ### Bug Fixes
