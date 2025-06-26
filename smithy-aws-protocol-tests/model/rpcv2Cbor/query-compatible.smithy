@@ -2,26 +2,28 @@ $version: "2"
 
 namespace aws.protocoltests.rpcv2cbor
 
+use aws.api#service
+use aws.auth#sigv4
+use aws.protocols#awsQueryCompatible
 use aws.protocols#awsQueryError
 use aws.protocoltests.config#ErrorCodeParams
 use smithy.protocols#rpcv2Cbor
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-@httpRequestTests([
-    {
-        id: "NonQueryCompatibleRpcV2CborForbidsQueryModeHeader"
-        documentation: "The query mode header MUST NOT be set on non-query-compatible services."
-        protocol: rpcv2Cbor
-        method: "POST"
-        headers: { "smithy-protocol": "rpc-v2-cbor", Accept: "application/cbor" }
-        forbidHeaders: ["x-amzn-query-mode"]
-        uri: "/service/NonQueryCompatibleRpcV2Protocol/operation/QueryIncompatibleOperation"
-        body: ""
-    }
-])
-@idempotent
-operation QueryIncompatibleOperation {}
+
+@service(sdkId: "Query Compatible RpcV2 Protocol")
+@sigv4(name: "querycompatiblerpcv2protocol")
+@rpcv2Cbor
+@title("Query Compatible RpcV2 Protocol Service")
+@awsQueryCompatible
+service QueryCompatibleRpcV2Protocol {
+    version: "2025-06-20"
+    operations: [
+        QueryCompatibleOperation
+    ]
+}
+
 
 @idempotent
 operation QueryCompatibleOperation {
