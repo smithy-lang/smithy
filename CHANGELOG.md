@@ -1,5 +1,13 @@
 # Smithy Changelog
 
+## 1.60.2 (2025-06-26)
+
+### Bug Fixes
+
+* Added model discovery args to smithy select. ([#2680](https://github.com/smithy-lang/smithy/pull/2680))
+* Fix `NonQueryCompatible` to remove the bogus empty JSON body and media-type. ([#2681](https://github.com/smithy-lang/smithy/pull/2681))
+* Reduced query error uniqueness validation severity. ([#2682](https://github.com/smithy-lang/smithy/pull/2682))
+
 ## 1.60.1 (2025-06-25)
 
 ### Bug Fixes
