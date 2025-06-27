@@ -112,7 +112,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     @Deprecated
     Node transformSmithyValueToProtocolValue(Node value) {
         return value;
-    }
+    };
 
     /**
      * Converts Smithy values in Node form to a data exchange format used by a protocol (e.g., XML).
