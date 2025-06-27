@@ -1,5 +1,3 @@
-$version: "2"
-
 namespace smithy.examplestrait
 
 use aws.protocols#restJson1
@@ -78,7 +76,6 @@ operation Withdraw {
 
         location: String
 
-        @jsonName("bank")
         bankName: String
 
         atmRecording: exampleVideo
