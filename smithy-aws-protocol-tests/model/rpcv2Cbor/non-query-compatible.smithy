@@ -26,7 +26,7 @@ service NonQueryCompatibleRpcV2Protocol {
         method: "POST"
         headers: { "smithy-protocol": "rpc-v2-cbor", Accept: "application/cbor" }
         forbidHeaders: ["x-amzn-query-mode"]
-        uri: "/service/NonQueryCompatibleRpcV2Protocol/operation/QueryIncompatibleOperation"
+        uri: "/service/NonQueryCompatibleRpcV2Protocol/operation/NonQueryCompatibleOperation"
         body: ""
     }
 ])
