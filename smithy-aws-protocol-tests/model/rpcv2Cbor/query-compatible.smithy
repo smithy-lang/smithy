@@ -59,7 +59,7 @@ apply NoCustomCodeError @httpResponseTests([
         params: { message: "Hi" }
         code: 400
         headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
-        body: "uQACZl9fdHlwZXgtYXdzLnByb3RvY29sdGVzdHMucnBjdjJjYm9yI05vQ3VzdG9tQ29kZUVycm9yZ01lc3NhZ2ViSGk="
+        body: "uQACZl9fdHlwZXgtYXdzLnByb3RvY29sdGVzdHMucnBjdjJjYm9yI05vQ3VzdG9tQ29kZUVycm9yZ21lc3NhZ2ViSGk="
         bodyMediaType: "application/cbor"
         vendorParamsShape: ErrorCodeParams
         vendorParams: { code: "NoCustomCodeError" }
@@ -80,7 +80,7 @@ apply CustomCodeError @httpResponseTests([
         params: { message: "Hi" }
         code: 400
         headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor", "x-amzn-query-error": "Customized;Sender" }
-        body: "uQACZl9fdHlwZXgrYXdzLnByb3RvY29sdGVzdHMucnBjdjJjYm9yI0N1c3RvbUNvZGVFcnJvcmdNZXNzYWdlYkhp"
+        body: "uQACZl9fdHlwZXgrYXdzLnByb3RvY29sdGVzdHMucnBjdjJjYm9yI0N1c3RvbUNvZGVFcnJvcmdtZXNzYWdlYkhp"
         bodyMediaType: "application/cbor"
         vendorParamsShape: ErrorCodeParams
         vendorParams: { code: "Customized", type: "Sender" }
