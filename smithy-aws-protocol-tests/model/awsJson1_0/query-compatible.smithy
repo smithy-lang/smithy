@@ -51,7 +51,7 @@ structure NoCustomCodeError {
 
 apply NoCustomCodeError @httpResponseTests([
     {
-        id: "QueryCompatibleAwsJson10CborNoCustomCodeError"
+        id: "QueryCompatibleAwsJson10NoCustomCodeError"
         documentation: "Parses simple errors with no query error code"
         protocol: awsJson1_0
         params: { message: "Hi" }
