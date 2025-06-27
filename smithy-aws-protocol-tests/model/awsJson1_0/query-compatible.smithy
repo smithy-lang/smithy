@@ -60,7 +60,7 @@ apply NoCustomCodeError @httpResponseTests([
         body: """
             {
                 "__type": "aws.protocoltests.json10#NoCustomCodeError",
-                "Message": "Hi"
+                "message": "Hi"
             }"""
         bodyMediaType: "application/json"
         vendorParamsShape: ErrorCodeParams
@@ -85,7 +85,7 @@ apply CustomCodeError @httpResponseTests([
         body: """
             {
                 "__type": "aws.protocoltests.json10#CustomCodeError",
-                "Message": "Hi"
+                "message": "Hi"
             }"""
         bodyMediaType: "application/json"
         vendorParamsShape: ErrorCodeParams
