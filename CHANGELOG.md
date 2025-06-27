@@ -4,7 +4,7 @@
 
 ### Bug Fixes
 
-* Fixed incorrect operation name in the URI for `NonQueryCompatibleOperation`. ([#2684](https://github.com/smithy-lang/smithy/pull/2684/))
+* Fixed incorrect operation name in URI for `NonQueryCompatibleOperation`. ([#2684](https://github.com/smithy-lang/smithy/pull/2684/))
 * Fixed jsonName conversion for OpenAPI examples. ([#2666](https://github.com/smithy-lang/smithy/pull/2666))
 * Fixed incorrect property name in protocol test bodies. ([#2686](https://github.com/smithy-lang/smithy/pull/2686))
 
