@@ -1,11 +1,19 @@
 # Smithy Changelog
 
+## 1.60.3 (2025-06-27)
+
+### Bug Fixes
+
+* Fixed incorrect operation name in URI for `NonQueryCompatibleOperation`. ([#2684](https://github.com/smithy-lang/smithy/pull/2684/))
+* Fixed jsonName conversion for OpenAPI examples. ([#2666](https://github.com/smithy-lang/smithy/pull/2666))
+* Fixed incorrect property name in protocol test bodies. ([#2686](https://github.com/smithy-lang/smithy/pull/2686))
+
 ## 1.60.2 (2025-06-26)
 
 ### Bug Fixes
 
 * Added model discovery args to smithy select. ([#2680](https://github.com/smithy-lang/smithy/pull/2680))
-* Fix `NonQueryCompatible` to remove the bogus empty JSON body and media-type. ([#2681](https://github.com/smithy-lang/smithy/pull/2681))
+* Fixed `NonQueryCompatible` to remove the bogus empty JSON body and media-type. ([#2681](https://github.com/smithy-lang/smithy/pull/2681))
 * Reduced query error uniqueness validation severity. ([#2682](https://github.com/smithy-lang/smithy/pull/2682))
 
 ## 1.60.1 (2025-06-25)
