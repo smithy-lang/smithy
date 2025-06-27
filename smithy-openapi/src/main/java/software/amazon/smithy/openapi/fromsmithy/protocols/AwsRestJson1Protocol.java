@@ -166,7 +166,7 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
     }
 
     @Override
-    Node transformSmithyValueToProtocolValue(Context<RestJson1Trait> context, Shape shape, Node value) {
+    Node transformSmithyValueToProtocolValue(Node value) {
         return value;
     }
 }
