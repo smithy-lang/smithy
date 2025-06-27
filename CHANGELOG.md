@@ -6,6 +6,7 @@
 
 * Fixed incorrect operation name in the URI for `NonQueryCompatibleOperation`. ([#2684](https://github.com/smithy-lang/smithy/pull/2684/))
 * Fixed jsonName conversion for OpenAPI examples. ([#2666](https://github.com/smithy-lang/smithy/pull/2666))
+* Fixed incorrect property name in protocol tests' body. ([#2686](https://github.com/smithy-lang/smithy/pull/2686))
 
 ## 1.60.2 (2025-06-26)
 
