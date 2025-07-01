@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 public final class Topic {
     private static final Pattern LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
-    private final TopicRules type;
+    private final TopicRule rule;
     private final String topic;
     private final List<Level> levels;
 
-    private Topic(TopicRules type, String topic, List<Level> levels) {
-        this.type = type;
+    private Topic(TopicRule rule, String topic, List<Level> levels) {
+        this.rule = rule;
         this.topic = topic;
         this.levels = Collections.unmodifiableList(levels);
     }
@@ -39,18 +39,18 @@ public final class Topic {
      * @throws TopicSyntaxException if the topic is malformed.
      */
     public static Topic parse(String topic) {
-        return parse(TopicRules.TOPIC, topic);
+        return parse(TopicRule.TOPIC, topic);
     }
 
     /**
      * Parses a string into an MQTT topic, including substitution labels.
      *
-     * @param type MQTT-specific rules to apply to the parsing
+     * @param rule MQTT-specific rule to apply to the parsing
      * @param topic string to parse into a modeled MQTT topic
      * @return Returns the parsed topic.
      * @throws TopicSyntaxException if the topic is malformed.
      */
-    public static Topic parse(TopicRules type, String topic) {
+    public static Topic parse(TopicRule rule, String topic) {
         List<Level> levels = new ArrayList<>();
         Set<String> labels = new HashSet<>();
 
@@ -70,7 +70,7 @@ public final class Topic {
             }
 
             if (level.contains("#") || level.contains("+")) {
-                if (type == TopicRules.TOPIC) {
+                if (rule == TopicRule.TOPIC) {
                     throw new TopicSyntaxException(format(
                             "Wildcard levels are not allowed in MQTT topics. Found `%s` in `%s`",
                             level,
@@ -109,25 +109,7 @@ public final class Topic {
             }
         }
 
-        return new Topic(type, topic, levels);
-    }
-
-    /**
-     * Gets what kind of topic this instance is.
-     *
-     * @return the kind of topic instance: topic or topic filter
-     */
-    public TopicRules getType() {
-        return type;
-    }
-
-    /**
-     * Gets the full topic value.
-     *
-     * @return the full topic value
-     */
-    public String getTopic() {
-        return topic;
+        return new Topic(rule, topic, levels);
     }
 
     /**
@@ -310,7 +292,7 @@ public final class Topic {
     /**
      * Controls the rules for how a value is parsed into a topic.
      */
-    public enum TopicRules {
+    public enum TopicRule {
 
         /**
          * Treat the value as a basic topic.  Wildcards are not allowed.

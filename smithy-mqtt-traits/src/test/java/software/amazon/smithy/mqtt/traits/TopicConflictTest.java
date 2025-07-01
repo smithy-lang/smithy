@@ -16,8 +16,8 @@ public class TopicConflictTest {
     @ParameterizedTest
     @MethodSource("topicCases")
     public void topicPatternConflicts(String topicA, String topicB, boolean isConflicting) {
-        Topic a = Topic.parse(Topic.TopicRules.TOPIC, topicA);
-        Topic b = Topic.parse(Topic.TopicRules.TOPIC, topicB);
+        Topic a = Topic.parse(Topic.TopicRule.TOPIC, topicA);
+        Topic b = Topic.parse(Topic.TopicRule.TOPIC, topicB);
 
         if (a.conflictsWith(b) != isConflicting) {
             if (isConflicting) {
@@ -64,8 +64,8 @@ public class TopicConflictTest {
     @ParameterizedTest
     @MethodSource("topicFilterCases")
     public void topicFilterPatternConflicts(String topicA, String topicB, boolean isConflicting) {
-        Topic a = Topic.parse(Topic.TopicRules.FILTER, topicA);
-        Topic b = Topic.parse(Topic.TopicRules.FILTER, topicB);
+        Topic a = Topic.parse(Topic.TopicRule.FILTER, topicA);
+        Topic b = Topic.parse(Topic.TopicRule.FILTER, topicB);
 
         if (a.conflictsWith(b) != isConflicting) {
             if (isConflicting) {
