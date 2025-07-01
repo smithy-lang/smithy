@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Adds MQTT topic filter parsing and conflict support; fixes a parsing bug that treated trailing and preceding empty levels incorrectly",
+  "pull_requests": []
+}
