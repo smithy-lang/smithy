@@ -84,6 +84,8 @@ configure<JReleaserExtension> {
                     active = Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository(stagingDir().get().asFile.path)
+                    maxRetries = 100
+                    retryDelay = 60
                 }
             }
         }
