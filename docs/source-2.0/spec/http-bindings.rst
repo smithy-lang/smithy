@@ -656,7 +656,53 @@ Serialization rules
   format by default, as defined in the ``IMF-fixdate`` production of
   :rfc:`9110#section-5.6.7`. The :ref:`timestampFormat-trait` MAY be used
   to use a custom serialization format.
+* If a member with the :ref:`httpHeader-trait` and a member with the
+  :ref:`httpPrefixHeaders-trait` set the same header, clients MUST use
+  the value set by the member with the :ref:`httpHeader-trait` and
+  disregard the value set by :ref:`httpPrefixHeaders-trait`. For
+  example, given the following model:
 
+.. code-block:: smithy
+
+    @readonly
+    @http(method: "GET", uri: "/myOperation")
+    operation MyOperation {
+        input: MyOperationInput
+    }
+
+    @input
+    structure MyOperationInput {
+        @httpPrefixHeaders("X-Foo-")
+        headers: MapOfStrings
+
+        @httpHeader("X-Foo-Value")
+        foo: String
+    }
+
+    map MapOfStrings {
+        key: String
+        value: String
+    }
+
+And given the following input to ``MyOperation``:
+
+.. code-block:: json
+
+    {
+        "headers": {
+            "Value": "not sent"
+        }
+        "foo": "resolved"
+    }
+
+An example HTTP request would be serialized as:
+
+::
+
+    GET /myOperation
+    Host: <server>
+    X-Foo-Value: resolved
+  
 .. note::
 
     While there is no limit placed on the length of an HTTP header field, many
@@ -720,6 +766,99 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
     * - X-Forwarded-For
       - X-Forwarded-For is an implementation detail of HTTP that does not
         need to be modeled.
+
+
+.. smithy-trait:: smithy.api#httpPrefixHeaders
+.. _httpPrefixHeaders-trait:
+
+``httpPrefixHeaders`` trait
+===========================
+
+Summary
+    Binds a map of key-value pairs to prefixed HTTP headers.
+Trait selector
+    .. code-block:: none
+
+        structure > member
+        :test(> map :not([trait|sparse]) > member[id|member=value] > string)
+
+    The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
+    that target a ``map`` of ``string``. The targeted map MUST NOT be marked
+    with the :ref:`sparse-trait`.
+Value type
+    ``string`` value that defines the prefix to prepend to each header field
+    name stored in the targeted map member. For example, given a prefix value
+    of "X-Amz-Meta-" and a map key entry of "Baz", the resulting header field
+    name serialized in the message is "X-Amz-Meta-Baz".
+Conflicts with
+   :ref:`httpLabel-trait`, :ref:`httpQuery-trait`, :ref:`httpQueryParams-trait`,
+   :ref:`httpHeader-trait`, :ref:`httpPayload-trait`,
+   :ref:`httpResponseCode-trait`
+Structurally exclusive
+    Only a single structure member can be bound to ``httpPrefixHeaders``.
+
+Given the following Smithy model:
+
+.. code-block:: smithy
+
+    @readonly
+    @http(method: "GET", uri: "/myOperation")
+    operation MyOperation {
+        input: MyOperationInput
+    }
+
+    @input
+    structure MyOperationInput {
+        @httpPrefixHeaders("X-Foo-")
+        headers: StringMap
+    }
+
+    map StringMap {
+        key: String
+        value: String
+    }
+
+And given the following input to ``MyOperation``:
+
+.. code-block:: json
+
+    {
+        "headers": {
+            "first": "hi",
+            "second": "there"
+        }
+    }
+
+An example HTTP request would be serialized as:
+
+::
+
+    GET /myOperation
+    Host: <server>
+    X-Foo-first: hi
+    X-Foo-second: there
+
+Disambiguation of ``httpPrefixHeaders``
+---------------------------------------
+
+In order to differentiate ``httpPrefixHeaders`` from other headers, when
+``httpPrefixHeaders`` are used with a non-empty string, no other
+:ref:`httpHeader-trait` bindings can start with the same prefix provided in
+``httpPrefixHeaders`` trait.
+
+If ``httpPrefixHeaders`` is set to an empty string, then other members
+can be bound to ``headers`` by using :ref:`httpHeader-trait`. This can
+lead to ambiguity on the source of provided header values, in this
+case the value using :ref:`httpHeader-trait` MUST be used instead of
+any value given by ``httpPrefixHeaders``.
+
+
+
+.. note::
+
+    ``httpPrefixHeaders`` is only considered when applied to top-level members
+    of an operation's input, output, or error structures. This trait has no
+    meaning in any other context and is simply ignored.
 
 
 .. smithy-trait:: smithy.api#httpLabel
@@ -902,139 +1041,6 @@ Serialization rules
     ``httpPayload`` is only considered when applied to top-level members of an
     operation's input, output, or error structures. This trait has no meaning
     in any other context and is simply ignored.
-
-
-.. smithy-trait:: smithy.api#httpPrefixHeaders
-.. _httpPrefixHeaders-trait:
-
-``httpPrefixHeaders`` trait
-===========================
-
-Summary
-    Binds a map of key-value pairs to prefixed HTTP headers.
-Trait selector
-    .. code-block:: none
-
-        structure > member
-        :test(> map :not([trait|sparse]) > member[id|member=value] > string)
-
-    The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``. The targeted map MUST NOT be marked
-    with the :ref:`sparse-trait`.
-Value type
-    ``string`` value that defines the prefix to prepend to each header field
-    name stored in the targeted map member. For example, given a prefix value
-    of "X-Amz-Meta-" and a map key entry of "Baz", the resulting header field
-    name serialized in the message is "X-Amz-Meta-Baz".
-Conflicts with
-   :ref:`httpLabel-trait`, :ref:`httpQuery-trait`, :ref:`httpQueryParams-trait`,
-   :ref:`httpHeader-trait`, :ref:`httpPayload-trait`,
-   :ref:`httpResponseCode-trait`
-Structurally exclusive
-    Only a single structure member can be bound to ``httpPrefixHeaders``.
-
-Given the following Smithy model:
-
-.. code-block:: smithy
-
-    @readonly
-    @http(method: "GET", uri: "/myOperation")
-    operation MyOperation {
-        input: MyOperationInput
-    }
-
-    @input
-    structure MyOperationInput {
-        @httpPrefixHeaders("X-Foo-")
-        headers: StringMap
-    }
-
-    map StringMap {
-        key: String
-        value: String
-    }
-
-And given the following input to ``MyOperation``:
-
-.. code-block:: json
-
-    {
-        "headers": {
-            "first": "hi",
-            "second": "there"
-        }
-    }
-
-An example HTTP request would be serialized as:
-
-::
-
-    GET /myOperation
-    Host: <server>
-    X-Foo-first: hi
-    X-Foo-second: there
-
-Given the following Smithy model that also uses the ``httpHeader`` trait:
-
-.. code-block:: smithy
-
-    @readonly
-    @http(method: "GET", uri: "/myOperation")
-    operation MyOperation {
-        input: MyOperationInput
-    }
-
-    @input
-    structure MyOperationInput {
-        @httpPrefixHeaders("X-Foo-")
-        headers: MapOfStrings
-
-        @httpHeader("X-Foo-Value")
-        foo: String
-    }
-
-    map MapOfStrings {
-        key: String
-        value: String
-    }
-
-And given the following input to ``MyOperation``:
-
-.. code-block:: json
-
-    {
-        "headers": {
-            "Value": "not sent"
-        }
-        "foo": "resolved"
-    }
-
-An example HTTP request would be serialized as:
-
-::
-
-    GET /myOperation
-    Host: <server>
-    X-Foo-Value: resolved
-
-
-Disambiguation of ``httpPrefixHeaders``
----------------------------------------
-
-In order to differentiate ``httpPrefixHeaders`` from other headers, when
-``httpPrefixHeaders`` are used with a non-empty string, no other
-:ref:`httpHeader-trait` bindings can start with the same prefix provided in
-``httpPrefixHeaders`` trait.
-
-If ``httpPrefixHeaders`` is set to an empty string, then other members can be
-bound to ``headers``. However, this can lead to ambiguity on the source of
-provided header values.
-
-.. note::
-
-    ``httpPrefixHeaders`` is only considered when applied to top-level members
-    of an operation's input, output, or error structures. This trait has no
-    meaning in any other context and is simply ignored.
 
 
 .. smithy-trait:: smithy.api#httpQuery
