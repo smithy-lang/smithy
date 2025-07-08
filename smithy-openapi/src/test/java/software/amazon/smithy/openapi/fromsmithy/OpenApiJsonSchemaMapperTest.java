@@ -140,6 +140,95 @@ public class OpenApiJsonSchemaMapperTest {
     }
 
     @Test
+    public void disableDefaultDeprecatedMessage() {
+        IntegerShape shape = IntegerShape.builder()
+                .id("a.b#C")
+                .addTrait(DeprecatedTrait.builder().build())
+                .addTrait(new DocumentationTrait("This is an integer."))
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultDeprecatedMessage(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        String expected = "This is an integer.";
+        assertThat(document.getRootSchema().getDescription().get(), equalTo(expected));
+
+        // Asserts that deprecated node is still there
+        assertThat(document.getRootSchema().getExtension("deprecated").get(), equalTo(Node.from(true)));
+    }
+
+    @Test
+    public void disableDefaultDeprecatedMessageStillAllowsCustomMessage() {
+        String message = "Use a.b#D instead.";
+        IntegerShape shape = IntegerShape.builder()
+                .id("a.b#C")
+                .addTrait(DeprecatedTrait.builder().message(message).build())
+                .addTrait(new DocumentationTrait("This is an integer."))
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultDeprecatedMessage(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        String expected = "This is an integer.\nThis shape is deprecated: Use a.b#D instead.";
+        assertThat(document.getRootSchema().getDescription().get(), equalTo(expected));
+    }
+
+    @Test
+    public void disableDefaultDeprecatedMessageStillAllowsSince() {
+        String since = "2020-01-01";
+        IntegerShape shape = IntegerShape.builder()
+                .id("a.b#C")
+                .addTrait(DeprecatedTrait.builder().since(since).build())
+                .addTrait(new DocumentationTrait("This is an integer."))
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultDeprecatedMessage(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        String expected = "This is an integer.\nThis shape is deprecated since 2020-01-01.";
+        assertThat(document.getRootSchema().getDescription().get(), equalTo(expected));
+    }
+
+    @Test
+    public void disableDefaultDeprecatedMessageOnlyAffectsIfTrue() {
+        IntegerShape shape = IntegerShape.builder()
+                .id("a.b#C")
+                .addTrait(DeprecatedTrait.builder().build())
+                .addTrait(new DocumentationTrait("This is an integer."))
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultDeprecatedMessage(false);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .config(config)
+                .build()
+                .convertShape(shape);
+
+        String expected = "This is an integer.\nThis shape is deprecated.";
+        assertThat(document.getRootSchema().getDescription().get(), equalTo(expected));
+    }
+
+    @Test
     public void supportsInt32() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
