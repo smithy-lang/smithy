@@ -908,9 +908,9 @@ shape. Members and references within a model MUST NOT target shapes.
 Summary
     Marks a shape as a :ref:`trait <traits>`.
 Trait selector
-    ``:is(simpleType, list, map, set, structure, union)``
+    ``:is(simpleType, list, map, structure, union)``
 
-    This trait can only be applied to simple types, ``list``, ``map``, ``set``,
+    This trait can only be applied to simple types, ``list``, ``map``,
     ``structure``, and ``union`` shapes.
 Value type
     ``structure``
