@@ -85,7 +85,7 @@
         "implicitGlobalRegion": "us-iso-east-1"
       },
       "regions": {
-        "us-iso-east-1":  {},
+        "us-iso-east-1": {},
         "us-iso-west-1": {},
         "aws-iso-global": {}
       }
@@ -107,30 +107,47 @@
       }
     },
     {
-      "id" : "aws-iso-e",
-      "outputs" : {
-        "dnsSuffix" : "cloud.adc-e.uk",
-        "dualStackDnsSuffix" : "cloud.adc-e.uk",
-        "implicitGlobalRegion" : "eu-isoe-west-1",
-        "name" : "aws-iso-e",
-        "supportsDualStack" : false,
-        "supportsFIPS" : true
+      "id": "aws-iso-e",
+      "outputs": {
+        "dnsSuffix": "cloud.adc-e.uk",
+        "dualStackDnsSuffix": "cloud.adc-e.uk",
+        "implicitGlobalRegion": "eu-isoe-west-1",
+        "name": "aws-iso-e",
+        "supportsDualStack": false,
+        "supportsFIPS": true
       },
-      "regionRegex" : "^eu\\-isoe\\-\\w+\\-\\d+$",
-      "regions" : { }
+      "regionRegex": "^eu\\-isoe\\-\\w+\\-\\d+$",
+      "regions": {}
     },
     {
-      "id" : "aws-iso-f",
-      "outputs" : {
-        "dnsSuffix" : "csp.hci.ic.gov",
-        "dualStackDnsSuffix" : "csp.hci.ic.gov",
-        "implicitGlobalRegion" : "us-isof-south-1",
-        "name" : "aws-iso-f",
-        "supportsDualStack" : false,
-        "supportsFIPS" : true
+      "id": "aws-iso-f",
+      "outputs": {
+        "dnsSuffix": "csp.hci.ic.gov",
+        "dualStackDnsSuffix": "csp.hci.ic.gov",
+        "implicitGlobalRegion": "us-isof-south-1",
+        "name": "aws-iso-f",
+        "supportsDualStack": false,
+        "supportsFIPS": true
       },
-      "regionRegex" : "^us\\-isof\\-\\w+\\-\\d+$",
-      "regions" : { }
+      "regionRegex": "^us\\-isof\\-\\w+\\-\\d+$",
+      "regions": {}
+    },
+    {
+      "id": "aws-eusc",
+      "outputs": {
+        "dnsSuffix": "amazonaws.eu",
+        "dualStackDnsSuffix": "amazonaws.eu",
+        "implicitGlobalRegion": "eusc-de-east-1",
+        "name": "aws-eusc",
+        "supportsDualStack": false,
+        "supportsFIPS": true
+      },
+      "regionRegex": "^eusc\\-(de)\\-\\w+\\-\\d+$",
+      "regions": {
+        "eusc-de-east-1": {
+          "description": "EU (Germany)"
+        }
+      }
     }
   ]
 }
