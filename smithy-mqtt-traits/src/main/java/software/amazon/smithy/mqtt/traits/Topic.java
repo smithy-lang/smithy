@@ -21,12 +21,10 @@ import java.util.stream.Collectors;
 public final class Topic {
     private static final Pattern LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
-    private final TopicRule rule;
     private final String topic;
     private final List<Level> levels;
 
-    private Topic(TopicRule rule, String topic, List<Level> levels) {
-        this.rule = rule;
+    private Topic(String topic, List<Level> levels) {
         this.topic = topic;
         this.levels = Collections.unmodifiableList(levels);
     }
@@ -109,7 +107,7 @@ public final class Topic {
             }
         }
 
-        return new Topic(rule, topic, levels);
+        return new Topic(topic, levels);
     }
 
     /**
@@ -183,15 +181,6 @@ public final class Topic {
             if (thisLevel.isLabel() != otherLevel.isLabel()) {
                 // One is static and the other is not, so there is not a
                 // conflict. One is more specific than the other.
-
-                // Note: I disagree with the above assertion and what it implies for the definition (which is not
-                // given anywhere) of "topic conflict."  My definition of "topic conflict" is "could potentially have
-                // a non-empty routing intersection."
-                //
-                // In particular, the above check can lead to a non-empty intersection if the label substitution
-                // yields a value that matches the non-label level's value.
-                //
-                // Despite this, I don't want to change the behavior of what currently exists.
                 return false;
             }
         }
