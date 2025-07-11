@@ -207,6 +207,15 @@
                 "smithy.api#sparse": {}
             }
         },
+        "ns.foo#DocumentMap": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#KeyString"
+            },
+            "value": {
+                "target": "smithy.api#Document"
+            }
+        },
         "ns.foo#Structure": {
             "type": "structure",
             "members": {
