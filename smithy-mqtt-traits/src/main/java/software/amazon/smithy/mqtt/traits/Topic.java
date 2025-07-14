@@ -30,23 +30,62 @@ public final class Topic {
     }
 
     /**
-     * Parses an MQTT topic and labels.
+     * Parses a string into an MQTT topic, including substitution labels.
      *
-     * @param topic Topic to parse.
+     * @param topic string to parse into a modeled MQTT topic
      * @return Returns the parsed topic.
      * @throws TopicSyntaxException if the topic is malformed.
      */
     public static Topic parse(String topic) {
+        return parse(TopicRule.TOPIC, topic);
+    }
+
+    /**
+     * Parses a string into an MQTT topic, including substitution labels.
+     *
+     * @param rule MQTT-specific rule to apply to the parsing
+     * @param topic string to parse into a modeled MQTT topic
+     * @return Returns the parsed topic.
+     * @throws TopicSyntaxException if the topic is malformed.
+     */
+    public static Topic parse(TopicRule rule, String topic) {
         List<Level> levels = new ArrayList<>();
         Set<String> labels = new HashSet<>();
 
-        for (String level : topic.split("/")) {
-            if (level.contains("#") || level.contains("+")) {
+        if (topic.isEmpty()) {
+            throw new TopicSyntaxException("Topics and topic filters may not be empty");
+        }
+
+        boolean hasFullWildcard = false;
+
+        // use negative limit to allow zero-length captures which matches MQTT specification behavior
+        for (String level : topic.split("/", -1)) {
+            if (hasFullWildcard) {
                 throw new TopicSyntaxException(format(
-                        "Wildcard levels are not allowed in MQTT topics. Found `%s` in `%s`",
+                        "A full wildcard must be the last segment in a topic filter. Found `%s` in `%s`",
                         level,
                         topic));
-            } else if (level.startsWith("{") && level.endsWith("}")) {
+            }
+
+            if (level.contains("#") || level.contains("+")) {
+                if (rule == TopicRule.TOPIC) {
+                    throw new TopicSyntaxException(format(
+                            "Wildcard levels are not allowed in MQTT topics. Found `%s` in `%s`",
+                            level,
+                            topic));
+                } else if (level.length() > 1) {
+                    throw new TopicSyntaxException(format(
+                            "A wildcard must be the entire topic segment. Found `%s` in `%s`",
+                            level,
+                            topic));
+                }
+
+                if (level.equals("#")) {
+                    hasFullWildcard = true;
+                }
+            }
+
+            if (level.startsWith("{") && level.endsWith("}")) {
                 String label = level.substring(1, level.length() - 1);
                 if (!LABEL_PATTERN.matcher(label).matches()) {
                     throw new TopicSyntaxException(format(
@@ -119,11 +158,27 @@ public final class Topic {
         for (int i = 0; i < minSize; i++) {
             Level thisLevel = levels.get(i);
             Level otherLevel = other.levels.get(i);
+
+            String thisValue = thisLevel.getContent();
+            String otherValue = otherLevel.getContent();
+
+            // multi-level wildcard will conflict regardless of what the other level is
+            if (thisValue.equals("#") || otherValue.equals("#")) {
+                return true;
+            }
+
+            // single-level wildcard is a level match regardless of the other level
+            if (thisValue.equals("+") || otherValue.equals("+")) {
+                continue;
+            }
+
             // Both are static levels with different values.
             if (!thisLevel.isLabel() && !otherLevel.isLabel()
-                    && !thisLevel.getContent().equals(otherLevel.getContent())) {
+                    && !thisValue.equals(otherValue)) {
                 return false;
-            } else if (thisLevel.isLabel() != otherLevel.isLabel()) {
+            }
+
+            if (thisLevel.isLabel() != otherLevel.isLabel()) {
                 // One is static and the other is not, so there is not a
                 // conflict. One is more specific than the other.
                 return false;
@@ -221,5 +276,22 @@ public final class Topic {
         public int hashCode() {
             return Objects.hash(isLabel, value);
         }
+    }
+
+    /**
+     * Controls the rules for how a value is parsed into a topic.
+     */
+    public enum TopicRule {
+
+        /**
+         * Treat the value as a basic topic.  Wildcards are not allowed.
+         */
+        TOPIC,
+
+        /**
+         * Treat the value as a topic filter.  Single and multi-level wildcards are allowed if they follow the
+         * MQTT specification properly.
+         */
+        FILTER
     }
 }
