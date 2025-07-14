@@ -136,6 +136,7 @@ public class JsonSchemaConfig {
     private boolean disableIntEnums = false;
     private boolean addReferenceDescriptions = false;
     private boolean useInlineMaps = false;
+    private boolean disableDefaultDeprecatedMessage = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
@@ -465,6 +466,24 @@ public class JsonSchemaConfig {
      */
     public void setDisableIntEnums(boolean disableIntEnums) {
         this.disableIntEnums = disableIntEnums;
+    }
+
+    public boolean getDisableDefaultDeprecatedMessage() {
+        return disableDefaultDeprecatedMessage;
+    }
+
+    /**
+     * Set to true to disable adding default deprecated messages to schema descriptions
+     * when the @deprecated trait is present but has no message or since.
+     *
+     * <p>By default, when a shape has the @deprecated trait, a default message like
+     * "This operation is deprecated." is added to the schema description. Setting this
+     * to true will prevent the default description from being added.
+     *
+     * @param disableDefaultDeprecatedMessage True to disable default description for @deprecated trait.
+     */
+    public void setDisableDefaultDeprecatedMessage(boolean disableDefaultDeprecatedMessage) {
+        this.disableDefaultDeprecatedMessage = disableDefaultDeprecatedMessage;
     }
 
     /**

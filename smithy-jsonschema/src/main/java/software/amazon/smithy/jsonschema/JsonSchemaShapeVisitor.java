@@ -381,11 +381,21 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         shape
                 .getTrait(DocumentationTrait.class)
                 .ifPresent(trait -> builder.append(trait.getValue()));
+
+        JsonSchemaConfig config = converter.getConfig();
+        boolean disableDefaultDeprecatedMessage = config.getDisableDefaultDeprecatedMessage();
+
         shape
                 .getTrait(DeprecatedTrait.class)
-                .ifPresent(trait -> builder
-                        .append("\n")
-                        .append(trait.getDeprecatedDescription(shape.getType())));
+                .ifPresent(trait -> {
+                    if (!disableDefaultDeprecatedMessage || trait.getMessage().isPresent()
+                            || trait.getSince().isPresent()) {
+                        builder
+                                .append("\n")
+                                .append(trait.getDeprecatedDescription(shape.getType()));
+                    }
+                });
+
         String description = builder.toString().trim();
         return description.isEmpty() ? Optional.empty() : Optional.of(description);
     }
