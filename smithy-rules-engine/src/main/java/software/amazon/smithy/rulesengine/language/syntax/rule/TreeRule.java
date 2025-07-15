@@ -21,6 +21,7 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyUnstableApi
 public final class TreeRule extends Rule {
     private final List<Rule> rules;
+    private int hash;
 
     TreeRule(Builder builder, List<Rule> rules) {
         super(builder);
@@ -54,7 +55,7 @@ public final class TreeRule extends Rule {
     }
 
     @Override
-    void withValueNode(ObjectNode.Builder builder) {
+    protected void withValueNode(ObjectNode.Builder builder) {
         ArrayNode.Builder rulesBuilder = ArrayNode.builder().sourceLocation(getSourceLocation());
         for (Rule rule : rules) {
             rulesBuilder.withValue(rule.toNode());
@@ -69,5 +70,15 @@ public final class TreeRule extends Rule {
             ruleStrings.add(rule.toString());
         }
         return super.toString() + StringUtils.indent(String.join("\n", ruleStrings), 2);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hash;
+        if (result == 0) {
+            result = super.hashCode();
+            hash = result;
+        }
+        return result;
     }
 }

@@ -84,7 +84,10 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
 
         Builder builder = new Builder(node);
         objectNode.getStringMember(DOCUMENTATION, builder::description);
-        builder.conditions(objectNode.expectArrayMember(CONDITIONS).getElementsAs(Condition::fromNode));
+
+        objectNode.getArrayMember(CONDITIONS).ifPresent(conds -> {
+            builder.conditions(conds.getElementsAs(Condition::fromNode));
+        });
 
         String type = objectNode.expectStringMember(TYPE).getValue();
         switch (type) {
@@ -131,9 +134,27 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
      */
     public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
+    /**
+     * Get a new Rule of the same type that has the same values, but no conditions.
+     *
+     * @return the rule without conditions.
+     * @throws UnsupportedOperationException if it is a TreeRule or Condition rule.
+     */
+    public Rule withoutConditions() {
+        if (getConditions().isEmpty()) {
+            return this;
+        } else if (this instanceof ErrorRule) {
+            return new ErrorRule(ErrorRule.builder(this), ((ErrorRule) this).getError());
+        } else if (this instanceof EndpointRule) {
+            return new EndpointRule(EndpointRule.builder(this), ((EndpointRule) this).getEndpoint());
+        } else {
+            throw new UnsupportedOperationException("Cannot remove conditions from " + this);
+        }
+    }
+
     protected abstract Type typecheckValue(Scope<Type> scope);
 
-    abstract void withValueNode(ObjectNode.Builder builder);
+    protected abstract void withValueNode(ObjectNode.Builder builder);
 
     @Override
     public Type typeCheck(Scope<Type> scope) {
@@ -150,11 +171,13 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public Node toNode() {
         ObjectNode.Builder builder = ObjectNode.builder();
 
-        ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
-        for (Condition condition : conditions) {
-            conditionsBuilder.withValue(condition.toNode());
+        if (!conditions.isEmpty()) {
+            ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
+            for (Condition condition : conditions) {
+                conditionsBuilder.withValue(condition.toNode());
+            }
+            builder.withMember(CONDITIONS, conditionsBuilder.build());
         }
-        builder.withMember(CONDITIONS, conditionsBuilder.build());
 
         if (documentation != null) {
             builder.withMember(DOCUMENTATION, documentation);
@@ -219,7 +242,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             return this;
         }
 
-        public Builder conditions(List<ToCondition> conditions) {
+        public Builder conditions(List<? extends ToCondition> conditions) {
             this.conditions.addAll(conditions);
             return this;
         }
@@ -229,20 +252,24 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             return this;
         }
 
-        public Rule endpoint(Endpoint endpoint) {
-            return this.onBuild.apply(new EndpointRule(this, endpoint));
+        public EndpointRule endpoint(Endpoint endpoint) {
+            return (EndpointRule) this.onBuild.apply(new EndpointRule(this, endpoint));
         }
 
-        public Rule error(Node error) {
-            return this.onBuild.apply(new ErrorRule(this, Expression.fromNode(error)));
+        public ErrorRule error(Node error) {
+            return error(Expression.fromNode(error));
         }
 
-        public Rule error(String error) {
-            return this.onBuild.apply(new ErrorRule(this, Literal.of(error)));
+        public ErrorRule error(String error) {
+            return error(Literal.of(error));
         }
 
-        public Rule treeRule(Rule... rules) {
-            return this.treeRule(Arrays.asList(rules));
+        public ErrorRule error(Expression error) {
+            return (ErrorRule) this.onBuild.apply(new ErrorRule(this, error));
+        }
+
+        public TreeRule treeRule(Rule... rules) {
+            return (TreeRule) this.treeRule(Arrays.asList(rules));
         }
 
         @SafeVarargs

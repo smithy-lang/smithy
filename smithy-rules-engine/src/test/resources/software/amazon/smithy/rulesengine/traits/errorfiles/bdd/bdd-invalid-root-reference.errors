@@ -1,0 +1,1 @@
+[ERROR] smithy.example#InvalidRootRefService: Error creating trait `smithy.rules#bdd`: Root reference cannot be complemented: -5 | Model
