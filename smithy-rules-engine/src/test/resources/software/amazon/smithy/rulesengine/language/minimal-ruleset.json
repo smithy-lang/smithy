@@ -9,7 +9,6 @@
   },
   "rules": [
     {
-      "conditions": [],
       "documentation": "base rule",
       "endpoint": {
         "url": "https://{Region}.amazonaws.com",

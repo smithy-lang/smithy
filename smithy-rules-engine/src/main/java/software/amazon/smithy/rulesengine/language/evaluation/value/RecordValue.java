@@ -97,4 +97,13 @@ public final class RecordValue extends Value {
     public String toString() {
         return value.toString();
     }
+
+    @Override
+    public Object toObject() {
+        Map<String, Object> result = new HashMap<>(value.size());
+        for (Map.Entry<Identifier, Value> entry : value.entrySet()) {
+            result.put(entry.getKey().toString(), entry.getValue().toObject());
+        }
+        return result;
+    }
 }

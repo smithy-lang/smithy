@@ -238,6 +238,11 @@ public final class GetAttr extends LibraryFunction {
         public GetAttr createFunction(FunctionNode functionNode) {
             return new GetAttr(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 7;
+        }
     }
 
     public interface Part {

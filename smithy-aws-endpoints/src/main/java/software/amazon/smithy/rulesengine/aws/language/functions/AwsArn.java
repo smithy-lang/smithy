@@ -4,7 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,26 +39,65 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
      * @return the optional ARN.
      */
     public static Optional<AwsArn> parse(String arn) {
-        String[] base = arn.split(":", 6);
-        if (base.length != 6) {
+        if (arn == null || arn.length() < 8 || !arn.startsWith("arn:")) {
             return Optional.empty();
         }
-        // First section must be "arn".
-        if (!base[0].equals("arn")) {
+
+        // find each of the first five ':' positions
+        int p0 = 3; // after "arn"
+        int p1 = arn.indexOf(':', p0 + 1);
+        if (p1 < 0) {
             return Optional.empty();
         }
-        // Sections for partition, service, and resource type must not be empty.
-        if (base[1].isEmpty() || base[2].isEmpty() || base[5].isEmpty()) {
+
+        int p2 = arn.indexOf(':', p1 + 1);
+        if (p2 < 0) {
+            return Optional.empty();
+        }
+
+        int p3 = arn.indexOf(':', p2 + 1);
+        if (p3 < 0) {
+            return Optional.empty();
+        }
+
+        int p4 = arn.indexOf(':', p3 + 1);
+        if (p4 < 0) {
+            return Optional.empty();
+        }
+
+        // extract and validate mandatory parts
+        String partition = arn.substring(p0 + 1, p1);
+        String service = arn.substring(p1 + 1, p2);
+        String region = arn.substring(p2 + 1, p3);
+        String accountId = arn.substring(p3 + 1, p4);
+        String resource = arn.substring(p4 + 1);
+
+        if (partition.isEmpty() || service.isEmpty() || resource.isEmpty()) {
             return Optional.empty();
         }
 
         return Optional.of(builder()
-                .partition(base[1])
-                .service(base[2])
-                .region(base[3])
-                .accountId(base[4])
-                .resource(Arrays.asList(base[5].split("[:/]", -1)))
+                .partition(partition)
+                .service(service)
+                .region(region)
+                .accountId(accountId)
+                .resource(splitResource(resource))
                 .build());
+    }
+
+    private static List<String> splitResource(String resource) {
+        List<String> result = new ArrayList<>();
+        int start = 0;
+        int length = resource.length();
+        for (int i = 0; i < length; i++) {
+            char c = resource.charAt(i);
+            if (c == ':' || c == '/') {
+                result.add(resource.substring(start, i));
+                start = i + 1;
+            }
+        }
+        result.add(resource.substring(start));
+        return result;
     }
 
     /**

@@ -230,4 +230,6 @@ public abstract class Value implements FromSourceLocation, ToNode {
                 getType(),
                 this));
     }
+
+    public abstract Object toObject();
 }

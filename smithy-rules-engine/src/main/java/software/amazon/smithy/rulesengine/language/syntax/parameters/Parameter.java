@@ -234,7 +234,7 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
 
     @Override
     public Condition.Builder toConditionBuilder() {
-        return Condition.builder().fn(toExpression());
+        throw new UnsupportedOperationException("Cannot convert a Parameter to a Condition");
     }
 
     @Override

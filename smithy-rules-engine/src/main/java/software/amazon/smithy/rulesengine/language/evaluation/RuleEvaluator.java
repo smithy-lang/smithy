@@ -19,6 +19,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
@@ -68,6 +69,21 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
             }
             throw new RuntimeException("No rules in ruleset matched");
         });
+    }
+
+    /**
+     * Configure the rule evaluator with the given parameters and parameter values for manual evaluation.
+     *
+     * @param parameters Parameters of the ruleset to evaluate.
+     * @param parameterArguments Parameter values to evaluate the ruleset against.
+     * @return the updated evaluator.
+     */
+    public RuleEvaluator withParameters(Parameters parameters, Map<Identifier, Value> parameterArguments) {
+        for (Parameter parameter : parameters) {
+            parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
+        }
+        parameterArguments.forEach(scope::insert);
+        return this;
     }
 
     /**

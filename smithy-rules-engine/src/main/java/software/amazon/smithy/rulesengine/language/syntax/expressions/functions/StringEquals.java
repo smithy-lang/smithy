@@ -57,6 +57,25 @@ public final class StringEquals extends LibraryFunction {
     }
 
     @Override
+    public StringEquals canonicalize() {
+        List<Expression> args = getArguments();
+
+        // Strip single-variable templates
+        Expression arg0 = stripSingleVariableTemplate(args.get(0));
+        Expression arg1 = stripSingleVariableTemplate(args.get(1));
+
+        // Check if we need to reorder for commutative canonicalization
+        if (shouldSwapArgs(arg0, arg1)) {
+            return StringEquals.ofExpressions(arg1, arg0);
+        } else if (arg0 != args.get(0) || arg1 != args.get(1)) {
+            // Templates were stripped but no reordering needed
+            return StringEquals.ofExpressions(arg0, arg1);
+        }
+
+        return this;
+    }
+
+    @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitStringEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
@@ -91,6 +110,11 @@ public final class StringEquals extends LibraryFunction {
         @Override
         public StringEquals createFunction(FunctionNode functionNode) {
             return new StringEquals(functionNode);
+        }
+
+        @Override
+        public int getCostHeuristic() {
+            return 3;
         }
     }
 }

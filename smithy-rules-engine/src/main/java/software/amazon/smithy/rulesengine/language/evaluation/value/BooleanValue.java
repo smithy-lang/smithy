@@ -68,4 +68,9 @@ public final class BooleanValue extends Value {
     public String toString() {
         return String.valueOf(value);
     }
+
+    @Override
+    public Object toObject() {
+        return value;
+    }
 }

@@ -218,4 +218,10 @@
         <Bug code="CT"/>
     </Match>
 
+    <!-- This is a false positive. Yeah, we have a terminal node that's a singleton, but the ctor is still valid. -->
+    <Match>
+        <Class name="software.amazon.smithy.rulesengine.logic.cfg.ResultNode" />
+        <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+    </Match>
+
 </FindBugsFilter>

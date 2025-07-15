@@ -1,0 +1,1 @@
+[ERROR] smithy.example#ValidBddService: Error creating trait `smithy.rules#bdd`: Extra data found after decoding 2 nodes. 9 bytes remaining. | Model
