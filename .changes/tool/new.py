@@ -128,7 +128,7 @@ def parse_filled_in_contents(contents: str) -> Change | None:
             # of the description, so we can break once we pull in the
             # remaining lines.
             first_line = line.split(":")[1].strip()
-            full_description = "\n".join([first_line] + list(lines))
+            full_description = "\n".join([first_line], *list(lines))
             parsed["description"] = full_description.strip()
             break
 
