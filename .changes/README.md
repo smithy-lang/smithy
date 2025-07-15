@@ -48,3 +48,27 @@ Then commit the changelog and the `.changes` directory:
 ```sh
 > git add CHANGELOG.md .changes
 ```
+
+## Development
+
+The changelog tool is a python project managed by [uv](https://docs.astral.sh/uv/).
+While most usage doesn't require worrying about the underlying python code
+due to a lack of dependencies, developers must make use of `uv` to lint and
+format code before committing.
+
+```sh
+> uv sync
+> uv run ruff check --fix
+> uv run ruff format
+> uv run pyright
+```
+
+uv will manage keeping a virtual python environment up to date and ensure that the
+right versions of these tools is used.
+
+uv can also be used to run scripts:
+
+```sh
+> uv sync
+> uv run render
+```
