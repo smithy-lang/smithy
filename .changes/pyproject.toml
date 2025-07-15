@@ -6,6 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
 
+[project.scripts]
+amend = "tool.amend:main"
+render = "tool.render:main"
+new-change = "tool.new:main"
+
 [dependency-groups]
 lint = [
     "ruff>=0.12.3",
@@ -16,7 +21,7 @@ typing = [
 ]
 
 [tool.uv]
-package=false
+package = true
 required-version = ">=0.7.21"
 default-groups = ["lint", "typing"]
 
