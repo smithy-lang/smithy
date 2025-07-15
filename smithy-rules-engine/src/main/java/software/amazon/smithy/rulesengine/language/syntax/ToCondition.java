@@ -17,8 +17,11 @@ public interface ToCondition {
      * Convert this into a condition builder for compositional use.
      *
      * @return the condition builder.
+     * @throws UnsupportedOperationException if this cannot be converted to a condition.
      */
-    Condition.Builder toConditionBuilder();
+    default Condition.Builder toConditionBuilder() {
+        throw new UnsupportedOperationException("Cannot convert " + getClass().getName() + " to a condition");
+    }
 
     /**
      * Convert this into a condition.

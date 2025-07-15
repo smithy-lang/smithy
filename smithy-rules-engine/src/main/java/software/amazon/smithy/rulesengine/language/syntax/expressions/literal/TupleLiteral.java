@@ -5,9 +5,11 @@
 package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -77,5 +79,14 @@ public final class TupleLiteral extends Literal {
             builder.withValue(member.toNode());
         }
         return builder.build();
+    }
+
+    @Override
+    public Set<String> getReferences() {
+        Set<String> references = new LinkedHashSet<>();
+        for (Literal member : members()) {
+            references.addAll(member.getReferences());
+        }
+        return references;
     }
 }

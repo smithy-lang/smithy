@@ -125,5 +125,10 @@ public final class ParseArn extends LibraryFunction {
         public ParseArn createFunction(FunctionNode functionNode) {
             return new ParseArn(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 9;
+        }
     }
 }
