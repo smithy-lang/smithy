@@ -1,0 +1,38 @@
+[project]
+name = "changelog"
+version = "0.1.0"
+description = "A staged changelog tool for Smithy."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+lint = [
+    "ruff>=0.12.3",
+    "docformatter>=1.7.7",
+]
+typing = [
+    "pyright>=1.1.403"
+]
+
+[tool.uv]
+package=false
+required-version = ">=0.7.21"
+default-groups = ["lint", "typing"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+
+[tool.docformatter]
+recursive = true
+black = true
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [ "ASYNC", "C4", "E1", "E4", "E7", "E9", "F", "FURB", "G", "I", "LOG", "PIE", "RUF", "S", "T", "UP" ]
+
+[tool.ruff.format]
+docstring-code-format = true
+
