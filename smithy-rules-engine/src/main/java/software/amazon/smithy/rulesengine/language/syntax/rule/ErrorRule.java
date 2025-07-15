@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.language.syntax.rule;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
+import java.util.Objects;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -19,6 +20,7 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyUnstableApi
 public final class ErrorRule extends Rule {
     private final Expression error;
+    private int hash;
 
     public ErrorRule(Rule.Builder builder, Expression error) {
         super(builder);
@@ -45,7 +47,7 @@ public final class ErrorRule extends Rule {
     }
 
     @Override
-    void withValueNode(ObjectNode.Builder builder) {
+    protected void withValueNode(ObjectNode.Builder builder) {
         builder.withMember("error", error.toNode()).withMember(TYPE, ERROR);
     }
 
@@ -53,5 +55,29 @@ public final class ErrorRule extends Rule {
     public String toString() {
         return super.toString()
                 + StringUtils.indent(String.format("error(%s)", error), 2);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if (object == null || getClass() != object.getClass()) {
+            return false;
+        } else if (!super.equals(object)) {
+            return false;
+        } else {
+            ErrorRule errorRule = (ErrorRule) object;
+            return Objects.equals(error, errorRule.error);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hash;
+        if (result == 0) {
+            result = Objects.hash(super.hashCode(), error);
+            hash = result;
+        }
+        return hash;
     }
 }

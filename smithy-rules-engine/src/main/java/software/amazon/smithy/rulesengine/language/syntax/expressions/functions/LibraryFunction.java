@@ -5,8 +5,10 @@
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -15,6 +17,10 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.StringLiteral;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -41,11 +47,40 @@ public abstract class LibraryFunction extends Expression {
         return functionNode.getName();
     }
 
+    @Override
+    public Set<String> getReferences() {
+        Set<String> references = new LinkedHashSet<>();
+        for (Expression arg : getArguments()) {
+            references.addAll(arg.getReferences());
+        }
+        return references;
+    }
+
+    /**
+     * Get the function definition.
+     *
+     * @return function definition.
+     */
+    public FunctionDefinition getFunctionDefinition() {
+        return definition;
+    }
+
     /**
      * @return The arguments to this function
      */
     public List<Expression> getArguments() {
         return functionNode.getArguments();
+    }
+
+    /**
+     * Returns a canonical form of this function.
+     *
+     * <p>Default implementation returns this. Override for functions that need canonicalization.
+     *
+     * @return the canonical form of this function
+     */
+    public LibraryFunction canonicalize() {
+        return this;
     }
 
     protected Expression expectOneArgument() {
@@ -54,6 +89,11 @@ public abstract class LibraryFunction extends Expression {
             return argv.get(0);
         }
         throw new RuleError(new SourceException("expected 1 argument but found " + argv.size(), functionNode));
+    }
+
+    @Override
+    public Condition.Builder toConditionBuilder() {
+        return Condition.builder().fn(this);
     }
 
     @Override
@@ -152,5 +192,57 @@ public abstract class LibraryFunction extends Expression {
             arguments.add(expression.toString());
         }
         return getName() + "(" + String.join(", ", arguments) + ")";
+    }
+
+    /**
+     * Determines if two arguments should be swapped for canonical ordering.
+     * Used by commutative functions to ensure consistent argument order.
+     *
+     * @param arg0 the first argument
+     * @param arg1 the second argument
+     * @return true if arguments should be swapped
+     */
+    protected static boolean shouldSwapArgs(Expression arg0, Expression arg1) {
+        boolean arg0IsRef = isReference(arg0);
+        boolean arg1IsRef = isReference(arg1);
+
+        // Always put References before literals to make things consistent
+        if (arg0IsRef != arg1IsRef) {
+            return !arg0IsRef; // Swap if arg0 is literal and arg1 is reference
+        }
+
+        // Both same type, use string comparison for deterministic order
+        return arg0.toString().compareTo(arg1.toString()) > 0;
+    }
+
+    /**
+     * Strips single-variable template wrappers if present.
+     * Converts "{varName}" to just varName reference.
+     *
+     * @param expr the expression to strip
+     * @return the stripped expression or original if not applicable
+     */
+    static Expression stripSingleVariableTemplate(Expression expr) {
+        if (!(expr instanceof StringLiteral)) {
+            return expr;
+        }
+
+        StringLiteral stringLit = (StringLiteral) expr;
+        List<Template.Part> parts = stringLit.value().getParts();
+        if (parts.size() == 1 && parts.get(0) instanceof Template.Dynamic) {
+            return ((Template.Dynamic) parts.get(0)).toExpression();
+        }
+
+        return expr;
+    }
+
+    private static boolean isReference(Expression arg) {
+        if (arg instanceof Reference) {
+            return true;
+        } else if (arg instanceof StringLiteral) {
+            StringLiteral s = (StringLiteral) arg;
+            return !s.value().isStatic();
+        }
+        return false;
     }
 }

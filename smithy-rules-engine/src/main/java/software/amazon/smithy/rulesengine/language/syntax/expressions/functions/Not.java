@@ -87,5 +87,10 @@ public final class Not extends LibraryFunction {
         public Not createFunction(FunctionNode functionNode) {
             return new Not(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 2;
+        }
     }
 }

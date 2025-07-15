@@ -20,6 +20,7 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyUnstableApi
 public final class EndpointRule extends Rule {
     private final Endpoint endpoint;
+    private int hash;
 
     EndpointRule(Rule.Builder builder, Endpoint endpoint) {
         super(builder);
@@ -46,7 +47,7 @@ public final class EndpointRule extends Rule {
     }
 
     @Override
-    void withValueNode(ObjectNode.Builder builder) {
+    protected void withValueNode(ObjectNode.Builder builder) {
         builder.withMember("endpoint", endpoint).withMember(TYPE, ENDPOINT);
     }
 
@@ -67,7 +68,12 @@ public final class EndpointRule extends Rule {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), endpoint);
+        int result = hash;
+        if (result == 0) {
+            result = Objects.hash(super.hashCode(), endpoint);
+            hash = result;
+        }
+        return hash;
     }
 
     @Override

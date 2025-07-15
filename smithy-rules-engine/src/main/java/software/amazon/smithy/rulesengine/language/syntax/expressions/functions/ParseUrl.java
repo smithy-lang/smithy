@@ -119,6 +119,11 @@ public final class ParseUrl extends LibraryFunction {
         public ParseUrl createFunction(FunctionNode functionNode) {
             return new ParseUrl(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 10;
+        }
     }
 
     /**

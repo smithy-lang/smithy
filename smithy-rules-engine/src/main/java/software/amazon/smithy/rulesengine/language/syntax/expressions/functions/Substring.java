@@ -105,6 +105,11 @@ public final class Substring extends LibraryFunction {
         public Substring createFunction(FunctionNode functionNode) {
             return new Substring(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 5;
+        }
     }
 
     /**
@@ -117,22 +122,23 @@ public final class Substring extends LibraryFunction {
      * @return the substring value or null.
      */
     public static String getSubstring(String value, int startIndex, int stopIndex, boolean reverse) {
-        if (startIndex >= stopIndex || value.length() < stopIndex) {
+        if (value == null) {
             return null;
         }
 
-        for (int i = 0; i < value.length(); i++) {
-            if (!(value.charAt(i) <= 127)) {
+        int len = value.length();
+        if (startIndex < 0 || stopIndex > len || startIndex >= stopIndex) {
+            return null;
+        }
+
+        int from = reverse ? len - stopIndex : startIndex;
+        int to = reverse ? len - startIndex : stopIndex;
+        for (int i = from; i < to; i++) {
+            if (value.charAt(i) > 127) {
                 return null;
             }
         }
 
-        if (!reverse) {
-            return value.substring(startIndex, stopIndex);
-        } else {
-            int revStart = value.length() - stopIndex;
-            int revStop = value.length() - startIndex;
-            return value.substring(revStart, revStop);
-        }
+        return value.substring(from, to);
     }
 }

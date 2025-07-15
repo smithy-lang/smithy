@@ -35,4 +35,9 @@ public final class EmptyValue extends Value {
     public String toString() {
         return "<empty>";
     }
+
+    @Override
+    public Object toObject() {
+        return null;
+    }
 }

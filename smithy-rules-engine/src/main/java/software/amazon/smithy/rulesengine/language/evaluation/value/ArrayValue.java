@@ -101,4 +101,13 @@ public final class ArrayValue extends Value {
         }
         return "[" + String.join(", ", valueStrings) + "]";
     }
+
+    @Override
+    public Object toObject() {
+        List<Object> result = new ArrayList<>(values.size());
+        for (Value value : values) {
+            result.add(value.toObject());
+        }
+        return result;
+    }
 }

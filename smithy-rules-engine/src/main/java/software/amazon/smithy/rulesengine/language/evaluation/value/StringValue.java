@@ -66,4 +66,9 @@ public final class StringValue extends Value {
     public String toString() {
         return value;
     }
+
+    @Override
+    public Object toObject() {
+        return value;
+    }
 }
