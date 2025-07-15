@@ -32,6 +32,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = [ "ASYNC", "C4", "E1", "E4", "E7", "E9", "F", "FURB", "G", "I", "LOG", "PIE", "RUF", "S", "T", "UP" ]
+ignore = [ "T201", "S602", "S324", "S310" ]
 
 [tool.ruff.format]
 docstring-code-format = true

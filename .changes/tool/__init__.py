@@ -35,7 +35,7 @@ class ChangeType(Enum):
 class Change:
     type: ChangeType
     description: str
-    pull_requests: list[str] = field(default_factory=list)
+    pull_requests: list[str] = field(default_factory=list[str])
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> Self:

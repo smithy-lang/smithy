@@ -8,10 +8,11 @@ import json
 import os
 import re
 import time
+from collections.abc import Generator
 from dataclasses import dataclass
 from http.client import HTTPResponse
 from pathlib import Path
-from typing import Generator, Literal, NotRequired, Required, Self, TypedDict
+from typing import Literal, NotRequired, Required, Self, TypedDict
 from urllib import request
 from urllib.error import HTTPError
 
@@ -111,8 +112,7 @@ def get_review_comments(
             raise ValueError(
                 f"Expected list body, but found {type(response.body)}: {response.body}"
             )
-        for comment in response.body:
-            yield comment  # type: ignore
+        yield from response.body  # type: ignore
 
 
 # https://docs.github.com/en/rest/issues/comments?apiVersion=2022-11-28#create-an-issue-comment
@@ -147,8 +147,7 @@ def get_comments(
             raise ValueError(
                 f"Expected list body, but found {type(response.body)}: {response.body}"
             )
-        for comment in response.body:
-            yield comment  # type: ignore
+        yield from response.body  # type: ignore
 
 
 @dataclass
