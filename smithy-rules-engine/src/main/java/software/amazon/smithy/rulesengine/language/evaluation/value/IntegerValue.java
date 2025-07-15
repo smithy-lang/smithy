@@ -42,4 +42,9 @@ public final class IntegerValue extends Value {
     public Node toNode() {
         return Node.from(value);
     }
+
+    @Override
+    public Object toObject() {
+        return value;
+    }
 }

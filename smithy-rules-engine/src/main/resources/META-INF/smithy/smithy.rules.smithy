@@ -7,6 +7,11 @@ namespace smithy.rules
 @trait(selector: "service")
 document endpointRuleSet
 
+/// Defines an endpoint rule-set using a binary decision diagram (BDD).
+@unstable
+@trait(selector: "service")
+document bdd
+
 /// Defines endpoint test-cases for validating a client's endpoint rule-set.
 @unstable
 @trait(selector: "service[trait|smithy.rules#endpointRuleSet]")

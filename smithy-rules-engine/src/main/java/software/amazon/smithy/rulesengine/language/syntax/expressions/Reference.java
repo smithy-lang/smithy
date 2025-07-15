@@ -6,7 +6,9 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -45,6 +47,11 @@ public final class Reference extends Expression {
     @Override
     public String template() {
         return String.format("{%s}", name);
+    }
+
+    @Override
+    public Set<String> getReferences() {
+        return Collections.singleton(getName().toString());
     }
 
     @Override

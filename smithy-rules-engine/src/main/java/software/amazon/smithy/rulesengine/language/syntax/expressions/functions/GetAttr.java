@@ -9,6 +9,7 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.contex
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -155,6 +156,11 @@ public final class GetAttr extends LibraryFunction {
     }
 
     @Override
+    public Set<String> getReferences() {
+        return getTarget().getReferences();
+    }
+
+    @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitGetAttr(this);
     }
@@ -237,6 +243,11 @@ public final class GetAttr extends LibraryFunction {
         @Override
         public GetAttr createFunction(FunctionNode functionNode) {
             return new GetAttr(functionNode);
+        }
+
+        @Override
+        public int getCostHeuristic() {
+            return 7;
         }
     }
 
