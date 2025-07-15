@@ -6,6 +6,7 @@ import re
 import string
 import subprocess
 import tempfile
+from argparse import ArgumentParser
 
 from . import NEXT_RELEASE_DIR, Change, ChangeType
 
@@ -31,6 +32,42 @@ pull request: {pull_requests}
 # with the correct link.
 description: {description}
 """
+
+
+def main() -> None:
+    parser = ArgumentParser(
+        description="""\
+            Create a new changelog entry to be staged for the next release. Required \
+            values not provided on the command line will be prompted for.""",
+    )
+    parser.add_argument(
+        "-t",
+        "--type",
+        choices=[t.name.lower() for t in ChangeType],
+        help="The type of change being logged.",
+    )
+    parser.add_argument(
+        "-d", "--description", type=str, help="A concise description of the change."
+    )
+    parser.add_argument(
+        "-p",
+        "--pull-requests",
+        nargs="+",
+        help="The pull request that implements the change.",
+    )
+    parser.add_argument(
+        "-r",
+        "--repository",
+        help="The name of the repository, defaulting to 'smithy-lang/smithy'.",
+    )
+
+    args = parser.parse_args()
+    new_change(
+        change_type=ChangeType[args.type.upper()],
+        description=args.description,
+        pull_requests=args.pull_requests,
+        repository=args.repository,
+    )
 
 
 def new_change(
