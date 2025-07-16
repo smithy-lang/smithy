@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,15 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
                     parameter,
                     () -> scope.insert(parameter.getName(), parameter.toType()));
         }
+    }
+
+    /**
+     * Convert the Parameters container to a list.
+     *
+     * @return the parameters list.
+     */
+    public List<Parameter> toList() {
+        return Collections.unmodifiableList(parameters);
     }
 
     @Override
