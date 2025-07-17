@@ -5,6 +5,7 @@
 package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -35,6 +36,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -251,10 +253,19 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
-                    fieldName,
-                    memberName,
-                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n", 1)));
+            if (shape.hasTrait(UniqueItemsTrait.ID)) {
+                writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, l -> builder.$2L(new $4T<>(l)))",
+                        fieldName,
+                        memberName,
+                        (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n", 1)),
+                        HashSet.class);
+            } else {
+                writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
+                        fieldName,
+                        memberName,
+                        (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n", 1)));
+            }
+
             return null;
         }
 
