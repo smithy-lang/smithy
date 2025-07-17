@@ -98,6 +98,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private boolean syncCorsPreflightIntegration = false;
     private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
+    private Map<String, String> additionalProperties = Collections.emptyMap();
 
     public OpenApiConfig() {
         super();
@@ -373,6 +374,18 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setOnErrorStatusConflict(ErrorStatusConflictHandlingStrategy onErrorStatusConflict) {
         this.onErrorStatusConflict = Objects.requireNonNull(onErrorStatusConflict);
+    }
+
+    public Map<String, String> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    /**
+     * Sets additional non-standard config properties that might be used by other components
+     * @param additionalProperties Map of additional properties
+     */
+    public void setAdditionalProperties(Map<String, String> additionalProperties) {
+        this.additionalProperties = additionalProperties;
     }
 
     /**
