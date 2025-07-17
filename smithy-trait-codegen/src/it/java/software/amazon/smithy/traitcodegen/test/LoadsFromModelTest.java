@@ -25,10 +25,12 @@ import com.example.traits.idref.NestedIdRefHolder;
 import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
 import com.example.traits.lists.NestedListTrait;
+import com.example.traits.lists.NestedUniqueItemsListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
 import com.example.traits.maps.NestedMapTrait;
+import com.example.traits.maps.NestedStringUniqueItemMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
@@ -48,6 +50,7 @@ import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
 import com.example.traits.structures.StructWithListOfMapTrait;
+import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
 import com.example.traits.timestamps.EpochSecondsTimestampTrait;
@@ -162,6 +165,10 @@ public class LoadsFromModelTest {
                         NestedListTrait.class,
                         MapUtils.of("getValues",
                                 ListUtils.of(ListUtils.of(ListUtils.of("a"))))),
+                Arguments.of("lists/nested-uniqueitems-list-trait.smithy",
+                        NestedUniqueItemsListTrait.class,
+                        MapUtils.of("getValues",
+                                ListUtils.of(ListUtils.of(ListUtils.of("a"), ListUtils.of("b"))))),
                 // Maps
                 Arguments.of("maps/string-string-map-trait.smithy",
                         StringStringMapTrait.class,
@@ -202,6 +209,15 @@ public class LoadsFromModelTest {
                                                 MapUtils.of(
                                                         "c",
                                                         "d"))))),
+                Arguments.of("maps/nested-string-uniqueitems-map-trait.smithy",
+                        NestedStringUniqueItemMapTrait.class,
+                        MapUtils.of("getValues",
+                                MapUtils.of(
+                                        "a",
+                                        SetUtils.of(
+                                                MapUtils.of(
+                                                        "b",
+                                                        "c"))))),
                 // Mixins
                 Arguments.of("mixins/struct-with-mixin-member.smithy",
                         StructureListWithMixinMemberTrait.class,
@@ -310,6 +326,13 @@ public class LoadsFromModelTest {
                                 Optional.of(
                                         ListUtils.of(
                                                 MapUtils.of("b", "c"))))),
+                Arguments.of("structures/struct-with-uniqueitems-list-trait.smithy",
+                        StructWithUniqueItemsListTrait.class,
+                        MapUtils.of(
+                                "getName",
+                                Optional.of("a"),
+                                "getItems",
+                                Optional.of(SetUtils.of("b", "c")))),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,
