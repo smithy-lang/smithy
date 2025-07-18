@@ -171,7 +171,6 @@ class BddTest {
 
         Node node = original.toNode();
         assertTrue(node.isObjectNode());
-        assertTrue(node.expectObjectNode().containsMember("version"));
         assertTrue(node.expectObjectNode().containsMember("conditions"));
         assertTrue(node.expectObjectNode().containsMember("results"));
         assertTrue(node.expectObjectNode().containsMember("nodes"));
@@ -185,41 +184,37 @@ class BddTest {
     }
 
     @Test
-    void testFromNodeWithInvalidVersion() {
-        Node node = Node.objectNode()
-                .withMember("version", "0.1") // Invalid version
-                .withMember("parameters", Parameters.builder().build().toNode())
-                .withMember("conditions", Node.arrayNode())
-                .withMember("results", Node.arrayNode())
-                .withMember("nodes", "")
-                .withMember("nodeCount", 0)
-                .withMember("root", 1);
-
-        assertThrows(IllegalArgumentException.class, () -> Bdd.fromNode(node));
-    }
-
-    @Test
     void testToStringWithDifferentNodeTypes() {
         Parameters params = Parameters.builder().build();
-        Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
-        Rule endpoint = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
-        Rule error = ErrorRule.builder().error("test error");
 
+        // Two conditions
+        Condition cond1 = Condition.builder().fn(TestHelpers.isSet("Region")).build();
+        Condition cond2 = Condition.builder().fn(TestHelpers.booleanEquals("UseFips", true)).build();
+
+        // Two results
+        Rule endpoint1 = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
+        Rule endpoint2 = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example-fips.com"));
+
+        // BDD structure:
+        // Node 0: terminal
+        // Node 1: test condition 0 (isSet Region)
+        // Node 2: test condition 1 (booleanEquals UseFips)
         int[][] nodes = new int[][] {
-                {-1, 1, -1}, // terminal
-                {0, 3, 4}, // condition node
-                {1, 1, -1}, // endpoint result
-                {2, 1, -1} // error result
+                {-1, 1, -1}, // 0: terminal node
+                {0, 2, -1}, // 1: if Region is set, go to node 2, else FALSE
+                {1, 2000001, 2000000} // 2: if UseFips, return result 1, else result 0
         };
 
-        Bdd bdd = new Bdd(params, ListUtils.of(cond), ListUtils.of(endpoint, error), nodes, 2);
+        Bdd bdd = new Bdd(params, ListUtils.of(cond1, cond2), ListUtils.of(endpoint1, endpoint2), nodes, 1);
         String str = bdd.toString();
 
         assertTrue(str.contains("Endpoint:"));
-        assertTrue(str.contains("Error:"));
         assertTrue(str.contains("C0"));
+        assertTrue(str.contains("C1"));
         assertTrue(str.contains("R0"));
         assertTrue(str.contains("R1"));
+
+        System.out.println(Node.prettyPrintJson(bdd.toNode()));
     }
 
     private Bdd createSimpleBdd() {

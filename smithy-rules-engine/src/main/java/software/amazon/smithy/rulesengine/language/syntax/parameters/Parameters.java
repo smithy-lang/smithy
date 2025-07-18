@@ -58,8 +58,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     public static Parameters fromNode(ObjectNode node) throws RuleError {
         Builder builder = new Builder(node);
         for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
-            builder.addParameter(Parameter.fromNode(entry.getKey(),
-                    RuleError.context("when parsing parameter", () -> entry.getValue().expectObjectNode())));
+            builder.addParameter(Parameter.fromNode(entry.getKey(), entry.getValue().expectObjectNode()));
         }
         return builder.build();
     }

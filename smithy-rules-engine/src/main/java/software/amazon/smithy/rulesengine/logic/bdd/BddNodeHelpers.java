@@ -21,7 +21,6 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SetUtils;
 
 final class BddNodeHelpers {
-    private static final String LATEST_VERSION = "1.3";
     private static final int[] TERMINAL_NODE = new int[] {-1, 1, -1};
     private static final Set<String> ALLOWED_PROPERTIES = SetUtils.of(
             "parameters",
@@ -35,7 +34,6 @@ final class BddNodeHelpers {
 
     static Node toNode(Bdd bdd) {
         ObjectNode.Builder builder = ObjectNode.builder();
-        builder.withMember("version", LATEST_VERSION);
 
         List<Node> conditions = new ArrayList<>();
         for (Condition c : bdd.getConditions()) {
@@ -60,7 +58,6 @@ final class BddNodeHelpers {
     static Bdd fromNode(Node node) {
         ObjectNode obj = node.expectObjectNode();
         obj.warnIfAdditionalProperties(ALLOWED_PROPERTIES);
-
         Parameters params = Parameters.fromNode(obj.expectObjectMember("parameters"));
         List<Condition> conditions = obj.expectArrayMember("conditions").getElementsAs(Condition::fromNode);
         List<Rule> results = obj.expectArrayMember("results").getElementsAs(Rule::fromNode);
@@ -68,12 +65,6 @@ final class BddNodeHelpers {
         int nodeCount = obj.expectNumberMember("nodeCount").getValue().intValue();
         int[][] nodes = decodeNodes(nodesBase64, nodeCount);
         int rootRef = obj.expectNumberMember("root").getValue().intValue();
-
-        String version = obj.expectStringMember("version").getValue();
-        if (!version.equals(LATEST_VERSION)) {
-            throw new IllegalArgumentException("Unsupported BDD version: " + version);
-        }
-
         return new Bdd(params, conditions, results, nodes, rootRef);
     }
 

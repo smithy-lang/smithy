@@ -8,6 +8,7 @@ import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.ParseUrl;
@@ -27,6 +28,12 @@ public final class TestHelpers {
         return StringEquals.ofExpressions(
                 Expression.getReference(Identifier.of(paramName)),
                 StringLiteral.of(value));
+    }
+
+    public static LibraryFunction booleanEquals(String paramName, boolean value) {
+        return BooleanEquals.ofExpressions(
+                Expression.getReference(Identifier.of(paramName)),
+                Literal.booleanLiteral(value));
     }
 
     public static LibraryFunction parseUrl(String urlTemplate) {

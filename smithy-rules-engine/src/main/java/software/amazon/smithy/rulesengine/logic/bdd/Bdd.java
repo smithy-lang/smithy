@@ -31,18 +31,19 @@ import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
  *   <li>{@code -1}: FALSE terminal; represents boolean false, treated as "no match" in endpoint resolution</li>
  *   <li>{@code 2, 3, ...}: Node references (points to nodes array at index ref-1)</li>
  *   <li>{@code -2, -3, ...}: Complement node references (logical NOT of the referenced node)</li>
+ *   <li>{@code 2000000+}: Result terminals (2000000 + resultIndex)</li>
  * </ul>
  *
- * <p>Result nodes come after all condition nodes. When evaluating the BDD, any node with a variable index
- * {@code >= conditionCount} is a result terminal representing an endpoint or error outcome. The condition count must
- * be known to distinguish between condition nodes (which test variables) and result nodes (which terminate
- * evaluation with a specific outcome).
+ * <p>Result terminals are encoded as special references starting at 2000000 (RESULT_OFFSET).
+ * When evaluating the BDD, any reference >= 2000000 represents a result terminal that
+ * indexes into the results array (resultIndex = ref - 2000000). These are not stored
+ * as nodes in the nodes array.
  *
  * <p><b>Node Format:</b> {@code [variable, high, low]}
  * <ul>
- *   <li>{@code variable}: Condition index (0 to conditionCount-1) or result index (>= conditionCount)</li>
- *   <li>{@code high}: Reference to follow when variable evaluates to true</li>
- *   <li>{@code low}: Reference to follow when variable evaluates to false</li>
+ *   <li>{@code variable}: Condition index (0 to conditionCount-1)</li>
+ *   <li>{@code high}: Reference to follow when condition evaluates to true</li>
+ *   <li>{@code low}: Reference to follow when condition evaluates to false</li>
  * </ul>
  */
 public final class Bdd implements ToNode {
@@ -157,6 +158,50 @@ public final class Bdd implements ToNode {
      */
     public Bdd transform(Function<Bdd, Bdd> transformer) {
         return transformer.apply(this);
+    }
+
+    /**
+     * Checks if a reference points to a node (not a terminal or result).
+     *
+     * @param ref the reference to check
+     * @return true if this is a node reference
+     */
+    public static boolean isNodeReference(int ref) {
+        if (ref == 0 || isTerminal(ref)) {
+            return false;
+        }
+        return Math.abs(ref) < RESULT_OFFSET;
+    }
+
+    /**
+     * Checks if a reference points to a result.
+     *
+     * @param ref the reference to check
+     * @return true if this is a result reference
+     */
+    public static boolean isResultReference(int ref) {
+        return ref >= RESULT_OFFSET;
+    }
+
+    /**
+     * Checks if a reference is a terminal (TRUE or FALSE).
+     *
+     * @param ref the reference to check
+     * @return true if this is a terminal reference
+     */
+    public static boolean isTerminal(int ref) {
+        return ref == 1 || ref == -1;
+    }
+
+    /**
+     * Checks if a reference is complemented (negative).
+     *
+     * @param ref the reference to check
+     * @return true if the reference is complemented
+     */
+    public static boolean isComplemented(int ref) {
+        // -1 is FALSE terminal, not a complement
+        return ref < 0 && ref != -1;
     }
 
     @Override
