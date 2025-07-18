@@ -98,7 +98,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private boolean syncCorsPreflightIntegration = false;
     private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
-    private Map<String, Object> additionalProperties = Collections.emptyMap();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public OpenApiConfig() {
         super();
@@ -377,21 +377,20 @@ public class OpenApiConfig extends JsonSchemaConfig {
     }
 
     public Map<String, Object> getAdditionalProperties() {
-        return additionalProperties;
+        return Collections.unmodifiableMap(additionalProperties);
     }
 
     /**
-     * Sets additional non-standard config properties that might be used by other components
-     * @param additionalProperties Map of additional properties
+     * Sets additional non-standard config property that might be used by other components
+     * @param key Name of the property to put.
+     * @param value Value to set for the property.
      */
-    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
-        this.additionalProperties = Collections.unmodifiableMap(additionalProperties);
+    public void putAdditionalProperty(String key, Object value) {
+        this.additionalProperties.put(key, value);
     }
 
-    public void putAdditionalProperty(String key, Object value) {
-        Map<String, Object> newMap = new HashMap<>(additionalProperties);
-        newMap.put(key, value);
-        this.additionalProperties = Collections.unmodifiableMap(newMap);
+    public Object getAdditionalProperty(String key) {
+        return this.additionalProperties.get(key);
     }
 
     /**
