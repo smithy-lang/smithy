@@ -11,17 +11,25 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.utils.SetUtils;
 
 final class BddNodeHelpers {
     private static final String LATEST_VERSION = "1.3";
     private static final int[] TERMINAL_NODE = new int[] {-1, 1, -1};
+    private static final Set<String> ALLOWED_PROPERTIES = SetUtils.of(
+            "parameters",
+            "conditions",
+            "results",
+            "root",
+            "nodes",
+            "nodeCount");
 
     private BddNodeHelpers() {}
 
@@ -45,16 +53,20 @@ final class BddNodeHelpers {
                 .withMember("results", Node.fromNodes(results))
                 .withMember("root", bdd.getRootRef())
                 .withMember("nodes", encodeNodes(bdd))
+                .withMember("nodeCount", bdd.getNodes().length)
                 .build();
     }
 
     static Bdd fromNode(Node node) {
         ObjectNode obj = node.expectObjectNode();
+        obj.warnIfAdditionalProperties(ALLOWED_PROPERTIES);
+
         Parameters params = Parameters.fromNode(obj.expectObjectMember("parameters"));
         List<Condition> conditions = obj.expectArrayMember("conditions").getElementsAs(Condition::fromNode);
         List<Rule> results = obj.expectArrayMember("results").getElementsAs(Rule::fromNode);
         String nodesBase64 = obj.expectStringMember("nodes").getValue();
-        List<int[]> nodes = decodeNodes(nodesBase64);
+        int nodeCount = obj.expectNumberMember("nodeCount").getValue().intValue();
+        int[][] nodes = decodeNodes(nodesBase64, nodeCount);
         int rootRef = obj.expectNumberMember("root").getValue().intValue();
 
         String version = obj.expectStringMember("version").getValue();
@@ -68,7 +80,8 @@ final class BddNodeHelpers {
     static String encodeNodes(Bdd bdd) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(baos)) {
-            for (int[] node : bdd.getNodes()) {
+            int[][] nodes = bdd.getNodes();
+            for (int[] node : nodes) {
                 writeVarInt(dos, node[0]);
                 writeVarInt(dos, node[1]);
                 writeVarInt(dos, node[2]);
@@ -80,21 +93,25 @@ final class BddNodeHelpers {
         }
     }
 
-    static List<int[]> decodeNodes(String base64) {
-        if (base64.isEmpty()) {
-            return Collections.singletonList(TERMINAL_NODE);
+    static int[][] decodeNodes(String base64, int nodeCount) {
+        if (base64.isEmpty() || nodeCount == 0) {
+            return new int[][] {TERMINAL_NODE};
         }
 
         byte[] data = Base64.getDecoder().decode(base64);
-        List<int[]> nodes = new ArrayList<>();
+        int[][] nodes = new int[nodeCount][];
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
                 DataInputStream dis = new DataInputStream(bais)) {
-            while (bais.available() > 0) {
+            for (int i = 0; i < nodeCount; i++) {
                 int varIdx = readVarInt(dis);
                 int high = readVarInt(dis);
                 int low = readVarInt(dis);
-                nodes.add(new int[] {varIdx, high, low});
+                nodes[i] = new int[] {varIdx, high, low};
+            }
+            if (bais.available() > 0) {
+                throw new IllegalArgumentException("Extra data found after decoding " + nodeCount +
+                        " nodes. " + bais.available() + " bytes remaining.");
             }
             return nodes;
         } catch (IOException e) {

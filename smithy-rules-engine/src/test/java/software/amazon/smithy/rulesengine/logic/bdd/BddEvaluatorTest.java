@@ -6,9 +6,6 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
@@ -26,7 +23,7 @@ class BddEvaluatorTest {
     @Test
     void testEvaluateTerminalTrue() {
         // BDD with just TRUE terminal
-        List<int[]> nodes = Collections.singletonList(new int[] {-1, 1, -1});
+        int[][] nodes = new int[][] {{-1, 1, -1}};
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(), ListUtils.of(), nodes, 1);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
@@ -38,7 +35,7 @@ class BddEvaluatorTest {
     @Test
     void testEvaluateTerminalFalse() {
         // BDD with just FALSE terminal
-        List<int[]> nodes = Collections.singletonList(new int[] {-1, 1, -1});
+        int[][] nodes = new int[][] {{-1, 1, -1}};
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(), ListUtils.of(), nodes, -1);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
@@ -56,10 +53,10 @@ class BddEvaluatorTest {
         // With new encoding: result references are encoded as RESULT_OFFSET + resultIndex
         int result1Ref = Bdd.RESULT_OFFSET + 1;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, result1Ref, -1} // 1: condition node (high=result1, low=FALSE)
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, result1Ref, -1} // 1: condition node (high=result1, low=FALSE)
+        };
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond), ListUtils.of(null, rule), nodes, 2);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
@@ -82,11 +79,11 @@ class BddEvaluatorTest {
         // Which means: if cond1 && !cond2 then result1 else no-match
         int result1Ref = Bdd.RESULT_OFFSET + 1;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, -3, -1}, // 1: cond1 node (high=-3 (complement of ref 3 = node 2), low=FALSE)
-                new int[] {1, -1, result1Ref} // 2: cond2 node (high=FALSE, low=result1)
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, -3, -1}, // 1: cond1 node (high=-3 (complement of ref 3 = node 2), low=FALSE)
+                {1, -1, result1Ref} // 2: cond2 node (high=FALSE, low=result1)
+        };
         // Root is 2 (reference to node at index 1)
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond1, cond2), ListUtils.of(null, rule), nodes, 2);
 
@@ -119,11 +116,11 @@ class BddEvaluatorTest {
         int result1Ref = Bdd.RESULT_OFFSET + 1;
         int result2Ref = Bdd.RESULT_OFFSET + 2;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, 3, -1}, // 1: cond1 node (high=cond2 node, low=FALSE)
-                new int[] {1, result1Ref, result2Ref} // 2: cond2 node (high=result1, low=result2)
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, 3, -1}, // 1: cond1 node (high=cond2 node, low=FALSE)
+                {1, result1Ref, result2Ref} // 2: cond2 node (high=result1, low=result2)
+        };
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond1, cond2), ListUtils.of(null, rule1, rule2), nodes, 2);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
@@ -141,10 +138,10 @@ class BddEvaluatorTest {
         // Result0 reference encoded with RESULT_OFFSET
         int result0Ref = Bdd.RESULT_OFFSET;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, -1, result0Ref} // 1: condition node
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, -1, result0Ref} // 1: condition node
+        };
         Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond), ListUtils.of((Rule) null), nodes, 2);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
@@ -161,16 +158,16 @@ class BddEvaluatorTest {
         // Test with a larger result index to ensure offset works correctly
         int result999Ref = Bdd.RESULT_OFFSET + 999;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, result999Ref, -1} // 1: condition node
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, result999Ref, -1} // 1: condition node
+        };
 
         // Create a results list with 1000 entries (0-999)
         Rule[] results = new Rule[1000];
         results[999] = rule;
 
-        Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond), Arrays.asList(results), nodes, 2);
+        Bdd bdd = new Bdd(EMPTY, ListUtils.of(cond), ListUtils.of(results), nodes, 2);
 
         BddEvaluator evaluator = BddEvaluator.from(bdd);
 
@@ -190,12 +187,12 @@ class BddEvaluatorTest {
         int result1Ref = Bdd.RESULT_OFFSET + 1;
         int result2Ref = Bdd.RESULT_OFFSET + 2;
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // 0: terminal
-                new int[] {0, 3, 4}, // 1: cond1 node
-                new int[] {1, result1Ref, -1}, // 2: cond2 node
-                new int[] {2, result2Ref, -5} // 3: cond3 node (low has complement ref)
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // 0: terminal
+                {0, 3, 4}, // 1: cond1 node
+                {1, result1Ref, -1}, // 2: cond2 node
+                {2, result2Ref, -5} // 3: cond3 node (low has complement ref)
+        };
 
         Bdd bdd = new Bdd(EMPTY,
                 ListUtils.of(cond1, cond2, cond3),

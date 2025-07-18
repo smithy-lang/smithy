@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -22,8 +20,8 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
     @Override
     public Bdd apply(Bdd bdd) {
         LOGGER.info("Starting BDD node reversal optimization");
-        List<int[]> nodes = bdd.getNodes();
-        int nodeCount = nodes.size();
+        int[][] nodes = bdd.getNodes();
+        int nodeCount = nodes.length;
 
         if (nodeCount <= 2) {
             return bdd;
@@ -41,18 +39,18 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
         }
 
         // Create new node array with reversed order
-        List<int[]> newNodes = new ArrayList<>(nodeCount);
-        newNodes.add(nodes.get(0).clone()); // Terminal stays at index 0
+        int[][] newNodes = new int[nodeCount][];
+        newNodes[0] = nodes[0].clone(); // Terminal stays at index 0
 
         // Add nodes in reverse order, updating their references
+        int newIdx = 1;
         for (int oldIdx = nodeCount - 1; oldIdx >= 1; oldIdx--) {
-            int[] oldNode = nodes.get(oldIdx);
-            int[] newNode = new int[] {
+            int[] oldNode = nodes[oldIdx];
+            newNodes[newIdx++] = new int[] {
                     oldNode[0], // variable index stays the same
                     remapReference(oldNode[1], oldToNew), // remap high reference
                     remapReference(oldNode[2], oldToNew) // remap low reference
             };
-            newNodes.add(newNode);
         }
 
         // Remap the root reference
@@ -76,6 +74,8 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
             return 0; // Invalid reference stays invalid
         } else if (ref == 1 || ref == -1) {
             return ref; // TRUE/FALSE terminals unchanged
+        } else if (ref >= Bdd.RESULT_OFFSET) {
+            return ref; // Result references are not remapped
         }
 
         // Handle regular node references (with possible complement)

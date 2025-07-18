@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -111,7 +112,7 @@ class BddCompilerTest {
         Bdd bdd = compiler.compile();
 
         assertEquals(2, bdd.getConditions().size());
-        assertTrue(bdd.getNodes().size() > 2); // Should have multiple nodes
+        assertTrue(bdd.getNodes().length > 2); // Should have multiple nodes
     }
 
     @Test
@@ -152,7 +153,7 @@ class BddCompilerTest {
         // Even with no rules, there's still a result (no match)
         assertFalse(bdd.getResults().isEmpty());
         // Should have at least terminal node
-        assertFalse(bdd.getNodes().isEmpty());
+        assertNotEquals(0, bdd.getNodes().length);
     }
 
     @Test

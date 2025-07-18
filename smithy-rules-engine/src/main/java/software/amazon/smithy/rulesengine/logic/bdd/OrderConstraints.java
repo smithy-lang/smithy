@@ -7,7 +7,6 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 
 /**
@@ -48,17 +47,13 @@ final class OrderConstraints {
         // Build dependencies and compute valid positions in one pass
         for (int i = 0; i < n; i++) {
             maxValidPosition[i] = n - 1; // Initialize max position
-
-            Set<Condition> deps = graph.getDependencies(this.conditions[i]);
-            if (!deps.isEmpty()) {
-                for (Condition dep : deps) {
-                    Integer depIndex = conditionToIndex.get(dep);
-                    if (depIndex != null) {
-                        // This condition must come after its dependency
-                        minValidPosition[i] = Math.max(minValidPosition[i], depIndex + 1);
-                        // The dependency must come before this condition
-                        maxValidPosition[depIndex] = Math.min(maxValidPosition[depIndex], i - 1);
-                    }
+            for (Condition dep : graph.getDependencies(this.conditions[i])) {
+                Integer depIndex = conditionToIndex.get(dep);
+                if (depIndex != null) {
+                    // This condition must come after its dependency
+                    minValidPosition[i] = Math.max(minValidPosition[i], depIndex + 1);
+                    // The dependency must come before this condition
+                    maxValidPosition[depIndex] = Math.min(maxValidPosition[depIndex], i - 1);
                 }
             }
         }

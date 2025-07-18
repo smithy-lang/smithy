@@ -64,7 +64,7 @@ final class BddCompiler {
         int rootRef = convertCfgToBdd(cfg.getRoot());
         rootRef = bddBuilder.reduce(rootRef);
         Parameters parameters = cfg.getRuleSet().getParameters();
-        Bdd bdd = new Bdd(parameters, orderedConditions, indexedResults, bddBuilder.getNodes(), rootRef);
+        Bdd bdd = new Bdd(parameters, orderedConditions, indexedResults, bddBuilder.getNodesArray(), rootRef);
 
         long elapsed = System.currentTimeMillis() - start;
         LOGGER.fine(String.format(

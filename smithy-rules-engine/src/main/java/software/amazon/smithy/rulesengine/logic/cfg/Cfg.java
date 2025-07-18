@@ -158,19 +158,24 @@ public final class Cfg implements Iterable<CfgNode> {
         LOGGER.fine(() -> "Converting ruleset with " + ruleSet.getRules().size() + " top-level rules");
         CfgBuilder builder = new CfgBuilder(ruleSet);
         CfgNode terminal = ResultNode.terminal();
-        RuleContext context = new RuleContext();
-        CfgNode root = convertRulesToChain(ruleSet.getRules(), terminal, builder, context);
+        Map<RuleKey, CfgNode> processedRules = new HashMap<>();
+        CfgNode root = convertRulesToChain(ruleSet.getRules(), terminal, builder, processedRules);
         return builder.build(root);
     }
 
     // Converts a list of rules into a conditional chain. Each rule's false branch goes to the next rule.
-    private static CfgNode convertRulesToChain(List<Rule> rules, CfgNode fallthrough, CfgBuilder bd, RuleContext ctx) {
+    private static CfgNode convertRulesToChain(
+            List<Rule> rules,
+            CfgNode fallthrough,
+            CfgBuilder builder,
+            Map<RuleKey, CfgNode> processedRules
+    ) {
         // Make a reversed view of the rules list
         List<Rule> reversed = new ArrayList<>(rules);
         Collections.reverse(reversed);
         CfgNode next = fallthrough;
         for (Rule rule : reversed) {
-            next = convertRule(rule, next, bd, ctx);
+            next = convertRule(rule, next, builder, processedRules);
         }
         return next;
     }
@@ -181,11 +186,17 @@ public final class Cfg implements Iterable<CfgNode> {
      * @param rule the rule to convert
      * @param fallthrough what to do if this rule doesn't match
      * @param builder the CFG builder
-     * @param context the rule processing context
+     * @param processedRules cache for processed rules
      * @return the entry point for this rule
      */
-    private static CfgNode convertRule(Rule rule, CfgNode fallthrough, CfgBuilder builder, RuleContext context) {
-        CfgNode existing = context.getProcessed(rule, fallthrough);
+    private static CfgNode convertRule(
+            Rule rule,
+            CfgNode fallthrough,
+            CfgBuilder builder,
+            Map<RuleKey, CfgNode> processedRules
+    ) {
+        RuleKey key = new RuleKey(rule, fallthrough);
+        CfgNode existing = processedRules.get(key);
         if (existing != null) {
             return existing;
         }
@@ -197,7 +208,7 @@ public final class Cfg implements Iterable<CfgNode> {
         } else if (rule instanceof TreeRule) {
             TreeRule treeRule = (TreeRule) rule;
             // Recursively convert nested rules with same fallthrough
-            body = convertRulesToChain(treeRule.getRules(), fallthrough, builder, context);
+            body = convertRulesToChain(treeRule.getRules(), fallthrough, builder, processedRules);
         } else {
             throw new IllegalArgumentException("Unknown rule type: " + rule.getClass());
         }
@@ -211,23 +222,9 @@ public final class Cfg implements Iterable<CfgNode> {
         }
 
         // Cache the result for this (rule, fallthrough) combination
-        context.putProcessed(rule, fallthrough, current);
+        processedRules.put(key, current);
 
         return current;
-    }
-
-    // Context for tracking rule processing to handle shared rules.
-    private static final class RuleContext {
-        // Map from (Rule, fallthrough) -> CfgNode to handle shared rules
-        private final Map<RuleKey, CfgNode> processedRules = new HashMap<>();
-
-        CfgNode getProcessed(Rule rule, CfgNode fallthrough) {
-            return processedRules.get(new RuleKey(rule, fallthrough));
-        }
-
-        void putProcessed(Rule rule, CfgNode fallthrough, CfgNode result) {
-            processedRules.put(new RuleKey(rule, fallthrough), result);
-        }
     }
 
     private static final class RuleKey {

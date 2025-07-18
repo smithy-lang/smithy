@@ -7,20 +7,40 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 
 /**
- * Simple BDD evaluator.
+ * Simple BDD evaluator that works directly with BDD nodes.
  */
 public final class BddEvaluator {
 
-    private final Bdd bdd;
+    private final int[][] nodes;
+    private final int rootRef;
     private final int conditionCount;
 
-    private BddEvaluator(Bdd bdd) {
-        this.bdd = bdd;
-        this.conditionCount = bdd.getConditionCount();
+    private BddEvaluator(int[][] nodes, int rootRef, int conditionCount) {
+        this.nodes = nodes;
+        this.rootRef = rootRef;
+        this.conditionCount = conditionCount;
     }
 
+    /**
+     * Create evaluator from a Bdd object.
+     *
+     * @param bdd the BDD
+     * @return the evaluator
+     */
     public static BddEvaluator from(Bdd bdd) {
-        return new BddEvaluator(bdd);
+        return from(bdd.getNodes(), bdd.getRootRef(), bdd.getConditionCount());
+    }
+
+    /**
+     * Create evaluator from BDD data.
+     *
+     * @param nodes BDD nodes array
+     * @param rootRef root reference
+     * @param conditionCount number of conditions
+     * @return the evaluator
+     */
+    public static BddEvaluator from(int[][] nodes, int rootRef, int conditionCount) {
+        return new BddEvaluator(nodes, rootRef, conditionCount);
     }
 
     /**
@@ -30,7 +50,7 @@ public final class BddEvaluator {
      * @return the result index, or -1 for no match
      */
     public int evaluate(ConditionEvaluator evaluator) {
-        int ref = bdd.getRootRef();
+        int ref = rootRef;
 
         while (true) {
             // Handle terminals
@@ -48,7 +68,7 @@ public final class BddEvaluator {
             boolean complemented = ref < 0;
             int nodeIdx = (complemented ? -ref : ref) - 1;
 
-            int[] node = bdd.getNodes().get(nodeIdx);
+            int[] node = nodes[nodeIdx];
             int varIdx = node[0];
 
             // Evaluate condition and follow appropriate branch

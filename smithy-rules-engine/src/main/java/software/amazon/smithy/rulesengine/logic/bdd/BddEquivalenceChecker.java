@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
 import java.time.Duration;
@@ -21,8 +25,9 @@ import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
 /**
  * Verifies functional equivalence between a CFG and its BDD representation.
  *
- * <p>This verifier uses structural equivalence checking to ensure that for every possible
- * combination of condition evaluations, both representations produce the same result.
+ * <p>This verifier uses structural equivalence checking to ensure that both representations produce the same result.
+ * When the BDD has fewer than 20 conditions, the checking is exhaustive. When there are more, random samples are
+ * checked up the earlier of max samples being reached, or the max duration being reached.
  */
 public final class BddEquivalenceChecker {
 
@@ -60,7 +65,7 @@ public final class BddEquivalenceChecker {
     /**
      * Sets the maximum number of samples to test for large condition sets.
      *
-     * <p>Defaults to a max of 1M samples. Set to <= 0 to disable the max.
+     * <p>Defaults to a max of 1M samples. Set to {@code <= 0} to disable the max.
      *
      * @param maxSamples the maximum number of samples
      * @return this verifier for method chaining
@@ -97,7 +102,9 @@ public final class BddEquivalenceChecker {
         testsRun = 0;
 
         LOGGER.info(() -> String.format("Verifying BDD with %d conditions (max samples: %d, timeout: %s)",
-                                        bdd.getConditionCount(), maxSamples, timeout));
+                bdd.getConditionCount(),
+                maxSamples,
+                timeout));
 
         if (bdd.getConditionCount() <= EXHAUSTIVE_THRESHOLD) {
             verifyExhaustive();
@@ -129,11 +136,13 @@ public final class BddEquivalenceChecker {
             Set<Rule> inBddOnly = new HashSet<>(bddResults);
             inBddOnly.removeAll(cfgResults);
             throw new IllegalStateException(String.format(
-                    "Result mismatch: CFG has %d results, BDD has %d results (excluding NoMatchRule).\n" +
-                    "In CFG only: %s\n" +
-                    "In BDD only: %s",
-                    cfgResults.size(), bddResults.size(), inCfgOnly, inBddOnly
-            ));
+                    "Result mismatch: CFG has %d results, BDD has %d results (excluding NoMatchRule).%n" +
+                            "In CFG only: %s%n" +
+                            "In BDD only: %s",
+                    cfgResults.size(),
+                    bddResults.size(),
+                    inCfgOnly,
+                    inBddOnly));
         }
     }
 
@@ -147,7 +156,7 @@ public final class BddEquivalenceChecker {
             verifyCase(mask);
             if (hasEitherLimitBeenExceeded()) {
                 LOGGER.info(String.format("Exhaustive verification stopped after %d tests "
-                                          + "(limit: %d samples or %s timeout)", testsRun, maxSamples, timeout));
+                        + "(limit: %d samples or %s timeout)", testsRun, maxSamples, timeout));
                 break;
             }
         }
@@ -159,7 +168,8 @@ public final class BddEquivalenceChecker {
      */
     private void verifyWithLimits() {
         LOGGER.info(() -> String.format("Running limited verification (will stop at %d samples OR %s timeout)",
-                                        maxSamples, timeout));
+                maxSamples,
+                timeout));
         verifyCriticalCases();
 
         while (!hasEitherLimitBeenExceeded()) {
@@ -235,8 +245,13 @@ public final class BddEquivalenceChecker {
             for (int i = 0; i < bdd.getConditions().size(); i++) {
                 Condition condition = bdd.getConditions().get(i);
                 boolean value = (mask & (1L << i)) != 0;
-                errorMsg.append("  Condition ").append(i).append(" [").append(value).append("]: ")
-                        .append(condition).append("\n");
+                errorMsg.append("  Condition ")
+                        .append(i)
+                        .append(" [")
+                        .append(value)
+                        .append("]: ")
+                        .append(condition)
+                        .append("\n");
             }
             errorMsg.append("\nResults:\n");
             errorMsg.append("  CFG result: ").append(describeResult(cfgResult)).append("\n");
@@ -255,8 +270,11 @@ public final class BddEquivalenceChecker {
     }
 
     // Recursively evaluates a CFG node.
-    private CfgNode evaluateCfgNode(CfgNode node, Map<Condition, Integer> conditionToIndex,
-            ConditionEvaluator maskEvaluator) {
+    private CfgNode evaluateCfgNode(
+            CfgNode node,
+            Map<Condition, Integer> conditionToIndex,
+            ConditionEvaluator maskEvaluator
+    ) {
         if (node instanceof ResultNode) {
             return node;
         }

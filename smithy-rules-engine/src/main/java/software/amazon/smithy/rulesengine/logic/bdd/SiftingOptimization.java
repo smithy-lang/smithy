@@ -115,8 +115,8 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
 
         // Build initial BDD with better ordering
         Bdd currentBest = Bdd.from(cfg, new BddBuilder(), ConditionOrderingStrategy.fixed(orderView));
-        int currentSize = currentBest.getNodes().size() - 1; // -1 for terminal
-        int initialSize = bdd.getNodes().size() - 1;
+        int currentSize = currentBest.getNodes().length - 1; // -1 for terminal
+        int initialSize = bdd.getNodes().length - 1;
 
         LOGGER.info(String.format("Initial reordering: %d -> %d nodes", initialSize, currentSize));
 
@@ -150,7 +150,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
                 // Move to best position and build BDD once
                 move(order, varIdx, best.position);
                 currentBest = Bdd.from(cfg, new BddBuilder(), ConditionOrderingStrategy.fixed(orderView));
-                currentSize = currentBest.getNodes().size() - 1;
+                currentSize = currentBest.getNodes().length - 1;
                 improvements++;
 
                 // Update absolute best
@@ -294,7 +294,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
      */
     private int countNodes(List<Condition> ordering) {
         BddBuilder builder = threadBuilder.get().reset();
-        return Bdd.from(cfg, builder, ConditionOrderingStrategy.fixed(ordering)).getNodes().size() - 1;
+        return Bdd.from(cfg, builder, ConditionOrderingStrategy.fixed(ordering)).getNodes().length - 1;
     }
 
     // Position and its node count.

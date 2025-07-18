@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 
@@ -49,11 +50,9 @@ final class DefaultOrderingStrategy {
                 // fewer deps first
                 .comparingInt((Condition c) -> deps.getDependencies(c).size())
                 // isSet() before everything else
-                .thenComparing(c -> !"isSet".equals(c.getFunction().getName()))
+                .thenComparingInt(c -> c.getFunction().getFunctionDefinition() == IsSet.getDefinition() ? 0 : 1)
                 // variable-defining conditions first
-                .thenComparing(c -> infos.get(c).getReturnVariable() == null)
-                // lower complexity first
-                .thenComparingInt(c -> infos.get(c).getComplexity())
+                .thenComparingInt(c -> infos.get(c).getReturnVariable() != null ? 0 : 1)
                 // fewer references first
                 .thenComparingInt(c -> infos.get(c).getReferences().size())
                 // stable tie-breaker

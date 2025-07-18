@@ -550,6 +550,15 @@ final class BddBuilder {
         return copy;
     }
 
+    /**
+     * Get the array of nodes.
+     *
+     * @return array of nodes.
+     */
+    public int[][] getNodesArray() {
+        return nodes.toArray(new int[0][]);
+    }
+
     private void validateBooleanOperands(int f, int g, String operation) {
         if (isResult(f) || isResult(g)) {
             throw new IllegalArgumentException("Cannot perform " + operation + " on result terminals");

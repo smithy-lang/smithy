@@ -55,7 +55,7 @@ class SiftingOptimizationTest {
         assertEquals(originalBdd.getResults().size(), optimizedBdd.getResults().size());
 
         // Size should be same or smaller
-        assertTrue(optimizedBdd.getNodes().size() <= originalBdd.getNodes().size());
+        assertTrue(optimizedBdd.getNodes().length <= originalBdd.getNodes().length);
     }
 
     @Test
@@ -128,7 +128,7 @@ class SiftingOptimizationTest {
         Bdd optimizedBdd = optimizer.apply(originalBdd);
 
         // Should be unchanged
-        assertEquals(originalBdd.getNodes().size(), optimizedBdd.getNodes().size());
+        assertEquals(originalBdd.getNodes().length, optimizedBdd.getNodes().length);
         assertEquals(1, optimizedBdd.getConditions().size());
     }
 }

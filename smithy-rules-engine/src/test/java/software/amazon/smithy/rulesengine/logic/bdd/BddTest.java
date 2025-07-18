@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
@@ -32,7 +29,7 @@ class BddTest {
     @Test
     void testConstructorValidation() {
         Parameters params = Parameters.builder().build();
-        List<int[]> nodes = Collections.singletonList(new int[] {-1, 1, -1});
+        int[][] nodes = new int[][] {{-1, 1, -1}};
 
         // Should reject complemented root (except -1 which is FALSE terminal)
         assertThrows(IllegalArgumentException.class, () -> new Bdd(params, ListUtils.of(), ListUtils.of(), nodes, -2));
@@ -53,10 +50,11 @@ class BddTest {
                 .build();
         Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Rule rule = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1},
-                new int[] {0, 3, -1},
-                new int[] {1, 1, -1});
+        int[][] nodes = new int[][] {
+                {-1, 1, -1},
+                {0, 3, -1},
+                {1, 1, -1}
+        };
 
         Bdd bdd = new Bdd(params, ListUtils.of(cond), ListUtils.of(rule), nodes, 2);
 
@@ -66,7 +64,7 @@ class BddTest {
         assertEquals(1, bdd.getConditionCount());
         assertEquals(1, bdd.getResults().size());
         assertEquals(rule, bdd.getResults().get(0));
-        assertEquals(3, bdd.getNodes().size());
+        assertEquals(3, bdd.getNodes().length);
         assertEquals(2, bdd.getRootRef());
     }
 
@@ -85,7 +83,7 @@ class BddTest {
 
         assertTrue(bdd.getConditionCount() > 0);
         assertFalse(bdd.getResults().isEmpty());
-        assertTrue(bdd.getNodes().size() > 1); // At least terminal + one node
+        assertTrue(bdd.getNodes().length > 1); // At least terminal + one node
     }
 
     @Test
@@ -138,7 +136,7 @@ class BddTest {
         assertNotEquals(bdd1, bdd4);
 
         // Different nodes
-        List<int[]> newNodes = Arrays.asList(new int[] {-1, 1, -1}, new int[] {0, -1, 3});
+        int[][] newNodes = new int[][] {{-1, 1, -1}, {0, -1, 3}};
         Bdd bdd5 = new Bdd(bdd1.getParameters(), bdd1.getConditions(), bdd1.getResults(), newNodes, bdd1.getRootRef());
         assertNotEquals(bdd1, bdd5);
     }
@@ -183,7 +181,7 @@ class BddTest {
         assertEquals(original.getRootRef(), restored.getRootRef());
         assertEquals(original.getConditionCount(), restored.getConditionCount());
         assertEquals(original.getResults().size(), restored.getResults().size());
-        assertEquals(original.getNodes().size(), restored.getNodes().size());
+        assertEquals(original.getNodes().length, restored.getNodes().length);
     }
 
     @Test
@@ -194,6 +192,7 @@ class BddTest {
                 .withMember("conditions", Node.arrayNode())
                 .withMember("results", Node.arrayNode())
                 .withMember("nodes", "")
+                .withMember("nodeCount", 0)
                 .withMember("root", 1);
 
         assertThrows(IllegalArgumentException.class, () -> Bdd.fromNode(node));
@@ -206,12 +205,12 @@ class BddTest {
         Rule endpoint = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
         Rule error = ErrorRule.builder().error("test error");
 
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1}, // terminal
-                new int[] {0, 3, 4}, // condition node
-                new int[] {1, 1, -1}, // endpoint result
-                new int[] {2, 1, -1} // error result
-        );
+        int[][] nodes = new int[][] {
+                {-1, 1, -1}, // terminal
+                {0, 3, 4}, // condition node
+                {1, 1, -1}, // endpoint result
+                {2, 1, -1} // error result
+        };
 
         Bdd bdd = new Bdd(params, ListUtils.of(cond), ListUtils.of(endpoint, error), nodes, 2);
         String str = bdd.toString();
@@ -227,10 +226,11 @@ class BddTest {
         Parameters params = Parameters.builder().build();
         Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Rule rule = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
-        List<int[]> nodes = Arrays.asList(
-                new int[] {-1, 1, -1},
-                new int[] {0, 3, -1},
-                new int[] {1, 1, -1});
+        int[][] nodes = new int[][] {
+                {-1, 1, -1},
+                {0, 3, -1},
+                {1, 1, -1}
+        };
         return new Bdd(params, ListUtils.of(cond), ListUtils.of(rule), nodes, 2);
     }
 }

@@ -56,7 +56,7 @@ public final class Bdd implements ToNode {
     private final Parameters parameters;
     private final List<Condition> conditions;
     private final List<Rule> results;
-    private final List<int[]> nodes;
+    private final int[][] nodes;
     private final int rootRef;
 
     /**
@@ -83,7 +83,7 @@ public final class Bdd implements ToNode {
         return new BddCompiler(cfg, orderingStrategy, bddBuilder).compile();
     }
 
-    public Bdd(Parameters params, List<Condition> conditions, List<Rule> results, List<int[]> nodes, int rootRef) {
+    public Bdd(Parameters params, List<Condition> conditions, List<Rule> results, int[][] nodes, int rootRef) {
         this.parameters = Objects.requireNonNull(params, "params is null");
         this.conditions = conditions;
         this.results = results;
@@ -125,9 +125,9 @@ public final class Bdd implements ToNode {
     /**
      * Gets the BDD nodes.
      *
-     * @return list of node triples
+     * @return array of node triples
      */
-    public List<int[]> getNodes() {
+    public int[][] getNodes() {
         return nodes;
     }
 
@@ -174,24 +174,28 @@ public final class Bdd implements ToNode {
                 && Objects.equals(parameters, other.parameters);
     }
 
-    private static boolean nodesEqual(List<int[]> a, List<int[]> b) {
-        if (a.size() != b.size()) {
+    private static boolean nodesEqual(int[][] a, int[][] b) {
+        if (a.length != b.length) {
             return false;
-        } else {
-            for (int i = 0; i < a.size(); i++) {
-                if (!Arrays.equals(a.get(i), b.get(i))) {
-                    return false;
-                }
-            }
-            return true;
         }
+        for (int i = 0; i < a.length; i++) {
+            if (!Arrays.equals(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = Objects.hash(rootRef, conditions, results, parameters);
-        for (int[] node : nodes) {
-            hash = 31 * hash + Arrays.hashCode(node);
+        int hash = 31 * rootRef + nodes.length;
+        // Sample up to 16 nodes distributed across the BDD
+        int step = Math.max(1, nodes.length / 16);
+        for (int i = 0; i < nodes.length; i += step) {
+            int[] node = nodes[i];
+            hash = 31 * hash + node[0];
+            hash = 31 * hash + node[1];
+            hash = 31 * hash + node[2];
         }
         return hash;
     }
@@ -208,18 +212,27 @@ public final class Bdd implements ToNode {
      * @return the given string builder.
      */
     public StringBuilder toString(StringBuilder sb) {
+        // Calculate max width needed for first column identifiers
+        int maxConditionIdx = conditions.size() - 1;
+        int maxResultIdx = results.size() - 1;
+
+        // Width needed for "C" + maxConditionIdx or "R" + maxResultIdx
+        int conditionWidth = maxConditionIdx >= 0 ? String.valueOf(maxConditionIdx).length() + 1 : 2;
+        int resultWidth = maxResultIdx >= 0 ? String.valueOf(maxResultIdx).length() + 1 : 2;
+        int varWidth = Math.max(conditionWidth, resultWidth);
+
         sb.append("Bdd{\n");
 
         // Conditions
         sb.append("  conditions (").append(getConditionCount()).append("):\n");
         for (int i = 0; i < conditions.size(); i++) {
-            sb.append("    C").append(i).append(": ").append(conditions.get(i)).append("\n");
+            sb.append(String.format("    %" + varWidth + "s: %s%n", "C" + i, conditions.get(i)));
         }
 
         // Results
         sb.append("  results (").append(results.size()).append("):\n");
         for (int i = 0; i < results.size(); i++) {
-            sb.append("    R").append(i).append(": ");
+            sb.append(String.format("    %" + varWidth + "s: ", "R" + i));
             appendResult(sb, results.get(i));
             sb.append("\n");
         }
@@ -228,24 +241,32 @@ public final class Bdd implements ToNode {
         sb.append("  root: ").append(formatReference(rootRef)).append("\n");
 
         // Nodes
-        sb.append("  nodes (").append(nodes.size()).append("):\n");
-        for (int i = 0; i < nodes.size(); i++) {
-            sb.append("    ").append(i).append(": ");
+        sb.append("  nodes (").append(nodes.length).append("):\n");
+
+        // Calculate width needed for node indices
+        int indexWidth = String.valueOf(nodes.length - 1).length();
+
+        for (int i = 0; i < nodes.length; i++) {
+            sb.append(String.format("    %" + indexWidth + "d: ", i));
             if (i == 0) {
                 sb.append("terminal");
             } else {
-                int[] node = nodes.get(i);
+                int[] node = nodes[i];
                 int varIdx = node[0];
                 sb.append("[");
+
+                // Use the calculated width for variable/result references
                 if (varIdx < conditions.size()) {
-                    sb.append("C").append(varIdx);
+                    sb.append(String.format("%" + varWidth + "s", "C" + varIdx));
                 } else {
-                    sb.append("R").append(varIdx - conditions.size());
+                    sb.append(String.format("%" + varWidth + "s", "R" + (varIdx - conditions.size())));
                 }
+
+                // Format the references with consistent spacing
                 sb.append(", ")
-                        .append(formatReference(node[1]))
+                        .append(String.format("%6s", formatReference(node[1])))
                         .append(", ")
-                        .append(formatReference(node[2]))
+                        .append(String.format("%6s", formatReference(node[2])))
                         .append("]");
             }
             sb.append("\n");
