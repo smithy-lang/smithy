@@ -57,6 +57,16 @@ public final class BooleanEquals extends LibraryFunction {
     }
 
     @Override
+    public BooleanEquals canonicalize() {
+        List<Expression> args = getArguments();
+        if (shouldSwapArgs(args.get(0), args.get(1))) {
+            return BooleanEquals.ofExpressions(args.get(1), args.get(0));
+        }
+
+        return this;
+    }
+
+    @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitBoolEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
@@ -91,6 +101,11 @@ public final class BooleanEquals extends LibraryFunction {
         @Override
         public BooleanEquals createFunction(FunctionNode functionNode) {
             return new BooleanEquals(functionNode);
+        }
+
+        @Override
+        public int getCostHeuristic() {
+            return 2;
         }
     }
 }

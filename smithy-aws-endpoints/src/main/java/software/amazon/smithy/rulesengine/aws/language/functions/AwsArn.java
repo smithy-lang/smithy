@@ -4,7 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,14 +39,37 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
      * @return the optional ARN.
      */
     public static Optional<AwsArn> parse(String arn) {
-        String[] base = arn.split(":", 6);
-        if (base.length != 6) {
+        String[] base = new String[6];
+        int partIndex = 0;
+        int start = 0;
+        int length = arn.length();
+        for (int i = 0; i < length; i++) {
+            if (arn.charAt(i) == ':') {
+                // Only split first 5 colons
+                if (partIndex < 5) {
+                    base[partIndex] = arn.substring(start, i);
+                    partIndex++;
+                    start = i + 1;
+                }
+            }
+        }
+
+        // Add the last part
+        if (partIndex < 6) {
+            base[partIndex] = arn.substring(start);
+            partIndex++;
+        }
+
+        // Check if we have exactly 6 parts
+        if (partIndex != 6) {
             return Optional.empty();
         }
+
         // First section must be "arn".
         if (!base[0].equals("arn")) {
             return Optional.empty();
         }
+
         // Sections for partition, service, and resource type must not be empty.
         if (base[1].isEmpty() || base[2].isEmpty() || base[5].isEmpty()) {
             return Optional.empty();
@@ -57,8 +80,23 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
                 .service(base[2])
                 .region(base[3])
                 .accountId(base[4])
-                .resource(Arrays.asList(base[5].split("[:/]", -1)))
+                .resource(splitResource(base[5]))
                 .build());
+    }
+
+    private static List<String> splitResource(String resource) {
+        List<String> result = new ArrayList<>();
+        int start = 0;
+        int length = resource.length();
+        for (int i = 0; i < length; i++) {
+            char c = resource.charAt(i);
+            if (c == ':' || c == '/') {
+                result.add(resource.substring(start, i));
+                start = i + 1;
+            }
+        }
+        result.add(resource.substring(start));
+        return result;
     }
 
     /**

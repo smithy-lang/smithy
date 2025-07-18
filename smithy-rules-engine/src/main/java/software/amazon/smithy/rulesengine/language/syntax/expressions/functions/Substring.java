@@ -105,6 +105,11 @@ public final class Substring extends LibraryFunction {
         public Substring createFunction(FunctionNode functionNode) {
             return new Substring(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 5;
+        }
     }
 
     /**
