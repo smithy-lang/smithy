@@ -171,7 +171,7 @@
 
 ### Features
 * Added multiselect and filter to supported `operationContextParams` paths ([#2442](https://github.com/smithy-lang/smithy/pull/2442))
-* Integrated Spotless formatter into build logic to automatically format Java and Kotlin code ([#2485](https://github.com/smithy-lang/smithy/pull/2485)
+* Integrated Spotless formatter into build logic to automatically format Java and Kotlin code ([#2485](https://github.com/smithy-lang/smithy/pull/2485))
 * Added help text to `ResourceOperationInputOutput` event ([#2489](https://github.com/smithy-lang/smithy/pull/2489))
 * Added `smithy-docgen` package that enables the generation of a service documentation site from a smithy model ([#2488](https://github.com/smithy-lang/smithy/pull/2488))
 * Updated `ShouldHaveUsedTimestampValidator` to reduce false positives ([#2480](https://github.com/smithy-lang/smithy/pull/2480))
@@ -441,7 +441,7 @@
 * Fixed Windows CI errors by removing no-cone on git add command. ([#2168](https://github.com/smithy-lang/smithy/pull/2168))
 * Fixed the `RestJsonZeroAndFalseQueryValues` protocol test. ([#2167](https://github.com/smithy-lang/smithy/pull/2167))
 * Properly fix multi-mixin members in shape build. ([#2157](https://github.com/smithy-lang/smithy/pull/2157))
-* Fixed text block incidental whitespace handling. ([#2147](https://github.com/smithy-lang/smithy/pull/2147)
+* Fixed text block incidental whitespace handling. ([#2147](https://github.com/smithy-lang/smithy/pull/2147))
 * Fixed issues with `AbstractCodeWriter` state stacks. ([#2142](https://github.com/smithy-lang/smithy/pull/2142))
 
 ### Documentation
@@ -1370,9 +1370,10 @@
 
   Existing models that already use a set of other types will need to migrate to
   use a list rather than a set, and they will need to implement any necessary
-  uniqueness checks server-side as needed. ([#1106](https://github.com/awslabs/smithy/pull/1106))
+  uniqueness checks server-side as needed.
 
   **NOTE**: This restriction was downgraded to a WARNING in 1.18.1
+  ([#1106](https://github.com/awslabs/smithy/pull/1106))
 
 * Removed unused `UseShapeWriterObserver` and related features. ([#1117](https://github.com/awslabs/smithy/pull/1117))
 
@@ -1437,8 +1438,8 @@
 ### Bug Fixes
 * Removed @internal from the @unitType trait. ([#1054](https://github.com/awslabs/smithy/pull/1054))
 * Fixed JMESPath and-expression evaluation to correctly provide the result of the
-  left expression when it is falsey. [#1053](https://github.com/awslabs/smithy/pull/1053)
-* Fixed quoted string headers restJson1 response protocol test. [#1049](https://github.com/awslabs/smithy/pull/1049)
+  left expression when it is falsey. ([#1053](https://github.com/awslabs/smithy/pull/1053))
+* Fixed quoted string headers restJson1 response protocol test. ([#1049](https://github.com/awslabs/smithy/pull/1049))
 
 ## 1.16.2 (2022-01-10)
 
@@ -2167,16 +2168,16 @@
 * Added the `ast` command to the CLI to convert 0 or more Smithy models into a JSON AST. ([#435](https://github.com/awslabs/smithy/pull/435))
 * Added a Dockerfile for building Smithy as a Docker image. ([#427](https://github.com/awslabs/smithy/pull/427))
 
-### Optimizations
-
-* The Smithy IDL parser has been rewritten and optimized. ([#434](https://github.com/awslabs/smithy/pull/434))
-* Generate a class data share to speed up the CLI. ([#429](https://github.com/awslabs/smithy/pull/429))
-
 ### Bug Fixes
 
 * Fix several ambiguities and issues in the IDL grammar. ([#434](https://github.com/awslabs/smithy/pull/434))
 * JSON pretty printing of the AST now uses 4 spaces for indentation. ([#435](https://github.com/awslabs/smithy/pull/435))
 * Fix CLI `--help` output alignment. ([#429](https://github.com/awslabs/smithy/pull/429))
+
+### Other
+
+* The Smithy IDL parser has been rewritten and optimized. ([#434](https://github.com/awslabs/smithy/pull/434))
+* Generate a class data share to speed up the CLI. ([#429](https://github.com/awslabs/smithy/pull/429))
 
 ## 1.0.0 (2020-05-04)
 
