@@ -11,7 +11,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -140,7 +139,7 @@ public final class Rpcv2CborTrait extends AbstractTrait implements ToSmithyBuild
         }
 
         @Override
-        public Trait createTrait(ShapeId target, Node value) {
+        public Rpcv2CborTrait createTrait(ShapeId target, Node value) {
             Rpcv2CborTrait result = fromNode(value);
             result.setNodeCache(value);
             return result;
