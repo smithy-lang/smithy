@@ -8,6 +8,15 @@ from typing import Self
 from . import RELEASES_DIR, Change, Release
 from .release import release as _release
 
+try:
+    import mdformat
+except ImportError as e:
+    raise Exception(
+        "Required dependency of render not found. Please install the smithy_changelog "
+        "package or run render via `uv run render` to ensure the dependency is "
+        "available."
+    ) from e
+
 TITLE = "Changelog"
 
 
@@ -66,6 +75,10 @@ def render() -> None:
 
             rendered += "\n"
 
+    rendered = mdformat.text(  # pyright: ignore [reportUnknownMemberType]
+        rendered, options={"wrap": 80}
+    )
+    rendered = rendered.strip() + "\n"
     print(rendered)
 
 
