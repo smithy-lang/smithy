@@ -3,29 +3,6 @@ revision = 2
 requires-python = ">=3.12"
 
 [[package]]
-name = "changelog"
-version = "0.1.0"
-source = { editable = "." }
-
-[package.dev-dependencies]
-lint = [
-    { name = "docformatter" },
-    { name = "ruff" },
-]
-typing = [
-    { name = "pyright" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-lint = [
-    { name = "docformatter", specifier = ">=1.7.7" },
-    { name = "ruff", specifier = ">=0.12.3" },
-]
-typing = [{ name = "pyright", specifier = ">=1.1.403" }]
-
-[[package]]
 name = "charset-normalizer"
 version = "3.4.2"
 source = { registry = "https://pypi.org/simple" }
@@ -119,6 +96,29 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/07/87/c070f5f027bd81f3efee7d14cb4d84067ecf67a3a8efb43aadfc72aa79a6/ruff-0.12.3-py3-none-win_amd64.whl", hash = "sha256:a946cf1e7ba3209bdef039eb97647f1c77f6f540e5845ec9c114d3af8df873e7", size = 11695072, upload-time = "2025-07-11T13:21:11.004Z" },
     { url = "https://files.pythonhosted.org/packages/e0/30/f3eaf6563c637b6e66238ed6535f6775480db973c836336e4122161986fc/ruff-0.12.3-py3-none-win_arm64.whl", hash = "sha256:5f9c7c9c8f84c2d7f27e93674d27136fbf489720251544c4da7fb3d742e011b1", size = 10805855, upload-time = "2025-07-11T13:21:13.547Z" },
 ]
+
+[[package]]
+name = "smithy-changelog"
+version = "0.1.0"
+source = { editable = "." }
+
+[package.dev-dependencies]
+lint = [
+    { name = "docformatter" },
+    { name = "ruff" },
+]
+typing = [
+    { name = "pyright" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+lint = [
+    { name = "docformatter", specifier = ">=1.7.7" },
+    { name = "ruff", specifier = ">=0.12.3" },
+]
+typing = [{ name = "pyright", specifier = ">=1.1.403" }]
 
 [[package]]
 name = "typing-extensions"
