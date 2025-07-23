@@ -4,6 +4,11 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -247,107 +252,81 @@ public final class Bdd implements ToNode {
 
     @Override
     public String toString() {
-        return toString(new StringBuilder()).toString();
-    }
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Writer writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
 
-    /**
-     * Appends a string representation to the given StringBuilder.
-     *
-     * @param sb the StringBuilder to append to
-     * @return the given string builder.
-     */
-    public StringBuilder toString(StringBuilder sb) {
-        // Calculate max width needed for first column identifiers
-        int maxConditionIdx = conditions.size() - 1;
-        int maxResultIdx = results.size() - 1;
+            // Calculate width for condition/result indices
+            int maxConditionIdx = conditions.size() - 1;
+            int maxResultIdx = results.size() - 1;
+            int conditionWidth = maxConditionIdx >= 0 ? String.valueOf(maxConditionIdx).length() + 1 : 2;
+            int resultWidth = maxResultIdx >= 0 ? String.valueOf(maxResultIdx).length() + 1 : 2;
+            int varWidth = Math.max(conditionWidth, resultWidth);
 
-        // Width needed for "C" + maxConditionIdx or "R" + maxResultIdx
-        int conditionWidth = maxConditionIdx >= 0 ? String.valueOf(maxConditionIdx).length() + 1 : 2;
-        int resultWidth = maxResultIdx >= 0 ? String.valueOf(maxResultIdx).length() + 1 : 2;
-        int varWidth = Math.max(conditionWidth, resultWidth);
+            writer.write("Bdd{\n");
 
-        sb.append("Bdd{\n");
-
-        // Conditions
-        sb.append("  conditions (").append(getConditionCount()).append("):\n");
-        for (int i = 0; i < conditions.size(); i++) {
-            sb.append(String.format("    %" + varWidth + "s: %s%n", "C" + i, conditions.get(i)));
-        }
-
-        // Results
-        sb.append("  results (").append(results.size()).append("):\n");
-        for (int i = 0; i < results.size(); i++) {
-            sb.append(String.format("    %" + varWidth + "s: ", "R" + i));
-            appendResult(sb, results.get(i));
-            sb.append("\n");
-        }
-
-        // Root
-        sb.append("  root: ").append(formatReference(rootRef)).append("\n");
-
-        // Nodes
-        sb.append("  nodes (").append(nodes.length).append("):\n");
-
-        // Calculate width needed for node indices
-        int indexWidth = String.valueOf(nodes.length - 1).length();
-
-        for (int i = 0; i < nodes.length; i++) {
-            sb.append(String.format("    %" + indexWidth + "d: ", i));
-            if (i == 0) {
-                sb.append("terminal");
-            } else {
-                int[] node = nodes[i];
-                int varIdx = node[0];
-                sb.append("[");
-
-                // Use the calculated width for variable/result references
-                if (varIdx < conditions.size()) {
-                    sb.append(String.format("%" + varWidth + "s", "C" + varIdx));
-                } else {
-                    sb.append(String.format("%" + varWidth + "s", "R" + (varIdx - conditions.size())));
-                }
-
-                // Format the references with consistent spacing
-                sb.append(", ")
-                        .append(String.format("%6s", formatReference(node[1])))
-                        .append(", ")
-                        .append(String.format("%6s", formatReference(node[2])))
-                        .append("]");
+            // Write conditions
+            writer.write("  conditions (");
+            writer.write(String.valueOf(getConditionCount()));
+            writer.write("):\n");
+            for (int i = 0; i < conditions.size(); i++) {
+                writer.write(String.format("    %" + varWidth + "s: %s%n", "C" + i, conditions.get(i)));
             }
-            sb.append("\n");
-        }
 
-        sb.append("}");
-        return sb;
+            // Write results
+            writer.write("  results (");
+            writer.write(String.valueOf(results.size()));
+            writer.write("):\n");
+            for (int i = 0; i < results.size(); i++) {
+                writer.write(String.format("    %" + varWidth + "s: ", "R" + i));
+                appendResult(writer, results.get(i));
+                writer.write("\n");
+            }
+
+            // Write root
+            writer.write("  root: ");
+            writer.write(BddFormatter.formatReference(rootRef));
+            writer.write("\n");
+
+            // Write nodes header
+            writer.write("  nodes (");
+            writer.write(String.valueOf(nodes.length));
+            writer.write("):\n");
+
+            writer.flush();
+
+            // Use BddFormatter for nodes - no need to strip anything since we control the indent
+            BddFormatter.builder()
+                    .writer(writer)
+                    .nodes(nodes)
+                    .rootRef(rootRef)
+                    .conditionCount(conditions.size())
+                    .resultCount(results.size())
+                    .indent("  ")
+                    .build()
+                    .format();
+
+            writer.write("}");
+            writer.flush();
+
+            return baos.toString(StandardCharsets.UTF_8.name());
+        } catch (IOException e) {
+            // Should never happen with ByteArrayOutputStream
+            throw new RuntimeException("Failed to format BDD", e);
+        }
     }
 
-    private void appendResult(StringBuilder sb, Rule result) {
+    private void appendResult(Writer writer, Rule result) throws IOException {
         if (result == null) {
-            sb.append("(no match)");
+            writer.write("(no match)");
         } else if (result instanceof EndpointRule) {
-            sb.append("Endpoint: ").append(((EndpointRule) result).getEndpoint().getUrl());
+            writer.write("Endpoint: ");
+            writer.write(((EndpointRule) result).getEndpoint().getUrl().toString());
         } else if (result instanceof ErrorRule) {
-            sb.append("Error: ").append(((ErrorRule) result).getError());
+            writer.write("Error: ");
+            writer.write(((ErrorRule) result).getError().toString());
         } else {
-            sb.append(result.getClass().getSimpleName());
-        }
-    }
-
-    private String formatReference(int ref) {
-        if (ref == 0) {
-            return "INVALID";
-        } else if (ref == 1) {
-            return "TRUE";
-        } else if (ref == -1) {
-            return "FALSE";
-        } else if (ref >= Bdd.RESULT_OFFSET) {
-            // This is a result reference
-            int resultIdx = ref - Bdd.RESULT_OFFSET;
-            return "R" + resultIdx;
-        } else if (ref < 0) {
-            return "!" + (Math.abs(ref) - 1);
-        } else {
-            return String.valueOf(ref - 1);
+            writer.write(result.getClass().getSimpleName());
         }
     }
 
