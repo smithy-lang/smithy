@@ -1,0 +1,27 @@
+{
+  "version": "1.14.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated the `@aws.protocols#httpChecksum` trait to use uppercase algorithm\nnames.",
+      "pull_requests": [
+        "[#982](https://github.com/awslabs/smithy/pull/982)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where JSON Schema conversion wouldn't remove out-of-service\nreferences before deconflicting.",
+      "pull_requests": [
+        "[#978](https://github.com/awslabs/smithy/pull/978)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed IAM condition key inference not using the `@aws.iam#iamResource` trait.",
+      "pull_requests": [
+        "[#981](https://github.com/awslabs/smithy/pull/981)"
+      ]
+    }
+  ],
+  "date": "2021-11-15"
+}

@@ -1,0 +1,83 @@
+{
+  "version": "1.40.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added new protocol tests for the `restXml` protocol, which assert\nrequest/response behaviors for string payloads.",
+      "pull_requests": [
+        "[#2007](https://github.com/smithy-lang/smithy/pull/2007)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new package, `smithy-smoke-test-traits`, which defines the traits for\nsmoke tests. This package contains the smithy model definitions of said\ntraits, their java implementations, and unit tests.",
+      "pull_requests": [
+        "[#2005](https://github.com/smithy-lang/smithy/pull/2005)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added auth-scheme validator that runs for SigV4 sub-schemes as part of the AWS\nrule-set in `smithy-rules-engine`.",
+      "pull_requests": [
+        "[#2000](https://github.com/smithy-lang/smithy/pull/2000)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `AccountId` and `CredentialScope` parameters for AWS-specific endpoint\nrules in `smithy-rules-engine`.",
+      "pull_requests": [
+        "[#1993](https://github.com/smithy-lang/smithy/pull/1993)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added traits anchors for a few traits that were previously missing.",
+      "pull_requests": [
+        "[#2008](https://github.com/smithy-lang/smithy/pull/2008)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added `Smithy Examples` embedding to the [smithy.io](https://smithy.io)\nsidebar under `Project`.",
+      "pull_requests": [
+        "[#2006](https://github.com/smithy-lang/smithy/pull/2006)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added important notice for the `@contextParam` trait to clarify expected\nbehavior of clients when `@required` is used on the same\nmember.",
+      "pull_requests": [
+        "[#1999](https://github.com/smithy-lang/smithy/pull/1999)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed missing source-locations in emitted events by `smithy-diff`. Previously,\n`N/A` would be displayed instead of the real location.",
+      "pull_requests": [
+        "[#2001](https://github.com/smithy-lang/smithy/pull/2001)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added missing method override in `smithy-rules-engine`.",
+      "pull_requests": [
+        "[#1998](https://github.com/smithy-lang/smithy/pull/1998)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed bug where properties of resource shapes were not being serialized in the\nIDL serializer.",
+      "pull_requests": [
+        "[#1996](https://github.com/smithy-lang/smithy/pull/1996)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue with OpenAPI conversion not allowing multiple errors for a\nsingle status code with an opt-in that uses `oneOf` to de-conflict the errors.",
+      "pull_requests": [
+        "[#1995](https://github.com/smithy-lang/smithy/pull/1995)"
+      ]
+    }
+  ],
+  "date": "2023-10-16"
+}

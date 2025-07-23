@@ -1,0 +1,21 @@
+{
+  "version": "1.13.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug that caused the `apply` transform to not run its projections.",
+      "pull_requests": [
+        "[#969](https://github.com/awslabs/smithy/pull/969)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified uri label and greedy label documentation.",
+      "pull_requests": [
+        "[#965](https://github.com/awslabs/smithy/pull/965)",
+        "[#968](https://github.com/awslabs/smithy/pull/968)"
+      ]
+    }
+  ],
+  "date": "2021-11-02"
+}

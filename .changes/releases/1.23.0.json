@@ -1,0 +1,194 @@
+{
+  "version": "1.23.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added version 2.0 of the Smithy IDL.",
+      "pull_requests": [
+        "[#1317](https://github.com/awslabs/smithy/pull/1317)",
+        "[#1312](https://github.com/awslabs/smithy/pull/1312)",
+        "[#1318](https://github.com/awslabs/smithy/pull/1318)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added mixins for all shape types.",
+      "pull_requests": [
+        "[#889](https://github.com/awslabs/smithy/pull/889)",
+        "[#1025](https://github.com/awslabs/smithy/pull/1025)",
+        "[#1139](https://github.com/awslabs/smithy/pull/1139)",
+        "[#1323](https://github.com/awslabs/smithy/pull/1323)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added resource properties to version 2.0 of Smithy IDL.",
+      "pull_requests": [
+        "[#1213](https://github.com/awslabs/smithy/pull/1213)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added target elision for mixins/resources.",
+      "pull_requests": [
+        "[#1231](https://github.com/awslabs/smithy/pull/1231)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added inline operation IO shapes.",
+      "pull_requests": [
+        "[#963](https://github.com/awslabs/smithy/pull/963)",
+        "[#962](https://github.com/awslabs/smithy/pull/962)",
+        "[#1007](https://github.com/awslabs/smithy/pull/1007)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for multiple IDL versions.",
+      "pull_requests": [
+        "[#917](https://github.com/awslabs/smithy/pull/917)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added IDL 1.0 to 2.0 model migration tool.",
+      "pull_requests": [
+        "[#1175](https://github.com/awslabs/smithy/pull/1175)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added enum shapes.",
+      "pull_requests": [
+        "[#1088](https://github.com/awslabs/smithy/pull/1088)",
+        "[#1114](https://github.com/awslabs/smithy/pull/1114)",
+        "[#1133](https://github.com/awslabs/smithy/pull/1133)",
+        "[#1313](https://github.com/awslabs/smithy/pull/1313)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `@clientOptional` trait.",
+      "pull_requests": [
+        "[#1052](https://github.com/awslabs/smithy/pull/1052)",
+        "[#1264](https://github.com/awslabs/smithy/pull/1264)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Multiple traits can now be applied in a single `apply` statement.",
+      "pull_requests": [
+        "[#885](https://github.com/awslabs/smithy/pull/885)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Commas are now optional in the IDL.",
+      "pull_requests": [
+        "[#772](https://github.com/awslabs/smithy/pull/772)",
+        "[#776](https://github.com/awslabs/smithy/pull/776)",
+        "[#1166](https://github.com/awslabs/smithy/pull/1166)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `@default` trait.",
+      "pull_requests": [
+        "[#1019](https://github.com/awslabs/smithy/pull/1019)",
+        "[#1286](https://github.com/awslabs/smithy/pull/1286)",
+        "[#1021](https://github.com/awslabs/smithy/pull/1021)",
+        "[#1048](https://github.com/awslabs/smithy/pull/1048)",
+        "[#920](https://github.com/awslabs/smithy/pull/920)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Sets can no longer be used in 2.0 models. Use a list with the `@uniqueItems`\ntrait instead. Sets can still be used in 1.0 models, though a warning will be\nemitted. The `SetShape` in smithy-model is a subclass of `ListShape`, so new\ncode generators can simply treat any `SetShape` like a `ListShape`.",
+      "pull_requests": [
+        "[#1292](https://github.com/awslabs/smithy/pull/1292)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Migrated traits packages to use Smithy IDL definitions instead of JSON AST.",
+      "pull_requests": [
+        "[#1207](https://github.com/awslabs/smithy/pull/1207)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `@cfnDefaultValue` trait",
+      "pull_requests": [
+        "[#1285](https://github.com/awslabs/smithy/pull/1285)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Made streaming blobs required/default.",
+      "pull_requests": [
+        "[#1209](https://github.com/awslabs/smithy/pull/1209)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed TextIndex to handle synthetic traits.",
+      "pull_requests": [
+        "[#1206](https://github.com/awslabs/smithy/pull/1206)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Removed duplicate aws.protocols model file.",
+      "pull_requests": [
+        "[#1310](https://github.com/awslabs/smithy/pull/1310)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Removed empty trait block serialization.",
+      "pull_requests": [
+        "[#1240](https://github.com/awslabs/smithy/pull/1240)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed trait source locations.",
+      "pull_requests": [
+        "[#1146](https://github.com/awslabs/smithy/pull/1146)",
+        "[#1157](https://github.com/awslabs/smithy/pull/1157)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for IDL 2.0 and changed location of 1.0 docs.",
+      "pull_requests": [
+        "[#1302](https://github.com/awslabs/smithy/pull/1302)",
+        "[#1057](https://github.com/awslabs/smithy/pull/1057)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added IDL 1.0 to 2.0 migration guide.",
+      "pull_requests": [
+        "[#1065](https://github.com/awslabs/smithy/pull/1065)",
+        "[#1074](https://github.com/awslabs/smithy/pull/1074)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the doc highlighter for IDL 2.0.",
+      "pull_requests": [
+        "[#1251](https://github.com/awslabs/smithy/pull/1251)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation to IAM trait enums.",
+      "pull_requests": [
+        "[#1322](https://github.com/awslabs/smithy/pull/1322)"
+      ]
+    }
+  ],
+  "date": "2022-08-10"
+}

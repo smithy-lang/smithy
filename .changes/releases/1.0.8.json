@@ -1,0 +1,57 @@
+{
+  "version": "1.0.8",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated `Walker` to provide a stable sort for shapes.",
+      "pull_requests": [
+        "[#511](https://github.com/awslabs/smithy/pull/511)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved support for loading `ValidationEvent`s via `NodeMapper`.",
+      "pull_requests": [
+        "[#518](https://github.com/awslabs/smithy/pull/518)",
+        "[#516](https://github.com/awslabs/smithy/pull/516)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the ability to `disableFromNode` via `NodeMapper`.",
+      "pull_requests": [
+        "[#505](https://github.com/awslabs/smithy/pull/505)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in protocol tests.",
+      "pull_requests": [
+        "[#502](https://github.com/awslabs/smithy/pull/502)",
+        "[#507](https://github.com/awslabs/smithy/pull/507)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Stopped raising validation errors and running validation with `RenameShapes`\ntransformer.",
+      "pull_requests": [
+        "[#512](https://github.com/awslabs/smithy/pull/512)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Simplified conflict handling for shapes.",
+      "pull_requests": [
+        "[#514](https://github.com/awslabs/smithy/pull/514)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Simplified duplicate member detection and handling.",
+      "pull_requests": [
+        "[#513](https://github.com/awslabs/smithy/pull/513)"
+      ]
+    }
+  ],
+  "date": "2020-07-31"
+}

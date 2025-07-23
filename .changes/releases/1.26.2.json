@@ -1,0 +1,13 @@
+{
+  "version": "1.26.2",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Add missing regions and fix typo in partitions.json",
+      "pull_requests": [
+        "[#1487](https://github.com/awslabs/smithy/pull/1487)"
+      ]
+    }
+  ],
+  "date": "2022-11-07"
+}

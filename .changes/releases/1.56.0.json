@@ -1,0 +1,97 @@
+{
+  "version": "1.56.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `FlattenAndRemoveMixins` transform to list of provided build transforms",
+      "pull_requests": [
+        "[#2552](https://github.com/smithy-lang/smithy/pull/2552)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `Since` suffix to timestamp linter for better timestamp validation",
+      "pull_requests": [
+        "[#2554](https://github.com/smithy-lang/smithy/pull/2554)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved performance by preferring `ShapeId` for `hasTrait` lookups instead of\nclass-based lookups",
+      "pull_requests": [
+        "[#2562](https://github.com/smithy-lang/smithy/pull/2562)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved `CleanClientDiscoveryTraitTransformer` implementation by adding short\nciruit if ClientDiscovery traits are not applied",
+      "pull_requests": [
+        "[#2559](https://github.com/smithy-lang/smithy/pull/2559)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Make IDL serialization clearer by skipping to serialize default boolean values",
+      "pull_requests": [
+        "[#2553](https://github.com/smithy-lang/smithy/pull/2553)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Optimized `ModelTransformPlugin` and `ResourceIdentifierBindingValidator` to\nuse fewer intermediate objects and\nstreams.",
+      "pull_requests": [
+        "[#2561](https://github.com/smithy-lang/smithy/pull/2561)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `breakingChanges` property to the removal of sigv4 and sigv4a traits",
+      "pull_requests": [
+        "[#2567](https://github.com/smithy-lang/smithy/pull/2567)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed constraints on `httpPrefixHeaders` trait to have `NOTE` severity\nduring validation when the prefix is set to empty string",
+      "pull_requests": [
+        "[#2565](https://github.com/smithy-lang/smithy/pull/2565)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Relaxed on `TaggableResource` instance validation by lowering the severity\nfrom `ERROR` to `DANGER` when a resource does not have instance operations for\nmanipulating tags and service level tagging operations are not present",
+      "pull_requests": [
+        "[#2566](https://github.com/smithy-lang/smithy/pull/2566)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed OpenAPI conversion by using `ShapeId` instead of name, reducing\nunnecessary object creation",
+      "pull_requests": [
+        "[#2560](https://github.com/smithy-lang/smithy/pull/2560)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added TypeScript quickstart pages to provide tutorial for users to generate\nclients and SDKs with Smithy TypeScript",
+      "pull_requests": [
+        "[#2536](https://github.com/smithy-lang/smithy/pull/2536)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for OpenAPI `enumStrategy` setting to clarify\nconfiguration options",
+      "pull_requests": [
+        "[#2551](https://github.com/smithy-lang/smithy/pull/2551)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added new Smithy landing page for improved user experience",
+      "pull_requests": [
+        "[#2543](https://github.com/smithy-lang/smithy/pull/2543)"
+      ]
+    }
+  ],
+  "date": "2025-03-27"
+}

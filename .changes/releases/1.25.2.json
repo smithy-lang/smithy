@@ -1,0 +1,20 @@
+{
+  "version": "1.25.2",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Revert \"Enforce private on traits (#1406)\"",
+      "pull_requests": [
+        "[#1428](https://github.com/awslabs/smithy/pull/1428)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Remove aws query compatible protocol test",
+      "pull_requests": [
+        "[#1424](https://github.com/awslabs/smithy/pull/1424)"
+      ]
+    }
+  ],
+  "date": "2022-09-28"
+}

@@ -1,0 +1,90 @@
+{
+  "version": "0.9.4",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add support for AWS Client Endpoint Discovery",
+      "pull_requests": [
+        "[#165](https://github.com/awslabs/smithy/pull/165)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Refactor event streams to target members",
+      "pull_requests": [
+        "[#171](https://github.com/awslabs/smithy/pull/171)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for aliasing referenced `Symbol`s",
+      "pull_requests": [
+        "[#168](https://github.com/awslabs/smithy/pull/168)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for `Symbol`s to introduce dependencies",
+      "pull_requests": [
+        "[#169](https://github.com/awslabs/smithy/pull/169)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add ability to manually escape reserved words in `ReservedWordSymbolProvider`",
+      "pull_requests": [
+        "[#174](https://github.com/awslabs/smithy/pull/174)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add method to gather dependencies for `Symbol`s",
+      "pull_requests": [
+        "[#170](https://github.com/awslabs/smithy/pull/170)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add a caching `SymbolProvider`",
+      "pull_requests": [
+        "[#167](https://github.com/awslabs/smithy/pull/167)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improve the usability of `CodeWroter#openBlock`",
+      "pull_requests": [
+        "[#175](https://github.com/awslabs/smithy/pull/175)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improve the usability of `PluginContext`",
+      "pull_requests": [
+        "[#181](https://github.com/awslabs/smithy/pull/181)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Disable URLConnection cache in CLI",
+      "pull_requests": [
+        "[#180](https://github.com/awslabs/smithy/pull/180)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix issue with generated authentication for CORS checks",
+      "pull_requests": [
+        "[#179](https://github.com/awslabs/smithy/pull/179)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Set the `defaultTimestampFormat` to `epoch-seconds` for `aws.rest-json`\nprotocols in OpenAPI",
+      "pull_requests": [
+        "[#184](https://github.com/awslabs/smithy/pull/184)"
+      ]
+    }
+  ],
+  "date": "2019-10-09"
+}

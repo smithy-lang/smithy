@@ -1,0 +1,48 @@
+{
+  "version": "1.57.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `aws_recommended` as a partitional endpoint pattern type",
+      "pull_requests": [
+        "[#2575](https://github.com/smithy-lang/smithy/pull/2575)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Increased validation event severity for input name-value validation for the\nendpoint tests trait",
+      "pull_requests": [
+        "[#2593](https://github.com/smithy-lang/smithy/pull/2593)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added nascent document type support for RPC v2 CBOR",
+      "pull_requests": [
+        "[#2595](https://github.com/smithy-lang/smithy/pull/2595)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Enabled AWS query compatibility for RPC v2 CBOR",
+      "pull_requests": [
+        "[#2579](https://github.com/smithy-lang/smithy/pull/2579)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated `restXml` protocol tests to align with other XML tests",
+      "pull_requests": [
+        "[#2583](https://github.com/smithy-lang/smithy/pull/2583)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed waiter examples that included wrong members",
+      "pull_requests": [
+        "[2594](https://github.com/smithy-lang/smithy/pull/2594)"
+      ]
+    }
+  ],
+  "date": "2025-04-21"
+}

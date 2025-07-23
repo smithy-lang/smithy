@@ -1,0 +1,90 @@
+{
+  "version": "1.49.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added list and map shapes to directed codegen.",
+      "pull_requests": [
+        "[#2273](https://github.com/smithy-lang/smithy/pull/2273)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for defaults on trait member values in trait-codegen.",
+      "pull_requests": [
+        "[#2267](https://github.com/smithy-lang/smithy/pull/2267)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for string-arrays for as parameters in rules-engine.",
+      "pull_requests": [
+        "[#2266](https://github.com/smithy-lang/smithy/pull/2266)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new trait (`@operationContextParams`) for binding array parameters to\nnested operation inputs in the rules-engine.",
+      "pull_requests": [
+        "[#2264](https://github.com/smithy-lang/smithy/pull/2264)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed bug in the formatter where comments in operation errors were not being\nhandled correctly.",
+      "pull_requests": [
+        "[#2283](https://github.com/smithy-lang/smithy/pull/2283)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed bug in the formatter where certain documentation comments were being\nconverted to line-comments.",
+      "pull_requests": [
+        "[#2277](https://github.com/smithy-lang/smithy/pull/2277)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed incorrect status code in restXml response protocol test.",
+      "pull_requests": [
+        "[#2272](https://github.com/smithy-lang/smithy/pull/2272)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed ec2query protocol test for empty list serialization.",
+      "pull_requests": [
+        "[#2269](https://github.com/smithy-lang/smithy/pull/2269)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed Javadoc integration for documentation in members and enum variants in\ntrait-codegen.",
+      "pull_requests": [
+        "[#2265](https://github.com/smithy-lang/smithy/pull/2265)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed timing issue in the delay calculation for waiter retries.",
+      "pull_requests": [
+        "[#2259](https://github.com/smithy-lang/smithy/pull/2259)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Corrected a typo in RPCv2 CBOR specificaiton.",
+      "pull_requests": [
+        "[#2278](https://github.com/smithy-lang/smithy/pull/2278)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated casing of aggregate shape names in shape type table.",
+      "pull_requests": [
+        "[#2271](https://github.com/smithy-lang/smithy/pull/2271)"
+      ]
+    }
+  ],
+  "date": "2024-05-08"
+}

@@ -1,0 +1,48 @@
+{
+  "version": "1.7.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `rename` property to the `service` shape to disambiguate shape name\nconflicts in the service closure.",
+      "pull_requests": [
+        "[#734](https://github.com/awslabs/smithy/pull/734)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `httpQueryParams` trait that binds a map of key-value pairs to query\nstring parameters.",
+      "pull_requests": [
+        "[#735](https://github.com/awslabs/smithy/pull/735)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved the usability of code for building and running Selectors.",
+      "pull_requests": [
+        "[#726](https://github.com/awslabs/smithy/pull/726)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several protocol tests for behavior around `null` serialization.",
+      "pull_requests": [
+        "[#728](https://github.com/awslabs/smithy/pull/728)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added missing documentation for some trait models.",
+      "pull_requests": [
+        "[#737](https://github.com/awslabs/smithy/pull/737)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed `awsQuery` and `ec2Query` list serialization examples.",
+      "pull_requests": [
+        "[#732](https://github.com/awslabs/smithy/pull/732)"
+      ]
+    }
+  ],
+  "date": "2021-03-12"
+}

@@ -1,0 +1,102 @@
+{
+  "version": "1.0.7",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Use the `@title` trait to improve generated documentation for JSON Schema\nunions that use `\"oneOf\"`.",
+      "pull_requests": [
+        "[#485](https://github.com/awslabs/smithy/pull/485)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added and updated several protocol tests for `restJson1`.",
+      "pull_requests": [
+        "[#490](https://github.com/awslabs/smithy/pull/490)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added and updated several protocol tests for `awsJson1_1`.",
+      "pull_requests": [
+        "[#484](https://github.com/awslabs/smithy/pull/484)",
+        "[#493](https://github.com/awslabs/smithy/pull/493)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for `awsJson1_0`.",
+      "pull_requests": [
+        "[#496](https://github.com/awslabs/smithy/pull/496)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where `passthroughBehavior` was misspelled as\n`passThroughBehavior` in APIGateway OpenAPI output for integrations and mock\nintegrations.",
+      "pull_requests": [
+        "[#495](https://github.com/awslabs/smithy/pull/495)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where only the last line in a multiline doc comment on a member\nwould be successfully parsed.",
+      "pull_requests": [
+        "[#498](https://github.com/awslabs/smithy/pull/498)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in protocol tests.",
+      "pull_requests": [
+        "[#473](https://github.com/awslabs/smithy/pull/473)",
+        "[#476](https://github.com/awslabs/smithy/pull/476)",
+        "[#481](https://github.com/awslabs/smithy/pull/481)",
+        "[#491](https://github.com/awslabs/smithy/pull/491)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Refactored the specification to better explain the semantic model and its\nrepresentations.",
+      "pull_requests": [
+        "[#497](https://github.com/awslabs/smithy/pull/497)",
+        "[#482](https://github.com/awslabs/smithy/pull/482)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified guidance on using `@mediaType`.",
+      "pull_requests": [
+        "[#500](https://github.com/awslabs/smithy/pull/500)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed outdated namespace guidance.",
+      "pull_requests": [
+        "[#487](https://github.com/awslabs/smithy/pull/487)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed several minor issues.",
+      "pull_requests": [
+        "[#494](https://github.com/awslabs/smithy/pull/494)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Disallowed problematic identifiers misusing `_`.",
+      "pull_requests": [
+        "[#499](https://github.com/awslabs/smithy/pull/499)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Moved validation of members with the `@httpLabel` trait being marked required\nto the selector.",
+      "pull_requests": [
+        "[#480](https://github.com/awslabs/smithy/pull/480)"
+      ]
+    }
+  ],
+  "date": "2020-07-16"
+}

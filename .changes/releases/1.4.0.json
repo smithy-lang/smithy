@@ -1,0 +1,154 @@
+{
+  "version": "1.4.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `smithy-jmespath`, a dependency-less, JMESPath parser with a rich AST\nthat can be used in code generation, and performs static analysis of\nexpressions.",
+      "pull_requests": [
+        "[#621](https://github.com/awslabs/smithy/pull/621)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-waiters`, containing the `@waitable` trait. This provides\ninformation that clients can use to poll until a desired state is reached, or\nit is determined that state cannot be reached.",
+      "pull_requests": [
+        "[#623](https://github.com/awslabs/smithy/pull/623)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-aws-cloudformation-traits`, containing several (unstable) traits\nthat indicate CloudFormation resources and the additional metadata about their\nproperties.",
+      "pull_requests": [
+        "[#579](https://github.com/awslabs/smithy/pull/579)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-aws-cloudformation`, containing the (unstable) \"cloudformation\"\nbuild tool that, given a model decorated with traits from\n`aws.cloudformation`, will generate CloudFormation Resource Schemas.",
+      "pull_requests": [
+        "[#622](https://github.com/awslabs/smithy/pull/622)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for `patternProperties` when generating JSON Schema.",
+      "pull_requests": [
+        "[#611](https://github.com/awslabs/smithy/pull/611)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added more utility methods to the `CodeWriter`.",
+      "pull_requests": [
+        "[#624](https://github.com/awslabs/smithy/pull/624)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for `@sensitive` trait when applied to members.",
+      "pull_requests": [
+        "[#609](https://github.com/awslabs/smithy/pull/609)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for retrieving full paths to the `outputToken` and `items`\npagination members.",
+      "pull_requests": [
+        "[#628](https://github.com/awslabs/smithy/pull/628)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning for `@enum` entries without names.",
+      "pull_requests": [
+        "[#610](https://github.com/awslabs/smithy/pull/610)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for generating an `integer` OpenAPI type.",
+      "pull_requests": [
+        "[#632](https://github.com/awslabs/smithy/pull/632)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved `smithy-diff` evaluation of changing member targets.",
+      "pull_requests": [
+        "[#630](https://github.com/awslabs/smithy/pull/630)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated pagination tokens to support being `map` shapes.",
+      "pull_requests": [
+        "[#629](https://github.com/awslabs/smithy/pull/629)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where URIs would be declared conflicting if the differed through\nthe `@endpoint` trait.",
+      "pull_requests": [
+        "[#626](https://github.com/awslabs/smithy/pull/626)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug that would allow the `@aws.auth#sigv4` trait's `name` property to\nbe empty.",
+      "pull_requests": [
+        "[#635](https://github.com/awslabs/smithy/pull/635)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated protocol tests for `@sparse` trait.",
+      "pull_requests": [
+        "[#620](https://github.com/awslabs/smithy/pull/620)",
+        "[#631](https://github.com/awslabs/smithy/pull/631)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug with the interaction of `CodeWriter.writeInline` with sections.",
+      "pull_requests": [
+        "[#617](https://github.com/awslabs/smithy/pull/617)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed links for protocol test suites.",
+      "pull_requests": [
+        "[#615](https://github.com/awslabs/smithy/pull/615)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added example and test for composing with `CodeWriter`.",
+      "pull_requests": [
+        "[#619](https://github.com/awslabs/smithy/pull/619)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that `@enum` values cannot be empty.",
+      "pull_requests": [
+        "[#633](https://github.com/awslabs/smithy/pull/633)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified binary data in protocol tests.",
+      "pull_requests": [
+        "[#634](https://github.com/awslabs/smithy/pull/634)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Lowered severity of validation that a `pageSize` member is marked `@required`.",
+      "pull_requests": [
+        "[#612](https://github.com/awslabs/smithy/pull/612)"
+      ]
+    }
+  ],
+  "date": "2020-11-20"
+}

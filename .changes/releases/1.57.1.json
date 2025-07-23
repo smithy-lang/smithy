@@ -1,0 +1,13 @@
+{
+  "version": "1.57.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `FileManifest::writeJson` would return a relative path\ninstead of an absolute one",
+      "pull_requests": [
+        "[#2602](https://github.com/smithy-lang/smithy/pull/2602)"
+      ]
+    }
+  ],
+  "date": "2025-04-21"
+}

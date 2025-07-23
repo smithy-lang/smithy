@@ -1,0 +1,20 @@
+{
+  "version": "1.7.2",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where unions would cause CloudFormation schema conversion to fail.",
+      "pull_requests": [
+        "[#794](https://github.com/awslabs/smithy/pull/794)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an incorrect restXml protocol test.",
+      "pull_requests": [
+        "[#795](https://github.com/awslabs/smithy/pull/795)"
+      ]
+    }
+  ],
+  "date": "2021-05-11"
+}

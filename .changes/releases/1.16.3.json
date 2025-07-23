@@ -1,0 +1,27 @@
+{
+  "version": "1.16.3",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Removed @internal from the @unitType trait.",
+      "pull_requests": [
+        "[#1054](https://github.com/awslabs/smithy/pull/1054)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed JMESPath and-expression evaluation to correctly provide the result of\nthe left expression when it is falsey.",
+      "pull_requests": [
+        "[#1053](https://github.com/awslabs/smithy/pull/1053)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed quoted string headers restJson1 response protocol test.",
+      "pull_requests": [
+        "[#1049](https://github.com/awslabs/smithy/pull/1049)"
+      ]
+    }
+  ],
+  "date": "2022-01-13"
+}

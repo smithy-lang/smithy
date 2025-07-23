@@ -1,0 +1,20 @@
+{
+  "version": "1.0.3",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Prevent parsing overly deep Node values",
+      "pull_requests": [
+        "[#442](https://github.com/awslabs/smithy/pull/442)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix an issue with the OpenAPI conversion where synthesized structure inputs\nreference required properties that were removed.",
+      "pull_requests": [
+        "[#443](https://github.com/awslabs/smithy/pull/443)"
+      ]
+    }
+  ],
+  "date": "2020-05-26"
+}

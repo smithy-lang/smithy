@@ -1,0 +1,63 @@
+{
+  "version": "1.15.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added protocol tests for quoted strings in headers.",
+      "pull_requests": [
+        "[#986](https://github.com/awslabs/smithy/pull/986)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `filterSuppressions` transform's handling of members.",
+      "pull_requests": [
+        "[#989](https://github.com/awslabs/smithy/pull/989)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed http-content-type protocol tests.",
+      "pull_requests": [
+        "[#993](https://github.com/awslabs/smithy/pull/993)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed documentation regarding `@length` and `@auth` traits.",
+      "pull_requests": [
+        "[#988](https://github.com/awslabs/smithy/pull/988)",
+        "[#997](https://github.com/awslabs/smithy/pull/997)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for `httpMalformedRequestTests`.",
+      "pull_requests": [
+        "[#973](https://github.com/awslabs/smithy/pull/973)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Upgraded to use version `0.6.0` of the\n[Smithy Gradle Plugin](https://github.com/awslabs/smithy-gradle-plugin).",
+      "pull_requests": [
+        "[#996](https://github.com/awslabs/smithy/pull/996)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Reduced number of copies builders need to make when building up immutable\nobjects.",
+      "pull_requests": [
+        "[#995](https://github.com/awslabs/smithy/pull/995)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Ensured InputStreams in loader are closed.",
+      "pull_requests": [
+        "[#991](https://github.com/awslabs/smithy/pull/991)"
+      ]
+    }
+  ],
+  "date": "2021-12-02"
+}

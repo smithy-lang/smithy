@@ -1,0 +1,160 @@
+{
+  "version": "1.53.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a transform to mark required idempotency tokens client optional",
+      "pull_requests": [
+        "[#2466](https://github.com/smithy-lang/smithy/pull/2466)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the IDL serializer to write metadata to a separate file",
+      "pull_requests": [
+        "[#2464](https://github.com/smithy-lang/smithy/pull/2464)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Expanded the `title` trait to be applicable to any non-member shape",
+      "pull_requests": [
+        "[#2461](https://github.com/smithy-lang/smithy/pull/2461)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a pagination flattening transform",
+      "pull_requests": [
+        "[#2454](https://github.com/smithy-lang/smithy/pull/2454)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added transforms to remove deprecated shapes",
+      "pull_requests": [
+        "[#2452](https://github.com/smithy-lang/smithy/pull/2452)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed the pattern on the `@defineConditionKeys` trait's keys to enable\ninferring the `service` to be the service's `arnNamespace`",
+      "pull_requests": [
+        "[#2450](https://github.com/smithy-lang/smithy/pull/2450)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `useInlineMaps` JSONSchema setting to allow users to configure JSON\nSchema conversion to inline converted map shapes instead of creating\nreferences",
+      "pull_requests": [
+        "[#2449](https://github.com/smithy-lang/smithy/pull/2449)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the CFN resource schema generation to fill in the permissions field of\nthe tagging configuration for resources",
+      "pull_requests": [
+        "[#2446](https://github.com/smithy-lang/smithy/pull/2446)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `resourceDelimiter` and `reusable` properties to the `arn` trait",
+      "pull_requests": [
+        "[#2440](https://github.com/smithy-lang/smithy/pull/2440)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a validator for the xmlFlattened trait that checks if the member's\ntarget is a list that has a member with xmlName, and that xmlName doesn't\nmatch the name of the xmlFlattened member",
+      "pull_requests": [
+        "[#2439](https://github.com/smithy-lang/smithy/pull/2439)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated CloudFormation resource schema conversion to be round-trippable",
+      "pull_requests": [
+        "[#2445](https://github.com/smithy-lang/smithy/pull/2445/)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed for tagsProperty in CFN schema creation",
+      "pull_requests": [
+        "[#2444](https://github.com/smithy-lang/smithy/pull/2444)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Deferred the `scrubTraitDefinitions` call inside JSON Schema deconflicting to\nhappen only when the model is in a state that would have an avoidable conflict",
+      "pull_requests": [
+        "[#2435](https://github.com/smithy-lang/smithy/pull/2435)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated the `ChangedMemberTarget` diff evaluator to properly check changes to\nmap keys and values the same way it checks changes to list members",
+      "pull_requests": [
+        "[#2434](https://github.com/smithy-lang/smithy/pull/2434)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed a typo in event stream content-type documentation",
+      "pull_requests": [
+        "[#2458](https://github.com/smithy-lang/smithy/pull/2458)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed a broken README link",
+      "pull_requests": [
+        "[#2457](https://github.com/smithy-lang/smithy/pull/2457)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated blob defaults for protocol tests",
+      "pull_requests": [
+        "[#2467](https://github.com/smithy-lang/smithy/pull/2467)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Downgraded a noisy log statement",
+      "pull_requests": [
+        "[#2451](https://github.com/smithy-lang/smithy/pull/2451)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Fixed the CBOR type for blobs in RPCv2 CBOR protocol tests",
+      "pull_requests": [
+        "[#2447](https://github.com/smithy-lang/smithy/pull/2447)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated protocol tests to use lower-cased headers",
+      "pull_requests": [
+        "[#2437](https://github.com/smithy-lang/smithy/pull/2437)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated server protocol tests to assert serialization of empty headers",
+      "pull_requests": [
+        "[#2433](https://github.com/smithy-lang/smithy/pull/2433)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Lowered the severity of `UnboundTestOperation` to `WARNING`",
+      "pull_requests": [
+        "[#2432](https://github.com/smithy-lang/smithy/pull/2432)"
+      ]
+    }
+  ],
+  "date": "2024-11-18"
+}

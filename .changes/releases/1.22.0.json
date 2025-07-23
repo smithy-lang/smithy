@@ -1,0 +1,234 @@
+{
+  "version": "1.22.0",
+  "changes": [
+    {
+      "type": "break",
+      "description": "Disallowed `@sensitive` trait on members. It must be applied the shape\ntargeted by members.",
+      "pull_requests": [
+        "[#1226](https://github.com/awslabs/smithy/pull/1226)"
+      ]
+    },
+    {
+      "type": "break",
+      "description": "Deprecated `set` in favor of `@uniqueItems`. `@uniqueItems` can no longer\ntarget `float`, `double` and `document`.",
+      "pull_requests": [
+        "[#1278](https://github.com/awslabs/smithy/pull/1278)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `breakingChanges` property to `@trait` to specify more complex backward\ncompatibility rules.",
+      "pull_requests": [
+        "[#1193](https://github.com/awslabs/smithy/pull/1193)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added automatic casing detection to CamelCaseValidator.",
+      "pull_requests": [
+        "[#1217](https://github.com/awslabs/smithy/pull/1217)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `--quiet` flag to all CLI commands.",
+      "pull_requests": [
+        "[#1257](https://github.com/awslabs/smithy/pull/1257)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added CodeWriter support to pull named parameters from CodeSections.",
+      "pull_requests": [
+        "[#1256](https://github.com/awslabs/smithy/pull/1256)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added stack trace comment support to code writer.",
+      "pull_requests": [
+        "[#1198](https://github.com/awslabs/smithy/pull/1198)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added an automatic topological sorting of shape in DirectedCodegen.",
+      "pull_requests": [
+        "[#1214](https://github.com/awslabs/smithy/pull/1214)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated CodegenDirector to generate shapes before generating service.",
+      "pull_requests": [
+        "[#1289](https://github.com/awslabs/smithy/pull/1289)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated CodegenDirector to automatically use `SymbolProvider.cache`.",
+      "pull_requests": [
+        "[#1233](https://github.com/awslabs/smithy/pull/1233)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made SmithyIntegrations available from CodegenContext.",
+      "pull_requests": [
+        "[#1237](https://github.com/awslabs/smithy/pull/1237)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added helper to convert `Symbol` to `SymbolReference`.",
+      "pull_requests": [
+        "[#1220](https://github.com/awslabs/smithy/pull/1220)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated NodeDiff to sort results to make them easier to understand.",
+      "pull_requests": [
+        "[#1238](https://github.com/awslabs/smithy/pull/1238)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Implemented `Comparable` in `SourceLocation`.",
+      "pull_requests": [
+        "[#1192](https://github.com/awslabs/smithy/pull/1192)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added missing validation to ensure that unions have at least one member.",
+      "pull_requests": [
+        "[#1229](https://github.com/awslabs/smithy/pull/1229)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to forbid impossibly recursive shapes.",
+      "pull_requests": [
+        "[#1200](https://github.com/awslabs/smithy/pull/1200)",
+        "[#1212](https://github.com/awslabs/smithy/pull/1212)",
+        "[#1253](https://github.com/awslabs/smithy/pull/1253)",
+        "[#1269](https://github.com/awslabs/smithy/pull/1269)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to warn when HTTP 204/205 responses have bodies.",
+      "pull_requests": [
+        "[#1254](https://github.com/awslabs/smithy/pull/1254)",
+        "[#1276](https://github.com/awslabs/smithy/pull/1276)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to forbid sparse maps with httpPrefixHeaders.",
+      "pull_requests": [
+        "[#1268](https://github.com/awslabs/smithy/pull/1268)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to serialize the prelude.",
+      "pull_requests": [
+        "[#1275](https://github.com/awslabs/smithy/pull/1275)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for httpResponseCode.",
+      "pull_requests": [
+        "[#1241](https://github.com/awslabs/smithy/pull/1241)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Enabled the PostUnionWithJsonName protocol test.",
+      "pull_requests": [
+        "[#1239](https://github.com/awslabs/smithy/pull/1239)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the MalformedAcceptWithGenericString compliance test.",
+      "pull_requests": [
+        "[#1243](https://github.com/awslabs/smithy/pull/1243)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added definition for value equality for `@uniqueItems`.",
+      "pull_requests": [
+        "[#1278](https://github.com/awslabs/smithy/pull/1278)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for Smithy Server Generator for TypeScript.",
+      "pull_requests": [
+        "[#1119](https://github.com/awslabs/smithy/pull/1119)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added link to Smithy Diff from Evolving Models guide.",
+      "pull_requests": [
+        "[#1208](https://github.com/awslabs/smithy/pull/1208)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed constraint traits doc regarding non-structure members.",
+      "pull_requests": [
+        "[#1205](https://github.com/awslabs/smithy/pull/1205)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed typo in `uniqueItems` warning.",
+      "pull_requests": [
+        "[#1201](https://github.com/awslabs/smithy/pull/1201)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `@deprecated` javadocs in `smithy-codegen-core`.",
+      "pull_requests": [
+        "[#1197](https://github.com/awslabs/smithy/pull/1197)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified Selectors documentation.",
+      "pull_requests": [
+        "[#1196](https://github.com/awslabs/smithy/pull/1196)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified meaning of Language in implementations.",
+      "pull_requests": [
+        "[#1191](https://github.com/awslabs/smithy/pull/1191)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that constraint traits cascade for all members.",
+      "pull_requests": [
+        "[#1205](https://github.com/awslabs/smithy/pull/1205)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed jsonName note from awsJson protocols.",
+      "pull_requests": [
+        "[#1279](https://github.com/awslabs/smithy/pull/1279)"
+      ]
+    }
+  ],
+  "date": "2022-06-30"
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.26.4",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed updating mixins when replacing shapes in transforms",
+      "pull_requests": [
+        "[1509](https://github.com/awslabs/smithy/pull/1509)"
+      ]
+    }
+  ],
+  "date": "2022-11-22"
+}

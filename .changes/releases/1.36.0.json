@@ -1,0 +1,139 @@
+{
+  "version": "1.36.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Allowed disabling format on integers when converting to OpenAPI",
+      "pull_requests": [
+        "[#1904](https://github.com/smithy-lang/smithy/pull/1904)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added intEnum support when converting to OpenAPI",
+      "pull_requests": [
+        "[#1898](https://github.com/smithy-lang/smithy/pull/1898)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for overriding validation severity",
+      "pull_requests": [
+        "[#1890](https://github.com/smithy-lang/smithy/pull/1890)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `disableDefaultValues` option when converting to OpenAPI",
+      "pull_requests": [
+        "[#1887](https://github.com/smithy-lang/smithy/pull/1887)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated brew workflow to use new smithy tap",
+      "pull_requests": [
+        "[#1897](https://github.com/smithy-lang/smithy/pull/1897)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added progress tracker and message for CLI while cloning a template",
+      "pull_requests": [
+        "[#1888](https://github.com/smithy-lang/smithy/pull/1888)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated init command to honor quiet setting",
+      "pull_requests": [
+        "[#1889](https://github.com/smithy-lang/smithy/pull/1889)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated appearance of smithy init list output",
+      "pull_requests": [
+        "[#1901](https://github.com/smithy-lang/smithy/pull/1901)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added exceptions for invalid paths in template definition",
+      "pull_requests": [
+        "[#1907](https://github.com/smithy-lang/smithy/pull/1907)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added Cache template directory in init command",
+      "pull_requests": [
+        "[#1896](https://github.com/smithy-lang/smithy/pull/1896)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Check for existing directory when creating template with init",
+      "pull_requests": [
+        "[#1885](https://github.com/smithy-lang/smithy/pull/1885)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified constraint trait enforcement",
+      "pull_requests": [
+        "[#1902](https://github.com/smithy-lang/smithy/pull/1902)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Better document trait merging",
+      "pull_requests": [
+        "[#1895](https://github.com/smithy-lang/smithy/pull/1895)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated docs to use new smithy-lang tap",
+      "pull_requests": [
+        "[#1893](https://github.com/smithy-lang/smithy/pull/1893)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added naming recommendations",
+      "pull_requests": [
+        "[#1892](https://github.com/smithy-lang/smithy/pull/1892)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed NPE when docId is null when ServiceTrait.equals is called",
+      "pull_requests": [
+        "[#1903](https://github.com/smithy-lang/smithy/pull/1903)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed off-by-one issues in TokenTree and TreeCursor",
+      "pull_requests": [
+        "[#1891](https://github.com/smithy-lang/smithy/pull/1891)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed snapshot dependency resolution",
+      "pull_requests": [
+        "[#1884](https://github.com/smithy-lang/smithy/pull/1884)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Use standard output for regular messages",
+      "pull_requests": [
+        "[#1894](https://github.com/smithy-lang/smithy/pull/1894)"
+      ]
+    }
+  ],
+  "date": "2023-08-03"
+}

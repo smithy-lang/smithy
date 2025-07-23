@@ -1,0 +1,27 @@
+{
+  "version": "1.60.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Added ASM to the relocated dependencies.",
+      "pull_requests": [
+        "[#2676](https://github.com/smithy-lang/smithy/pull/2676)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for `@awsQueryCompatible`.",
+      "pull_requests": [
+        "[#2672](https://github.com/smithy-lang/smithy/pull/2672)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to ensure query errors are unique.",
+      "pull_requests": [
+        "[#2674](https://github.com/smithy-lang/smithy/pull/2674)"
+      ]
+    }
+  ],
+  "date": "2025-06-23"
+}

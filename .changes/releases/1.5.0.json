@@ -1,0 +1,175 @@
+{
+  "version": "1.5.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `endpointPrefix` property to the `@aws.api#service` trait.",
+      "pull_requests": [
+        "[#663](https://github.com/awslabs/smithy/pull/663)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for `tags` and `deprecated` members to `@waitable` definitions.",
+      "pull_requests": [
+        "[#652](https://github.com/awslabs/smithy/pull/652)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for `@httpHeader` trait values.",
+      "pull_requests": [
+        "[#650](https://github.com/awslabs/smithy/pull/650)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `required` property for `requestBody` when converting to OpenAPI.",
+      "pull_requests": [
+        "[#655](https://github.com/awslabs/smithy/pull/655)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added more helper methods to `OperationIndex`.",
+      "pull_requests": [
+        "[#657](https://github.com/awslabs/smithy/pull/657)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Ensure that names in the `@waitable` trait are unique in the closure of the\nservice.",
+      "pull_requests": [
+        "[#645](https://github.com/awslabs/smithy/pull/645)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a regression with `@aws.apigateway#authorizors` behavior when setting\nthe `customAuthType` property without having set its `type` property.",
+      "pull_requests": [
+        "[#613](https://github.com/awslabs/smithy/pull/613)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where modeled headers were not populated in to\n`Access-Control-Expose-Headers` in CORS responses.",
+      "pull_requests": [
+        "[#659](https://github.com/awslabs/smithy/pull/659)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added missing `deprecated` member to `@enum` definitions in the prelude model.",
+      "pull_requests": [
+        "[#651](https://github.com/awslabs/smithy/pull/651)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue with the conversion of greedy label parameter names in to\nOpenAPI.",
+      "pull_requests": [
+        "[#641](https://github.com/awslabs/smithy/pull/641)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue in `CodeWriter.popState` where it would not honor custom\nexpression start characters.",
+      "pull_requests": [
+        "[#648](https://github.com/awslabs/smithy/pull/648)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a potential `NullPointerException` when validating the `@examples`\ntrait.",
+      "pull_requests": [
+        "[#642](https://github.com/awslabs/smithy/pull/642)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issues with some `@awsQuery` and `@ec2Query` protocol test responses.",
+      "pull_requests": [
+        "[#653](https://github.com/awslabs/smithy/pull/653)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where the `removeTraitDefinitions` build transform was not\nregistered with the SPI.",
+      "pull_requests": [
+        "[#660](https://github.com/awslabs/smithy/pull/660)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where using an environment variable in `smithy-build.json`\nwould consume an extra preceding character when performing a replacement.",
+      "pull_requests": [
+        "[#662](https://github.com/awslabs/smithy/pull/662)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Update `@waitable` documentation to specify using jitter and account for\noverflows.",
+      "pull_requests": [
+        "[#656](https://github.com/awslabs/smithy/pull/656)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added examples and clarified documentation for several HTTP traits, most\nimportantly `@httpLabel` and `@httpQuery`.",
+      "pull_requests": [
+        "[#654](https://github.com/awslabs/smithy/pull/654)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified various aspects of the `@xmlNamespace` trait documentation.",
+      "pull_requests": [
+        "[#643](https://github.com/awslabs/smithy/pull/643)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `@waitable` documentation.",
+      "pull_requests": [
+        "[#646](https://github.com/awslabs/smithy/pull/646)",
+        "[#664](https://github.com/awslabs/smithy/pull/664)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that the `@pattern` trait does not implicitly match an entire\nstring.",
+      "pull_requests": [
+        "[#649](https://github.com/awslabs/smithy/pull/649)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various examples in the specification.",
+      "pull_requests": [
+        "[#639](https://github.com/awslabs/smithy/pull/639)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Sort `TopDownIndex` contents to provide deterministic results.",
+      "pull_requests": [
+        "[#667](https://github.com/awslabs/smithy/pull/667)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Improved error messages when an unknown annotation trait is encountered.",
+      "pull_requests": [
+        "[#644](https://github.com/awslabs/smithy/pull/644)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added `smithy-diff` error when the `@idempotencyTrait` token is removed from a\nshape.",
+      "pull_requests": [
+        "[#640](https://github.com/awslabs/smithy/pull/640)"
+      ]
+    }
+  ],
+  "date": "2020-12-10"
+}

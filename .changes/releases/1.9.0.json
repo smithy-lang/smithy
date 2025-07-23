@@ -1,0 +1,126 @@
+{
+  "version": "1.9.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a common validation model for use in server SDKs.",
+      "pull_requests": [
+        "[#813](https://github.com/awslabs/smithy/pull/813)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for cross platform builds of the CLI.",
+      "pull_requests": [
+        "[#832](https://github.com/awslabs/smithy/pull/832)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Validate the contents of protocol test bodies for known media types.",
+      "pull_requests": [
+        "[#822](https://github.com/awslabs/smithy/pull/822)",
+        "[#835](https://github.com/awslabs/smithy/pull/835)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated support for non-numeric floating-point values in several places.",
+      "pull_requests": [
+        "[#828](https://github.com/awslabs/smithy/pull/828)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several `restJson` protocol tests.",
+      "pull_requests": [
+        "[#684](https://github.com/awslabs/smithy/pull/684)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several `restXml` protocol tests.",
+      "pull_requests": [
+        "[#804](https://github.com/awslabs/smithy/pull/804)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added and updated several `awsQuery` and `ec2Query` protocol tests.",
+      "pull_requests": [
+        "[#815](https://github.com/awslabs/smithy/pull/815)",
+        "[#833](https://github.com/awslabs/smithy/pull/833)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several `document` type protocol tests.",
+      "pull_requests": [
+        "[#810](https://github.com/awslabs/smithy/pull/810)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `s3UnwrappedXmlOutput` trait, which defines when an S3 operation does\nnot use the protocol standard XML wrapper.",
+      "pull_requests": [
+        "[#839](https://github.com/awslabs/smithy/pull/839)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a `NullPointerException` when loading a config and no parent path is\npresent.",
+      "pull_requests": [
+        "[#814](https://github.com/awslabs/smithy/pull/814)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added an overview of known Smithy implementations and projects.",
+      "pull_requests": [
+        "[#830](https://github.com/awslabs/smithy/pull/830)",
+        "[#831](https://github.com/awslabs/smithy/pull/831)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the documentation for the `restXml`.",
+      "pull_requests": [
+        "[#827](https://github.com/awslabs/smithy/pull/827)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the documentation for the `awsQuery`.",
+      "pull_requests": [
+        "[#827](https://github.com/awslabs/smithy/pull/827)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the documentation for the `ec2Query` protocol.",
+      "pull_requests": [
+        "[#823](https://github.com/awslabs/smithy/pull/823)",
+        "[#827](https://github.com/awslabs/smithy/pull/827)",
+        "[#836](https://github.com/awslabs/smithy/pull/836)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added more context for documentation types.",
+      "pull_requests": [
+        "[#818](https://github.com/awslabs/smithy/pull/818)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed several minor documentation issues.",
+      "pull_requests": [
+        "[#816](https://github.com/awslabs/smithy/pull/816)",
+        "[#818](https://github.com/awslabs/smithy/pull/818)",
+        "[#837](https://github.com/awslabs/smithy/pull/837)",
+        "[#840](https://github.com/awslabs/smithy/pull/840)"
+      ]
+    }
+  ],
+  "date": "2021-06-23"
+}

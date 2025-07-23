@@ -1,0 +1,125 @@
+{
+  "version": "1.52.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added validator for identifiers missing references",
+      "pull_requests": [
+        "[#2418](https://github.com/smithy-lang/smithy/pull/2418)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added checksum algorithm to model enum",
+      "pull_requests": [
+        "[#2419](https://github.com/smithy-lang/smithy/pull/2419)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the `httpChecksum` trait spec",
+      "pull_requests": [
+        "[#2413](https://github.com/smithy-lang/smithy/pull/2413)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `breakingChanges` to the `httpChecksum` trait",
+      "pull_requests": [
+        "[#2398](https://github.com/smithy-lang/smithy/pull/2398)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Use the most common suffix for IDL inline IO",
+      "pull_requests": [
+        "[#2397](https://github.com/smithy-lang/smithy/pull/2397)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the name of XML root nodes in the protocol tests",
+      "pull_requests": [
+        "[#2423](https://github.com/smithy-lang/smithy/pull/2423)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed trait codegen to properly support lists of enums",
+      "pull_requests": [
+        "[#2420](https://github.com/smithy-lang/smithy/pull/2420)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Update RPC v2 CBOR spec to require an Accept header for requests",
+      "pull_requests": [
+        "[#2417](https://github.com/smithy-lang/smithy/pull/2417)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Changed prefix header tests to allow for empty headers",
+      "pull_requests": [
+        "[#2415](https://github.com/smithy-lang/smithy/pull/2415)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed OpenAPI plugin to properly support effective documentation precedence",
+      "pull_requests": [
+        "[#2402](https://github.com/smithy-lang/smithy/pull/2402)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in the `SigV4` diff logic that assumed that the a service exists\nin the old operation",
+      "pull_requests": [
+        "[#2405](https://github.com/smithy-lang/smithy/pull/2405)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added `NodeValidationVisitor` checks for invalid nulls",
+      "pull_requests": [
+        "[#2393](https://github.com/smithy-lang/smithy/pull/2393)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the `httpChecksum` trait spec to clarify the expected behavior and\nadded the supported algorithms",
+      "pull_requests": [
+        "[#2413](https://github.com/smithy-lang/smithy/pull/2413)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed the `httpChecksum` algorithm list in spec",
+      "pull_requests": [
+        "[#2394](https://github.com/smithy-lang/smithy/pull/2394)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed a broken link to smithy-rs design document in Code Gen documentation.",
+      "pull_requests": [
+        "[#2416](https://github.com/smithy-lang/smithy/pull/2416)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed resource type typo in AST docs",
+      "pull_requests": [
+        "[#2410](https://github.com/smithy-lang/smithy/pull/2410)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed small typos in full stack tutorial",
+      "pull_requests": [
+        "[#2389](https://github.com/smithy-lang/smithy/pull/2389)"
+      ]
+    }
+  ],
+  "date": "2024-10-16"
+}
