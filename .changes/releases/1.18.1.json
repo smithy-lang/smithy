@@ -1,0 +1,48 @@
+{
+  "version": "1.18.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Downgraded set type violations from ERROR to WARNING to give consumers more\ntime to convert these sets to lists. These will be upgraded to ERROR again in\na future release.",
+      "pull_requests": [
+        "[#1125](https://github.com/awslabs/smithy/pull/1125)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed backwards compatibility of CodeWriter and created a new basic\nimplementation of `AbstractCodeWriter` named `SimpleCodeWriter`.",
+      "pull_requests": [
+        "[#1123](https://github.com/awslabs/smithy/pull/1123)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in `AbstractCodeWriter` where indenting the next line would not be\npreserved after popping a state.",
+      "pull_requests": [
+        "[#1129](https://github.com/awslabs/smithy/pull/1129)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in `AbstractCodeWriter` where text could sometimes be lost due to\nlazy StringBuilder construction.",
+      "pull_requests": [
+        "[#1128](https://github.com/awslabs/smithy/pull/1128)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a null pointer exception in `ModelAssembler` after calling `reset()`.",
+      "pull_requests": [
+        "[#1124](https://github.com/awslabs/smithy/pull/1124)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed examples showing `@sensitive` on structure members, which is\ndeprecated in IDL 2.0.",
+      "pull_requests": [
+        "[#1127](https://github.com/awslabs/smithy/pull/1127)"
+      ]
+    }
+  ],
+  "date": "2022-03-10"
+}

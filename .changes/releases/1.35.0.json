@@ -1,0 +1,133 @@
+{
+  "version": "1.35.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Enabled support for SNAPSHOT dependencies",
+      "pull_requests": [
+        "[#1853](https://github.com/smithy-lang/smithy/pull/1853)",
+        "[#1857](https://github.com/smithy-lang/smithy/pull/1857)",
+        "[#1884](https://github.com/smithy-lang/smithy/pull/1884)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Enabled default mode for `smithy diff` rather than failing when not set",
+      "pull_requests": [
+        "[#1856](https://github.com/smithy-lang/smithy/pull/1856)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added warning to mis-cased standard HTTP verbs",
+      "pull_requests": [
+        "[#1862](https://github.com/smithy-lang/smithy/pull/1862)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed type constraints for `pageSize` property of the `@paginated` trait",
+      "pull_requests": [
+        "[#1866](https://github.com/smithy-lang/smithy/pull/1866)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved message for invalid `.errors` entries",
+      "pull_requests": [
+        "[#1867](https://github.com/smithy-lang/smithy/pull/1867)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `docId` property to `aws.api#service` trait",
+      "pull_requests": [
+        "[#1863](https://github.com/smithy-lang/smithy/pull/1863)",
+        "[#1872](https://github.com/smithy-lang/smithy/pull/1872)",
+        "[#1881](https://github.com/smithy-lang/smithy/pull/1881)",
+        "[#1882](https://github.com/smithy-lang/smithy/pull/1882)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved validation for http binding protocols",
+      "pull_requests": [
+        "[#1873](https://github.com/smithy-lang/smithy/pull/1873)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Expanded valid targets of `@httpPayload`",
+      "pull_requests": [
+        "[#1876](https://github.com/smithy-lang/smithy/pull/1876)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated documentation around `timestamp` and added more specificity to the\ndefinition",
+      "pull_requests": [
+        "[#1858](https://github.com/smithy-lang/smithy/pull/1858)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Removed unrecognized models from sources",
+      "pull_requests": [
+        "[#1851](https://github.com/smithy-lang/smithy/pull/1851)",
+        "[#1860](https://github.com/smithy-lang/smithy/pull/1860)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated the content type of list & map shapes with the `@httpPayload` trait to\ndocument content type",
+      "pull_requests": [
+        "[#1840](https://github.com/smithy-lang/smithy/pull/1840)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed IDL serializer which would write emtpy `apply` statements to mixed in\nmembers of `enums`",
+      "pull_requests": [
+        "[#1865](https://github.com/smithy-lang/smithy/pull/1865)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed indentation when formatting text blocks",
+      "pull_requests": [
+        "[#1875](https://github.com/smithy-lang/smithy/pull/1875)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added resource files to source jars",
+      "pull_requests": [
+        "[#1877](https://github.com/smithy-lang/smithy/pull/1877)",
+        "[#1880](https://github.com/smithy-lang/smithy/pull/1880)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a potential resource leak by using a try with resources",
+      "pull_requests": [
+        "[#1878](https://github.com/smithy-lang/smithy/pull/1878)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrated to using Gradle 8.2.1 to build Smithy. This should have no impactful\ndownstream effects",
+      "pull_requests": [
+        "[#1849](https://github.com/smithy-lang/smithy/pull/1849)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Moved repository into `smithy-lang` organization and updated resources\naccordingly",
+      "pull_requests": [
+        "[#1852](https://github.com/smithy-lang/smithy/pull/1852)",
+        "[#1854](https://github.com/smithy-lang/smithy/pull/1854)"
+      ]
+    }
+  ],
+  "date": "2023-07-27"
+}

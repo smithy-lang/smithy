@@ -1,0 +1,29 @@
+{
+  "version": "0.9.9",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Add security to individual operations in OpenAPI conversion",
+      "pull_requests": [
+        "[#329](https://github.com/awslabs/smithy/pull/329)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix an issue with header casing for `x-api-key` integration with API Gateway",
+      "pull_requests": [
+        "[#330](https://github.com/awslabs/smithy/pull/330)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix discrepancies in `smithy-aws-protocol-tests`",
+      "pull_requests": [
+        "[#333](https://github.com/awslabs/smithy/pull/333)",
+        "[#335](https://github.com/awslabs/smithy/pull/335)",
+        "[#349](https://github.com/awslabs/smithy/pull/349)"
+      ]
+    }
+  ],
+  "date": "2020-04-01"
+}

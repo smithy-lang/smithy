@@ -1,0 +1,133 @@
+{
+  "version": "1.12.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added support for binding common errors to a `service` shape.",
+      "pull_requests": [
+        "[#919](https://github.com/awslabs/smithy/pull/919)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Loosened the requirement of setting a `version` property when defining a\n`service`.",
+      "pull_requests": [
+        "[#918](https://github.com/awslabs/smithy/pull/918)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `smithy-build` to fail when a build plugin cannot be found.",
+      "pull_requests": [
+        "[#909](https://github.com/awslabs/smithy/pull/909)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `changeTypes` build transform.",
+      "pull_requests": [
+        "[#912](https://github.com/awslabs/smithy/pull/912)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for replacing simple shapes in `ModelTransformer`.",
+      "pull_requests": [
+        "[#900](https://github.com/awslabs/smithy/pull/900)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `scheme` property to the `@httpApiKeyAuth` trait.",
+      "pull_requests": [
+        "[#893](https://github.com/awslabs/smithy/pull/893)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for specifying errors in the `@examples` trait.",
+      "pull_requests": [
+        "[#888](https://github.com/awslabs/smithy/pull/888)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added multi-character newline support in `CodeWriter`.",
+      "pull_requests": [
+        "[#892](https://github.com/awslabs/smithy/pull/892)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated semantic validation of modeled `OPTIONS` operations.",
+      "pull_requests": [
+        "[#890](https://github.com/awslabs/smithy/pull/890)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several malformed request protocol tests.",
+      "pull_requests": [
+        "[#879](https://github.com/awslabs/smithy/pull/879)",
+        "[#882](https://github.com/awslabs/smithy/pull/882)",
+        "[#881](https://github.com/awslabs/smithy/pull/881)",
+        "[#898](https://github.com/awslabs/smithy/pull/898)",
+        "[#901](https://github.com/awslabs/smithy/pull/901)",
+        "[#905](https://github.com/awslabs/smithy/pull/905)",
+        "[#908](https://github.com/awslabs/smithy/pull/908)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for path prefixes.",
+      "pull_requests": [
+        "[#899](https://github.com/awslabs/smithy/pull/899)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed how `NodeMapper` handles generic params.",
+      "pull_requests": [
+        "[#912](https://github.com/awslabs/smithy/pull/912)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed how the CLI logs messages and interacts with logging levels.",
+      "pull_requests": [
+        "[#910](https://github.com/awslabs/smithy/pull/910)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated guidance on ordering of `set` shapes.",
+      "pull_requests": [
+        "[#875](https://github.com/awslabs/smithy/pull/875)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarify that event streams contain modeled errors.",
+      "pull_requests": [
+        "[#891](https://github.com/awslabs/smithy/pull/891)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added an index that lists all traits.",
+      "pull_requests": [
+        "[#876](https://github.com/awslabs/smithy/pull/876)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various documentation issues.",
+      "pull_requests": [
+        "[#884](https://github.com/awslabs/smithy/pull/884)",
+        "[#911](https://github.com/awslabs/smithy/pull/911)",
+        "[#927](https://github.com/awslabs/smithy/pull/927)"
+      ]
+    }
+  ],
+  "date": "2021-10-05"
+}

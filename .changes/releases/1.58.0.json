@@ -1,0 +1,129 @@
+{
+  "version": "1.58.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed `Node` serialization and deserialization of rules engine endpoint\nvalues.",
+      "pull_requests": [
+        "[#2616](https://github.com/smithy-lang/smithy/pull/2616)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed null pointer exceptions when serializing endpoints traits to nodes.",
+      "pull_requests": [
+        "[#2629](https://github.com/smithy-lang/smithy/pull/2629)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Made `smithy.rules#endpointTests` have an explicit dependency on\n`smithy.rules#endpointRuleSet`.",
+      "pull_requests": [
+        "[#2637](https://github.com/smithy-lang/smithy/pull/2637)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added hierarchical IDs for `ChangedOperation` diff events.",
+      "pull_requests": [
+        "[#2607](https://github.com/smithy-lang/smithy/pull/2607)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Removed `@unstable` from the following traits: `@standardRegionalEndpoints`,\n`@standardPartitonalEndpoints`, and `@dualStackOnlyEndpoints`.",
+      "pull_requests": [
+        "[#2608](https://github.com/smithy-lang/smithy/pull/2608)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made `Dynamic` `Part`s of the rules engine public.",
+      "pull_requests": [
+        "[#2614](https://github.com/smithy-lang/smithy/pull/2614)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made validation of IAM resource names case-insensitive.",
+      "pull_requests": [
+        "[#2615](https://github.com/smithy-lang/smithy/pull/2615)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several static utility methods to the rules engine.",
+      "pull_requests": [
+        "[#2617](https://github.com/smithy-lang/smithy/pull/2617)",
+        "[#2618](https://github.com/smithy-lang/smithy/pull/2618)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made `arnNamespace` optional in IAM traits that support specifying condition\nkeys.",
+      "pull_requests": [
+        "[#2619](https://github.com/smithy-lang/smithy/pull/2619)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to ensure that the value for any condition key may only be\nsupplied by one member in operation input.",
+      "pull_requests": [
+        "[#2620](https://github.com/smithy-lang/smithy/pull/2620)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added additional validation for the `endpointsTests` trait.",
+      "pull_requests": [
+        "[#2622](https://github.com/smithy-lang/smithy/pull/2622)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `UnknownMember` to the event ID for node validation.",
+      "pull_requests": [
+        "[#2630](https://github.com/smithy-lang/smithy/pull/2630)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added more links to OpenAPI APIGateway config.",
+      "pull_requests": [
+        "[#2605](https://github.com/smithy-lang/smithy/pull/2605)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed bad links in javadocs.",
+      "pull_requests": [
+        "[#2612](https://github.com/smithy-lang/smithy/pull/2612)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Documented `SUPPRESSED` as a valid value for `--severity` in validate command.",
+      "pull_requests": [
+        "[#2638](https://github.com/smithy-lang/smithy/pull/2638)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Improved performance of `CleanOperationStructures`.",
+      "pull_requests": [
+        "[#2609](https://github.com/smithy-lang/smithy/pull/2609)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Improved performance of several rules engine functions.",
+      "pull_requests": [
+        "[#2633](https://github.com/smithy-lang/smithy/pull/2633)",
+        "[#2634](https://github.com/smithy-lang/smithy/pull/2634)",
+        "[#2635](https://github.com/smithy-lang/smithy/pull/2635)",
+        "[#2636](https://github.com/smithy-lang/smithy/pull/2636)"
+      ]
+    }
+  ],
+  "date": "2025-05-13"
+}

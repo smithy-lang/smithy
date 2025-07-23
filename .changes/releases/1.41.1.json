@@ -1,0 +1,41 @@
+{
+  "version": "1.41.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added support for `sdkId`s with a single character",
+      "pull_requests": [
+        "[#2043](https://github.com/smithy-lang/smithy/pull/2043)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `toShapeId` call in `EndpointModifierIndex`",
+      "pull_requests": [
+        "[#2044](https://github.com/smithy-lang/smithy/pull/2044)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed removal of applied non-prelude meta traits",
+      "pull_requests": [
+        "[#2042](https://github.com/smithy-lang/smithy/pull/2042)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `recommended` trait provider to avoid discarding `reason`",
+      "pull_requests": [
+        "[#2041](https://github.com/smithy-lang/smithy/pull/2041)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the javadoc of `ValidatedResult.unwrap` to note that `DANGER` events\nalso throw a validation event",
+      "pull_requests": [
+        "[#2040](https://github.com/smithy-lang/smithy/pull/2040)"
+      ]
+    }
+  ],
+  "date": "2023-11-16"
+}

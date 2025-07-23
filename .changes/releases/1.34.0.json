@@ -1,0 +1,55 @@
+{
+  "version": "1.34.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a default template for the `smithy init` command, making specifying\ntemplates optional",
+      "pull_requests": [
+        "[#1843](https://github.com/awslabs/smithy/pull/1843)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the model loader to skip unrecognized non-Smithy JSON files",
+      "pull_requests": [
+        "[#1846](https://github.com/awslabs/smithy/pull/1846)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed basic HTTP authentication when resolving dependencies in the Smithy CLI",
+      "pull_requests": [
+        "[#1838](https://github.com/awslabs/smithy/pull/1838)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug when deduping `ChangedNullability` events",
+      "pull_requests": [
+        "[#1839](https://github.com/awslabs/smithy/pull/1839)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Replaced implementation docs with the awesome-smithy repository",
+      "pull_requests": [
+        "[#1845](https://github.com/awslabs/smithy/pull/1845)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed support for fractional seconds from the `http-date` timestamp format",
+      "pull_requests": [
+        "[#1847](https://github.com/awslabs/smithy/pull/1847)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Rephrased optional fractional precision and no UTC offset support for the\n`date-time` timestamp format",
+      "pull_requests": [
+        "[#1835](https://github.com/awslabs/smithy/pull/1835)"
+      ]
+    }
+  ],
+  "date": "2023-07-10"
+}

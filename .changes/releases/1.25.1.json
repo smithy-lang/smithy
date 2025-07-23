@@ -1,0 +1,98 @@
+{
+  "version": "1.25.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Warn when box trait found on union member",
+      "pull_requests": [
+        "[#1420](https://github.com/awslabs/smithy/pull/1420)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Warn when default used with union member target",
+      "pull_requests": [
+        "[#1418](https://github.com/awslabs/smithy/pull/1418)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Simplify ShapeId caching",
+      "pull_requests": [
+        "[#1411](https://github.com/awslabs/smithy/pull/1411)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update smithy-diff for strings with the enum trait to enum shapes",
+      "pull_requests": [
+        "[#1409](https://github.com/awslabs/smithy/pull/1409)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for 1.0 downgrades and serialization",
+      "pull_requests": [
+        "[#1403](https://github.com/awslabs/smithy/pull/1403)",
+        "[#1410](https://github.com/awslabs/smithy/pull/1410)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add AwsQueryCompatible trait",
+      "pull_requests": [
+        "[#1314](https://github.com/awslabs/smithy/pull/1314)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Only emit deprecation of enum trait in 2.0 models",
+      "pull_requests": [
+        "[#1421](https://github.com/awslabs/smithy/pull/1421)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Enforce private on traits",
+      "pull_requests": [
+        "[#1406](https://github.com/awslabs/smithy/pull/1406)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix apply statement parsing and ABNF",
+      "pull_requests": [
+        "[#1414](https://github.com/awslabs/smithy/pull/1414)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Add test for synthetic box traits on mixins",
+      "pull_requests": [
+        "[#1404](https://github.com/awslabs/smithy/pull/1404)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add some clarifications to revised default value design doc",
+      "pull_requests": [
+        "[#1413](https://github.com/awslabs/smithy/pull/1413)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Revise default value design doc to match recent updates",
+      "pull_requests": [
+        "[#1412](https://github.com/awslabs/smithy/pull/1412)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix typo in migration guide",
+      "pull_requests": [
+        "[#1405](https://github.com/awslabs/smithy/pull/1405)"
+      ]
+    }
+  ],
+  "date": "2022-09-23"
+}

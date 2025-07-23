@@ -1,0 +1,128 @@
+{
+  "version": "1.3.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added several `CodegenWriter` and related abstractions to simplify creating\ncode generators.",
+      "pull_requests": [
+        "[#587](https://github.com/awslabs/smithy/pull/587)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@sparse` trait to the Prelude.",
+      "pull_requests": [
+        "[#599](https://github.com/awslabs/smithy/pull/599)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `NullableIndex` to help check if a shape can be set to null.",
+      "pull_requests": [
+        "[#599](https://github.com/awslabs/smithy/pull/599)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for API Gateway API key usage plans.",
+      "pull_requests": [
+        "[#603](https://github.com/awslabs/smithy/pull/603)",
+        "[#605](https://github.com/awslabs/smithy/pull/605)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `sortMembers` model transform to reorder the members of structures\nand unions.",
+      "pull_requests": [
+        "[#588](https://github.com/awslabs/smithy/pull/588)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `description` property to operations when converting to OpenAPI.",
+      "pull_requests": [
+        "[#589](https://github.com/awslabs/smithy/pull/589)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where the `flattenNamespaces` build transform was not\nregistered with the SPI.",
+      "pull_requests": [
+        "[#593](https://github.com/awslabs/smithy/pull/593)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that `map` keys, `set` values, and `union` members cannot be null.",
+      "pull_requests": [
+        "[#596](https://github.com/awslabs/smithy/pull/596/)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `enum` names and their usage.",
+      "pull_requests": [
+        "[#601](https://github.com/awslabs/smithy/pull/601)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added an example dependency to OpenAPI conversion.",
+      "pull_requests": [
+        "[#594](https://github.com/awslabs/smithy/pull/594)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improve and clean up formatting.",
+      "pull_requests": [
+        "[#585](https://github.com/awslabs/smithy/pull/585)",
+        "[#597](https://github.com/awslabs/smithy/pull/597)",
+        "[#598](https://github.com/awslabs/smithy/pull/598)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Optimized the reverse `NeighborProvider` for memory usage.",
+      "pull_requests": [
+        "[#590](https://github.com/awslabs/smithy/pull/590)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Optimized model validation event aggregation for memory usage.",
+      "pull_requests": [
+        "[#595](https://github.com/awslabs/smithy/pull/595)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated `service`, `resource`, and `operation` shapes to maintain the order of\nbound `resource` and `operation` shapes.",
+      "pull_requests": [
+        "[#602](https://github.com/awslabs/smithy/pull/602)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated the `sources` build plugin to create an empty manifest if there are no\nsource models.",
+      "pull_requests": [
+        "[#607](https://github.com/awslabs/smithy/pull/607)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Deprecated the `BoxIndex`.",
+      "pull_requests": [
+        "[#599](https://github.com/awslabs/smithy/pull/599)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added `enum` names for `httpApiKeyLocation` in the Prelude.",
+      "pull_requests": [
+        "[#606](https://github.com/awslabs/smithy/pull/606)"
+      ]
+    }
+  ],
+  "date": "2020-10-20"
+}

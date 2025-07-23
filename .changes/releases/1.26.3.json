@@ -1,0 +1,76 @@
+{
+  "version": "1.26.3",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Moved useIntegerType to jsonschema",
+      "pull_requests": [
+        "[1495](https://github.com/awslabs/smithy/pull/1495)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added intEnum protocol tests",
+      "pull_requests": [
+        "[1492](https://github.com/awslabs/smithy/pull/1492)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added timestampFormat protocol tests on target shapes",
+      "pull_requests": [
+        "[1440](https://github.com/awslabs/smithy/pull/1440)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added MissingSensitiveTraitValidator",
+      "pull_requests": [
+        "[1364](https://github.com/awslabs/smithy/pull/1364)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed applying protocol tests to correct operations",
+      "pull_requests": [
+        "[1477](https://github.com/awslabs/smithy/pull/1477)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed cfn-mutability for inherited identifiers",
+      "pull_requests": [
+        "[1465](https://github.com/awslabs/smithy/pull/1465)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed Resource shape properties Type entry",
+      "pull_requests": [
+        "[1415](https://github.com/awslabs/smithy/pull/1415)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated links to point to smithy.io",
+      "pull_requests": [
+        "[1497](https://github.com/awslabs/smithy/pull/1497)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed docs and fail on additional doc warnings",
+      "pull_requests": [
+        "[1496](https://github.com/awslabs/smithy/pull/1496)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed AbstractCodeWriter documentation",
+      "pull_requests": [
+        "[1490](https://github.com/awslabs/smithy/pull/1490)"
+      ]
+    }
+  ],
+  "date": "2022-11-17"
+}

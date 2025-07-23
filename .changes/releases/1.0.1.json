@@ -1,0 +1,76 @@
+{
+  "version": "1.0.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "The `smithy.api#httpPayload` trait can now target document shapes.",
+      "pull_requests": [
+        "[#431](https://github.com/awslabs/smithy/pull/431)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the IDL grammar to include many previously enforced parsing rules.",
+      "pull_requests": [
+        "[#434](https://github.com/awslabs/smithy/pull/434)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `select` command to the CLI to print out shapes from a model that\nmatch a selector.",
+      "pull_requests": [
+        "[#430](https://github.com/awslabs/smithy/pull/430)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `ast` command to the CLI to convert 0 or more Smithy models into a\nJSON AST.",
+      "pull_requests": [
+        "[#435](https://github.com/awslabs/smithy/pull/435)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a Dockerfile for building Smithy as a Docker image.",
+      "pull_requests": [
+        "[#427](https://github.com/awslabs/smithy/pull/427)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix several ambiguities and issues in the IDL grammar.",
+      "pull_requests": [
+        "[#434](https://github.com/awslabs/smithy/pull/434)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "JSON pretty printing of the AST now uses 4 spaces for indentation.",
+      "pull_requests": [
+        "[#435](https://github.com/awslabs/smithy/pull/435)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix CLI `--help` output alignment.",
+      "pull_requests": [
+        "[#429](https://github.com/awslabs/smithy/pull/429)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "The Smithy IDL parser has been rewritten and optimized.",
+      "pull_requests": [
+        "[#434](https://github.com/awslabs/smithy/pull/434)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Generate a class data share to speed up the CLI.",
+      "pull_requests": [
+        "[#429](https://github.com/awslabs/smithy/pull/429)"
+      ]
+    }
+  ],
+  "date": "2020-05-13"
+}

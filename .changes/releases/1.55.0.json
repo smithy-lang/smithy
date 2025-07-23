@@ -1,0 +1,143 @@
+{
+  "version": "1.55.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added support for `oneOf` enumStrategy in `smithy-jsonschema`",
+      "pull_requests": [
+        "[#2504](https://github.com/smithy-lang/smithy/pull/2504)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `TaggableApiConfig` builder methods visibility to public",
+      "pull_requests": [
+        "[#2506](https://github.com/smithy-lang/smithy/pull/2506)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `flattenAndRemoveMixins` build transform",
+      "pull_requests": [
+        "[#2516](https://github.com/smithy-lang/smithy/pull/2516)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to model more complex ARN templates in the `@arn` trait",
+      "pull_requests": [
+        "[#2527](https://github.com/smithy-lang/smithy/pull/2527)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Expanded the list of allowed member names in tag shapes",
+      "pull_requests": [
+        "[#2528](https://github.com/smithy-lang/smithy/pull/2528)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `primaryIdentifier` field to the `cfnResource` trait to indicate an\nunconventional primary identifier",
+      "pull_requests": [
+        "[#2539](https://github.com/smithy-lang/smithy/pull/2539)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed malformed CBOR body in `rpcv2Cbor` test",
+      "pull_requests": [
+        "[#2502](https://github.com/smithy-lang/smithy/pull/2502)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed serialization order of resource properties in the IDL",
+      "pull_requests": [
+        "[#2513](https://github.com/smithy-lang/smithy/pull/2513)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `restXml` protocol test to be consistent with other tests and be less\nconfusing",
+      "pull_requests": [
+        "[#2520](https://github.com/smithy-lang/smithy/pull/2520)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed validation of shape ids for resource identifier bindings",
+      "pull_requests": [
+        "[#2526](https://github.com/smithy-lang/smithy/pull/2526)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed bug where null was being returned instead of empty collection in\ntrait-codegen",
+      "pull_requests": [
+        "[#2530](https://github.com/smithy-lang/smithy/pull/2530)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed conversion of `oneOf` errors so that they are treated as untagged unions",
+      "pull_requests": [
+        "[#2532](https://github.com/smithy-lang/smithy/pull/2532)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed bug where documentation was being applied twice with dynamic\ndocumentation trait in the idl-serializer",
+      "pull_requests": [
+        "[#2544](https://github.com/smithy-lang/smithy/pull/2544)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added links to SigV4a spec",
+      "pull_requests": [
+        "[#2503](https://github.com/smithy-lang/smithy/pull/2503)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed `cfnDefaultValue` trait selector documentation to match what is defined\nin code",
+      "pull_requests": [
+        "[#2509](https://github.com/smithy-lang/smithy/pull/2509)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added a Smithy Java quickstart guide",
+      "pull_requests": [
+        "[#2517](https://github.com/smithy-lang/smithy/pull/2517)",
+        "[#2521](https://github.com/smithy-lang/smithy/pull/2521)",
+        "[#2525](https://github.com/smithy-lang/smithy/pull/2525)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed incorrect examples and typos in mixin specification",
+      "pull_requests": [
+        "[#2518](https://github.com/smithy-lang/smithy/pull/2518)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added a Smithy Java client user-guide",
+      "pull_requests": [
+        "[#2522](https://github.com/smithy-lang/smithy/pull/2522)",
+        "[#2531](https://github.com/smithy-lang/smithy/pull/2531)",
+        "[#2533](https://github.com/smithy-lang/smithy/pull/2533)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation placeholders for other languages",
+      "pull_requests": [
+        "[#2534](https://github.com/smithy-lang/smithy/pull/2534)"
+      ]
+    }
+  ],
+  "date": "2025-02-27"
+}

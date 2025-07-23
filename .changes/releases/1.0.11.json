@@ -1,0 +1,77 @@
+{
+  "version": "1.0.11",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a reverse-topological knowledge index to aid in code generation for\nlanguages that require types to be defined before they are referenced.",
+      "pull_requests": [
+        "[#545](https://github.com/awslabs/smithy/pull/545)",
+        "[#53](https://github.com/awslabs/smithy/pull/553)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@httpResponseCode` trait to indicate that a structure member\nrepresents an HTTP response status code.",
+      "pull_requests": [
+        "[#546](https://github.com/awslabs/smithy/pull/546)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added (unstable) support for generating a \"Trace File\" to link code generated\nartifacts back to their modeled source.",
+      "pull_requests": [
+        "[#552](https://github.com/awslabs/smithy/pull/552)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `:topdown` selector that matches shapes hierarchically.",
+      "pull_requests": [
+        "[#539](https://github.com/awslabs/smithy/pull/539)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for the `cloudTrailEventSource` property of the\n`@aws.api#service` trait.",
+      "pull_requests": [
+        "[#550](https://github.com/awslabs/smithy/pull/550)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated shape builders to properly update their member ShapeIds if the ShapeId\nof the builder changes.",
+      "pull_requests": [
+        "[#556](https://github.com/awslabs/smithy/pull/556)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several more XML related protocol tests.",
+      "pull_requests": [
+        "[#547](https://github.com/awslabs/smithy/pull/547)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where the `PaginatedIndex` did not properly support resolving\npaths.",
+      "pull_requests": [
+        "[#554](https://github.com/awslabs/smithy/pull/554)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified the documentation for the `cloudTrailEventSource` property of the\n`@aws.api#service` trait.",
+      "pull_requests": [
+        "[#550](https://github.com/awslabs/smithy/pull/550)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that the `@aws.api#arn` trait has no impact on OpenAPI conversions.",
+      "pull_requests": [
+        "[#555](https://github.com/awslabs/smithy/pull/555)"
+      ]
+    }
+  ],
+  "date": "2020-09-10"
+}

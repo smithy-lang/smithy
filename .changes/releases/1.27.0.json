@@ -1,0 +1,140 @@
+{
+  "version": "1.27.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add tests for ACCEPT *",
+      "pull_requests": [
+        "[#1365](https://github.com/awslabs/smithy/pull/1365)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Test content-type modeled inputs without body",
+      "pull_requests": [
+        "[#1399](https://github.com/awslabs/smithy/pull/1399)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improve member not targeting a property error message to better hint at fix",
+      "pull_requests": [
+        "[#1501](https://github.com/awslabs/smithy/pull/1501)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add typechecking to EndpointRuleset build",
+      "pull_requests": [
+        "[#1507](https://github.com/awslabs/smithy/pull/1507)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add warnings for private access on traits",
+      "pull_requests": [
+        "[#1508](https://github.com/awslabs/smithy/pull/1508)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Tweak class caching in node (de)serializers.",
+      "pull_requests": [
+        "[#1518](https://github.com/awslabs/smithy/pull/1518)",
+        "[#1530](https://github.com/awslabs/smithy/pull/1530)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add Maven dependency resolution to the CLI",
+      "pull_requests": [
+        "[#1526](https://github.com/awslabs/smithy/pull/1526)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add details to TraitBreakingChange EventId",
+      "pull_requests": [
+        "[#1538](https://github.com/awslabs/smithy/pull/1538)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix dedicated io transform leaving unused shapes",
+      "pull_requests": [
+        "[#1419](https://github.com/awslabs/smithy/pull/1419)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix return type of substring method",
+      "pull_requests": [
+        "[#1504](https://github.com/awslabs/smithy/pull/1504)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix quoted text grammar and parsing",
+      "pull_requests": [
+        "[#1535](https://github.com/awslabs/smithy/pull/1535)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix backwards compatibility rules for the paginated trait",
+      "pull_requests": [
+        "[#1549](https://github.com/awslabs/smithy/pull/1549)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Make it clearer that assembly-name stripping is not a MUST in `restJson1`",
+      "pull_requests": [
+        "[#1493](https://github.com/awslabs/smithy/pull/1493)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarify service-level pagination configuration",
+      "pull_requests": [
+        "[#1514](https://github.com/awslabs/smithy/pull/1514)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Document it is generally breaking to add/remove input trait",
+      "pull_requests": [
+        "[#1519](https://github.com/awslabs/smithy/pull/1519)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix grammar for MapMembers",
+      "pull_requests": [
+        "[#1520](https://github.com/awslabs/smithy/pull/1520)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarify that metadata has no namespace",
+      "pull_requests": [
+        "[#1521](https://github.com/awslabs/smithy/pull/1521)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Update trailing line break, list member grammar",
+      "pull_requests": [
+        "[#1533](https://github.com/awslabs/smithy/pull/1533)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix MapMembers grammar and update test",
+      "pull_requests": [
+        "[#1536](https://github.com/awslabs/smithy/pull/1536)"
+      ]
+    }
+  ],
+  "date": "2022-12-15"
+}

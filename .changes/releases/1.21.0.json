@@ -1,0 +1,42 @@
+{
+  "version": "1.21.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `DirectedCodegen` to make codegen simpler.",
+      "pull_requests": [
+        "[#1167](https://github.com/awslabs/smithy/pull/1167)",
+        "[#1180](https://github.com/awslabs/smithy/pull/1180)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add ability to register interceptors with delegator.",
+      "pull_requests": [
+        "[#1165](https://github.com/awslabs/smithy/pull/1165)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Optimized deprecated trait validation.",
+      "pull_requests": [
+        "[#1162](https://github.com/awslabs/smithy/pull/1162)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Used ConcurrentSkipListMap in Model for knowledge instead of synchornized\nIdentityMap.",
+      "pull_requests": [
+        "[#1161](https://github.com/awslabs/smithy/pull/1161)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added http and eventStreamHttp properties to AWS protocols.",
+      "pull_requests": [
+        "[#1172](https://github.com/awslabs/smithy/pull/1172)"
+      ]
+    }
+  ],
+  "date": "2022-04-13"
+}

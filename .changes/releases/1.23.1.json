@@ -1,0 +1,61 @@
+{
+  "version": "1.23.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added new methods to help deserializing object nodes",
+      "pull_requests": [
+        "[#1350](https://github.com/awslabs/smithy/pull/1350)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several (unstable) traits for endpoint resolution in the new\n`smithy-rules-engine` package",
+      "pull_requests": [
+        "[#1248](https://github.com/awslabs/smithy/pull/1248)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where validation events were emitted twice",
+      "pull_requests": [
+        "[#1362](https://github.com/awslabs/smithy/pull/1362)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug that was causing errors loading 1.0 models with `@enum` traits",
+      "pull_requests": [
+        "[#1358](https://github.com/awslabs/smithy/pull/1358)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `PostUnionWithJsonName` and `MalformedAcceptWithGenericString` protocol\ntest.",
+      "pull_requests": [
+        "[#1361](https://github.com/awslabs/smithy/pull/1361)",
+        "[#1360](https://github.com/awslabs/smithy/pull/1360)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added missing readonly traits on HTTP GET tests",
+      "pull_requests": [
+        "[#1354](https://github.com/awslabs/smithy/pull/1354)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed several documentation issues",
+      "pull_requests": [
+        "[#1355](https://github.com/awslabs/smithy/pull/1355)",
+        "[#1353](https://github.com/awslabs/smithy/pull/1353)",
+        "[#1349](https://github.com/awslabs/smithy/pull/1349)",
+        "[#1347](https://github.com/awslabs/smithy/pull/1347)",
+        "[#1346](https://github.com/awslabs/smithy/pull/1346)",
+        "[#1345](https://github.com/awslabs/smithy/pull/1345)"
+      ]
+    }
+  ],
+  "date": "2022-08-18"
+}

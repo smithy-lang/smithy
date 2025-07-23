@@ -1,0 +1,41 @@
+{
+  "version": "1.16.2",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Renamed `StutteredShapeName` validator to `RepeatingShapeName` and added an\n`exactMatch` configuration to let it more precisely prevent problematic\nmodels.",
+      "pull_requests": [
+        "[#1041](https://github.com/awslabs/smithy/pull/1041)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Reduced the severity of `HttpBindingsMissing` events for services that do not\nuse protocols that support the `@http` trait.",
+      "pull_requests": [
+        "[#1044](https://github.com/awslabs/smithy/pull/1044)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `unwrite()` to `CodeWriter`.",
+      "pull_requests": [
+        "[#1038](https://github.com/awslabs/smithy/pull/1038)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the `RestJsonInputUnionWithUnitMember` protocol test.",
+      "pull_requests": [
+        "[#1042](https://github.com/awslabs/smithy/pull/1042)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the documentation for pagination.",
+      "pull_requests": [
+        "[#1043](https://github.com/awslabs/smithy/pull/1043)"
+      ]
+    }
+  ],
+  "date": "2022-01-10"
+}

@@ -1,0 +1,27 @@
+{
+  "version": "1.5.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues related to building and running on Windows.",
+      "pull_requests": [
+        "[#671](https://github.com/awslabs/smithy/pull/671)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue loading the `jsonAdd` map from configuration for the\n`cloudformation` plugin.",
+      "pull_requests": [
+        "[#673](https://github.com/awslabs/smithy/pull/673)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where API Gateway REST APIs would have greedy label parameter\nnames rendered into OpenAPI with a `+` suffix.",
+      "pull_requests": [
+        "[#674](https://github.com/awslabs/smithy/pull/674)"
+      ]
+    }
+  ],
+  "date": "2020-12-21"
+}

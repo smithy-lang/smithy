@@ -1,0 +1,127 @@
+{
+  "version": "1.7.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `recommended` structure member trait, which indicates that a\nstructure member SHOULD be set.",
+      "pull_requests": [
+        "[#745](https://github.com/awslabs/smithy/pull/745)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for service renames when using the `flattenNamespaces`\ntransformer.",
+      "pull_requests": [
+        "[#760](https://github.com/awslabs/smithy/pull/760)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Set `additionalProperties` to `false` for CloudFormation objects.",
+      "pull_requests": [
+        "[#764](https://github.com/awslabs/smithy/pull/764)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved model validation debugging by stopping validation when an `ERROR`\noccurs while loading models.",
+      "pull_requests": [
+        "[#775](https://github.com/awslabs/smithy/pull/775)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation warning when a `hostPrefix` contains a label that does not\nend in a period.",
+      "pull_requests": [
+        "[#779](https://github.com/awslabs/smithy/pull/779)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added and updated several `@restXml` protocol test.",
+      "pull_requests": [
+        "[#744](https://github.com/awslabs/smithy/pull/744)",
+        "[#755](https://github.com/awslabs/smithy/pull/755)",
+        "[#757](https://github.com/awslabs/smithy/pull/757)",
+        "[#777](https://github.com/awslabs/smithy/pull/777)",
+        "[#766](https://github.com/awslabs/smithy/pull/781)",
+        "[#789](https://github.com/awslabs/smithy/pull/789)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added and updated several `@restJson1` protocol test.",
+      "pull_requests": [
+        "[#747](https://github.com/awslabs/smithy/pull/747)",
+        "[#755](https://github.com/awslabs/smithy/pull/755)",
+        "[#765](https://github.com/awslabs/smithy/pull/765)",
+        "[#790](https://github.com/awslabs/smithy/pull/790)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added missing `name` properties to `aws.iam#ConditionKeyType` enum.",
+      "pull_requests": [
+        "[#759](https://github.com/awslabs/smithy/pull/759)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed number parsing in the IDL, using BigDecimal or BigInteger where needed.",
+      "pull_requests": [
+        "[#766](https://github.com/awslabs/smithy/pull/766)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed Gradle 7 builds.",
+      "pull_requests": [
+        "[#758](https://github.com/awslabs/smithy/pull/758)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added `Document` type to list of inherently boxed shapes.",
+      "pull_requests": [
+        "[#749](https://github.com/awslabs/smithy/pull/749)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Reordered `TraitService` SPI entries for readability.",
+      "pull_requests": [
+        "[#742](https://github.com/awslabs/smithy/pull/742)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed `selector_expression` and `comment` in ABNF for Smithy IDL.",
+      "pull_requests": [
+        "[#771](https://github.com/awslabs/smithy/pull/771)",
+        "[#771](https://github.com/awslabs/smithy/pull/773)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Documented conflict resolution of HTTP query params.",
+      "pull_requests": [
+        "[#783](https://github.com/awslabs/smithy/pull/783)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Documented precedence of constraint traits.",
+      "pull_requests": [
+        "[#784](https://github.com/awslabs/smithy/pull/784)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Upgraded to use version `0.5.3` of the\n[Smithy Gradle Plugin](https://github.com/awslabs/smithy-gradle-plugin).",
+      "pull_requests": [
+        "[#791](https://github.com/awslabs/smithy/pull/791)"
+      ]
+    }
+  ],
+  "date": "2021-05-07"
+}

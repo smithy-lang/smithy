@@ -1,0 +1,27 @@
+{
+  "version": "1.52.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed several minor issues with IAM trait class implementations",
+      "pull_requests": [
+        "[#2427](https://github.com/smithy-lang/smithy/pull/2427)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where several protocol test operations were not bound to\nservices",
+      "pull_requests": [
+        "[#2426](https://github.com/smithy-lang/smithy/pull/2426)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the name of XML root nodes in the protocol tests",
+      "pull_requests": [
+        "[#2423](https://github.com/smithy-lang/smithy/pull/2423)"
+      ]
+    }
+  ],
+  "date": "2024-10-22"
+}

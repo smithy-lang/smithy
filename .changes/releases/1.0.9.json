@@ -1,0 +1,105 @@
+{
+  "version": "1.0.9",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Allow conflicting shape definitions if the fully built shapes are equivalent.",
+      "pull_requests": [
+        "[#520](https://github.com/awslabs/smithy/pull/520)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@internal` trait to the prelude.",
+      "pull_requests": [
+        "[#531](https://github.com/awslabs/smithy/pull/531)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `excludeShapesByTrait` build transform that will remove any shapes\nmarked with one or more of the specified traits.",
+      "pull_requests": [
+        "[#531](https://github.com/awslabs/smithy/pull/531)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved support for newlines and indentation in `CodeWriter`.",
+      "pull_requests": [
+        "[#529](https://github.com/awslabs/smithy/pull/529)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for configuring the expression starting character in\n`CodeWriter`.",
+      "pull_requests": [
+        "[#529](https://github.com/awslabs/smithy/pull/529)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `payloadFormatVersion` property for API Gateway integrations.",
+      "pull_requests": [
+        "[#527](https://github.com/awslabs/smithy/pull/527)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `deprecated` property to operations when converting to OpenAPI.",
+      "pull_requests": [
+        "[#535](https://github.com/awslabs/smithy/pull/535)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several more protocol tests.",
+      "pull_requests": [
+        "[#528](https://github.com/awslabs/smithy/pull/528)",
+        "[#536](https://github.com/awslabs/smithy/pull/536)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the selector for the `@httpQuery` trait.",
+      "pull_requests": [
+        "[#534](https://github.com/awslabs/smithy/pull/534)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed the selector for the `@httpPrefixHeaders` trait.",
+      "pull_requests": [
+        "[#533](https://github.com/awslabs/smithy/pull/533)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed some issues in protocol tests.",
+      "pull_requests": [
+        "[#526](https://github.com/awslabs/smithy/pull/526)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Removed the `abbreviation` property from the `@aws.api#service` trait.",
+      "pull_requests": [
+        "[#532](https://github.com/awslabs/smithy/pull/532)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Simplified prelude model loading.",
+      "pull_requests": [
+        "[#524](https://github.com/awslabs/smithy/pull/524)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Further simplified overall model loading.",
+      "pull_requests": [
+        "[#525](https://github.com/awslabs/smithy/pull/525)"
+      ]
+    }
+  ],
+  "date": "2020-08-21"
+}

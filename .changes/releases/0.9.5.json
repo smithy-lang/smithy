@@ -1,0 +1,76 @@
+{
+  "version": "0.9.5",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Allow overriding state management in CodeWriter",
+      "pull_requests": [
+        "[#186](https://github.com/awslabs/smithy/pull/186)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow the `xmlFlattened` trait to be applied to members",
+      "pull_requests": [
+        "[#191](https://github.com/awslabs/smithy/pull/191)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add helper to determine HTTP-based timestamp formats",
+      "pull_requests": [
+        "[#193](https://github.com/awslabs/smithy/pull/193)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow specifying XML namespace prefixes",
+      "pull_requests": [
+        "[#195](https://github.com/awslabs/smithy/pull/195)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `SymbolContainer`, an abstraction over `Symbol`s that enables easily\ncreating and aggregating `Symbols`",
+      "pull_requests": [
+        "[#202](https://github.com/awslabs/smithy/pull/202)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Escape popped state content",
+      "pull_requests": [
+        "[#187](https://github.com/awslabs/smithy/pull/187)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Make shape ID serialization consistent",
+      "pull_requests": [
+        "[#196](https://github.com/awslabs/smithy/pull/196)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Exclude private members targeted in JSON schema converters",
+      "pull_requests": [
+        "[#199](https://github.com/awslabs/smithy/pull/199)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix naming collisions in JSON schema output",
+      "pull_requests": [
+        "[#200](https://github.com/awslabs/smithy/pull/200)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Update `equals` to included typed bag parents",
+      "pull_requests": [
+        "[#201](https://github.com/awslabs/smithy/pull/201)"
+      ]
+    }
+  ],
+  "date": "2019-11-11"
+}

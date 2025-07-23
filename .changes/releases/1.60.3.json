@@ -1,0 +1,20 @@
+{
+  "version": "1.60.3",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed incorrect operation name in URI for `NonQueryCompatibleOperation`.",
+      "pull_requests": [
+        "[#2684](https://github.com/smithy-lang/smithy/pull/2684/)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed incorrect property name in protocol test bodies.",
+      "pull_requests": [
+        "[#2686](https://github.com/smithy-lang/smithy/pull/2686)"
+      ]
+    }
+  ],
+  "date": "2025-06-27"
+}

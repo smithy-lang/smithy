@@ -1,0 +1,27 @@
+{
+  "version": "1.0.10",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a validation event when a syntactic shape ID is found that does not\ntarget an actual shape in the model.",
+      "pull_requests": [
+        "[#542](https://github.com/awslabs/smithy/pull/542)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where forward reference resolution would use the incorrect\nnamespace when resolving operation and resource bindings.",
+      "pull_requests": [
+        "[#543](https://github.com/awslabs/smithy/pull/543)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Deprecated the reflection-based creation pattern for `KnowledgeIndex`\nimplementations.",
+      "pull_requests": [
+        "[#541](https://github.com/awslabs/smithy/pull/541)"
+      ]
+    }
+  ],
+  "date": "2020-08-26"
+}

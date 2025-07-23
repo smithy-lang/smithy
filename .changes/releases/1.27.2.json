@@ -1,0 +1,48 @@
+{
+  "version": "1.27.2",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Implement Comparable interface for TagObject and ExternalDocumentation",
+      "pull_requests": [
+        "[#1589](https://github.com/awslabs/smithy/pull/1589)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relax rule engine validation to support test auth schemes",
+      "pull_requests": [
+        "[#1590](https://github.com/awslabs/smithy/pull/1590)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Ensure that AuthSchemes added to Endpoint builder retain parameter ordering",
+      "pull_requests": [
+        "[#1591](https://github.com/awslabs/smithy/pull/1591)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add intEnum coverage on map of string list",
+      "pull_requests": [
+        "[#1596](https://github.com/awslabs/smithy/pull/1596)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Add source location to synthetic Enum trait",
+      "pull_requests": [
+        "[#1580](https://github.com/awslabs/smithy/pull/1580)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Minor fix to restJson1 docs",
+      "pull_requests": [
+        "[#1587](https://github.com/awslabs/smithy/pull/1587)"
+      ]
+    }
+  ],
+  "date": "2023-01-30"
+}

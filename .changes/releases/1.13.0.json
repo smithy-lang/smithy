@@ -1,0 +1,139 @@
+{
+  "version": "1.13.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a `filterSuppressions` model transform.",
+      "pull_requests": [
+        "[#940](https://github.com/awslabs/smithy/pull/940)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated selector attributes to be stricter.",
+      "pull_requests": [
+        "[#946](https://github.com/awslabs/smithy/pull/946)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for generating the `required` property when generating\nCloudFormation Resource Schemas.",
+      "pull_requests": [
+        "[#937](https://github.com/awslabs/smithy/pull/937)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for generating the `handlers` property when generating\nCloudFormation Resource Schemas.",
+      "pull_requests": [
+        "[#939](https://github.com/awslabs/smithy/pull/939)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@aws.iam#iamResource` trait to indicate properties of a Smithy\nresource in AWS IAM.",
+      "pull_requests": [
+        "[#948](https://github.com/awslabs/smithy/pull/948)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@aws.iam#supportedPrincipleTypes` trait to indicate which IAM\nprincipal types can use a service or operation.",
+      "pull_requests": [
+        "[#941](https://github.com/awslabs/smithy/pull/941)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated model serializers to allow for serializing the prelude.",
+      "pull_requests": [
+        "[#955](https://github.com/awslabs/smithy/pull/955)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated JSON Schema conversion to maintain property order.",
+      "pull_requests": [
+        "[#932](https://github.com/awslabs/smithy/pull/932)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved `@httpApiKeyAuth` description when converting to OpenAPI.",
+      "pull_requests": [
+        "[#934](https://github.com/awslabs/smithy/pull/934)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated the error message received when http request body content issues are\nencountered.",
+      "pull_requests": [
+        "[#959](https://github.com/awslabs/smithy/pull/959)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated request tests for `restJson1` query strings.",
+      "pull_requests": [
+        "[#933](https://github.com/awslabs/smithy/pull/933)",
+        "[#958](https://github.com/awslabs/smithy/pull/958)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for `restJson1` content types.",
+      "pull_requests": [
+        "[#924](https://github.com/awslabs/smithy/pull/924)",
+        "[#945](https://github.com/awslabs/smithy/pull/945)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issues in model loading that required a service `version` property.",
+      "pull_requests": [
+        "[#936](https://github.com/awslabs/smithy/pull/936)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue that where CORS headers in OpenAPI conversions were not\ncase-insensitive.",
+      "pull_requests": [
+        "[#950](https://github.com/awslabs/smithy/pull/950)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various issues in protocol tests.",
+      "pull_requests": [
+        "[#930](https://github.com/awslabs/smithy/pull/930)",
+        "[#933](https://github.com/awslabs/smithy/pull/933)",
+        "[#935](https://github.com/awslabs/smithy/pull/935)",
+        "[#944](https://github.com/awslabs/smithy/pull/944)",
+        "[#949](https://github.com/awslabs/smithy/pull/949)",
+        "[#954](https://github.com/awslabs/smithy/pull/954)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified host-related settings in the `@httpRequestTests` trait\ndocumentation.",
+      "pull_requests": [
+        "[#951](https://github.com/awslabs/smithy/pull/951)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified uri samples and descriptions.",
+      "pull_requests": [
+        "[#960](https://github.com/awslabs/smithy/pull/960)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed some issues in documentation.",
+      "pull_requests": [
+        "[#952](https://github.com/awslabs/smithy/pull/952)"
+      ]
+    }
+  ],
+  "date": "2021-10-29"
+}

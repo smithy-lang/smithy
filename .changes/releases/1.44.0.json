@@ -1,0 +1,132 @@
+{
+  "version": "1.44.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add AWS smoke test model package.",
+      "pull_requests": [
+        "[#2113](https://github.com/smithy-lang/smithy/pull/2113)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add more traits to protocol test services",
+      "pull_requests": [
+        "[#2117](https://github.com/smithy-lang/smithy/pull/2117)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Enable custom inline suffixes in IDL serializer",
+      "pull_requests": [
+        "[#2121](https://github.com/smithy-lang/smithy/pull/2121)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Keep trailing doc comment spaces in IDL serializer",
+      "pull_requests": [
+        "[#2116](https://github.com/smithy-lang/smithy/pull/2116)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Expand protocol tests for default values.",
+      "pull_requests": [
+        "[#2049](https://github.com/smithy-lang/smithy/pull/2049)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add protocol tests for 0/false in query params.",
+      "pull_requests": [
+        "[#2070](https://github.com/smithy-lang/smithy/pull/2070)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Change line break formatting in brackets.",
+      "pull_requests": [
+        "[#2072](https://github.com/smithy-lang/smithy/pull/2072)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add backticks to diff messages for trait changes.",
+      "pull_requests": [
+        "[#2075](https://github.com/smithy-lang/smithy/pull/2075)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Support internal trait when building synthetic enum trait.",
+      "pull_requests": [
+        "[#2106](https://github.com/smithy-lang/smithy/pull/2106)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add \"critical\" validation phase to validation.",
+      "pull_requests": [
+        "[#2098](https://github.com/smithy-lang/smithy/pull/2098)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Deprecated IAM Action traits that are now formally superseded by `@iamAction`.",
+      "pull_requests": [
+        "[#2095](https://github.com/smithy-lang/smithy/pull/2095)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to override AWS endpoints partitions when needed.",
+      "pull_requests": [
+        "[#2092](https://github.com/smithy-lang/smithy/pull/2092)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fail when duplicate members are found in enum/intEnum shapes.",
+      "pull_requests": [
+        "[#2112](https://github.com/smithy-lang/smithy/pull/2112)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Check references via idRef when looking for unreferenced shapes.",
+      "pull_requests": [
+        "[#2105](https://github.com/smithy-lang/smithy/pull/2105)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Remove service renames after flattening namespaces.",
+      "pull_requests": [
+        "[#2109](https://github.com/smithy-lang/smithy/pull/2109)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issue where endpoint modifier traits without a valid shape definition\nwere being indexed.",
+      "pull_requests": [
+        "[#2096](https://github.com/smithy-lang/smithy/pull/2096)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Upgrade sphinx for docs.",
+      "pull_requests": [
+        "[#2100](https://github.com/smithy-lang/smithy/pull/2100)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated several of the guide sections and tidied up the layout.",
+      "pull_requests": [
+        "[#2097](https://github.com/smithy-lang/smithy/pull/2097)"
+      ]
+    }
+  ],
+  "date": "2024-01-25"
+}

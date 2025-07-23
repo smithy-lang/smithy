@@ -1,0 +1,118 @@
+{
+  "version": "0.9.3",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Clean up `CodeWriter` modifiers",
+      "pull_requests": [
+        "[#143](https://github.com/awslabs/smithy/pull/143)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add typed `ObjectNode` member expectation functions",
+      "pull_requests": [
+        "[#144](https://github.com/awslabs/smithy/pull/144)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `expectShapeId` for fully-qualified shape ID",
+      "pull_requests": [
+        "[#147](https://github.com/awslabs/smithy/pull/147)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add helper to `EnumTrait` to check if it has names",
+      "pull_requests": [
+        "[#148](https://github.com/awslabs/smithy/pull/148)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `Symbol` references",
+      "pull_requests": [
+        "[#149](https://github.com/awslabs/smithy/pull/149)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add `ReservedWords` builder for simpler construction",
+      "pull_requests": [
+        "[#150](https://github.com/awslabs/smithy/pull/150)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow using path expressions in paginator outputs",
+      "pull_requests": [
+        "[#152](https://github.com/awslabs/smithy/pull/152)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add method to get non-trait shapes",
+      "pull_requests": [
+        "[#153](https://github.com/awslabs/smithy/pull/153)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add method to write class resource to manifest",
+      "pull_requests": [
+        "[#157](https://github.com/awslabs/smithy/pull/157)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow `authType` to be specified",
+      "pull_requests": [
+        "[#160](https://github.com/awslabs/smithy/pull/160)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix collection and gradle doc issues",
+      "pull_requests": [
+        "[#145](https://github.com/awslabs/smithy/pull/145)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Make `AuthorizerDefinition` definition private",
+      "pull_requests": [
+        "[#146](https://github.com/awslabs/smithy/pull/146)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix put handling on `ResourceShape`",
+      "pull_requests": [
+        "[#158](https://github.com/awslabs/smithy/pull/158)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix parse error when `apply` is at eof",
+      "pull_requests": [
+        "[#159](https://github.com/awslabs/smithy/pull/159)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Prevent `list`/`set` member from targeting container",
+      "pull_requests": [
+        "[#162](https://github.com/awslabs/smithy/pull/162)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Allow model assembling from symlink model files / directory",
+      "pull_requests": [
+        "[#163](https://github.com/awslabs/smithy/pull/163)"
+      ]
+    }
+  ],
+  "date": "2019-09-16"
+}

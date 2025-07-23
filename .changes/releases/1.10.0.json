@@ -1,0 +1,72 @@
+{
+  "version": "1.10.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Loosened the requirement of setting an `error` property when configuring\n`aws.api#clientEndpointDiscovery` trait.",
+      "pull_requests": [
+        "[#850](https://github.com/awslabs/smithy/pull/850)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `restJson1` protocol test.",
+      "pull_requests": [
+        "[#845](https://github.com/awslabs/smithy/pull/845)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning when using the OpenAPI conversion `jsonAdd` setting to alter\nschemas.",
+      "pull_requests": [
+        "[#851](https://github.com/awslabs/smithy/pull/851)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `httpChecksum` trait.",
+      "pull_requests": [
+        "[#843](https://github.com/awslabs/smithy/pull/843)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Revert \"Tightened substitution pattern for Fn::Sub to match CloudFormation.\"",
+      "pull_requests": [
+        "[#858](https://github.com/awslabs/smithy/pull/858)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `cors` trait `additionalExposedHeaders` were not added to\ngateway responses.",
+      "pull_requests": [
+        "[#852](https://github.com/awslabs/smithy/pull/852)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various issues in protocol tests.",
+      "pull_requests": [
+        "[#849](https://github.com/awslabs/smithy/pull/849)",
+        "[#855](https://github.com/awslabs/smithy/pull/855)",
+        "[#857](https://github.com/awslabs/smithy/pull/857)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified behavior for the `aws.api#service` trait's `sdkId` member.",
+      "pull_requests": [
+        "[#848](https://github.com/awslabs/smithy/pull/848)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various typos.",
+      "pull_requests": [
+        "[#853](https://github.com/awslabs/smithy/pull/853)",
+        "[#859](https://github.com/awslabs/smithy/pull/859)"
+      ]
+    }
+  ],
+  "date": "2021-07-14"
+}

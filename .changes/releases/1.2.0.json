@@ -1,0 +1,85 @@
+{
+  "version": "1.2.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added information to the `ModelDiff.Result` indicating how events have changed\nbetween the diff'd models.",
+      "pull_requests": [
+        "[#574](https://github.com/awslabs/smithy/pull/574)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a media type parser and validation for the `@mediaType` trait.",
+      "pull_requests": [
+        "[#582](https://github.com/awslabs/smithy/pull/582)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added additional default CORS headers and configuration for OpenAPI\nconversions.",
+      "pull_requests": [
+        "[#583](https://github.com/awslabs/smithy/pull/583)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `flattenNamespaces` build transform to flatten the namespaces of\nshapes connected to a specified service in a model in to a target namespace.",
+      "pull_requests": [
+        "[#572](https://github.com/awslabs/smithy/pull/572)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `runCommand` functionality to `smithy-utils`.",
+      "pull_requests": [
+        "[#580](https://github.com/awslabs/smithy/pull/580)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `TriConsumer` to `smithy-utils`.",
+      "pull_requests": [
+        "[#581](https://github.com/awslabs/smithy/pull/581)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for the `@httpResponseCode` trait in the `HttpBindingIndex`.",
+      "pull_requests": [
+        "[#571](https://github.com/awslabs/smithy/pull/571)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for the `@httpResponseCode` trait.",
+      "pull_requests": [
+        "[#573](https://github.com/awslabs/smithy/pull/573)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues that would cause Smithy to fail when running on Windows.",
+      "pull_requests": [
+        "[#575](https://github.com/awslabs/smithy/pull/575)",
+        "[#576](https://github.com/awslabs/smithy/pull/576)",
+        "[#577](https://github.com/awslabs/smithy/pull/577)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where a `union` shape marked as an `@httpPayload` would throw an\nexception when trying to resolve its content-type.",
+      "pull_requests": [
+        "[#584](https://github.com/awslabs/smithy/pull/584)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in OpenAPI conversions where tags were not passed through unless\nset in the `supportedTags` list, even when the `tags` setting was enabled.",
+      "pull_requests": [
+        "[#570](https://github.com/awslabs/smithy/pull/570)"
+      ]
+    }
+  ],
+  "date": "2020-09-30"
+}

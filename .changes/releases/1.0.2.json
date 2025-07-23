@@ -1,0 +1,13 @@
+{
+  "version": "1.0.2",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fix an issue that would squash exceptions thrown for invalid suppressions.",
+      "pull_requests": [
+        "[#440](https://github.com/awslabs/smithy/pull/440)"
+      ]
+    }
+  ],
+  "date": "2020-05-18"
+}

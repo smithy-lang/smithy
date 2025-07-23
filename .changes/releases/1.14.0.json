@@ -1,0 +1,27 @@
+{
+  "version": "1.14.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `@aws.protocols#httpChecksum` trait to describe checksumming\nbehavior for operations.",
+      "pull_requests": [
+        "[#972](https://github.com/awslabs/smithy/pull/972)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug that used a JSON pointer instead of names when generating\nCloudFormation Resource Schema required properties.",
+      "pull_requests": [
+        "[#971](https://github.com/awslabs/smithy/pull/971)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified parsing of members marked with the `@httpQueryParams` trait.",
+      "pull_requests": [
+        "[#957](https://github.com/awslabs/smithy/pull/957)"
+      ]
+    }
+  ],
+  "date": "2021-11-10"
+}

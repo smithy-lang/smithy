@@ -1,0 +1,52 @@
+{
+  "version": "0.9.7",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated Operation syntax in the Smithy IDL",
+      "pull_requests": [
+        "[#253](https://github.com/awslabs/smithy/pull/253)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated specification for XML traits",
+      "pull_requests": [
+        "[#242](https://github.com/awslabs/smithy/pull/242)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add the `@aws.api#ec2QueryName-trait` trait",
+      "pull_requests": [
+        "[#251](https://github.com/awslabs/smithy/pull/251)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add AWS protocol test models",
+      "pull_requests": [
+        "[#246](https://github.com/awslabs/smithy/pull/246)",
+        "[#247](https://github.com/awslabs/smithy/pull/247)",
+        "[#250](https://github.com/awslabs/smithy/pull/250)",
+        "[#255](https://github.com/awslabs/smithy/pull/255)",
+        "[#258](https://github.com/awslabs/smithy/pull/258)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Use URLConnection cache setting in ModelAssembler",
+      "pull_requests": [
+        "[#244](https://github.com/awslabs/smithy/pull/244)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Use list of string for queryParams in the `httpRequestTests` trait",
+      "pull_requests": [
+        "[#240](https://github.com/awslabs/smithy/pull/240)"
+      ]
+    }
+  ],
+  "date": "2020-01-15"
+}

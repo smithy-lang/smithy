@@ -1,0 +1,56 @@
+{
+  "version": "1.1.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `removeTraitDefinitions` build transform to remove trait definitions\nfrom models but leave instances intact.",
+      "pull_requests": [
+        "[#558](https://github.com/awslabs/smithy/pull/558)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added payload binding validation to HTTP `DELETE` operations.",
+      "pull_requests": [
+        "[#566](https://github.com/awslabs/smithy/pull/566)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `SmithyDiff` to emit events when traits are changed.",
+      "pull_requests": [
+        "[#561](https://github.com/awslabs/smithy/pull/561)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where some `StringListTrait` instances could lose\n`SourceLocation` information.",
+      "pull_requests": [
+        "[#564](https://github.com/awslabs/smithy/pull/564)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed some issues in protocol tests.",
+      "pull_requests": [
+        "[#560](https://github.com/awslabs/smithy/pull/560)",
+        "[#563](https://github.com/awslabs/smithy/pull/563)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Model components are now deduplicated based on location and value.",
+      "pull_requests": [
+        "[#565](https://github.com/awslabs/smithy/pull/565)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Normalize URL import filenames for better deduplication and reporting.",
+      "pull_requests": [
+        "[#562](https://github.com/awslabs/smithy/pull/562)"
+      ]
+    }
+  ],
+  "date": "2020-09-16"
+}
