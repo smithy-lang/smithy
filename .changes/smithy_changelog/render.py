@@ -70,7 +70,7 @@ def render() -> None:
 
 
 def render_change(change: Change) -> str:
-    rendered = f"* {change.description}"
+    rendered = f"- {change.description}"
     if prs := change.pull_requests:
         rendered += f"({', '.join(prs)})"
     return rendered + "\n"
