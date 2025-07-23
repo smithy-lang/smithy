@@ -1,6 +1,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 from argparse import ArgumentParser
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Self
 
 from . import RELEASES_DIR, Change, Release
 from .release import release as _release
@@ -49,6 +52,10 @@ def main() -> None:
 def render() -> None:
     rendered = f"# {TITLE}\n\n"
     for release in get_releases():
+        if isinstance(release, str):
+            rendered += release + "\n"
+            continue
+
         rendered += f"## {release.version} ({release.date})\n\n"
 
         for change_type, changes in release.change_map().items():
@@ -69,8 +76,42 @@ def render_change(change: Change) -> str:
     return rendered + "\n"
 
 
-def get_releases() -> list[Release]:
-    releases: list[Release] = []
-    for release_file in RELEASES_DIR.glob("*.json"):
-        releases.append(Release.read(release_file))
-    return sorted(releases)
+def get_releases() -> list[Release | str]:
+    releases: list[Release | str] = []
+    release_files = list(RELEASES_DIR.glob("*.json"))
+    release_files.extend(RELEASES_DIR.glob("*.md"))
+    release_files = sorted(
+        release_files, key=lambda p: Version.from_path(p), reverse=True
+    )
+    for release_file in release_files:
+        if release_file.name.endswith("md"):
+            releases.append(release_file.read_text().strip())
+        else:
+            releases.append(Release.read(release_file))
+    return releases
+
+
+# This exists to allow for sorting the release files based on the version in
+# the file name.
+@dataclass
+class Version:
+    major: int
+    minor: int
+    patch: int
+
+    def __lt__(self, other: Self) -> bool:
+        if self.major != other.major:
+            return self.major < other.major
+        if self.minor != other.minor:
+            return self.minor < other.minor
+        return self.patch < other.patch
+
+    @classmethod
+    def from_path(cls, path: Path) -> Self:
+        parts = path.name.split(".")
+        if len(parts) != 4:
+            raise Exception(
+                f"Invalid release file name. Expected `major.minor.patch.extension` "
+                f"(e.g. `1.2.3.json`), but found: {path.name}"
+            )
+        return cls(major=int(parts[0]), minor=int(parts[1]), patch=int(parts[2]))
