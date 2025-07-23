@@ -17,7 +17,8 @@ except ImportError as e:
         "available."
     ) from e
 
-TITLE = "Changelog"
+
+_DEFAULT_TITLE = "Smithy Changelog"
 
 
 def main() -> None:
@@ -25,6 +26,12 @@ def main() -> None:
         description="""\
             Render the changelog as markdown, optionally including pending features \
             as a new release.""",
+    )
+    parser.add_argument(
+        "-t",
+        "--title",
+        help="The top-level title to use for the changelog file.",
+        default=_DEFAULT_TITLE,
     )
     release_group = parser.add_argument_group(
         "release",
@@ -55,11 +62,11 @@ def main() -> None:
     if args.release_version:
         _release(args.release_version, args.release_date)
 
-    render()
+    render(title=args.title)
 
 
-def render() -> None:
-    rendered = f"# {TITLE}\n\n"
+def render(title: str = _DEFAULT_TITLE) -> None:
+    rendered = f"# {title}\n\n"
     for release in get_releases():
         if isinstance(release, str):
             rendered += release + "\n"
