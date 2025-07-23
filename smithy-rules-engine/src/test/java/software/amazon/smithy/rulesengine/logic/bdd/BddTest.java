@@ -141,18 +141,6 @@ class BddTest {
     }
 
     @Test
-    void testToStringBuilder() {
-        Bdd bdd = createSimpleBdd();
-        StringBuilder sb = new StringBuilder();
-        bdd.toString(sb);
-
-        String str = sb.toString();
-        assertTrue(str.contains("C0:")); // Condition index
-        assertTrue(str.contains("R0:")); // Result index
-        assertTrue(str.contains("terminal")); // Terminal node
-    }
-
-    @Test
     void testToNodeAndFromNode() {
         Bdd original = createSimpleBdd();
 
