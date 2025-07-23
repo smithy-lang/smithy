@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "A staged changelog tool for Smithy."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "mdformat>=0.7.22,<0.8.0"
+]
 
 [project.scripts]
 amend = "smithy_changelog.amend:main"
