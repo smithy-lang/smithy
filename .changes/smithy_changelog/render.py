@@ -90,7 +90,19 @@ def render(title: str = _DEFAULT_TITLE) -> None:
 
 
 def render_change(change: Change) -> str:
-    rendered = f"- {change.description.strip()}"
+    lines = change.description.strip().splitlines()
+    rendered = f"- {lines[0]}"
+
+    # Indend any additional lines in the description if they have
+    # content.
+    if len(lines) > 1:
+        for line in lines[1:]:
+            if not line:
+                rendered += "\n"
+                continue
+
+            rendered += f"\n  {line}"
+
     if prs := change.pull_requests:
         rendered += f" ({', '.join(prs)})"
     return rendered + "\n"
