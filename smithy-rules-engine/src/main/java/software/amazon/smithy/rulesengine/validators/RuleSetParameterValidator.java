@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
@@ -23,22 +22,21 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.analysis.OperationContextParamsChecker;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.traits.BddTrait;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Validator for rule-set parameters.
@@ -47,45 +45,52 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
-
         List<ValidationEvent> errors = new ArrayList<>();
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            // Pull all the parameters used in this service related to endpoints, validating that
-            // they are of matching types across the traits that can define them.
-            Pair<List<ValidationEvent>, Map<String, Parameter>> errorsParamsPair = validateAndExtractParameters(
-                    model,
-                    serviceShape,
-                    topDownIndex.getContainedOperations(serviceShape));
-            errors.addAll(errorsParamsPair.getLeft());
 
-            // Make sure parameters align across Params <-> RuleSet transitions.
-            EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
-            errors.addAll(validateParametersMatching(serviceShape,
-                    ruleSet.getParameters(),
-                    errorsParamsPair.getRight()));
-
-            // Check that tests declare required parameters, only defined parameters, etc.
-            if (serviceShape.hasTrait(EndpointTestsTrait.ID)) {
-                errors.addAll(validateTestsParameters(
-                        serviceShape,
-                        serviceShape.expectTrait(EndpointTestsTrait.class),
-                        ruleSet));
+        for (ServiceShape service : model.getServiceShapes()) {
+            EndpointRuleSetTrait epTrait = service.getTrait(EndpointRuleSetTrait.class).orElse(null);
+            BddTrait bddTrait = service.getTrait(BddTrait.class).orElse(null);
+            if (epTrait != null) {
+                validate(model, topDownIndex, service, errors, epTrait, epTrait.getEndpointRuleSet().getParameters());
+            }
+            if (bddTrait != null) {
+                validate(model, topDownIndex, service, errors, bddTrait, bddTrait.getBdd().getParameters());
             }
         }
 
         return errors;
     }
 
-    private Pair<List<ValidationEvent>, Map<String, Parameter>> validateAndExtractParameters(
+    private void validate(
             Model model,
-            ServiceShape serviceShape,
+            TopDownIndex topDownIndex,
+            ServiceShape service,
+            List<ValidationEvent> errors,
+            FromSourceLocation sourceLocation,
+            Iterable<Parameter> parameters
+    ) {
+        // Pull all the parameters used in this service related to endpoints, validating that
+        // they are of matching types across the traits that can define them.
+        Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
+        Map<String, Parameter> modelParams = validateAndExtractParameters(errors, model, service, operations);
+        // Make sure parameters align across Params <-> RuleSet transitions.
+        validateParametersMatching(errors, service, sourceLocation, parameters, modelParams);
+        // Check that tests declare required parameters, only defined parameters, etc.
+        if (service.hasTrait(EndpointTestsTrait.ID)) {
+            validateTestsParameters(errors, service, service.expectTrait(EndpointTestsTrait.class), parameters);
+        }
+    }
+
+    private Map<String, Parameter> validateAndExtractParameters(
+            List<ValidationEvent> errors,
+            Model model,
+            ServiceShape service,
             Set<OperationShape> containedOperations
     ) {
-        List<ValidationEvent> errors = new ArrayList<>();
         Map<String, Parameter> endpointParams = new HashMap<>();
 
-        if (serviceShape.hasTrait(ClientContextParamsTrait.ID)) {
-            ClientContextParamsTrait trait = serviceShape.expectTrait(ClientContextParamsTrait.class);
+        if (service.hasTrait(ClientContextParamsTrait.ID)) {
+            ClientContextParamsTrait trait = service.expectTrait(ClientContextParamsTrait.class);
             for (Map.Entry<String, ClientContextParamDefinition> entry : trait.getParameters().entrySet()) {
                 endpointParams.put(entry.getKey(),
                         Parameter.builder()
@@ -120,10 +125,14 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             if (operationShape.hasTrait(OperationContextParamsTrait.ID)) {
                 OperationContextParamsTrait trait = operationShape.expectTrait(OperationContextParamsTrait.class);
-                trait.getParameters().forEach((name, p) -> {
-                    Optional<ParameterType> maybeType = OperationContextParamsChecker
-                            .inferParameterType(p, operationShape, model);
-                    maybeType.ifPresent(parameterType -> {
+                for (Map.Entry<String, OperationContextParamDefinition> entry : trait.getParameters().entrySet()) {
+                    String name = entry.getKey();
+                    OperationContextParamDefinition p = entry.getValue();
+                    ParameterType parameterType = OperationContextParamsChecker
+                            .inferParameterType(p, operationShape, model)
+                            .orElse(null);
+
+                    if (parameterType != null) {
                         if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
                             errors.add(parameterError(operationShape,
                                     trait,
@@ -136,8 +145,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                                             .type(parameterType)
                                             .build());
                         }
-                    });
-                });
+                    }
+                }
             }
 
             StructureShape input = model.expectShape(operationShape.getInputShape(), StructureShape.class);
@@ -173,15 +182,16 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             }
         }
 
-        return Pair.of(errors, endpointParams);
+        return endpointParams;
     }
 
-    private List<ValidationEvent> validateParametersMatching(
+    private void validateParametersMatching(
+            List<ValidationEvent> errors,
             ServiceShape serviceShape,
-            Parameters ruleSetParams,
+            FromSourceLocation sourceLocation,
+            Iterable<Parameter> ruleSetParams,
             Map<String, Parameter> modelParams
     ) {
-        List<ValidationEvent> errors = new ArrayList<>();
         Set<String> matchedParams = new HashSet<>();
         for (Parameter parameter : ruleSetParams) {
             String name = parameter.getName().toString();
@@ -213,27 +223,25 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             if (!matchedParams.contains(entry.getKey())) {
                 errors.add(parameterError(serviceShape,
-                        serviceShape.expectTrait(EndpointRuleSetTrait.class),
+                        sourceLocation,
                         "RuleSet.UnmatchedName",
                         String.format("Parameter `%s` exists in service model but not in ruleset, existing params: %s",
                                 entry.getKey(),
                                 matchedParams)));
             }
         }
-
-        return errors;
     }
 
-    private List<ValidationEvent> validateTestsParameters(
+    private void validateTestsParameters(
+            List<ValidationEvent> errors,
             ServiceShape serviceShape,
             EndpointTestsTrait trait,
-            EndpointRuleSet ruleSet
+            Iterable<Parameter> parameters
     ) {
-        List<ValidationEvent> errors = new ArrayList<>();
         Set<String> rulesetParamNames = new HashSet<>();
         Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(trait.getTestCases());
 
-        for (Parameter parameter : ruleSet.getParameters()) {
+        for (Parameter parameter : parameters) {
             String name = parameter.getName().toString();
             rulesetParamNames.add(name);
             boolean testSuiteHasParam = testSuiteParams.containsKey(name);
@@ -278,8 +286,6 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                         String.format("Test parameter `%s` is not defined in ruleset", entry.getKey())));
             }
         }
-
-        return errors;
     }
 
     private Map<String, List<Parameter>> extractTestSuiteParameters(List<EndpointTestCase> testCases) {

@@ -6,7 +6,6 @@ package software.amazon.smithy.rulesengine.aws.validators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
@@ -14,8 +13,8 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.aws.language.functions.AwsBuiltIns;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.traits.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -33,36 +32,30 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            events.addAll(validateRuleSetAwsBuiltIns(serviceShape,
-                    serviceShape.expectTrait(EndpointRuleSetTrait.class)
-                            .getEndpointRuleSet()));
+
+        for (ServiceShape s : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
+            EndpointRuleSetTrait trait = s.expectTrait(EndpointRuleSetTrait.class);
+            validateRuleSetAwsBuiltIns(events, s, trait.getEndpointRuleSet().getParameters());
         }
+
+        for (ServiceShape s : model.getServiceShapesWithTrait(BddTrait.class)) {
+            validateRuleSetAwsBuiltIns(events, s, s.expectTrait(BddTrait.class).getBdd().getParameters());
+        }
+
         return events;
     }
 
-    private List<ValidationEvent> validateRuleSetAwsBuiltIns(ServiceShape serviceShape, EndpointRuleSet ruleSet) {
-        List<ValidationEvent> events = new ArrayList<>();
-        for (Parameter parameter : ruleSet.getParameters()) {
+    private void validateRuleSetAwsBuiltIns(List<ValidationEvent> events, ServiceShape s, Iterable<Parameter> params) {
+        for (Parameter parameter : params) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter).ifPresent(events::add);
+                validateBuiltIn(events, s, parameter.getBuiltIn().get(), parameter);
             }
         }
-        return events;
     }
 
-    private Optional<ValidationEvent> validateBuiltIn(
-            ServiceShape serviceShape,
-            String builtInName,
-            FromSourceLocation source
-    ) {
-        if (ADDITIONAL_CONSIDERATION_BUILT_INS.contains(builtInName)) {
-            return Optional.of(danger(
-                    serviceShape,
-                    source,
-                    String.format(ADDITIONAL_CONSIDERATION_MESSAGE, builtInName),
-                    builtInName));
+    private void validateBuiltIn(List<ValidationEvent> events, ServiceShape s, String name, FromSourceLocation source) {
+        if (ADDITIONAL_CONSIDERATION_BUILT_INS.contains(name)) {
+            events.add(danger(s, source, String.format(ADDITIONAL_CONSIDERATION_MESSAGE, name), name));
         }
-        return Optional.empty();
     }
 }
