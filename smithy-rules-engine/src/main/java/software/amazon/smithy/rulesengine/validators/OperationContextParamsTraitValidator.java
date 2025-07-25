@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.rulesengine.traits;
+package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +36,9 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.analysis.OperationContextParamsChecker;
+import software.amazon.smithy.rulesengine.traits.ContextIndex;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamDefinition;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
