@@ -13,6 +13,7 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.value.EndpointValue;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestExpectation;
 import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
@@ -34,12 +35,30 @@ public final class TestEvaluator {
      * @param testCase The test case.
      */
     public static void evaluate(EndpointRuleSet ruleset, EndpointTestCase testCase) {
+        Value result = RuleEvaluator.evaluate(ruleset, createParams(testCase));
+        processResult(result, testCase);
+    }
+
+    /**
+     * Evaluate the given rule-set and test case. Throws an exception in the event the test case does not pass.
+     *
+     * @param bdd      The BDD to be tested.
+     * @param testCase The test case.
+     */
+    public static void evaluate(Bdd bdd, EndpointTestCase testCase) {
+        Value result = RuleEvaluator.evaluate(bdd, createParams(testCase));
+        processResult(result, testCase);
+    }
+
+    private static Map<Identifier, Value> createParams(EndpointTestCase testCase) {
         Map<Identifier, Value> parameters = new LinkedHashMap<>();
         for (Map.Entry<StringNode, Node> entry : testCase.getParams().getMembers().entrySet()) {
             parameters.put(Identifier.of(entry.getKey()), Value.fromNode(entry.getValue()));
         }
-        Value result = RuleEvaluator.evaluate(ruleset, parameters);
+        return parameters;
+    }
 
+    private static void processResult(Value result, EndpointTestCase testCase) {
         StringBuilder messageBuilder = new StringBuilder("while executing test case");
         if (testCase.getDocumentation().isPresent()) {
             messageBuilder.append(" ").append(testCase.getDocumentation().get());
