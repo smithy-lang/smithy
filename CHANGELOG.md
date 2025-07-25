@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 1.61.0 (2025-07-23)
+
+### Bug Fixes
+
+* Return the specific type of the trait for RpcV2CborTrait as other protocols traits do. ([#2711](https://github.com/smithy-lang/smithy/pull/2711))
+* Relocate `com.google` dependencies in the CLI to avoid classpath conflicts. ([#2718](https://github.com/smithy-lang/smithy/pull/2718))
+
+### Documentation
+
+* Added more explicit rule on how to serialize conflicting headers. ([#2692](https://github.com/smithy-lang/smithy/pull/2692))
+* Removed `set` from trait selector in `@trait` documentation. ([#2698](https://github.com/smithy-lang/smithy/pull/2698))
+
+### Features
+
+* Relaxed restrictions on trait-codegen to allow `smithy*`, and some `smithy.*` namespaces. ([#2671](https://github.com/smithy-lang/smithy/pull/2671), [#2708](https://github.com/smithy-lang/smithy/pull/2708), [#2709](https://github.com/smithy-lang/smithy/pull/2709))
+* Added `aws-eusc` to AWS rules engine partitions. ([#2697](https://github.com/smithy-lang/smithy/pull/2697))
+* Added MQTT topic filter parsing and conflict support. ([#2690](https://github.com/smithy-lang/smithy/pull/2690))
+* Added OpenAPI configuration option to disable default deprecation description. ([#2694](https://github.com/smithy-lang/smithy/pull/2694))
+
 ## 1.60.3 (2025-06-27)
 
 ### Bug Fixes
