@@ -7,7 +7,6 @@ package software.amazon.smithy.rulesengine.validators;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
@@ -16,6 +15,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.traits.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
@@ -28,67 +28,63 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            events.addAll(validateRuleSetBuiltIns(serviceShape,
-                    serviceShape.expectTrait(EndpointRuleSetTrait.class)
-                            .getEndpointRuleSet()));
+
+        for (ServiceShape s : model.getServiceShapesWithTrait(BddTrait.class)) {
+            validateParams(events, s, s.expectTrait(BddTrait.class).getBdd().getParameters());
         }
 
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
-            events.addAll(validateTestTraitBuiltIns(serviceShape, serviceShape.expectTrait(EndpointTestsTrait.class)));
+        for (ServiceShape s : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
+            validateParams(events, s, s.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet().getParameters());
         }
+
+        for (ServiceShape s : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
+            validateTestBuiltIns(events, s, s.expectTrait(EndpointTestsTrait.class));
+        }
+
         return events;
     }
 
-    private List<ValidationEvent> validateRuleSetBuiltIns(ServiceShape serviceShape, EndpointRuleSet ruleSet) {
-        List<ValidationEvent> events = new ArrayList<>();
-        for (Parameter parameter : ruleSet.getParameters()) {
+    private void validateParams(List<ValidationEvent> events, ServiceShape service, Iterable<Parameter> params) {
+        for (Parameter parameter : params) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "RuleSet")
-                        .ifPresent(events::add);
+                validateBuiltIn(events, service, parameter.getBuiltIn().get(), parameter, "RuleSet");
             }
         }
-        return events;
     }
 
-    private List<ValidationEvent> validateTestTraitBuiltIns(ServiceShape serviceShape, EndpointTestsTrait testSuite) {
-        List<ValidationEvent> events = new ArrayList<>();
+    private void validateTestBuiltIns(List<ValidationEvent> events, ServiceShape service, EndpointTestsTrait suite) {
         int testIndex = 0;
-        for (EndpointTestCase testCase : testSuite.getTestCases()) {
+        for (EndpointTestCase testCase : suite.getTestCases()) {
             int inputIndex = 0;
             for (EndpointTestOperationInput operationInput : testCase.getOperationInputs()) {
                 for (StringNode builtInNode : operationInput.getBuiltInParams().getMembers().keySet()) {
-                    validateBuiltIn(serviceShape,
+                    validateBuiltIn(events,
+                            service,
                             builtInNode.getValue(),
                             operationInput,
                             "TestCase",
                             String.valueOf(testIndex),
                             "Inputs",
-                            String.valueOf(inputIndex))
-                            .ifPresent(events::add);
+                            String.valueOf(inputIndex));
                 }
                 inputIndex++;
             }
             testIndex++;
         }
-        return events;
     }
 
-    private Optional<ValidationEvent> validateBuiltIn(
-            ServiceShape serviceShape,
-            String builtInName,
+    private void validateBuiltIn(
+            List<ValidationEvent> events,
+            ServiceShape service,
+            String name,
             FromSourceLocation source,
             String... eventIdSuffixes
     ) {
-        if (!EndpointRuleSet.hasBuiltIn(builtInName)) {
-            return Optional.of(error(serviceShape,
-                    source,
-                    String.format(
-                            "The `%s` built-in used is not registered, valid built-ins: %s",
-                            builtInName,
-                            EndpointRuleSet.getKeyString()),
-                    String.join(".", Arrays.asList(eventIdSuffixes))));
+        if (!EndpointRuleSet.hasBuiltIn(name)) {
+            String msg = String.format("The `%s` built-in used is not registered, valid built-ins: %s",
+                    name,
+                    EndpointRuleSet.getKeyString());
+            events.add(error(service, source, msg, String.join(".", Arrays.asList(eventIdSuffixes))));
         }
-        return Optional.empty();
     }
 }

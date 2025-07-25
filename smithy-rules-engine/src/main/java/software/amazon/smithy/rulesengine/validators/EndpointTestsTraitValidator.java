@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.rulesengine.traits;
+package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,13 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
+import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
+import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -39,61 +44,81 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                 operationNameMap.put(operationShape.getId().getName(), operationShape);
             }
 
-            // Precompute the built-ins and their default states, as this will
-            // be used frequently in downstream validation.
-            List<Parameter> builtInParamsWithDefaults = new ArrayList<>();
-            List<Parameter> builtInParamsWithoutDefaults = new ArrayList<>();
-            EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
-            for (Parameter parameter : ruleSet.getParameters()) {
-                if (parameter.isBuiltIn()) {
-                    if (parameter.getDefault().isPresent()) {
-                        builtInParamsWithDefaults.add(parameter);
-                    } else {
-                        builtInParamsWithoutDefaults.add(parameter);
-                    }
-                }
-            }
+            serviceShape.getTrait(EndpointRuleSetTrait.class).ifPresent(trait -> {
+                validateEndpointRuleSet(events,
+                        model,
+                        serviceShape,
+                        trait.getEndpointRuleSet().getParameters(),
+                        operationNameMap);
+            });
 
-            for (EndpointTestCase testCase : serviceShape.expectTrait(EndpointTestsTrait.class).getTestCases()) {
-                // If values for built-in parameters don't match the default, they MUST
-                // be specified in the operation inputs. Precompute the ones that don't match
-                // and capture their value.
-                Map<Parameter, Node> builtInParamsWithNonDefaultValues =
-                        getBuiltInParamsWithNonDefaultValues(builtInParamsWithDefaults, testCase);
+            serviceShape.getTrait(BddTrait.class).ifPresent(trait -> {
+                validateEndpointRuleSet(events, model, serviceShape, trait.getBdd().getParameters(), operationNameMap);
+            });
+        }
 
-                for (EndpointTestOperationInput testOperationInput : testCase.getOperationInputs()) {
-                    String operationName = testOperationInput.getOperationName();
+        return events;
+    }
 
-                    // It's possible for an operation defined to not be in the service closure.
-                    if (!operationNameMap.containsKey(operationName)) {
-                        events.add(error(serviceShape,
-                                testOperationInput,
-                                String.format("Test case operation `%s` does not exist in service `%s`",
-                                        operationName,
-                                        serviceShape.getId())));
-                        continue;
-                    }
+    private void validateEndpointRuleSet(
+            List<ValidationEvent> events,
+            Model model,
+            ServiceShape serviceShape,
+            Parameters parameters,
+            Map<String, OperationShape> operationNameMap
+    ) {
+        // Precompute the built-ins and their default states, as this will
+        // be used frequently in downstream validation.
+        List<Parameter> builtInParamsWithDefaults = new ArrayList<>();
+        List<Parameter> builtInParamsWithoutDefaults = new ArrayList<>();
 
-                    // Still emit events if the operation exists, but was just not bound.
-                    validateConfiguredBuiltInValues(serviceShape,
-                            builtInParamsWithNonDefaultValues,
-                            testOperationInput,
-                            events);
-                    validateBuiltInsWithoutDefaultsHaveValues(serviceShape,
-                            builtInParamsWithoutDefaults,
-                            testCase,
-                            testOperationInput,
-                            events);
-
-                    StructureShape inputShape = model.expectShape(
-                            operationNameMap.get(operationName).getInputShape(),
-                            StructureShape.class);
-                    validateOperationInput(model, serviceShape, inputShape, testCase, testOperationInput, events);
+        for (Parameter parameter : parameters) {
+            if (parameter.isBuiltIn()) {
+                if (parameter.getDefault().isPresent()) {
+                    builtInParamsWithDefaults.add(parameter);
+                } else {
+                    builtInParamsWithoutDefaults.add(parameter);
                 }
             }
         }
 
-        return events;
+        for (EndpointTestCase testCase : serviceShape.expectTrait(EndpointTestsTrait.class).getTestCases()) {
+            // If values for built-in parameters don't match the default, they MUST
+            // be specified in the operation inputs. Precompute the ones that don't match
+            // and capture their value.
+            Map<Parameter, Node> builtInParamsWithNonDefaultValues =
+                    getBuiltInParamsWithNonDefaultValues(builtInParamsWithDefaults, testCase);
+
+            for (EndpointTestOperationInput testOperationInput : testCase.getOperationInputs()) {
+                String operationName = testOperationInput.getOperationName();
+
+                // It's possible for an operation defined to not be in the service closure.
+                if (!operationNameMap.containsKey(operationName)) {
+                    events.add(error(serviceShape,
+                            testOperationInput,
+                            String.format("Test case operation `%s` does not exist in service `%s`",
+                                    operationName,
+                                    serviceShape.getId())));
+                    continue;
+                }
+
+                // Still emit events if the operation exists, but was just not bound.
+                validateConfiguredBuiltInValues(serviceShape,
+                        builtInParamsWithNonDefaultValues,
+                        testOperationInput,
+                        events);
+                validateBuiltInsWithoutDefaultsHaveValues(serviceShape,
+                        builtInParamsWithoutDefaults,
+                        testCase,
+                        testOperationInput,
+                        events);
+
+                StructureShape inputShape = model.expectShape(
+                        operationNameMap.get(operationName).getInputShape(),
+                        StructureShape.class);
+                validateOperationInput(model, serviceShape, inputShape, testCase, testOperationInput, events);
+            }
+        }
     }
 
     private Map<Parameter, Node> getBuiltInParamsWithNonDefaultValues(

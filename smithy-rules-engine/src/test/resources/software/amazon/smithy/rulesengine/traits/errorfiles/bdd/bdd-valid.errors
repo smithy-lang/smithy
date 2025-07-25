@@ -1,1 +1,2 @@
 [WARNING] smithy.example#ValidBddService: This shape applies a trait that is unstable: smithy.rules#bdd | UnstableTrait.smithy.rules#bdd
+[WARNING] smithy.example#ValidBddService: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait.smithy.rules#clientContextParams
