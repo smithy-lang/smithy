@@ -24,6 +24,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -272,7 +273,7 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
         if (documentation != null) {
             node.withMember(DOCUMENTATION, documentation);
         }
-        node.withMember(TYPE, type.toString());
+        node.withMember(TYPE, StringUtils.uncapitalize(type.toString()));
         return node.build();
     }
 
