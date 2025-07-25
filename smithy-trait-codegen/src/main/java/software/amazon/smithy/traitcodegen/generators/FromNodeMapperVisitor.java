@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -78,7 +79,11 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         if (nestedLevel == 0) { // Triggered when shape is a member.
             writer.writeWithNoFormatting(".forEach(builder::addValues);");
         } else { // Triggered when shape is nested.
-            writer.write(".collect($T.toList())", Collectors.class);
+            if (shape.hasTrait(UniqueItemsTrait.ID)) {
+                writer.write(".collect($T.toSet())", Collectors.class);
+            } else {
+                writer.write(".collect($T.toList())", Collectors.class);
+            }
         }
         writer.dedent();
         return null;
