@@ -4,122 +4,162 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Formats BDD node structures to a stream without building the entire representation in memory.
+ * Formats BDD node structures to a writer.
  */
 public final class BddFormatter {
 
+    private final Bdd bdd;
     private final Writer writer;
-    private final int[][] nodes;
-    private final int rootRef;
-    private final int conditionCount;
-    private final int resultCount;
     private final String indent;
 
-    private BddFormatter(Builder builder) {
-        this.writer = builder.writer;
-        this.nodes = builder.nodes;
-        this.rootRef = builder.rootRef;
-        this.conditionCount = builder.conditionCount;
-        this.resultCount = builder.resultCount;
-        this.indent = builder.indent;
-    }
-
     /**
-     * Creates a builder for BddFormatter.
+     * Creates a BDD formatter.
      *
-     * @return a new builder
+     * @param bdd the BDD to format
+     * @param writer the writer to format to
+     * @param indent the indentation string
      */
-    public static Builder builder() {
-        return new Builder();
+    public BddFormatter(Bdd bdd, Writer writer, String indent) {
+        this.bdd = bdd;
+        this.writer = writer;
+        this.indent = indent;
     }
 
     /**
-     * Formats the BDD node structure.
+     * Formats a BDD to a string.
+     *
+     * @param bdd the BDD to format
+     * @return a formatted string representation
      */
-    public void format() {
+    public static String format(Bdd bdd) {
+        return format(bdd, "");
+    }
+
+    /**
+     * Formats a BDD to a string with custom indent.
+     *
+     * @param bdd the BDD to format
+     * @param indent the indentation string
+     * @return a formatted string representation
+     */
+    public static String format(Bdd bdd, String indent) {
         try {
-            // Calculate formatting widths
-            FormatContext ctx = calculateFormatContext();
-
-            // Write root
-            writer.write(indent);
-            writer.write("Root: ");
-            writer.write(formatReference(rootRef));
-            writer.write("\n");
-
-            // Write nodes
-            writer.write(indent);
-            writer.write("Nodes:\n");
-
-            for (int i = 0; i < nodes.length; i++) {
-                writer.write(indent);
-                writer.write("    ");
-                writer.write(String.format("%" + ctx.indexWidth + "d", i));
-                writer.write(": ");
-
-                if (i == 0 && nodes[i][0] == -1) {
-                    writer.write("terminal");
-                } else {
-                    formatNode(nodes[i], ctx);
-                }
-                writer.write("\n");
-            }
-
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Writer writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
+            new BddFormatter(bdd, writer, indent).format();
             writer.flush();
+            return baos.toString(StandardCharsets.UTF_8.name());
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            // Should never happen with ByteArrayOutputStream
+            throw new RuntimeException("Failed to format BDD", e);
         }
     }
 
+    /**
+     * Formats the BDD structure.
+     *
+     * @throws IOException if writing fails
+     */
+    public void format() throws IOException {
+        // Calculate formatting widths
+        FormatContext ctx = calculateFormatContext();
+
+        // Write header
+        writer.write(indent);
+        writer.write("Bdd {\n");
+
+        // Write counts
+        writer.write(indent);
+        writer.write("  conditions: ");
+        writer.write(String.valueOf(bdd.getConditionCount()));
+        writer.write("\n");
+
+        writer.write(indent);
+        writer.write("  results: ");
+        writer.write(String.valueOf(bdd.getResultCount()));
+        writer.write("\n");
+
+        // Write root
+        writer.write(indent);
+        writer.write("  root: ");
+        writer.write(formatReference(bdd.getRootRef()));
+        writer.write("\n");
+
+        // Write nodes
+        writer.write(indent);
+        writer.write("  nodes (");
+        writer.write(String.valueOf(bdd.getNodeCount()));
+        writer.write("):\n");
+
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            writer.write(indent);
+            writer.write("    ");
+            writer.write(String.format("%" + ctx.indexWidth + "d", i));
+            writer.write(": ");
+
+            if (i == 0 && bdd.getVariable(0) == -1) {
+                writer.write("terminal");
+            } else {
+                formatNode(i, ctx);
+            }
+            writer.write("\n");
+        }
+
+        writer.write(indent);
+        writer.write("}");
+    }
+
     private FormatContext calculateFormatContext() {
+        int nodeCount = bdd.getNodeCount();
         int maxVarIdx = -1;
 
         // Scan nodes to find max variable index
-        for (int i = 1; i < nodes.length; i++) {
-            int varIdx = nodes[i][0];
+        for (int i = 1; i < nodeCount; i++) {
+            int varIdx = bdd.getVariable(i);
             if (varIdx >= 0) {
                 maxVarIdx = Math.max(maxVarIdx, varIdx);
             }
         }
 
         // Calculate widths
+        int conditionCount = bdd.getConditionCount();
+        int resultCount = bdd.getResultCount();
         int conditionWidth = conditionCount > 0 ? String.valueOf(conditionCount - 1).length() + 1 : 2;
         int resultWidth = resultCount > 0 ? String.valueOf(resultCount - 1).length() + 1 : 2;
         int varWidth = Math.max(Math.max(conditionWidth, resultWidth), String.valueOf(maxVarIdx).length());
-        int indexWidth = String.valueOf(nodes.length - 1).length();
+        int indexWidth = String.valueOf(nodeCount - 1).length();
 
         return new FormatContext(varWidth, indexWidth);
     }
 
-    private void formatNode(int[] node, FormatContext ctx) throws IOException {
+    private void formatNode(int nodeIndex, FormatContext ctx) throws IOException {
         writer.write("[");
 
         // Variable reference
-        int varIdx = node[0];
+        int varIdx = bdd.getVariable(nodeIndex);
         String varRef = formatVariableIndex(varIdx);
         writer.write(String.format("%" + ctx.varWidth + "s", varRef));
 
         // High and low references
         writer.write(", ");
-        writer.write(String.format("%6s", formatReference(node[1])));
+        writer.write(String.format("%6s", formatReference(bdd.getHigh(nodeIndex))));
         writer.write(", ");
-        writer.write(String.format("%6s", formatReference(node[2])));
+        writer.write(String.format("%6s", formatReference(bdd.getLow(nodeIndex))));
         writer.write("]");
     }
 
     private String formatVariableIndex(int varIdx) {
-        if (conditionCount > 0 && varIdx < conditionCount) {
+        if (bdd.getConditionCount() > 0 && varIdx < bdd.getConditionCount()) {
             return "C" + varIdx;
-        } else if (conditionCount > 0 && resultCount > 0) {
-            return "R" + (varIdx - conditionCount);
+        } else if (bdd.getConditionCount() > 0 && bdd.getResultCount() > 0) {
+            return "R" + (varIdx - bdd.getConditionCount());
         } else {
             return String.valueOf(varIdx);
         }
@@ -154,64 +194,6 @@ public final class BddFormatter {
         FormatContext(int varWidth, int indexWidth) {
             this.varWidth = varWidth;
             this.indexWidth = indexWidth;
-        }
-    }
-
-    /**
-     * Builder for BddFormatter.
-     */
-    public static final class Builder {
-        private Writer writer;
-        private int[][] nodes;
-        private int rootRef;
-        private int conditionCount = 0;
-        private int resultCount = 0;
-        private String indent = "";
-
-        private Builder() {}
-
-        public Builder writer(Writer writer) {
-            this.writer = writer;
-            return this;
-        }
-
-        public Builder writer(OutputStream out) {
-            return writer(new OutputStreamWriter(out, StandardCharsets.UTF_8));
-        }
-
-        public Builder nodes(int[][] nodes) {
-            this.nodes = nodes;
-            return this;
-        }
-
-        public Builder rootRef(int rootRef) {
-            this.rootRef = rootRef;
-            return this;
-        }
-
-        public Builder conditionCount(int conditionCount) {
-            this.conditionCount = conditionCount;
-            return this;
-        }
-
-        public Builder resultCount(int resultCount) {
-            this.resultCount = resultCount;
-            return this;
-        }
-
-        public Builder indent(String indent) {
-            this.indent = indent;
-            return this;
-        }
-
-        public BddFormatter build() {
-            if (writer == null) {
-                throw new IllegalStateException("writer is required");
-            }
-            if (nodes == null) {
-                throw new IllegalStateException("nodes are required");
-            }
-            return new BddFormatter(this);
         }
     }
 }

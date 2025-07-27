@@ -25,7 +25,7 @@ import software.amazon.smithy.rulesengine.analysis.OperationContextParamsChecker
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
@@ -54,7 +54,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                 validate(model, topDownIndex, service, errors, epTrait, epTrait.getEndpointRuleSet().getParameters());
             }
             if (bddTrait != null) {
-                validate(model, topDownIndex, service, errors, bddTrait, bddTrait.getBdd().getParameters());
+                validate(model, topDownIndex, service, errors, bddTrait, bddTrait.getParameters());
             }
         }
 

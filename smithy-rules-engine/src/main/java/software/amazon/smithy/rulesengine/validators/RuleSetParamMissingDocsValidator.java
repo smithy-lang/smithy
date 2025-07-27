@@ -11,7 +11,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
-import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 
 /**
@@ -36,7 +36,7 @@ public final class RuleSetParamMissingDocsValidator extends AbstractValidator {
 
     private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, BddTrait trait) {
         if (trait != null) {
-            visitParams(events, serviceShape, trait.getBdd().getParameters());
+            visitParams(events, serviceShape, trait.getParameters());
         }
     }
 

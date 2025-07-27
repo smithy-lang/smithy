@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
@@ -63,15 +62,14 @@ final class BddCompiler {
         noMatchIndex = getOrCreateResultIndex(NoMatchRule.INSTANCE);
         int rootRef = convertCfgToBdd(cfg.getRoot());
         rootRef = bddBuilder.reduce(rootRef);
-        Parameters parameters = cfg.getRuleSet().getParameters();
-        Bdd bdd = new Bdd(parameters, orderedConditions, indexedResults, bddBuilder.getNodesArray(), rootRef);
 
+        Bdd bdd = bddBuilder.build(rootRef, indexedResults.size());
         long elapsed = System.currentTimeMillis() - start;
         LOGGER.fine(String.format(
                 "BDD compilation complete: %d conditions, %d results, %d BDD nodes in %dms",
                 orderedConditions.size(),
                 indexedResults.size(),
-                bddBuilder.getNodes().size() - 1,
+                bdd.getNodeCount(),
                 elapsed));
 
         return bdd;
