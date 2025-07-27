@@ -19,6 +19,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
+import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
 import software.amazon.smithy.rulesengine.logic.cfg.ConditionNode;
 import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
 
@@ -39,6 +40,8 @@ public final class BddEquivalenceChecker {
 
     private final Cfg cfg;
     private final Bdd bdd;
+    private final List<Condition> conditions;
+    private final List<Rule> results;
     private final List<Parameter> parameters;
     private final Map<Condition, Integer> conditionToIndex = new HashMap<>();
 
@@ -48,17 +51,19 @@ public final class BddEquivalenceChecker {
     private int testsRun = 0;
     private long startTime;
 
-    public static BddEquivalenceChecker of(Cfg cfg, Bdd bdd) {
-        return new BddEquivalenceChecker(cfg, bdd);
+    public static BddEquivalenceChecker of(Cfg cfg, Bdd bdd, List<Condition> conditions, List<Rule> results) {
+        return new BddEquivalenceChecker(cfg, bdd, conditions, results);
     }
 
-    private BddEquivalenceChecker(Cfg cfg, Bdd bdd) {
+    private BddEquivalenceChecker(Cfg cfg, Bdd bdd, List<Condition> conditions, List<Rule> results) {
         this.cfg = cfg;
         this.bdd = bdd;
+        this.conditions = conditions;
+        this.results = results;
         this.parameters = new ArrayList<>(cfg.getRuleSet().getParameters().toList());
 
-        for (int i = 0; i < bdd.getConditions().size(); i++) {
-            conditionToIndex.put(bdd.getConditions().get(i), i);
+        for (int i = 0; i < conditions.size(); i++) {
+            conditionToIndex.put(conditions.get(i), i);
         }
     }
 
@@ -127,7 +132,7 @@ public final class BddEquivalenceChecker {
         }
 
         // Remove the NoMatchRule that's added by default. It's not in the CFG.
-        Set<Rule> bddResults = new HashSet<>(bdd.getResults());
+        Set<Rule> bddResults = new HashSet<>(results);
         bddResults.removeIf(v -> v == NoMatchRule.INSTANCE);
 
         if (!cfgResults.equals(bddResults)) {
@@ -242,8 +247,8 @@ public final class BddEquivalenceChecker {
             errorMsg.append("Test case #").append(testsRun).append("\n");
             errorMsg.append("Condition mask: ").append(Long.toBinaryString(mask)).append("\n");
             errorMsg.append("\nCondition details:\n");
-            for (int i = 0; i < bdd.getConditions().size(); i++) {
-                Condition condition = bdd.getConditions().get(i);
+            for (int i = 0; i < conditions.size(); i++) {
+                Condition condition = conditions.get(i);
                 boolean value = (mask & (1L << i)) != 0;
                 errorMsg.append("  Condition ")
                         .append(i)
@@ -261,7 +266,15 @@ public final class BddEquivalenceChecker {
     }
 
     private Rule evaluateCfgWithMask(ConditionEvaluator maskEvaluator) {
-        CfgNode result = evaluateCfgNode(cfg.getRoot(), conditionToIndex, maskEvaluator);
+        // Get the condition data from CFG
+        ConditionData conditionData = cfg.getConditionData();
+        Map<Condition, Integer> cfgConditionToIndex = new HashMap<>();
+        Condition[] cfgConditions = conditionData.getConditions();
+        for (int i = 0; i < cfgConditions.length; i++) {
+            cfgConditionToIndex.put(cfgConditions[i], i);
+        }
+
+        CfgNode result = evaluateCfgNode(cfg.getRoot(), cfgConditionToIndex, maskEvaluator);
         if (result instanceof ResultNode) {
             return ((ResultNode) result).getResult();
         }
@@ -285,7 +298,7 @@ public final class BddEquivalenceChecker {
 
             Integer index = conditionToIndex.get(condition);
             if (index == null) {
-                throw new IllegalStateException("Condition not found in BDD: " + condition);
+                throw new IllegalStateException("Condition not found in CFG: " + condition);
             }
 
             boolean conditionResult = maskEvaluator.test(index);
@@ -308,9 +321,8 @@ public final class BddEquivalenceChecker {
 
     private Rule evaluateBdd(long mask) {
         FixedMaskEvaluator evaluator = new FixedMaskEvaluator(mask);
-        BddEvaluator bddEvaluator = BddEvaluator.from(bdd);
-        int resultIndex = bddEvaluator.evaluate(evaluator);
-        return resultIndex < 0 ? null : bdd.getResults().get(resultIndex);
+        int resultIndex = bdd.evaluate(evaluator);
+        return resultIndex < 0 ? null : results.get(resultIndex);
     }
 
     private boolean resultsEqual(Rule r1, Rule r2) {

@@ -20,8 +20,7 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
     @Override
     public Bdd apply(Bdd bdd) {
         LOGGER.info("Starting BDD node reversal optimization");
-        int[][] nodes = bdd.getNodes();
-        int nodeCount = nodes.length;
+        int nodeCount = bdd.getNodeCount();
 
         if (nodeCount <= 2) {
             return bdd;
@@ -38,27 +37,22 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
             oldToNew[oldIdx] = newIdx;
         }
 
-        // Create new node array with reversed order
-        int[][] newNodes = new int[nodeCount][];
-        newNodes[0] = nodes[0].clone(); // Terminal stays at index 0
-
-        // Add nodes in reverse order, updating their references
-        int newIdx = 1;
-        for (int oldIdx = nodeCount - 1; oldIdx >= 1; oldIdx--) {
-            int[] oldNode = nodes[oldIdx];
-            newNodes[newIdx++] = new int[] {
-                    oldNode[0], // variable index stays the same
-                    remapReference(oldNode[1], oldToNew), // remap high reference
-                    remapReference(oldNode[2], oldToNew) // remap low reference
-            };
-        }
-
         // Remap the root reference
         int newRoot = remapReference(bdd.getRootRef(), oldToNew);
 
-        LOGGER.info("BDD node reversal complete");
+        // Create reversed BDD using streaming constructor
+        return new Bdd(newRoot, bdd.getConditionCount(), bdd.getResultCount(), nodeCount, consumer -> {
+            // Terminal stays at index 0
+            consumer.accept(bdd.getVariable(0), bdd.getHigh(0), bdd.getLow(0));
 
-        return new Bdd(bdd.getParameters(), bdd.getConditions(), bdd.getResults(), newNodes, newRoot);
+            // Add nodes in reverse order, updating their references
+            for (int oldIdx = nodeCount - 1; oldIdx >= 1; oldIdx--) {
+                int var = bdd.getVariable(oldIdx);
+                int high = remapReference(bdd.getHigh(oldIdx), oldToNew);
+                int low = remapReference(bdd.getLow(oldIdx), oldToNew);
+                consumer.accept(var, high, low);
+            }
+        });
     }
 
     /**
@@ -69,21 +63,19 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
      * @return the remapped reference
      */
     private int remapReference(int ref, int[] oldToNew) {
-        // Handle special cases
+        // Return result references as-is.
         if (ref == 0) {
-            return 0; // Invalid reference stays invalid
+            return 0;
         } else if (ref == 1 || ref == -1) {
-            return ref; // TRUE/FALSE terminals unchanged
+            return ref;
         } else if (ref >= Bdd.RESULT_OFFSET) {
-            return ref; // Result references are not remapped
+            return ref;
         }
 
         // Handle regular node references (with possible complement)
         boolean isComplemented = ref < 0;
         int absRef = isComplemented ? -ref : ref;
-
-        // Convert from reference to index (1-based to 0-based)
-        int oldIdx = absRef - 1;
+        int oldIdx = absRef - 1; // convert 1-based to 0-based
 
         if (oldIdx >= oldToNew.length) {
             throw new IllegalStateException("Invalid reference: " + ref);

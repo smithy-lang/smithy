@@ -4,65 +4,41 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.logic.TestHelpers;
 
 class NodeReversalTest {
 
     @Test
     void testSingleNodeBdd() {
         // BDD with just terminal node
-        int[][] nodes = new int[][] {
-                {-1, 1, -1} // terminal
-        };
-
-        Bdd original = new Bdd(
-                Parameters.builder().build(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                nodes,
-                1 // root is TRUE
-        );
+        Bdd original = new Bdd(1, 0, 0, 1, consumer -> {
+            consumer.accept(-1, 1, -1); // terminal
+        });
 
         NodeReversal reversal = new NodeReversal();
         Bdd reversed = reversal.apply(original);
 
-        // Should be unchanged (2 nodes returns as-is).
-        assertEquals(1, reversed.getNodes().length);
+        // Should be unchanged (only 1 node, reversal returns as-is for <= 2 nodes).
+        assertEquals(1, reversed.getNodeCount());
         assertEquals(1, reversed.getRootRef());
-        assertArrayEquals(new int[] {-1, 1, -1}, reversed.getNodes()[0]);
+
+        // Check terminal node
+        assertEquals(-1, reversed.getVariable(0));
+        assertEquals(1, reversed.getHigh(0));
+        assertEquals(-1, reversed.getLow(0));
     }
 
     @Test
     void testComplementEdges() {
         // BDD with complement edges
-        int[][] nodes = new int[][] {
-                {-1, 1, -1}, // terminal
-                {0, 3, -2}, // condition 0, high to node 2, low to complement of node 1
-                {1, 1, -1} // condition 1
-        };
-
-        Bdd original = new Bdd(
-                Parameters.builder().build(),
-                Arrays.asList(
-                        Condition.builder().fn(TestHelpers.isSet("Region")).build(),
-                        Condition.builder().fn(TestHelpers.isSet("Bucket")).build()),
-                new ArrayList<>(),
-                nodes,
-                2 // root points to node 1
-        );
+        Bdd original = new Bdd(2, 2, 0, 3, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0: terminal
+            consumer.accept(0, 3, -2); // node 1: condition 0, high to node 2, low to complement of node 1
+            consumer.accept(1, 1, -1); // node 2: condition 1
+        });
 
         NodeReversal reversal = new NodeReversal();
         Bdd reversed = reversal.apply(original);
@@ -72,78 +48,58 @@ class NodeReversalTest {
         assertEquals(3, reversed.getRootRef());
 
         // Check complement edge is properly remapped
-        int[] reversedNode2 = reversed.getNodes()[2];
-        assertEquals(0, reversedNode2[0]); // condition index unchanged
-        assertEquals(2, reversedNode2[1]); // high ref 3 -> 2
-        assertEquals(-3, reversedNode2[2]); // complement low ref -2 -> -3
+        // Original node 1 is now at index 2
+        assertEquals(0, reversed.getVariable(2)); // condition index unchanged
+        assertEquals(2, reversed.getHigh(2)); // high ref 3 -> 2
+        assertEquals(-3, reversed.getLow(2)); // complement low ref -2 -> -3
     }
 
     @Test
     void testResultNodes() {
         // BDD with result terminals
-        int[][] nodes = new int[][] {
-                {-1, 1, -1}, // terminal
-                {0, Bdd.RESULT_OFFSET + 1, Bdd.RESULT_OFFSET}, // condition 0 at index 1
-                {2, 1, -1}, // result 0 at index 2
-                {3, 1, -1} // result 1 at index 3
-        };
-
-        List<Rule> results = Arrays.asList(
-                EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com")),
-                ErrorRule.builder().error("Error occurred"));
-
-        Bdd original = new Bdd(
-                Parameters.builder().build(),
-                Arrays.asList(
-                        Condition.builder().fn(TestHelpers.isSet("Region")).build(),
-                        Condition.builder().fn(TestHelpers.isSet("Bucket")).build()),
-                results,
-                nodes,
-                2 // root points to node 1
-        );
+        Bdd original = new Bdd(2, 4, 2, 4, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0: terminal
+            consumer.accept(0, Bdd.RESULT_OFFSET + 1, Bdd.RESULT_OFFSET); // node 1: condition 0
+            consumer.accept(2, 1, -1); // node 2: result 0
+            consumer.accept(3, 1, -1); // node 3: result 1
+        });
 
         NodeReversal reversal = new NodeReversal();
         Bdd reversed = reversal.apply(original);
 
-        assertEquals(4, reversed.getNodes().length);
+        assertEquals(4, reversed.getNodeCount());
         assertEquals(4, reversed.getRootRef()); // root was ref 2, now ref 4
 
         // Terminal stays at 0
-        assertArrayEquals(new int[] {-1, 1, -1}, reversed.getNodes()[0]);
+        assertEquals(-1, reversed.getVariable(0));
+        assertEquals(1, reversed.getHigh(0));
+        assertEquals(-1, reversed.getLow(0));
 
         // Original node 3 now at index 1
-        assertArrayEquals(new int[] {3, 1, -1}, reversed.getNodes()[1]);
+        assertEquals(3, reversed.getVariable(1));
+        assertEquals(1, reversed.getHigh(1));
+        assertEquals(-1, reversed.getLow(1));
 
         // Original node 2 stays at index 2
-        assertArrayEquals(new int[] {2, 1, -1}, reversed.getNodes()[2]);
+        assertEquals(2, reversed.getVariable(2));
+        assertEquals(1, reversed.getHigh(2));
+        assertEquals(-1, reversed.getLow(2));
 
         // Original node 1 now at index 3
-        int[] conditionNode = reversed.getNodes()[3];
-        assertEquals(0, conditionNode[0]); // condition index unchanged
-        assertEquals(Bdd.RESULT_OFFSET + 1, conditionNode[1]); // result references unchanged
-        assertEquals(Bdd.RESULT_OFFSET, conditionNode[2]); // result references unchanged
+        assertEquals(0, reversed.getVariable(3)); // condition index unchanged
+        assertEquals(Bdd.RESULT_OFFSET + 1, reversed.getHigh(3)); // result references unchanged
+        assertEquals(Bdd.RESULT_OFFSET, reversed.getLow(3)); // result references unchanged
     }
 
     @Test
     void testFourNodeExample() {
         // Simple 4-node example to verify reference mapping
-        int[][] nodes = new int[][] {
-                {-1, 1, -1}, // 0: terminal
-                {0, 3, 4}, // 1: points to nodes 2 and 3
-                {1, 1, -1}, // 2:
-                {2, 1, -1} // 3:
-        };
-
-        Bdd original = new Bdd(
-                Parameters.builder().build(),
-                Arrays.asList(
-                        Condition.builder().fn(TestHelpers.isSet("A")).build(),
-                        Condition.builder().fn(TestHelpers.isSet("B")).build(),
-                        Condition.builder().fn(TestHelpers.isSet("C")).build()),
-                new ArrayList<>(),
-                nodes,
-                2 // root points to node 1
-        );
+        Bdd original = new Bdd(2, 3, 0, 4, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0: terminal
+            consumer.accept(0, 3, 4); // node 1: points to nodes 2 and 3
+            consumer.accept(1, 1, -1); // node 2:
+            consumer.accept(2, 1, -1); // node 3:
+        });
 
         NodeReversal reversal = new NodeReversal();
         Bdd reversed = reversal.apply(original);
@@ -152,45 +108,73 @@ class NodeReversalTest {
         // Ref mapping: 2->4, 3->3, 4->2
         assertEquals(4, reversed.getRootRef()); // root ref 2 -> 4
 
-        int[] nodeAtIndex3 = reversed.getNodes()[3]; // original node 1
-        assertEquals(0, nodeAtIndex3[0]);
-        assertEquals(3, nodeAtIndex3[1]); // ref 3 stays 3
-        assertEquals(2, nodeAtIndex3[2]); // ref 4 -> 2
+        // Check node at index 3 (originally node 1)
+        assertEquals(0, reversed.getVariable(3)); // original node 1's variable
+        assertEquals(3, reversed.getHigh(3)); // ref 3 stays 3
+        assertEquals(2, reversed.getLow(3)); // ref 4 -> 2
     }
 
     @Test
     void testImmutability() {
         // Ensure original BDD is not modified
-        int[][] originalNodes = new int[][] {
-                {-1, 1, -1},
-                {0, 3, -1},
-                {1, 1, -1}
-        };
+        Bdd original = new Bdd(2, 2, 0, 3, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0
+            consumer.accept(0, 3, -1); // node 1
+            consumer.accept(1, 1, -1); // node 2
+        });
 
-        Bdd original = new Bdd(
-                Parameters.builder().build(),
-                Arrays.asList(
-                        Condition.builder().fn(TestHelpers.isSet("Region")).build(),
-                        Condition.builder().fn(TestHelpers.isSet("Bucket")).build()),
-                new ArrayList<>(),
-                originalNodes,
-                2);
+        // Get original values for comparison
+        int originalNodeCount = original.getNodeCount();
+        int originalRootRef = original.getRootRef();
 
-        // Clone original node arrays for comparison
-        int[][] originalNodesCopy = new int[original.getNodes().length][];
-        for (int i = 0; i < original.getNodes().length; i++) {
-            originalNodesCopy[i] = original.getNodes()[i].clone();
+        // Store original node values
+        int[] originalNodeValues = new int[original.getNodeCount() * 3];
+        for (int i = 0; i < original.getNodeCount(); i++) {
+            originalNodeValues[i * 3] = original.getVariable(i);
+            originalNodeValues[i * 3 + 1] = original.getHigh(i);
+            originalNodeValues[i * 3 + 2] = original.getLow(i);
         }
 
         NodeReversal reversal = new NodeReversal();
         Bdd reversed = reversal.apply(original);
 
         // Verify original is unchanged
-        assertEquals(originalNodesCopy.length, original.getNodes().length);
-        for (int i = 0; i < originalNodesCopy.length; i++) {
-            assertArrayEquals(originalNodesCopy[i], original.getNodes()[i]);
+        assertEquals(originalNodeCount, original.getNodeCount());
+        assertEquals(originalRootRef, original.getRootRef());
+
+        // Check original node values haven't changed
+        for (int i = 0; i < original.getNodeCount(); i++) {
+            assertEquals(originalNodeValues[i * 3], original.getVariable(i));
+            assertEquals(originalNodeValues[i * 3 + 1], original.getHigh(i));
+            assertEquals(originalNodeValues[i * 3 + 2], original.getLow(i));
         }
 
-        assertNotSame(original.getNodes(), reversed.getNodes());
+        // Ensure reversed is a different object
+        assertNotSame(original, reversed);
+    }
+
+    @Test
+    void testTwoNodeBdd() {
+        // Test edge case with exactly 2 nodes
+        Bdd original = new Bdd(2, 1, 0, 2, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0: terminal
+            consumer.accept(0, 1, -1); // node 1: simple condition
+        });
+
+        NodeReversal reversal = new NodeReversal();
+        Bdd reversed = reversal.apply(original);
+
+        // Should be unchanged (reversal returns as-is for <= 2 nodes)
+        assertEquals(2, reversed.getNodeCount());
+        assertEquals(2, reversed.getRootRef());
+
+        // Check nodes are unchanged
+        assertEquals(-1, reversed.getVariable(0));
+        assertEquals(1, reversed.getHigh(0));
+        assertEquals(-1, reversed.getLow(0));
+
+        assertEquals(0, reversed.getVariable(1));
+        assertEquals(1, reversed.getHigh(1));
+        assertEquals(-1, reversed.getLow(1));
     }
 }

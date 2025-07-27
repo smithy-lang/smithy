@@ -7,107 +7,110 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
+import java.util.function.Consumer;
+import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 
 /**
- * Binary Decision Diagram (BDD) with complement edges for efficient endpoint rule evaluation.
+ * Binary Decision Diagram (BDD) with complement edges for efficient rule evaluation.
  *
- * <p>A BDD provides a compact representation of decision logic where each condition is evaluated at most once along
- * any path. Complement edges (negative references) enable further size reduction through node sharing.
+ * <p>This class represents a pure BDD structure without any knowledge of the specific
+ * conditions or results it represents. The interpretation of condition indices and
+ * result indices is left to the caller.
  *
  * <p><b>Reference Encoding:</b>
  * <ul>
  *   <li>{@code 0}: Invalid/unused reference (never appears in valid BDDs)</li>
- *   <li>{@code 1}: TRUE terminal; represents boolean true, treated as "no match" in endpoint resolution</li>
- *   <li>{@code -1}: FALSE terminal; represents boolean false, treated as "no match" in endpoint resolution</li>
+ *   <li>{@code 1}: TRUE terminal</li>
+ *   <li>{@code -1}: FALSE terminal</li>
  *   <li>{@code 2, 3, ...}: Node references (points to nodes array at index ref-1)</li>
- *   <li>{@code -2, -3, ...}: Complement node references (logical NOT of the referenced node)</li>
+ *   <li>{@code -2, -3, ...}: Complement node references (logical NOT)</li>
  *   <li>{@code 100_000_000+}: Result terminals (100_000_000 + resultIndex)</li>
  * </ul>
- *
- * <p>Result terminals are encoded as special references starting at 100_000_000 (RESULT_OFFSET).
- * When evaluating the BDD, any reference >= 100_000_000 represents a result terminal that
- * indexes into the results array (resultIndex = ref - 100_000_000). These are not stored
- * as nodes in the nodes array.
- *
- * <p><b>Node Format:</b> {@code [variable, high, low]}
- * <ul>
- *   <li>{@code variable}: Condition index (0 to conditionCount-1)</li>
- *   <li>{@code high}: Reference to follow when condition evaluates to true</li>
- *   <li>{@code low}: Reference to follow when condition evaluates to false</li>
- * </ul>
  */
-public final class Bdd implements ToNode {
+public final class Bdd {
     /**
-     * Result reference encoding.
-     *
-     * <p>Results start at 100M to avoid collision with node references.
+     * Result reference encoding offset.
      */
     public static final int RESULT_OFFSET = 100_000_000;
 
-    private final Parameters parameters;
-    private final List<Condition> conditions;
-    private final List<Rule> results;
-    private final int[][] nodes;
+    private final int[] variables;
+    private final int[] highs;
+    private final int[] lows;
     private final int rootRef;
+    private final int conditionCount;
+    private final int resultCount;
 
     /**
-     * Builds a BDD from an endpoint ruleset.
+     * Creates a BDD by streaming nodes directly into the structure.
      *
-     * @param ruleSet the ruleset to convert
-     * @return the constructed BDD
+     * @param rootRef the root reference
+     * @param conditionCount the number of conditions
+     * @param resultCount the number of results
+     * @param nodeCount the exact number of nodes
+     * @param nodeHandler a handler that will provide nodes via a consumer
      */
-    public static Bdd from(EndpointRuleSet ruleSet) {
-        return from(Cfg.from(ruleSet));
-    }
-
-    /**
-     * Builds a BDD from a control flow graph.
-     *
-     * @param cfg the control flow graph
-     * @return the constructed BDD
-     */
-    public static Bdd from(Cfg cfg) {
-        return from(cfg, new BddBuilder(), ConditionOrderingStrategy.defaultOrdering());
-    }
-
-    static Bdd from(Cfg cfg, BddBuilder bddBuilder, ConditionOrderingStrategy orderingStrategy) {
-        return new BddCompiler(cfg, orderingStrategy, bddBuilder).compile();
-    }
-
-    public Bdd(Parameters params, List<Condition> conditions, List<Rule> results, int[][] nodes, int rootRef) {
-        this.parameters = Objects.requireNonNull(params, "params is null");
-        this.conditions = conditions;
-        this.results = results;
-        this.nodes = nodes;
+    public Bdd(int rootRef, int conditionCount, int resultCount, int nodeCount, Consumer<BddNodeConsumer> nodeHandler) {
         this.rootRef = rootRef;
+        this.conditionCount = conditionCount;
+        this.resultCount = resultCount;
 
         if (rootRef < 0 && rootRef != -1) {
             throw new IllegalArgumentException("Root reference cannot be complemented: " + rootRef);
         }
+
+        InputNodeConsumer consumer = new InputNodeConsumer(nodeCount);
+        nodeHandler.accept(consumer);
+
+        this.variables = consumer.variables;
+        this.highs = consumer.highs;
+        this.lows = consumer.lows;
+
+        if (consumer.index != nodeCount) {
+            throw new IllegalStateException("Expected " + nodeCount + " node, but got " + consumer.index);
+        }
     }
 
-    /**
-     * Gets the ordered list of conditions.
-     *
-     * @return list of conditions in evaluation order
-     */
-    public List<Condition> getConditions() {
-        return conditions;
+    private static final class InputNodeConsumer implements BddNodeConsumer {
+        private int index = 0;
+        private final int[] variables;
+        private final int[] highs;
+        private final int[] lows;
+
+        private InputNodeConsumer(int nodeCount) {
+            this.variables = new int[nodeCount];
+            this.highs = new int[nodeCount];
+            this.lows = new int[nodeCount];
+        }
+
+        @Override
+        public void accept(int var, int high, int low) {
+            variables[index] = var;
+            highs[index] = high;
+            lows[index] = low;
+            index++;
+        }
+    }
+
+    Bdd(int[] variables, int[] highs, int[] lows, int rootRef, int conditionCount, int resultCount) {
+        this.variables = Objects.requireNonNull(variables, "variables is null");
+        this.highs = Objects.requireNonNull(highs, "highs is null");
+        this.lows = Objects.requireNonNull(lows, "lows is null");
+        this.rootRef = rootRef;
+        this.conditionCount = conditionCount;
+        this.resultCount = resultCount;
+
+        if (rootRef < 0 && rootRef != -1) {
+            throw new IllegalArgumentException("Root reference cannot be complemented: " + rootRef);
+        }
+
+        if (variables.length != highs.length || variables.length != lows.length) {
+            throw new IllegalArgumentException("Array lengths must match");
+        }
     }
 
     /**
@@ -116,25 +119,25 @@ public final class Bdd implements ToNode {
      * @return condition count
      */
     public int getConditionCount() {
-        return conditions.size();
+        return conditionCount;
     }
 
     /**
-     * Gets the ordered list of results.
+     * Gets the number of results.
      *
-     * @return list of results (null represents no match)
+     * @return result count
      */
-    public List<Rule> getResults() {
-        return results;
+    public int getResultCount() {
+        return resultCount;
     }
 
     /**
-     * Gets the BDD nodes.
+     * Gets the number of nodes in the BDD.
      *
-     * @return array of node triples
+     * @return the node count
      */
-    public int[][] getNodes() {
-        return nodes;
+    public int getNodeCount() {
+        return variables.length;
     }
 
     /**
@@ -147,22 +150,68 @@ public final class Bdd implements ToNode {
     }
 
     /**
-     * Get the input parameters of the ruleset.
+     * Gets the variable index for a node.
      *
-     * @return input parameters.
+     * @param nodeIndex the node index (0-based)
+     * @return the variable index
      */
-    public Parameters getParameters() {
-        return parameters;
+    public int getVariable(int nodeIndex) {
+        return variables[nodeIndex];
     }
 
     /**
-     * Applies a transformation to the BDD and return a new BDD.
+     * Gets the high (true) reference for a node.
      *
-     * @param transformer Optimization to apply.
-     * @return the optimized BDD.
+     * @param nodeIndex the node index (0-based)
+     * @return the high reference
      */
-    public Bdd transform(Function<Bdd, Bdd> transformer) {
-        return transformer.apply(this);
+    public int getHigh(int nodeIndex) {
+        return highs[nodeIndex];
+    }
+
+    /**
+     * Gets the low (false) reference for a node.
+     *
+     * @param nodeIndex the node index (0-based)
+     * @return the low reference
+     */
+    public int getLow(int nodeIndex) {
+        return lows[nodeIndex];
+    }
+
+    /**
+     * Write all nodes to the consumer.
+     *
+     * @param consumer the consumer to receive the integers
+     */
+    public void getNodes(BddNodeConsumer consumer) {
+        for (int i = 0; i < variables.length; i++) {
+            consumer.accept(variables[i], highs[i], lows[i]);
+        }
+    }
+
+    /**
+     * Evaluates the BDD using the provided condition evaluator.
+     *
+     * @param ev the condition evaluator
+     * @return the result index, or -1 for no match
+     */
+    public int evaluate(ConditionEvaluator ev) {
+        int ref = rootRef;
+        int[] vars = this.variables;
+        int[] hi = this.highs;
+        int[] lo = this.lows;
+        int off = RESULT_OFFSET;
+
+        // keep walking while ref is a non-terminal node
+        while ((ref > 1 && ref < off) || (ref < -1 && ref > -off)) {
+            int idx = ref > 0 ? ref - 1 : -ref - 1; // Math.abs
+            // test ^ complement, pick hi or lo
+            ref = (ev.test(vars[idx]) ^ (ref < 0)) ? hi[idx] : lo[idx];
+        }
+
+        // +1/-1 => no match
+        return (ref == 1 || ref == -1) ? -1 : (ref - off);
     }
 
     /**
@@ -205,7 +254,6 @@ public final class Bdd implements ToNode {
      * @return true if the reference is complemented
      */
     public static boolean isComplemented(int ref) {
-        // -1 is FALSE terminal, not a complement
         return ref < 0 && ref != -1;
     }
 
@@ -218,34 +266,22 @@ public final class Bdd implements ToNode {
         }
         Bdd other = (Bdd) obj;
         return rootRef == other.rootRef
-                && conditions.equals(other.conditions)
-                && results.equals(other.results)
-                && nodesEqual(nodes, other.nodes)
-                && Objects.equals(parameters, other.parameters);
-    }
-
-    private static boolean nodesEqual(int[][] a, int[][] b) {
-        if (a.length != b.length) {
-            return false;
-        }
-        for (int i = 0; i < a.length; i++) {
-            if (!Arrays.equals(a[i], b[i])) {
-                return false;
-            }
-        }
-        return true;
+                && conditionCount == other.conditionCount
+                && resultCount == other.resultCount
+                && Arrays.equals(variables, other.variables)
+                && Arrays.equals(highs, other.highs)
+                && Arrays.equals(lows, other.lows);
     }
 
     @Override
     public int hashCode() {
-        int hash = 31 * rootRef + nodes.length;
+        int hash = 31 * rootRef + variables.length;
         // Sample up to 16 nodes distributed across the BDD
-        int step = Math.max(1, nodes.length / 16);
-        for (int i = 0; i < nodes.length; i += step) {
-            int[] node = nodes[i];
-            hash = 31 * hash + node[0];
-            hash = 31 * hash + node[1];
-            hash = 31 * hash + node[2];
+        int step = Math.max(1, variables.length / 16);
+        for (int i = 0; i < variables.length; i += step) {
+            hash = 31 * hash + variables[i];
+            hash = 31 * hash + highs[i];
+            hash = 31 * hash + lows[i];
         }
         return hash;
     }
@@ -255,87 +291,11 @@ public final class Bdd implements ToNode {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Writer writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-
-            // Calculate width for condition/result indices
-            int maxConditionIdx = conditions.size() - 1;
-            int maxResultIdx = results.size() - 1;
-            int conditionWidth = maxConditionIdx >= 0 ? String.valueOf(maxConditionIdx).length() + 1 : 2;
-            int resultWidth = maxResultIdx >= 0 ? String.valueOf(maxResultIdx).length() + 1 : 2;
-            int varWidth = Math.max(conditionWidth, resultWidth);
-
-            writer.write("Bdd{\n");
-
-            // Write conditions
-            writer.write("  conditions (");
-            writer.write(String.valueOf(getConditionCount()));
-            writer.write("):\n");
-            for (int i = 0; i < conditions.size(); i++) {
-                writer.write(String.format("    %" + varWidth + "s: %s%n", "C" + i, conditions.get(i)));
-            }
-
-            // Write results
-            writer.write("  results (");
-            writer.write(String.valueOf(results.size()));
-            writer.write("):\n");
-            for (int i = 0; i < results.size(); i++) {
-                writer.write(String.format("    %" + varWidth + "s: ", "R" + i));
-                appendResult(writer, results.get(i));
-                writer.write("\n");
-            }
-
-            // Write root
-            writer.write("  root: ");
-            writer.write(BddFormatter.formatReference(rootRef));
-            writer.write("\n");
-
-            // Write nodes header
-            writer.write("  nodes (");
-            writer.write(String.valueOf(nodes.length));
-            writer.write("):\n");
-
+            new BddFormatter(this, writer, "").format();
             writer.flush();
-
-            // Use BddFormatter for nodes - no need to strip anything since we control the indent
-            BddFormatter.builder()
-                    .writer(writer)
-                    .nodes(nodes)
-                    .rootRef(rootRef)
-                    .conditionCount(conditions.size())
-                    .resultCount(results.size())
-                    .indent("  ")
-                    .build()
-                    .format();
-
-            writer.write("}");
-            writer.flush();
-
             return baos.toString(StandardCharsets.UTF_8.name());
         } catch (IOException e) {
-            // Should never happen with ByteArrayOutputStream
-            throw new RuntimeException("Failed to format BDD", e);
+            throw new UncheckedIOException(e);
         }
-    }
-
-    private void appendResult(Writer writer, Rule result) throws IOException {
-        if (result == null) {
-            writer.write("(no match)");
-        } else if (result instanceof EndpointRule) {
-            writer.write("Endpoint: ");
-            writer.write(((EndpointRule) result).getEndpoint().getUrl().toString());
-        } else if (result instanceof ErrorRule) {
-            writer.write("Error: ");
-            writer.write(((ErrorRule) result).getError().toString());
-        } else {
-            writer.write(result.getClass().getSimpleName());
-        }
-    }
-
-    public static Bdd fromNode(Node node) {
-        return BddNodeHelpers.fromNode(node);
-    }
-
-    @Override
-    public Node toNode() {
-        return BddNodeHelpers.toNode(this);
     }
 }
