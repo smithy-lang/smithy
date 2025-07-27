@@ -13,7 +13,7 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.value.EndpointValue;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestExpectation;
 import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
@@ -40,12 +40,12 @@ public final class TestEvaluator {
     }
 
     /**
-     * Evaluate the given rule-set and test case. Throws an exception in the event the test case does not pass.
+     * Evaluate the given BDD and test case. Throws an exception in the event the test case does not pass.
      *
-     * @param bdd      The BDD to be tested.
+     * @param bdd      The BDD trait to be tested.
      * @param testCase The test case.
      */
-    public static void evaluate(Bdd bdd, EndpointTestCase testCase) {
+    public static void evaluate(BddTrait bdd, EndpointTestCase testCase) {
         Value result = RuleEvaluator.evaluate(bdd, createParams(testCase));
         processResult(result, testCase);
     }

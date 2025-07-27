@@ -12,7 +12,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 
 public final class BddTraitValidator extends AbstractValidator {
     @Override
@@ -34,29 +34,40 @@ public final class BddTraitValidator extends AbstractValidator {
 
         // Validate root reference
         int rootRef = bdd.getRootRef();
-        if (Bdd.isComplemented(rootRef)) {
+        if (Bdd.isComplemented(rootRef) && rootRef != -1) {
             events.add(error(service, trait, "Root reference cannot be complemented: " + rootRef));
         }
-        validateReference(events, service, trait, "Root", rootRef, bdd);
+        validateReference(events, service, trait, "Root", rootRef, bdd, trait);
 
-        // Validate node references
-        int[][] nodes = bdd.getNodes();
-        for (int i = 0; i < nodes.length; i++) {
+        // Validate that condition and result counts match what's in the trait
+        if (bdd.getConditionCount() != trait.getConditions().size()) {
+            events.add(error(service,
+                    trait,
+                    String.format("BDD condition count (%d) doesn't match trait conditions (%d)",
+                            bdd.getConditionCount(),
+                            trait.getConditions().size())));
+        }
+
+        if (bdd.getResultCount() != trait.getResults().size()) {
+            events.add(error(service,
+                    trait,
+                    String.format("BDD result count (%d) doesn't match trait results (%d)",
+                            bdd.getResultCount(),
+                            trait.getResults().size())));
+        }
+
+        // Validate nodes
+        int nodeCount = bdd.getNodeCount();
+
+        for (int i = 0; i < nodeCount; i++) {
             // Skip terminal node at index 0
             if (i == 0) {
                 continue;
             }
 
-            // Guard against malformed nodes array
-            if (nodes[i] == null || nodes[i].length != 3) {
-                events.add(error(service, trait, String.format("Node %d is malformed", i)));
-                continue;
-            }
-
-            int[] node = nodes[i];
-            int varIdx = node[0];
-            int highRef = node[1];
-            int lowRef = node[2];
+            int varIdx = bdd.getVariable(i);
+            int highRef = bdd.getHigh(i);
+            int lowRef = bdd.getLow(i);
 
             if (varIdx < 0 || varIdx >= bdd.getConditionCount()) {
                 events.add(error(service,
@@ -68,8 +79,8 @@ public final class BddTraitValidator extends AbstractValidator {
                                 bdd.getConditionCount())));
             }
 
-            validateReference(events, service, trait, String.format("Node %d high", i), highRef, bdd);
-            validateReference(events, service, trait, String.format("Node %d low", i), lowRef, bdd);
+            validateReference(events, service, trait, String.format("Node %d high", i), highRef, bdd, trait);
+            validateReference(events, service, trait, String.format("Node %d low", i), lowRef, bdd, trait);
         }
     }
 
@@ -79,13 +90,15 @@ public final class BddTraitValidator extends AbstractValidator {
             BddTrait trait,
             String context,
             int ref,
-            Bdd bdd
+            Bdd bdd,
+            BddTrait bddTrait
     ) {
         if (ref == 0) {
             events.add(error(service, trait, String.format("%s has invalid reference: 0", context)));
         } else if (Bdd.isNodeReference(ref)) {
             int nodeIndex = Math.abs(ref) - 1;
-            if (nodeIndex >= bdd.getNodes().length) {
+            int nodeCount = bdd.getNodeCount();
+            if (nodeIndex >= nodeCount) {
                 events.add(error(service,
                         trait,
                         String.format(
@@ -93,11 +106,11 @@ public final class BddTraitValidator extends AbstractValidator {
                                 context,
                                 ref,
                                 nodeIndex,
-                                bdd.getNodes().length)));
+                                nodeCount)));
             }
         } else if (Bdd.isResultReference(ref)) {
             int resultIndex = ref - Bdd.RESULT_OFFSET;
-            if (resultIndex >= bdd.getResults().size()) {
+            if (resultIndex >= bddTrait.getResults().size()) {
                 events.add(error(service,
                         trait,
                         String.format(
@@ -105,7 +118,7 @@ public final class BddTraitValidator extends AbstractValidator {
                                 context,
                                 ref,
                                 resultIndex,
-                                bdd.getResults().size())));
+                                bddTrait.getResults().size())));
             }
         }
     }

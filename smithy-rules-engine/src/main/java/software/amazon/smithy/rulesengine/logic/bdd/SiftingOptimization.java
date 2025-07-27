@@ -123,7 +123,13 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
 
         // Pre-spin the ForkJoinPool for better first-pass performance
         ForkJoinPool.commonPool().submit(() -> {}).join();
-        OptimizationState state = initializeOptimization(bdd);
+
+        // Get the conditions from the CFG (since Bdd no longer stores them)
+        List<Condition> bddConditions = cfg.getConditionData().getConditions() != null
+                ? Arrays.asList(cfg.getConditionData().getConditions())
+                : new ArrayList<>();
+
+        OptimizationState state = initializeOptimization(bdd, bddConditions);
         LOGGER.info(String.format("Initial reordering: %d -> %d nodes", state.initialSize, state.currentSize));
 
         state = runCoarseStage(state);
@@ -144,25 +150,25 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
         return state.bestBdd;
     }
 
-    private OptimizationState initializeOptimization(Bdd bdd) {
+    private OptimizationState initializeOptimization(Bdd bdd, List<Condition> bddConditions) {
         // Start with an intelligent initial ordering
         List<Condition> initialOrder = DefaultOrderingStrategy.orderConditions(
-                bdd.getConditions().toArray(new Condition[0]),
+                bddConditions.toArray(new Condition[0]),
                 conditionInfos);
 
         // Sanity check that ordering didn't lose conditions
-        if (initialOrder.size() != bdd.getConditions().size()) {
+        if (initialOrder.size() != bddConditions.size()) {
             throw new IllegalStateException("Initial ordering changed condition count: " +
-                    bdd.getConditions().size() + " -> " + initialOrder.size());
+                    bddConditions.size() + " -> " + initialOrder.size());
         }
 
         Condition[] order = initialOrder.toArray(new Condition[0]);
         List<Condition> orderView = Arrays.asList(order);
 
         // Build initial BDD with better ordering
-        Bdd currentBest = Bdd.from(cfg, new BddBuilder(), ConditionOrderingStrategy.fixed(orderView));
-        int currentSize = currentBest.getNodes().length - 1; // -1 for terminal
-        int initialSize = bdd.getNodes().length - 1;
+        Bdd currentBest = compileBdd(orderView);
+        int currentSize = currentBest.getNodeCount() - 1; // -1 for terminal
+        int initialSize = bdd.getNodeCount() - 1;
 
         return new OptimizationState(order, orderView, currentBest, currentSize, initialSize);
     }
@@ -284,8 +290,8 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
 
             // Move to best position and build BDD once
             move(order, varIdx, best.position);
-            Bdd newBdd = Bdd.from(cfg, new BddBuilder(), ConditionOrderingStrategy.fixed(orderView));
-            int newSize = newBdd.getNodes().length - 1;
+            Bdd newBdd = compileBdd(orderView);
+            int newSize = newBdd.getNodeCount() - 1;
 
             if (newSize < bestSize) {
                 bestBdd = newBdd;
@@ -311,7 +317,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
                 move(order, i, i + 1);
                 int swappedSize = countNodes(orderView);
                 if (swappedSize < bestSize) {
-                    bestBdd = Bdd.from(cfg, new BddBuilder(), ConditionOrderingStrategy.fixed(orderView));
+                    bestBdd = compileBdd(orderView);
                     bestSize = swappedSize;
                     improved = true;
                 } else {
@@ -425,11 +431,19 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
     }
 
     /**
+     * Compiles a BDD with the given condition ordering.
+     */
+    private Bdd compileBdd(List<Condition> ordering) {
+        BddBuilder builder = threadBuilder.get().reset();
+        return new BddCompiler(cfg, ConditionOrderingStrategy.fixed(ordering), builder).compile();
+    }
+
+    /**
      * Counts nodes for a given ordering without keeping the BDD.
      */
     private int countNodes(List<Condition> ordering) {
-        BddBuilder builder = threadBuilder.get().reset();
-        return Bdd.from(cfg, builder, ConditionOrderingStrategy.fixed(ordering)).getNodes().length - 1;
+        Bdd bdd = compileBdd(ordering);
+        return bdd.getNodeCount() - 1; // -1 for terminal
     }
 
     // Position and its node count
