@@ -21,7 +21,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Li
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
-import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 
 /**
@@ -50,7 +50,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
 
     private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, BddTrait trait) {
         if (trait != null) {
-            for (Rule result : trait.getBdd().getResults()) {
+            for (Rule result : trait.getResults()) {
                 if (result instanceof EndpointRule) {
                     visitEndpoint(events, serviceShape, (EndpointRule) result);
                 }

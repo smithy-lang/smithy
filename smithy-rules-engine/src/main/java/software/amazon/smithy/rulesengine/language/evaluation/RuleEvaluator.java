@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.logic.RuleBasedConditionEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.logic.bdd.BddEvaluator;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -53,31 +53,54 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     /**
      * Initializes a new {@link RuleEvaluator} instances, and evaluates the provided BDD and parameter arguments.
      *
+     * @param trait The trait to evaluate.
+     * @param args The rule-set parameter identifiers and values to evaluate the BDD against.
+     * @return The resulting value from the final matched rule.
+     */
+    public static Value evaluate(BddTrait trait, Map<Identifier, Value> args) {
+        return evaluate(trait.getBdd(), trait.getParameters(), trait.getConditions(), trait.getResults(), args);
+    }
+
+    /**
+     * Initializes a new {@link RuleEvaluator} instances, and evaluates the provided BDD and parameter arguments.
+     *
      * @param bdd The endpoint bdd.
      * @param parameterArguments The rule-set parameter identifiers and values to evaluate the BDD against.
      * @return The resulting value from the final matched rule.
      */
-    public static Value evaluate(Bdd bdd, Map<Identifier, Value> parameterArguments) {
-        return new RuleEvaluator().evaluateBdd(bdd, parameterArguments);
+    public static Value evaluate(
+            Bdd bdd,
+            Parameters parameters,
+            List<Condition> conditions,
+            List<Rule> results,
+            Map<Identifier, Value> parameterArguments
+    ) {
+        return new RuleEvaluator().evaluateBdd(bdd, parameters, conditions, results, parameterArguments);
     }
 
-    private Value evaluateBdd(Bdd bdd, Map<Identifier, Value> parameterArguments) {
+    private Value evaluateBdd(
+            Bdd bdd,
+            Parameters parameters,
+            List<Condition> conditions,
+            List<Rule> results,
+            Map<Identifier, Value> parameterArguments
+    ) {
         return scope.inScope(() -> {
-            for (Parameter parameter : bdd.getParameters()) {
+            for (Parameter parameter : parameters) {
                 parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
             }
 
             parameterArguments.forEach(scope::insert);
-            BddEvaluator evaluator = BddEvaluator.from(bdd);
-            Condition[] conds = bdd.getConditions().toArray(new Condition[0]);
-            RuleBasedConditionEvaluator conditionEvaluator = new RuleBasedConditionEvaluator(this, conds);
-            int result = evaluator.evaluate(conditionEvaluator);
 
-            if (result <= 0) {
+            Condition[] conds = conditions.toArray(new Condition[0]);
+            RuleBasedConditionEvaluator conditionEvaluator = new RuleBasedConditionEvaluator(this, conds);
+            int result = bdd.evaluate(conditionEvaluator);
+
+            if (result < 0) {
                 throw new RuntimeException("No BDD result matched");
             }
 
-            Rule rule = bdd.getResults().get(result);
+            Rule rule = results.get(result);
             if (rule instanceof EndpointRule) {
                 return resolveEndpoint(this, ((EndpointRule) rule).getEndpoint());
             } else if (rule instanceof ErrorRule) {

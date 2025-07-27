@@ -20,7 +20,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
-import software.amazon.smithy.rulesengine.traits.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
@@ -53,7 +53,7 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
             });
 
             serviceShape.getTrait(BddTrait.class).ifPresent(trait -> {
-                validateEndpointRuleSet(events, model, serviceShape, trait.getBdd().getParameters(), operationNameMap);
+                validateEndpointRuleSet(events, model, serviceShape, trait.getParameters(), operationNameMap);
             });
         }
 
