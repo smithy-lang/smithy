@@ -1,5 +1,6 @@
 from smithy.lexer import SmithyLexer
 import requests
+import xml.etree.ElementTree as ET
 
 project = u'Smithy'
 copyright = u'2022, Amazon Web Services'
@@ -73,8 +74,13 @@ def __load_gradle_version():
 
 # Find the latest version of the typescript codegen plugin from maven repo
 def __load_typescript_codegen_version():
-    return requests.get('https://search.maven.org/solrsearch/select?q=g:"software.amazon.smithy.typescript"'
-        + '+AND+a:"smithy-typescript-codegen"&wt=json').json()['response']['docs'][0]['latestVersion']
+    response = requests.get("https://repo1.maven.org/maven2/software/amazon/smithy/typescript/smithy-typescript-codegen/maven-metadata.xml")
+    response.raise_for_status()
+    root = ET.fromstring(response.text)
+    version = root.find('.//latest').text
+    if version is None:
+        raise Exception("Unable to find latest version of smithy-typescript-codegen")
+    return version
 
 # Find the latest version of smithy-java from github
 def __load_java_version():
