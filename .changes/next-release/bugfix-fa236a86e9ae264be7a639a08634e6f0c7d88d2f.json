@@ -1,5 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Return the specific type of the trait for RpcV2CborTrait as other protocols traits do",
-  "pull_requests": []
-}
