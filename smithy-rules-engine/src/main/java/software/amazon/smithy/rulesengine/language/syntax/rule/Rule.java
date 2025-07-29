@@ -171,17 +171,16 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public Node toNode() {
         ObjectNode.Builder builder = ObjectNode.builder();
 
-        if (!conditions.isEmpty()) {
-            ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
-            for (Condition condition : conditions) {
-                conditionsBuilder.withValue(condition.toNode());
-            }
-            builder.withMember(CONDITIONS, conditionsBuilder.build());
-        }
-
         if (documentation != null) {
             builder.withMember(DOCUMENTATION, documentation);
         }
+
+        // TODO: we should remove the requirement of serializing an empty array here
+        ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
+        for (Condition condition : conditions) {
+            conditionsBuilder.withValue(condition.toNode());
+        }
+        builder.withMember(CONDITIONS, conditionsBuilder.build());
 
         withValueNode(builder);
         return builder.build();
