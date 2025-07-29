@@ -12,6 +12,7 @@ dependencies = [
 amend = "smithy_changelog.amend:main"
 render = "smithy_changelog.render:main"
 new-change = "smithy_changelog.new:main"
+release = "smithy_changelog.release:main"
 
 [dependency-groups]
 lint = [
