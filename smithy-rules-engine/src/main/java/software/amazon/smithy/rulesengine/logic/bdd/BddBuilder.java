@@ -35,9 +35,9 @@ final class BddBuilder {
     private final Map<TripleKey, Integer> iteCache;
 
     // Node storage: three separate arrays
-    private int[] variables;
-    private int[] highs;
-    private int[] lows;
+    private int[] variables = new int[1024];
+    private int[] highs = new int[1024];
+    private int[] lows = new int[1024];
     private int nodeCount;
 
     // Unique table for node deduplication
@@ -51,9 +51,6 @@ final class BddBuilder {
      * Creates a new BDD engine.
      */
     public BddBuilder() {
-        this.variables = new int[4];
-        this.highs = new int[4];
-        this.lows = new int[4];
         this.nodeCount = 1;
         this.uniqueTable = new HashMap<>();
         this.iteCache = new HashMap<>();
@@ -61,6 +58,10 @@ final class BddBuilder {
         variables[0] = -1;
         highs[0] = TRUE_REF;
         lows[0] = FALSE_REF;
+    }
+
+    int getNodeCount() {
+        return nodeCount;
     }
 
     /**
@@ -127,6 +128,10 @@ final class BddBuilder {
      * @return reference to the BDD node
      */
     public int makeNode(int var, int high, int low) {
+        if (conditionCount >= 0 && (var < 0 || var >= conditionCount)) {
+            throw new IllegalArgumentException("Variable out of bounds: " + var);
+        }
+
         // Reduction rule: if both branches are identical, skip this test
         if (high == low) {
             return high;
@@ -170,8 +175,8 @@ final class BddBuilder {
 
     private void ensureCapacity() {
         if (nodeCount >= variables.length) {
-            // Grow by 50%
-            int newCapacity = variables.length + (variables.length >> 1);
+            // Double the current capacity
+            int newCapacity = variables.length * 2;
             variables = Arrays.copyOf(variables, newCapacity);
             highs = Arrays.copyOf(highs, newCapacity);
             lows = Arrays.copyOf(lows, newCapacity);
@@ -593,23 +598,6 @@ final class BddBuilder {
     }
 
     /**
-     * Get the nodes as a flat array.
-     *
-     * @return array of nodes, trimmed to actual size.
-     */
-    public int[] getNodesArray() {
-        // Convert back to flat array for compatibility
-        int[] result = new int[nodeCount * 3];
-        for (int i = 0; i < nodeCount; i++) {
-            int baseIdx = i * 3;
-            result[baseIdx] = variables[i];
-            result[baseIdx + 1] = highs[i];
-            result[baseIdx + 2] = lows[i];
-        }
-        return result;
-    }
-
-    /**
      * Builds a BDD from the current state of the builder.
      *
      * @return a new BDD instance
@@ -620,11 +608,10 @@ final class BddBuilder {
             throw new IllegalStateException("Condition count must be set before building BDD");
         }
 
-        // Create trimmed copies of the arrays with only the used portion
-        int[] trimmedVariables = Arrays.copyOf(variables, nodeCount);
-        int[] trimmedHighs = Arrays.copyOf(highs, nodeCount);
-        int[] trimmedLows = Arrays.copyOf(lows, nodeCount);
-        return new Bdd(trimmedVariables, trimmedHighs, trimmedLows, rootRef, conditionCount, resultCount);
+        int[] v = Arrays.copyOf(variables, nodeCount);
+        int[] h = Arrays.copyOf(highs, nodeCount);
+        int[] l = Arrays.copyOf(lows, nodeCount);
+        return new Bdd(v, h, l, nodeCount, rootRef, conditionCount, resultCount);
     }
 
     private void validateBooleanOperands(int f, int g, String operation) {

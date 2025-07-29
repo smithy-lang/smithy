@@ -11,11 +11,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -27,9 +26,6 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
-import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
-import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -68,43 +64,19 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      * @return the BddTrait containing the compiled BDD and all context
      */
     public static BddTrait from(Cfg cfg) {
-        ConditionData conditionData = cfg.getConditionData();
-        List<Condition> conditions = Arrays.asList(conditionData.getConditions());
-
-        // Compile the BDD
         BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
         Bdd bdd = compiler.compile();
 
-        List<Rule> results = extractResultsFromCfg(cfg, bdd);
-        Parameters parameters = cfg.getRuleSet().getParameters();
-        return builder().parameters(parameters).conditions(conditions).results(results).bdd(bdd).build();
-    }
-
-    private static List<Rule> extractResultsFromCfg(Cfg cfg, Bdd bdd) {
-        // The BddCompiler always puts NoMatchRule at index 0
-        List<Rule> results = new ArrayList<>();
-        results.add(NoMatchRule.INSTANCE);
-
-        Set<Rule> uniqueResults = new LinkedHashSet<>();
-        for (CfgNode node : cfg) {
-            if (node instanceof ResultNode) {
-                Rule result = ((ResultNode) node).getResult();
-                if (result != null && !(result instanceof NoMatchRule)) {
-                    uniqueResults.add(result.withoutConditions());
-                }
-            }
+        if (compiler.getOrderedConditions().size() != bdd.getConditionCount()) {
+            throw new IllegalStateException("Mismatch between BDD var count and orderedConditions size");
         }
 
-        results.addAll(uniqueResults);
-
-        if (results.size() != bdd.getResultCount()) {
-            throw new IllegalStateException(String.format(
-                    "Result count mismatch: found %d results in CFG but BDD expects %d",
-                    results.size(),
-                    bdd.getResultCount()));
-        }
-
-        return results;
+        return builder()
+                .parameters(cfg.getRuleSet().getParameters())
+                .conditions(compiler.getOrderedConditions())
+                .results(compiler.getIndexedResults())
+                .bdd(bdd)
+                .build();
     }
 
     /**
@@ -141,6 +113,16 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      */
     public Bdd getBdd() {
         return bdd;
+    }
+
+    /**
+     * Transform this BDD using the given function and return the updated BddTrait.
+     *
+     * @param transformer Transformer used to modify the trait.
+     * @return the updated trait.
+     */
+    public BddTrait transform(Function<BddTrait, BddTrait> transformer) {
+        return transformer.apply(this);
     }
 
     @Override

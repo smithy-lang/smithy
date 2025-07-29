@@ -14,6 +14,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
@@ -32,7 +33,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  *
  * <p>Each stage runs until reaching its target size or maximum passes.
  */
-public final class SiftingOptimization implements Function<Bdd, Bdd> {
+public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     private static final Logger LOGGER = Logger.getLogger(SiftingOptimization.class.getName());
 
     // Default thresholds and passes for each optimization level
@@ -109,68 +110,68 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
     }
 
     @Override
-    public Bdd apply(Bdd bdd) {
+    public BddTrait apply(BddTrait trait) {
         try {
-            return doApply(bdd);
+            return doApply(trait);
         } finally {
             threadBuilder.remove();
         }
     }
 
-    private Bdd doApply(Bdd bdd) {
+    private BddTrait doApply(BddTrait trait) {
         LOGGER.info("Starting BDD sifting optimization");
         long startTime = System.currentTimeMillis();
 
         // Pre-spin the ForkJoinPool for better first-pass performance
         ForkJoinPool.commonPool().submit(() -> {}).join();
 
-        // Get the conditions from the CFG (since Bdd no longer stores them)
-        List<Condition> bddConditions = cfg.getConditionData().getConditions() != null
-                ? Arrays.asList(cfg.getConditionData().getConditions())
-                : new ArrayList<>();
-
-        OptimizationState state = initializeOptimization(bdd, bddConditions);
-        LOGGER.info(String.format("Initial reordering: %d -> %d nodes", state.initialSize, state.currentSize));
+        OptimizationState state = initializeOptimization(trait);
+        LOGGER.info(String.format("Initial size: %d nodes", state.initialSize));
 
         state = runCoarseStage(state);
         state = runMediumStage(state);
         state = runGranularStage(state);
 
         double totalTimeInSeconds = (System.currentTimeMillis() - startTime) / 1000.0;
-        if (state.bestSize < state.initialSize) {
-            LOGGER.info(String.format("Optimization complete: %d -> %d nodes (%.1f%% total reduction) in %fs",
-                    state.initialSize,
-                    state.bestSize,
-                    (1.0 - (double) state.bestSize / state.initialSize) * 100,
-                    totalTimeInSeconds));
-        } else {
+
+        // Only rebuild if we found an improvement
+        if (state.bestSize >= state.initialSize) {
             LOGGER.info(String.format("No improvements found in %fs", totalTimeInSeconds));
+            return trait;
         }
 
-        return state.bestBdd;
+        LOGGER.info(String.format("Optimization complete: %d -> %d nodes (%.1f%% total reduction) in %fs",
+                state.initialSize,
+                state.bestSize,
+                (1.0 - (double) state.bestSize / state.initialSize) * 100,
+                totalTimeInSeconds));
+
+        // Rebuild the BddTrait with the optimized ordering and BDD
+        return trait.toBuilder()
+                .conditions(state.orderView)
+                .results(state.results)
+                .bdd(state.bestBdd)
+                .build();
     }
 
-    private OptimizationState initializeOptimization(Bdd bdd, List<Condition> bddConditions) {
-        // Start with an intelligent initial ordering
-        List<Condition> initialOrder = DefaultOrderingStrategy.orderConditions(
-                bddConditions.toArray(new Condition[0]),
-                conditionInfos);
-
-        // Sanity check that ordering didn't lose conditions
-        if (initialOrder.size() != bddConditions.size()) {
-            throw new IllegalStateException("Initial ordering changed condition count: " +
-                    bddConditions.size() + " -> " + initialOrder.size());
-        }
+    private OptimizationState initializeOptimization(BddTrait trait) {
+        // Use the trait's existing ordering as the starting point
+        List<Condition> initialOrder = new ArrayList<>(trait.getConditions());
 
         Condition[] order = initialOrder.toArray(new Condition[0]);
         List<Condition> orderView = Arrays.asList(order);
 
-        // Build initial BDD with better ordering
-        Bdd currentBest = compileBdd(orderView);
-        int currentSize = currentBest.getNodeCount() - 1; // -1 for terminal
-        int initialSize = bdd.getNodeCount() - 1;
+        // Get the initial size from the input BDD
+        Bdd bdd = trait.getBdd();
+        int initialSize = bdd.getNodeCount() - 1; // -1 for terminal
 
-        return new OptimizationState(order, orderView, currentBest, currentSize, initialSize);
+        // No need to recompile just for results—use the trait's own results
+        return new OptimizationState(order,
+                orderView,
+                bdd,
+                initialSize,
+                initialSize,
+                trait.getResults());
     }
 
     private OptimizationState runCoarseStage(OptimizationState state) {
@@ -202,7 +203,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
         OptimizationResult swapResult = performAdjacentSwaps(state.order, state.orderView, state.currentSize);
         if (swapResult.improved) {
             LOGGER.info(String.format("Adjacent swaps: %d -> %d nodes", state.currentSize, swapResult.size));
-            return state.withResult(swapResult.bdd, swapResult.size);
+            return state.withResult(swapResult.bdd, swapResult.size, swapResult.results);
         }
 
         return state;
@@ -241,7 +242,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
                 LOGGER.fine(String.format("%s pass %d found no improvements", stageName, pass));
                 break;
             } else {
-                currentState = currentState.withResult(result.bdd, result.size);
+                currentState = currentState.withResult(result.bdd, result.size, result.results);
                 double reduction = (1.0 - (double) result.size / passStartSize) * 100;
                 LOGGER.fine(String.format("%s pass %d: %d -> %d nodes (%.1f%% reduction)",
                         stageName,
@@ -271,6 +272,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
         OrderConstraints constraints = new OrderConstraints(dependencyGraph, orderView);
         Bdd bestBdd = null;
         int bestSize = currentSize;
+        List<Rule> bestResults = null;
 
         // Sample variables based on effort level
         for (int varIdx = 0; varIdx < order.length; varIdx += effort.sampleRate) {
@@ -290,12 +292,14 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
 
             // Move to best position and build BDD once
             move(order, varIdx, best.position);
-            Bdd newBdd = compileBdd(orderView);
+            BddCompilationResult compilationResult = compileBddWithResults(orderView);
+            Bdd newBdd = compilationResult.bdd;
             int newSize = newBdd.getNodeCount() - 1;
 
             if (newSize < bestSize) {
                 bestBdd = newBdd;
                 bestSize = newSize;
+                bestResults = compilationResult.results;
                 improvements++;
 
                 // Update constraints after successful move
@@ -303,13 +307,14 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
             }
         }
 
-        return new OptimizationResult(bestBdd, bestSize, improvements > 0);
+        return new OptimizationResult(bestBdd, bestSize, improvements > 0, bestResults);
     }
 
     private OptimizationResult performAdjacentSwaps(Condition[] order, List<Condition> orderView, int currentSize) {
         OrderConstraints constraints = new OrderConstraints(dependencyGraph, orderView);
         Bdd bestBdd = null;
         int bestSize = currentSize;
+        List<Rule> bestResults = null;
         boolean improved = false;
 
         for (int i = 0; i < order.length - 1; i++) {
@@ -317,8 +322,10 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
                 move(order, i, i + 1);
                 int swappedSize = countNodes(orderView);
                 if (swappedSize < bestSize) {
-                    bestBdd = compileBdd(orderView);
+                    BddCompilationResult compilationResult = compileBddWithResults(orderView);
+                    bestBdd = compilationResult.bdd;
                     bestSize = swappedSize;
+                    bestResults = compilationResult.results;
                     improved = true;
                 } else {
                     // Swap back if no improvement
@@ -327,7 +334,7 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
             }
         }
 
-        return new OptimizationResult(bestBdd, bestSize, improved);
+        return new OptimizationResult(bestBdd, bestSize, improved, bestResults);
     }
 
     private PositionCount findBestPosition(
@@ -431,19 +438,32 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
     }
 
     /**
-     * Compiles a BDD with the given condition ordering.
+     * Compiles a BDD with the given condition ordering and returns both BDD and results.
      */
-    private Bdd compileBdd(List<Condition> ordering) {
+    private BddCompilationResult compileBddWithResults(List<Condition> ordering) {
         BddBuilder builder = threadBuilder.get().reset();
-        return new BddCompiler(cfg, ConditionOrderingStrategy.fixed(ordering), builder).compile();
+        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.fixed(ordering), builder);
+        Bdd bdd = compiler.compile();
+        return new BddCompilationResult(bdd, compiler.getIndexedResults());
     }
 
     /**
      * Counts nodes for a given ordering without keeping the BDD.
      */
     private int countNodes(List<Condition> ordering) {
-        Bdd bdd = compileBdd(ordering);
+        Bdd bdd = compileBddWithResults(ordering).bdd;
         return bdd.getNodeCount() - 1; // -1 for terminal
+    }
+
+    // Container for BDD compilation results
+    private static final class BddCompilationResult {
+        final Bdd bdd;
+        final List<Rule> results;
+
+        BddCompilationResult(Bdd bdd, List<Rule> results) {
+            this.bdd = bdd;
+            this.results = results;
+        }
     }
 
     // Position and its node count
@@ -462,11 +482,13 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
         final Bdd bdd;
         final int size;
         final boolean improved;
+        final List<Rule> results;
 
-        OptimizationResult(Bdd bdd, int size, boolean improved) {
+        OptimizationResult(Bdd bdd, int size, boolean improved, List<Rule> results) {
             this.bdd = bdd;
             this.size = size;
             this.improved = improved;
+            this.results = results;
         }
     }
 
@@ -478,13 +500,15 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
         final int currentSize;
         final int bestSize;
         final int initialSize;
+        final List<Rule> results;
 
         OptimizationState(
                 Condition[] order,
                 List<Condition> orderView,
                 Bdd bestBdd,
                 int currentSize,
-                int initialSize
+                int initialSize,
+                List<Rule> results
         ) {
             this.order = order;
             this.orderView = orderView;
@@ -492,10 +516,11 @@ public final class SiftingOptimization implements Function<Bdd, Bdd> {
             this.currentSize = currentSize;
             this.bestSize = currentSize;
             this.initialSize = initialSize;
+            this.results = results;
         }
 
-        OptimizationState withResult(Bdd newBdd, int newSize) {
-            return new OptimizationState(order, orderView, newBdd, newSize, initialSize);
+        OptimizationState withResult(Bdd newBdd, int newSize, List<Rule> newResults) {
+            return new OptimizationState(order, orderView, newBdd, newSize, initialSize, newResults);
         }
     }
 

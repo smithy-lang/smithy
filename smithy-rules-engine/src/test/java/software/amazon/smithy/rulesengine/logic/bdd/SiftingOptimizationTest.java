@@ -7,8 +7,6 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -23,7 +21,6 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
 
 // Does some basic checks, but doesn't get too specific so we can easily change the sifting algorithm.
 class SiftingOptimizationTest {
@@ -48,17 +45,19 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd originalBdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        BddTrait originalTrait = BddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        Bdd optimizedBdd = optimizer.apply(originalBdd);
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Basic checks
-        assertEquals(originalBdd.getConditionCount(), optimizedBdd.getConditionCount());
-        assertEquals(originalBdd.getResultCount(), optimizedBdd.getResultCount());
+        assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
+        assertEquals(originalTrait.getResults().size(), optimizedTrait.getResults().size());
+        assertEquals(originalTrait.getBdd().getConditionCount(), optimizedTrait.getBdd().getConditionCount());
+        assertEquals(originalTrait.getBdd().getResultCount(), optimizedTrait.getBdd().getResultCount());
 
         // Size should be same or smaller
-        assertTrue(optimizedBdd.getNodeCount() <= originalBdd.getNodeCount());
+        assertTrue(optimizedTrait.getBdd().getNodeCount() <= originalTrait.getBdd().getNodeCount());
     }
 
     @Test
@@ -89,23 +88,21 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd originalBdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        BddTrait originalTrait = BddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        Bdd optimizedBdd = optimizer.apply(originalBdd);
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
 
-        // Get conditions from the CFG to verify ordering
-        ConditionData conditionData = cfg.getConditionData();
-        List<Condition> conditions = Arrays.asList(conditionData.getConditions());
+        // Verify the optimizer preserved the number of conditions
+        assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
+        assertEquals(originalTrait.getBdd().getConditionCount(), optimizedTrait.getBdd().getConditionCount());
 
-        // The optimizer may have reordered conditions, but we need to check
-        // if it created a valid BDD with the same number of conditions
-        assertEquals(originalBdd.getConditionCount(), optimizedBdd.getConditionCount());
+        // The fact that the optimization completes successfully and produces a valid BDD
+        // means dependencies were preserved (otherwise the BddCompiler would have failed
+        // during the optimization process).
 
-        // We can't directly check the ordering from the BDD anymore since it doesn't
-        // store conditions. The fact that the optimization completes successfully
-        // and produces a valid BDD means dependencies were preserved (otherwise
-        // the BddCompiler would have failed during the optimization process).
+        // Also verify results are preserved
+        assertEquals(originalTrait.getResults(), optimizedTrait.getResults());
     }
 
     @Test
@@ -121,14 +118,15 @@ class SiftingOptimizationTest {
 
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).addRule(rule).build();
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd originalBdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        BddTrait originalTrait = BddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        Bdd optimizedBdd = optimizer.apply(originalBdd);
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Should be unchanged or very similar
-        assertEquals(originalBdd.getNodeCount(), optimizedBdd.getNodeCount());
-        assertEquals(1, optimizedBdd.getConditionCount());
+        assertEquals(originalTrait.getBdd().getNodeCount(), optimizedTrait.getBdd().getNodeCount());
+        assertEquals(1, optimizedTrait.getBdd().getConditionCount());
+        assertEquals(originalTrait.getConditions(), optimizedTrait.getConditions());
     }
 
     @Test
@@ -138,13 +136,14 @@ class SiftingOptimizationTest {
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd originalBdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        BddTrait originalTrait = BddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        Bdd optimizedBdd = optimizer.apply(originalBdd);
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
 
-        assertEquals(0, optimizedBdd.getConditionCount());
-        assertEquals(originalBdd.getResultCount(), optimizedBdd.getResultCount());
+        assertEquals(0, optimizedTrait.getBdd().getConditionCount());
+        assertEquals(originalTrait.getBdd().getResultCount(), optimizedTrait.getBdd().getResultCount());
+        assertEquals(originalTrait.getResults(), optimizedTrait.getResults());
     }
 
     @Test
@@ -184,19 +183,49 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd originalBdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        BddTrait originalTrait = BddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder()
                 .cfg(cfg)
                 .granularEffort(100_000, 10) // Allow more aggressive optimization
                 .build();
-        Bdd optimizedBdd = optimizer.apply(originalBdd);
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Should maintain correctness
-        assertEquals(originalBdd.getConditionCount(), optimizedBdd.getConditionCount());
-        assertEquals(originalBdd.getResultCount(), optimizedBdd.getResultCount());
+        assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
+        assertEquals(originalTrait.getBdd().getConditionCount(), optimizedTrait.getBdd().getConditionCount());
+        assertEquals(originalTrait.getBdd().getResultCount(), optimizedTrait.getBdd().getResultCount());
+        assertEquals(originalTrait.getResults(), optimizedTrait.getResults());
 
         // Often achieves some reduction
-        assertTrue(optimizedBdd.getNodeCount() <= originalBdd.getNodeCount());
+        assertTrue(optimizedTrait.getBdd().getNodeCount() <= originalTrait.getBdd().getNodeCount());
+    }
+
+    @Test
+    void testNoImprovementReturnsOriginal() {
+        // Test that when no improvement is found, the original trait is returned
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .build();
+
+        Rule rule = EndpointRule.builder()
+                .conditions(Condition.builder().fn(TestHelpers.isSet("Region")).build())
+                .endpoint(TestHelpers.endpoint("https://example.com"));
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).addRule(rule).build();
+        Cfg cfg = Cfg.from(ruleSet);
+        BddTrait originalTrait = BddTrait.from(cfg);
+
+        SiftingOptimization optimizer = SiftingOptimization.builder()
+                .cfg(cfg)
+                .coarseEffort(1, 1) // Minimal effort to likely find no improvement
+                .build();
+
+        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+
+        // For simple cases with minimal optimization effort, should return the same trait object
+        if (optimizedTrait.getBdd().getNodeCount() == originalTrait.getBdd().getNodeCount()) {
+            assertTrue(optimizedTrait == originalTrait);
+        }
     }
 }
