@@ -30,23 +30,18 @@ You may optionally edit or combine the entries as is necessary. If you combine
 entries, ensure that the combined entry contains all of the relevant pr links.
 
 Once the entries have been verified, use the `render` tool to combine the
-staged entries and generate the changelog file. From the root of the Smithy
-repository, run the following with the version being released:
+staged entries and generate the changelog file. From the `.changes` directory,
+run the following:
 
 ```sh
-> ./.changes/render --release-version RELEASE_VERSION > CHANGELOG.md
+> uv run release
 ```
 
-If the `VERSION` file has already been updated, this can be simplified:
+Then commit the changelog, version file, and the `.changes` directory:
 
 ```sh
-> ./.changes/render --release-version "$(cat VERSION)" > CHANGELOG.md
-```
-
-Then commit the changelog and the `.changes` directory:
-
-```sh
-> git add CHANGELOG.md .changes
+> cd ..
+> git add VERSION CHANGELOG.md .changes
 ```
 
 ## Development
@@ -57,7 +52,7 @@ due to a lack of dependencies, developers must make use of `uv` to lint and
 format code before committing.
 
 ```sh
-> uv sync
+> uv sync --all-groups
 > uv run ruff check --fix
 > uv run ruff format
 > uv run pyright
@@ -69,7 +64,7 @@ right versions of these tools is used.
 uv can also be used to run scripts:
 
 ```sh
-> uv sync
+> uv sync --all-groups
 > uv run render
 ```
 
