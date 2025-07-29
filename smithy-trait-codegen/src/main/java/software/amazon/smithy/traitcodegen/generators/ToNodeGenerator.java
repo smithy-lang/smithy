@@ -282,7 +282,7 @@ final class ToNodeGenerator implements Runnable {
                     "element" + nextLevel,
                     varName);
             writer.indent();
-            
+
             if (memberTarget.isListShape() || memberTarget.isMapShape()) {
                 writer.write("$C",
                         (Runnable) () -> shape.getMember()
