@@ -13,12 +13,24 @@ import java.util.logging.Logger;
  * <p>This transformation reverses the node array (except the terminal at index 0)
  * and updates all references throughout the BDD to maintain correctness.
  */
-public final class NodeReversal implements Function<Bdd, Bdd> {
+public final class NodeReversal implements Function<BddTrait, BddTrait> {
 
     private static final Logger LOGGER = Logger.getLogger(NodeReversal.class.getName());
 
     @Override
-    public Bdd apply(Bdd bdd) {
+    public BddTrait apply(BddTrait trait) {
+        Bdd reversedBdd = reverse(trait.getBdd());
+        // Only rebuild the trait if the BDD actually changed
+        return reversedBdd == trait.getBdd() ? trait : trait.toBuilder().bdd(reversedBdd).build();
+    }
+
+    /**
+     * Reverses the node ordering in a BDD.
+     *
+     * @param bdd the BDD to reverse
+     * @return the reversed BDD, or the original if too small to reverse
+     */
+    public static Bdd reverse(Bdd bdd) {
         LOGGER.info("Starting BDD node reversal optimization");
         int nodeCount = bdd.getNodeCount();
 
@@ -62,7 +74,7 @@ public final class NodeReversal implements Function<Bdd, Bdd> {
      * @param oldToNew the index mapping array
      * @return the remapped reference
      */
-    private int remapReference(int ref, int[] oldToNew) {
+    private static int remapReference(int ref, int[] oldToNew) {
         // Return result references as-is.
         if (ref == 0) {
             return 0;

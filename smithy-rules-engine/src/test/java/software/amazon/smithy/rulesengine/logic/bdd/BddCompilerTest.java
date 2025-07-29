@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -128,7 +127,7 @@ class BddCompilerTest {
 
         // Get the actual conditions from the CFG after SSA transform
         ConditionData conditionData = cfg.getConditionData();
-        List<Condition> cfgConditions = Arrays.asList(conditionData.getConditions());
+        Condition[] cfgConditions = conditionData.getConditions();
 
         // Find the conditions that correspond to A and B
         Condition condA = null;

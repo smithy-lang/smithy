@@ -6,8 +6,13 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 
 class NodeReversalTest {
 
@@ -18,8 +23,7 @@ class NodeReversalTest {
             consumer.accept(-1, 1, -1); // terminal
         });
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         // Should be unchanged (only 1 node, reversal returns as-is for <= 2 nodes).
         assertEquals(1, reversed.getNodeCount());
@@ -40,8 +44,7 @@ class NodeReversalTest {
             consumer.accept(1, 1, -1); // node 2: condition 1
         });
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         // Mapping: 0->0, 1->2, 2->1
         // Ref mapping: 2->3, 3->2, -2->-3
@@ -64,8 +67,7 @@ class NodeReversalTest {
             consumer.accept(3, 1, -1); // node 3: result 1
         });
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         assertEquals(4, reversed.getNodeCount());
         assertEquals(4, reversed.getRootRef()); // root was ref 2, now ref 4
@@ -101,8 +103,7 @@ class NodeReversalTest {
             consumer.accept(2, 1, -1); // node 3:
         });
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         // Mapping: 0->0, 1->3, 2->2, 3->1
         // Ref mapping: 2->4, 3->3, 4->2
@@ -135,8 +136,7 @@ class NodeReversalTest {
             originalNodeValues[i * 3 + 2] = original.getLow(i);
         }
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         // Verify original is unchanged
         assertEquals(originalNodeCount, original.getNodeCount());
@@ -161,8 +161,7 @@ class NodeReversalTest {
             consumer.accept(0, 1, -1); // node 1: simple condition
         });
 
-        NodeReversal reversal = new NodeReversal();
-        Bdd reversed = reversal.apply(original);
+        Bdd reversed = NodeReversal.reverse(original);
 
         // Should be unchanged (reversal returns as-is for <= 2 nodes)
         assertEquals(2, reversed.getNodeCount());
@@ -176,5 +175,29 @@ class NodeReversalTest {
         assertEquals(0, reversed.getVariable(1));
         assertEquals(1, reversed.getHigh(1));
         assertEquals(-1, reversed.getLow(1));
+    }
+
+    @Test
+    void testBddTraitReversalReturnsOriginalForSmallBdd() {
+        // Test that small BDDs return the original trait unchanged
+        NodeReversal reversal = new NodeReversal();
+
+        // Create a BddTrait with a 2-node BDD
+        Bdd bdd = new Bdd(2, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1); // node 0: terminal
+            consumer.accept(0, 1, -1); // node 1: simple condition
+        });
+
+        BddTrait originalTrait = BddTrait.builder()
+                .parameters(Parameters.builder().build())
+                .conditions(new ArrayList<>())
+                .results(Collections.singletonList(NoMatchRule.INSTANCE))
+                .bdd(bdd)
+                .build();
+
+        BddTrait reversedTrait = reversal.apply(originalTrait);
+
+        // Should return the exact same trait object for small BDDs
+        assertSame(originalTrait, reversedTrait);
     }
 }
