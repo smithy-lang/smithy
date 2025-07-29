@@ -3,6 +3,7 @@
 import os
 import subprocess
 from argparse import ArgumentParser
+from contextlib import chdir
 from pathlib import Path
 
 from . import REPO_ROOT, Change
@@ -53,10 +54,23 @@ def main() -> None:
             Instead of amending the local files on disk, post a review comment on the \
             PR. This will also post a normal comment if no changelog entry is found.""",
     )
+    parser.add_argument(
+        "-d",
+        "--repository-dir",
+        type=lambda p: Path(p).absolute(),
+        required=True,
+        help=(
+            "The directory containing the repository to search for changes in. This "
+            "SHOULD NOT be the same version of the repository that the script is being "
+            "run from if this is being run as part of CI. Instead, a separately checked "
+            "out version of the repository should be used."
+        ),
+    )
 
     args = parser.parse_args()
     amend(
         base=args.base,
+        repository_dir=args.repository_dir,
         repository=args.repository,
         pr_number=args.pull_request_number,
         review_comment=args.review_comment,
@@ -66,6 +80,7 @@ def main() -> None:
 def amend(
     *,
     pr_number: str,
+    repository_dir: Path,
     repository: str | None = None,
     base: str | None = None,
     review_comment: bool = False,
@@ -73,7 +88,7 @@ def amend(
     repository = repository or os.environ.get("GITHUB_REPOSITORY", DEFAULT_REPO)
     pr_ref = f"[#{pr_number}]({GITHUB_URL}/{repository}/pull/{pr_number})"
 
-    changes = get_new_changes(base)
+    changes = _get_new_changes(repository_dir, base)
     if not changes and review_comment:
         print("No changelog found, adding reminder comment.")
         description = os.environ.get("PR_TITLE", "Example description").replace(
@@ -121,21 +136,28 @@ def amend(
                 change.write(change_file)
 
 
-def get_new_changes(base: str | None) -> dict[Path, Change]:
+def _get_new_changes(repository_dir: Path, base: str | None) -> dict[Path, Change]:
     base = base or os.environ.get("GITHUB_BASE_REF", "main")
-    print(f"Running a diff against base branch: {base}")
-    result = subprocess.run(
-        f"git diff origin/{base} --name-only",
-        check=True,
-        shell=True,
-        capture_output=True,
-    )
 
-    new_changes: dict[Path, Change] = {}
-    for changed_file in result.stdout.decode("utf-8").splitlines():
-        stripped = changed_file.strip()
-        if stripped.startswith(".changes/next-release") and stripped.endswith(".json"):
-            file = REPO_ROOT / stripped
-            print(f"Discovered newly staged changelog entry: {file}")
-            new_changes[file] = Change.read(file)
+    with chdir(repository_dir):
+        print(f"Running a diff against base branch: {base}")
+        result = subprocess.run(
+            f"git diff origin/{base} --name-only",
+            check=True,
+            shell=True,
+            capture_output=True,
+        )
+
+        new_changes: dict[Path, Change] = {}
+        for changed_file in result.stdout.decode("utf-8").splitlines():
+            changed_file = changed_file.strip()
+            if _is_staged_entry(changed_file):
+                file = REPO_ROOT / changed_file
+                print(f"Discovered newly staged changelog entry: {file}")
+                new_changes[file] = Change.read(file)
+
     return new_changes
+
+
+def _is_staged_entry(change: str) -> bool:
+    return change.startswith(".changes/next-release") and change.endswith(".json")
