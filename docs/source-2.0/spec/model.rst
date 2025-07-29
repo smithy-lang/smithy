@@ -895,7 +895,7 @@ References to traits
 --------------------
 
 The only valid reference to a trait is through applying a trait to a
-shape. Members and references within a model MUST NOT target shapes.
+shape. Members and references within a model MUST NOT target trait shapes.
 
 
 .. smithy-trait:: smithy.api#trait
