@@ -10,8 +10,6 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Consumer;
 import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 
@@ -44,6 +42,7 @@ public final class Bdd {
     private final int rootRef;
     private final int conditionCount;
     private final int resultCount;
+    private final int nodeCount;
 
     /**
      * Creates a BDD by streaming nodes directly into the structure.
@@ -55,23 +54,68 @@ public final class Bdd {
      * @param nodeHandler a handler that will provide nodes via a consumer
      */
     public Bdd(int rootRef, int conditionCount, int resultCount, int nodeCount, Consumer<BddNodeConsumer> nodeHandler) {
+        validateCounts(conditionCount, resultCount, nodeCount);
+        validateRootReference(rootRef, nodeCount);
+
         this.rootRef = rootRef;
         this.conditionCount = conditionCount;
         this.resultCount = resultCount;
-
-        if (rootRef < 0 && rootRef != -1) {
-            throw new IllegalArgumentException("Root reference cannot be complemented: " + rootRef);
-        }
+        this.nodeCount = nodeCount;
 
         InputNodeConsumer consumer = new InputNodeConsumer(nodeCount);
         nodeHandler.accept(consumer);
-
         this.variables = consumer.variables;
         this.highs = consumer.highs;
         this.lows = consumer.lows;
 
         if (consumer.index != nodeCount) {
-            throw new IllegalStateException("Expected " + nodeCount + " node, but got " + consumer.index);
+            throw new IllegalStateException("Expected " + nodeCount + " nodes, but got " + consumer.index);
+        }
+    }
+
+    Bdd(int[] variables, int[] highs, int[] lows, int nodeCount, int rootRef, int conditionCount, int resultCount) {
+        validateArrays(variables, highs, lows, nodeCount);
+        validateCounts(conditionCount, resultCount, nodeCount);
+        validateRootReference(rootRef, nodeCount);
+
+        this.variables = variables;
+        this.highs = highs;
+        this.lows = lows;
+        this.rootRef = rootRef;
+        this.conditionCount = conditionCount;
+        this.resultCount = resultCount;
+        this.nodeCount = nodeCount;
+    }
+
+    private static void validateCounts(int conditionCount, int resultCount, int nodeCount) {
+        if (conditionCount < 0) {
+            throw new IllegalArgumentException("Condition count cannot be negative: " + conditionCount);
+        } else if (resultCount < 0) {
+            throw new IllegalArgumentException("Result count cannot be negative: " + resultCount);
+        } else if (nodeCount < 0) {
+            throw new IllegalArgumentException("Node count cannot be negative: " + nodeCount);
+        }
+    }
+
+    private static void validateRootReference(int rootRef, int nodeCount) {
+        if (isComplemented(rootRef) && !isTerminal(rootRef)) {
+            throw new IllegalArgumentException("Root reference cannot be complemented: " + rootRef);
+        } else if (isNodeReference(rootRef)) {
+            int idx = Math.abs(rootRef) - 1;
+            if (idx >= nodeCount) {
+                throw new IllegalArgumentException("Root points to invalid BDD node: " + idx +
+                        " (node count: " + nodeCount + ")");
+            }
+        }
+    }
+
+    private static void validateArrays(int[] variables, int[] highs, int[] lows, int nodeCount) {
+        if (variables.length != highs.length || variables.length != lows.length) {
+            throw new IllegalArgumentException("Array lengths must match: variables=" + variables.length +
+                    ", highs=" + highs.length + ", lows=" + lows.length);
+        } else if (nodeCount > variables.length) {
+            throw new IllegalArgumentException("Node count (" + nodeCount +
+                    ") exceeds array capacity (" + variables.length + ")");
         }
     }
 
@@ -93,23 +137,6 @@ public final class Bdd {
             highs[index] = high;
             lows[index] = low;
             index++;
-        }
-    }
-
-    Bdd(int[] variables, int[] highs, int[] lows, int rootRef, int conditionCount, int resultCount) {
-        this.variables = Objects.requireNonNull(variables, "variables is null");
-        this.highs = Objects.requireNonNull(highs, "highs is null");
-        this.lows = Objects.requireNonNull(lows, "lows is null");
-        this.rootRef = rootRef;
-        this.conditionCount = conditionCount;
-        this.resultCount = resultCount;
-
-        if (rootRef < 0 && rootRef != -1) {
-            throw new IllegalArgumentException("Root reference cannot be complemented: " + rootRef);
-        }
-
-        if (variables.length != highs.length || variables.length != lows.length) {
-            throw new IllegalArgumentException("Array lengths must match");
         }
     }
 
@@ -137,7 +164,7 @@ public final class Bdd {
      * @return the node count
      */
     public int getNodeCount() {
-        return variables.length;
+        return nodeCount;
     }
 
     /**
@@ -156,7 +183,14 @@ public final class Bdd {
      * @return the variable index
      */
     public int getVariable(int nodeIndex) {
+        validateRange(nodeIndex);
         return variables[nodeIndex];
+    }
+
+    private void validateRange(int index) {
+        if (index < 0 || index >= nodeCount) {
+            throw new IndexOutOfBoundsException("Node index out of bounds: " + index + " (size: " + nodeCount + ")");
+        }
     }
 
     /**
@@ -166,6 +200,7 @@ public final class Bdd {
      * @return the high reference
      */
     public int getHigh(int nodeIndex) {
+        validateRange(nodeIndex);
         return highs[nodeIndex];
     }
 
@@ -176,6 +211,7 @@ public final class Bdd {
      * @return the low reference
      */
     public int getLow(int nodeIndex) {
+        validateRange(nodeIndex);
         return lows[nodeIndex];
     }
 
@@ -185,7 +221,7 @@ public final class Bdd {
      * @param consumer the consumer to receive the integers
      */
     public void getNodes(BddNodeConsumer consumer) {
-        for (int i = 0; i < variables.length; i++) {
+        for (int i = 0; i < nodeCount; i++) {
             consumer.accept(variables[i], highs[i], lows[i]);
         }
     }
@@ -201,17 +237,14 @@ public final class Bdd {
         int[] vars = this.variables;
         int[] hi = this.highs;
         int[] lo = this.lows;
-        int off = RESULT_OFFSET;
 
-        // keep walking while ref is a non-terminal node
-        while ((ref > 1 && ref < off) || (ref < -1 && ref > -off)) {
+        while (isNodeReference(ref)) {
             int idx = ref > 0 ? ref - 1 : -ref - 1; // Math.abs
             // test ^ complement, pick hi or lo
             ref = (ev.test(vars[idx]) ^ (ref < 0)) ? hi[idx] : lo[idx];
         }
 
-        // +1/-1 => no match
-        return (ref == 1 || ref == -1) ? -1 : (ref - off);
+        return isTerminal(ref) ? -1 : ref - RESULT_OFFSET;
     }
 
     /**
@@ -221,10 +254,7 @@ public final class Bdd {
      * @return true if this is a node reference
      */
     public static boolean isNodeReference(int ref) {
-        if (ref == 0 || isTerminal(ref)) {
-            return false;
-        }
-        return Math.abs(ref) < RESULT_OFFSET;
+        return (ref > 1 && ref < RESULT_OFFSET) || (ref < -1 && ref > -RESULT_OFFSET);
     }
 
     /**
@@ -264,21 +294,31 @@ public final class Bdd {
         } else if (!(obj instanceof Bdd)) {
             return false;
         }
+
         Bdd other = (Bdd) obj;
-        return rootRef == other.rootRef
-                && conditionCount == other.conditionCount
-                && resultCount == other.resultCount
-                && Arrays.equals(variables, other.variables)
-                && Arrays.equals(highs, other.highs)
-                && Arrays.equals(lows, other.lows);
+        if (rootRef != other.rootRef
+                || conditionCount != other.conditionCount
+                || resultCount != other.resultCount
+                || nodeCount != other.nodeCount) {
+            return false;
+        }
+
+        // Now check the views of arrays of each.
+        for (int i = 0; i < nodeCount; i++) {
+            if (variables[i] != other.variables[i] || highs[i] != other.highs[i] || lows[i] != other.lows[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 31 * rootRef + variables.length;
+        int hash = 31 * rootRef + nodeCount;
         // Sample up to 16 nodes distributed across the BDD
-        int step = Math.max(1, variables.length / 16);
-        for (int i = 0; i < variables.length; i += step) {
+        int step = Math.max(1, nodeCount / 16);
+        for (int i = 0; i < nodeCount; i += step) {
             hash = 31 * hash + variables[i];
             hash = 31 * hash + highs[i];
             hash = 31 * hash + lows[i];

@@ -62,8 +62,8 @@ final class BddCompiler {
         noMatchIndex = getOrCreateResultIndex(NoMatchRule.INSTANCE);
         int rootRef = convertCfgToBdd(cfg.getRoot());
         rootRef = bddBuilder.reduce(rootRef);
-
         Bdd bdd = bddBuilder.build(rootRef, indexedResults.size());
+
         long elapsed = System.currentTimeMillis() - start;
         LOGGER.fine(String.format(
                 "BDD compilation complete: %d conditions, %d results, %d BDD nodes in %dms",
@@ -73,6 +73,14 @@ final class BddCompiler {
                 elapsed));
 
         return bdd;
+    }
+
+    List<Rule> getIndexedResults() {
+        return indexedResults;
+    }
+
+    List<Condition> getOrderedConditions() {
+        return orderedConditions;
     }
 
     private int convertCfgToBdd(CfgNode cfgNode) {

@@ -4,8 +4,10 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -159,6 +161,166 @@ class BddTest {
             consumer.accept(-1, 1, -1); // node 0: terminal
             consumer.accept(0, Bdd.RESULT_OFFSET + 1, -1); // node 1: if cond true, return result 1, else FALSE
         });
+    }
+
+    @Test
+    void testStreamingConstructorValidation() {
+        // Valid construction
+        assertDoesNotThrow(() -> {
+            new Bdd(1, 1, 1, 1, consumer -> {
+                consumer.accept(-1, 1, -1);
+            });
+        });
+
+        // Root cannot be complemented (except -1)
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Bdd(-2, 1, 1, 1, consumer -> {
+                consumer.accept(-1, 1, -1);
+            });
+        });
+
+        // Root -1 (FALSE) is allowed
+        assertDoesNotThrow(() -> {
+            new Bdd(-1, 1, 1, 1, consumer -> {
+                consumer.accept(-1, 1, -1);
+            });
+        });
+
+        // Wrong node count
+        assertThrows(IllegalStateException.class, () -> {
+            new Bdd(1, 1, 1, 2, consumer -> {
+                consumer.accept(-1, 1, -1); // Only provides 1 node, but claims 2
+            });
+        });
+    }
+
+    @Test
+    void testArrayConstructorValidation() {
+        int[] vars = {-1};
+        int[] highs = {1};
+        int[] lows = {-1};
+
+        // Valid construction
+        assertDoesNotThrow(() -> {
+            new Bdd(vars, highs, lows, 1, 1, 1, 1);
+        });
+
+        // Null arrays
+        assertThrows(NullPointerException.class, () -> {
+            new Bdd(null, highs, lows, 1, 1, 1, 1);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            new Bdd(vars, null, lows, 1, 1, 1, 1);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            new Bdd(vars, highs, null, 1, 1, 1, 1);
+        });
+
+        // Mismatched array lengths
+        int[] shortArray = {};
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Bdd(shortArray, highs, lows, 1, 1, 1, 1);
+        });
+
+        // Node count exceeds array capacity
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Bdd(vars, highs, lows, 2, 1, 1, 1); // nodeCount=2 but arrays have length 1
+        });
+
+        // Root cannot be complemented (except -1)
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Bdd(vars, highs, lows, 1, -2, 1, 1);
+        });
+
+        // Root -1 (FALSE) is allowed
+        assertDoesNotThrow(() -> {
+            new Bdd(vars, highs, lows, 1, -1, 1, 1);
+        });
+    }
+
+    @Test
+    void testGetterBoundsChecking() {
+        Bdd bdd = new Bdd(1, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+
+        // Valid indices
+        assertDoesNotThrow(() -> bdd.getVariable(0));
+        assertDoesNotThrow(() -> bdd.getVariable(1));
+
+        // Out of bounds
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getVariable(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getVariable(2));
+
+        // Same for high/low
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getHigh(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getHigh(2));
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getLow(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> bdd.getLow(2));
+    }
+
+    @Test
+    void testEquals() {
+        // Create two identical BDDs
+        Bdd bdd1 = new Bdd(2, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+
+        Bdd bdd2 = new Bdd(2, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+
+        // Same content should be equal
+        assertEquals(bdd1, bdd2);
+        assertEquals(bdd1.hashCode(), bdd2.hashCode());
+
+        // Self equality
+        assertEquals(bdd1, bdd1);
+
+        // Different root ref (use TRUE terminal)
+        Bdd bdd3 = new Bdd(1, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+        assertNotEquals(bdd1, bdd3);
+
+        // Different root ref (use FALSE terminal)
+        Bdd bdd4 = new Bdd(-1, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+        assertNotEquals(bdd1, bdd4);
+
+        // Different node count
+        Bdd bdd5 = new Bdd(2, 1, 1, 3, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+            consumer.accept(0, -1, 1);
+        });
+        assertNotEquals(bdd1, bdd5);
+
+        // Different node content
+        Bdd bdd6 = new Bdd(2, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, -1, 1); // Different high/low
+        });
+        assertNotEquals(bdd1, bdd6);
+
+        // Different root ref (use result reference)
+        Bdd bdd7 = new Bdd(Bdd.RESULT_OFFSET + 0, 1, 1, 2, consumer -> {
+            consumer.accept(-1, 1, -1);
+            consumer.accept(0, 1, -1);
+        });
+        assertNotEquals(bdd1, bdd7);
+
+        // Null and different type
+        assertNotEquals(bdd1, null);
+        assertNotEquals(bdd1, "not a BDD");
     }
 
     // Used to regenerate BDD test cases for errorfiles

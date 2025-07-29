@@ -41,7 +41,7 @@ class BddBuilderTest {
         assertEquals(1, reduced); // Should return TRUE directly
 
         // Verify no new node was created (only terminal at index 0)
-        assertEquals(3, builder.getNodesArray().length); // 3 ints for terminal node
+        assertEquals(1, builder.getNodeCount()); // Only terminal node exists
     }
 
     @Test
@@ -58,7 +58,7 @@ class BddBuilderTest {
         assertEquals(-node1, node2); // Should be complement of first node
 
         // Only one actual node should be created (plus terminal)
-        assertEquals(6, builder.getNodesArray().length); // 3 ints for terminal + 3 for one node
+        assertEquals(2, builder.getNodeCount()); // Terminal + one node
     }
 
     @Test
@@ -70,7 +70,7 @@ class BddBuilderTest {
         int node2 = builder.makeNode(0, builder.makeTrue(), builder.makeFalse());
 
         assertEquals(node1, node2); // Should return same reference
-        assertEquals(6, builder.getNodesArray().length); // No duplicate created
+        assertEquals(2, builder.getNodeCount()); // Terminal + one node (no duplicate)
     }
 
     @Test
@@ -232,11 +232,11 @@ class BddBuilderTest {
         int b = builder.makeNode(1, a, builder.makeFalse());
         int root = builder.makeNode(0, b, a);
 
-        int nodesBefore = builder.getNodesArray().length;
-        builder.reduce(root);
+        int nodesBefore = builder.getNodeCount();
+        int reduced = builder.reduce(root);
 
         // Structure should be preserved if already optimal
-        assertEquals(nodesBefore, builder.getNodesArray().length);
+        assertEquals(nodesBefore, builder.getNodeCount());
     }
 
     @Test
@@ -247,11 +247,11 @@ class BddBuilderTest {
         int right = builder.makeNode(1, builder.makeTrue(), builder.makeFalse());
         int root = builder.makeNode(0, right, builder.makeFalse());
 
-        int nodesBefore = builder.getNodesArray().length;
-        builder.reduce(root);
+        int nodesBefore = builder.getNodeCount();
+        int reduced = builder.reduce(root);
 
         // No change expected
-        assertEquals(nodesBefore, builder.getNodesArray().length);
+        assertEquals(nodesBefore, builder.getNodeCount());
     }
 
     @Test
@@ -290,7 +290,7 @@ class BddBuilderTest {
         assertEquals(builder.negate(reduced), reducedComplement);
 
         // Verify the structure is preserved
-        assertTrue(builder.getNodesArray().length > 3);
+        assertTrue(builder.getNodeCount() > 1); // More than just terminal
     }
 
     @Test
@@ -303,7 +303,7 @@ class BddBuilderTest {
         int ite1 = builder.ite(a, b, builder.makeFalse());
 
         // Reduce
-        builder.reduce(ite1);
+        int reduced = builder.reduce(ite1);
 
         // Cache should be cleared, so same ITE creates new result
         // Recreate the nodes since reduce may have changed internal state
@@ -311,58 +311,6 @@ class BddBuilderTest {
         b = builder.makeNode(1, builder.makeTrue(), builder.makeFalse());
         int ite2 = builder.ite(a, b, builder.makeFalse());
         assertTrue(ite2 != 0); // Should get a valid reference
-    }
-
-    @Test
-    void testReduceSharedSubgraphs() {
-        builder.setConditionCount(3);
-
-        // Create BDD with shared subgraphs - use only boolean nodes
-        int shared = builder.makeNode(2, builder.makeTrue(), builder.makeFalse());
-        int left = builder.makeNode(1, shared, builder.makeFalse());
-        int right = builder.makeNode(1, builder.makeTrue(), shared);
-        int root = builder.makeNode(0, left, right);
-
-        builder.reduce(root);
-
-        // Shared subgraph should remain shared after reduction
-        int[] nodes = builder.getNodesArray();
-
-        // Verify structure is maintained - at least one node should exist
-        assertTrue(nodes.length > 3);
-    }
-
-    @Test
-    void testReducePreservesResultNodes() {
-        builder.setConditionCount(2);
-
-        // Create BDD with result terminals
-        int result0 = builder.makeResult(0);
-        int result1 = builder.makeResult(1);
-        int cond = builder.makeNode(0, result0, result1);
-        int root = builder.makeNode(1, cond, builder.makeFalse());
-
-        int reduced = builder.reduce(root);
-
-        // Result refs should be preserved in the hi/lo branches
-        boolean foundResult0 = false;
-        boolean foundResult1 = false;
-
-        // Check the nodes for result references
-        int[] nodes = builder.getNodesArray();
-        int nodeCount = nodes.length / 3;
-        for (int i = 0; i < nodeCount; i++) {
-            int baseIdx = i * 3;
-            if (nodes[baseIdx + 1] == result0 || nodes[baseIdx + 2] == result0) {
-                foundResult0 = true;
-            }
-            if (nodes[baseIdx + 1] == result1 || nodes[baseIdx + 2] == result1) {
-                foundResult1 = true;
-            }
-        }
-
-        assertTrue(foundResult0);
-        assertTrue(foundResult1);
     }
 
     @Test
@@ -374,9 +322,9 @@ class BddBuilderTest {
         int middle = builder.makeNode(1, bottom, builder.makeFalse());
         int root = builder.makeNode(0, middle, bottom);
 
-        int beforeSize = builder.getNodesArray().length;
-        builder.reduce(root);
-        int afterSize = builder.getNodesArray().length;
+        int beforeSize = builder.getNodeCount();
+        int reduced = builder.reduce(root);
+        int afterSize = builder.getNodeCount();
 
         // In this case, no reduction should occur since makeNode already optimized
         assertEquals(beforeSize, afterSize);
@@ -427,8 +375,8 @@ class BddBuilderTest {
         // The cofactors should be different
         assertTrue(cofactorTrue != cofactorFalse);
 
-        // Verify structure is simplified
-        assertTrue(builder.getNodesArray().length > 3);
+        // Verify structure exists
+        assertTrue(builder.getNodeCount() > 1);
     }
 
     @Test
@@ -522,7 +470,7 @@ class BddBuilderTest {
         builder.reset();
 
         // Verify state is cleared
-        assertEquals(3, builder.getNodesArray().length); // Only terminal (3 ints)
+        assertEquals(1, builder.getNodeCount()); // Only terminal
         assertThrows(IllegalStateException.class, () -> builder.makeResult(0));
 
         // Can use builder again

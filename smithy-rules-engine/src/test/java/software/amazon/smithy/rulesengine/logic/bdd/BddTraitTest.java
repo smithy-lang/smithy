@@ -75,4 +75,24 @@ public class BddTraitTest {
             consumer.accept(0, Bdd.RESULT_OFFSET + 1, -1); // node 1: if cond true, return result 1, else FALSE
         });
     }
+
+    @Test
+    void testEmptyBddTrait() {
+        Parameters params = Parameters.builder().build();
+
+        Bdd bdd = new Bdd(-1, 0, 1, 1, consumer -> {
+            consumer.accept(-1, 1, -1); // terminal node only
+        });
+
+        BddTrait trait = BddTrait.builder()
+                .parameters(params)
+                .conditions(ListUtils.of())
+                .results(ListUtils.of(NoMatchRule.INSTANCE))
+                .bdd(bdd)
+                .build();
+
+        assertEquals(0, trait.getConditions().size());
+        assertEquals(1, trait.getResults().size());
+        assertEquals(-1, trait.getBdd().getRootRef()); // FALSE terminal
+    }
 }
