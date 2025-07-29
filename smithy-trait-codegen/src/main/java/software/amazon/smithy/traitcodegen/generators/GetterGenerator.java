@@ -21,6 +21,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -139,6 +140,9 @@ final class GetterGenerator implements Runnable {
                     Shape target = model.expectShape(member.getTarget());
                     boolean isListShape = target.isListShape();
                     if (isListShape || target.isMapShape()) {
+                        // If the target list has @uniqueItems, we should create emptySet
+                        String emptyListOrSet =
+                                isListShape && target.hasTrait(UniqueItemsTrait.ID) ? "emptySet" : "emptyList";
                         writer.openBlock("public $T get$UOrEmpty() {",
                                 "}",
                                 symbolProvider.toSymbol(member),
@@ -146,7 +150,7 @@ final class GetterGenerator implements Runnable {
                                 () -> writer.write("return $1L == null ? $2T.$3L() : $1L;",
                                         symbolProvider.toMemberName(member),
                                         Collections.class,
-                                        isListShape ? "emptyList" : "emptyMap"));
+                                        isListShape ? emptyListOrSet : "emptyMap"));
                     }
                 } else {
                     writer.openBlock("public $T get$U() {",

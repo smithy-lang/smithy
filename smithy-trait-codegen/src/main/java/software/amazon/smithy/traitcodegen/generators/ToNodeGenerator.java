@@ -7,8 +7,8 @@ package software.amazon.smithy.traitcodegen.generators;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -70,12 +70,9 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("return values.stream()")
-                    .indent()
-                    .write(".map(s -> $C)",
-                            (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s", 1)))
-                    .write(".collect($T.collect(getSourceLocation()));", ArrayNode.class)
-                    .dedent();
+            writer.write("$C",
+                    (Runnable) () -> shape.accept(new ToNodeMapperVisitor("values", 0, symbolProvider)));
+            writer.write("return new $T(list0, getSourceLocation());", ArrayNode.class);
             return null;
         }
 
@@ -94,23 +91,9 @@ final class ToNodeGenerator implements Runnable {
                         .writeWithNoFormatting(".sourceLocation(getSourceLocation()).build();");
                 return null;
             }
-            writer.writeWithNoFormatting("return values.entrySet().stream()")
-                    .indent()
-                    .write(".map(entry -> new $T<>(", AbstractMap.SimpleImmutableEntry.class)
-                    .indent()
-                    .write("$C, $C))",
-                            (Runnable) () -> shape.getKey()
-                                    .accept(
-                                            new ToNodeMapperVisitor("entry.getKey()", 1)),
-                            (Runnable) () -> shape.getValue()
-                                    .accept(
-                                            new ToNodeMapperVisitor("entry.getValue()", 1)))
-                    .dedent()
-                    .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
-                            ObjectNode.class,
-                            Map.Entry.class)
-                    .writeWithNoFormatting(".toBuilder().sourceLocation(getSourceLocation()).build();")
-                    .dedent();
+            writer.write("$C",
+                    (Runnable) () -> shape.accept(new ToNodeMapperVisitor("values", 0, symbolProvider)));
+            writer.writeWithNoFormatting("return builder0.build();");
             return null;
         }
 
@@ -142,20 +125,73 @@ final class ToNodeGenerator implements Runnable {
                 writer.writeWithNoFormatting(".sourceLocation(getSourceLocation())");
             }
             for (MemberShape mem : shape.members()) {
-                if (TraitCodegenUtils.isNullableMember(mem)) {
-                    writer.write(".withOptionalMember($S, get$U().map(m -> $C))",
-                            mem.getMemberName(),
-                            symbolProvider.toMemberName(mem),
-                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m")));
+                Shape memTarget = model.expectShape(mem.getTarget());
+                boolean isMemCollection = memTarget.isMapShape() || memTarget.isListShape();
+                boolean isNullable = TraitCodegenUtils.isNullableMember(mem);
+                String memberName = mem.getMemberName();
+                String getterName = symbolProvider.toMemberName(mem);
+                if (isMemCollection) {
+                    generateCollectionMember(mem, memTarget, memberName, getterName, isNullable);
                 } else {
-                    writer.write(".withMember($S, $C)",
-                            mem.getMemberName(),
-                            (Runnable) () -> mem.accept(new ToNodeMapperVisitor(symbolProvider.toMemberName(mem))));
+                    generateSimpleMember(mem, memberName, getterName, isNullable);
                 }
             }
             writer.writeWithNoFormatting(".build();");
             writer.dedent();
             return null;
+        }
+
+        private void generateCollectionMember(
+                MemberShape mem,
+                Shape memTarget,
+                String memberName,
+                String getterName,
+                boolean isNullable
+        ) {
+            if (isNullable) {
+                writer.write(".withOptionalMember($S, get$U().map(m -> {",
+                        memberName,
+                        getterName);
+                writer.indent();
+                writer.write("$C", (Runnable) () -> mem.accept(new ToNodeMapperVisitor("m", 1, symbolProvider)));
+            } else {
+                writer.write(".withMember($S, () -> {", memberName);
+                writer.indent();
+                writer.write("$C", (Runnable) () -> mem.accept(new ToNodeMapperVisitor(getterName, 1, symbolProvider)));
+            }
+
+            if (memTarget.isListShape()) {
+                writer.write("return $T.fromNodes(list1);", ArrayNode.class);
+            } else {
+                writer.writeWithNoFormatting("return builder1.build();");
+            }
+
+            writer.dedent();
+            writer.writeWithNoFormatting(isNullable ? "}))" : "})");
+        }
+
+        private void generateSimpleMember(
+                MemberShape mem,
+                String memberName,
+                String getterName,
+                boolean isNullable
+        ) {
+            if (isNullable) {
+                writer.write(".withOptionalMember($S, get$U().map(m -> $C))",
+                        memberName,
+                        getterName,
+                        (Runnable) () -> mem.accept(new ToNodeMapperVisitor(
+                                "m",
+                                1,
+                                symbolProvider)));
+            } else {
+                writer.write(".withMember($S, $C)",
+                        memberName,
+                        (Runnable) () -> mem.accept(new ToNodeMapperVisitor(
+                                getterName,
+                                1,
+                                symbolProvider)));
+            }
         }
 
         @Override
@@ -204,14 +240,16 @@ final class ToNodeGenerator implements Runnable {
     private final class ToNodeMapperVisitor extends TraitVisitor<Void> {
         private final String varName;
         private final int nestedLevel;
+        private final SymbolProvider symbolProvider;
 
         ToNodeMapperVisitor(String varName) {
-            this(varName, 0);
+            this(varName, 0, null);
         }
 
-        ToNodeMapperVisitor(String varName, int nestedLevel) {
+        ToNodeMapperVisitor(String varName, int nestedLevel, SymbolProvider symbolProvider) {
             this.varName = varName;
             this.nestedLevel = nestedLevel;
+            this.symbolProvider = symbolProvider;
         }
 
         @Override
@@ -232,45 +270,98 @@ final class ToNodeGenerator implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            if (nestedLevel == 0) {
-                writer.write("$L.stream().map(s -> $C).collect($T.collect())",
-                        varName,
-                        (Runnable) () -> shape.getMember().accept(new ToNodeMapperVisitor("s", nestedLevel + 1)),
-                        ArrayNode.class);
-            } else {
-                writer.write("$L.stream().map($L -> $C).collect($T.collect())",
-                        varName,
-                        "s" + nestedLevel,
-                        (Runnable) () -> shape.getMember()
-                                .accept(new ToNodeMapperVisitor("s" + nestedLevel,
-                                        nestedLevel + 1)),
-                        ArrayNode.class);
-            }
+            writer.write("$T<Node> $L = new $T<>();",
+                    List.class,
+                    "list" + nestedLevel,
+                    ArrayList.class);
 
+            Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+            int nextLevel = nestedLevel + 1;
+            writer.write("for ($T $L : $L) {",
+                    symbolProvider.toSymbol(memberTarget),
+                    "element" + nextLevel,
+                    varName);
+            writer.indent();
+            
+            if (memberTarget.isListShape() || memberTarget.isMapShape()) {
+                writer.write("$C",
+                        (Runnable) () -> shape.getMember()
+                                .accept(new ToNodeMapperVisitor(
+                                        "element" + nextLevel,
+                                        nextLevel,
+                                        symbolProvider)));
+                if (memberTarget.isListShape()) {
+                    writer.write("$L.add($T.fromNodes($L));",
+                            "list" + nestedLevel,
+                            ArrayNode.class,
+                            "list" + nextLevel);
+                } else {
+                    writer.write("$L.add($L.build());",
+                            "list" + nestedLevel,
+                            "builder" + nextLevel);
+                }
+            } else {
+                writer.write("$L.add($C);",
+                        "list" + nestedLevel,
+                        (Runnable) () -> shape.getMember()
+                                .accept(new ToNodeMapperVisitor("element" + nextLevel)));
+            }
+            writer.dedent();
+            writer.writeWithNoFormatting("}");
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            String entryName = nestedLevel > 0 ? "entry" + nestedLevel : "entry";
-            writer.openBlock("$L.entrySet().stream()",
-                    "",
-                    varName,
-                    () -> writer.write(".map($L -> new $T<>(", entryName, AbstractMap.SimpleImmutableEntry.class)
-                            .indent()
-                            .write("$C, $C))",
-                                    (Runnable) () -> shape.getKey()
-                                            .accept(new ToNodeMapperVisitor(
-                                                    entryName + ".getKey()",
-                                                    nestedLevel + 1)),
-                                    (Runnable) () -> shape.getValue()
-                                            .accept(new ToNodeMapperVisitor(
-                                                    entryName + ".getValue()",
-                                                    nestedLevel + 1)))
-                            .dedent()
-                            .write(".collect($1T.collect($2T::getKey, $2T::getValue))",
-                                    ObjectNode.class,
-                                    Map.Entry.class));
+            writer.write("$T.Builder $L = ObjectNode.builder();",
+                    ObjectNode.class,
+                    "builder" + nestedLevel);
+            int nextLevel = nestedLevel + 1;
+            writer.write("for (Map.Entry<String, $T> $L : $L.entrySet()) {",
+                    symbolProvider.toSymbol(shape.getValue()),
+                    "entry" + nextLevel,
+                    varName);
+            writer.indent();
+            writer.write("$T $L = $C;",
+                    StringNode.class,
+                    "key" + nextLevel,
+                    (Runnable) () -> shape.getKey()
+                            .accept(new ToNodeMapperVisitor(
+                                    "entry" + nextLevel + ".getKey()",
+                                    nextLevel,
+                                    symbolProvider)));
+            Shape valueTarget = model.expectShape(shape.getValue().getTarget());
+            if (valueTarget.isListShape() || valueTarget.isMapShape()) {
+                writer.write("$C;",
+                        (Runnable) () -> shape.getValue()
+                                .accept(new ToNodeMapperVisitor(
+                                        "entry" + nextLevel + ".getValue()",
+                                        nextLevel,
+                                        symbolProvider)));
+                if (valueTarget.isListShape()) {
+                    writer.write("$L.withMember($L, $T.fromNodes($L));",
+                            "builder" + nestedLevel,
+                            "key" + nextLevel,
+                            ArrayNode.class,
+                            "list" + nextLevel);
+                } else {
+                    writer.write("$L.withMember($L, $L.build());",
+                            "builder" + nestedLevel,
+                            "key" + nextLevel,
+                            "builder" + nextLevel);
+                }
+            } else {
+                writer.write("$L.withMember($L, $C);",
+                        "builder" + nestedLevel,
+                        "key" + nextLevel,
+                        (Runnable) () -> shape.getValue()
+                                .accept(new ToNodeMapperVisitor(
+                                        "entry" + nextLevel + ".getValue()",
+                                        nextLevel,
+                                        symbolProvider)));
+            }
+            writer.dedent();
+            writer.writeWithNoFormatting("}");
             return null;
         }
 
