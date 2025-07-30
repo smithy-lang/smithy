@@ -202,7 +202,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         if (shape.hasTrait(TimestampFormatTrait.ID)) {
             writer.write("return new $T($C, node.getSourceLocation());",
                     symbol,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider)));
         } else {
             writer.openBlock("if (node.isNumberNode()) {", "}", () -> {
                 writer.write("return new $T($T.ofEpochSecond(node.expectNumberNode().getValue().longValue()),",
@@ -384,7 +384,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                         fieldName,
                         memberName,
-                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             }
             return null;
         }
@@ -403,7 +403,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                     fieldName,
                     memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             return null;
         }
 
@@ -412,7 +412,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                     fieldName,
                     memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             return null;
         }
 

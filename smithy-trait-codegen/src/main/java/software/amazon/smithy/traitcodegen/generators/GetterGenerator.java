@@ -141,8 +141,7 @@ final class GetterGenerator implements Runnable {
                     boolean isListShape = target.isListShape();
                     if (isListShape || target.isMapShape()) {
                         // If the target list has @uniqueItems, we should create emptySet
-                        String emptyListOrSet =
-                                isListShape && target.hasTrait(UniqueItemsTrait.ID) ? "emptySet" : "emptyList";
+                        String emptyListOrSet = target.hasTrait(UniqueItemsTrait.ID) ? "emptySet" : "emptyList";
                         writer.openBlock("public $T get$UOrEmpty() {",
                                 "}",
                                 symbolProvider.toSymbol(member),

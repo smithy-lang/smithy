@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -55,10 +56,6 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     private final SymbolProvider symbolProvider;
     private final int nestedLevel;
 
-    FromNodeMapperVisitor(TraitCodegenWriter writer, Model model, String varName) {
-        this(writer, model, varName, 0, null);
-    }
-
     FromNodeMapperVisitor(TraitCodegenWriter writer, Model model, String varName, SymbolProvider symbolProvider) {
         this(writer, model, varName, 0, symbolProvider);
     }
@@ -86,8 +83,9 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     @Override
     public Void listShape(ListShape shape) {
         boolean isSet = shape.hasTrait(UniqueItemsTrait.ID);
-        writer.write("$T<Node> $L = $L.expectArrayNode().getElements();",
+        writer.write("$T<$T> $L = $L.expectArrayNode().getElements();",
                 List.class,
+                Node.class,
                 "elements" + nestedLevel,
                 varName);
         writer.write("$T<$T> $L = new $T<>();",
@@ -96,7 +94,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
                 "value" + nestedLevel,
                 isSet ? LinkedHashSet.class : ArrayList.class);
 
-        writer.write("for (Node $L : $L) {", "node" + nestedLevel, "elements" + nestedLevel);
+        writer.write("for ($T $L : $L) {", Node.class, "node" + nestedLevel, "elements" + nestedLevel);
         writer.indent();
         int nextLevel = nestedLevel + 1;
         Shape memberTarget = model.expectShape(shape.getMember().getTarget());
@@ -130,19 +128,24 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     public Void mapShape(MapShape shape) {
         // Map traits use putValues() to update entries.So no need to create a new map.
         if (nestedLevel > 0) {
-            writer.write("Map<$T, $T> $L = new $T<>();",
+            writer.write("$T<$T, $T> $L = new $T<>();",
+                    Map.class,
                     String.class,
                     symbolProvider.toSymbol(shape.getValue()),
                     "value" + nestedLevel,
                     LinkedHashMap.class);
         }
-        writer.write("Map<$T, $T> $L = $L.expectObjectNode().getMembers();",
+        writer.write("$T<$T, $T> $L = $L.expectObjectNode().getMembers();",
+                Map.class,
                 StringNode.class,
                 Node.class,
                 "members" + nestedLevel,
                 varName);
 
-        writer.write("for (Map.Entry<StringNode, Node> $L : $L.entrySet()) {",
+        writer.write("for ($T<$T, $T> $L : $L.entrySet()) {",
+                Map.Entry.class,
+                StringNode.class,
+                Node.class,
                 "entry" + nestedLevel,
                 "members" + nestedLevel);
         writer.indent();

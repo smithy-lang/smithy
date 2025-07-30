@@ -4,7 +4,10 @@ namespace test.smithy.traitcodegen
 
 use test.smithy.traitcodegen.lists#NestedUniqueItemsListTrait
 
-@NestedUniqueItemsListTrait([[["a","ab","c","bc"],["b", "ba","ab","aa"]]])
-structure myStruct {
-
-}
+@NestedUniqueItemsListTrait([
+    [
+        ["a", "ab", "c", "bc"]
+        ["b", "ba", "ab", "aa"]
+    ]
+])
+structure myStruct {}
