@@ -16,10 +16,14 @@ import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
 import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
+import com.example.traits.lists.NestedListTrait;
+import com.example.traits.lists.NestedUniqueItemsListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StringListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
+import com.example.traits.maps.NestedMapTrait;
+import com.example.traits.maps.NestedStringUniqueItemMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
@@ -37,6 +41,8 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructWithListOfMapTrait;
+import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
 import com.example.traits.timestamps.EpochSecondsTimestampTrait;
@@ -59,6 +65,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 public class CreatesTraitTest {
     private static final ShapeId DUMMY_ID = ShapeId.from("ns.foo#foo");
@@ -103,6 +110,14 @@ public class CreatesTraitTest {
                         ArrayNode.fromNodes(
                                 ObjectNode.builder().withMember("a", "b").build(),
                                 ObjectNode.builder().withMember("c", "d").withMember("e", "f").build())),
+                Arguments.of(NestedListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ArrayNode.fromNodes(
+                                        ArrayNode.fromNodes(Node.from("1"), Node.from("2"), Node.from("3"))))),
+                Arguments.of(NestedUniqueItemsListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ArrayNode.fromNodes(
+                                        ArrayNode.fromNodes(Node.from("1"), Node.from("2"), Node.from("3"))))),
                 // Maps
                 Arguments.of(StringStringMapTrait.ID,
                         StringStringMapTrait.builder()
@@ -122,6 +137,19 @@ public class CreatesTraitTest {
                                 .putValues("b", ObjectNode.builder().withMember("b", "b").build().toNode())
                                 .putValues("string", Node.from("stuff"))
                                 .putValues("number", Node.from(1))
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedMapTrait.ID,
+                        NestedMapTrait.builder()
+                                .putValues("1", MapUtils.of("1", MapUtils.of("2", "3")))
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedStringUniqueItemMapTrait.ID,
+                        NestedStringUniqueItemMapTrait.builder()
+                                .putValues("1",
+                                        SetUtils.of(
+                                                MapUtils.of("2", "3"),
+                                                MapUtils.of("4", "5")))
                                 .build()
                                 .toNode()),
                 // Mixins
@@ -159,6 +187,17 @@ public class CreatesTraitTest {
                                         .build())
                                 .fieldD(ListUtils.of("a", "b", "c"))
                                 .fieldE(MapUtils.of("a", "one", "b", "two"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithListOfMapTrait.ID,
+                        StructWithListOfMapTrait.builder()
+                                .addItems(MapUtils.of("1", "2"))
+                                .addItems(MapUtils.of("3", "4"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithUniqueItemsListTrait.ID,
+                        StructWithUniqueItemsListTrait.builder()
+                                .addItems(SetUtils.of("a", "b", "c"))
                                 .build()
                                 .toNode()),
                 // Timestamps

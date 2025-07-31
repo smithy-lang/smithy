@@ -6,6 +6,7 @@ package software.amazon.smithy.traitcodegen.generators;
 
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -35,10 +36,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates the static {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
@@ -82,7 +83,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 Node.class,
                 () -> {
                     writer.writeWithNoFormatting("Builder builder = builder();");
-                    shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+                    shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider));
+                    writer.write("builder.values(value0);");
                     writer.writeWithNoFormatting("return builder.build();");
                 });
         writer.newLine();
@@ -99,7 +101,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 Node.class,
                 () -> {
                     writer.writeWithNoFormatting("Builder builder = builder();");
-                    shape.accept(new FromNodeMapperVisitor(writer, model, "node"));
+                    shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider));
                     writer.writeWithNoFormatting("return builder.build();");
                 });
         writer.newLine();
@@ -169,7 +171,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             if (memberIterator.hasNext()) {
                 writer.writeInlineWithNoFormatting("\n");
             } else {
-                writer.writeWithNoFormatting(";\n");
+                writer.writeInlineWithNoFormatting(";\n");
             }
         }
         writer.dedent();
@@ -200,7 +202,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         if (shape.hasTrait(TimestampFormatTrait.ID)) {
             writer.write("return new $T($C, node.getSourceLocation());",
                     symbol,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider)));
         } else {
             writer.openBlock("if (node.isNumberNode()) {", "}", () -> {
                 writer.write("return new $T($T.ofEpochSecond(node.expectNumberNode().getValue().longValue()),",
@@ -251,10 +253,30 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeInline(memberPrefix + "ArrayMember($1S, n -> $3C, builder::$2L)",
-                    fieldName,
-                    memberName,
-                    (Runnable) () -> shape.getMember().accept(new FromNodeMapperVisitor(writer, model, "n", 1)));
+            writer.writeInline(memberPrefix + "ArrayMember($1S, n -> ", fieldName);
+
+            Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+            boolean isMemberCollection = memberTarget.isListShape() || memberTarget.isMapShape();
+            if (isMemberCollection) {
+                writer.indent();
+                writer.writeInline("{\n$C\n",
+                        (Runnable) () -> shape.getMember()
+                                .accept(new FromNodeMapperVisitor(writer, model, "n", 1, symbolProvider)));
+                writer.writeInlineWithNoFormatting("return value1;\n");
+                writer.dedent();
+                writer.writeInlineWithNoFormatting("}, ");
+            } else {
+                writer.writeInline("$C, ",
+                        (Runnable) () -> shape.getMember()
+                                .accept(new FromNodeMapperVisitor(writer, model, "n", 1, symbolProvider)));
+            }
+
+            boolean isSet = shape.hasTrait(UniqueItemsTrait.ID);
+            if (isSet) {
+                writer.writeInline("l -> builder.$L(new $T<>(l)))", fieldName, LinkedHashSet.class);
+            } else {
+                writer.writeInline("builder::$L)", fieldName);
+            }
             return null;
         }
 
@@ -335,29 +357,13 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.disableNewlines();
-            writer.openBlock(memberPrefix
-                    + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n",
-                    "}))",
-                    fieldName,
-                    () -> {
-                        writer.write("builder.put$L(\n", StringUtils.capitalize(memberName));
-                        writer.indent();
-                        writer.write("$C,\n",
-                                (Runnable) () -> shape.getKey()
-                                        .accept(new FromNodeMapperVisitor(writer,
-                                                model,
-                                                "k")));
-                        writer.write("$C\n",
-                                (Runnable) () -> shape.getValue()
-                                        .accept(new FromNodeMapperVisitor(writer,
-                                                model,
-                                                "v",
-                                                1)));
-                        writer.dedent();
-                        writer.write(");\n");
-                    });
-            writer.enableNewlines();
+            writer.writeInline(memberPrefix + "ObjectMember($S, o -> {\n", fieldName);
+            writer.indent();
+            writer.writeInline("$C\n",
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "o", 1, symbolProvider)));
+            writer.writeInline("builder.$L(value1);", memberName);
+            writer.dedent();
+            writer.writeInlineWithNoFormatting("\n})");
             return null;
         }
 
@@ -378,7 +384,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                         fieldName,
                         memberName,
-                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                        (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             }
             return null;
         }
@@ -397,7 +403,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                     fieldName,
                     memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             return null;
         }
 
@@ -406,7 +412,7 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
             writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
                     fieldName,
                     memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n")));
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
             return null;
         }
 
