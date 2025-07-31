@@ -41,6 +41,7 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
@@ -198,6 +199,12 @@ public class CreatesTraitTest {
                 Arguments.of(StructWithUniqueItemsListTrait.ID,
                         StructWithUniqueItemsListTrait.builder()
                                 .addItems(SetUtils.of("a", "b", "c"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithIdrefMemberTrait.ID,
+                        StructWithIdrefMemberTrait.builder()
+                                .idRefMemberA(ShapeId.from("test.smithy.traitcodegen#a"))
+                                .idRefMemberB(ShapeId.from("test.smithy.traitcodegen#b"))
                                 .build()
                                 .toNode()),
                 // Timestamps

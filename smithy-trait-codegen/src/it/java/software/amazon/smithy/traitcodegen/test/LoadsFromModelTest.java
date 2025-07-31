@@ -48,6 +48,7 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
@@ -324,6 +325,13 @@ public class LoadsFromModelTest {
                                 Optional.of("a"),
                                 "getItems",
                                 Optional.of(SetUtils.of(SetUtils.of("b", "c"), SetUtils.of("d", "e"))))),
+                Arguments.of("structures/struct-with-idref-member-trait.smithy",
+                        StructWithIdrefMemberTrait.class,
+                        MapUtils.of(
+                                "getIdRefMemberA",
+                                Optional.of(ShapeId.from("test.smithy.traitcodegen#a")),
+                                "getIdRefMemberB",
+                                Optional.of(ShapeId.from("test.smithy.traitcodegen#b")))),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,

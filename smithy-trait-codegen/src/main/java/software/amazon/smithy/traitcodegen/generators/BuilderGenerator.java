@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -371,6 +372,10 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void memberShape(MemberShape shape) {
+            if (shape.hasTrait(IdRefTrait.ID)) {
+                this.getDefault(shape);
+                return null;
+            }
             return model.expectShape(shape.getTarget()).accept(this);
         }
     }
