@@ -172,7 +172,6 @@ public class AnnotationsTest {
         assertTrue(fileContents.contains(expected));
     }
 
-
     private String getFileContentsFromShapeName(String className, boolean isTrait) {
         String suffix = isTrait ? "Trait" : "";
         String path = String.format("com/example/traits/%s%s.java", className, suffix);
