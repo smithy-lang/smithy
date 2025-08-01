@@ -5,8 +5,6 @@
 package software.amazon.smithy.rulesengine.logic.bdd;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Binary Decision Diagram (BDD) builder with complement edges and multi-terminal support.
@@ -31,33 +29,27 @@ final class BddBuilder {
     private static final int TRUE_REF = 1;
     private static final int FALSE_REF = -1;
 
-    // ITE operation cache for memoization
-    private final Map<TripleKey, Integer> iteCache;
-
     // Node storage: three separate arrays
     private int[] variables = new int[1024];
     private int[] highs = new int[1024];
     private int[] lows = new int[1024];
     private int nodeCount;
 
-    // Unique table for node deduplication
-    private Map<TripleKey, Integer> uniqueTable;
+    // Unique tables for node deduplication and ITE caching
+    private final UniqueTable uniqueTable;
+    private final UniqueTable iteCache;
+
     // Track the boundary between conditions and results
     private int conditionCount = -1;
-
-    private final TripleKey mutableKey = new TripleKey(0, 0, 0);
 
     /**
      * Creates a new BDD engine.
      */
     public BddBuilder() {
         this.nodeCount = 1;
-        this.uniqueTable = new HashMap<>();
-        this.iteCache = new HashMap<>();
-        // Initialize with terminal node at index 0
-        variables[0] = -1;
-        highs[0] = TRUE_REF;
-        lows[0] = FALSE_REF;
+        this.uniqueTable = new UniqueTable();
+        this.iteCache = new UniqueTable(4096); // Larger initial capacity for ITE cache
+        initializeTerminalNode();
     }
 
     int getNodeCount() {
@@ -130,33 +122,34 @@ final class BddBuilder {
     public int makeNode(int var, int high, int low) {
         if (conditionCount >= 0 && (var < 0 || var >= conditionCount)) {
             throw new IllegalArgumentException("Variable out of bounds: " + var);
-        }
-
-        // Reduction rule: if both branches are identical, skip this test
-        if (high == low) {
+        } else if (high == low) {
+            // Reduction rule: if both branches are identical, skip this test
             return high;
         }
 
         // Complement edge canonicalization: ensure complement only on low branch.
         // Don't apply this to result nodes or when branches contain results
-        boolean flip = false;
-        if (isComplement(low) && !isResult(high) && !isResult(low)) {
+        boolean flip = shouldFlip(high, low);
+        if (flip) {
             high = negate(high);
             low = negate(low);
-            flip = true;
         }
 
         // Check if this node already exists
-        mutableKey.update(var, high, low);
-        Integer existing = uniqueTable.get(mutableKey);
-
+        Integer existing = uniqueTable.get(var, high, low);
         if (existing != null) {
-            int ref = toReference(existing);
-            return flip ? negate(ref) : ref;
+            return applyFlip(flip, existing);
+        } else {
+            return insertNode(var, high, low, flip);
         }
+    }
 
-        // Create new node
-        return insertNode(var, high, low, flip);
+    private boolean shouldFlip(int high, int low) {
+        return isComplement(low) && !isResult(high) && !isResult(low);
+    }
+
+    private int applyFlip(boolean flip, int idx) {
+        return flip ? negate(toReference(idx)) : toReference(idx);
     }
 
     private int insertNode(int var, int high, int low, boolean flip) {
@@ -168,9 +161,8 @@ final class BddBuilder {
         lows[idx] = low;
         nodeCount++;
 
-        uniqueTable.put(new TripleKey(var, high, low), idx);
-        int ref = toReference(idx);
-        return flip ? negate(ref) : ref;
+        uniqueTable.put(var, high, low, idx);
+        return applyFlip(flip, idx);
     }
 
     private void ensureCapacity() {
@@ -232,23 +224,29 @@ final class BddBuilder {
     }
 
     /**
+     * Checks if a reference is a leaf (terminal or result).
+     *
+     * @param ref the reference to check
+     * @return true if this is a leaf node
+     */
+    private boolean isLeaf(int ref) {
+        return Math.abs(ref) == TRUE_REF || ref >= Bdd.RESULT_OFFSET;
+    }
+
+    /**
      * Gets the variable index for a BDD node.
      *
      * @param ref the BDD reference
      * @return the variable index, or -1 for terminals
      */
     public int getVariable(int ref) {
-        if (isTerminal(ref)) {
+        if (isLeaf(ref)) {
             return -1;
-        } else if (isResult(ref)) {
-            return -1; // Result terminals are leaves and don't test variables
-        } else {
-            int nodeIndex = Math.abs(ref) - 1;
-            if (nodeIndex >= nodeCount || nodeIndex < 0) {
-                throw new IllegalStateException("Invalid node index: " + nodeIndex);
-            }
-            return variables[nodeIndex];
         }
+
+        int nodeIndex = Math.abs(ref) - 1;
+        validateNodeIndex(nodeIndex);
+        return variables[nodeIndex];
     }
 
     /**
@@ -261,15 +259,13 @@ final class BddBuilder {
      */
     public int cofactor(int bdd, int varIndex, boolean value) {
         // Terminals and results are unaffected by cofactoring
-        if (isTerminal(bdd) || isResult(bdd)) {
+        if (isLeaf(bdd)) {
             return bdd;
         }
 
         boolean complemented = isComplement(bdd);
         int nodeIndex = toNodeIndex(bdd);
-        if (nodeIndex >= nodeCount || nodeIndex < 0) {
-            throw new IllegalStateException("Invalid node index: " + nodeIndex);
-        }
+        validateNodeIndex(nodeIndex);
 
         int nodeVar = variables[nodeIndex];
 
@@ -329,36 +325,26 @@ final class BddBuilder {
      * @throws IllegalArgumentException if f is a result terminal
      */
     public int ite(int f, int g, int h) {
-        // Normalize: if condition is complemented, swap branches
-        if (isComplement(f)) {
-            f = negate(f);
+        // Normalize complement edge on f
+        if (f < 0) {
+            f = -f;
             int tmp = g;
             g = h;
             h = tmp;
         }
 
-        // Terminal cases and validation.
-        if (isResult(f)) {
+        // Quick terminal cases
+        if (f == TRUE_REF || g == h) {
+            return g;
+        } else if (isResult(f)) {
             throw new IllegalArgumentException("Condition f must be boolean, not a result terminal");
-        } else if (f == TRUE_REF) {
-            return g;
-        } else if (f == FALSE_REF) {
-            return h;
-        } else if (g == h) {
-            return g;
-        }
-
-        // Boolean-specific optimizations (don't apply to result terminals)
-        if (!(isResult(g) || isResult(h))) {
-            // Standard Boolean identities
+        } else if (!isResult(g) && !isResult(h)) {
+            // Boolean-only identities
             if (g == TRUE_REF && h == FALSE_REF) {
                 return f;
             } else if (g == FALSE_REF && h == TRUE_REF) {
                 return negate(f);
-            } else if (isComplement(g) && isComplement(h) && !isResult(negate(g)) && !isResult(negate(h))) {
-                // Factor out common complement only if the negated values aren't results
-                return negate(ite(f, negate(g), negate(h)));
-            } else if (g == f) { // Simplifications when f appears in branches
+            } else if (g == f) {
                 return or(f, h);
             } else if (h == f) {
                 return and(f, g);
@@ -366,39 +352,31 @@ final class BddBuilder {
                 return and(negate(f), h);
             } else if (h == negate(f)) {
                 return or(negate(f), g);
+            } else if (isComplement(g) && isComplement(h)) {
+                // Factor out common complement
+                return negate(ite(f, negate(g), negate(h)));
             }
         }
 
-        // Check cache using the mutable key.
-        Integer cached = iteCache.get(mutableKey.update(f, g, h));
+        // Check cache
+        Integer cached = iteCache.get(f, g, h);
         if (cached != null) {
             return cached;
         }
 
-        // Create the actual key, and reserve cache slot to handle recursive calls
-        TripleKey key = new TripleKey(f, g, h);
-        iteCache.put(key, 0); // invalid place holder
+        // Reserve cache slot to handle recursive calls
+        iteCache.put(f, g, h, 0); // placeholder
 
-        // Shannon expansion: find the top variable
+        // Shannon expansion
         int v = getTopVariable(f, g, h);
-
-        // Compute cofactors
-        int f0 = cofactor(f, v, false);
-        int f1 = cofactor(f, v, true);
-        int g0 = cofactor(g, v, false);
-        int g1 = cofactor(g, v, true);
-        int h0 = cofactor(h, v, false);
-        int h1 = cofactor(h, v, true);
-
-        // Recursive ITE on cofactors
-        int r0 = ite(f0, g0, h0);
-        int r1 = ite(f1, g1, h1);
+        int r0 = ite(cofactor(f, v, false), cofactor(g, v, false), cofactor(h, v, false));
+        int r1 = ite(cofactor(f, v, true), cofactor(g, v, true), cofactor(h, v, true));
 
         // Build result node
         int result = makeNode(v, r1, r0);
 
         // Update cache with actual result
-        iteCache.put(key, result);
+        iteCache.put(f, g, h, result);
         return result;
     }
 
@@ -409,41 +387,40 @@ final class BddBuilder {
      * @return the reduced BDD root
      */
     public int reduce(int rootRef) {
-        // Quick exit for terminals/results
-        if (isTerminal(rootRef) || isResult(rootRef)) {
+        if (isLeaf(rootRef)) {
             return rootRef;
         }
 
-        boolean rootComp = isComplement(rootRef);
+        // Peel off complement on the root
+        boolean rootComp = rootRef < 0;
         int absRoot = rootComp ? negate(rootRef) : rootRef;
 
-        // Prep new storage
+        // Allocate new tables
         int[] newVariables = new int[nodeCount];
         int[] newHighs = new int[nodeCount];
         int[] newLows = new int[nodeCount];
-        Map<TripleKey, Integer> newUnique = new HashMap<>(nodeCount * 2);
 
-        // Initialize terminal node
+        // Clear and reuse the existing unique table
+        uniqueTable.clear();
+
+        // Initialize the terminal node
         newVariables[0] = -1;
         newHighs[0] = TRUE_REF;
         newLows[0] = FALSE_REF;
 
-        // Create a mutable counter to track nodes added
-        int[] newNodeCounter = new int[] {1}; // Start at 1 (terminal already added)
-
-        // Mapping array
+        // Prepare the visitation map
         int[] oldToNew = new int[nodeCount];
         Arrays.fill(oldToNew, -1);
+        int[] newCount = {1}; // start after terminal
 
-        // Recurse
-        int newRoot = reduceRec(absRoot, oldToNew, newVariables, newHighs, newLows, newNodeCounter, newUnique);
+        // Recursively rebuild
+        int newRoot = reduceRec(absRoot, oldToNew, newVariables, newHighs, newLows, newCount);
 
-        // Swap in - use the actual count of nodes created
-        this.variables = Arrays.copyOf(newVariables, newNodeCounter[0]);
-        this.highs = Arrays.copyOf(newHighs, newNodeCounter[0]);
-        this.lows = Arrays.copyOf(newLows, newNodeCounter[0]);
-        this.nodeCount = newNodeCounter[0];
-        this.uniqueTable = newUnique;
+        // Swap in the new tables
+        this.variables = newVariables;
+        this.highs = newHighs;
+        this.lows = newLows;
+        this.nodeCount = newCount[0];
         clearCaches();
 
         return rootComp ? negate(newRoot) : newRoot;
@@ -455,119 +432,79 @@ final class BddBuilder {
             int[] newVariables,
             int[] newHighs,
             int[] newLows,
-            int[] newNodeCounter,
-            Map<TripleKey, Integer> newUnique
+            int[] newCount
     ) {
-        // Handle terminals and results first
-        if (isTerminal(ref)) {
-            return ref;
-        }
-
-        // Handle result references (not stored as nodes)
-        if (isResult(ref)) {
+        if (isLeaf(ref)) {
             return ref;
         }
 
         // Peel complement
-        boolean comp = isComplement(ref);
+        boolean comp = ref < 0;
         int abs = comp ? negate(ref) : ref;
         int idx = toNodeIndex(abs);
 
-        // Bounds check against nodeCount, not array length
-        if (idx >= nodeCount || idx < 0) {
-            throw new IllegalStateException("Invalid node index: " + idx + " (nodeCount=" + nodeCount + ")");
-        }
-
-        // Already processed?
+        // If already mapped, return it
         int mapped = oldToNew[idx];
         if (mapped != -1) {
             return comp ? negate(mapped) : mapped;
         }
 
-        // Process children
+        // Recurse on children
         int var = variables[idx];
-        int hiNew = reduceRec(highs[idx], oldToNew, newVariables, newHighs, newLows, newNodeCounter, newUnique);
-        int loNew = reduceRec(lows[idx], oldToNew, newVariables, newHighs, newLows, newNodeCounter, newUnique);
+        int hiNew = reduceRec(highs[idx], oldToNew, newVariables, newHighs, newLows, newCount);
+        int loNew = reduceRec(lows[idx], oldToNew, newVariables, newHighs, newLows, newCount);
 
-        // Apply reduction rule
+        // Reduction rule
         int resultAbs;
         if (hiNew == loNew) {
             resultAbs = hiNew;
         } else {
-            resultAbs = makeNodeInNew(var, hiNew, loNew, newVariables, newHighs, newLows, newNodeCounter, newUnique);
+            // Canonicalize complement edges on the low branch
+            boolean flip = shouldFlip(hiNew, loNew);
+            if (flip) {
+                hiNew = negate(hiNew);
+                loNew = negate(loNew);
+            }
+
+            // Lookup or create a new node
+            Integer existing = uniqueTable.get(var, hiNew, loNew);
+            if (existing != null) {
+                resultAbs = toReference(existing);
+            } else {
+                int nodeIdx = newCount[0]++;
+                newVariables[nodeIdx] = var;
+                newHighs[nodeIdx] = hiNew;
+                newLows[nodeIdx] = loNew;
+                uniqueTable.put(var, hiNew, loNew, nodeIdx);
+                resultAbs = toReference(nodeIdx);
+            }
+
+            if (flip) {
+                resultAbs = negate(resultAbs);
+            }
         }
 
         oldToNew[idx] = resultAbs;
         return comp ? negate(resultAbs) : resultAbs;
     }
 
-    private int makeNodeInNew(
-            int var,
-            int hi,
-            int lo,
-            int[] newVariables,
-            int[] newHighs,
-            int[] newLows,
-            int[] newNodeCounter,
-            Map<TripleKey, Integer> newUnique
-    ) {
-        if (hi == lo) {
-            return hi;
-        }
-
-        // Canonicalize complement edges (but not for result nodes)
-        boolean comp = false;
-        if (!isResult(hi) && !isResult(lo) && isComplement(lo)) {
-            hi = negate(hi);
-            lo = negate(lo);
-            comp = true;
-        }
-
-        // Check if node already exists in new structure
-        Integer existing = newUnique.get(mutableKey.update(var, hi, lo));
-        if (existing != null) {
-            int ref = toReference(existing);
-            return comp ? negate(ref) : ref;
-        } else {
-            int idx = newNodeCounter[0];
-
-            if (idx >= newVariables.length) {
-                throw new IllegalStateException("Insufficient space allocated for reduction");
-            }
-
-            newVariables[idx] = var;
-            newHighs[idx] = hi;
-            newLows[idx] = lo;
-
-            newUnique.put(new TripleKey(var, hi, lo), idx);
-            newNodeCounter[0]++; // Increment the node counter
-
-            int ref = toReference(idx);
-            return comp ? negate(ref) : ref;
-        }
-    }
-
     /**
      * Finds the topmost variable among three BDDs.
      */
     private int getTopVariable(int f, int g, int h) {
-        int varF = getVariable(f);
-        int varG = getVariable(g);
-        int varH = getVariable(h);
+        int minVar = Integer.MAX_VALUE;
+        minVar = updateMinVariable(minVar, f);
+        minVar = updateMinVariable(minVar, g);
+        minVar = updateMinVariable(minVar, h);
+        return (minVar == Integer.MAX_VALUE) ? -1 : minVar;
+    }
 
-        // Filter out -1 (terminal marker) and find minimum
-        int min = Integer.MAX_VALUE;
-        if (varF >= 0 && varF < min) {
-            min = varF;
+    private int updateMinVariable(int currentMin, int ref) {
+        int absRef = Math.abs(ref);
+        if (absRef > 1 && absRef < Bdd.RESULT_OFFSET) {
+            return Math.min(currentMin, variables[absRef - 1]);
         }
-        if (varG >= 0 && varG < min) {
-            min = varG;
-        }
-        if (varH >= 0 && varH < min) {
-            min = varH;
-        }
-
-        return min == Integer.MAX_VALUE ? -1 : min;
+        return currentMin;
     }
 
     /**
@@ -589,10 +526,7 @@ final class BddBuilder {
         Arrays.fill(highs, 0, nodeCount, 0);
         Arrays.fill(lows, 0, nodeCount, 0);
         nodeCount = 1;
-        // Re-initialize terminal node
-        variables[0] = -1;
-        highs[0] = TRUE_REF;
-        lows[0] = FALSE_REF;
+        initializeTerminalNode();
         conditionCount = -1;
         return this;
     }
@@ -628,36 +562,15 @@ final class BddBuilder {
         return nodeIndex + 1;
     }
 
-    private static final class TripleKey {
-        private int a, b, c, hash;
-
-        private TripleKey(int a, int b, int c) {
-            update(a, b, c);
+    private void validateNodeIndex(int nodeIndex) {
+        if (nodeIndex >= nodeCount || nodeIndex < 0) {
+            throw new IllegalStateException("Invalid node index: " + nodeIndex);
         }
+    }
 
-        TripleKey update(int a, int b, int c) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            int i = (a * 31 + b) * 31 + c;
-            this.hash = (i ^ (i >>> 16));
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            } else if (!(o instanceof TripleKey)) {
-                return false;
-            }
-            TripleKey k = (TripleKey) o;
-            return a == k.a && b == k.b && c == k.c;
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
+    private void initializeTerminalNode() {
+        variables[0] = -1;
+        highs[0] = TRUE_REF;
+        lows[0] = FALSE_REF;
     }
 }
