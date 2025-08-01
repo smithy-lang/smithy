@@ -20,6 +20,14 @@ structure DeprecatedStructure {
     /// Has docs in addition to deprecated
     @deprecated
     deprecatedWithDocs: String
+
+    @deprecated
+    deprecatedMap: MemberMap
+}
+
+map MemberMap {
+    key: String
+    value: Integer
 }
 
 @trait

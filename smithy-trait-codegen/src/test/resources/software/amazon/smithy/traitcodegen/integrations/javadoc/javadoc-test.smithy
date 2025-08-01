@@ -31,6 +31,13 @@ structure DeprecatedStructure {
     /// Has docs in addition to deprecated
     @deprecated(message: "A message", since: "yesterday")
     deprecatedWithDocs: String
+
+    @deprecated(message: "A message", since: "yesterday")
+    deprecatedList: MemberList
+}
+
+list MemberList {
+    member: Integer
 }
 
 @trait
