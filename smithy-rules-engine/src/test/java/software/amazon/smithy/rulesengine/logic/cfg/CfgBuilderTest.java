@@ -234,7 +234,7 @@ class CfgBuilderTest {
         ConditionReference ref = builder.createConditionReference(cond);
 
         assertNotNull(ref);
-        assertEquals("parsedUrl", ref.getReturnVariable());
+        assertEquals(cond, ref.getCondition());
     }
 
     @Test
@@ -275,6 +275,6 @@ class CfgBuilderTest {
         // Should not be treated as simple negation due to variable binding
         assertFalse(ref.isNegated());
         assertInstanceOf(Not.class, ref.getCondition().getFunction());
-        assertEquals("notRegionSet", ref.getReturnVariable());
+        assertEquals(negatedWithBinding, ref.getCondition());
     }
 }

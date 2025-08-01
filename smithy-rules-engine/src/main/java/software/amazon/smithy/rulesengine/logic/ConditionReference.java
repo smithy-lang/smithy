@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.rulesengine.logic;
 
-import java.util.Set;
-import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 
 /**
@@ -15,12 +13,10 @@ public final class ConditionReference {
 
     private final Condition condition;
     private final boolean negated;
-    private final String returnVar;
 
     public ConditionReference(Condition condition, boolean negated) {
         this.condition = condition;
         this.negated = negated;
-        this.returnVar = condition.getResult().map(Identifier::toString).orElse(null);
     }
 
     /**
@@ -48,33 +44,6 @@ public final class ConditionReference {
      */
     public Condition getCondition() {
         return condition;
-    }
-
-    /**
-     * Get the complexity of the condition.
-     *
-     * @return the complexity.
-     */
-    public int getComplexity() {
-        return condition.getFunction().getComplexity();
-    }
-
-    /**
-     * Get the references used by the condition.
-     *
-     * @return the references.
-     */
-    public Set<String> getReferences() {
-        return condition.getFunction().getReferences();
-    }
-
-    /**
-     * Get the name of the variable this condition defines, if any, or null.
-     *
-     * @return the defined variable name or null.
-     */
-    public String getReturnVariable() {
-        return returnVar;
     }
 
     @Override
