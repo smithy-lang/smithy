@@ -82,11 +82,20 @@ public final class TupleLiteral extends Literal {
     }
 
     @Override
-    public Set<String> getReferences() {
+    protected Set<String> calculateReferences() {
         Set<String> references = new LinkedHashSet<>();
         for (Literal member : members()) {
             references.addAll(member.getReferences());
         }
         return references;
+    }
+
+    @Override
+    protected int calculateComplexity() {
+        int complexity = 1;
+        for (Literal member : members()) {
+            complexity += member.getComplexity();
+        }
+        return complexity;
     }
 }

@@ -5,19 +5,22 @@
 package software.amazon.smithy.rulesengine.logic;
 
 import java.util.Set;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 
 /**
  * A reference to a condition and whether it is negated.
  */
-public final class ConditionReference implements ConditionInfo {
+public final class ConditionReference {
 
-    private final ConditionInfo delegate;
+    private final Condition condition;
     private final boolean negated;
+    private final String returnVar;
 
-    public ConditionReference(ConditionInfo delegate, boolean negated) {
-        this.delegate = delegate;
+    public ConditionReference(Condition condition, boolean negated) {
+        this.condition = condition;
         this.negated = negated;
+        this.returnVar = condition.getResult().map(Identifier::toString).orElse(null);
     }
 
     /**
@@ -35,32 +38,48 @@ public final class ConditionReference implements ConditionInfo {
      * @return returns the negated reference.
      */
     public ConditionReference negate() {
-        return new ConditionReference(delegate, !negated);
+        return new ConditionReference(condition, !negated);
     }
 
-    @Override
+    /**
+     * Get the underlying condition.
+     *
+     * @return condition.
+     */
     public Condition getCondition() {
-        return delegate.getCondition();
+        return condition;
     }
 
-    @Override
+    /**
+     * Get the complexity of the condition.
+     *
+     * @return the complexity.
+     */
     public int getComplexity() {
-        return delegate.getComplexity();
+        return condition.getFunction().getComplexity();
     }
 
-    @Override
+    /**
+     * Get the references used by the condition.
+     *
+     * @return the references.
+     */
     public Set<String> getReferences() {
-        return delegate.getReferences();
+        return condition.getFunction().getReferences();
     }
 
-    @Override
+    /**
+     * Get the name of the variable this condition defines, if any, or null.
+     *
+     * @return the defined variable name or null.
+     */
     public String getReturnVariable() {
-        return delegate.getReturnVariable();
+        return returnVar;
     }
 
     @Override
     public String toString() {
-        return (negated ? "!" : "") + delegate.toString();
+        return (negated ? "!" : "") + condition.toString();
     }
 
     @Override
@@ -71,11 +90,11 @@ public final class ConditionReference implements ConditionInfo {
             return false;
         }
         ConditionReference that = (ConditionReference) object;
-        return negated == that.negated && delegate.equals(that.delegate);
+        return negated == that.negated && condition.equals(that.condition);
     }
 
     @Override
     public int hashCode() {
-        return delegate.hashCode() ^ (negated ? 0x80000000 : 0);
+        return condition.hashCode() ^ (negated ? 0x80000000 : 0);
     }
 }

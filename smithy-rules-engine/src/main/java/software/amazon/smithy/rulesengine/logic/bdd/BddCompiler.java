@@ -14,11 +14,9 @@ import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.ConditionReference;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
 import software.amazon.smithy.rulesengine.logic.cfg.ConditionNode;
 import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
 
@@ -133,12 +131,7 @@ final class BddCompiler {
     }
 
     private void extractAndOrderConditions() {
-        // Extract conditions from CFG and order them.
-        ConditionData data = cfg.getConditionData();
-        Map<Condition, ConditionInfo> infos = data.getConditionInfos();
-        orderedConditions = orderingStrategy.orderConditions(data.getConditions(), infos);
-
-        // Build index map
+        orderedConditions = orderingStrategy.orderConditions(cfg.getConditions());
         conditionToIndex = new LinkedHashMap<>();
         for (int i = 0; i < orderedConditions.size(); i++) {
             conditionToIndex.put(orderedConditions.get(i), i);
