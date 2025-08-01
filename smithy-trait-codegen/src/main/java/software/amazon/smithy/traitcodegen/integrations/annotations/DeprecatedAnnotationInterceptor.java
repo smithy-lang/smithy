@@ -4,7 +4,9 @@
  */
 package software.amazon.smithy.traitcodegen.integrations.annotations;
 
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
@@ -27,7 +29,8 @@ final class DeprecatedAnnotationInterceptor implements CodeInterceptor.Prepender
         if (section instanceof ClassSection) {
             return ((ClassSection) section).shape().hasTrait(DeprecatedTrait.ID);
         } else if (section instanceof GetterSection) {
-            return ((GetterSection) section).shape().hasTrait(DeprecatedTrait.ID);
+            Shape shape = ((GetterSection) section).shape();
+            return shape.hasTrait(DeprecatedTrait.ID) && !shape.hasTrait(TraitDefinition.ID);
         } else if (section instanceof EnumVariantSection) {
             return ((EnumVariantSection) section).memberShape().hasTrait(DeprecatedTrait.ID);
         }

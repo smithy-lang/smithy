@@ -78,3 +78,21 @@ enum EnumVariantsTest {
     B
 }
 
+/// A deprecated list trait
+@trait
+@deprecated(message: "A message", since: "yesterday")
+@externalDocumentation(Example: "https://example.com")
+@since("4.5")
+list DeprecatedList {
+    member: Integer
+}
+
+/// A deprecated map trait
+@trait
+@deprecated(message: "A message", since: "yesterday")
+@externalDocumentation(Example: "https://example.com")
+@since("4.5")
+map DeprecatedMap {
+    key: String
+    value: Integer
+}

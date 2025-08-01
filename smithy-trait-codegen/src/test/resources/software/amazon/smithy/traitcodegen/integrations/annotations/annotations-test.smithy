@@ -41,4 +41,15 @@ enum EnumWithAnnotations {
     UNSTABLE
 }
 
+@trait
+@deprecated
+list DeprecatedList {
+    member: Integer
+}
 
+@trait
+@deprecated
+map DeprecatedMap {
+    key: String
+    value: Integer
+}
