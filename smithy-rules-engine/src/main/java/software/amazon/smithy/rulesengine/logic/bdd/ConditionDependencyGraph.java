@@ -4,14 +4,15 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 
 /**
  * Immutable graph of dependencies between conditions.
@@ -24,7 +25,7 @@ import software.amazon.smithy.rulesengine.logic.ConditionInfo;
  * </ul>
  */
 final class ConditionDependencyGraph {
-    private final Map<Condition, ConditionInfo> conditionInfos;
+    private final List<Condition> conditions;
     private final Map<Condition, Set<Condition>> dependencies;
     private final Map<String, Set<Condition>> variableDefiners;
     private final Map<String, Set<Condition>> isSetConditions;
@@ -32,27 +33,24 @@ final class ConditionDependencyGraph {
     /**
      * Creates a dependency graph by analyzing the given conditions.
      *
-     * @param conditionInfos metadata about each condition
+     * @param conditions the conditions to analyze
      */
-    public ConditionDependencyGraph(Map<Condition, ConditionInfo> conditionInfos) {
-        this.conditionInfos = Collections.unmodifiableMap(new LinkedHashMap<>(conditionInfos));
+    public ConditionDependencyGraph(List<Condition> conditions) {
+        this.conditions = Collections.unmodifiableList(new ArrayList<>(conditions));
         this.variableDefiners = new LinkedHashMap<>();
         this.isSetConditions = new LinkedHashMap<>();
 
         // Categorize all conditions
-        for (Map.Entry<Condition, ConditionInfo> entry : conditionInfos.entrySet()) {
-            Condition cond = entry.getKey();
-            ConditionInfo info = entry.getValue();
-
+        for (Condition cond : conditions) {
             // Track variable definition
-            String definedVar = info.getReturnVariable();
-            if (definedVar != null) {
+            if (cond.getResult().isPresent()) {
+                String definedVar = cond.getResult().get().toString();
                 variableDefiners.computeIfAbsent(definedVar, k -> new LinkedHashSet<>()).add(cond);
             }
 
             // Track isSet conditions
             if (isIsset(cond)) {
-                for (String var : info.getReferences()) {
+                for (String var : cond.getFunction().getReferences()) {
                     isSetConditions.computeIfAbsent(var, k -> new LinkedHashSet<>()).add(cond);
                 }
             }
@@ -60,13 +58,10 @@ final class ConditionDependencyGraph {
 
         // Compute dependencies
         Map<Condition, Set<Condition>> deps = new LinkedHashMap<>();
-        for (Map.Entry<Condition, ConditionInfo> entry : conditionInfos.entrySet()) {
-            Condition cond = entry.getKey();
-            ConditionInfo info = entry.getValue();
-
+        for (Condition cond : conditions) {
             Set<Condition> condDeps = new LinkedHashSet<>();
 
-            for (String usedVar : info.getReferences()) {
+            for (String usedVar : cond.getFunction().getReferences()) {
                 // Must come after any condition that defines this variable
                 condDeps.addAll(variableDefiners.getOrDefault(usedVar, Collections.emptySet()));
 
@@ -101,7 +96,7 @@ final class ConditionDependencyGraph {
      * @return the number of conditions
      */
     public int size() {
-        return conditionInfos.size();
+        return conditions.size();
     }
 
     private static boolean isIsset(Condition cond) {

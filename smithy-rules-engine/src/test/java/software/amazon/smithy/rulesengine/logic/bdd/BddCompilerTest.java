@@ -21,7 +21,6 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
 
 class BddCompilerTest {
 
@@ -126,8 +125,7 @@ class BddCompilerTest {
         Cfg cfg = Cfg.from(ruleSet);
 
         // Get the actual conditions from the CFG after SSA transform
-        ConditionData conditionData = cfg.getConditionData();
-        Condition[] cfgConditions = conditionData.getConditions();
+        Condition[] cfgConditions = cfg.getConditions();
 
         // Find the conditions that correspond to A and B
         Condition condA = null;

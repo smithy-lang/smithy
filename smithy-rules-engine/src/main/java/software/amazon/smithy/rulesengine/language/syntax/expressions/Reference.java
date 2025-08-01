@@ -50,7 +50,7 @@ public final class Reference extends Expression {
     }
 
     @Override
-    public Set<String> getReferences() {
+    protected Set<String> calculateReferences() {
         return Collections.singleton(getName().toString());
     }
 

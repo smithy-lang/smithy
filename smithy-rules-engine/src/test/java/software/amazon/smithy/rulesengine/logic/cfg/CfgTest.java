@@ -123,31 +123,6 @@ class CfgTest {
     }
 
     @Test
-    void getConditionDataCachesResult() {
-        Parameters params = Parameters.builder()
-                .addParameter(Parameter.builder().name("region").type(ParameterType.STRING).build())
-                .build();
-
-        EndpointRule rule = EndpointRule.builder()
-                .condition(Condition.builder().fn(TestHelpers.isSet("region")).build())
-                .endpoint(TestHelpers.endpoint("https://example.com"));
-
-        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
-                .parameters(params)
-                .addRule(rule)
-                .build();
-
-        Cfg cfg = Cfg.from(ruleSet);
-
-        ConditionData data1 = cfg.getConditionData();
-        ConditionData data2 = cfg.getConditionData();
-
-        assertNotNull(data1);
-        assertSame(data1, data2);
-        assertEquals(1, data1.getConditions().length);
-    }
-
-    @Test
     void iteratorVisitsAllNodes() {
         Parameters params = Parameters.builder()
                 .addParameter(Parameter.builder().name("region").type(ParameterType.STRING).build())

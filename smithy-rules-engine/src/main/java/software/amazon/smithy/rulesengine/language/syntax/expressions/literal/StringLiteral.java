@@ -71,7 +71,7 @@ public final class StringLiteral extends Literal {
     }
 
     @Override
-    public Set<String> getReferences() {
+    protected Set<String> calculateReferences() {
         Template template = value();
         if (template.isStatic()) {
             return Collections.emptySet();
@@ -85,5 +85,28 @@ public final class StringLiteral extends Literal {
         }
 
         return references;
+    }
+
+    @Override
+    protected int calculateComplexity() {
+        Template template = value();
+        if (template.isStatic()) {
+            return 1;
+        }
+
+        int complexity = 1;
+        if (template.getParts().size() > 1) {
+            // Multiple parts are expensive
+            complexity += 8;
+        }
+
+        for (Template.Part part : template.getParts()) {
+            if (part instanceof Template.Dynamic) {
+                Template.Dynamic dynamic = (Template.Dynamic) part;
+                complexity += dynamic.toExpression().getComplexity();
+            }
+        }
+
+        return complexity;
     }
 }

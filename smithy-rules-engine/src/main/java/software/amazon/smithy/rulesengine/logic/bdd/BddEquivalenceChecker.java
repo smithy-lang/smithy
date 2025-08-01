@@ -19,7 +19,6 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionData;
 import software.amazon.smithy.rulesengine.logic.cfg.ConditionNode;
 import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
 
@@ -266,10 +265,8 @@ public final class BddEquivalenceChecker {
     }
 
     private Rule evaluateCfgWithMask(ConditionEvaluator maskEvaluator) {
-        // Get the condition data from CFG
-        ConditionData conditionData = cfg.getConditionData();
         Map<Condition, Integer> cfgConditionToIndex = new HashMap<>();
-        Condition[] cfgConditions = conditionData.getConditions();
+        Condition[] cfgConditions = cfg.getConditions();
         for (int i = 0; i < cfgConditions.length; i++) {
             cfgConditionToIndex.put(cfgConditions[i], i);
         }

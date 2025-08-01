@@ -48,7 +48,7 @@ public abstract class LibraryFunction extends Expression {
     }
 
     @Override
-    public Set<String> getReferences() {
+    protected Set<String> calculateReferences() {
         Set<String> references = new LinkedHashSet<>();
         for (Expression arg : getArguments()) {
             references.addAll(arg.getReferences());
@@ -244,5 +244,14 @@ public abstract class LibraryFunction extends Expression {
             return !s.value().isStatic();
         }
         return false;
+    }
+
+    @Override
+    protected int calculateComplexity() {
+        int complexity = getFunctionDefinition().getCostHeuristic();
+        for (Expression arg : getArguments()) {
+            complexity += arg.getComplexity();
+        }
+        return complexity;
     }
 }
