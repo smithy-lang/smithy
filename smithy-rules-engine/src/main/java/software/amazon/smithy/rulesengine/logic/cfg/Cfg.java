@@ -11,6 +11,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -39,7 +40,10 @@ public final class Cfg implements Iterable<CfgNode> {
 
     private final EndpointRuleSet ruleSet;
     private final CfgNode root;
-    private ConditionData data;
+
+    // Lazily computed condition data
+    private Condition[] conditions;
+    private Map<Condition, Integer> conditionToIndex;
 
     Cfg(EndpointRuleSet ruleSet, CfgNode root) {
         this.ruleSet = ruleSet;
@@ -61,17 +65,64 @@ public final class Cfg implements Iterable<CfgNode> {
     }
 
     /**
-     * Get the condition data of the CFG.
+     * Gets all unique conditions in the CFG, in the order they were discovered.
      *
-     * @return the lazily created and cached prepared condition data.
+     * @return array of conditions
      */
-    public ConditionData getConditionData() {
-        ConditionData result = data;
-        if (result == null) {
-            result = ConditionData.from(this);
-            data = result;
+    public Condition[] getConditions() {
+        ensureConditionsExtracted();
+        return conditions;
+    }
+
+    /**
+     * Gets the index of a condition in the conditions array.
+     *
+     * @param condition the condition to look up
+     * @return the index, or null if not found
+     */
+    public Integer getConditionIndex(Condition condition) {
+        ensureConditionsExtracted();
+        return conditionToIndex.get(condition);
+    }
+
+    /**
+     * Gets the number of unique conditions in the CFG.
+     *
+     * @return the condition count
+     */
+    public int getConditionCount() {
+        ensureConditionsExtracted();
+        return conditions.length;
+    }
+
+    private void ensureConditionsExtracted() {
+        if (conditions == null) {
+            extractConditions();
         }
-        return result;
+    }
+
+    private synchronized void extractConditions() {
+        if (conditions != null) {
+            return;
+        }
+
+        List<Condition> conditionList = new ArrayList<>();
+        Map<Condition, Integer> indexMap = new LinkedHashMap<>();
+
+        for (CfgNode node : this) {
+            if (node instanceof ConditionNode) {
+                ConditionNode condNode = (ConditionNode) node;
+                Condition condition = condNode.getCondition().getCondition();
+
+                if (!indexMap.containsKey(condition)) {
+                    indexMap.put(condition, conditionList.size());
+                    conditionList.add(condition);
+                }
+            }
+        }
+
+        this.conditions = conditionList.toArray(new Condition[0]);
+        this.conditionToIndex = indexMap;
     }
 
     public EndpointRuleSet getRuleSet() {

@@ -7,18 +7,13 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
-import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
-import software.amazon.smithy.rulesengine.logic.cfg.ConditionNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -52,7 +47,6 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
 
     private final Cfg cfg;
     private final ConditionDependencyGraph dependencyGraph;
-    private final Map<Condition, ConditionInfo> conditionInfos;
 
     // Tiered optimization settings
     private final int coarseMinNodes;
@@ -87,17 +81,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         this.mediumMaxPasses = builder.mediumMaxPasses;
         this.granularMaxNodes = builder.granularMaxNodes;
         this.granularMaxPasses = builder.granularMaxPasses;
-
-        // Extract condition infos from CFG
-        this.conditionInfos = new LinkedHashMap<>();
-        for (CfgNode node : cfg) {
-            if (node instanceof ConditionNode) {
-                ConditionInfo info = ((ConditionNode) node).getCondition();
-                conditionInfos.put(info.getCondition(), info);
-            }
-        }
-
-        this.dependencyGraph = new ConditionDependencyGraph(conditionInfos);
+        this.dependencyGraph = new ConditionDependencyGraph(Arrays.asList(cfg.getConditions()));
     }
 
     /**

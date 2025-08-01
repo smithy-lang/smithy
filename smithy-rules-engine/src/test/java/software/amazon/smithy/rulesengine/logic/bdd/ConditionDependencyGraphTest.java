@@ -7,8 +7,8 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -16,7 +16,6 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 
 class ConditionDependencyGraphTest {
@@ -34,11 +33,8 @@ class ConditionDependencyGraphTest {
                 .fn(BooleanEquals.ofExpressions(Expression.of("{hasRegion}"), Expression.of(true)))
                 .build();
 
-        Map<Condition, ConditionInfo> conditionInfos = new HashMap<>();
-        conditionInfos.put(definer, ConditionInfo.from(definer));
-        conditionInfos.put(user, ConditionInfo.from(user));
-
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditionInfos);
+        List<Condition> conditions = Arrays.asList(definer, user);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
 
         // Definer has no dependencies
         assertTrue(graph.getDependencies(definer).isEmpty());
@@ -58,11 +54,8 @@ class ConditionDependencyGraphTest {
                 .fn(StringEquals.ofExpressions(Expression.of("{Region}"), Expression.of("us-east-1")))
                 .build();
 
-        Map<Condition, ConditionInfo> conditionInfos = new HashMap<>();
-        conditionInfos.put(isSetCondition, ConditionInfo.from(isSetCondition));
-        conditionInfos.put(userCondition, ConditionInfo.from(userCondition));
-
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditionInfos);
+        List<Condition> conditions = Arrays.asList(isSetCondition, userCondition);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
 
         // Non-isSet condition depends on isSet for undefined variables
         Set<Condition> userDeps = graph.getDependencies(userCondition);
@@ -90,12 +83,8 @@ class ConditionDependencyGraphTest {
                         BooleanEquals.ofExpressions(Expression.of("{hasBucket}"), Expression.of(true))))
                 .build();
 
-        Map<Condition, ConditionInfo> conditionInfos = new HashMap<>();
-        conditionInfos.put(definer1, ConditionInfo.from(definer1));
-        conditionInfos.put(definer2, ConditionInfo.from(definer2));
-        conditionInfos.put(user, ConditionInfo.from(user));
-
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditionInfos);
+        List<Condition> conditions = Arrays.asList(definer1, definer2, user);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
 
         // User depends on both definers
         Set<Condition> userDeps = graph.getDependencies(user);
@@ -109,12 +98,22 @@ class ConditionDependencyGraphTest {
         Condition known = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Condition unknown = Condition.builder().fn(TestHelpers.isSet("Bucket")).build();
 
-        Map<Condition, ConditionInfo> conditionInfos = new HashMap<>();
-        conditionInfos.put(known, ConditionInfo.from(known));
-
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditionInfos);
+        List<Condition> conditions = Arrays.asList(known);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
 
         // Getting dependencies for unknown condition returns empty set
         assertTrue(graph.getDependencies(unknown).isEmpty());
+    }
+
+    @Test
+    void testGraphSize() {
+        Condition cond1 = Condition.builder().fn(TestHelpers.isSet("A")).build();
+        Condition cond2 = Condition.builder().fn(TestHelpers.isSet("B")).build();
+        Condition cond3 = Condition.builder().fn(TestHelpers.isSet("C")).build();
+
+        List<Condition> conditions = Arrays.asList(cond1, cond2, cond3);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
+
+        assertEquals(3, graph.size());
     }
 }

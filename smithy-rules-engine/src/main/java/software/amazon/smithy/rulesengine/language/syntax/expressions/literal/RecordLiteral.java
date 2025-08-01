@@ -76,11 +76,20 @@ public final class RecordLiteral extends Literal {
     }
 
     @Override
-    public Set<String> getReferences() {
+    protected Set<String> calculateReferences() {
         Set<String> references = new LinkedHashSet<>();
         for (Literal value : members().values()) {
             references.addAll(value.getReferences());
         }
         return references;
+    }
+
+    @Override
+    protected int calculateComplexity() {
+        int complexity = 1;
+        for (Literal value : members().values()) {
+            complexity += value.getComplexity();
+        }
+        return complexity;
     }
 }

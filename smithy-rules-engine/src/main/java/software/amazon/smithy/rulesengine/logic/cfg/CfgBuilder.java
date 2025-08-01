@@ -20,7 +20,6 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Li
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.ConditionReference;
 
 /**
@@ -36,7 +35,6 @@ public final class CfgBuilder {
     private final Map<NodeSignature, CfgNode> nodeCache = new HashMap<>();
 
     // Condition and result canonicalization
-    private final Map<Condition, ConditionInfo> conditionToInfo = new HashMap<>();
     private final Map<Condition, ConditionReference> conditionToReference = new HashMap<>();
     private final Map<Rule, Rule> resultCache = new HashMap<>();
     private final Map<Rule, ResultNode> resultNodeCache = new HashMap<>();
@@ -114,7 +112,7 @@ public final class CfgBuilder {
             // Check if we already have the non-negated version
             ConditionReference existing = conditionToReference.get(canonical);
             if (existing != null) {
-                // Reuse the existing ConditionInfo, just negate the reference
+                // Reuse the existing Condition, just negate the reference
                 ConditionReference negatedReference = existing.negate();
                 conditionToReference.put(condition, negatedReference);
                 return negatedReference;
@@ -132,11 +130,8 @@ public final class CfgBuilder {
             negated = !negated;
         }
 
-        // Get or create the ConditionInfo
-        ConditionInfo info = conditionToInfo.computeIfAbsent(canonical, ConditionInfo::from);
-
         // Create the reference (possibly negated)
-        ConditionReference reference = new ConditionReference(info, negated);
+        ConditionReference reference = new ConditionReference(canonical, negated);
 
         // Cache the reference under the original key
         conditionToReference.put(condition, reference);
