@@ -227,6 +227,57 @@ public class JavadocTest {
         assertTrue(fileContents.contains(expected));
     }
 
+    @Test
+    void deprecatedAnnotationAndNoteForListTrait() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedList", true);
+        String expectedForClass = "/**\n" +
+                " * A deprecated list trait\n" +
+                " *\n" +
+                " * @see <a href=\"https://example.com\">Example</a>\n" +
+                " * @since 4.5\n" +
+                " * @deprecated As of yesterday. A message\n" +
+                " */\n" +
+                "@Deprecated\n" +
+                "@SmithyGenerated\n" +
+                "public final class DeprecatedListTrait";
+        String expectedForGetter = "    }\n\n" +
+                "    public List<Integer> getValues() {";
+        assertTrue(fileContents.contains(expectedForClass));
+        assertTrue(fileContents.contains(expectedForGetter));
+    }
+
+    @Test
+    void deprecatedAnnotationAndNoteForMapTrait() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedMap", true);
+        String expectedForClass = "/**\n" +
+                " * A deprecated map trait\n" +
+                " *\n" +
+                " * @see <a href=\"https://example.com\">Example</a>\n" +
+                " * @since 4.5\n" +
+                " * @deprecated As of yesterday. A message\n" +
+                " */\n" +
+                "@Deprecated\n" +
+                "@SmithyGenerated\n" +
+                "public final class DeprecatedMapTrait";
+        String expectedForGetter = "    }\n\n" +
+                "    public Map<String, Integer> getValues() {";
+        assertTrue(fileContents.contains(expectedForClass));
+        assertTrue(fileContents.contains(expectedForGetter));
+    }
+
+    @Test
+    void deprecatedAnnotationAndNoteForListMember() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
+        String expected = "    /**\n" +
+                "     * @deprecated As of yesterday. A message\n" +
+                "     */\n" +
+                "    @Deprecated\n" +
+                "    public Optional<List<Integer>> getDeprecatedList() {\n" +
+                "        return Optional.ofNullable(deprecatedList);\n" +
+                "    }";
+        assertTrue(fileContents.contains(expected));
+    }
+
     private String getFileContentsFromShapeName(String className, boolean isTrait) {
         String suffix = isTrait ? "Trait" : "";
         String path = String.format("com/example/traits/%s%s.java", className, suffix);

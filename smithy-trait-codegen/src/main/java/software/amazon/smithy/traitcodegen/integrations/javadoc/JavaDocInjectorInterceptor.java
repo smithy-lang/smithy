@@ -5,6 +5,7 @@
 package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
@@ -40,6 +41,9 @@ final class JavaDocInjectorInterceptor implements CodeInterceptor.Prepender<Code
             shape = ((ClassSection) section).shape();
         } else if (section instanceof GetterSection) {
             shape = ((GetterSection) section).shape();
+            if (shape.hasTrait(TraitDefinition.ID)) {
+                return;
+            }
         } else if (section instanceof EnumVariantSection) {
             shape = ((EnumVariantSection) section).memberShape();
         } else {

@@ -130,6 +130,48 @@ public class AnnotationsTest {
         assertTrue(fileContents.contains(expected));
     }
 
+    @Test
+    void deprecatedAnnotationOnListTrait() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedList", true);
+        String expected = "@Deprecated\n" +
+                "@SmithyGenerated\n" +
+                "public final class DeprecatedListTrait";
+        assertTrue(fileContents.contains(expected));
+    }
+
+    @Test
+    void noDeprecatedAnnotationOnListGetValues() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedList", true);
+        String expected = "    }\n\n" +
+                "    public List<Integer> getValues() {";
+        assertTrue(fileContents.contains(expected));
+    }
+
+    @Test
+    void deprecatedAnnotationOnMapTrait() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedMap", true);
+        String expected = "@Deprecated\n" +
+                "@SmithyGenerated\n" +
+                "public final class DeprecatedMapTrait";
+        assertTrue(fileContents.contains(expected));
+    }
+
+    @Test
+    void noDeprecatedAnnotationOnMapGetValues() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedMap", true);
+        String expected = "    }\n\n" +
+                "    public Map<String, Integer> getValues() {";
+        assertTrue(fileContents.contains(expected));
+    }
+
+    @Test
+    void deprecatedAnnotationOnListMember() {
+        String fileContents = getFileContentsFromShapeName("DeprecatedStructure", true);
+        String expected = "    @Deprecated\n" +
+                "    public Optional<Map<String, Integer>> getDeprecatedMap() {";
+        assertTrue(fileContents.contains(expected));
+    }
+
     private String getFileContentsFromShapeName(String className, boolean isTrait) {
         String suffix = isTrait ? "Trait" : "";
         String path = String.format("com/example/traits/%s%s.java", className, suffix);
