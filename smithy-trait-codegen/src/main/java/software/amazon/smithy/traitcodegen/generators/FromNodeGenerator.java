@@ -35,6 +35,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
@@ -242,6 +243,14 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void memberShape(MemberShape shape) {
+            if (shape.hasTrait(IdRefTrait.ID)) {
+                writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                        fieldName,
+                        memberName,
+                        (Runnable) () -> shape
+                                .accept(new FromNodeMapperVisitor(writer, model, "n", 1, symbolProvider)));
+                return null;
+            }
             return model.expectShape(shape.getTarget()).accept(this);
         }
 
