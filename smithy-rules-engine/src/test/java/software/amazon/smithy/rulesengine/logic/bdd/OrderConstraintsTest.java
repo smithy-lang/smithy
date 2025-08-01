@@ -11,15 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 
 class OrderConstraintsTest {
@@ -30,10 +27,8 @@ class OrderConstraintsTest {
         Condition cond1 = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Condition cond2 = Condition.builder().fn(TestHelpers.isSet("Bucket")).build();
 
-        Map<Condition, ConditionInfo> infos = createInfoMap(cond1, cond2);
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(infos);
         List<Condition> conditions = Arrays.asList(cond1, cond2);
-
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
         OrderConstraints constraints = new OrderConstraints(graph, conditions);
 
         // Both conditions can be placed anywhere
@@ -58,10 +53,8 @@ class OrderConstraintsTest {
                 .fn(BooleanEquals.ofExpressions(Literal.of("{hasRegion}"), Literal.of(true)))
                 .build();
 
-        Map<Condition, ConditionInfo> infos = createInfoMap(cond1, cond2);
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(infos);
         List<Condition> conditions = Arrays.asList(cond1, cond2);
-
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
         OrderConstraints constraints = new OrderConstraints(graph, conditions);
 
         // cond1 can only stay in place (cannot move past its dependent)
@@ -90,10 +83,8 @@ class OrderConstraintsTest {
                 .fn(BooleanEquals.ofExpressions(Literal.of("{var2}"), Literal.of(false)))
                 .build();
 
-        Map<Condition, ConditionInfo> infos = createInfoMap(condA, condB, condC);
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(infos);
         List<Condition> conditions = Arrays.asList(condA, condB, condC);
-
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
         OrderConstraints constraints = new OrderConstraints(graph, conditions);
 
         // A can only be at position 0
@@ -118,10 +109,8 @@ class OrderConstraintsTest {
     @Test
     void testCanMoveToSamePosition() {
         Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
-        Map<Condition, ConditionInfo> infos = createInfoMap(cond);
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(infos);
         List<Condition> conditions = Collections.singletonList(cond);
-
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
         OrderConstraints constraints = new OrderConstraints(graph, conditions);
 
         // Moving to same position is always allowed
@@ -131,8 +120,8 @@ class OrderConstraintsTest {
     @Test
     void testMismatchedSizes() {
         Condition cond1 = Condition.builder().fn(TestHelpers.isSet("Region")).build();
-        Map<Condition, ConditionInfo> infos = createInfoMap(cond1);
-        ConditionDependencyGraph graph = new ConditionDependencyGraph(infos);
+        List<Condition> graphConditions = Collections.singletonList(cond1);
+        ConditionDependencyGraph graph = new ConditionDependencyGraph(graphConditions);
 
         // Try to create constraints with more conditions than in graph
         List<Condition> conditions = Arrays.asList(
@@ -140,13 +129,5 @@ class OrderConstraintsTest {
                 Condition.builder().fn(TestHelpers.isSet("Bucket")).build());
 
         assertThrows(IllegalArgumentException.class, () -> new OrderConstraints(graph, conditions));
-    }
-
-    private Map<Condition, ConditionInfo> createInfoMap(Condition... conditions) {
-        Map<Condition, ConditionInfo> map = new HashMap<>();
-        for (Condition cond : conditions) {
-            map.put(cond, ConditionInfo.from(cond));
-        }
-        return map;
     }
 }

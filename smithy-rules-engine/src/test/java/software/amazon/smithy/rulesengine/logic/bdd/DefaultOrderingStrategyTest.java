@@ -8,9 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
@@ -18,7 +16,6 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.logic.ConditionInfo;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 
 class DefaultOrderingStrategyTest {
@@ -32,9 +29,8 @@ class DefaultOrderingStrategyTest {
                 .build();
 
         Condition[] conditions = {stringEqualsCond, isSetCond};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // isSet should come first
         assertEquals(isSetCond, ordered.get(0));
@@ -52,9 +48,8 @@ class DefaultOrderingStrategyTest {
         Condition nonDefiner = Condition.builder().fn(TestHelpers.isSet("Bucket")).build();
 
         Condition[] conditions = {nonDefiner, definer};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // Variable-defining condition should come first
         assertEquals(definer, ordered.get(0));
@@ -75,9 +70,8 @@ class DefaultOrderingStrategyTest {
                 .build();
 
         Condition[] conditions = {user, definer};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // Definer must come before user
         assertEquals(definer, ordered.get(0));
@@ -93,9 +87,8 @@ class DefaultOrderingStrategyTest {
         Condition complex = Condition.builder().fn(ParseUrl.ofExpressions(Literal.of("https://example.com"))).build();
 
         Condition[] conditions = {complex, simple};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // Simple should come before complex
         assertEquals(simple, ordered.get(0));
@@ -117,10 +110,9 @@ class DefaultOrderingStrategyTest {
                 .build();
 
         Condition[] conditions = {cond1, cond2};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
         assertThrows(IllegalStateException.class,
-                () -> DefaultOrderingStrategy.orderConditions(conditions, infos));
+                () -> DefaultOrderingStrategy.orderConditions(conditions));
     }
 
     @Test
@@ -142,9 +134,8 @@ class DefaultOrderingStrategyTest {
 
         // Mix up the order
         Condition[] conditions = {condC, condA, condB};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         assertEquals(condA, ordered.get(0));
         assertEquals(condB, ordered.get(1));
@@ -158,9 +149,8 @@ class DefaultOrderingStrategyTest {
         Condition cond2 = Condition.builder().fn(TestHelpers.isSet("Bucket")).build();
 
         Condition[] conditions = {cond1, cond2};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // Order should be deterministic based on toString
         assertEquals(2, ordered.size());
@@ -171,9 +161,8 @@ class DefaultOrderingStrategyTest {
     @Test
     void testEmptyConditions() {
         Condition[] conditions = new Condition[0];
-        Map<Condition, ConditionInfo> infos = new HashMap<>();
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         assertEquals(0, ordered.size());
     }
@@ -183,9 +172,8 @@ class DefaultOrderingStrategyTest {
         Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
 
         Condition[] conditions = {cond};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         assertEquals(1, ordered.size());
         assertEquals(cond, ordered.get(0));
@@ -202,20 +190,11 @@ class DefaultOrderingStrategyTest {
 
         // Put value check first to test ordering
         Condition[] conditions = {valueCheck, isSet};
-        Map<Condition, ConditionInfo> infos = createInfoMap(conditions);
 
-        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions, infos);
+        List<Condition> ordered = DefaultOrderingStrategy.orderConditions(conditions);
 
         // isSet must come before value check
         assertEquals(isSet, ordered.get(0));
         assertEquals(valueCheck, ordered.get(1));
-    }
-
-    private Map<Condition, ConditionInfo> createInfoMap(Condition... conditions) {
-        Map<Condition, ConditionInfo> map = new HashMap<>();
-        for (Condition cond : conditions) {
-            map.put(cond, ConditionInfo.from(cond));
-        }
-        return map;
     }
 }
