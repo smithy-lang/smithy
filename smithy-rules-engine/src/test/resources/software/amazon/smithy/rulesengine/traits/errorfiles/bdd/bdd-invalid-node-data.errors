@@ -1,1 +1,1 @@
-[ERROR] smithy.example#ValidBddService: Error creating trait `smithy.rules#bdd`: Failed to decode BDD nodes | Model
+[ERROR] smithy.example#ValidBddService: Error creating trait `smithy.rules#bdd`: Expected 36 bytes for 3 nodes, but got 2 | Model

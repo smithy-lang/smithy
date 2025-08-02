@@ -202,7 +202,6 @@ class BddBuilderTest {
 
     @Test
     void testSetConditionCountRequired() {
-        // Cannot create result without setting condition count
         assertThrows(IllegalStateException.class, () -> builder.makeResult(0));
     }
 
@@ -217,7 +216,6 @@ class BddBuilderTest {
         assertEquals(1, builder.getVariable(node));
         assertEquals(1, builder.getVariable(Math.abs(node))); // Use absolute value for complement
 
-        // Test result references
         int result = builder.makeResult(0);
         assertEquals(-1, builder.getVariable(result)); // results have no variable
     }
@@ -233,7 +231,7 @@ class BddBuilderTest {
         int root = builder.makeNode(0, b, a);
 
         int nodesBefore = builder.getNodeCount();
-        int reduced = builder.reduce(root);
+        builder.reduce(root);
 
         // Structure should be preserved if already optimal
         assertEquals(nodesBefore, builder.getNodeCount());
@@ -248,9 +246,8 @@ class BddBuilderTest {
         int root = builder.makeNode(0, right, builder.makeFalse());
 
         int nodesBefore = builder.getNodeCount();
-        int reduced = builder.reduce(root);
+        builder.reduce(root);
 
-        // No change expected
         assertEquals(nodesBefore, builder.getNodeCount());
     }
 
@@ -279,7 +276,6 @@ class BddBuilderTest {
         int b = builder.makeNode(1, a, builder.negate(a));
         int root = builder.makeNode(0, b, builder.makeFalse());
 
-        // Reduce without complement first
         int reduced = builder.reduce(root);
 
         // Now test reducing with complemented root
@@ -302,8 +298,7 @@ class BddBuilderTest {
         int b = builder.makeNode(1, builder.makeTrue(), builder.makeFalse());
         int ite1 = builder.ite(a, b, builder.makeFalse());
 
-        // Reduce
-        int reduced = builder.reduce(ite1);
+        builder.reduce(ite1);
 
         // Cache should be cleared, so same ITE creates new result
         // Recreate the nodes since reduce may have changed internal state
@@ -323,7 +318,7 @@ class BddBuilderTest {
         int root = builder.makeNode(0, middle, bottom);
 
         int beforeSize = builder.getNodeCount();
-        int reduced = builder.reduce(root);
+        builder.reduce(root);
         int afterSize = builder.getNodeCount();
 
         // In this case, no reduction should occur since makeNode already optimized
@@ -438,7 +433,6 @@ class BddBuilderTest {
         int node2 = builder.makeNode(1, node1, builder.makeFalse());
         int node3 = builder.makeNode(2, node2, node1);
 
-        // Create results
         int result0 = builder.makeResult(0);
         int result1 = builder.makeResult(1);
 
@@ -463,13 +457,11 @@ class BddBuilderTest {
         builder.setConditionCount(2);
 
         // Create some state
-        int node = builder.makeNode(0, builder.makeTrue(), builder.makeFalse());
-        int result = builder.makeResult(0);
+        builder.makeNode(0, builder.makeTrue(), builder.makeFalse());
+        builder.makeResult(0);
 
-        // Reset
         builder.reset();
 
-        // Verify state is cleared
         assertEquals(1, builder.getNodeCount()); // Only terminal
         assertThrows(IllegalStateException.class, () -> builder.makeResult(0));
 

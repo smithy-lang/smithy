@@ -36,6 +36,7 @@ use smithy.rules#clientContextParams
     ],
     "results": [
         {
+            "conditions": [],
             "endpoint": {
                 "url": "https://service-fips.{Region}.amazonaws.com",
                 "properties": {},
@@ -44,6 +45,7 @@ use smithy.rules#clientContextParams
             "type": "endpoint"
         },
         {
+            "conditions": [],
             "endpoint": {
                 "url": "https://service.{Region}.amazonaws.com",
                 "properties": {},
@@ -53,8 +55,8 @@ use smithy.rules#clientContextParams
         }
     ],
     "root": 2,
-    "nodes": "AQIBAIKEr1+EhK9f",
-    "nodeCount": 2
+    "nodeCount": 2,
+    "nodes": "/////wAAAAH/////AAAAAAX14QEF9eEC"
 })
 service ValidBddService {
     version: "2022-01-01"
