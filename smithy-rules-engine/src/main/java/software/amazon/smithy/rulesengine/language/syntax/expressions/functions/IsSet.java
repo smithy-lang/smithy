@@ -99,5 +99,10 @@ public final class IsSet extends LibraryFunction {
         public IsSet createFunction(FunctionNode functionNode) {
             return new IsSet(functionNode);
         }
+
+        @Override
+        public int getCostHeuristic() {
+            return 1;
+        }
     }
 }
