@@ -90,11 +90,9 @@ final class BddCompiler {
         int result;
         if (cfgNode == null) {
             result = bddBuilder.makeResult(noMatchIndex);
-
         } else if (cfgNode instanceof ResultNode) {
             Rule rule = ((ResultNode) cfgNode).getResult();
             result = bddBuilder.makeResult(getOrCreateResultIndex(rule));
-
         } else {
             ConditionNode cn = (ConditionNode) cfgNode;
             ConditionReference ref = cn.getCondition();

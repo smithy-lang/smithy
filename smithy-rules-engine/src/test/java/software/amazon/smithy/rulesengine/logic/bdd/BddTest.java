@@ -196,47 +196,32 @@ class BddTest {
 
     @Test
     void testArrayConstructorValidation() {
-        int[] vars = {-1};
-        int[] highs = {1};
-        int[] lows = {-1};
+        int[] nodes = {-1, 1, -1};
 
         // Valid construction
         assertDoesNotThrow(() -> {
-            new Bdd(vars, highs, lows, 1, 1, 1, 1);
+            new Bdd(1, 1, 1, 1, nodes);
         });
 
-        // Null arrays
-        assertThrows(NullPointerException.class, () -> {
-            new Bdd(null, highs, lows, 1, 1, 1, 1);
-        });
-
-        assertThrows(NullPointerException.class, () -> {
-            new Bdd(vars, null, lows, 1, 1, 1, 1);
-        });
-
-        assertThrows(NullPointerException.class, () -> {
-            new Bdd(vars, highs, null, 1, 1, 1, 1);
-        });
-
-        // Mismatched array lengths
-        int[] shortArray = {};
+        // Wrong array length (not multiple of 3)
+        int[] wrongLength = {-1, 1, -1, 0}; // 4 elements, not divisible by 3
         assertThrows(IllegalArgumentException.class, () -> {
-            new Bdd(shortArray, highs, lows, 1, 1, 1, 1);
+            new Bdd(1, 1, 1, 1, wrongLength);
         });
 
-        // Node count exceeds array capacity
+        // Array length doesn't match nodeCount
         assertThrows(IllegalArgumentException.class, () -> {
-            new Bdd(vars, highs, lows, 2, 1, 1, 1); // nodeCount=2 but arrays have length 1
+            new Bdd(1, 1, 1, 2, nodes); // nodeCount=2 but array has 3 elements (1 node)
         });
 
         // Root cannot be complemented (except -1)
         assertThrows(IllegalArgumentException.class, () -> {
-            new Bdd(vars, highs, lows, 1, -2, 1, 1);
+            new Bdd(-2, 1, 1, 1, nodes);
         });
 
         // Root -1 (FALSE) is allowed
         assertDoesNotThrow(() -> {
-            new Bdd(vars, highs, lows, 1, -1, 1, 1);
+            new Bdd(-1, 1, 1, 1, nodes);
         });
     }
 
@@ -374,15 +359,12 @@ class BddTest {
     //                .build();
     //
     //        Cfg cfg = Cfg.from(ruleSet);
-    //        Bdd bdd = Bdd.from(cfg);
     //
-    //        BddTrait trait = BddTrait.builder().bdd(bdd).build();
+    //        BddTrait trait = BddTrait.from(cfg);
     //        BddTraitValidator validator = new BddTraitValidator();
     //        ServiceShape service = ServiceShape.builder().id("foo#Bar").addTrait(trait).build();
     //        Model model = Model.builder().addShape(service).build();
     //        System.out.println(validator.validate(model));
-    //
-    //        System.out.println(bdd);
     //
     //        // Get the base64 encoded nodes
     //        System.out.println(Node.prettyPrintJson(trait.toNode()));

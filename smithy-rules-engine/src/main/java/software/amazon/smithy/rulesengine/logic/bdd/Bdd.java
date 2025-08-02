@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import software.amazon.smithy.rulesengine.logic.ConditionEvaluator;
 
@@ -36,9 +37,7 @@ public final class Bdd {
      */
     public static final int RESULT_OFFSET = 100_000_000;
 
-    private final int[] variables;
-    private final int[] highs;
-    private final int[] lows;
+    private final int[] nodes; // Flat array: [var0, high0, low0, var1, high1, low1, ...]
     private final int rootRef;
     private final int conditionCount;
     private final int resultCount;
@@ -64,27 +63,29 @@ public final class Bdd {
 
         InputNodeConsumer consumer = new InputNodeConsumer(nodeCount);
         nodeHandler.accept(consumer);
-        this.variables = consumer.variables;
-        this.highs = consumer.highs;
-        this.lows = consumer.lows;
+        this.nodes = consumer.nodes;
 
-        if (consumer.index != nodeCount) {
-            throw new IllegalStateException("Expected " + nodeCount + " nodes, but got " + consumer.index);
+        if (consumer.index != nodeCount * 3) {
+            throw new IllegalStateException("Expected " + nodeCount + " nodes, but got " + (consumer.index / 3));
         }
     }
 
-    Bdd(int[] variables, int[] highs, int[] lows, int nodeCount, int rootRef, int conditionCount, int resultCount) {
-        validateArrays(variables, highs, lows, nodeCount);
+    /**
+     * Package-private constructor for direct array initialization (used by BddTrait).
+     */
+    Bdd(int rootRef, int conditionCount, int resultCount, int nodeCount, int[] nodes) {
         validateCounts(conditionCount, resultCount, nodeCount);
         validateRootReference(rootRef, nodeCount);
 
-        this.variables = variables;
-        this.highs = highs;
-        this.lows = lows;
+        if (nodes.length != nodeCount * 3) {
+            throw new IllegalArgumentException("Nodes array length must be nodeCount * 3");
+        }
+
         this.rootRef = rootRef;
         this.conditionCount = conditionCount;
         this.resultCount = resultCount;
         this.nodeCount = nodeCount;
+        this.nodes = nodes;
     }
 
     private static void validateCounts(int conditionCount, int resultCount, int nodeCount) {
@@ -109,34 +110,19 @@ public final class Bdd {
         }
     }
 
-    private static void validateArrays(int[] variables, int[] highs, int[] lows, int nodeCount) {
-        if (variables.length != highs.length || variables.length != lows.length) {
-            throw new IllegalArgumentException("Array lengths must match: variables=" + variables.length +
-                    ", highs=" + highs.length + ", lows=" + lows.length);
-        } else if (nodeCount > variables.length) {
-            throw new IllegalArgumentException("Node count (" + nodeCount +
-                    ") exceeds array capacity (" + variables.length + ")");
-        }
-    }
-
     private static final class InputNodeConsumer implements BddNodeConsumer {
         private int index = 0;
-        private final int[] variables;
-        private final int[] highs;
-        private final int[] lows;
+        private final int[] nodes;
 
         private InputNodeConsumer(int nodeCount) {
-            this.variables = new int[nodeCount];
-            this.highs = new int[nodeCount];
-            this.lows = new int[nodeCount];
+            this.nodes = new int[nodeCount * 3];
         }
 
         @Override
         public void accept(int var, int high, int low) {
-            variables[index] = var;
-            highs[index] = high;
-            lows[index] = low;
-            index++;
+            nodes[index++] = var;
+            nodes[index++] = high;
+            nodes[index++] = low;
         }
     }
 
@@ -184,7 +170,7 @@ public final class Bdd {
      */
     public int getVariable(int nodeIndex) {
         validateRange(nodeIndex);
-        return variables[nodeIndex];
+        return nodes[nodeIndex * 3];
     }
 
     private void validateRange(int index) {
@@ -201,7 +187,7 @@ public final class Bdd {
      */
     public int getHigh(int nodeIndex) {
         validateRange(nodeIndex);
-        return highs[nodeIndex];
+        return nodes[nodeIndex * 3 + 1];
     }
 
     /**
@@ -212,7 +198,7 @@ public final class Bdd {
      */
     public int getLow(int nodeIndex) {
         validateRange(nodeIndex);
-        return lows[nodeIndex];
+        return nodes[nodeIndex * 3 + 2];
     }
 
     /**
@@ -222,7 +208,8 @@ public final class Bdd {
      */
     public void getNodes(BddNodeConsumer consumer) {
         for (int i = 0; i < nodeCount; i++) {
-            consumer.accept(variables[i], highs[i], lows[i]);
+            int base = i * 3;
+            consumer.accept(nodes[base], nodes[base + 1], nodes[base + 2]);
         }
     }
 
@@ -234,14 +221,13 @@ public final class Bdd {
      */
     public int evaluate(ConditionEvaluator ev) {
         int ref = rootRef;
-        int[] vars = this.variables;
-        int[] hi = this.highs;
-        int[] lo = this.lows;
+        int[] n = this.nodes;
 
         while (isNodeReference(ref)) {
-            int idx = ref > 0 ? ref - 1 : -ref - 1; // Math.abs
+            int idx = ref > 0 ? ref - 1 : -ref - 1;
+            int base = idx * 3;
             // test ^ complement, pick hi or lo
-            ref = (ev.test(vars[idx]) ^ (ref < 0)) ? hi[idx] : lo[idx];
+            ref = (ev.test(n[base]) ^ (ref < 0)) ? n[base + 1] : n[base + 2];
         }
 
         return isTerminal(ref) ? -1 : ref - RESULT_OFFSET;
@@ -303,27 +289,12 @@ public final class Bdd {
             return false;
         }
 
-        // Now check the views of arrays of each.
-        for (int i = 0; i < nodeCount; i++) {
-            if (variables[i] != other.variables[i] || highs[i] != other.highs[i] || lows[i] != other.lows[i]) {
-                return false;
-            }
-        }
-
-        return true;
+        return Arrays.equals(nodes, other.nodes);
     }
 
     @Override
     public int hashCode() {
-        int hash = 31 * rootRef + nodeCount;
-        // Sample up to 16 nodes distributed across the BDD
-        int step = Math.max(1, nodeCount / 16);
-        for (int i = 0; i < nodeCount; i += step) {
-            hash = 31 * hash + variables[i];
-            hash = 31 * hash + highs[i];
-            hash = 31 * hash + lows[i];
-        }
-        return hash;
+        return 31 * rootRef + nodeCount + Arrays.hashCode(nodes);
     }
 
     @Override

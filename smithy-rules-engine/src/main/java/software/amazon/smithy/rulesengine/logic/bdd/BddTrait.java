@@ -4,17 +4,18 @@
  */
 package software.amazon.smithy.rulesengine.logic.bdd;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -130,14 +131,14 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
         ObjectNode.Builder builder = ObjectNode.builder();
         builder.withMember("parameters", parameters.toNode());
 
-        List<Node> conditionNodes = new ArrayList<>();
+        ArrayNode.Builder conditionBuilder = ArrayNode.builder();
         for (Condition c : conditions) {
-            conditionNodes.add(c.toNode());
+            conditionBuilder.withValue(c);
         }
-        builder.withMember("conditions", Node.fromNodes(conditionNodes));
+        builder.withMember("conditions", conditionBuilder.build());
 
         // Results (skip NoMatchRule at index 0 for serialization)
-        List<Node> resultNodes = new ArrayList<>();
+        ArrayNode.Builder resultBuilder = ArrayNode.builder();
         if (!results.isEmpty() && !(results.get(0) instanceof NoMatchRule)) {
             throw new IllegalStateException("BDD must always have a NoMatchRule as the first result");
         }
@@ -146,9 +147,9 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
             if (result instanceof NoMatchRule) {
                 throw new IllegalStateException("NoMatch rules can only appear at rule index 0. Found at index " + i);
             }
-            resultNodes.add(result.toNode());
+            resultBuilder.withValue(result);
         }
-        builder.withMember("results", Node.fromNodes(resultNodes));
+        builder.withMember("results", resultBuilder.build());
 
         builder.withMember("root", bdd.getRootRef());
         builder.withMember("nodeCount", bdd.getNodeCount());
@@ -196,9 +197,9 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
                 DataOutputStream dos = new DataOutputStream(baos)) {
             bdd.getNodes((varIdx, high, low) -> {
                 try {
-                    writeVarInt(dos, varIdx);
-                    writeVarInt(dos, high);
-                    writeVarInt(dos, low);
+                    dos.writeInt(varIdx);
+                    dos.writeInt(high);
+                    dos.writeInt(low);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -213,53 +214,19 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
     }
 
     private static Bdd decodeBdd(String base64, int nodeCount, int rootRef, int conditionCount, int resultCount) {
-        // Special case for empty BDD with just terminal (should never happen, but just in case).
-        if (base64.isEmpty() || nodeCount == 0) {
-            return new Bdd(rootRef, conditionCount, resultCount, 1, consumer -> {
-                consumer.accept(-1, 1, -1);
-            });
-        }
-
         byte[] data = Base64.getDecoder().decode(base64);
-        return new Bdd(rootRef, conditionCount, resultCount, nodeCount, consumer -> {
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
-                    DataInputStream dis = new DataInputStream(bais)) {
-                for (int i = 0; i < nodeCount; i++) {
-                    consumer.accept(readVarInt(dis), readVarInt(dis), readVarInt(dis));
-                }
-                if (bais.available() > 0) {
-                    throw new IllegalArgumentException("Extra data found after decoding " + nodeCount +
-                            " nodes. " + bais.available() + " bytes remaining.");
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to decode BDD nodes", e);
-            }
-        });
-    }
-
-    // Zig-zag + varint encode of a signed int
-    private static void writeVarInt(DataOutputStream dos, int value) throws IOException {
-        int zz = (value << 1) ^ (value >> 31);
-        while ((zz & ~0x7F) != 0) {
-            dos.writeByte((zz & 0x7F) | 0x80);
-            zz >>>= 7;
+        if (data.length != nodeCount * 12) {
+            throw new IllegalArgumentException("Expected " + (nodeCount * 12) + " bytes for " + nodeCount +
+                    " nodes, but got " + data.length);
         }
-        dos.writeByte(zz);
-    }
 
-    // Decode a signed int from varint + zig-zag
-    private static int readVarInt(DataInputStream dis) throws IOException {
-        int shift = 0, result = 0;
-        while (true) {
-            byte b = dis.readByte();
-            result |= (b & 0x7F) << shift;
-            if ((b & 0x80) == 0) {
-                break;
-            }
-            shift += 7;
+        int[] nodes = new int[nodeCount * 3];
+        ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = buffer.getInt();
         }
-        // reverse zig-zag
-        return (result >>> 1) ^ -(result & 1);
+
+        return new Bdd(rootRef, conditionCount, resultCount, nodeCount, nodes);
     }
 
     /**
