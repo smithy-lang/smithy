@@ -15,6 +15,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -130,14 +131,14 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
         ObjectNode.Builder builder = ObjectNode.builder();
         builder.withMember("parameters", parameters.toNode());
 
-        List<Node> conditionNodes = new ArrayList<>();
+        ArrayNode.Builder conditionBuilder = ArrayNode.builder();
         for (Condition c : conditions) {
-            conditionNodes.add(c.toNode());
+            conditionBuilder.withValue(c);
         }
-        builder.withMember("conditions", Node.fromNodes(conditionNodes));
+        builder.withMember("conditions", conditionBuilder.build());
 
         // Results (skip NoMatchRule at index 0 for serialization)
-        List<Node> resultNodes = new ArrayList<>();
+        ArrayNode.Builder resultBuilder = ArrayNode.builder();
         if (!results.isEmpty() && !(results.get(0) instanceof NoMatchRule)) {
             throw new IllegalStateException("BDD must always have a NoMatchRule as the first result");
         }
@@ -146,9 +147,9 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
             if (result instanceof NoMatchRule) {
                 throw new IllegalStateException("NoMatch rules can only appear at rule index 0. Found at index " + i);
             }
-            resultNodes.add(result.toNode());
+            resultBuilder.withValue(result);
         }
-        builder.withMember("results", Node.fromNodes(resultNodes));
+        builder.withMember("results", resultBuilder.build());
 
         builder.withMember("root", bdd.getRootRef());
         builder.withMember("nodeCount", bdd.getNodeCount());

@@ -30,9 +30,10 @@ final class BddBuilder {
     private static final int FALSE_REF = -1;
 
     // Node storage: three separate arrays
-    private int[] variables = new int[1024];
-    private int[] highs = new int[1024];
-    private int[] lows = new int[1024];
+    private static final int INITIAL_SIZE = 256;
+    private int[] variables = new int[INITIAL_SIZE];
+    private int[] highs = new int[INITIAL_SIZE];
+    private int[] lows = new int[INITIAL_SIZE];
     private int nodeCount;
 
     // Unique tables for node deduplication and ITE caching
@@ -48,7 +49,7 @@ final class BddBuilder {
     public BddBuilder() {
         this.nodeCount = 1;
         this.uniqueTable = new UniqueTable();
-        this.iteCache = new UniqueTable(4096); // Larger initial capacity for ITE cache
+        this.iteCache = new UniqueTable(1024);
         initializeTerminalNode();
     }
 
