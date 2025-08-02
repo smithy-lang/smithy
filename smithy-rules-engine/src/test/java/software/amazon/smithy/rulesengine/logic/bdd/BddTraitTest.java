@@ -70,19 +70,22 @@ public class BddTraitTest {
     }
 
     private Bdd createSimpleBdd() {
-        return new Bdd(2, 1, 2, 2, consumer -> {
-            consumer.accept(-1, 1, -1); // node 0: terminal
-            consumer.accept(0, Bdd.RESULT_OFFSET + 1, -1); // node 1: if cond true, return result 1, else FALSE
-        });
+        int[] nodes = new int[] {
+                -1,
+                1,
+                -1, // node 0: terminal
+                0,
+                Bdd.RESULT_OFFSET + 1,
+                -1 // node 1
+        };
+        return new Bdd(2, 1, 2, 2, nodes);
     }
 
     @Test
     void testEmptyBddTrait() {
         Parameters params = Parameters.builder().build();
-
-        Bdd bdd = new Bdd(-1, 0, 1, 1, consumer -> {
-            consumer.accept(-1, 1, -1); // terminal node only
-        });
+        int[] nodes = new int[] {-1, 1, -1};
+        Bdd bdd = new Bdd(-1, 0, 1, 1, nodes);
 
         BddTrait trait = BddTrait.builder()
                 .parameters(params)

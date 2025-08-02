@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
  *
  * <p>This verifier uses structural equivalence checking to ensure that both representations produce the same result.
  * When the BDD has fewer than 20 conditions, the checking is exhaustive. When there are more, random samples are
- * checked up the earlier of max samples being reached, or the max duration being reached.
+ * checked up to the earlier of max samples being reached or the max duration being reached.
  */
 public final class BddEquivalenceChecker {
 
@@ -210,11 +210,12 @@ public final class BddEquivalenceChecker {
             verifyCase(allTrue ^ (1L << i));
         }
 
-        // Alternating patterns
+        // Alternating patterns: 0101... (even conditions false, odd true)
         if (!hasEitherLimitBeenExceeded()) {
             verifyCase(0x5555555555555555L & ((1L << bdd.getConditionCount()) - 1));
         }
 
+        // Pattern: 1010... (even conditions true, odd false)
         if (!hasEitherLimitBeenExceeded()) {
             verifyCase(0xAAAAAAAAAAAAAAAAL & ((1L << bdd.getConditionCount()) - 1));
         }

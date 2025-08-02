@@ -165,6 +165,9 @@ structure Result {
 
     /// Provided if type is "endpoint".
     endpoint: EndpointObject
+
+    /// Conditions for the result (only used with decision tree rules).
+    conditions: Conditions
 }
 
 @private

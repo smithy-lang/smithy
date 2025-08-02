@@ -8,7 +8,7 @@ use smithy.rules#bdd
     parameters: {}
     conditions: []
     results: []
-    nodes: "AAAA"  // Base64 encoded empty node array
+    nodes: ""  // Base64 encoded empty node array
     root: -5  // Invalid negative root reference (only -1 is allowed for FALSE)
     nodeCount: 0
 })

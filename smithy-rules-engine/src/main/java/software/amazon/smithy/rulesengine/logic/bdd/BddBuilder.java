@@ -29,10 +29,9 @@ final class BddBuilder {
     private static final int TRUE_REF = 1;
     private static final int FALSE_REF = -1;
 
-    // Node storage: three separate arrays
-    private int[] variables = new int[1024];
-    private int[] highs = new int[1024];
-    private int[] lows = new int[1024];
+    // Node storage: flat array [var0, high0, low0, var1, high1, low1, ...]
+    private static final int INITIAL_SIZE = 256 * 3;
+    private int[] nodes = new int[INITIAL_SIZE];
     private int nodeCount;
 
     // Unique tables for node deduplication and ITE caching
@@ -48,7 +47,7 @@ final class BddBuilder {
     public BddBuilder() {
         this.nodeCount = 1;
         this.uniqueTable = new UniqueTable();
-        this.iteCache = new UniqueTable(4096); // Larger initial capacity for ITE cache
+        this.iteCache = new UniqueTable(1024);
         initializeTerminalNode();
     }
 
@@ -156,9 +155,10 @@ final class BddBuilder {
         ensureCapacity();
 
         int idx = nodeCount;
-        variables[idx] = var;
-        highs[idx] = high;
-        lows[idx] = low;
+        int base = idx * 3;
+        nodes[base] = var;
+        nodes[base + 1] = high;
+        nodes[base + 2] = low;
         nodeCount++;
 
         uniqueTable.put(var, high, low, idx);
@@ -166,12 +166,10 @@ final class BddBuilder {
     }
 
     private void ensureCapacity() {
-        if (nodeCount >= variables.length) {
+        if (nodeCount * 3 >= nodes.length) {
             // Double the current capacity
-            int newCapacity = variables.length * 2;
-            variables = Arrays.copyOf(variables, newCapacity);
-            highs = Arrays.copyOf(highs, newCapacity);
-            lows = Arrays.copyOf(lows, newCapacity);
+            int newCapacity = nodes.length * 2;
+            nodes = Arrays.copyOf(nodes, newCapacity);
         }
     }
 
@@ -246,7 +244,7 @@ final class BddBuilder {
 
         int nodeIndex = Math.abs(ref) - 1;
         validateNodeIndex(nodeIndex);
-        return variables[nodeIndex];
+        return nodes[nodeIndex * 3];
     }
 
     /**
@@ -267,11 +265,12 @@ final class BddBuilder {
         int nodeIndex = toNodeIndex(bdd);
         validateNodeIndex(nodeIndex);
 
-        int nodeVar = variables[nodeIndex];
+        int base = nodeIndex * 3;
+        int nodeVar = nodes[base];
 
         if (nodeVar == varIndex) {
             // This node tests our variable, so take the appropriate branch
-            int child = value ? highs[nodeIndex] : lows[nodeIndex];
+            int child = value ? nodes[base + 1] : nodes[base + 2];
             // Only negate if child is not a result
             return (complemented && !isResult(child)) ? negate(child) : child;
         } else if (nodeVar > varIndex) {
@@ -279,8 +278,8 @@ final class BddBuilder {
             return bdd;
         } else {
             // Variable appears deeper, so recurse on both branches
-            int high = cofactor(highs[nodeIndex], varIndex, value);
-            int low = cofactor(lows[nodeIndex], varIndex, value);
+            int high = cofactor(nodes[base + 1], varIndex, value);
+            int low = cofactor(nodes[base + 2], varIndex, value);
             int result = makeNode(nodeVar, high, low);
             return (complemented && !isResult(result)) ? negate(result) : result;
         }
@@ -358,7 +357,6 @@ final class BddBuilder {
             }
         }
 
-        // Check cache
         Integer cached = iteCache.get(f, g, h);
         if (cached != null) {
             return cached;
@@ -372,10 +370,8 @@ final class BddBuilder {
         int r0 = ite(cofactor(f, v, false), cofactor(g, v, false), cofactor(h, v, false));
         int r1 = ite(cofactor(f, v, true), cofactor(g, v, true), cofactor(h, v, true));
 
-        // Build result node
+        // Build result node and cache it
         int result = makeNode(v, r1, r0);
-
-        // Update cache with actual result
         iteCache.put(f, g, h, result);
         return result;
     }
@@ -395,18 +391,16 @@ final class BddBuilder {
         boolean rootComp = rootRef < 0;
         int absRoot = rootComp ? negate(rootRef) : rootRef;
 
-        // Allocate new tables
-        int[] newVariables = new int[nodeCount];
-        int[] newHighs = new int[nodeCount];
-        int[] newLows = new int[nodeCount];
+        // Allocate new nodes array
+        int[] newNodes = new int[nodeCount * 3];
 
         // Clear and reuse the existing unique table
         uniqueTable.clear();
 
         // Initialize the terminal node
-        newVariables[0] = -1;
-        newHighs[0] = TRUE_REF;
-        newLows[0] = FALSE_REF;
+        newNodes[0] = -1;
+        newNodes[1] = TRUE_REF;
+        newNodes[2] = FALSE_REF;
 
         // Prepare the visitation map
         int[] oldToNew = new int[nodeCount];
@@ -414,12 +408,10 @@ final class BddBuilder {
         int[] newCount = {1}; // start after terminal
 
         // Recursively rebuild
-        int newRoot = reduceRec(absRoot, oldToNew, newVariables, newHighs, newLows, newCount);
+        int newRoot = reduceRec(absRoot, oldToNew, newNodes, newCount);
 
-        // Swap in the new tables
-        this.variables = newVariables;
-        this.highs = newHighs;
-        this.lows = newLows;
+        // Swap in the new nodes array (trimmed to actual size)
+        this.nodes = Arrays.copyOf(newNodes, newCount[0] * 3);
         this.nodeCount = newCount[0];
         clearCaches();
 
@@ -429,9 +421,7 @@ final class BddBuilder {
     private int reduceRec(
             int ref,
             int[] oldToNew,
-            int[] newVariables,
-            int[] newHighs,
-            int[] newLows,
+            int[] newNodes,
             int[] newCount
     ) {
         if (isLeaf(ref)) {
@@ -450,9 +440,10 @@ final class BddBuilder {
         }
 
         // Recurse on children
-        int var = variables[idx];
-        int hiNew = reduceRec(highs[idx], oldToNew, newVariables, newHighs, newLows, newCount);
-        int loNew = reduceRec(lows[idx], oldToNew, newVariables, newHighs, newLows, newCount);
+        int base = idx * 3;
+        int var = nodes[base];
+        int hiNew = reduceRec(nodes[base + 1], oldToNew, newNodes, newCount);
+        int loNew = reduceRec(nodes[base + 2], oldToNew, newNodes, newCount);
 
         // Reduction rule
         int resultAbs;
@@ -472,9 +463,10 @@ final class BddBuilder {
                 resultAbs = toReference(existing);
             } else {
                 int nodeIdx = newCount[0]++;
-                newVariables[nodeIdx] = var;
-                newHighs[nodeIdx] = hiNew;
-                newLows[nodeIdx] = loNew;
+                int newBase = nodeIdx * 3;
+                newNodes[newBase] = var;
+                newNodes[newBase + 1] = hiNew;
+                newNodes[newBase + 2] = loNew;
                 uniqueTable.put(var, hiNew, loNew, nodeIdx);
                 resultAbs = toReference(nodeIdx);
             }
@@ -502,7 +494,7 @@ final class BddBuilder {
     private int updateMinVariable(int currentMin, int ref) {
         int absRef = Math.abs(ref);
         if (absRef > 1 && absRef < Bdd.RESULT_OFFSET) {
-            return Math.min(currentMin, variables[absRef - 1]);
+            return Math.min(currentMin, nodes[(absRef - 1) * 3]);
         }
         return currentMin;
     }
@@ -522,9 +514,7 @@ final class BddBuilder {
     public BddBuilder reset() {
         clearCaches();
         uniqueTable.clear();
-        Arrays.fill(variables, 0, nodeCount, 0);
-        Arrays.fill(highs, 0, nodeCount, 0);
-        Arrays.fill(lows, 0, nodeCount, 0);
+        Arrays.fill(nodes, 0, nodeCount * 3, 0);
         nodeCount = 1;
         initializeTerminalNode();
         conditionCount = -1;
@@ -542,10 +532,8 @@ final class BddBuilder {
             throw new IllegalStateException("Condition count must be set before building BDD");
         }
 
-        int[] v = Arrays.copyOf(variables, nodeCount);
-        int[] h = Arrays.copyOf(highs, nodeCount);
-        int[] l = Arrays.copyOf(lows, nodeCount);
-        return new Bdd(v, h, l, nodeCount, rootRef, conditionCount, resultCount);
+        int[] n = Arrays.copyOf(nodes, nodeCount * 3);
+        return new Bdd(rootRef, conditionCount, resultCount, nodeCount, n);
     }
 
     private void validateBooleanOperands(int f, int g, String operation) {
@@ -569,8 +557,8 @@ final class BddBuilder {
     }
 
     private void initializeTerminalNode() {
-        variables[0] = -1;
-        highs[0] = TRUE_REF;
-        lows[0] = FALSE_REF;
+        nodes[0] = -1;
+        nodes[1] = TRUE_REF;
+        nodes[2] = FALSE_REF;
     }
 }
