@@ -60,7 +60,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -240,6 +242,16 @@ public class CreatesTraitTest {
 
     static Stream<Arguments> createSourceLocationTests() {
         return Stream.of(
+                Arguments.of(BigDecimalTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(BigIntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(ByteTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(DoubleTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(FloatTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(IntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(LongTrait.ID, new NumberNode(1L, testLocation)),
+                Arguments.of(ShortTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(StringTrait.ID, new StringNode("a", testLocation)),
+                Arguments.of(TimestampTrait.ID, new StringNode("1985-04-12T23:20:50.52Z", testLocation)),
                 Arguments.of(NumberListTrait.ID,
                         ArrayNode.builder()
                                 .withValue(Node.from(1))
