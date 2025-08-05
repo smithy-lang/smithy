@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
@@ -83,7 +84,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 symbol,
                 Node.class,
                 () -> {
-                    writer.writeWithNoFormatting("Builder builder = builder();");
+                    writer.writeWithNoFormatting("Builder builder = builder()" +
+                            (shape.hasTrait(TraitDefinition.ID) ? ".sourceLocation(node);" : ";"));
                     shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider));
                     writer.write("builder.values(value0);");
                     writer.writeWithNoFormatting("return builder.build();");
@@ -101,7 +103,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 symbol,
                 Node.class,
                 () -> {
-                    writer.writeWithNoFormatting("Builder builder = builder();");
+                    writer.writeWithNoFormatting("Builder builder = builder()" +
+                            (shape.hasTrait(TraitDefinition.ID) ? ".sourceLocation(node);" : ";"));
                     shape.accept(new FromNodeMapperVisitor(writer, model, "node", symbolProvider));
                     writer.writeWithNoFormatting("return builder.build();");
                 });
@@ -159,7 +162,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         writeFromNodeJavaDoc();
         writer.write("public static $T fromNode($T node) {", symbol, Node.class);
         writer.indent();
-        writer.write("Builder builder = builder();");
+        writer.write("Builder builder = builder()" +
+                (shape.hasTrait(TraitDefinition.ID) ? ".sourceLocation(node);" : ";"));
         // If the shape has no members (i.e. is an annotation trait) then there will be no member setters, and we
         // need to terminate the line.
         writer.putContext("isEmpty", shape.members().isEmpty());

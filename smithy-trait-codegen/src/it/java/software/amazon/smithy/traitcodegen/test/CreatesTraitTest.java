@@ -71,6 +71,7 @@ import software.amazon.smithy.utils.SetUtils;
 public class CreatesTraitTest {
     private static final ShapeId DUMMY_ID = ShapeId.from("ns.foo#foo");
     private final TraitFactory provider = TraitFactory.createServiceFactory();
+    private static final SourceLocation testLocation = new SourceLocation("test.smithy", 1, 2);
 
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
@@ -235,5 +236,45 @@ public class CreatesTraitTest {
         Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
         assertEquals(SourceLocation.NONE, trait.getSourceLocation());
         assertEquals(trait, provider.createTrait(traitId, DUMMY_ID, trait.toNode()).orElseThrow(RuntimeException::new));
+    }
+
+    static Stream<Arguments> createSourceLocationTests() {
+        return Stream.of(
+                Arguments.of(NumberListTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NumberSetTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedMapTrait.ID,
+                        NestedMapTrait.builder()
+                                .putValues("1", MapUtils.of("1", MapUtils.of("2", "3")))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithListOfMapTrait.ID,
+                        StructWithListOfMapTrait.builder()
+                                .addItems(MapUtils.of("1", "2"))
+                                .addItems(MapUtils.of("3", "4"))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createSourceLocationTests")
+    void sourceLocationTest(ShapeId traitId, Node fromNode) {
+        Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
+        assertEquals(testLocation, trait.getSourceLocation());
     }
 }
