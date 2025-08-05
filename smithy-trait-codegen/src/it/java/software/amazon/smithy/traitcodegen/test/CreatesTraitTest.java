@@ -60,7 +60,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -71,6 +73,7 @@ import software.amazon.smithy.utils.SetUtils;
 public class CreatesTraitTest {
     private static final ShapeId DUMMY_ID = ShapeId.from("ns.foo#foo");
     private final TraitFactory provider = TraitFactory.createServiceFactory();
+    private static final SourceLocation testLocation = new SourceLocation("test.smithy", 1, 2);
 
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
@@ -235,5 +238,55 @@ public class CreatesTraitTest {
         Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
         assertEquals(SourceLocation.NONE, trait.getSourceLocation());
         assertEquals(trait, provider.createTrait(traitId, DUMMY_ID, trait.toNode()).orElseThrow(RuntimeException::new));
+    }
+
+    static Stream<Arguments> createSourceLocationTests() {
+        return Stream.of(
+                Arguments.of(BigDecimalTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(BigIntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(ByteTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(DoubleTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(FloatTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(IntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(LongTrait.ID, new NumberNode(1L, testLocation)),
+                Arguments.of(ShortTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(StringTrait.ID, new StringNode("a", testLocation)),
+                Arguments.of(TimestampTrait.ID, new StringNode("1985-04-12T23:20:50.52Z", testLocation)),
+                Arguments.of(NumberListTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NumberSetTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedMapTrait.ID,
+                        NestedMapTrait.builder()
+                                .putValues("1", MapUtils.of("1", MapUtils.of("2", "3")))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithListOfMapTrait.ID,
+                        StructWithListOfMapTrait.builder()
+                                .addItems(MapUtils.of("1", "2"))
+                                .addItems(MapUtils.of("3", "4"))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createSourceLocationTests")
+    void sourceLocationTest(ShapeId traitId, Node fromNode) {
+        Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
+        assertEquals(testLocation, trait.getSourceLocation());
     }
 }
