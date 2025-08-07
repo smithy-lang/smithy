@@ -1,0 +1,1 @@
+[ERROR] com.foo#MyDoc: Shape `com.foo#MyDoc` cannot be applied as a trait. If this is a custom trait, please add `@trait` to this shape. | Model
