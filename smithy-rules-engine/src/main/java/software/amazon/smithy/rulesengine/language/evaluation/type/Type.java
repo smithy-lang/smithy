@@ -38,20 +38,20 @@ public interface Type {
     }
 
     static Type fromParameterType(ParameterType parameterType) {
-        if (parameterType == ParameterType.STRING) {
-            return stringType();
+        switch (parameterType) {
+            case STRING:
+                return stringType();
+            case BOOLEAN:
+                return booleanType();
+            case STRING_ARRAY:
+                return arrayType(stringType());
+            default:
+                throw new IllegalArgumentException("Unexpected parameter type: " + parameterType);
         }
-        if (parameterType == ParameterType.BOOLEAN) {
-            return booleanType();
-        }
-        if (parameterType == ParameterType.STRING_ARRAY) {
-            return arrayType(stringType());
-        }
-        throw new IllegalArgumentException("Unexpected parameter type: " + parameterType);
     }
 
     static AnyType anyType() {
-        return new AnyType();
+        return AnyType.INSTANCE;
     }
 
     static ArrayType arrayType(Type inner) {
@@ -59,19 +59,19 @@ public interface Type {
     }
 
     static BooleanType booleanType() {
-        return new BooleanType();
+        return BooleanType.INSTANCE;
     }
 
     static EmptyType emptyType() {
-        return new EmptyType();
+        return EmptyType.INSTANCE;
     }
 
     static EndpointType endpointType() {
-        return new EndpointType();
+        return EndpointType.INSTANCE;
     }
 
     static IntegerType integerType() {
-        return new IntegerType();
+        return IntegerType.INSTANCE;
     }
 
     static OptionalType optionalType(Type type) {
@@ -83,7 +83,7 @@ public interface Type {
     }
 
     static StringType stringType() {
-        return new StringType();
+        return StringType.INSTANCE;
     }
 
     static TupleType tupleType(List<Type> members) {

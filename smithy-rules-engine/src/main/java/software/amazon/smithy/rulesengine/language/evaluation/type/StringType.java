@@ -8,6 +8,9 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
  * The "string" type.
  */
 public final class StringType extends AbstractType {
+
+    static final StringType INSTANCE = new StringType();
+
     StringType() {}
 
     @Override
