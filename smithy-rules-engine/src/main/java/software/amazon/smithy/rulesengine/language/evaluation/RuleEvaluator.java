@@ -184,6 +184,12 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     }
 
     @Override
+    public Value visitCoalesce(Expression left, Expression right) {
+        Value leftValue = left.accept(this);
+        return leftValue.isEmpty() ? right.accept(this) : leftValue;
+    }
+
+    @Override
     public Value visitNot(Expression not) {
         return Value.booleanValue(!not.accept(this).expectBooleanValue().getValue());
     }

@@ -8,6 +8,9 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
  * The "boolean" type.
  */
 public final class BooleanType extends AbstractType {
+
+    static final BooleanType INSTANCE = new BooleanType();
+
     BooleanType() {}
 
     @Override
