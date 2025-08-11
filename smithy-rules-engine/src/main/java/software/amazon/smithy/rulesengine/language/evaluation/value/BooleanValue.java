@@ -14,9 +14,17 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
  * A boolean value of true or false.
  */
 public final class BooleanValue extends Value {
+
+    static final BooleanValue TRUE = new BooleanValue(true);
+    static final BooleanValue FALSE = new BooleanValue(false);
+
     private final boolean value;
 
-    BooleanValue(boolean value) {
+    static BooleanValue create(boolean v) {
+        return v ? TRUE : FALSE;
+    }
+
+    private BooleanValue(boolean value) {
         super(SourceLocation.none());
         this.value = value;
     }

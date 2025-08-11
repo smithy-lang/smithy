@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
+import software.amazon.smithy.rulesengine.logic.cfg.ConditionDependencyGraph;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -60,7 +61,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     private enum OptimizationEffort {
         COARSE(12, 4, 0),
         MEDIUM(2, 18, 5),
-        GRANULAR(1, 30, 6);
+        GRANULAR(1, 48, 10);
 
         final int sampleRate;
         final int maxPositions;
@@ -253,7 +254,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     ) {
 
         int improvements = 0;
-        OrderConstraints constraints = new OrderConstraints(dependencyGraph, orderView);
+        ConditionDependencyGraph.OrderConstraints constraints = dependencyGraph.createOrderConstraints(orderView);
         Bdd bestBdd = null;
         int bestSize = currentSize;
         List<Rule> bestResults = null;
@@ -287,7 +288,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                 improvements++;
 
                 // Update constraints after successful move
-                constraints = new OrderConstraints(dependencyGraph, orderView);
+                constraints = dependencyGraph.createOrderConstraints(orderView);
             }
         }
 
@@ -295,7 +296,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     }
 
     private OptimizationResult performAdjacentSwaps(Condition[] order, List<Condition> orderView, int currentSize) {
-        OrderConstraints constraints = new OrderConstraints(dependencyGraph, orderView);
+        ConditionDependencyGraph.OrderConstraints constraints = dependencyGraph.createOrderConstraints(orderView);
         Bdd bestBdd = null;
         int bestSize = currentSize;
         List<Rule> bestResults = null;
@@ -339,7 +340,11 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                 .orElse(null);
     }
 
-    private List<Integer> getPositions(int varIdx, OrderConstraints constraints, OptimizationEffort effort) {
+    private List<Integer> getPositions(
+            int varIdx,
+            ConditionDependencyGraph.OrderConstraints constraints,
+            OptimizationEffort effort
+    ) {
         int min = constraints.getMinValidPosition(varIdx);
         int max = constraints.getMaxValidPosition(varIdx);
         int range = max - min;
@@ -348,7 +353,12 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                 : getStrategicPositions(varIdx, min, max, range, constraints, effort);
     }
 
-    private List<Integer> getExhaustivePositions(int varIdx, int min, int max, OrderConstraints constraints) {
+    private List<Integer> getExhaustivePositions(
+            int varIdx,
+            int min,
+            int max,
+            ConditionDependencyGraph.OrderConstraints constraints
+    ) {
         List<Integer> positions = new ArrayList<>(max - min);
         for (int p = min; p < max; p++) {
             if (p != varIdx && constraints.canMove(varIdx, p)) {
@@ -363,7 +373,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
             int min,
             int max,
             int range,
-            OrderConstraints constraints,
+            ConditionDependencyGraph.OrderConstraints constraints,
             OptimizationEffort effort
     ) {
         List<Integer> positions = new ArrayList<>(effort.maxPositions);
@@ -426,7 +436,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
      */
     private BddCompilationResult compileBddWithResults(List<Condition> ordering) {
         BddBuilder builder = threadBuilder.get().reset();
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.fixed(ordering), builder);
+        BddCompiler compiler = new BddCompiler(cfg, OrderingStrategy.fixed(ordering), builder);
         Bdd bdd = compiler.compile();
         return new BddCompilationResult(bdd, compiler.getIndexedResults());
     }

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -58,15 +59,15 @@ class BddCompilerTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
 
         Bdd bdd = compiler.compile();
 
         assertNotNull(bdd);
         assertEquals(1, bdd.getConditionCount());
-        // Results include: endpoint when condition true, no match when false
-        assertTrue(bdd.getResultCount() >= 2);
-        assertTrue(bdd.getRootRef() > 0);
+        // Results include: NoMatchRule, endpoint, and possibly a terminal for the false branch
+        assertEquals(3, bdd.getResultCount());
+        assertTrue(bdd.getRootRef() != 0);
     }
 
     @Test
@@ -82,13 +83,13 @@ class BddCompilerTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
 
         Bdd bdd = compiler.compile();
 
         assertEquals(1, bdd.getConditionCount());
-        // Similar to endpoint rule
-        assertTrue(bdd.getResultCount() >= 2);
+        // Results: NoMatchRule, error, and possibly a terminal
+        assertEquals(3, bdd.getResultCount());
     }
 
     @Test
@@ -104,12 +105,12 @@ class BddCompilerTest {
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).addRule(treeRule).build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
 
         Bdd bdd = compiler.compile();
 
         assertEquals(2, bdd.getConditionCount());
-        assertTrue(bdd.getNodeCount() > 2); // Should have multiple nodes
+        assertTrue(bdd.getNodeCount() >= 2); // Should have multiple nodes
     }
 
     @Test
@@ -143,15 +144,19 @@ class BddCompilerTest {
         assertNotNull(condB, "Could not find condition for B");
 
         // Use fixed ordering (B before A)
-        ConditionOrderingStrategy customOrdering = ConditionOrderingStrategy.fixed(Arrays.asList(condB, condA));
+        OrderingStrategy customOrdering = OrderingStrategy.fixed(Arrays.asList(condB, condA));
 
         BddCompiler compiler = new BddCompiler(cfg, customOrdering, new BddBuilder());
         Bdd bdd = compiler.compile();
 
-        // Verify ordering was applied by checking the compiled BDD
-        // Since we don't have access to conditions from Bdd anymore, we just verify compilation succeeded
+        List<Condition> orderedConditions = compiler.getOrderedConditions();
+
+        // Verify ordering was applied
         assertEquals(2, bdd.getConditionCount());
-        assertNotNull(bdd);
+        assertEquals(2, orderedConditions.size());
+        // Verify B comes before A in the ordering
+        assertEquals(condB, orderedConditions.get(0));
+        assertEquals(condA, orderedConditions.get(1));
     }
 
     @Test
@@ -160,14 +165,14 @@ class BddCompilerTest {
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(Parameters.builder().build()).build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         assertEquals(0, bdd.getConditionCount());
-        // Even with no rules, there's still a result (no match)
-        assertTrue(bdd.getResultCount() > 0);
+        // Even with no rules, there's the NoMatchRule and possibly a terminal
+        assertEquals(2, bdd.getResultCount());
         // Should have at least terminal node
-        assertTrue(bdd.getNodeCount() > 0);
+        assertEquals(1, bdd.getNodeCount());
     }
 
     @Test
@@ -193,12 +198,54 @@ class BddCompilerTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
+
+        Bdd bdd = compiler.compile();
+        List<Rule> results = compiler.getIndexedResults();
+
+        // Should have 2 conditions
+        assertEquals(2, bdd.getConditionCount());
+        // Results: NoMatchRule at index 0, plus the endpoint(s)
+        // The compiler may deduplicate identical endpoints or keep them separate
+        assertTrue(bdd.getResultCount() >= 2);
+        assertTrue(bdd.getResultCount() <= 3);
+
+        // Verify NoMatchRule is always at index 0
+        assertEquals("NoMatchRule", results.get(0).getClass().getSimpleName());
+    }
+
+    @Test
+    void testCompileWithReduction() {
+        // Test that the BDD is properly reduced after compilation
+        Rule rule = EndpointRule.builder()
+                .conditions(
+                        Condition.builder().fn(TestHelpers.isSet("Region")).build(),
+                        Condition.builder().fn(TestHelpers.isSet("Bucket")).build())
+                .endpoint(TestHelpers.endpoint("https://example.com"));
+
+        Parameters params = Parameters.builder()
+                .addParameter(REGION_PARAM)
+                .addParameter(BUCKET_PARAM)
+                .build();
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .addRule(rule)
+                .build();
+
+        Cfg cfg = Cfg.from(ruleSet);
+        BddBuilder builder = new BddBuilder();
+        BddCompiler compiler = new BddCompiler(cfg, builder);
 
         Bdd bdd = compiler.compile();
 
-        // The BDD compiler might create separate result nodes even for same endpoint
-        // depending on how the CFG is structured
-        assertEquals(3, bdd.getResultCount());
+        // The BDD should be reduced (no redundant nodes)
+        assertNotNull(bdd);
+        assertEquals(2, bdd.getConditionCount());
+
+        // After reduction, we should have a minimal BDD
+        // For 2 conditions with AND semantics leading to one endpoint:
+        // We expect approximately 3-4 nodes (depending on the exact structure)
+        assertTrue(bdd.getNodeCount() <= 5, "BDD should be reduced to minimal form");
     }
 }

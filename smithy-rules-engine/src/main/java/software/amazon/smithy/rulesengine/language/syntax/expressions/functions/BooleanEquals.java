@@ -102,10 +102,5 @@ public final class BooleanEquals extends LibraryFunction {
         public BooleanEquals createFunction(FunctionNode functionNode) {
             return new BooleanEquals(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 2;
-        }
     }
 }

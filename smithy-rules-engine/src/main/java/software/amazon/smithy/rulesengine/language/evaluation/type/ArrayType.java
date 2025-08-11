@@ -4,12 +4,17 @@
  */
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 
 /**
  * The "array" type, which contains entries of a member type.
  */
 public final class ArrayType extends AbstractType {
+
+    private static final Optional<Literal> ZERO = Optional.of(Literal.tupleLiteral(Collections.emptyList()));
     private final Type member;
 
     ArrayType(Type member) {
@@ -50,5 +55,10 @@ public final class ArrayType extends AbstractType {
     @Override
     public String toString() {
         return String.format("ArrayType[%s]", member);
+    }
+
+    @Override
+    public Optional<Literal> getZeroValue() {
+        return ZERO;
     }
 }

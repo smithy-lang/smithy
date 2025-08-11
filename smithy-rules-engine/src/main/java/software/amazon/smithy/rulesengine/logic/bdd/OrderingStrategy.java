@@ -6,12 +6,13 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 
 /**
  * Strategy interface for ordering conditions in a BDD.
  */
 @FunctionalInterface
-interface ConditionOrderingStrategy {
+interface OrderingStrategy {
     /**
      * Orders the given conditions for BDD construction.
      *
@@ -21,20 +22,19 @@ interface ConditionOrderingStrategy {
     List<Condition> orderConditions(Condition[] conditions);
 
     /**
-     * Default ordering strategy that uses the existing ConditionOrderer.
+     * Creates an initial ordering strategy using the given CFG.
      *
-     * @return return the default ordering strategy.
+     * @param cfg CFG to process.
+     * @return the initial ordering strategy.
      */
-    static ConditionOrderingStrategy defaultOrdering() {
-        return DefaultOrderingStrategy::orderConditions;
+    static OrderingStrategy initialOrdering(Cfg cfg) {
+        return new CfgGuidedOrdering(cfg);
     }
 
     /**
      * Fixed ordering strategy that uses a pre-determined order.
-     *
-     * @return a fixed ordering strategy.
      */
-    static ConditionOrderingStrategy fixed(List<Condition> ordering) {
+    static OrderingStrategy fixed(List<Condition> ordering) {
         return conditions -> ordering;
     }
 }

@@ -65,7 +65,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      * @return the BddTrait containing the compiled BDD and all context
      */
     public static BddTrait from(Cfg cfg) {
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         if (compiler.getOrderedConditions().size() != bdd.getConditionCount()) {
