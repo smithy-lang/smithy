@@ -194,6 +194,15 @@
         <Bug pattern="DE_MIGHT_IGNORE"/>
     </Match>
 
+    <!-- We could mark these as volatile, but in practice we don't share instances across
+         threads, so there isn't a need to. This class is private, so we don't have to worry
+         about outside
+          usage. -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.ModelBuilder"/>
+        <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE"/>
+    </Match>
+
     <!-- This checks for mutability, but it's full of false positives. Among other things, it doesn't
          recognize SetUtils.copyOf and similar as providing immutable collections. -->
     <Match>
