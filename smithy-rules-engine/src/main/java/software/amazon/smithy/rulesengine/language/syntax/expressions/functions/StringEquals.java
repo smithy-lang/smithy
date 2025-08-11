@@ -111,10 +111,5 @@ public final class StringEquals extends LibraryFunction {
         public StringEquals createFunction(FunctionNode functionNode) {
             return new StringEquals(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 3;
-        }
     }
 }

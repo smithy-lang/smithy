@@ -6,8 +6,10 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -128,5 +130,18 @@ public interface Type {
 
     default TupleType expectTupleType() throws InnerParseError {
         throw new InnerParseError("Expected tuple but found " + this);
+    }
+
+    /**
+     * Gets the default zero-value of the type as a Literal.
+     *
+     * <p>Strings, booleans, integers, and arrays have zero values. Other types do not. E.g., a map might have
+     * required properties, and the behavior of a tuple _seems_ to imply that each member is required. Optionals
+     * return the zero value of its inner type.
+     *
+     * @return the default zero value.
+     */
+    default Optional<Literal> getZeroValue() {
+        return Optional.empty();
     }
 }

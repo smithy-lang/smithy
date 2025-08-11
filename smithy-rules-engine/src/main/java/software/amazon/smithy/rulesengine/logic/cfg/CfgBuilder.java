@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.logic.cfg;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,7 @@ public final class CfgBuilder {
      * @return a result node (cached if identical rule already seen)
      */
     public CfgNode createResult(Rule rule) {
-        Rule canonical = rule.withoutConditions();
+        Rule canonical = rule.withConditions(Collections.emptyList());
         Rule interned = resultCache.computeIfAbsent(canonical, k -> k);
         return resultNodeCache.computeIfAbsent(interned, ResultNode::new);
     }

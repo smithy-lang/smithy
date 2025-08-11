@@ -26,7 +26,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 
-public class VariableDisambiguatorTest {
+public class SsaTransformTest {
 
     @Test
     void testNoDisambiguationNeeded() {
@@ -53,7 +53,6 @@ public class VariableDisambiguatorTest {
 
         EndpointRuleSet result = SsaTransform.transform(original);
 
-        // Should be unchanged
         assertEquals(original, result);
     }
 
@@ -82,11 +81,9 @@ public class VariableDisambiguatorTest {
         List<Rule> resultRules = result.getRules();
         assertEquals(2, resultRules.size());
 
-        // First rule should keep "temp"
         EndpointRule resultRule1 = (EndpointRule) resultRules.get(0);
         assertEquals("temp", resultRule1.getConditions().get(0).getResult().get().toString());
 
-        // Second rule should have "temp_1"
         EndpointRule resultRule2 = (EndpointRule) resultRules.get(1);
         assertEquals("temp_1", resultRule2.getConditions().get(0).getResult().get().toString());
     }
@@ -143,7 +140,6 @@ public class VariableDisambiguatorTest {
 
         EndpointRuleSet result = SsaTransform.transform(original);
 
-        // Should handle error rules without issues
         assertEquals(1, result.getRules().size());
         assertInstanceOf(ErrorRule.class, result.getRules().get(0));
     }

@@ -4,11 +4,15 @@
  */
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+import java.util.Optional;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+
 /**
  * The "string" type.
  */
 public final class StringType extends AbstractType {
 
+    private static final Optional<Literal> ZERO = Optional.of(Literal.of(""));
     static final StringType INSTANCE = new StringType();
 
     StringType() {}
@@ -16,5 +20,10 @@ public final class StringType extends AbstractType {
     @Override
     public StringType expectStringType() {
         return this;
+    }
+
+    @Override
+    public Optional<Literal> getZeroValue() {
+        return ZERO;
     }
 }

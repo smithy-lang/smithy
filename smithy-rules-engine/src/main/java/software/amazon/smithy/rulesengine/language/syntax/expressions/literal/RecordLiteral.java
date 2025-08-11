@@ -83,13 +83,4 @@ public final class RecordLiteral extends Literal {
         }
         return references;
     }
-
-    @Override
-    protected int calculateComplexity() {
-        int complexity = 1;
-        for (Literal value : members().values()) {
-            complexity += value.getComplexity();
-        }
-        return complexity;
-    }
 }

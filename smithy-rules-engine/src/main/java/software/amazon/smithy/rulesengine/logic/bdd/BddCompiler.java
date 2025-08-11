@@ -28,7 +28,7 @@ final class BddCompiler {
 
     private final Cfg cfg;
     private final BddBuilder bddBuilder;
-    private final ConditionOrderingStrategy orderingStrategy;
+    private final OrderingStrategy orderingStrategy;
 
     // Condition ordering
     private List<Condition> orderedConditions;
@@ -43,7 +43,11 @@ final class BddCompiler {
     // Simple cache to avoid recomputing identical subgraphs
     private final Map<CfgNode, Integer> nodeCache = new HashMap<>();
 
-    BddCompiler(Cfg cfg, ConditionOrderingStrategy orderingStrategy, BddBuilder bddBuilder) {
+    BddCompiler(Cfg cfg, BddBuilder bddBuilder) {
+        this(cfg, OrderingStrategy.initialOrdering(cfg), bddBuilder);
+    }
+
+    BddCompiler(Cfg cfg, OrderingStrategy orderingStrategy, BddBuilder bddBuilder) {
         this.cfg = Objects.requireNonNull(cfg, "CFG cannot be null");
         this.orderingStrategy = Objects.requireNonNull(orderingStrategy, "Ordering strategy cannot be null");
         this.bddBuilder = Objects.requireNonNull(bddBuilder, "BDD builder cannot be null");

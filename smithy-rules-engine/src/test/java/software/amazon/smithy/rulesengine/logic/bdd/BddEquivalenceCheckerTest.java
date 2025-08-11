@@ -37,25 +37,19 @@ class BddEquivalenceCheckerTest {
                                 .conditions(Condition.builder().fn(TestHelpers.isSet("Region")).build())
                                 .endpoint(TestHelpers.endpoint("https://example.com")),
                         // Default case
-                        ErrorRule.builder()
-                                .error(Literal.of("No region provided"))))
+                        ErrorRule.builder().error(Literal.of("No region provided"))))
                 .build();
 
-        // Convert to CFG
         Cfg cfg = Cfg.from(ruleSet);
-
-        // Create BDD from CFG
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
-        // Create checker
         BddEquivalenceChecker checker = BddEquivalenceChecker.of(
                 cfg,
                 bdd,
                 compiler.getOrderedConditions(),
                 compiler.getIndexedResults());
 
-        // Should pass verification
         assertDoesNotThrow(checker::verify);
     }
 
@@ -64,14 +58,11 @@ class BddEquivalenceCheckerTest {
         // Empty ruleset with a default endpoint
         EndpointRuleSet ruleSet = EndpointRuleSet.builder()
                 .parameters(Parameters.builder().build())
-                .rules(ListUtils.of(
-                        EndpointRule.builder()
-                                .endpoint(TestHelpers.endpoint("https://default.com"))))
+                .rules(ListUtils.of(EndpointRule.builder().endpoint(TestHelpers.endpoint("https://default.com"))))
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         BddEquivalenceChecker checker = BddEquivalenceChecker.of(
@@ -97,13 +88,11 @@ class BddEquivalenceCheckerTest {
                                         Condition.builder().fn(TestHelpers.isSet("Region")).build(),
                                         Condition.builder().fn(TestHelpers.isSet("Bucket")).build())
                                 .endpoint(TestHelpers.endpoint("https://example.com")),
-                        // Default case
-                        ErrorRule.builder()
-                                .error(Literal.of("Missing required parameters"))))
+                        ErrorRule.builder().error(Literal.of("Missing required parameters"))))
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         BddEquivalenceChecker checker = BddEquivalenceChecker.of(
@@ -130,9 +119,8 @@ class BddEquivalenceCheckerTest {
                     .endpoint(TestHelpers.endpoint("https://example" + i + ".com")));
         }
 
-        // Add default case
-        rules.add(ErrorRule.builder()
-                .error(Literal.of("No parameters set")));
+        // default case
+        rules.add(ErrorRule.builder().error(Literal.of("No parameters set")));
 
         EndpointRuleSet ruleSet = EndpointRuleSet.builder()
                 .parameters(paramsBuilder.build())
@@ -140,7 +128,7 @@ class BddEquivalenceCheckerTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         BddEquivalenceChecker checker = BddEquivalenceChecker.of(
@@ -166,12 +154,11 @@ class BddEquivalenceCheckerTest {
                         EndpointRule.builder()
                                 .conditions(Condition.builder().fn(TestHelpers.isSet("Region")).build())
                                 .endpoint(TestHelpers.endpoint("https://example.com")),
-                        ErrorRule.builder()
-                                .error(Literal.of("No region provided"))))
+                        ErrorRule.builder().error(Literal.of("No region provided"))))
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddCompiler compiler = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
         BddEquivalenceChecker checker = BddEquivalenceChecker.of(
@@ -182,6 +169,44 @@ class BddEquivalenceCheckerTest {
 
         // Set a short timeout
         checker.setMaxDuration(Duration.ofMillis(100));
+
+        assertDoesNotThrow(checker::verify);
+    }
+
+    @Test
+    void testLargeNumberOfConditions() {
+        // Test with 25 conditions to ensure it uses sampling rather than exhaustive testing
+        Parameters.Builder paramsBuilder = Parameters.builder();
+        List<Condition> conditions = new ArrayList<>();
+
+        for (int i = 0; i < 25; i++) {
+            String paramName = String.format("Param%02d", i);
+            paramsBuilder.addParameter(Parameter.builder().name(paramName).type(ParameterType.STRING).build());
+            conditions.add(Condition.builder().fn(TestHelpers.isSet(paramName)).build());
+        }
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(paramsBuilder.build())
+                .rules(ListUtils.of(
+                        EndpointRule.builder()
+                                .conditions(conditions)
+                                .endpoint(TestHelpers.endpoint("https://example.com")),
+                        ErrorRule.builder().error(Literal.of("Not all parameters set"))))
+                .build();
+
+        Cfg cfg = Cfg.from(ruleSet);
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
+        Bdd bdd = compiler.compile();
+
+        BddEquivalenceChecker checker = BddEquivalenceChecker.of(
+                cfg,
+                bdd,
+                compiler.getOrderedConditions(),
+                compiler.getIndexedResults());
+
+        // Set reasonable limits for large condition sets
+        checker.setMaxSamples(10000);
+        checker.setMaxDuration(Duration.ofSeconds(5));
 
         assertDoesNotThrow(checker::verify);
     }
