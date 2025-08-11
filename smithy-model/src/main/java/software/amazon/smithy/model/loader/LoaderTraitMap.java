@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -46,7 +47,7 @@ final class LoaderTraitMap {
         this.allowUnknownTraits = allowUnknownTraits;
     }
 
-    void applyTraitsToNonMixinsInShapeMap(LoaderShapeMap shapeMap) {
+    void applyTraitsToNonMixinsInShapeMap(LoaderShapeMap shapeMap, List<ShapeId> undefinedTraits) {
         for (Map.Entry<ShapeId, Map<ShapeId, Node>> entry : traits.entrySet()) {
             ShapeId target = entry.getKey();
             ShapeId root = target.withoutMember();
@@ -64,6 +65,7 @@ final class LoaderTraitMap {
                 Node traitNode = traitEntry.getValue();
                 Trait created = createTrait(target, traitId, traitNode);
                 validateTraitIsKnown(target, traitId, created, traitNode.getSourceLocation(), shapeMap);
+                validateTraitWithTraitDefinition(traitId, undefinedTraits);
 
                 if (target.hasMember()) {
                     // Apply the trait to a member by reaching into the members of each LoadOperation.DefineShape.
@@ -141,6 +143,13 @@ final class LoaderTraitMap {
                     .message(String.format("Unable to resolve trait `%s`. If this is a custom trait, then it must be "
                             + "defined before it can be used in a model.", traitId))
                     .build());
+        }
+    }
+
+    private void validateTraitWithTraitDefinition(ShapeId traitId, List<ShapeId> undefinedTraits) {
+        Map<ShapeId, Node> appliedTraits = traits.get(traitId);
+        if (appliedTraits == null || !appliedTraits.containsKey(TraitDefinition.ID)) {
+            undefinedTraits.add(traitId);
         }
     }
 
