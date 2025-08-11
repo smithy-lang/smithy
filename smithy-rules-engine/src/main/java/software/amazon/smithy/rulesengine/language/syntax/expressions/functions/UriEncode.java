@@ -99,10 +99,5 @@ public final class UriEncode extends LibraryFunction {
         public UriEncode createFunction(FunctionNode functionNode) {
             return new UriEncode(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 8;
-        }
     }
 }

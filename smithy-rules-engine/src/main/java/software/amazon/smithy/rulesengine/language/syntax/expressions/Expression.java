@@ -36,7 +36,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public abstract class Expression extends SyntaxElement implements FromSourceLocation, ToNode, TypeCheck {
     private final SourceLocation sourceLocation;
-    private Integer cachedComplexity;
     private Set<String> cachedReferences;
     private Type cachedType;
 
@@ -163,27 +162,6 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
      */
     protected Set<String> calculateReferences() {
         return Collections.emptySet();
-    }
-
-    /**
-     * Get the complexity heuristic of the expression, based on functions, references, etc.
-     *
-     * @return the complexity heuristic.
-     */
-    public final int getComplexity() {
-        if (cachedComplexity == null) {
-            cachedComplexity = calculateComplexity();
-        }
-        return cachedComplexity;
-    }
-
-    /**
-     * Calculates the complexity of the expression, to be overridden by implementations.
-     *
-     * @return complexity estimate.
-     */
-    protected int calculateComplexity() {
-        return 1;
     }
 
     /**

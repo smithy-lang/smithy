@@ -112,7 +112,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns the created BooleanValue.
      */
     public static BooleanValue booleanValue(boolean value) {
-        return new BooleanValue(value);
+        return BooleanValue.create(value);
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns the created EmptyValue.
      */
     public static EmptyValue emptyValue() {
-        return new EmptyValue();
+        return EmptyValue.INSTANCE;
     }
 
     /**

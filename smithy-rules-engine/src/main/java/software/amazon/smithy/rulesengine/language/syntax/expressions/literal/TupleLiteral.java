@@ -89,13 +89,4 @@ public final class TupleLiteral extends Literal {
         }
         return references;
     }
-
-    @Override
-    protected int calculateComplexity() {
-        int complexity = 1;
-        for (Literal member : members()) {
-            complexity += member.getComplexity();
-        }
-        return complexity;
-    }
 }

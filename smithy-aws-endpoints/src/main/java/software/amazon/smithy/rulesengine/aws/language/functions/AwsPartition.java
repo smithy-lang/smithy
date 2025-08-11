@@ -184,11 +184,6 @@ public final class AwsPartition extends LibraryFunction {
         public AwsPartition createFunction(FunctionNode functionNode) {
             return new AwsPartition(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 6;
-        }
     }
 
     /**

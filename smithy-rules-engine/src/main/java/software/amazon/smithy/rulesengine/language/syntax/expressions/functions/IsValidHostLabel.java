@@ -93,11 +93,6 @@ public final class IsValidHostLabel extends LibraryFunction {
         public IsValidHostLabel createFunction(FunctionNode functionNode) {
             return new IsValidHostLabel(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 8;
-        }
     }
 
     /**

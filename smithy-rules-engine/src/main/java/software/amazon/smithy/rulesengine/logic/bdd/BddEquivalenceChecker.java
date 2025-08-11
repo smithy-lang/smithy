@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -329,7 +330,7 @@ public final class BddEquivalenceChecker {
         } else if (r1 == null || r2 == null) {
             return false;
         } else {
-            return r1.withoutConditions().equals(r2.withoutConditions());
+            return r1.withConditions(Collections.emptyList()).equals(r2.withConditions(Collections.emptyList()));
         }
     }
 

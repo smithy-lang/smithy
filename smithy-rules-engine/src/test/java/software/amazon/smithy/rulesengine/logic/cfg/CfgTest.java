@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +67,7 @@ class CfgTest {
         // Root should be a result node for a simple endpoint rule
         assertInstanceOf(ResultNode.class, cfg.getRoot());
         ResultNode resultNode = (ResultNode) cfg.getRoot();
-        assertEquals(rule.withoutConditions(), resultNode.getResult());
+        assertEquals(rule.withConditions(Collections.emptyList()), resultNode.getResult());
     }
 
     @Test

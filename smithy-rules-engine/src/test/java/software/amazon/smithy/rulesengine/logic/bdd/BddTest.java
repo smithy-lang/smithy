@@ -74,7 +74,7 @@ class BddTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd bdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        Bdd bdd = new BddCompiler(cfg, OrderingStrategy.initialOrdering(cfg), new BddBuilder()).compile();
 
         assertTrue(bdd.getConditionCount() > 0);
         assertTrue(bdd.getResultCount() > 0);
@@ -89,7 +89,7 @@ class BddTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        Bdd bdd = new BddCompiler(cfg, ConditionOrderingStrategy.defaultOrdering(), new BddBuilder()).compile();
+        Bdd bdd = new BddCompiler(cfg, OrderingStrategy.initialOrdering(cfg), new BddBuilder()).compile();
 
         assertEquals(0, bdd.getConditionCount()); // No conditions
         assertTrue(bdd.getResultCount() > 0);
@@ -297,7 +297,7 @@ class BddTest {
         assertNotEquals(bdd1, bdd6);
 
         // Different root ref (use result reference)
-        Bdd bdd7 = new Bdd(Bdd.RESULT_OFFSET + 0, 1, 1, 2, consumer -> {
+        Bdd bdd7 = new Bdd(Bdd.RESULT_OFFSET, 1, 1, 2, consumer -> {
             consumer.accept(-1, 1, -1);
             consumer.accept(0, 1, -1);
         });

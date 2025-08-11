@@ -245,13 +245,4 @@ public abstract class LibraryFunction extends Expression {
         }
         return false;
     }
-
-    @Override
-    protected int calculateComplexity() {
-        int complexity = getFunctionDefinition().getCostHeuristic();
-        for (Expression arg : getArguments()) {
-            complexity += arg.getComplexity();
-        }
-        return complexity;
-    }
 }

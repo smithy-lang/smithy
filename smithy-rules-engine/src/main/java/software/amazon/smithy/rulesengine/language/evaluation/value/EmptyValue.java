@@ -12,6 +12,8 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
  * An empty value.
  */
 public final class EmptyValue extends Value {
+    static final EmptyValue INSTANCE = new EmptyValue();
+
     public EmptyValue() {
         super(SourceLocation.none());
     }

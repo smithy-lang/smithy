@@ -135,20 +135,24 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
     /**
-     * Get a new Rule of the same type that has the same values, but no conditions.
+     * Get a new Rule of the same type that has the same values, but with the given conditions.
      *
-     * @return the rule without conditions.
+     * @param conditions Conditions to use.
+     * @return the rule with the given conditions.
      * @throws UnsupportedOperationException if it is a TreeRule or Condition rule.
      */
-    public Rule withoutConditions() {
-        if (getConditions().isEmpty()) {
+    public final Rule withConditions(List<Condition> conditions) {
+        if (getConditions().equals(conditions)) {
             return this;
         } else if (this instanceof ErrorRule) {
-            return new ErrorRule(ErrorRule.builder(this), ((ErrorRule) this).getError());
+            return new ErrorRule(ErrorRule.builder(this).conditions(conditions), ((ErrorRule) this).getError());
         } else if (this instanceof EndpointRule) {
-            return new EndpointRule(EndpointRule.builder(this), ((EndpointRule) this).getEndpoint());
+            return new EndpointRule(EndpointRule.builder(this).conditions(conditions),
+                    ((EndpointRule) this).getEndpoint());
+        } else if (this instanceof TreeRule) {
+            return new TreeRule(TreeRule.builder(this).conditions(conditions), ((TreeRule) this).getRules());
         } else {
-            throw new UnsupportedOperationException("Cannot remove conditions from " + this);
+            throw new UnsupportedOperationException("Unknown rule type: " + this.getClass());
         }
     }
 

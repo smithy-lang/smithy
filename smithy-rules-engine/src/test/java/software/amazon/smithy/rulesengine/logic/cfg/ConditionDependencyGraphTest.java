@@ -2,12 +2,13 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.rulesengine.logic.bdd;
+package software.amazon.smithy.rulesengine.logic.cfg;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -98,7 +99,7 @@ class ConditionDependencyGraphTest {
         Condition known = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Condition unknown = Condition.builder().fn(TestHelpers.isSet("Bucket")).build();
 
-        List<Condition> conditions = Arrays.asList(known);
+        List<Condition> conditions = Collections.singletonList(known);
         ConditionDependencyGraph graph = new ConditionDependencyGraph(conditions);
 
         // Getting dependencies for unknown condition returns empty set

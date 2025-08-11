@@ -45,16 +45,4 @@ public interface FunctionDefinition {
      * @return the created LibraryFunction implementation.
      */
     LibraryFunction createFunction(FunctionNode functionNode);
-
-    /**
-     * Get the relative "cost" of the function as compared to the baseline of "isset" which equals 1.
-     *
-     * <p>If this function is considered more computationally expensive, then it has a value higher than 1. Otherwise,
-     * it has a value equal to 1. Defaults to "4" for unknown functions.
-     *
-     * @return the relative cost.
-     */
-    default int getCostHeuristic() {
-        return 4;
-    }
 }

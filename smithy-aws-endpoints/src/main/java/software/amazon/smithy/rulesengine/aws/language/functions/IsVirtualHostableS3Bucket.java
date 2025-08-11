@@ -97,11 +97,6 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
         public IsVirtualHostableS3Bucket createFunction(FunctionNode functionNode) {
             return new IsVirtualHostableS3Bucket(functionNode);
         }
-
-        @Override
-        public int getCostHeuristic() {
-            return 8;
-        }
     }
 
     /**
