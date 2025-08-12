@@ -16,7 +16,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: gradle/actions/wrapper-validation@v4
 
       - name: Set up JDK ${{ matrix.java }}
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Build
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Set up Python 3.x
       uses: actions/setup-python@v5
@@ -69,12 +69,12 @@ jobs:
     name: Build AWS API Models
     steps:
       - name: Checkout Smithy
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: 'smithy'
 
       - name: Checkout api-models-aws
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: aws/api-models-aws
           path: api-models-aws

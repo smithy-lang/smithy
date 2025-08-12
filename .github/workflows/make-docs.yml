@@ -32,7 +32,7 @@ jobs:
         node-version: latest
 
     - name: Checkout repo 
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup
       run: |
         mkdir -p $ARTIFACTS_DIR
@@ -78,7 +78,7 @@ jobs:
     needs: build-docs
     steps:
     - name: Checkout GitHub pages branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         ref: 'gh-pages'
     - name: Download artifacts
