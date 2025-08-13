@@ -10,7 +10,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,6 @@ import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
@@ -39,20 +37,17 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
  */
 final class SsaTransform {
 
-    // Stack of scopes, each mapping original variable names to their current SSA names
     private final Deque<Map<String, String>> scopeStack = new ArrayDeque<>();
     private final Map<Condition, Condition> rewrittenConditions = new IdentityHashMap<>();
     private final Map<Rule, Rule> rewrittenRules = new IdentityHashMap<>();
     private final VariableAnalysis variableAnalysis;
-    private final ReferenceRewriter referenceRewriter;
+    private final TreeRewriter referenceRewriter;
 
     private SsaTransform(VariableAnalysis variableAnalysis) {
-        // Start with an empty global scope
         scopeStack.push(new HashMap<>());
         this.variableAnalysis = variableAnalysis;
 
-        // Create a reference rewriter that uses our scope resolution
-        this.referenceRewriter = new ReferenceRewriter(
+        this.referenceRewriter = new TreeRewriter(
                 ref -> {
                     String originalName = ref.getName().toString();
                     String uniqueName = resolveReference(originalName);
@@ -62,13 +57,10 @@ final class SsaTransform {
     }
 
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
+        ruleSet = VariableConsolidationTransform.transform(ruleSet);
         ruleSet = CoalesceTransform.transform(ruleSet);
+        SsaTransform ssaTransform = new SsaTransform(VariableAnalysis.analyze(ruleSet));
 
-        // Use VariableAnalysis to get all the information we need
-        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
-
-        // Rewrite with the pre-computed mappings
-        SsaTransform ssaTransform = new SsaTransform(analysis);
         List<Rule> rewrittenRules = new ArrayList<>(ruleSet.getRules().size());
         for (Rule original : ruleSet.getRules()) {
             rewrittenRules.add(ssaTransform.processRule(original));
@@ -88,12 +80,10 @@ final class SsaTransform {
         return rewrittenRule;
     }
 
-    // Enters a new scope, inheriting all variable mappings from the parent scope
     private void enterScope() {
         scopeStack.push(new HashMap<>(scopeStack.peek()));
     }
 
-    // Exits the current scope, reverting to the parent scope's variable mappings
     private void exitScope() {
         if (scopeStack.size() <= 1) {
             throw new IllegalStateException("Cannot exit global scope");
@@ -101,11 +91,9 @@ final class SsaTransform {
         scopeStack.pop();
     }
 
-    // Rewrites a condition's bindings and references to use SSA names
     private Condition rewriteCondition(Condition condition) {
         boolean hasBinding = condition.getResult().isPresent();
 
-        // Check cache for non-binding conditions
         if (!hasBinding) {
             Condition cached = rewrittenConditions.get(condition);
             if (cached != null) {
@@ -116,19 +104,21 @@ final class SsaTransform {
         LibraryFunction fn = condition.getFunction();
         Set<String> rewritableRefs = filterOutInputParameters(fn.getReferences());
 
-        // Determine if this binding needs an SSA name
         String uniqueBindingName = null;
         boolean needsUniqueBinding = false;
         if (hasBinding) {
             String varName = condition.getResult().get().toString();
-            Map<String, String> expressionMap = variableAnalysis.getExpressionMappings().get(varName);
-            if (expressionMap != null) {
-                uniqueBindingName = expressionMap.get(fn.toString());
-                needsUniqueBinding = uniqueBindingName != null && !uniqueBindingName.equals(varName);
+
+            // Only need SSA rename if variable has multiple bindings
+            if (variableAnalysis.hasMultipleBindings(varName)) {
+                Map<String, String> expressionMap = variableAnalysis.getExpressionMappings().get(varName);
+                if (expressionMap != null) {
+                    uniqueBindingName = expressionMap.get(fn.toString());
+                    needsUniqueBinding = uniqueBindingName != null && !uniqueBindingName.equals(varName);
+                }
             }
         }
 
-        // Early return if no rewriting needed
         if (!needsRewriting(rewritableRefs) && !needsUniqueBinding) {
             if (!hasBinding) {
                 rewrittenConditions.put(condition, condition);
@@ -136,16 +126,12 @@ final class SsaTransform {
             return condition;
         }
 
-        // Rewrite the expression
         LibraryFunction rewrittenExpr = (LibraryFunction) referenceRewriter.rewrite(fn);
         boolean exprChanged = rewrittenExpr != fn;
 
-        // Build the rewritten condition
         Condition rewritten;
         if (hasBinding && uniqueBindingName != null) {
-            // Update scope with the SSA name
             scopeStack.peek().put(condition.getResult().get().toString(), uniqueBindingName);
-
             if (needsUniqueBinding || exprChanged) {
                 rewritten = condition.toBuilder().fn(rewrittenExpr).result(Identifier.of(uniqueBindingName)).build();
             } else {
@@ -157,7 +143,6 @@ final class SsaTransform {
             rewritten = condition;
         }
 
-        // Cache non-binding conditions
         if (!hasBinding) {
             rewrittenConditions.put(condition, rewritten);
         }
@@ -169,12 +154,12 @@ final class SsaTransform {
         if (references.isEmpty() || variableAnalysis.getInputParams().isEmpty()) {
             return references;
         }
+
         Set<String> filtered = new HashSet<>(references);
         filtered.removeAll(variableAnalysis.getInputParams());
         return filtered;
     }
 
-    // Check if any references in scope need to be rewritten to SSA names
     private boolean needsRewriting(Set<String> references) {
         if (references.isEmpty()) {
             return false;
@@ -194,7 +179,6 @@ final class SsaTransform {
         return needsRewriting(filterOutInputParameters(expression.getReferences()));
     }
 
-    // Rewrites a rule's conditions to use SSA names
     private Rule rewriteRule(Rule rule) {
         Rule cached = rewrittenRules.get(rule);
         if (cached != null) {
@@ -234,26 +218,13 @@ final class SsaTransform {
             List<Condition> rewrittenConditions,
             boolean conditionsChanged
     ) {
-        Endpoint endpoint = rule.getEndpoint();
+        Endpoint rewrittenEndpoint = referenceRewriter.rewriteEndpoint(rule.getEndpoint());
 
-        // Rewrite endpoint components to use SSA names
-        Expression rewrittenUrl = referenceRewriter.rewrite(endpoint.getUrl());
-        Map<String, List<Expression>> rewrittenHeaders = rewriteHeaders(endpoint.getHeaders());
-        Map<Identifier, Literal> rewrittenProperties = rewriteProperties(endpoint.getProperties());
-
-        boolean endpointChanged = rewrittenUrl != endpoint.getUrl()
-                || !rewrittenHeaders.equals(endpoint.getHeaders())
-                || !rewrittenProperties.equals(endpoint.getProperties());
-
-        if (conditionsChanged || endpointChanged) {
+        if (conditionsChanged || rewrittenEndpoint != rule.getEndpoint()) {
             return EndpointRule.builder()
                     .description(rule.getDocumentation().orElse(null))
                     .conditions(rewrittenConditions)
-                    .endpoint(Endpoint.builder()
-                            .url(rewrittenUrl)
-                            .headers(rewrittenHeaders)
-                            .properties(rewrittenProperties)
-                            .build());
+                    .endpoint(rewrittenEndpoint);
         }
 
         return rule;
@@ -294,30 +265,6 @@ final class SsaTransform {
         }
 
         return rule;
-    }
-
-    private Map<String, List<Expression>> rewriteHeaders(Map<String, List<Expression>> headers) {
-        Map<String, List<Expression>> rewritten = new LinkedHashMap<>();
-        for (Map.Entry<String, List<Expression>> entry : headers.entrySet()) {
-            List<Expression> rewrittenValues = new ArrayList<>();
-            for (Expression expr : entry.getValue()) {
-                rewrittenValues.add(referenceRewriter.rewrite(expr));
-            }
-            rewritten.put(entry.getKey(), rewrittenValues);
-        }
-        return rewritten;
-    }
-
-    private Map<Identifier, Literal> rewriteProperties(Map<Identifier, Literal> properties) {
-        Map<Identifier, Literal> rewritten = new LinkedHashMap<>();
-        for (Map.Entry<Identifier, Literal> entry : properties.entrySet()) {
-            Expression rewrittenExpr = referenceRewriter.rewrite(entry.getValue());
-            if (!(rewrittenExpr instanceof Literal)) {
-                throw new IllegalStateException("Property value must be a literal");
-            }
-            rewritten.put(entry.getKey(), (Literal) rewrittenExpr);
-        }
-        return rewritten;
     }
 
     private String resolveReference(String originalName) {

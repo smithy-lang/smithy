@@ -28,7 +28,7 @@ import software.amazon.smithy.rulesengine.logic.TestHelpers;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.utils.ListUtils;
 
-class CfgGuidedOrderingTest {
+class InitialOrderingTest {
 
     @Test
     void testSimpleOrdering() {
@@ -45,7 +45,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 
@@ -89,7 +89,7 @@ class CfgGuidedOrderingTest {
         // If coalesce merged them, we'll have 1 condition. Otherwise 2.
         assertTrue(conditions.length >= 1 && conditions.length <= 2);
 
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
         List<Condition> ordered = ordering.orderConditions(conditions);
 
         assertEquals(conditions.length, ordered.size());
@@ -153,7 +153,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 
@@ -198,7 +198,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 
@@ -240,7 +240,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 
@@ -264,7 +264,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 
@@ -311,7 +311,7 @@ class CfgGuidedOrderingTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        CfgGuidedOrdering ordering = new CfgGuidedOrdering(cfg);
+        InitialOrdering ordering = new InitialOrdering(cfg);
 
         List<Condition> ordered = ordering.orderConditions(cfg.getConditions());
 

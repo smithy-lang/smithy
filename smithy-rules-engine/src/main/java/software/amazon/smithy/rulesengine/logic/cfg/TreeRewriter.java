@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
@@ -21,11 +23,15 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Li
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.RecordLiteral;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.StringLiteral;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.TupleLiteral;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 
 /**
  * Utility for rewriting references within expression trees.
  */
-final class ReferenceRewriter {
+final class TreeRewriter {
+    // A no-op rewriter that returns expressions unchanged.
+    static final TreeRewriter IDENTITY = new TreeRewriter(ref -> ref, expr -> false);
 
     private final Function<Reference, Expression> referenceTransformer;
     private final Predicate<Expression> shouldRewrite;
@@ -36,7 +42,7 @@ final class ReferenceRewriter {
      * @param referenceTransformer function to transform references
      * @param shouldRewrite predicate to determine if an expression needs rewriting
      */
-    ReferenceRewriter(
+    TreeRewriter(
             Function<Reference, Expression> referenceTransformer,
             Predicate<Expression> shouldRewrite
     ) {
@@ -45,12 +51,44 @@ final class ReferenceRewriter {
     }
 
     /**
+     * Creates a simple rewriter that replaces specific references.
+     *
+     * @param replacements map of variable names to replacement expressions
+     * @return a reference rewriter that performs the replacements
+     */
+    static TreeRewriter forReplacements(Map<String, Expression> replacements) {
+        if (replacements.isEmpty()) {
+            return IDENTITY;
+        }
+        return new TreeRewriter(
+                ref -> replacements.getOrDefault(ref.getName().toString(), ref),
+                expr -> expr.getReferences().stream().anyMatch(replacements::containsKey));
+    }
+
+    static List<Rule> transformNestedRules(
+            TreeRule tree,
+            String parentPath,
+            BiFunction<Rule, String, Rule> transformer
+    ) {
+        List<Rule> result = new ArrayList<>();
+        for (int i = 0; i < tree.getRules().size(); i++) {
+            Rule transformed = transformer.apply(
+                    tree.getRules().get(i),
+                    parentPath + "/tree/rule[" + i + "]");
+            if (transformed != null) {
+                result.add(transformed);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Rewrites references within an expression tree.
      *
      * @param expression the expression to rewrite
      * @return the rewritten expression, or the original if no changes needed
      */
-    public Expression rewrite(Expression expression) {
+    Expression rewrite(Expression expression) {
         if (!shouldRewrite.test(expression)) {
             return expression;
         }
@@ -68,6 +106,108 @@ final class ReferenceRewriter {
         }
 
         return expression;
+    }
+
+    Map<String, List<Expression>> rewriteHeaders(Map<String, List<Expression>> headers) {
+        if (headers.isEmpty()) {
+            return headers;
+        }
+
+        Map<String, List<Expression>> rewritten = null;
+        boolean changed = false;
+
+        for (Map.Entry<String, List<Expression>> entry : headers.entrySet()) {
+            List<Expression> originalValues = entry.getValue();
+            List<Expression> rewrittenValues = null;
+
+            for (int i = 0; i < originalValues.size(); i++) {
+                Expression original = originalValues.get(i);
+                Expression rewrittenExpr = rewrite(original);
+
+                if (rewrittenExpr != original) {
+                    if (rewrittenValues == null) {
+                        rewrittenValues = new ArrayList<>(originalValues.subList(0, i));
+                    }
+                    rewrittenValues.add(rewrittenExpr);
+                    changed = true;
+                } else if (rewrittenValues != null) {
+                    rewrittenValues.add(original);
+                }
+            }
+
+            if (changed && rewritten == null) {
+                rewritten = new LinkedHashMap<>();
+                // Copy all previous entries
+                for (Map.Entry<String, List<Expression>> prev : headers.entrySet()) {
+                    if (prev.getKey().equals(entry.getKey())) {
+                        break;
+                    }
+                    rewritten.put(prev.getKey(), prev.getValue());
+                }
+            }
+
+            if (rewritten != null) {
+                rewritten.put(entry.getKey(),
+                        rewrittenValues != null ? rewrittenValues : originalValues);
+            }
+        }
+
+        return changed ? rewritten : headers;
+    }
+
+    Map<Identifier, Literal> rewriteProperties(Map<Identifier, Literal> properties) {
+        if (properties.isEmpty()) {
+            return properties;
+        }
+
+        Map<Identifier, Literal> rewritten = null;
+        boolean changed = false;
+
+        for (Map.Entry<Identifier, Literal> entry : properties.entrySet()) {
+            Expression rewrittenExpr = rewrite(entry.getValue());
+
+            if (rewrittenExpr != entry.getValue()) {
+                if (!(rewrittenExpr instanceof Literal)) {
+                    throw new IllegalStateException("Property value must be a literal");
+                }
+
+                if (rewritten == null) {
+                    rewritten = new LinkedHashMap<>();
+                    // Copy all previous entries
+                    for (Map.Entry<Identifier, Literal> prev : properties.entrySet()) {
+                        if (prev.getKey().equals(entry.getKey())) {
+                            break;
+                        }
+                        rewritten.put(prev.getKey(), prev.getValue());
+                    }
+                }
+
+                rewritten.put(entry.getKey(), (Literal) rewrittenExpr);
+                changed = true;
+            } else if (rewritten != null) {
+                rewritten.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return changed ? rewritten : properties;
+    }
+
+    Endpoint rewriteEndpoint(Endpoint endpoint) {
+        Expression rewrittenUrl = rewrite(endpoint.getUrl());
+        Map<String, List<Expression>> rewrittenHeaders = rewriteHeaders(endpoint.getHeaders());
+        Map<Identifier, Literal> rewrittenProperties = rewriteProperties(endpoint.getProperties());
+
+        // Only create new endpoint if something changed
+        if (rewrittenUrl != endpoint.getUrl()
+                || rewrittenHeaders != endpoint.getHeaders()
+                || rewrittenProperties != endpoint.getProperties()) {
+            return Endpoint.builder()
+                    .url(rewrittenUrl)
+                    .headers(rewrittenHeaders)
+                    .properties(rewrittenProperties)
+                    .build();
+        }
+        return endpoint;
     }
 
     private Expression rewriteStringLiteral(StringLiteral str) {
@@ -148,17 +288,5 @@ final class ReferenceRewriter {
                 .arguments(rewrittenArgs)
                 .build();
         return fn.getFunctionDefinition().createFunction(node);
-    }
-
-    /**
-     * Creates a simple rewriter that replaces specific references.
-     *
-     * @param replacements map of variable names to replacement expressions
-     * @return a reference rewriter that performs the replacements
-     */
-    public static ReferenceRewriter forReplacements(Map<String, Expression> replacements) {
-        return new ReferenceRewriter(
-                ref -> replacements.getOrDefault(ref.getName().toString(), ref),
-                expr -> expr.getReferences().stream().anyMatch(replacements::containsKey));
     }
 }

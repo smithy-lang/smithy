@@ -28,7 +28,7 @@ interface OrderingStrategy {
      * @return the initial ordering strategy.
      */
     static OrderingStrategy initialOrdering(Cfg cfg) {
-        return new CfgGuidedOrdering(cfg);
+        return new InitialOrdering(cfg);
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
@@ -38,7 +39,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public final class Cfg implements Iterable<CfgNode> {
 
-    private final EndpointRuleSet ruleSet;
+    private final Parameters parameters;
     private final CfgNode root;
 
     // Lazily computed condition data
@@ -46,8 +47,12 @@ public final class Cfg implements Iterable<CfgNode> {
     private Map<Condition, Integer> conditionToIndex;
 
     Cfg(EndpointRuleSet ruleSet, CfgNode root) {
-        this.ruleSet = ruleSet;
+        this(ruleSet == null ? Parameters.builder().build() : ruleSet.getParameters(), root);
+    }
+
+    Cfg(Parameters parameters, CfgNode root) {
         this.root = SmithyBuilder.requiredState("root", root);
+        this.parameters = parameters;
     }
 
     /**
@@ -125,8 +130,8 @@ public final class Cfg implements Iterable<CfgNode> {
         this.conditionToIndex = indexMap;
     }
 
-    public EndpointRuleSet getRuleSet() {
-        return ruleSet;
+    public Parameters getParameters() {
+        return parameters;
     }
 
     @Override
