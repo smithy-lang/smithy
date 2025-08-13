@@ -23,15 +23,15 @@ import software.amazon.smithy.rulesengine.logic.cfg.ConditionDependencyGraph;
  * together in the BDD, enabling better node sharing. This ordering implementation flattens the tree structure while
  * respecting data dependencies.
  */
-final class CfgGuidedOrdering implements OrderingStrategy {
-    private static final Logger LOGGER = Logger.getLogger(CfgGuidedOrdering.class.getName());
+final class InitialOrdering implements OrderingStrategy {
+    private static final Logger LOGGER = Logger.getLogger(InitialOrdering.class.getName());
 
     /** How many distinct consumers make an isSet() a "gate". */
     private static final int GATE_SUCCESSOR_THRESHOLD = 2;
 
     private final Cfg cfg;
 
-    CfgGuidedOrdering(Cfg cfg) {
+    InitialOrdering(Cfg cfg) {
         this.cfg = cfg;
     }
 
@@ -51,6 +51,7 @@ final class CfgGuidedOrdering implements OrderingStrategy {
 
         long elapsed = System.currentTimeMillis() - startTime;
         LOGGER.info(() -> String.format("Initial ordering: %d conditions in %dms", conditions.length, elapsed));
+        result.forEach(System.out::println);
         return result;
     }
 

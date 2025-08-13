@@ -66,7 +66,7 @@ class CfgBuilderTest {
 
         assertNotNull(cfg);
         assertSame(root, cfg.getRoot());
-        assertEquals(ruleSet, cfg.getRuleSet());
+        assertEquals(ruleSet.getParameters(), cfg.getParameters());
     }
 
     @Test

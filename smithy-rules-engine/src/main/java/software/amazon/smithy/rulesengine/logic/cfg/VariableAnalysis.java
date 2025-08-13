@@ -36,80 +36,62 @@ final class VariableAnalysis {
     private final Map<String, Set<String>> bindings;
     private final Map<String, Integer> referenceCounts;
     private final Map<String, Map<String, String>> expressionMappings;
+    private final Map<String, List<String>> expressionToVars;
 
     private VariableAnalysis(
             Set<String> inputParams,
             Map<String, Set<String>> bindings,
-            Map<String, Integer> referenceCounts
+            Map<String, Integer> referenceCounts,
+            Map<String, List<String>> expressionToVars
     ) {
         this.inputParams = inputParams;
         this.bindings = bindings;
         this.referenceCounts = referenceCounts;
+        this.expressionToVars = expressionToVars;
         this.expressionMappings = createExpressionMappings(bindings);
     }
 
     static VariableAnalysis analyze(EndpointRuleSet ruleSet) {
         Set<String> inputParameters = extractInputParameters(ruleSet);
-        Map<String, Set<String>> variableBindings = new HashMap<>();
-        Map<String, Integer> referenceCounts = new HashMap<>();
 
-        Visitor visitor = new Visitor(variableBindings, referenceCounts);
+        AnalysisVisitor visitor = new AnalysisVisitor(inputParameters);
         for (Rule rule : ruleSet.getRules()) {
             visitor.visitRule(rule);
         }
 
-        return new VariableAnalysis(inputParameters, variableBindings, referenceCounts);
+        return new VariableAnalysis(
+                inputParameters,
+                visitor.bindings,
+                visitor.referenceCounts,
+                visitor.expressionToVars);
     }
 
     Set<String> getInputParams() {
         return inputParams;
     }
 
-    /**
-     * Gets the mapping from variable name to expression to SSA name.
-     * This is used to determine when variables need SSA renaming.
-     */
     Map<String, Map<String, String>> getExpressionMappings() {
         return expressionMappings;
     }
 
-    /**
-     * Gets the reference count for a variable.
-     *
-     * @param variableName the variable name
-     * @return the number of times the variable is referenced, or 0 if not found
-     */
     int getReferenceCount(String variableName) {
         return referenceCounts.getOrDefault(variableName, 0);
     }
 
-    /**
-     * Checks if a variable is referenced exactly once.
-     *
-     * @param variableName the variable name
-     * @return true if the variable is referenced exactly once
-     */
     boolean isReferencedOnce(String variableName) {
         return getReferenceCount(variableName) == 1;
     }
 
-    /**
-     * Checks if a variable has only one binding expression.
-     *
-     * @param variableName the variable name
-     * @return true if the variable has exactly one binding
-     */
     boolean hasSingleBinding(String variableName) {
         Set<String> expressions = bindings.get(variableName);
         return expressions != null && expressions.size() == 1;
     }
 
-    /**
-     * Checks if a variable is safe to inline (single binding, single reference).
-     *
-     * @param variableName the variable name
-     * @return true if the variable can be safely inlined
-     */
+    boolean hasMultipleBindings(String variableName) {
+        Set<String> expressions = bindings.get(variableName);
+        return expressions != null && expressions.size() > 1;
+    }
+
     boolean isSafeToInline(String variableName) {
         return hasSingleBinding(variableName) && isReferencedOnce(variableName);
     }
@@ -122,10 +104,6 @@ final class VariableAnalysis {
         return inputParameters;
     }
 
-    /**
-     * Creates a mapping from variable name to expression to SSA name.
-     * Variables assigned multiple times get unique SSA names (x, x_1, x_2, etc).
-     */
     private static Map<String, Map<String, String>> createExpressionMappings(
             Map<String, Set<String>> bindings
     ) {
@@ -145,13 +123,11 @@ final class VariableAnalysis {
         Map<String, String> mapping = new HashMap<>();
 
         if (expressions.size() == 1) {
-            // Only one expression for this variable, so no SSA renaming needed
             String expression = expressions.iterator().next();
             mapping.put(expression, varName);
         } else {
-            // Multiple expressions, so create unique SSA names
             List<String> sortedExpressions = new ArrayList<>(expressions);
-            sortedExpressions.sort(String::compareTo); // Ensure deterministic ordering
+            sortedExpressions.sort(String::compareTo);
 
             for (int i = 0; i < sortedExpressions.size(); i++) {
                 String expression = sortedExpressions.get(i);
@@ -163,23 +139,30 @@ final class VariableAnalysis {
         return mapping;
     }
 
-    // Visitor that collects variable bindings and reference counts.
-    private static class Visitor {
-        private final Map<String, Set<String>> variableBindings;
-        private final Map<String, Integer> referenceCounts;
+    private static class AnalysisVisitor {
+        final Map<String, Set<String>> bindings = new HashMap<>();
+        final Map<String, Integer> referenceCounts = new HashMap<>();
+        final Map<String, List<String>> expressionToVars = new HashMap<>();
 
-        Visitor(Map<String, Set<String>> variableBindings, Map<String, Integer> referenceCounts) {
-            this.variableBindings = variableBindings;
-            this.referenceCounts = referenceCounts;
+        private final Set<String> inputParams;
+
+        AnalysisVisitor(Set<String> inputParams) {
+            this.inputParams = inputParams;
         }
 
         void visitRule(Rule rule) {
             for (Condition condition : rule.getConditions()) {
                 if (condition.getResult().isPresent()) {
                     String varName = condition.getResult().get().toString();
-                    String expression = condition.getFunction().toString();
-                    variableBindings.computeIfAbsent(varName, k -> new HashSet<>())
+                    LibraryFunction fn = condition.getFunction();
+                    String expression = fn.toString();
+                    String canonical = fn.canonicalize().toString();
+
+                    bindings.computeIfAbsent(varName, k -> new HashSet<>())
                             .add(expression);
+
+                    expressionToVars.computeIfAbsent(canonical, k -> new ArrayList<>())
+                            .add(varName);
                 }
 
                 countReferences(condition.getFunction());
@@ -194,17 +177,16 @@ final class VariableAnalysis {
                 EndpointRule endpointRule = (EndpointRule) rule;
                 Endpoint endpoint = endpointRule.getEndpoint();
                 countReferences(endpoint.getUrl());
-                for (List<Expression> headerValues : endpoint.getHeaders().values()) {
-                    for (Expression expr : headerValues) {
-                        countReferences(expr);
-                    }
-                }
-                for (Literal literal : endpoint.getProperties().values()) {
-                    countReferences(literal);
-                }
+                endpoint.getHeaders()
+                        .values()
+                        .stream()
+                        .flatMap(List::stream)
+                        .forEach(this::countReferences);
+                endpoint.getProperties()
+                        .values()
+                        .forEach(this::countReferences);
             } else if (rule instanceof ErrorRule) {
-                ErrorRule errorRule = (ErrorRule) rule;
-                countReferences(errorRule.getError());
+                countReferences(((ErrorRule) rule).getError());
             }
         }
 
@@ -212,6 +194,7 @@ final class VariableAnalysis {
             if (expression instanceof Reference) {
                 Reference ref = (Reference) expression;
                 String name = ref.getName().toString();
+                // Count all references, including input parameters
                 referenceCounts.merge(name, 1, Integer::sum);
             } else if (expression instanceof StringLiteral) {
                 StringLiteral str = (StringLiteral) expression;

@@ -73,7 +73,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
         }
 
         return builder()
-                .parameters(cfg.getRuleSet().getParameters())
+                .parameters(cfg.getParameters())
                 .conditions(compiler.getOrderedConditions())
                 .results(compiler.getIndexedResults())
                 .bdd(bdd)

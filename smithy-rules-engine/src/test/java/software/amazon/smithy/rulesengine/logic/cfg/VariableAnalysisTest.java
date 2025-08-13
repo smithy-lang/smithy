@@ -123,6 +123,7 @@ class VariableAnalysisTest {
         VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
 
         assertFalse(analysis.hasSingleBinding("x"));
+        assertTrue(analysis.hasMultipleBindings("x"));
 
         // Not safe to inline when multiple bindings exist
         assertFalse(analysis.isSafeToInline("x"));
@@ -323,5 +324,146 @@ class VariableAnalysisTest {
 
         // But Region is an input parameter
         assertTrue(analysis.getInputParams().contains("Region"));
+    }
+
+    @Test
+    void testSameExpressionDifferentVariableNames() {
+        // Same expression bound to different variable names in different rules
+        Rule rule1 = EndpointRule.builder()
+                .conditions(Condition.builder()
+                        .fn(TestHelpers.isSet("Region"))
+                        .result(Identifier.of("hasRegion"))
+                        .build())
+                .endpoint(TestHelpers.endpoint("https://example1.com"));
+
+        Rule rule2 = EndpointRule.builder()
+                .conditions(Condition.builder()
+                        .fn(TestHelpers.isSet("Region"))
+                        .result(Identifier.of("regionExists"))
+                        .build())
+                .endpoint(TestHelpers.endpoint("https://example2.com"));
+
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .build();
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .rules(ListUtils.of(rule1, rule2))
+                .build();
+
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        // Each variable has a single binding (same expression though)
+        assertTrue(analysis.hasSingleBinding("hasRegion"));
+        assertTrue(analysis.hasSingleBinding("regionExists"));
+
+        // Neither is referenced after binding
+        assertEquals(0, analysis.getReferenceCount("hasRegion"));
+        assertEquals(0, analysis.getReferenceCount("regionExists"));
+    }
+
+    @Test
+    void testDeeplyNestedTreeRules() {
+        // Multiple levels of tree rule nesting
+        Condition level3Define = Condition.builder()
+                .fn(TestHelpers.isSet("Bucket"))
+                .result(Identifier.of("hasBucket"))
+                .build();
+
+        Rule level3Rule = EndpointRule.builder()
+                .conditions(level3Define)
+                .endpoint(TestHelpers.endpoint("https://level3.com"));
+
+        Condition level2Define = Condition.builder()
+                .fn(TestHelpers.isSet("Key"))
+                .result(Identifier.of("hasKey"))
+                .build();
+
+        Rule level2Rule = TreeRule.builder()
+                .conditions(level2Define)
+                .treeRule(level3Rule);
+
+        Condition level1Define = Condition.builder()
+                .fn(TestHelpers.isSet("Region"))
+                .result(Identifier.of("hasRegion"))
+                .build();
+
+        Condition level1Use = Condition.builder()
+                .fn(BooleanEquals.ofExpressions(
+                        Expression.getReference(Identifier.of("hasRegion")),
+                        Literal.of(true)))
+                .build();
+
+        Rule level1Rule = TreeRule.builder()
+                .conditions(level1Define, level1Use)
+                .treeRule(level2Rule);
+
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .addParameter(Parameter.builder().name("Key").type(ParameterType.STRING).build())
+                .addParameter(Parameter.builder().name("Bucket").type(ParameterType.STRING).build())
+                .build();
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .addRule(level1Rule)
+                .build();
+
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        assertTrue(analysis.hasSingleBinding("hasRegion"));
+        assertTrue(analysis.hasSingleBinding("hasKey"));
+        assertTrue(analysis.hasSingleBinding("hasBucket"));
+
+        assertEquals(1, analysis.getReferenceCount("hasRegion"));
+        assertEquals(0, analysis.getReferenceCount("hasKey"));
+        assertEquals(0, analysis.getReferenceCount("hasBucket"));
+    }
+
+    @Test
+    void testUnreferencedVariable() {
+        // Variable that's defined but never used
+        Condition defineUnused = Condition.builder()
+                .fn(TestHelpers.isSet("Region"))
+                .result(Identifier.of("unused"))
+                .build();
+
+        Rule rule = EndpointRule.builder()
+                .conditions(defineUnused)
+                .endpoint(TestHelpers.endpoint("https://example.com"));
+
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .build();
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .addRule(rule)
+                .build();
+
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        assertTrue(analysis.hasSingleBinding("unused"));
+        assertEquals(0, analysis.getReferenceCount("unused"));
+        assertFalse(analysis.isSafeToInline("unused")); // Not safe because not referenced
+    }
+
+    @Test
+    void testEmptyRuleSet() {
+        // Empty ruleset with just parameters
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .build();
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .build();
+
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        assertEquals(1, analysis.getInputParams().size());
+        assertTrue(analysis.getInputParams().contains("Region"));
+        assertEquals(0, analysis.getReferenceCount("Region"));
     }
 }
