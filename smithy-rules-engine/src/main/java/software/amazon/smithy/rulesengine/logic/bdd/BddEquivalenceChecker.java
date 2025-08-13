@@ -60,7 +60,7 @@ public final class BddEquivalenceChecker {
         this.bdd = bdd;
         this.conditions = conditions;
         this.results = results;
-        this.parameters = new ArrayList<>(cfg.getRuleSet().getParameters().toList());
+        this.parameters = new ArrayList<>(cfg.getParameters().toList());
 
         for (int i = 0; i < conditions.size(); i++) {
             conditionToIndex.put(conditions.get(i), i);

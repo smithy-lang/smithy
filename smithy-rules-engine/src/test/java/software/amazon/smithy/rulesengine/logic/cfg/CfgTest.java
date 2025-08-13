@@ -44,7 +44,7 @@ class CfgTest {
 
         Cfg cfg = new Cfg(ruleSet, root);
 
-        assertSame(ruleSet, cfg.getRuleSet());
+        assertSame(ruleSet.getParameters(), cfg.getParameters());
         assertSame(root, cfg.getRoot());
     }
 
@@ -62,7 +62,6 @@ class CfgTest {
 
         assertNotNull(cfg);
         assertNotNull(cfg.getRoot());
-        assertEquals(ruleSet, cfg.getRuleSet());
 
         // Root should be a result node for a simple endpoint rule
         assertInstanceOf(ResultNode.class, cfg.getRoot());
@@ -156,7 +155,7 @@ class CfgTest {
     @Test
     void iteratorHandlesEmptyCfg() {
         CfgNode root = ResultNode.terminal();
-        Cfg cfg = new Cfg(null, root);
+        Cfg cfg = new Cfg((EndpointRuleSet) null, root);
 
         List<CfgNode> nodes = new ArrayList<>();
         for (CfgNode node : cfg) {
@@ -170,7 +169,7 @@ class CfgTest {
     @Test
     void iteratorThrowsNoSuchElementException() {
         CfgNode root = ResultNode.terminal();
-        Cfg cfg = new Cfg(null, root);
+        Cfg cfg = new Cfg((EndpointRuleSet) null, root);
 
         Iterator<CfgNode> iterator = cfg.iterator();
         assertTrue(iterator.hasNext());
