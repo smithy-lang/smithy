@@ -7,10 +7,13 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
@@ -20,28 +23,18 @@ import software.amazon.smithy.utils.SmithyBuilder;
 /**
  * BDD optimization using tiered parallel position evaluation with dependency-aware constraints.
  *
- * <p>This algorithm improves BDD size through a multi-stage approach:
+ * <p>The optimization runs in three stages with decreasing granularity:
  * <ul>
- *     <li>Coarse optimization for large BDDs (fast reduction)</li>
- *     <li>Medium optimization for moderate BDDs (balanced approach)</li>
- *     <li>Granular optimization for small BDDs (maximum quality)</li>
+ *   <li>Coarse: Fast reduction with large steps</li>
+ *   <li>Medium: Balanced optimization</li>
+ *   <li>Granular: Fine-tuned optimization for maximum reduction</li>
  * </ul>
- *
- * <p>Each stage runs until reaching its target size or maximum passes.
  */
 public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     private static final Logger LOGGER = Logger.getLogger(SiftingOptimization.class.getName());
 
-    // Default thresholds and passes for each optimization level
-    private static final int DEFAULT_COARSE_MIN_NODES = 50_000;
-    private static final int DEFAULT_COARSE_MAX_PASSES = 5;
-    private static final int DEFAULT_MEDIUM_MIN_NODES = 10_000;
-    private static final int DEFAULT_MEDIUM_MAX_PASSES = 5;
-    private static final int DEFAULT_GRANULAR_MAX_NODES = 10_000;
-    private static final int DEFAULT_GRANULAR_MAX_PASSES = 8;
-
-    // When a variable has fewer than this many valid positions, try them all.
-    private static final int EXHAUSTIVE_THRESHOLD = 20;
+    // When to use a parallel stream
+    private static final int PARALLEL_THRESHOLD = 7;
 
     // Thread-local BDD builders to avoid allocation overhead
     private final ThreadLocal<BddBuilder> threadBuilder = ThreadLocal.withInitial(BddBuilder::new);
@@ -59,18 +52,31 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
 
     // Internal effort levels for the tiered optimization stages.
     private enum OptimizationEffort {
-        COARSE(12, 4, 0),
-        MEDIUM(2, 18, 5),
-        GRANULAR(1, 48, 10);
+        COARSE(11, 4, 0, 20, 4_000, 6),
+        MEDIUM(2, 20, 6, 20, 1_000, 6),
+        GRANULAR(1, 50, 12, 20, 8_000, 12);
 
         final int sampleRate;
         final int maxPositions;
         final int nearbyRadius;
+        final int exhaustiveThreshold;
+        final int defaultNodeThreshold;
+        final int defaultMaxPasses;
 
-        OptimizationEffort(int sampleRate, int maxPositions, int nearbyRadius) {
+        OptimizationEffort(
+                int sampleRate,
+                int maxPositions,
+                int nearbyRadius,
+                int exhaustiveThreshold,
+                int defaultNodeThreshold,
+                int defaultMaxPasses
+        ) {
             this.sampleRate = sampleRate;
             this.maxPositions = maxPositions;
             this.nearbyRadius = nearbyRadius;
+            this.exhaustiveThreshold = exhaustiveThreshold;
+            this.defaultNodeThreshold = defaultNodeThreshold;
+            this.defaultMaxPasses = defaultMaxPasses;
         }
     }
 
@@ -85,11 +91,6 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         this.dependencyGraph = new ConditionDependencyGraph(Arrays.asList(cfg.getConditions()));
     }
 
-    /**
-     * Creates a new builder for SiftingOptimization.
-     *
-     * @return a new builder instance
-     */
     public static Builder builder() {
         return new Builder();
     }
@@ -106,20 +107,20 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     private BddTrait doApply(BddTrait trait) {
         LOGGER.info("Starting BDD sifting optimization");
         long startTime = System.currentTimeMillis();
-
-        // Pre-spin the ForkJoinPool for better first-pass performance
-        ForkJoinPool.commonPool().submit(() -> {}).join();
-
         OptimizationState state = initializeOptimization(trait);
         LOGGER.info(String.format("Initial size: %d nodes", state.initialSize));
 
-        state = runCoarseStage(state);
-        state = runMediumStage(state);
-        state = runGranularStage(state);
+        state = runOptimizationStage("Coarse", state, OptimizationEffort.COARSE, coarseMinNodes, coarseMaxPasses, 4.0);
+        state = runOptimizationStage("Medium", state, OptimizationEffort.MEDIUM, mediumMinNodes, mediumMaxPasses, 1.5);
+        if (state.currentSize <= granularMaxNodes) {
+            state = runOptimizationStage("Granular", state, OptimizationEffort.GRANULAR, 0, granularMaxPasses, 0.0);
+        } else {
+            LOGGER.info("Skipping granular stage - too large");
+        }
+        state = runAdjacentSwaps(state);
 
         double totalTimeInSeconds = (System.currentTimeMillis() - startTime) / 1000.0;
 
-        // Only rebuild if we found an improvement
         if (state.bestSize >= state.initialSize) {
             LOGGER.info(String.format("No improvements found in %fs", totalTimeInSeconds));
             return trait;
@@ -131,77 +132,30 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                 (1.0 - (double) state.bestSize / state.initialSize) * 100,
                 totalTimeInSeconds));
 
-        // Rebuild the BddTrait with the optimized ordering and BDD
-        return trait.toBuilder()
-                .conditions(state.orderView)
-                .results(state.results)
-                .bdd(state.bestBdd)
-                .build();
+        return trait.toBuilder().conditions(state.orderView).results(state.results).bdd(state.bestBdd).build();
     }
 
     private OptimizationState initializeOptimization(BddTrait trait) {
         // Use the trait's existing ordering as the starting point
         List<Condition> initialOrder = new ArrayList<>(trait.getConditions());
-
         Condition[] order = initialOrder.toArray(new Condition[0]);
         List<Condition> orderView = Arrays.asList(order);
-
-        // Get the initial size from the input BDD
         Bdd bdd = trait.getBdd();
-        int initialSize = bdd.getNodeCount() - 1; // -1 for terminal
-
-        // No need to recompile just for results—use the trait's own results
-        return new OptimizationState(order,
-                orderView,
-                bdd,
-                initialSize,
-                initialSize,
-                trait.getResults());
-    }
-
-    private OptimizationState runCoarseStage(OptimizationState state) {
-        if (state.currentSize <= coarseMinNodes) {
-            return state;
-        }
-        return runOptimizationStage(state, "Coarse", OptimizationEffort.COARSE, coarseMinNodes, coarseMaxPasses, 4.0);
-    }
-
-    private OptimizationState runMediumStage(OptimizationState state) {
-        if (state.currentSize <= mediumMinNodes) {
-            return state;
-        }
-        return runOptimizationStage(state, "Medium", OptimizationEffort.MEDIUM, mediumMinNodes, mediumMaxPasses, 1.5);
-    }
-
-    private OptimizationState runGranularStage(OptimizationState state) {
-        if (state.currentSize > granularMaxNodes) {
-            LOGGER.info(String.format("Skipping granular stage - BDD too large (%d nodes > %d threshold)",
-                    state.currentSize,
-                    granularMaxNodes));
-            return state;
-        }
-
-        // Run with no minimums
-        state = runOptimizationStage(state, "Granular", OptimizationEffort.GRANULAR, 0, granularMaxPasses, 0.0);
-
-        // Also perform adjacent swaps in granular stage
-        OptimizationResult swapResult = performAdjacentSwaps(state.order, state.orderView, state.currentSize);
-        if (swapResult.improved) {
-            LOGGER.info(String.format("Adjacent swaps: %d -> %d nodes", state.currentSize, swapResult.size));
-            return state.withResult(swapResult.bdd, swapResult.size, swapResult.results);
-        }
-
-        return state;
+        int initialSize = bdd.getNodeCount() - 1;
+        return new OptimizationState(order, orderView, bdd, initialSize, initialSize, trait.getResults());
     }
 
     private OptimizationState runOptimizationStage(
-            OptimizationState state,
             String stageName,
+            OptimizationState state,
             OptimizationEffort effort,
             int targetNodeCount,
             int maxPasses,
             double minReductionPercent
     ) {
+        if (targetNodeCount > 0 && state.currentSize <= targetNodeCount) {
+            return state;
+        }
 
         LOGGER.info(String.format("Stage: %s optimization (%d nodes%s)",
                 stageName,
@@ -209,24 +163,14 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                 targetNodeCount > 0 ? String.format(", target < %d", targetNodeCount) : ""));
 
         OptimizationState currentState = state;
-
         for (int pass = 1; pass <= maxPasses; pass++) {
-            // Stop if we've reached the target
             if (targetNodeCount > 0 && currentState.currentSize <= targetNodeCount) {
                 break;
             }
 
             int passStartSize = currentState.currentSize;
-            OptimizationResult result = runOptimizationPass(
-                    currentState.order,
-                    currentState.orderView,
-                    currentState.currentSize,
-                    effort);
-
-            if (!result.improved) {
-                LOGGER.fine(String.format("%s pass %d found no improvements", stageName, pass));
-                break;
-            } else {
+            OptimizationResult result = runPass(currentState, effort);
+            if (result.improved) {
                 currentState = currentState.withResult(result.bdd, result.size, result.results);
                 double reduction = (1.0 - (double) result.size / passStartSize) * 100;
                 LOGGER.fine(String.format("%s pass %d: %d -> %d nodes (%.1f%% reduction)",
@@ -235,112 +179,112 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
                         passStartSize,
                         result.size,
                         reduction));
-                // Check for diminishing returns
                 if (minReductionPercent > 0 && reduction < minReductionPercent) {
                     LOGGER.fine(String.format("%s optimization yielding diminishing returns", stageName));
                     break;
                 }
+            } else {
+                LOGGER.fine(String.format("%s pass %d found no improvements", stageName, pass));
+                break;
             }
         }
 
         return currentState;
     }
 
-    private OptimizationResult runOptimizationPass(
-            Condition[] order,
-            List<Condition> orderView,
-            int currentSize,
-            OptimizationEffort effort
-    ) {
-
-        int improvements = 0;
-        ConditionDependencyGraph.OrderConstraints constraints = dependencyGraph.createOrderConstraints(orderView);
-        Bdd bestBdd = null;
-        int bestSize = currentSize;
-        List<Rule> bestResults = null;
-
-        // Sample variables based on effort level
-        for (int varIdx = 0; varIdx < order.length; varIdx += effort.sampleRate) {
-            List<Integer> positions = getPositions(varIdx, constraints, effort);
-            if (positions.isEmpty()) {
-                continue;
-            } else if (positions.size() > effort.maxPositions) {
-                positions = positions.subList(0, effort.maxPositions);
-            }
-
-            // Find best position
-            PositionCount best = findBestPosition(positions, order, bestSize, varIdx);
-
-            if (best == null || best.count >= bestSize) {
-                continue;
-            }
-
-            // Move to best position and build BDD once
-            move(order, varIdx, best.position);
-            BddCompilationResult compilationResult = compileBddWithResults(orderView);
-            Bdd newBdd = compilationResult.bdd;
-            int newSize = newBdd.getNodeCount() - 1;
-
-            if (newSize < bestSize) {
-                bestBdd = newBdd;
-                bestSize = newSize;
-                bestResults = compilationResult.results;
-                improvements++;
-
-                // Update constraints after successful move
-                constraints = dependencyGraph.createOrderConstraints(orderView);
-            }
+    private OptimizationState runAdjacentSwaps(OptimizationState state) {
+        if (state.currentSize > granularMaxNodes) {
+            return state;
         }
 
-        return new OptimizationResult(bestBdd, bestSize, improvements > 0, bestResults);
-    }
+        LOGGER.info("Running adjacent swaps optimization");
+        OptimizationState currentState = state;
 
-    private OptimizationResult performAdjacentSwaps(Condition[] order, List<Condition> orderView, int currentSize) {
-        ConditionDependencyGraph.OrderConstraints constraints = dependencyGraph.createOrderConstraints(orderView);
-        Bdd bestBdd = null;
-        int bestSize = currentSize;
-        List<Rule> bestResults = null;
-        boolean improved = false;
+        // Run multiple sweeps until no improvement
+        for (int sweep = 1; sweep <= 3; sweep++) {
+            OptimizationContext context = new OptimizationContext(currentState, dependencyGraph);
+            int startSize = currentState.currentSize;
 
-        for (int i = 0; i < order.length - 1; i++) {
-            if (constraints.canMove(i, i + 1)) {
-                move(order, i, i + 1);
-                int swappedSize = countNodes(orderView);
-                if (swappedSize < bestSize) {
-                    BddCompilationResult compilationResult = compileBddWithResults(orderView);
-                    bestBdd = compilationResult.bdd;
-                    bestSize = swappedSize;
-                    bestResults = compilationResult.results;
-                    improved = true;
-                } else {
-                    // Swap back if no improvement
-                    move(order, i + 1, i);
+            for (int i = 0; i < currentState.order.length - 1; i++) {
+                if (context.constraints.canMove(i, i + 1)) {
+                    move(currentState.order, i, i + 1);
+                    BddCompilationResult compilationResult = compileBddWithResults(currentState.orderView);
+                    int swappedSize = compilationResult.bdd.getNodeCount() - 1;
+                    if (swappedSize < context.bestSize) {
+                        context = context.withImprovement(
+                                new PositionResult(i + 1,
+                                        swappedSize,
+                                        compilationResult.bdd,
+                                        compilationResult.results));
+                    } else {
+                        move(currentState.order, i + 1, i); // Swap back
+                    }
                 }
             }
+
+            if (context.improvements > 0) {
+                currentState = currentState.withResult(context.bestBdd, context.bestSize, context.bestResults);
+                LOGGER.fine(String.format("Adjacent swaps sweep %d: %d -> %d nodes",
+                        sweep,
+                        startSize,
+                        context.bestSize));
+            } else {
+                break;
+            }
         }
 
-        return new OptimizationResult(bestBdd, bestSize, improved, bestResults);
+        return currentState;
     }
 
-    private PositionCount findBestPosition(
-            List<Integer> positions,
-            final Condition[] currentOrder,
-            final int currentSize,
-            final int varIdx
-    ) {
-        return positions.parallelStream()
+    private OptimizationResult runPass(OptimizationState state, OptimizationEffort effort) {
+        OptimizationContext context = new OptimizationContext(state, dependencyGraph);
+
+        List<Condition> selectedConditions = IntStream.range(0, state.orderView.size())
+                .filter(i -> i % effort.sampleRate == 0)
+                .mapToObj(state.orderView::get)
+                .collect(Collectors.toList());
+
+        for (Condition condition : selectedConditions) {
+            Integer varIdx = context.liveIndex.get(condition);
+            if (varIdx == null) {
+                continue;
+            }
+
+            List<Integer> positions = getStrategicPositions(varIdx, context.constraints, effort);
+            if (positions.isEmpty()) {
+                continue;
+            }
+
+            context = tryImprovePosition(context, varIdx, positions);
+        }
+
+        return context.toResult();
+    }
+
+    private OptimizationContext tryImprovePosition(OptimizationContext context, int varIdx, List<Integer> positions) {
+        PositionResult best = findBestPosition(positions, context, varIdx);
+        if (best != null && best.count <= context.bestSize) { // Accept ties
+            move(context.order, varIdx, best.position);
+            return context.withImprovement(best);
+        }
+
+        return context;
+    }
+
+    private PositionResult findBestPosition(List<Integer> positions, OptimizationContext ctx, int varIdx) {
+        return (positions.size() > PARALLEL_THRESHOLD ? positions.parallelStream() : positions.stream())
                 .map(pos -> {
-                    Condition[] threadOrder = currentOrder.clone();
-                    move(threadOrder, varIdx, pos);
-                    int nodeCount = countNodes(Arrays.asList(threadOrder));
-                    return new PositionCount(pos, nodeCount);
+                    Condition[] order = ctx.order.clone();
+                    move(order, varIdx, pos);
+                    BddCompilationResult cr = compileBddWithResults(Arrays.asList(order));
+                    return new PositionResult(pos, cr.bdd.getNodeCount() - 1, cr.bdd, cr.results);
                 })
-                .filter(pc -> pc.count < currentSize)
-                .min(Comparator.comparingInt(pc -> pc.count))
+                .filter(pr -> pr.count <= ctx.bestSize)
+                .min(Comparator.comparingInt((PositionResult pr) -> pr.count).thenComparingInt(pr -> pr.position))
                 .orElse(null);
     }
 
-    private List<Integer> getPositions(
+    private static List<Integer> getStrategicPositions(
             int varIdx,
             ConditionDependencyGraph.OrderConstraints constraints,
             OptimizationEffort effort
@@ -348,73 +292,64 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         int min = constraints.getMinValidPosition(varIdx);
         int max = constraints.getMaxValidPosition(varIdx);
         int range = max - min;
-        return range <= EXHAUSTIVE_THRESHOLD
-                ? getExhaustivePositions(varIdx, min, max, constraints)
-                : getStrategicPositions(varIdx, min, max, range, constraints, effort);
-    }
 
-    private List<Integer> getExhaustivePositions(
-            int varIdx,
-            int min,
-            int max,
-            ConditionDependencyGraph.OrderConstraints constraints
-    ) {
-        List<Integer> positions = new ArrayList<>(max - min);
-        for (int p = min; p < max; p++) {
-            if (p != varIdx && constraints.canMove(varIdx, p)) {
-                positions.add(p);
+        if (range <= effort.exhaustiveThreshold) {
+            List<Integer> positions = new ArrayList<>(range);
+            for (int p = min; p < max; p++) {
+                if (p != varIdx && constraints.canMove(varIdx, p)) {
+                    positions.add(p);
+                }
             }
+            return positions;
         }
-        return positions;
-    }
 
-    private List<Integer> getStrategicPositions(
-            int varIdx,
-            int min,
-            int max,
-            int range,
-            ConditionDependencyGraph.OrderConstraints constraints,
-            OptimizationEffort effort
-    ) {
         List<Integer> positions = new ArrayList<>(effort.maxPositions);
 
-        // Boundaries (these are most likely to be optimal)
+        // Test extremes first since they often yield the best improvements
         if (min != varIdx && constraints.canMove(varIdx, min)) {
             positions.add(min);
         }
+        if (positions.size() >= effort.maxPositions) {
+            return positions;
+        }
+
         if (max - 1 != varIdx && constraints.canMove(varIdx, max - 1)) {
             positions.add(max - 1);
         }
+        if (positions.size() >= effort.maxPositions) {
+            return positions;
+        }
 
-        // Nearby positions (only if effort includes nearbyRadius)
-        if (effort.nearbyRadius > 0) {
-            for (int offset = -effort.nearbyRadius; offset <= effort.nearbyRadius; offset++) {
-                if (offset != 0) {
-                    int p = varIdx + offset;
-                    if (p >= min && p < max && !positions.contains(p) && constraints.canMove(varIdx, p)) {
-                        positions.add(p);
-                    }
+        // Test local moves that preserve relative ordering with neighbors
+        for (int offset = -effort.nearbyRadius; offset <= effort.nearbyRadius; offset++) {
+            if (offset != 0) {
+                if (positions.size() >= effort.maxPositions) {
+                    return positions;
+                }
+                int p = varIdx + offset;
+                if (p >= min && p < max && !positions.contains(p) && constraints.canMove(varIdx, p)) {
+                    positions.add(p);
                 }
             }
         }
 
-        // Adaptive sampling: fewer samples for smaller ranges
+        // Sample intermediate positions to find global improvements
+        if (positions.size() >= effort.maxPositions) {
+            return positions;
+        }
+
         int maxSamples = Math.min(15, effort.maxPositions / 2);
         int samples = Math.min(maxSamples, Math.max(2, range / 4));
         int step = Math.max(1, range / samples);
 
-        for (int p = min + step; p < max - step; p += step) {
+        for (int p = min + step; p < max - step && positions.size() < effort.maxPositions; p += step) {
             if (p != varIdx && !positions.contains(p) && constraints.canMove(varIdx, p)) {
                 positions.add(p);
             }
         }
-
         return positions;
     }
 
-    /**
-     * Moves an element in an array from one position to another.
-     */
     private static void move(Condition[] arr, int from, int to) {
         if (from == to) {
             return;
@@ -422,18 +357,21 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
 
         Condition moving = arr[from];
         if (from < to) {
-            // Moving right: shift elements left
             System.arraycopy(arr, from + 1, arr, from, to - from);
         } else {
-            // Moving left: shift elements right
             System.arraycopy(arr, to, arr, to + 1, from - to);
         }
         arr[to] = moving;
     }
 
-    /**
-     * Compiles a BDD with the given condition ordering and returns both BDD and results.
-     */
+    private static Map<Condition, Integer> rebuildIndex(List<Condition> orderView) {
+        Map<Condition, Integer> index = new IdentityHashMap<>();
+        for (int i = 0; i < orderView.size(); i++) {
+            index.put(orderView.get(i), i);
+        }
+        return index;
+    }
+
     private BddCompilationResult compileBddWithResults(List<Condition> ordering) {
         BddBuilder builder = threadBuilder.get().reset();
         BddCompiler compiler = new BddCompiler(cfg, OrderingStrategy.fixed(ordering), builder);
@@ -441,15 +379,72 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         return new BddCompilationResult(bdd, compiler.getIndexedResults());
     }
 
-    /**
-     * Counts nodes for a given ordering without keeping the BDD.
-     */
-    private int countNodes(List<Condition> ordering) {
-        Bdd bdd = compileBddWithResults(ordering).bdd;
-        return bdd.getNodeCount() - 1; // -1 for terminal
+    // Helper class to track optimization context within a pass
+    private static final class OptimizationContext {
+        final Condition[] order;
+        final List<Condition> orderView;
+        final ConditionDependencyGraph dependencyGraph;
+        final ConditionDependencyGraph.OrderConstraints constraints;
+        final Map<Condition, Integer> liveIndex;
+        final Bdd bestBdd;
+        final int bestSize;
+        final List<Rule> bestResults;
+        final int improvements;
+
+        OptimizationContext(OptimizationState state, ConditionDependencyGraph dependencyGraph) {
+            this.order = state.order;
+            this.orderView = state.orderView;
+            this.dependencyGraph = dependencyGraph;
+            this.constraints = dependencyGraph.createOrderConstraints(orderView);
+            this.liveIndex = rebuildIndex(orderView);
+            this.bestBdd = null;
+            this.bestSize = state.currentSize;
+            this.bestResults = null;
+            this.improvements = 0;
+        }
+
+        private OptimizationContext(
+                Condition[] order,
+                List<Condition> orderView,
+                ConditionDependencyGraph dependencyGraph,
+                ConditionDependencyGraph.OrderConstraints constraints,
+                Map<Condition, Integer> liveIndex,
+                Bdd bestBdd,
+                int bestSize,
+                List<Rule> bestResults,
+                int improvements
+        ) {
+            this.order = order;
+            this.orderView = orderView;
+            this.dependencyGraph = dependencyGraph;
+            this.constraints = constraints;
+            this.liveIndex = liveIndex;
+            this.bestBdd = bestBdd;
+            this.bestSize = bestSize;
+            this.bestResults = bestResults;
+            this.improvements = improvements;
+        }
+
+        OptimizationContext withImprovement(PositionResult result) {
+            ConditionDependencyGraph.OrderConstraints newConstraints =
+                    dependencyGraph.createOrderConstraints(orderView);
+            Map<Condition, Integer> newIndex = rebuildIndex(orderView);
+            return new OptimizationContext(order,
+                    orderView,
+                    dependencyGraph,
+                    newConstraints,
+                    newIndex,
+                    result.bdd,
+                    result.count,
+                    result.results,
+                    improvements + 1);
+        }
+
+        OptimizationResult toResult() {
+            return new OptimizationResult(bestBdd, bestSize, improvements > 0, bestResults);
+        }
     }
 
-    // Container for BDD compilation results
     private static final class BddCompilationResult {
         final Bdd bdd;
         final List<Rule> results;
@@ -460,18 +455,20 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         }
     }
 
-    // Position and its node count
-    private static final class PositionCount {
+    private static final class PositionResult {
         final int position;
         final int count;
+        final Bdd bdd;
+        final List<Rule> results;
 
-        PositionCount(int position, int count) {
+        PositionResult(int position, int count, Bdd bdd, List<Rule> results) {
             this.position = position;
             this.count = count;
+            this.bdd = bdd;
+            this.results = results;
         }
     }
 
-    // Result of an optimization pass
     private static final class OptimizationResult {
         final Bdd bdd;
         final int size;
@@ -486,7 +483,6 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         }
     }
 
-    // State tracking during optimization
     private static final class OptimizationState {
         final Condition[] order;
         final List<Condition> orderView;
@@ -518,17 +514,14 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         }
     }
 
-    /**
-     * Builder for SiftingOptimization.
-     */
     public static final class Builder implements SmithyBuilder<SiftingOptimization> {
         private Cfg cfg;
-        private int coarseMinNodes = DEFAULT_COARSE_MIN_NODES;
-        private int coarseMaxPasses = DEFAULT_COARSE_MAX_PASSES;
-        private int mediumMinNodes = DEFAULT_MEDIUM_MIN_NODES;
-        private int mediumMaxPasses = DEFAULT_MEDIUM_MAX_PASSES;
-        private int granularMaxNodes = DEFAULT_GRANULAR_MAX_NODES;
-        private int granularMaxPasses = DEFAULT_GRANULAR_MAX_PASSES;
+        private int coarseMinNodes = OptimizationEffort.COARSE.defaultNodeThreshold;
+        private int coarseMaxPasses = OptimizationEffort.COARSE.defaultMaxPasses;
+        private int mediumMinNodes = OptimizationEffort.MEDIUM.defaultNodeThreshold;
+        private int mediumMaxPasses = OptimizationEffort.MEDIUM.defaultMaxPasses;
+        private int granularMaxNodes = OptimizationEffort.GRANULAR.defaultNodeThreshold;
+        private int granularMaxPasses = OptimizationEffort.GRANULAR.defaultMaxPasses;
 
         private Builder() {}
 
@@ -549,8 +542,8 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
          * <p>Coarse optimization runs until the BDD has fewer than minNodeCount nodes
          * or maxPasses have been completed.
          *
-         * @param minNodeCount the target size to stop coarse optimization (default: 50,000)
-         * @param maxPasses the maximum number of coarse passes (default: 3)
+         * @param minNodeCount the target size to stop coarse optimization (default: 4,000)
+         * @param maxPasses the maximum number of coarse passes (default: 6)
          * @return this builder
          */
         public Builder coarseEffort(int minNodeCount, int maxPasses) {
@@ -565,8 +558,8 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
          * <p>Medium optimization runs until the BDD has fewer than minNodeCount nodes
          * or maxPasses have been completed.
          *
-         * @param minNodeCount the target size to stop medium optimization (default: 10,000)
-         * @param maxPasses the maximum number of medium passes (default: 4)
+         * @param minNodeCount the target size to stop medium optimization (default: 1,000)
+         * @param maxPasses the maximum number of medium passes (default: 6)
          * @return this builder
          */
         public Builder mediumEffort(int minNodeCount, int maxPasses) {
@@ -581,8 +574,8 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
          * <p>Granular optimization only runs if the BDD has fewer than maxNodeCount nodes,
          * and runs for at most maxPasses.
          *
-         * @param maxNodeCount the maximum size to attempt granular optimization (default: 3,000)
-         * @param maxPasses the maximum number of granular passes (default: 2)
+         * @param maxNodeCount the maximum size to attempt granular optimization (default: 8,000)
+         * @param maxPasses the maximum number of granular passes (default: 12)
          * @return this builder
          */
         public Builder granularEffort(int maxNodeCount, int maxPasses) {
