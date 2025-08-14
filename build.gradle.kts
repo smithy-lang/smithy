@@ -44,8 +44,18 @@ afterEvaluate {
         javadoc {
             title = "Smithy API ${version}"
             setDestinationDir(layout.buildDirectory.dir("docs/javadoc/latest").get().asFile)
-            source(subprojects.map { project(it.path).sourceSets.main.get().allJava })
-            classpath = files(subprojects.map { project(it.path).sourceSets.main.get().compileClasspath })
+
+            // Add an explicit dependencies on the compilation of each subproject because we need
+            // the compile classpath, which we can only get after the compile task has completed.
+            dependsOn(subprojects.map { it.tasks.named("compileJava") })
+            classpath = files(provider {
+                subprojects.flatMap { subproject ->
+                    subproject.configurations.getByName("compileClasspath").resolve()
+                }
+            })
+
+            source(provider { subprojects.map { project -> project.sourceSets.main.get().allJava } })
+
             (options as StandardJavadocDocletOptions).apply {
                 addStringOption("Xdoclint:-html", "-quiet")
             }
