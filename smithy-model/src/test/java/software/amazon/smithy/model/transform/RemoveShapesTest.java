@@ -208,7 +208,7 @@ public class RemoveShapesTest {
         assertEquals(1, result.shapes().count());
         assertFalse(result.expectShape(operationId, OperationShape.class).getInput().isPresent());
         assertFalse(result.expectShape(operationId, OperationShape.class).getOutput().isPresent());
-        assertTrue(result.expectShape(operationId, OperationShape.class).getErrors().isEmpty());
+        assertTrue(result.expectShape(operationId, OperationShape.class).getErrorsSet().isEmpty());
     }
 
     @Test

@@ -76,7 +76,7 @@ public final class ProtocolHttpPayloadValidator extends AbstractValidator {
             List<HttpBinding> responseBindings = bindingIndex.getResponseBindings(operation, Location.PAYLOAD);
             validateBindings(model, responseBindings).ifPresent(events::add);
 
-            for (ShapeId error : operation.getErrors()) {
+            for (ShapeId error : operation.getErrorsSet()) {
                 List<HttpBinding> errorBindings = bindingIndex.getResponseBindings(error, Location.PAYLOAD);
                 validateBindings(model, errorBindings).ifPresent(events::add);
             }

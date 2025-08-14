@@ -26,15 +26,15 @@ final class CopyServiceErrorsToOperationsTransform {
     }
 
     Model transform(ModelTransformer transformer, Model model) {
-        if (forService.getErrors().isEmpty()) {
+        if (forService.getErrorsSet().isEmpty()) {
             return model;
         }
 
         Set<Shape> toReplace = new HashSet<>();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         for (OperationShape operation : topDownIndex.getContainedOperations(forService)) {
-            Set<ShapeId> errors = new LinkedHashSet<>(operation.getErrors());
-            errors.addAll(forService.getErrors());
+            Set<ShapeId> errors = new LinkedHashSet<>(operation.getErrorsSet());
+            errors.addAll(forService.getErrorsSet());
             toReplace.add(operation.toBuilder().errors(errors).build());
         }
 

@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.model.shapes;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -15,6 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -26,8 +26,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     private final String introducedVersion;
     private final Map<ShapeId, String> rename;
     private final Map<ShapeId, String> introducedRename;
-    private final List<ShapeId> errors;
-    private final List<ShapeId> introducedErrors;
+    private final Set<ShapeId> errors;
+    private final Set<ShapeId> introducedErrors;
 
     private ServiceShape(Builder builder) {
         super(builder);
@@ -51,7 +51,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                         computedVersion = mixin.version;
                     }
                     computedRename.putAll(mixin.getRename());
-                    computedErrors.addAll(mixin.getErrors());
+                    computedErrors.addAll(mixin.getErrorsSet());
                 }
             }
 
@@ -67,7 +67,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
             version = computedVersion;
             rename = Collections.unmodifiableMap(computedRename);
-            errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
+            errors = Collections.unmodifiableSet(new LinkedHashSet<>(computedErrors));
         }
     }
 
@@ -150,6 +150,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         return introducedRename;
     }
 
+    @Deprecated
+    public List<ShapeId> getErrors() {
+        return ListUtils.copyOf(errors);
+    }
+
     /**
      * <p>Gets a list of the common errors that can be encountered by
      * every operation in the service.</p>
@@ -160,8 +165,13 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      *
      * @return Returns the errors.
      */
-    public List<ShapeId> getErrors() {
+    public Set<ShapeId> getErrorsSet() {
         return errors;
+    }
+
+    @Deprecated
+    public List<ShapeId> getIntroducedErrors() {
+        return ListUtils.copyOf(introducedErrors);
     }
 
     /**
@@ -175,7 +185,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      *
      * @return Returns the introduced service errors.
      */
-    public List<ShapeId> getIntroducedErrors() {
+    public Set<ShapeId> getIntroducedErrorsSet() {
         return introducedErrors;
     }
 
@@ -204,7 +214,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     public static final class Builder extends EntityShape.Builder<Builder, ServiceShape> {
         private String version = "";
         private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
-        private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
+        private final BuilderRef<Set<ShapeId>> errors = BuilderRef.forOrderedSet();
 
         @Override
         public ServiceShape build() {
@@ -328,7 +338,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                         flatVersion = mixin.version;
                     }
                     flatRename.putAll(mixin.getRename());
-                    flatErrors.addAll(mixin.getErrors());
+                    flatErrors.addAll(mixin.getErrorsSet());
                 }
             }
 

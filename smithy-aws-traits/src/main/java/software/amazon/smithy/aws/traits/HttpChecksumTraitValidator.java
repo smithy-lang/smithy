@@ -260,8 +260,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
         });
 
         // Check for header binding conflicts with each error shape.
-        if (!operation.getErrors().isEmpty()) {
-            for (ShapeId id : operation.getErrors()) {
+        if (!operation.getErrorsSet().isEmpty()) {
+            for (ShapeId id : operation.getErrorsSet()) {
                 StructureShape shape = model.expectShape(id, StructureShape.class);
                 events.addAll(validateHeaderConflicts(operation, shape));
             }

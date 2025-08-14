@@ -29,14 +29,14 @@ public final class AddedOperationError extends AbstractDiffEvaluator {
     }
 
     private List<ValidationEvent> createErrorViolations(ChangedShape<OperationShape> change, Model newModel) {
-        if (change.getOldShape().getErrors().equals(change.getNewShape().getErrors())) {
+        if (change.getOldShape().getErrorsSet().equals(change.getNewShape().getErrorsSet())) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId error : change.getNewShape().getErrors()) {
+        for (ShapeId error : change.getNewShape().getErrorsSet()) {
             SourceLocation errorSource = newModel.expectShape(error).getSourceLocation();
-            if (!change.getOldShape().getErrors().contains(error)) {
+            if (!change.getOldShape().getErrorsSet().contains(error)) {
                 events.add(
                         ValidationEvent.builder()
                                 .id(getEventId() + "." + error.getName())

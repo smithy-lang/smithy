@@ -346,7 +346,7 @@ public final class ModelSerializer {
                     createTypedBuilder(shape)
                             .withMember("input", serializeReference(shape.getInputShape()))
                             .withMember("output", serializeReference(shape.getOutputShape()))
-                            .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
+                            .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrorsSet())))
                     .build();
         }
 
@@ -394,7 +394,7 @@ public final class ModelSerializer {
 
             serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()));
             serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources()));
-            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors()));
+            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrorsSet()));
 
             if (!shape.getIntroducedRename().isEmpty()) {
                 ObjectNode.Builder renameBuilder = Node.objectNodeBuilder();

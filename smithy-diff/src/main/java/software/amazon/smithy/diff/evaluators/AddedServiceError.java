@@ -26,13 +26,13 @@ public final class AddedServiceError extends AbstractDiffEvaluator {
     }
 
     private List<ValidationEvent> createErrorViolations(ChangedShape<ServiceShape> change) {
-        if (change.getOldShape().getErrors().equals(change.getNewShape().getErrors())) {
+        if (change.getOldShape().getErrorsSet().equals(change.getNewShape().getErrorsSet())) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId id : change.getNewShape().getErrors()) {
-            if (!change.getOldShape().getErrors().contains(id)) {
+        for (ShapeId id : change.getNewShape().getErrorsSet()) {
+            if (!change.getOldShape().getErrorsSet().contains(id)) {
                 events.add(warning(change.getNewShape(),
                         String.format(
                                 "The `%s` error was added to the `%s` service, making this error common "

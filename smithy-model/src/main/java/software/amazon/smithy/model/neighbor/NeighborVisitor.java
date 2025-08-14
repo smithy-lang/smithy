@@ -68,7 +68,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> serviceShape(ServiceShape shape) {
-        int neededSize = shape.getOperations().size() + shape.getResources().size() + shape.getErrors().size();
+        int neededSize = shape.getOperations().size() + shape.getResources().size() + shape.getErrorsSet().size();
         List<Relationship> result = initializeRelationships(shape, neededSize);
 
         for (ShapeId operation : shape.getOperations()) {
@@ -79,7 +79,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
             push(result, shape, RelationshipType.RESOURCE, resource);
         }
 
-        for (ShapeId errorId : shape.getErrors()) {
+        for (ShapeId errorId : shape.getErrorsSet()) {
             push(result, shape, RelationshipType.ERROR, errorId);
         }
 
@@ -120,7 +120,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         ShapeId output = shape.getOutput().orElse(null);
 
         // Calculate the number of relationships up front.
-        int assumedRelationshipCount = shape.getErrors().size()
+        int assumedRelationshipCount = shape.getErrorsSet().size()
                 + (input == null ? 0 : 1)
                 + (output == null ? 0 : 1);
         List<Relationship> result = initializeRelationships(shape, assumedRelationshipCount);
@@ -133,7 +133,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
             push(result, shape, RelationshipType.OUTPUT, output);
         }
 
-        for (ShapeId errorId : shape.getErrors()) {
+        for (ShapeId errorId : shape.getErrorsSet()) {
             push(result, shape, RelationshipType.ERROR, errorId);
         }
 
