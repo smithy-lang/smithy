@@ -141,7 +141,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     }
 
     /**
-     * <p>Gets a list of the error shape IDs bound directly to the operation
+     * <p>Gets a set of the error shape IDs bound directly to the operation
      * that can be encountered.
      *
      * <p>This DOES NOT include errors that are common to a service. Operations
