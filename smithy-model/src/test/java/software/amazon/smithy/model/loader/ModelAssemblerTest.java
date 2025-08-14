@@ -1089,7 +1089,7 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         ShapeId service = ShapeId.from("smithy.example#Example");
-        assertThat(model.expectShape(service, ServiceShape.class).getErrors(),
+        assertThat(model.expectShape(service, ServiceShape.class).getErrorsSet(),
                 contains(ShapeId.from("smithy.example#Error1"),
                         ShapeId.from("smithy.example#Error2"),
                         ShapeId.from("smithy.example#Error3"),

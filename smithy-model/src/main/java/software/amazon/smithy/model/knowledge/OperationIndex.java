@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.knowledge;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,15 +56,15 @@ public final class OperationIndex implements KnowledgeIndex {
                 outputs.put(operation.getId(), shape);
                 boundOutputOperations.computeIfAbsent(shape.getId(), id -> new HashSet<>()).add(operation);
             });
-            addErrorsFromShape(model, operation.getId(), operation.getErrors());
+            addErrorsFromShape(model, operation.getId(), operation.getErrorsSet());
         }
 
         for (ServiceShape service : model.getServiceShapes()) {
-            addErrorsFromShape(model, service.getId(), service.getErrors());
+            addErrorsFromShape(model, service.getId(), service.getErrorsSet());
         }
     }
 
-    private void addErrorsFromShape(Model model, ShapeId source, List<ShapeId> errorShapeIds) {
+    private void addErrorsFromShape(Model model, ShapeId source, Collection<ShapeId> errorShapeIds) {
         List<StructureShape> errorShapes = new ArrayList<>(errorShapeIds.size());
         Shape sourceShape = model.expectShape(source);
         for (ShapeId target : errorShapeIds) {

@@ -45,8 +45,8 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 public class IdlModelLoaderTest {
     @Test
@@ -206,8 +206,8 @@ public class IdlModelLoaderTest {
         assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getInput(),
                 equalTo(Optional.of(ShapeId.from("smithy.example.nested#A"))));
 
-        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrors(),
-                equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C"))));
+        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrorsSet(),
+                equalTo(SetUtils.of(ShapeId.from("smithy.example.nested#C"))));
 
         Map<String, ShapeId> identifiers = model.expectShape(
                 ShapeId.from("smithy.example.nested#Resource"),

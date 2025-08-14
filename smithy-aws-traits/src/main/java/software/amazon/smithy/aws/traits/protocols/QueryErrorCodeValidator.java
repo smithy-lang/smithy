@@ -48,9 +48,9 @@ public class QueryErrorCodeValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
         TopDownIndex index = TopDownIndex.of(model);
-        Set<ShapeId> errors = new HashSet<>(service.getErrors());
+        Set<ShapeId> errors = new HashSet<>(service.getErrorsSet());
         for (OperationShape operation : index.getContainedOperations(service)) {
-            errors.addAll(operation.getErrors());
+            errors.addAll(operation.getErrorsSet());
         }
 
         Map<String, Set<String>> errorCodeBindings = new HashMap<>();

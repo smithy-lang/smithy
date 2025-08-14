@@ -49,7 +49,7 @@ final class DeconflictErrorsWithSharedStatusCode {
 
             // Collect errors that share the same status code.
             Map<Integer, List<StructureShape>> statusCodesToErrors = new HashMap<>();
-            for (ShapeId errorId : operation.getErrors()) {
+            for (ShapeId errorId : operation.getErrorsSet()) {
                 StructureShape error = model.expectShape(errorId, StructureShape.class);
                 Integer statusCode = error.hasTrait(HttpErrorTrait.ID)
                         ? error.getTrait(HttpErrorTrait.class).get().getCode()

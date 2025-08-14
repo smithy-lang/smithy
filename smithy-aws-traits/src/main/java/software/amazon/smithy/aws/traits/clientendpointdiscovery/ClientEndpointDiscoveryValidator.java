@@ -138,7 +138,7 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
 
         return infos.stream()
                 .filter(discoveryInfo -> discoveryInfo.getOptionalError().isPresent())
-                .filter(discoveryInfo -> !operation.getErrors()
+                .filter(discoveryInfo -> !operation.getErrorsSet()
                         .contains(
                                 discoveryInfo.getOptionalError().get().getId()))
                 .map(discoveryInfo -> error(operation,

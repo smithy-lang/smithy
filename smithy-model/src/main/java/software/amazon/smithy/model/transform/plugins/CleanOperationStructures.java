@@ -73,10 +73,10 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
             OperationShape operation,
             OperationShape.Builder builder
     ) {
-        Set<ShapeId> errors = new HashSet<>(operation.getErrors());
+        Set<ShapeId> errors = new HashSet<>(operation.getErrorsSet());
         errors.removeAll(removed);
 
-        if (errors.size() != operation.getErrors().size()) {
+        if (errors.size() != operation.getErrorsSet().size()) {
             if (builder == null) {
                 builder = operation.toBuilder();
             }

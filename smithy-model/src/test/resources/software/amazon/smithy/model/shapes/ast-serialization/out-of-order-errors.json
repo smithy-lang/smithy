@@ -1,0 +1,61 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#ErrorA": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client"
+      }
+    },
+    "smithy.example#ErrorB": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client"
+      }
+    },
+    "smithy.example#ErrorC": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client"
+      }
+    },
+    "smithy.example#ErrorD": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client"
+      }
+    },
+    "smithy.example#Operation": {
+      "type": "operation",
+      "input": {
+        "target": "smithy.api#Unit"
+      },
+      "output": {
+        "target": "smithy.api#Unit"
+      },
+      "errors": [
+        {
+          "target": "smithy.example#ErrorD"
+        },
+        {
+          "target": "smithy.example#ErrorC"
+        }
+      ]
+    },
+    "smithy.example#Service": {
+      "type": "service",
+      "errors": [
+        {
+          "target": "smithy.example#ErrorB"
+        },
+        {
+          "target": "smithy.example#ErrorA"
+        }
+      ]
+    }
+  }
+}

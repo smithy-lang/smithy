@@ -82,6 +82,22 @@ public class ModelSerializerTest {
     }
 
     @Test
+    public void testSerializationDoesntChangeErrorSemanticEquality() throws URISyntaxException {
+        String filename = "ast-serialization/out-of-order-errors.json";
+        Path path = Paths.get(SmithyIdlModelSerializer.class.getResource(filename).toURI());
+        Model model = Model.assembler().addImport(path).assemble().unwrap();
+
+        ModelSerializer serializer = ModelSerializer.builder().build();
+        ObjectNode serialized = serializer.serialize(model);
+        Model roundTrippedModel = Model.assembler()
+                .addUnparsedModel(path.toString(), Node.printJson(serialized))
+                .assemble()
+                .unwrap();
+
+        assertThat(roundTrippedModel, equalTo(model));
+    }
+
+    @Test
     public void serializesModels() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-model.json"))
