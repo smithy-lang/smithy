@@ -38,6 +38,54 @@ parameter is equal to the value ``false``:
     }
 
 
+.. _rules-engine-standard-library-coalesce:
+
+``coalesce`` function
+=====================
+
+Summary
+    Evaluates the first argument and returns the result if it is present, otherwise evaluates and returns the result
+    of the second argument.
+Argument types
+    * value1: ``T`` or ``option<T>``
+    * value2: ``T`` or ``option<T>``
+Return type
+    * ``coalesce(T, T)`` → ``T``
+    * ``coalesce(option<T>, T)`` → ``T``
+    * ``coalesce(T, option<T>)`` → ``T``
+    * ``coalesce(option<T>, option<T>)`` → ``option<T>``
+Since
+    1.1
+
+The ``coalesce`` function provides null-safe chaining by returning the result of the first argument if it returns a
+value, otherwise returns the result of the second argument. This is particularly useful for providing default values
+for optional parameters, chaining multiple optional values together, and related optimizations.
+
+The following example demonstrates chaining multiple ``coalesce`` calls to try several optional values
+in sequence:
+
+.. code-block:: json
+
+    {
+        "fn": "coalesce",
+        "argv": [
+            {"ref": "customEndpoint"},
+            {
+                "fn": "coalesce",
+                "argv": [
+                    {"ref": "regionalEndpoint"},
+                    {"ref": "defaultEndpoint"}
+                ]
+            }
+        ]
+    }
+
+.. important::
+    Both arguments must be of the same type after unwrapping any optionals (types are known at compile time and do not
+    need to be validated at runtime). Note that the first result is returned even if it's ``false`` (coalesce is
+    looking for a *non-empty* value).
+
+
 .. _rules-engine-standard-library-getAttr:
 
 ``getAttr`` function
