@@ -43,6 +43,7 @@ structures/structure-trait.smithy
 structures/struct-with-listofmap-trait.smithy
 structures/struct-with-uniqueitems-list-trait.smithy
 structures/struct-with-idref-member-trait.smithy
+structures/struct-member-with-timestamp-format-trait.smithy
 timestamps/date-time-format-timestamp-trait.smithy
 timestamps/epoch-seconds-format-timestamp-trait.smithy
 timestamps/http-date-format-timestamp-trait.smithy

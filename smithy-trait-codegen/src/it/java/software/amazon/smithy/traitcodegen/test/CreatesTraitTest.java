@@ -41,6 +41,7 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
 import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
@@ -53,6 +54,8 @@ import com.example.traits.uniqueitems.NumberSetTrait;
 import com.example.traits.uniqueitems.SetMember;
 import com.example.traits.uniqueitems.StringSetTrait;
 import com.example.traits.uniqueitems.StructureSetTrait;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -208,6 +211,14 @@ public class CreatesTraitTest {
                         StructWithIdrefMemberTrait.builder()
                                 .idRefMemberA(ShapeId.from("test.smithy.traitcodegen#a"))
                                 .idRefMemberB(ShapeId.from("test.smithy.traitcodegen#b"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructMemberWithTimestampFormatTrait.ID,
+                        StructMemberWithTimestampFormatTrait.builder()
+                                .memberDateTime(Instant.parse("1985-04-12T23:20:50.52Z"))
+                                .memberHttpDate(Instant.from(
+                                        DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")))
+                                .memberEpochSeconds(Instant.ofEpochSecond((long) 1515531081.123))
                                 .build()
                                 .toNode()),
                 // Timestamps
