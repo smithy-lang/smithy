@@ -6,10 +6,13 @@ package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class BuilderRefTest {
@@ -84,5 +87,37 @@ public class BuilderRefTest {
         strings.clear();
 
         assertThat(strings.hasValue(), equalTo(false));
+    }
+
+    @Test
+    public void createsSortedMaps() {
+        BuilderRef<Map<String, String>> sortedMap = BuilderRef.forSortedMap();
+        sortedMap.get().put("c", "d");
+        sortedMap.get().put("a", "b");
+        assertThat(sortedMap.peek().keySet(), containsInRelativeOrder("a", "c"));
+    }
+
+    @Test
+    public void createsSortedMapsWithCustomComparator() {
+        BuilderRef<Map<String, String>> sortedMap = BuilderRef.forSortedMap(String.CASE_INSENSITIVE_ORDER);
+        sortedMap.get().put("C", "d");
+        sortedMap.get().put("a", "b");
+        assertThat(sortedMap.peek().keySet(), containsInRelativeOrder("a", "C"));
+    }
+
+    @Test
+    public void createsSortedSets() {
+        BuilderRef<Set<String>> sortedSet = BuilderRef.forSortedSet();
+        sortedSet.get().add("b");
+        sortedSet.get().add("a");
+        assertThat(sortedSet.peek(), containsInRelativeOrder("a", "b"));
+    }
+
+    @Test
+    public void createsSortedSetsWithCustomComparator() {
+        BuilderRef<Set<String>> sortedSet = BuilderRef.forSortedSet(String.CASE_INSENSITIVE_ORDER);
+        sortedSet.get().add("B");
+        sortedSet.get().add("a");
+        assertThat(sortedSet.peek(), containsInRelativeOrder("a", "B"));
     }
 }
