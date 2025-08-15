@@ -4,12 +4,11 @@
  */
 package software.amazon.smithy.openapi.model;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -22,9 +21,9 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
     private ResponseObject(Builder builder) {
         super(builder);
         description = SmithyBuilder.requiredState("description", builder.description);
-        headers = Collections.unmodifiableMap(new TreeMap<>(builder.headers));
-        content = Collections.unmodifiableMap(new TreeMap<>(builder.content));
-        links = Collections.unmodifiableMap(new TreeMap<>(builder.links));
+        headers = builder.headers.copy();
+        content = builder.content.copy();
+        links = builder.links.copy();
     }
 
     public static Builder builder() {
@@ -104,9 +103,9 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
 
     public static final class Builder extends Component.Builder<Builder, ResponseObject> {
         private String description;
-        private final Map<String, Ref<ParameterObject>> headers = new TreeMap<>();
-        private final Map<String, MediaTypeObject> content = new TreeMap<>();
-        private final Map<String, Ref<LinkObject>> links = new TreeMap<>();
+        private final BuilderRef<Map<String, Ref<ParameterObject>>> headers = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, MediaTypeObject>> content = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, Ref<LinkObject>>> links = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -121,29 +120,29 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
         }
 
         public Builder putHeader(String name, Ref<ParameterObject> header) {
-            headers.put(name, header);
+            headers.get().put(name, header);
             return this;
         }
 
         public Builder headers(Map<String, Ref<ParameterObject>> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return this;
         }
 
         public Builder putContent(String name, MediaTypeObject mediaTypeObject) {
-            content.put(name, mediaTypeObject);
+            content.get().put(name, mediaTypeObject);
             return this;
         }
 
         public Builder content(Map<String, MediaTypeObject> content) {
             this.content.clear();
-            this.content.putAll(content);
+            content.forEach(this::putContent);
             return this;
         }
 
         public Builder putLink(String name, Ref<LinkObject> link) {
-            links.put(name, link);
+            links.get().put(name, link);
             return this;
         }
 
@@ -153,7 +152,7 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
 
         public Builder links(Map<String, Ref<LinkObject>> links) {
             this.links.clear();
-            this.links.putAll(links);
+            links.forEach(this::putLink);
             return this;
         }
     }

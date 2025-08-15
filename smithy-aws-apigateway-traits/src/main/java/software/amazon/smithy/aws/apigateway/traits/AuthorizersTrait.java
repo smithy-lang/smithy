@@ -5,7 +5,6 @@
 package software.amazon.smithy.aws.apigateway.traits;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,7 +15,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -40,7 +39,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
     private AuthorizersTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        authorizers = MapUtils.copyOf(builder.authorizers);
+        authorizers = builder.authorizers.copy();
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -110,7 +109,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      * Builds an {@link AuthorizersTrait}.
      */
     public static final class Builder extends AbstractTraitBuilder<AuthorizersTrait, Builder> {
-        private final Map<String, AuthorizerDefinition> authorizers = new HashMap<>();
+        private final BuilderRef<Map<String, AuthorizerDefinition>> authorizers = BuilderRef.forOrderedMap();
 
         @Override
         public AuthorizersTrait build() {
@@ -125,7 +124,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder putAuthorizer(String name, AuthorizerDefinition authorizer) {
-            authorizers.put(name, Objects.requireNonNull(authorizer));
+            authorizers.get().put(name, Objects.requireNonNull(authorizer));
             return this;
         }
 
@@ -148,7 +147,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder removeAuthorizer(String name) {
-            authorizers.remove(name);
+            authorizers.get().remove(name);
             return this;
         }
 

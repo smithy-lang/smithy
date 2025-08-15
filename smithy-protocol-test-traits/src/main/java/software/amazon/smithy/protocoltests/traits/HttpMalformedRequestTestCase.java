@@ -4,12 +4,11 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.Tagged;
@@ -39,7 +38,7 @@ public final class HttpMalformedRequestTestCase implements Tagged, ToSmithyBuild
         protocol = SmithyBuilder.requiredState(PROTOCOL, builder.protocol);
         request = SmithyBuilder.requiredState(REQUEST, builder.request);
         response = SmithyBuilder.requiredState(RESPONSE, builder.response);
-        tags = ListUtils.copyOf(builder.tags);
+        tags = builder.tags.copy();
     }
 
     public Optional<String> getDocumentation() {
@@ -93,7 +92,7 @@ public final class HttpMalformedRequestTestCase implements Tagged, ToSmithyBuild
         private ShapeId protocol;
         private HttpMalformedRequestDefinition request;
         private HttpMalformedResponseDefinition response;
-        private final List<String> tags = new ArrayList<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
 
@@ -124,7 +123,7 @@ public final class HttpMalformedRequestTestCase implements Tagged, ToSmithyBuild
 
         public Builder tags(List<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            this.tags.get().addAll(tags);
             return this;
         }
 

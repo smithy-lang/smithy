@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,8 +12,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -46,9 +43,9 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
         body = builder.body;
         bodyMediaType = builder.bodyMediaType;
         host = builder.host;
-        headers = MapUtils.copyOf(builder.headers);
+        headers = builder.headers.copy();
         method = SmithyBuilder.requiredState(METHOD, builder.method);
-        queryParams = ListUtils.copyOf(builder.queryParams);
+        queryParams = builder.queryParams.copy();
         uri = builder.uri;
     }
 
@@ -144,9 +141,9 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
         private String body;
         private String bodyMediaType;
         private String host;
-        private final Map<String, String> headers = new HashMap<>();
+        private final BuilderRef<Map<String, String>> headers = BuilderRef.forOrderedMap();
         private String method;
-        private final List<String> queryParams = new ArrayList<>();
+        private final BuilderRef<List<String>> queryParams = BuilderRef.forList();
         private String uri;
 
         private Builder() {}
@@ -163,12 +160,12 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
         public Builder headers(Map<String, String> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return this;
         }
 
         public Builder putHeader(String key, String value) {
-            this.headers.put(key, value);
+            this.headers.get().put(key, value);
             return this;
         }
 
@@ -184,7 +181,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
         public Builder queryParams(List<String> queryParams) {
             this.queryParams.clear();
-            this.queryParams.addAll(queryParams);
+            this.queryParams.get().addAll(queryParams);
             return this;
         }
 

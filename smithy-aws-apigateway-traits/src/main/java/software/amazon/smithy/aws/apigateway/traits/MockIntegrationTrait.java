@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
@@ -14,7 +13,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -33,9 +32,9 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         super(ID, builder.getSourceLocation());
         passThroughBehavior = builder.passThroughBehavior;
         contentHandling = builder.contentHandling;
-        requestParameters = MapUtils.copyOf(builder.requestParameters);
-        requestTemplates = MapUtils.copyOf(builder.requestTemplates);
-        responses = MapUtils.copyOf(builder.responses);
+        requestParameters = builder.requestParameters.copy();
+        requestTemplates = builder.requestTemplates.copy();
+        responses = builder.responses.copy();
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -165,9 +164,9 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     public static final class Builder extends AbstractTraitBuilder<MockIntegrationTrait, Builder> {
         private String passThroughBehavior;
         private String contentHandling;
-        private final Map<String, String> requestParameters = new HashMap<>();
-        private final Map<String, String> requestTemplates = new HashMap<>();
-        private final Map<String, IntegrationResponse> responses = new HashMap<>();
+        private final BuilderRef<Map<String, String>> requestParameters = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, String>> requestTemplates = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, IntegrationResponse>> responses = BuilderRef.forOrderedMap();
 
         @Override
         public MockIntegrationTrait build() {
@@ -218,7 +217,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @see IntegrationTrait#getRequestParameters()
          */
         public Builder putRequestParameter(String input, String output) {
-            requestParameters.put(input, output);
+            requestParameters.get().put(input, output);
             return this;
         }
 
@@ -231,7 +230,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          */
         public Builder requestParameters(Map<String, String> requestParameters) {
             this.requestParameters.clear();
-            this.requestParameters.putAll(requestParameters);
+            requestParameters.forEach(this::putRequestParameter);
             return this;
         }
 
@@ -242,7 +241,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @return Returns the builder.
          */
         public Builder removeRequestParameter(String expression) {
-            requestParameters.remove(expression);
+            requestParameters.get().remove(expression);
             return this;
         }
 
@@ -255,7 +254,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @see IntegrationTrait#getRequestTemplates()
          */
         public Builder putRequestTemplate(String mimeType, String template) {
-            requestTemplates.put(mimeType, template);
+            requestTemplates.get().put(mimeType, template);
             return this;
         }
 
@@ -268,7 +267,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          */
         public Builder requestTemplates(Map<String, String> requestTemplates) {
             this.requestTemplates.clear();
-            this.requestTemplates.putAll(requestTemplates);
+            requestTemplates.forEach(this::putRequestTemplate);
             return this;
         }
 
@@ -279,7 +278,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @return Returns the builder.
          */
         public Builder removeRequestTemplate(String mimeType) {
-            requestTemplates.remove(mimeType);
+            requestTemplates.get().remove(mimeType);
             return this;
         }
 
@@ -292,7 +291,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @see IntegrationTrait#getResponses()
          */
         public Builder putResponse(String statusCodeRegex, IntegrationResponse integrationResponse) {
-            responses.put(statusCodeRegex, integrationResponse);
+            responses.get().put(statusCodeRegex, integrationResponse);
             return this;
         }
 
@@ -305,7 +304,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          */
         public Builder responses(Map<String, IntegrationResponse> responses) {
             this.responses.clear();
-            this.responses.putAll(responses);
+            responses.forEach(this::putResponse);
             return this;
         }
 
@@ -316,7 +315,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @return Returns the builder.
          */
         public Builder removeResponse(String statusCodeRegex) {
-            responses.remove(statusCodeRegex);
+            responses.get().remove(statusCodeRegex);
             return this;
         }
     }

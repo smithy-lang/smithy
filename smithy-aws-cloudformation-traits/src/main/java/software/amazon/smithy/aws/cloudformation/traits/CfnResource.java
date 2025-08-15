@@ -4,10 +4,8 @@
  */
 package software.amazon.smithy.aws.cloudformation.traits;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -30,11 +29,11 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
     private final List<Set<String>> additionalIdentifiers;
 
     private CfnResource(Builder builder) {
-        Map<String, CfnResourceProperty> propertyDefinitions = new HashMap<>(builder.propertyDefinitions);
-        Map<String, CfnResourceProperty> availableProperties = new HashMap<>();
-        this.excludedProperties = Collections.unmodifiableSet(builder.excludedProperties);
-        this.primaryIdentifiers = Collections.unmodifiableSet(builder.primaryIdentifiers);
-        this.additionalIdentifiers = Collections.unmodifiableList(builder.additionalIdentifiers);
+        Map<String, CfnResourceProperty> propertyDefinitions = new LinkedHashMap<>(builder.propertyDefinitions.copy());
+        Map<String, CfnResourceProperty> availableProperties = new LinkedHashMap<>();
+        this.excludedProperties = builder.excludedProperties.copy();
+        this.primaryIdentifiers = builder.primaryIdentifiers.copy();
+        this.additionalIdentifiers = builder.additionalIdentifiers.copy();
 
         // Pre-compute the properties available, cleaning up any exclusions.
         for (Map.Entry<String, CfnResourceProperty> propertyDefinition : propertyDefinitions.entrySet()) {
@@ -56,6 +55,7 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
                     availableProperties.put(propertyDefinition.getKey(), propertyDefinition.getValue());
                 }
             }
+
         }
 
         this.propertyDefinitions = Collections.unmodifiableMap(propertyDefinitions);
@@ -204,19 +204,19 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
     }
 
     public static final class Builder implements SmithyBuilder<CfnResource> {
-        private final Map<String, CfnResourceProperty> propertyDefinitions = new HashMap<>();
-        private final Set<ShapeId> excludedProperties = new HashSet<>();
-        private final Set<String> primaryIdentifiers = new HashSet<>();
-        private final List<Set<String>> additionalIdentifiers = new ArrayList<>();
+        private final BuilderRef<Map<String, CfnResourceProperty>> propertyDefinitions = BuilderRef.forOrderedMap();
+        private final BuilderRef<Set<ShapeId>> excludedProperties = BuilderRef.forOrderedSet();
+        private final BuilderRef<Set<String>> primaryIdentifiers = BuilderRef.forOrderedSet();
+        private final BuilderRef<List<Set<String>>> additionalIdentifiers = BuilderRef.forList();
 
         private Builder() {}
 
         public boolean hasPropertyDefinition(String propertyName) {
-            return propertyDefinitions.containsKey(propertyName);
+            return propertyDefinitions.peek().containsKey(propertyName);
         }
 
         public Builder putPropertyDefinition(String propertyName, CfnResourceProperty definition) {
-            propertyDefinitions.put(propertyName, definition);
+            propertyDefinitions.get().put(propertyName, definition);
             return this;
         }
 
@@ -224,7 +224,7 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
                 String propertyName,
                 Function<CfnResourceProperty, CfnResourceProperty> updater
         ) {
-            CfnResourceProperty definition = propertyDefinitions.get(propertyName);
+            CfnResourceProperty definition = propertyDefinitions.get().get(propertyName);
 
             // Don't update if we don't have a property or it's already locked.
             if (definition == null || definition.hasExplicitMutability()) {
@@ -236,40 +236,40 @@ public final class CfnResource implements ToSmithyBuilder<CfnResource> {
 
         public Builder propertyDefinitions(Map<String, CfnResourceProperty> propertyDefinitions) {
             this.propertyDefinitions.clear();
-            this.propertyDefinitions.putAll(propertyDefinitions);
+            propertyDefinitions.forEach(this::putPropertyDefinition);
             return this;
         }
 
         public Builder addExcludedProperty(ShapeId excludedProperty) {
-            this.excludedProperties.add(excludedProperty);
+            this.excludedProperties.get().add(excludedProperty);
             return this;
         }
 
         public Builder excludedProperties(Set<ShapeId> excludedProperties) {
             this.excludedProperties.clear();
-            this.excludedProperties.addAll(excludedProperties);
+            excludedProperties.forEach(this::addExcludedProperty);
             return this;
         }
 
         public Builder addPrimaryIdentifier(String primaryIdentifier) {
-            this.primaryIdentifiers.add(primaryIdentifier);
+            this.primaryIdentifiers.get().add(primaryIdentifier);
             return this;
         }
 
         public Builder primaryIdentifiers(Set<String> primaryIdentifiers) {
             this.primaryIdentifiers.clear();
-            this.primaryIdentifiers.addAll(primaryIdentifiers);
+            primaryIdentifiers.forEach(this::addPrimaryIdentifier);
             return this;
         }
 
         public Builder addAdditionalIdentifier(Set<String> additionalIdentifier) {
-            this.additionalIdentifiers.add(additionalIdentifier);
+            this.additionalIdentifiers.get().add(additionalIdentifier);
             return this;
         }
 
         public Builder additionalIdentifiers(List<Set<String>> additionalIdentifiers) {
             this.additionalIdentifiers.clear();
-            this.additionalIdentifiers.addAll(additionalIdentifiers);
+            additionalIdentifiers.forEach(this::addAdditionalIdentifier);
             return this;
         }
 

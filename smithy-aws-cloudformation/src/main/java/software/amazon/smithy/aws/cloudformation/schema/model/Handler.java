@@ -7,12 +7,11 @@ package software.amazon.smithy.aws.cloudformation.schema.model;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -43,7 +42,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
     private final Set<String> permissions;
 
     private Handler(Builder builder) {
-        this.permissions = SetUtils.orderedCopyOf(builder.permissions);
+        this.permissions = builder.permissions.copy();
     }
 
     @Override
@@ -73,7 +72,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
     }
 
     public static final class Builder implements SmithyBuilder<Handler> {
-        private final Set<String> permissions = new TreeSet<>();
+        private final BuilderRef<Set<String>> permissions = BuilderRef.forSortedSet();
 
         private Builder() {}
 
@@ -84,12 +83,12 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
 
         public Builder permissions(Collection<String> permissions) {
             this.permissions.clear();
-            this.permissions.addAll(permissions);
+            permissions.forEach(this::addPermission);
             return this;
         }
 
         public Builder addPermission(String permission) {
-            this.permissions.add(permission);
+            this.permissions.get().add(permission);
             return this;
         }
 
