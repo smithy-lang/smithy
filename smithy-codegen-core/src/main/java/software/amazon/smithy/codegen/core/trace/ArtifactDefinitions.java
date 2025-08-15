@@ -4,13 +4,12 @@
  */
 package software.amazon.smithy.codegen.core.trace;
 
-import java.util.HashMap;
 import java.util.Map;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -25,14 +24,14 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
     private Map<String, String> types;
 
     private ArtifactDefinitions(Builder builder) {
-        if (builder.tags.isEmpty()) {
+        if (builder.tags.peek().isEmpty()) {
             throw new IllegalStateException("ArtifactDefinition's Tags field must not be empty.");
         }
-        if (builder.types.isEmpty()) {
+        if (builder.types.peek().isEmpty()) {
             throw new IllegalStateException("ArtifactDefinition's Types field must not be empty.");
         }
-        tags = MapUtils.copyOf(builder.tags);
-        types = MapUtils.copyOf(builder.types);
+        tags = builder.tags.copy();
+        types = builder.types.copy();
     }
 
     /**
@@ -108,8 +107,8 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
     }
 
     public static final class Builder implements SmithyBuilder<ArtifactDefinitions> {
-        private final Map<String, String> tags = new HashMap<>();
-        private final Map<String, String> types = new HashMap<>();
+        private final BuilderRef<Map<String, String>> tags = BuilderRef.forUnorderedMap();
+        private final BuilderRef<Map<String, String>> types = BuilderRef.forUnorderedMap();
 
         /**
          * @return Definitions object from this builder.
@@ -120,13 +119,13 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
 
         public Builder tags(Map<String, String> tags) {
             this.tags.clear();
-            this.tags.putAll(tags);
+            tags.forEach(this::addTag);
             return this;
         }
 
         public Builder types(Map<String, String> types) {
             this.types.clear();
-            this.types.putAll(types);
+            types.forEach(this::addType);
             return this;
         }
 
@@ -138,7 +137,7 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
          * @return This builder.
          */
         public Builder addTag(String name, String description) {
-            this.tags.put(name, description);
+            this.tags.get().put(name, description);
             return this;
         }
 
@@ -150,7 +149,7 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
          * @return This builder.
          */
         public Builder addType(String name, String description) {
-            this.types.put(name, description);
+            this.types.get().put(name, description);
             return this;
         }
 

@@ -4,14 +4,13 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -42,9 +41,9 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         uri = SmithyBuilder.requiredState(URI, builder.uri);
         host = builder.host;
         resolvedHost = builder.resolvedHost;
-        queryParams = ListUtils.copyOf(builder.queryParams);
-        forbidQueryParams = ListUtils.copyOf(builder.forbidQueryParams);
-        requireQueryParams = ListUtils.copyOf(builder.requireQueryParams);
+        queryParams = builder.queryParams.copy();
+        forbidQueryParams = builder.forbidQueryParams.copy();
+        requireQueryParams = builder.requireQueryParams.copy();
     }
 
     public String getMethod() {
@@ -141,9 +140,9 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         private String uri;
         private String host;
         private String resolvedHost;
-        private final List<String> queryParams = new ArrayList<>();
-        private final List<String> forbidQueryParams = new ArrayList<>();
-        private final List<String> requireQueryParams = new ArrayList<>();
+        private final BuilderRef<List<String>> queryParams = BuilderRef.forList();
+        private final BuilderRef<List<String>> forbidQueryParams = BuilderRef.forList();
+        private final BuilderRef<List<String>> requireQueryParams = BuilderRef.forList();
 
         private Builder() {}
 
@@ -169,19 +168,19 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
         public Builder queryParams(List<String> queryParams) {
             this.queryParams.clear();
-            this.queryParams.addAll(queryParams);
+            this.queryParams.get().addAll(queryParams);
             return this;
         }
 
         public Builder forbidQueryParams(List<String> forbidQueryParams) {
             this.forbidQueryParams.clear();
-            this.forbidQueryParams.addAll(forbidQueryParams);
+            this.forbidQueryParams.get().addAll(forbidQueryParams);
             return this;
         }
 
         public Builder requireQueryParams(List<String> requireQueryParams) {
             this.requireQueryParams.clear();
-            this.requireQueryParams.addAll(requireQueryParams);
+            this.requireQueryParams.get().addAll(requireQueryParams);
             return this;
         }
 

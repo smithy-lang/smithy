@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.smoketests.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -13,7 +12,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -42,7 +41,7 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
         this.vendorParams = builder.vendorParams;
         this.vendorParamsShape = builder.vendorParamsShape;
         this.expectation = SmithyBuilder.requiredState(EXPECT, builder.expectation);
-        this.tags = ListUtils.copyOf(builder.tags);
+        this.tags = builder.tags.copy();
     }
 
     /**
@@ -190,7 +189,7 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
         private ObjectNode vendorParams;
         private ShapeId vendorParamsShape;
         private Expectation expectation;
-        private final List<String> tags = new ArrayList<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
 
@@ -271,7 +270,7 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
          */
         public Builder tags(List<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            this.tags.get().addAll(tags);
             return this;
         }
 

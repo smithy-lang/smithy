@@ -4,14 +4,13 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -31,8 +30,8 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
     private IntegrationResponse(Builder builder) {
         statusCode = SmithyBuilder.requiredState("statusCode", builder.statusCode);
         contentHandling = builder.contentHandling;
-        responseTemplates = MapUtils.copyOf(builder.responseTemplates);
-        responseParameters = MapUtils.copyOf(builder.responseParameters);
+        responseTemplates = builder.responseTemplates.copy();
+        responseParameters = builder.responseParameters.copy();
         sourceLocation = builder.sourceLocation;
     }
 
@@ -151,8 +150,8 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
     public static final class Builder implements SmithyBuilder<IntegrationResponse> {
         private String statusCode;
         private String contentHandling;
-        private Map<String, String> responseTemplates = new HashMap<>();
-        private Map<String, String> responseParameters = new HashMap<>();
+        private final BuilderRef<Map<String, String>> responseTemplates = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, String>> responseParameters = BuilderRef.forSortedMap();
         private FromSourceLocation sourceLocation;
 
         @Override
@@ -193,7 +192,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          */
         public Builder responseTemplates(Map<String, String> responseTemplates) {
             this.responseTemplates.clear();
-            this.responseTemplates.putAll(responseTemplates);
+            responseTemplates.forEach(this::putResponseTemplate);
             return this;
         }
 
@@ -206,7 +205,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          * @see IntegrationResponse#getResponseTemplates()
          */
         public Builder putResponseTemplate(String mimeType, String template) {
-            responseTemplates.put(mimeType, template);
+            responseTemplates.get().put(mimeType, template);
             return this;
         }
 
@@ -217,7 +216,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          * @return Returns the builder.
          */
         public Builder removeResponseTemplate(String mimeType) {
-            responseTemplates.remove(mimeType);
+            responseTemplates.get().remove(mimeType);
             return this;
         }
 
@@ -230,7 +229,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          */
         public Builder responseParameters(Map<String, String> responseParameters) {
             this.responseParameters.clear();
-            this.responseParameters.putAll(responseParameters);
+            responseParameters.forEach(this::putResponseParameter);
             return this;
         }
 
@@ -243,7 +242,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          * @see IntegrationResponse#getResponseParameters()
          */
         public Builder putResponseParameter(String name, String value) {
-            responseParameters.put(name, value);
+            responseParameters.get().put(name, value);
             return this;
         }
 
@@ -254,7 +253,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
          * @return Returns the builder.
          */
         public Builder removeResponseParameter(String name) {
-            responseParameters.remove(name);
+            responseParameters.get().remove(name);
             return this;
         }
 

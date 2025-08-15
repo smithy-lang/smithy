@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -21,7 +21,7 @@ public final class ServerObject extends Component implements ToSmithyBuilder<Ser
         super(builder);
         url = SmithyBuilder.requiredState("url", builder.url);
         description = builder.description;
-        variables = MapUtils.copyOf(builder.variables);
+        variables = builder.variables.copy();
     }
 
     public static Builder builder() {
@@ -72,7 +72,7 @@ public final class ServerObject extends Component implements ToSmithyBuilder<Ser
     public static final class Builder extends Component.Builder<Builder, ServerObject> {
         private String url;
         private String description;
-        private Map<String, ObjectNode> variables;
+        private final BuilderRef<Map<String, ObjectNode>> variables = BuilderRef.forOrderedMap();
 
         @Override
         public ServerObject build() {
@@ -90,7 +90,8 @@ public final class ServerObject extends Component implements ToSmithyBuilder<Ser
         }
 
         public Builder variables(Map<String, ObjectNode> variables) {
-            this.variables = variables;
+            this.variables.clear();
+            this.variables.get().putAll(variables);
             return this;
         }
     }

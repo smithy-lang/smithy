@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -35,7 +35,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     private final SourceLocation sourceLocation;
 
     private Parameters(Builder builder) {
-        this.parameters = builder.parameters;
+        this.parameters = builder.parameters.copy();
         this.sourceLocation = builder.getSourceLocation();
     }
 
@@ -157,14 +157,14 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
      * A builder used to create a {@link Parameters} class.
      */
     public static class Builder extends RulesComponentBuilder<Builder, Parameters> {
-        private final List<Parameter> parameters = new ArrayList<>();
+        private final BuilderRef<List<Parameter>> parameters = BuilderRef.forList();
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
         }
 
         public Builder addParameter(Parameter parameter) {
-            this.parameters.add(parameter);
+            this.parameters.get().add(parameter);
             return this;
         }
 

@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Computes the API Gateway integration for each operation,
@@ -48,7 +48,7 @@ public final class IntegrationTraitIndex implements KnowledgeIndex {
      * @return The integration trait or an empty optional if none set
      */
     public Optional<Trait> getIntegrationTrait(ToShapeId service, ToShapeId shape) {
-        return Optional.ofNullable(traits.getOrDefault(service.toShapeId(), MapUtils.of())
+        return Optional.ofNullable(traits.getOrDefault(service.toShapeId(), Collections.emptyMap())
                 .get(shape.toShapeId()));
     }
 
