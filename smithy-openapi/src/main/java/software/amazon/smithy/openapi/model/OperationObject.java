@@ -4,19 +4,16 @@
  */
 package software.amazon.smithy.openapi.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -37,22 +34,22 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
     private OperationObject(Builder builder) {
         super(builder);
-        tags = ListUtils.copyOf(builder.tags);
+        tags = builder.tags.copy();
         summary = builder.summary;
         description = builder.description;
         externalDocs = builder.externalDocs;
         operationId = builder.operationId;
-        parameters = ListUtils.copyOf(builder.parameters);
+        parameters = builder.parameters.copy();
         requestBody = builder.requestBody;
-        responses = Collections.unmodifiableMap(new TreeMap<>(builder.responses));
+        responses = builder.responses.copy();
         deprecated = builder.deprecated;
-        callbacks = Collections.unmodifiableMap(new TreeMap<>(builder.callbacks));
-        if (builder.security != null) {
-            security = ListUtils.copyOf(builder.security);
+        callbacks = builder.callbacks.copy();
+        if (builder.security.hasValue()) {
+            security = ListUtils.copyOf(builder.security.peek());
         } else {
             security = null;
         }
-        servers = ListUtils.copyOf(builder.servers);
+        servers = builder.servers.copy();
     }
 
     public static Builder builder() {
@@ -188,14 +185,14 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
     }
 
     public static final class Builder extends Component.Builder<Builder, OperationObject> {
-        private final List<String> tags = new ArrayList<>();
-        private final List<ParameterObject> parameters = new ArrayList<>();
-        private final Map<String, ResponseObject> responses = new TreeMap<>();
-        private final Map<String, CallbackObject> callbacks = new TreeMap<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
+        private final BuilderRef<List<ParameterObject>> parameters = BuilderRef.forList();
+        private final BuilderRef<Map<String, ResponseObject>> responses = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, CallbackObject>> callbacks = BuilderRef.forSortedMap();
         // Use a set for security as duplicate entries are unnecessary (effectively
         // represent an "A or A" security posture) and can cause downstream issues.
-        private Set<Map<String, List<String>>> security;
-        private final List<ServerObject> servers = new ArrayList<>();
+        private final BuilderRef<Set<Map<String, List<String>>>> security = BuilderRef.forOrderedSet();
+        private final BuilderRef<List<ServerObject>> servers = BuilderRef.forList();
         private String summary;
         private String description;
         private ExternalDocumentation externalDocs;
@@ -212,12 +209,12 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
         public Builder tags(Collection<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            tags.forEach(this::addTag);
             return this;
         }
 
         public Builder addTag(String tag) {
-            tags.add(tag);
+            tags.get().add(tag);
             return this;
         }
 
@@ -243,12 +240,12 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
         public Builder parameters(Collection<ParameterObject> parameters) {
             this.parameters.clear();
-            this.parameters.addAll(parameters);
+            parameters.forEach(this::addParameter);
             return this;
         }
 
         public Builder addParameter(ParameterObject parameter) {
-            parameters.add(parameter);
+            parameters.get().add(parameter);
             return this;
         }
 
@@ -259,23 +256,23 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
         public Builder responses(Map<String, ResponseObject> responses) {
             this.responses.clear();
-            this.responses.putAll(responses);
+            responses.forEach(this::putResponse);
             return this;
         }
 
         public Builder putResponse(String statusCode, ResponseObject response) {
-            responses.put(statusCode, response);
+            responses.get().put(statusCode, response);
             return this;
         }
 
         public Builder callbacks(Map<String, CallbackObject> callbacks) {
             this.callbacks.clear();
-            this.callbacks.putAll(callbacks);
+            callbacks.forEach(this::putCallback);
             return this;
         }
 
         public Builder putCallback(String expression, CallbackObject callback) {
-            callbacks.put(expression, callback);
+            callbacks.get().put(expression, callback);
             return this;
         }
 
@@ -285,27 +282,23 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         }
 
         public Builder security(Collection<Map<String, List<String>>> security) {
-            this.security = new LinkedHashSet<>();
-            this.security.addAll(security);
+            this.security.get().addAll(security);
             return this;
         }
 
         public Builder addSecurity(Map<String, List<String>> security) {
-            if (this.security == null) {
-                this.security = new LinkedHashSet<>();
-            }
-            this.security.add(security);
+            this.security.get().add(security);
             return this;
         }
 
         public Builder servers(Collection<ServerObject> servers) {
             this.servers.clear();
-            this.servers.addAll(servers);
+            servers.forEach(this::addServer);
             return this;
         }
 
         public Builder addServer(ServerObject server) {
-            servers.add(server);
+            servers.get().add(server);
             return this;
         }
     }

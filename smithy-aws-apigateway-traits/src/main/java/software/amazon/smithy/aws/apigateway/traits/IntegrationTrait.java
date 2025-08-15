@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,8 +15,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -64,10 +61,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         connectionType = builder.connectionType;
         cacheNamespace = builder.cacheNamespace;
         payloadFormatVersion = builder.payloadFormatVersion;
-        cacheKeyParameters = ListUtils.copyOf(builder.cacheKeyParameters);
-        requestParameters = MapUtils.copyOf(builder.requestParameters);
-        requestTemplates = MapUtils.copyOf(builder.requestTemplates);
-        responses = MapUtils.copyOf(builder.responses);
+        cacheKeyParameters = builder.cacheKeyParameters.copy();
+        requestParameters = builder.requestParameters.copy();
+        requestTemplates = builder.requestTemplates.copy();
+        responses = builder.responses.copy();
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -369,10 +366,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         private String connectionType;
         private String cacheNamespace;
         private String payloadFormatVersion;
-        private final List<String> cacheKeyParameters = new ArrayList<>();
-        private final Map<String, String> requestParameters = new HashMap<>();
-        private final Map<String, String> requestTemplates = new HashMap<>();
-        private final Map<String, IntegrationResponse> responses = new HashMap<>();
+        private final BuilderRef<List<String>> cacheKeyParameters = BuilderRef.forList();
+        private final BuilderRef<Map<String, String>> requestParameters = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, String>> requestTemplates = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, IntegrationResponse>> responses = BuilderRef.forOrderedMap();
 
         @Override
         public IntegrationTrait build() {
@@ -523,7 +520,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder addCacheKeyParameter(String cacheKeyParameter) {
-            this.cacheKeyParameters.add(cacheKeyParameter);
+            this.cacheKeyParameters.get().add(cacheKeyParameter);
             return this;
         }
 
@@ -535,7 +532,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder cacheKeyParameters(List<String> cacheKeyParameters) {
             this.cacheKeyParameters.clear();
-            this.cacheKeyParameters.addAll(cacheKeyParameters);
+            cacheKeyParameters.forEach(this::addCacheKeyParameter);
             return this;
         }
 
@@ -546,7 +543,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder removeCacheKeyParameter(String cacheKeyParameter) {
-            this.cacheKeyParameters.remove(cacheKeyParameter);
+            this.cacheKeyParameters.get().remove(cacheKeyParameter);
             return this;
         }
 
@@ -569,7 +566,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @see IntegrationTrait#getRequestParameters()
          */
         public Builder putRequestParameter(String input, String output) {
-            requestParameters.put(input, output);
+            requestParameters.get().put(input, output);
             return this;
         }
 
@@ -582,7 +579,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder requestParameters(Map<String, String> requestParameters) {
             this.requestParameters.clear();
-            this.requestParameters.putAll(requestParameters);
+            requestParameters.forEach(this::putRequestParameter);
             return this;
         }
 
@@ -593,7 +590,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder removeRequestParameter(String expression) {
-            requestParameters.remove(expression);
+            requestParameters.get().remove(expression);
             return this;
         }
 
@@ -606,7 +603,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @see IntegrationTrait#getRequestTemplates()
          */
         public Builder putRequestTemplate(String mimeType, String template) {
-            requestTemplates.put(mimeType, template);
+            requestTemplates.get().put(mimeType, template);
             return this;
         }
 
@@ -619,7 +616,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder requestTemplates(Map<String, String> requestTemplates) {
             this.requestTemplates.clear();
-            this.requestTemplates.putAll(requestTemplates);
+            requestTemplates.forEach(this::putRequestTemplate);
             return this;
         }
 
@@ -630,7 +627,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder removeRequestTemplate(String mimeType) {
-            requestTemplates.remove(mimeType);
+            requestTemplates.get().remove(mimeType);
             return this;
         }
 
@@ -643,7 +640,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @see IntegrationTrait#getResponses()
          */
         public Builder putResponse(String statusCodeRegex, IntegrationResponse integrationResponse) {
-            responses.put(statusCodeRegex, integrationResponse);
+            responses.get().put(statusCodeRegex, integrationResponse);
             return this;
         }
 
@@ -656,7 +653,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder responses(Map<String, IntegrationResponse> responses) {
             this.responses.clear();
-            this.responses.putAll(responses);
+            responses.forEach(this::putResponse);
             return this;
         }
 
@@ -667,7 +664,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @return Returns the builder.
          */
         public Builder removeResponse(String statusCodeRegex) {
-            responses.remove(statusCodeRegex);
+            responses.get().remove(statusCodeRegex);
             return this;
         }
     }

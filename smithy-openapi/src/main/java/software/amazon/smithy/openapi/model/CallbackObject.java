@@ -4,11 +4,10 @@
  */
 package software.amazon.smithy.openapi.model;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class CallbackObject extends Component implements ToSmithyBuilder<CallbackObject> {
@@ -16,7 +15,7 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
 
     private CallbackObject(Builder builder) {
         super(builder);
-        paths = Collections.unmodifiableMap(new TreeMap<>(builder.paths));
+        paths = builder.paths.copy();
     }
 
     public static Builder builder() {
@@ -42,7 +41,7 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
     }
 
     public static final class Builder extends Component.Builder<Builder, CallbackObject> {
-        private Map<String, PathItem> paths = new TreeMap<>();
+        private final BuilderRef<Map<String, PathItem>> paths = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -53,12 +52,12 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
 
         public Builder paths(Map<String, PathItem> paths) {
             this.paths.clear();
-            this.paths.putAll(paths);
+            paths.forEach(this::putPath);
             return this;
         }
 
         public Builder putPath(String expression, PathItem pathItem) {
-            paths.put(expression, pathItem);
+            paths.get().put(expression, pathItem);
             return this;
         }
     }

@@ -4,12 +4,11 @@
  */
 package software.amazon.smithy.aws.cloudformation.traits;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceIndex.Mutability;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -17,13 +16,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Contains extracted resource property information.
  */
 public final class CfnResourceProperty implements ToSmithyBuilder<CfnResourceProperty> {
-    private final Set<ShapeId> shapeIds = new TreeSet<>();
+    private final Set<ShapeId> shapeIds;
     private final Set<Mutability> mutabilities;
     private final boolean hasExplicitMutability;
 
     private CfnResourceProperty(Builder builder) {
-        shapeIds.addAll(builder.shapeIds);
-        mutabilities = SetUtils.copyOf(builder.mutabilities);
+        shapeIds = new TreeSet<>(builder.shapeIds.peek());
+        mutabilities = builder.mutabilities.copy();
         hasExplicitMutability = builder.hasExplicitMutability;
     }
 
@@ -84,8 +83,8 @@ public final class CfnResourceProperty implements ToSmithyBuilder<CfnResourcePro
     }
 
     public static final class Builder implements SmithyBuilder<CfnResourceProperty> {
-        private final Set<ShapeId> shapeIds = new TreeSet<>();
-        private Set<Mutability> mutabilities = new HashSet<>();
+        private final BuilderRef<Set<ShapeId>> shapeIds = BuilderRef.forSortedSet();
+        private final BuilderRef<Set<Mutability>> mutabilities = BuilderRef.forUnorderedSet();
         private boolean hasExplicitMutability = false;
 
         @Override
@@ -94,23 +93,24 @@ public final class CfnResourceProperty implements ToSmithyBuilder<CfnResourcePro
         }
 
         public Builder addShapeId(ShapeId shapeId) {
-            this.shapeIds.add(shapeId);
+            this.shapeIds.get().add(shapeId);
             return this;
         }
 
         public Builder removeShapeId(ShapeId shapeId) {
-            this.shapeIds.remove(shapeId);
+            this.shapeIds.get().remove(shapeId);
             return this;
         }
 
         public Builder shapeIds(Set<ShapeId> shapeIds) {
             this.shapeIds.clear();
-            this.shapeIds.addAll(shapeIds);
+            shapeIds.forEach(this::addShapeId);
             return this;
         }
 
         public Builder mutabilities(Set<Mutability> mutabilities) {
-            this.mutabilities = mutabilities;
+            this.mutabilities.clear();
+            this.mutabilities.get().addAll(mutabilities);
             return this;
         }
 

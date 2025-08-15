@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 
 import java.util.Collections;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 public class SchemaTest {
@@ -196,6 +198,23 @@ public class SchemaTest {
                 .build();
 
         assertThat(schema.getProperties().keySet(), contains("bar"));
+        assertThat(schema.getRequired(), hasSize(1));
+        assertThat(schema.getRequired(), contains("bar"));
+    }
+
+    @Test
+    public void implicitlyRemovingPropertiesRemovesRequiredPropertiesToo() {
+        Schema schema = Schema.builder()
+                .removeProperty("notThere")
+                .required(null)
+                .putProperty("foo", Schema.builder().build())
+                .putProperty("bar", Schema.builder().build())
+                .required(ListUtils.of("foo", "bar"))
+                .properties(MapUtils.of("bar", Schema.builder().build()))
+                .build();
+
+        assertThat(schema.getProperties().keySet(), contains("bar"));
+        assertThat(schema.getRequired(), hasSize(1));
         assertThat(schema.getRequired(), contains("bar"));
     }
 

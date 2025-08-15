@@ -9,28 +9,29 @@ import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class ComponentsObject extends Component implements ToSmithyBuilder<ComponentsObject> {
-    private final Map<String, Schema> schemas = new TreeMap<>();
-    private final Map<String, ResponseObject> responses = new TreeMap<>();
-    private final Map<String, ParameterObject> parameters = new TreeMap<>();
-    private final Map<String, RequestBodyObject> requestBodies = new TreeMap<>();
-    private final Map<String, ParameterObject> headers = new TreeMap<>();
-    private final Map<String, SecurityScheme> securitySchemes = new TreeMap<>();
-    private final Map<String, LinkObject> links = new TreeMap<>();
-    private final Map<String, CallbackObject> callbacks = new TreeMap<>();
+    private final Map<String, Schema> schemas;
+    private final Map<String, ResponseObject> responses;
+    private final Map<String, ParameterObject> parameters;
+    private final Map<String, RequestBodyObject> requestBodies;
+    private final Map<String, ParameterObject> headers;
+    private final Map<String, SecurityScheme> securitySchemes;
+    private final Map<String, LinkObject> links;
+    private final Map<String, CallbackObject> callbacks;
 
     private ComponentsObject(Builder builder) {
         super(builder);
-        schemas.putAll(builder.schemas);
-        responses.putAll(builder.responses);
-        parameters.putAll(builder.parameters);
-        requestBodies.putAll(builder.requestBodies);
-        headers.putAll(builder.headers);
-        securitySchemes.putAll(builder.securitySchemes);
-        links.putAll(builder.links);
-        callbacks.putAll(builder.callbacks);
+        schemas = new TreeMap<>(builder.schemas.peek());
+        responses = new TreeMap<>(builder.responses.peek());
+        parameters = new TreeMap<>(builder.parameters.peek());
+        requestBodies = new TreeMap<>(builder.requestBodies.peek());
+        headers = new TreeMap<>(builder.headers.peek());
+        securitySchemes = new TreeMap<>(builder.securitySchemes.peek());
+        links = new TreeMap<>(builder.links.peek());
+        callbacks = new TreeMap<>(builder.callbacks.peek());
     }
 
     public static Builder builder() {
@@ -147,14 +148,14 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
     }
 
     public static final class Builder extends Component.Builder<Builder, ComponentsObject> {
-        private final Map<String, Schema> schemas = new TreeMap<>();
-        private final Map<String, ResponseObject> responses = new TreeMap<>();
-        private final Map<String, ParameterObject> parameters = new TreeMap<>();
-        private final Map<String, RequestBodyObject> requestBodies = new TreeMap<>();
-        private final Map<String, ParameterObject> headers = new TreeMap<>();
-        private final Map<String, SecurityScheme> securitySchemes = new TreeMap<>();
-        private final Map<String, LinkObject> links = new TreeMap<>();
-        private final Map<String, CallbackObject> callbacks = new TreeMap<>();
+        private final BuilderRef<Map<String, Schema>> schemas = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, ResponseObject>> responses = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, ParameterObject>> parameters = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, RequestBodyObject>> requestBodies = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, ParameterObject>> headers = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, SecurityScheme>> securitySchemes = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, LinkObject>> links = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, CallbackObject>> callbacks = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -165,99 +166,99 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
 
         public Builder schemas(Map<String, Schema> schemas) {
             this.schemas.clear();
-            this.schemas.putAll(schemas);
+            schemas.forEach(this::putSchema);
             return this;
         }
 
         public Builder putSchema(String name, Schema schema) {
-            schemas.put(name, schema);
+            schemas.get().put(name, schema);
             return this;
         }
 
         public Builder removeSchema(String name) {
-            schemas.remove(name);
+            schemas.get().remove(name);
             return this;
         }
 
         public Builder responses(Map<String, ResponseObject> responses) {
             this.responses.clear();
-            this.responses.putAll(responses);
+            responses.forEach(this::putResponse);
             return this;
         }
 
         public Builder putResponse(String name, ResponseObject response) {
-            responses.put(name, response);
+            responses.get().put(name, response);
             return this;
         }
 
         public Builder parameters(Map<String, ParameterObject> parameters) {
             this.parameters.clear();
-            this.parameters.putAll(parameters);
+            parameters.forEach(this::putParameter);
             return this;
         }
 
         public Builder putParameter(String name, ParameterObject parameter) {
-            parameters.put(name, parameter);
+            parameters.get().put(name, parameter);
             return this;
         }
 
         public Builder requestBodies(Map<String, RequestBodyObject> requestBodies) {
             this.requestBodies.clear();
-            this.requestBodies.putAll(requestBodies);
+            requestBodies.forEach(this::putRequestBodies);
             return this;
         }
 
         public Builder putRequestBodies(String name, RequestBodyObject requestBody) {
-            requestBodies.put(name, requestBody);
+            requestBodies.get().put(name, requestBody);
             return this;
         }
 
         public Builder headers(Map<String, ParameterObject> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return this;
         }
 
         public Builder putHeader(String name, ParameterObject header) {
-            headers.put(name, header);
+            headers.get().put(name, header);
             return this;
         }
 
         public Builder securitySchemes(Map<String, SecurityScheme> securitySchemes) {
             this.securitySchemes.clear();
-            this.securitySchemes.putAll(securitySchemes);
+            securitySchemes.forEach(this::putSecurityScheme);
             return this;
         }
 
         public Builder putSecurityScheme(String name, SecurityScheme securityScheme) {
-            securitySchemes.put(name, securityScheme);
+            securitySchemes.get().put(name, securityScheme);
             return this;
         }
 
         public Builder removeSecurityScheme(String name) {
-            securitySchemes.remove(name);
+            securitySchemes.get().remove(name);
             return this;
         }
 
         public Builder links(Map<String, LinkObject> links) {
             this.links.clear();
-            this.links.putAll(links);
+            links.forEach(this::putLink);
             return this;
         }
 
         public Builder putLink(String name, LinkObject link) {
-            links.put(name, link);
+            links.get().put(name, link);
             return this;
         }
 
         public Builder callbacks(Map<String, CallbackObject> callbacks) {
             this.callbacks.clear();
-            this.callbacks.putAll(callbacks);
+            callbacks.forEach(this::putCallbacks);
             return this;
         }
 
         public Builder putCallbacks(String name, CallbackObject callback) {
-            callbacks.put(name, callback);
+            callbacks.get().put(name, callback);
             return this;
         }
     }

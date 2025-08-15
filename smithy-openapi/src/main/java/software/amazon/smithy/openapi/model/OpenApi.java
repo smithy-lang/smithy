@@ -7,7 +7,6 @@ package software.amazon.smithy.openapi.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -24,7 +24,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
     private final String openapi;
     private final InfoObject info;
     private final List<ServerObject> servers;
-    private final Map<String, PathItem> paths = new TreeMap<>();
+    private final Map<String, PathItem> paths;
     private final ComponentsObject components;
     private final List<Map<String, List<String>>> security;
     private final List<TagObject> tags;
@@ -34,10 +34,10 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         super(builder);
         openapi = SmithyBuilder.requiredState("openapi", builder.openapi);
         info = SmithyBuilder.requiredState("info", builder.info);
-        servers = ListUtils.copyOf(builder.servers);
-        paths.putAll(builder.paths);
+        servers = builder.servers.copy();
+        paths = new TreeMap<>(builder.paths.peek());
         components = builder.components == null ? ComponentsObject.builder().build() : builder.components;
-        security = ListUtils.copyOf(builder.security);
+        security = ListUtils.copyOf(builder.security.peek());
         tags = ListUtils.copyOf(builder.tags);
         externalDocs = builder.externalDocs;
     }
@@ -138,12 +138,12 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
     public static final class Builder extends Component.Builder<Builder, OpenApi> {
         private String openapi;
         private InfoObject info;
-        private final List<ServerObject> servers = new ArrayList<>();
-        private Map<String, PathItem> paths = new TreeMap<>();
+        private final BuilderRef<List<ServerObject>> servers = BuilderRef.forList();
+        private final BuilderRef<Map<String, PathItem>> paths = BuilderRef.forSortedMap();
         private ComponentsObject components;
         // Use a set for security as duplicate entries are unnecessary (effectively
         // represent an "A or A" security posture) and can cause downstream issues.
-        private final Set<Map<String, List<String>>> security = new LinkedHashSet<>();
+        private final BuilderRef<Set<Map<String, List<String>>>> security = BuilderRef.forOrderedSet();
         private final List<TagObject> tags = new ArrayList<>();
         private ExternalDocumentation externalDocs;
 
@@ -165,17 +165,18 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         public Builder paths(Map<String, PathItem> paths) {
-            this.paths = paths;
+            this.paths.clear();
+            paths.forEach(this::putPath);
             return this;
         }
 
         public Builder putPath(String path, PathItem item) {
-            paths.put(path, item);
+            paths.get().put(path, item);
             return this;
         }
 
         public Builder removePath(String path) {
-            paths.remove(path);
+            paths.get().remove(path);
             return this;
         }
 
@@ -190,7 +191,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         public Builder addServer(ServerObject server) {
-            this.servers.add(server);
+            this.servers.get().add(server);
             return this;
         }
 
@@ -200,13 +201,13 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         public Builder addSecurity(Map<String, List<String>> requirement) {
-            this.security.add(requirement);
+            this.security.get().add(requirement);
             return this;
         }
 
         public Builder security(Collection<Map<String, List<String>>> security) {
             this.security.clear();
-            this.security.addAll(security);
+            security.forEach(this::addSecurity);
             return this;
         }
 

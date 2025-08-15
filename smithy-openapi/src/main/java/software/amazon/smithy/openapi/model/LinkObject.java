@@ -9,10 +9,11 @@ import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class LinkObject extends Component implements ToSmithyBuilder<LinkObject> {
-    private final Map<String, Node> parameters = new TreeMap<>();
+    private final Map<String, Node> parameters;
     private final String operationRef;
     private final String operationId;
     private final Node requestBody;
@@ -21,7 +22,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
 
     private LinkObject(Builder builder) {
         super(builder);
-        parameters.putAll(builder.parameters);
+        parameters = new TreeMap<>(builder.parameters.peek());
         operationId = builder.operationId;
         operationRef = builder.operationRef;
         requestBody = builder.requestBody;
@@ -89,7 +90,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
     }
 
     public static final class Builder extends Component.Builder<Builder, LinkObject> {
-        private final Map<String, Node> parameters = new TreeMap<>();
+        private final BuilderRef<Map<String, Node>> parameters = BuilderRef.forSortedMap();
         private String operationRef;
         private String operationId;
         private Node requestBody;
@@ -115,7 +116,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
 
         public Builder parameters(Map<String, Node> parameters) {
             this.parameters.clear();
-            this.parameters.putAll(parameters);
+            this.parameters.get().putAll(parameters);
             return this;
         }
 

@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.openapi.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class PathItem extends Component implements ToSmithyBuilder<PathItem> {
@@ -34,8 +33,8 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
         super(builder);
         summary = builder.summary;
         description = builder.description;
-        servers = ListUtils.copyOf(builder.servers);
-        parameters = ListUtils.copyOf(builder.parameters);
+        servers = builder.servers.copy();
+        parameters = builder.parameters.copy();
         get = builder.get;
         put = builder.put;
         post = builder.post;
@@ -164,8 +163,8 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
     public static final class Builder extends Component.Builder<Builder, PathItem> {
         private String summary;
         private String description;
-        private List<ServerObject> servers = new ArrayList<>();
-        private List<Ref<ParameterObject>> parameters = new ArrayList<>();
+        private final BuilderRef<List<ServerObject>> servers = BuilderRef.forList();
+        private final BuilderRef<List<Ref<ParameterObject>>> parameters = BuilderRef.forList();
         private OperationObject get;
         private OperationObject put;
         private OperationObject post;
@@ -194,18 +193,18 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
 
         public Builder servers(List<ServerObject> servers) {
             this.servers.clear();
-            this.servers.addAll(servers);
+            servers.forEach(this::addServer);
             return this;
         }
 
         public Builder addServer(ServerObject server) {
-            servers.add(server);
+            servers.get().add(server);
             return this;
         }
 
         public Builder parameters(List<Ref<ParameterObject>> parameters) {
             this.parameters.clear();
-            this.parameters.addAll(parameters);
+            parameters.forEach(this::addParameter);
             return this;
         }
 
@@ -214,7 +213,7 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
         }
 
         public Builder addParameter(Ref<ParameterObject> parameter) {
-            parameters.add(parameter);
+            parameters.get().add(parameter);
             return this;
         }
 

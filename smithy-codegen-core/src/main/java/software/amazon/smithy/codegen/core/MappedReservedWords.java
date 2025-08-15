@@ -4,9 +4,9 @@
  */
 package software.amazon.smithy.codegen.core;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -56,6 +56,11 @@ public final class MappedReservedWords implements ReservedWords {
         this.caseInsensitiveMappings = MapUtils.copyOf(caseInsensitiveMappings);
     }
 
+    private MappedReservedWords(Builder builder) {
+        this.mappings = builder.mappings.copy();
+        this.caseInsensitiveMappings = builder.caseInsensitiveMappings.copy();
+    }
+
     /**
      * @return Creates a new Builder.
      */
@@ -87,8 +92,8 @@ public final class MappedReservedWords implements ReservedWords {
      * Builder to create a new {@link MappedReservedWords} instance.
      */
     public static final class Builder implements SmithyBuilder<ReservedWords> {
-        private final Map<String, String> mappings = new HashMap<>();
-        private final Map<String, String> caseInsensitiveMappings = new HashMap<>();
+        private final BuilderRef<Map<String, String>> mappings = BuilderRef.forUnorderedMap();
+        private final BuilderRef<Map<String, String>> caseInsensitiveMappings = BuilderRef.forUnorderedMap();
 
         private Builder() {}
 
@@ -100,7 +105,7 @@ public final class MappedReservedWords implements ReservedWords {
          * @return Returns the builder.
          */
         public Builder put(String reservedWord, String conversion) {
-            mappings.put(reservedWord, conversion);
+            mappings.get().put(reservedWord, conversion);
             return this;
         }
 
@@ -118,7 +123,7 @@ public final class MappedReservedWords implements ReservedWords {
          * @return Returns the builder.
          */
         public Builder putCaseInsensitive(String reservedWord, String conversion) {
-            caseInsensitiveMappings.put(reservedWord.toLowerCase(Locale.US), conversion);
+            caseInsensitiveMappings.get().put(reservedWord.toLowerCase(Locale.US), conversion);
             return this;
         }
 
@@ -129,7 +134,7 @@ public final class MappedReservedWords implements ReservedWords {
          */
         @Override
         public ReservedWords build() {
-            return new MappedReservedWords(mappings, caseInsensitiveMappings);
+            return new MappedReservedWords(this);
         }
     }
 }

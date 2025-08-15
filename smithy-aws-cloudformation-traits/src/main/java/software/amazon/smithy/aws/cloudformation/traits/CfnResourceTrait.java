@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.aws.cloudformation.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
@@ -13,7 +12,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -30,7 +29,7 @@ public final class CfnResourceTrait extends AbstractTrait
     private CfnResourceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         name = builder.name;
-        additionalSchemas = ListUtils.copyOf(builder.additionalSchemas);
+        additionalSchemas = builder.additionalSchemas.copy();
         primaryIdentifier = builder.primaryIdentifier;
     }
 
@@ -93,7 +92,7 @@ public final class CfnResourceTrait extends AbstractTrait
 
     public static final class Builder extends AbstractTraitBuilder<CfnResourceTrait, Builder> {
         private String name;
-        private final List<ShapeId> additionalSchemas = new ArrayList<>();
+        private final BuilderRef<List<ShapeId>> additionalSchemas = BuilderRef.forList();
         private String primaryIdentifier;
 
         private Builder() {}
@@ -109,13 +108,13 @@ public final class CfnResourceTrait extends AbstractTrait
         }
 
         public Builder addAdditionalSchema(ShapeId additionalSchema) {
-            this.additionalSchemas.add(additionalSchema);
+            this.additionalSchemas.get().add(additionalSchema);
             return this;
         }
 
         public Builder additionalSchemas(List<ShapeId> additionalSchemas) {
             this.additionalSchemas.clear();
-            this.additionalSchemas.addAll(additionalSchemas);
+            additionalSchemas.forEach(this::addAdditionalSchema);
             return this;
         }
 

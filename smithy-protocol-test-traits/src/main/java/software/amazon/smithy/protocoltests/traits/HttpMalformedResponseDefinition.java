@@ -4,13 +4,12 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -32,7 +31,7 @@ public final class HttpMalformedResponseDefinition implements ToNode, ToSmithyBu
     private HttpMalformedResponseDefinition(Builder builder) {
         body = builder.body;
         code = builder.code;
-        headers = MapUtils.copyOf(builder.headers);
+        headers = builder.headers.copy();
     }
 
     public Optional<HttpMalformedResponseBodyDefinition> getBody() {
@@ -90,7 +89,7 @@ public final class HttpMalformedResponseDefinition implements ToNode, ToSmithyBu
 
         private HttpMalformedResponseBodyDefinition body;
         private int code;
-        private final Map<String, String> headers = new HashMap<>();
+        private final BuilderRef<Map<String, String>> headers = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
@@ -106,12 +105,12 @@ public final class HttpMalformedResponseDefinition implements ToNode, ToSmithyBu
 
         public Builder headers(Map<String, String> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return this;
         }
 
         public Builder putHeader(String key, String value) {
-            this.headers.put(key, value);
+            this.headers.get().put(key, value);
             return this;
         }
 
