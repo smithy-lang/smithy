@@ -4,4 +4,4 @@ software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait$Provider
 software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait$Provider
 software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait$Provider
 software.amazon.smithy.rulesengine.traits.EndpointTestsTrait$Provider
-software.amazon.smithy.rulesengine.logic.bdd.BddTrait$Provider
+software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait$Provider

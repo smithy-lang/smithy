@@ -188,14 +188,14 @@ class NodeReversalTest {
             consumer.accept(0, 1, -1); // node 1: simple condition
         });
 
-        BddTrait originalTrait = BddTrait.builder()
+        EndpointBddTrait originalTrait = EndpointBddTrait.builder()
                 .parameters(Parameters.builder().build())
                 .conditions(new ArrayList<>())
                 .results(Collections.singletonList(NoMatchRule.INSTANCE))
                 .bdd(bdd)
                 .build();
 
-        BddTrait reversedTrait = reversal.apply(originalTrait);
+        EndpointBddTrait reversedTrait = reversal.apply(originalTrait);
 
         // Should return the exact same trait object for small BDDs
         assertSame(originalTrait, reversedTrait);

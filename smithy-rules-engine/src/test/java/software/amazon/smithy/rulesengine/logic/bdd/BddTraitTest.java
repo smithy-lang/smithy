@@ -34,7 +34,7 @@ public class BddTraitTest {
 
         Bdd bdd = createSimpleBdd();
 
-        BddTrait original = BddTrait.builder()
+        EndpointBddTrait original = EndpointBddTrait.builder()
                 .parameters(params)
                 .conditions(ListUtils.of(cond))
                 .results(results)
@@ -56,7 +56,7 @@ public class BddTraitTest {
         assertEquals(1, serializedResultCount);
 
         // Deserialize from Node
-        BddTrait restored = BddTrait.fromNode(node);
+        EndpointBddTrait restored = EndpointBddTrait.fromNode(node);
 
         assertEquals(original.getParameters(), restored.getParameters());
         assertEquals(original.getConditions().size(), restored.getConditions().size());
@@ -87,7 +87,7 @@ public class BddTraitTest {
         int[] nodes = new int[] {-1, 1, -1};
         Bdd bdd = new Bdd(-1, 0, 1, 1, nodes);
 
-        BddTrait trait = BddTrait.builder()
+        EndpointBddTrait trait = EndpointBddTrait.builder()
                 .parameters(params)
                 .conditions(ListUtils.of())
                 .results(ListUtils.of(NoMatchRule.INSTANCE))
