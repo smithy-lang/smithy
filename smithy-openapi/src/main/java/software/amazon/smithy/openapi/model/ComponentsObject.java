@@ -5,6 +5,7 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -23,14 +24,14 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
 
     private ComponentsObject(Builder builder) {
         super(builder);
-        schemas = builder.schemas.copy();
-        responses = builder.responses.copy();
-        parameters = builder.parameters.copy();
-        requestBodies = builder.requestBodies.copy();
-        headers = builder.headers.copy();
-        securitySchemes = builder.securitySchemes.copy();
-        links = builder.links.copy();
-        callbacks = builder.callbacks.copy();
+        schemas = new TreeMap<>(builder.schemas.peek());
+        responses = new TreeMap<>(builder.responses.peek());
+        parameters = new TreeMap<>(builder.parameters.peek());
+        requestBodies = new TreeMap<>(builder.requestBodies.peek());
+        headers = new TreeMap<>(builder.headers.peek());
+        securitySchemes = new TreeMap<>(builder.securitySchemes.peek());
+        links = new TreeMap<>(builder.links.peek());
+        callbacks = new TreeMap<>(builder.callbacks.peek());
     }
 
     public static Builder builder() {

@@ -5,6 +5,7 @@
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceIndex.Mutability;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.BuilderRef;
@@ -20,7 +21,7 @@ public final class CfnResourceProperty implements ToSmithyBuilder<CfnResourcePro
     private final boolean hasExplicitMutability;
 
     private CfnResourceProperty(Builder builder) {
-        shapeIds = builder.shapeIds.copy();
+        shapeIds = new TreeSet<>(builder.shapeIds.peek());
         mutabilities = builder.mutabilities.copy();
         hasExplicitMutability = builder.hasExplicitMutability;
     }

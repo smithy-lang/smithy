@@ -6,6 +6,7 @@ package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.BuilderRef;
@@ -20,7 +21,7 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
 
     private EncodingObject(Builder builder) {
         super(builder);
-        headers = builder.headers.copy();
+        headers = new TreeMap<>(builder.headers.peek());
         contentType = builder.contentType;
         style = builder.style;
         explode = builder.explode;

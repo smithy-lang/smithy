@@ -5,6 +5,7 @@
 package software.amazon.smithy.aws.cloudformation.schema.model;
 
 import java.util.Map;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
@@ -25,8 +26,8 @@ public final class Remote implements ToNode, ToSmithyBuilder<Remote> {
     private final Map<String, Property> properties;
 
     private Remote(Builder builder) {
-        definitions = builder.definitions.copy();
-        properties = builder.properties.copy();
+        definitions = new TreeMap<>(builder.definitions.copy());
+        properties = new TreeMap<>(builder.properties.copy());
     }
 
     @Override

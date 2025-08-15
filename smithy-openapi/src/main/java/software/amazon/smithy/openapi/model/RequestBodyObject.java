@@ -6,6 +6,7 @@ package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.BuilderRef;
@@ -19,7 +20,7 @@ public final class RequestBodyObject extends Component implements ToSmithyBuilde
     private RequestBodyObject(Builder builder) {
         super(builder);
         description = builder.description;
-        content = builder.content.copy();
+        content = new TreeMap<>(builder.content.peek());
         required = builder.required;
     }
 

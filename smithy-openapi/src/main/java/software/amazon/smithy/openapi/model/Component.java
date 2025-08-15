@@ -75,7 +75,7 @@ public abstract class Component implements ToNode {
         private final BuilderRef<Map<String, Node>> extensions = BuilderRef.forSortedMap();
 
         public Map<String, Node> getExtensions() {
-            return extensions.copy();
+            return extensions.get();
         }
 
         @SuppressWarnings("unchecked")

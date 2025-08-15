@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -34,7 +35,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         openapi = SmithyBuilder.requiredState("openapi", builder.openapi);
         info = SmithyBuilder.requiredState("info", builder.info);
         servers = builder.servers.copy();
-        paths = builder.paths.copy();
+        paths = new TreeMap<>(builder.paths.peek());
         components = builder.components == null ? ComponentsObject.builder().build() : builder.components;
         security = ListUtils.copyOf(builder.security.peek());
         tags = ListUtils.copyOf(builder.tags);

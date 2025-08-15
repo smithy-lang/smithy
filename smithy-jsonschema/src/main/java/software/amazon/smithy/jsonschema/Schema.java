@@ -7,6 +7,7 @@ package software.amazon.smithy.jsonschema;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -130,13 +131,13 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         minItems = builder.minItems;
         uniqueItems = builder.uniqueItems;
 
-        properties = builder.properties.copy();
+        properties = new LinkedHashMap<>(builder.properties.peek());
         additionalProperties = builder.additionalProperties;
         required = builder.required.copy();
         maxProperties = builder.maxProperties;
         minProperties = builder.minProperties;
         propertyNames = builder.propertyNames;
-        patternProperties = builder.patternProperties.copy();
+        patternProperties = new LinkedHashMap<>(builder.patternProperties.peek());
 
         allOf = builder.allOf.copy();
         oneOf = builder.oneOf.copy();

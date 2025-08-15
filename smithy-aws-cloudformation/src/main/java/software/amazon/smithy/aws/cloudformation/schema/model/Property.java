@@ -43,7 +43,7 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
         }
 
         if (!builder.dependencies.peek().isEmpty()) {
-            schemaBuilder.putExtension("dependencies", Node.fromStrings(builder.dependencies.copy()));
+            schemaBuilder.putExtension("dependencies", Node.fromStrings(builder.dependencies.peek()));
         }
 
         this.schema = schemaBuilder.build();

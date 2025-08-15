@@ -59,7 +59,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
     private final boolean unitTargetedByUnion;
 
     private JsonSchemaConverter(Builder builder) {
-        mappers = builder.mappers.copy();
+        mappers = new ArrayList<>(builder.mappers.peek());
         config = SmithyBuilder.requiredState("config", builder.config);
         propertyNamingStrategy = SmithyBuilder.requiredState("propertyNamingStrategy", builder.propertyNamingStrategy);
 

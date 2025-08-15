@@ -6,6 +6,7 @@ package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -22,8 +23,8 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
         super(builder);
         schema = builder.schema;
         example = builder.example;
-        examples = builder.examples.copy();
-        encoding = builder.encoding.copy();
+        examples = new TreeMap<>(builder.examples.peek());
+        encoding = new TreeMap<>(builder.encoding.peek());
     }
 
     public static Builder builder() {

@@ -6,6 +6,7 @@ package software.amazon.smithy.openapi.model;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.BuilderRef;
@@ -21,7 +22,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
 
     private LinkObject(Builder builder) {
         super(builder);
-        parameters = builder.parameters.copy();
+        parameters = new TreeMap<>(builder.parameters.peek());
         operationId = builder.operationId;
         operationRef = builder.operationRef;
         requestBody = builder.requestBody;
