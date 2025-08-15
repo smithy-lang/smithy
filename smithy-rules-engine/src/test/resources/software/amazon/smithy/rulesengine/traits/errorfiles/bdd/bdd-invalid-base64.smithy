@@ -5,6 +5,7 @@ namespace smithy.example
 use smithy.rules#endpointBdd
 
 @endpointBdd({
+    version: "1.1"
     parameters: {
         Region: {
             type: "string"

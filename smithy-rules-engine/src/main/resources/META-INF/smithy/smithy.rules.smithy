@@ -11,6 +11,10 @@ document endpointRuleSet
 @unstable
 @trait(selector: "service")
 structure endpointBdd {
+    /// The rules engine version. Must be set to 1.1 or higher.
+    @required
+    version: String
+
     /// A map of zero or more endpoint parameter names to their parameter configuration.
     @required
     parameters: Parameters
@@ -35,15 +39,12 @@ structure endpointBdd {
 
     /// Base64-encoded array of BDD nodes representing the decision graph structure.
     ///
+    /// All integers are encoded in big-endian.
+    ///
     /// The first node (index 0) is always the terminal node `[-1, 1, -1]` and is included in the nodeCount.
     /// User-defined nodes start at index 1.
     ///
-    /// Zig-zag encoding transforms signed integers to unsigned:
-    /// - 0 -> 0, -1 → 1, 1 → 2, -2 → 3, 2 → 4, etc.
-    /// - Formula: `(n << 1) ^ (n >> 31)`
-    /// - This ensures small negative numbers use few bytes
-    ///
-    /// Each node consists of three varint-encoded integers written sequentially:
+    /// Each node is written one after the other and consists of three integers written sequentially:
     /// 1. variable index
     /// 2. high reference (when condition is true)
     /// 3. low reference (when condition is false)
@@ -69,17 +70,6 @@ structure endpointBdd {
     /// boolean function and its complement; instead of creating separate nodes for `condition AND other` and
     /// `NOT(condition AND other)`, we can reuse the same nodes with complement edges. Complement edges cannot be
     /// used on result terminals.
-    ///
-    /// Example (before encoding):
-    /// ```
-    /// nodes = [
-    ///   [ -1,       1, -1],        // 0: terminal node
-    ///   [  0,       3,  2],          // 1: if condition[0] then node 3, else node 2
-    ///   [  1, 2000001, -1],   // 2: if condition[1] then result[1], else FALSE
-    /// ]
-    /// ```
-    ///
-    /// After zig-zag + varint + base64: `"AQEBAAYEBAGBwOgPAQ=="`
     @required
     nodes: String
 }

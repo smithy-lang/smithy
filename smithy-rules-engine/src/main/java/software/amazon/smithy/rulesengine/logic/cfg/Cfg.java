@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
@@ -45,13 +46,18 @@ public final class Cfg implements Iterable<CfgNode> {
     // Lazily computed condition data
     private Condition[] conditions;
     private Map<Condition, Integer> conditionToIndex;
+    private final String version;
 
     Cfg(EndpointRuleSet ruleSet, CfgNode root) {
-        this(ruleSet == null ? Parameters.builder().build() : ruleSet.getParameters(), root);
+        this(
+                ruleSet == null ? Parameters.builder().build() : ruleSet.getParameters(),
+                root,
+                ruleSet == null ? "1.1" : ruleSet.getVersion());
     }
 
-    Cfg(Parameters parameters, CfgNode root) {
+    Cfg(Parameters parameters, CfgNode root, String version) {
         this.root = SmithyBuilder.requiredState("root", root);
+        this.version = version;
         this.parameters = parameters;
     }
 
@@ -67,6 +73,15 @@ public final class Cfg implements Iterable<CfgNode> {
         Map<RuleKey, CfgNode> processedRules = new HashMap<>();
         CfgNode root = convertRulesToChain(builder.ruleSet.getRules(), terminal, builder, processedRules);
         return builder.build(root);
+    }
+
+    /**
+     * Get the endpoint ruleset version of the CFG.
+     *
+     * @return endpoint ruleset version.
+     */
+    public String getVersion() {
+        return version;
     }
 
     /**
@@ -141,13 +156,14 @@ public final class Cfg implements Iterable<CfgNode> {
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         } else {
-            return root.equals(((Cfg) object).root);
+            Cfg o = (Cfg) object;
+            return root.equals(o.root) && version.equals(o.version);
         }
     }
 
     @Override
     public int hashCode() {
-        return root.hashCode();
+        return Objects.hash(root, version);
     }
 
     /**
