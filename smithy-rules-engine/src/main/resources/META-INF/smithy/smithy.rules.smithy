@@ -10,7 +10,7 @@ document endpointRuleSet
 /// Defines an endpoint rule-set using a binary decision diagram (BDD).
 @unstable
 @trait(selector: "service")
-structure bdd {
+structure endpointBdd {
     /// A map of zero or more endpoint parameter names to their parameter configuration.
     @required
     parameters: Parameters
@@ -206,7 +206,7 @@ map EndpointObjectHeaders {
 
 /// Defines endpoint test-cases for validating a client's endpoint rule-set.
 @unstable
-@trait(selector: "service :is([trait|smithy.rules#endpointRuleSet], [trait|smithy.rules#bdd])")
+@trait(selector: "service :is([trait|smithy.rules#endpointRuleSet], [trait|smithy.rules#endpointBdd])")
 structure endpointTests {
     /// The endpoint tests schema version.
     @required

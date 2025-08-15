@@ -2,9 +2,9 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.rules#bdd
+use smithy.rules#endpointBdd
 
-@bdd({
+@endpointBdd({
     parameters: {}
     conditions: []
     results: []

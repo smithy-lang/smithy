@@ -12,24 +12,24 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
 
 public final class BddTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        if (!model.isTraitApplied(BddTrait.class)) {
+        if (!model.isTraitApplied(EndpointBddTrait.class)) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ServiceShape service : model.getServiceShapesWithTrait(BddTrait.class)) {
-            validateService(events, service, service.expectTrait(BddTrait.class));
+        for (ServiceShape service : model.getServiceShapesWithTrait(EndpointBddTrait.class)) {
+            validateService(events, service, service.expectTrait(EndpointBddTrait.class));
         }
 
         return events;
     }
 
-    private void validateService(List<ValidationEvent> events, ServiceShape service, BddTrait trait) {
+    private void validateService(List<ValidationEvent> events, ServiceShape service, EndpointBddTrait trait) {
         Bdd bdd = trait.getBdd();
 
         // Validate root reference
@@ -87,11 +87,11 @@ public final class BddTraitValidator extends AbstractValidator {
     private void validateReference(
             List<ValidationEvent> events,
             ServiceShape service,
-            BddTrait trait,
+            EndpointBddTrait trait,
             String context,
             int ref,
             Bdd bdd,
-            BddTrait bddTrait
+            EndpointBddTrait bddTrait
     ) {
         if (ref == 0) {
             events.add(error(service, trait, String.format("%s has invalid reference: 0", context)));

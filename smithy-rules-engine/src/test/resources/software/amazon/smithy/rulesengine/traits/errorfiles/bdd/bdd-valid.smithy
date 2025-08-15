@@ -2,14 +2,14 @@ $version: "2.0"
 
 namespace smithy.example
 
-use smithy.rules#bdd
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 
 @clientContextParams(
     Region: {type: "string", documentation: "docs"}
     UseFips: {type: "boolean", documentation: "docs"}
 )
-@bdd({
+@endpointBdd({
     "parameters": {
         "Region": {
             "required": true,

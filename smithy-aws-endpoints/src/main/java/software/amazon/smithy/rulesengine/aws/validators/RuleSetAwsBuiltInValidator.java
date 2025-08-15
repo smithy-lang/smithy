@@ -14,7 +14,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.aws.language.functions.AwsBuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
-import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -38,8 +38,8 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
             validateRuleSetAwsBuiltIns(events, s, trait.getEndpointRuleSet().getParameters());
         }
 
-        for (ServiceShape s : model.getServiceShapesWithTrait(BddTrait.class)) {
-            validateRuleSetAwsBuiltIns(events, s, s.expectTrait(BddTrait.class).getParameters());
+        for (ServiceShape s : model.getServiceShapesWithTrait(EndpointBddTrait.class)) {
+            validateRuleSetAwsBuiltIns(events, s, s.expectTrait(EndpointBddTrait.class).getParameters());
         }
 
         return events;
