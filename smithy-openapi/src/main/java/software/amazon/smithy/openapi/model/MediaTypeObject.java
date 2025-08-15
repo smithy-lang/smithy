@@ -10,20 +10,21 @@ import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class MediaTypeObject extends Component implements ToSmithyBuilder<MediaTypeObject> {
     private final Schema schema;
     private final ExampleObject example;
-    private final Map<String, ExampleObject> examples = new TreeMap<>();
-    private final Map<String, EncodingObject> encoding = new TreeMap<>();
+    private final Map<String, ExampleObject> examples;
+    private final Map<String, EncodingObject> encoding;
 
     private MediaTypeObject(Builder builder) {
         super(builder);
         schema = builder.schema;
         example = builder.example;
-        examples.putAll(builder.examples);
-        encoding.putAll(builder.encoding);
+        examples = new TreeMap<>(builder.examples.peek());
+        encoding = new TreeMap<>(builder.encoding.peek());
     }
 
     public static Builder builder() {
@@ -87,8 +88,8 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
     public static final class Builder extends Component.Builder<Builder, MediaTypeObject> {
         private Schema schema;
         private ExampleObject example;
-        private final Map<String, ExampleObject> examples = new TreeMap<>();
-        private final Map<String, EncodingObject> encoding = new TreeMap<>();
+        private final BuilderRef<Map<String, ExampleObject>> examples = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, EncodingObject>> encoding = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -110,24 +111,24 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
         public Builder examples(Map<String, Node> examples) {
             this.examples.clear();
             for (Map.Entry<String, Node> example : examples.entrySet()) {
-                this.examples.put(example.getKey(), ExampleObject.fromNode(example.getValue()));
+                this.examples.get().put(example.getKey(), ExampleObject.fromNode(example.getValue()));
             }
             return this;
         }
 
         public Builder putExample(String name, ExampleObject example) {
-            examples.put(name, example);
+            examples.get().put(name, example);
             return this;
         }
 
         public Builder encoding(Map<String, EncodingObject> encoding) {
             this.encoding.clear();
-            this.encoding.putAll(encoding);
+            encoding.forEach(this::putEncoding);
             return this;
         }
 
         public Builder putEncoding(String name, EncodingObject encodingObject) {
-            encoding.put(name, encodingObject);
+            encoding.get().put(name, encodingObject);
             return this;
         }
     }

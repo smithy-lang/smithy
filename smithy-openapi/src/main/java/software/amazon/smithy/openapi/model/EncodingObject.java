@@ -9,10 +9,11 @@ import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class EncodingObject extends Component implements ToSmithyBuilder<EncodingObject> {
-    private final Map<String, ParameterObject> headers = new TreeMap<>();
+    private final Map<String, ParameterObject> headers;
     private final String contentType;
     private final String style;
     private final boolean explode;
@@ -20,7 +21,7 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
 
     private EncodingObject(Builder builder) {
         super(builder);
-        headers.putAll(builder.headers);
+        headers = new TreeMap<>(builder.headers.peek());
         contentType = builder.contentType;
         style = builder.style;
         explode = builder.explode;
@@ -87,7 +88,7 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
     }
 
     public static final class Builder extends Component.Builder<Builder, EncodingObject> {
-        private final Map<String, ParameterObject> headers = new TreeMap<>();
+        private final BuilderRef<Map<String, ParameterObject>> headers = BuilderRef.forSortedMap();
         private String contentType;
         private String style;
         private boolean explode;
@@ -102,12 +103,12 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
 
         public Builder headers(Map<String, ParameterObject> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return this;
         }
 
         public Builder putHeader(String name, ParameterObject header) {
-            headers.put(name, header);
+            headers.get().put(name, header);
             return this;
         }
 

@@ -4,13 +4,12 @@
  */
 package software.amazon.smithy.openapi.model;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class ParameterObject extends Component implements ToSmithyBuilder<ParameterObject> {
@@ -41,8 +40,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         allowReserved = builder.allowReserved;
         schema = builder.schema;
         example = builder.example;
-        examples = Collections.unmodifiableMap(new TreeMap<>(builder.examples));
-        content = Collections.unmodifiableMap(new TreeMap<>(builder.content));
+        examples = builder.examples.copy();
+        content = builder.content.copy();
     }
 
     public static Builder builder() {
@@ -184,8 +183,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         private boolean allowReserved;
         private Schema schema;
         private ExampleObject example;
-        private final Map<String, ExampleObject> examples = new TreeMap<>();
-        private final Map<String, MediaTypeObject> content = new TreeMap<>();
+        private final BuilderRef<Map<String, ExampleObject>> examples = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, MediaTypeObject>> content = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -252,24 +251,24 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         public Builder examples(Map<String, Node> examples) {
             this.examples.clear();
             for (Map.Entry<String, Node> example : examples.entrySet()) {
-                this.examples.put(example.getKey(), ExampleObject.fromNode(example.getValue()));
+                this.examples.get().put(example.getKey(), ExampleObject.fromNode(example.getValue()));
             }
             return this;
         }
 
         public Builder putExample(String name, Node example) {
-            this.examples.put(name, ExampleObject.fromNode(example));
+            this.examples.get().put(name, ExampleObject.fromNode(example));
             return this;
         }
 
         public Builder content(Map<String, MediaTypeObject> content) {
             this.content.clear();
-            this.content.putAll(content);
+            content.forEach(this::putContent);
             return this;
         }
 
         public Builder putContent(String name, MediaTypeObject mediaTypeObject) {
-            this.content.put(name, mediaTypeObject);
+            this.content.get().put(name, mediaTypeObject);
             return this;
         }
     }

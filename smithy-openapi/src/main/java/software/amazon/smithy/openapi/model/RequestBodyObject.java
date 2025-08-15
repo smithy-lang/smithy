@@ -9,17 +9,18 @@ import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class RequestBodyObject extends Component implements ToSmithyBuilder<RequestBodyObject> {
     private final String description;
-    private final Map<String, MediaTypeObject> content = new TreeMap<>();
+    private final Map<String, MediaTypeObject> content;
     private final boolean required;
 
     private RequestBodyObject(Builder builder) {
         super(builder);
         description = builder.description;
-        content.putAll(builder.content);
+        content = new TreeMap<>(builder.content.peek());
         required = builder.required;
     }
 
@@ -65,7 +66,7 @@ public final class RequestBodyObject extends Component implements ToSmithyBuilde
     }
 
     public static final class Builder extends Component.Builder<Builder, RequestBodyObject> {
-        private final Map<String, MediaTypeObject> content = new TreeMap<>();
+        private final BuilderRef<Map<String, MediaTypeObject>> content = BuilderRef.forSortedMap();
         private String description;
         private boolean required;
 
@@ -83,12 +84,12 @@ public final class RequestBodyObject extends Component implements ToSmithyBuilde
 
         public Builder content(Map<String, MediaTypeObject> content) {
             this.content.clear();
-            this.content.putAll(content);
+            content.forEach(this::putContent);
             return this;
         }
 
         public Builder putContent(String name, MediaTypeObject content) {
-            this.content.put(name, content);
+            this.content.get().put(name, content);
             return this;
         }
 

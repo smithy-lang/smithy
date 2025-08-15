@@ -11,6 +11,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -21,12 +22,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see <a href="https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.jsonL349">Resource Type Remote JSON Schema</a>
  */
 public final class Remote implements ToNode, ToSmithyBuilder<Remote> {
-    private final Map<String, Schema> definitions = new TreeMap<>();
-    private final Map<String, Property> properties = new TreeMap<>();
+    private final Map<String, Schema> definitions;
+    private final Map<String, Property> properties;
 
     private Remote(Builder builder) {
-        properties.putAll(builder.properties);
-        definitions.putAll(builder.definitions);
+        definitions = new TreeMap<>(builder.definitions.copy());
+        properties = new TreeMap<>(builder.properties.copy());
     }
 
     @Override
@@ -65,8 +66,8 @@ public final class Remote implements ToNode, ToSmithyBuilder<Remote> {
     }
 
     public static final class Builder implements SmithyBuilder<Remote> {
-        private final Map<String, Schema> definitions = new TreeMap<>();
-        private final Map<String, Property> properties = new TreeMap<>();
+        private final BuilderRef<Map<String, Schema>> definitions = BuilderRef.forSortedMap();
+        private final BuilderRef<Map<String, Property>> properties = BuilderRef.forSortedMap();
 
         private Builder() {}
 
@@ -77,17 +78,17 @@ public final class Remote implements ToNode, ToSmithyBuilder<Remote> {
 
         public Builder definitions(Map<String, Schema> definitions) {
             this.definitions.clear();
-            this.definitions.putAll(definitions);
+            definitions.forEach(this::addDefinition);
             return this;
         }
 
         public Builder addDefinition(String name, Schema definition) {
-            this.definitions.put(name, definition);
+            this.definitions.get().put(name, definition);
             return this;
         }
 
         public Builder removeDefinition(String name) {
-            this.definitions.remove(name);
+            this.definitions.get().remove(name);
             return this;
         }
 
@@ -98,17 +99,17 @@ public final class Remote implements ToNode, ToSmithyBuilder<Remote> {
 
         public Builder properties(Map<String, Property> properties) {
             this.properties.clear();
-            this.properties.putAll(properties);
+            properties.forEach(this::addProperty);
             return this;
         }
 
         public Builder addProperty(String name, Property property) {
-            this.properties.put(name, property);
+            this.properties.get().put(name, property);
             return this;
         }
 
         public Builder removeProperty(String name) {
-            this.properties.remove(name);
+            this.properties.get().remove(name);
             return this;
         }
 

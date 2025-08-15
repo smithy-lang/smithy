@@ -6,6 +6,7 @@ package software.amazon.smithy.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Manages the creation, copying, and reuse of values created by builders.
@@ -106,6 +109,40 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
     }
 
     /**
+     * Creates a builder reference to a sorted map.
+     *
+     * @param <K> Type of key of the map.
+     * @param <V> Type of value of the map.
+     * @return Returns the created map.
+     */
+    static <K, V> BuilderRef<Map<K, V>> forSortedMap() {
+        return new DefaultBuilderRef<>(TreeMap::new,
+                TreeMap::new,
+                Collections::unmodifiableMap,
+                Collections::emptyMap);
+    }
+
+    /**
+     * Creates a builder reference to a sorted map with a custom comparator.
+     *
+     * @param <K> Type of key of the map.
+     * @param <V> Type of value of the map.
+     * @param comparator A comparator used to sort entries in the map.
+     * @return Returns the created map.
+     */
+    static <K, V> BuilderRef<Map<K, V>> forSortedMap(Comparator<K> comparator) {
+        return new DefaultBuilderRef<>(
+                () -> new TreeMap<>(comparator),
+                source -> {
+                    Map<K, V> copy = new TreeMap<>(comparator);
+                    copy.putAll(source);
+                    return copy;
+                },
+                Collections::unmodifiableMap,
+                Collections::emptyMap);
+    }
+
+    /**
      * Creates a builder reference to a list.
      *
      * @param <T> Type of value in the list.
@@ -140,6 +177,38 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
     static <T> BuilderRef<Set<T>> forOrderedSet() {
         return new DefaultBuilderRef<>(LinkedHashSet::new,
                 LinkedHashSet::new,
+                Collections::unmodifiableSet,
+                Collections::emptySet);
+    }
+
+    /**
+     * Creates a builder reference to a sorted set.
+     *
+     * @param <T> Type of value in the set.
+     * @return Returns the created set.
+     */
+    static <T> BuilderRef<Set<T>> forSortedSet() {
+        return new DefaultBuilderRef<>(TreeSet::new,
+                TreeSet::new,
+                Collections::unmodifiableSet,
+                Collections::emptySet);
+    }
+
+    /**
+     * Creates a builder reference to a sorted set.
+     *
+     * @param <T> Type of value in the set.
+     * @param comparator A comparator used to sort items in the set.
+     * @return Returns the created set.
+     */
+    static <T> BuilderRef<Set<T>> forSortedSet(Comparator<T> comparator) {
+        return new DefaultBuilderRef<>(
+                () -> new TreeSet<>(comparator),
+                source -> {
+                    Set<T> copy = new TreeSet<>(comparator);
+                    copy.addAll(source);
+                    return copy;
+                },
                 Collections::unmodifiableSet,
                 Collections::emptySet);
     }

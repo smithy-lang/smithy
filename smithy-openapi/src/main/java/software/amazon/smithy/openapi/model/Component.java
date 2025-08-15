@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -24,10 +25,11 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public abstract class Component implements ToNode {
     private Node node;
-    private final Map<String, Node> extensions = new TreeMap<>();
+    private final Map<String, Node> extensions;
 
     protected Component(Builder<?, ?> builder) {
-        extensions.putAll(builder.getExtensions());
+        // This wasn't made immutable from the start, so now it's mutable forever.
+        extensions = new TreeMap<>(builder.extensions.copy());
     }
 
     public final Optional<Node> getExtension(String name) {
@@ -70,16 +72,16 @@ public abstract class Component implements ToNode {
     }
 
     public abstract static class Builder<B extends Builder, C extends Component> implements SmithyBuilder<C> {
-        private final Map<String, Node> extensions = new TreeMap<>();
+        private final BuilderRef<Map<String, Node>> extensions = BuilderRef.forSortedMap();
 
         public Map<String, Node> getExtensions() {
-            return extensions;
+            return extensions.get();
         }
 
         @SuppressWarnings("unchecked")
         public B extensions(Map<String, Node> extensions) {
             this.extensions.clear();
-            this.extensions.putAll(extensions);
+            extensions.forEach(this::putExtension);
             return (B) this;
         }
 
@@ -89,7 +91,7 @@ public abstract class Component implements ToNode {
 
         @SuppressWarnings("unchecked")
         public B putExtension(String key, Node value) {
-            extensions.put(key, value);
+            extensions.get().put(key, value);
             return (B) this;
         }
 
@@ -107,7 +109,7 @@ public abstract class Component implements ToNode {
 
         @SuppressWarnings("unchecked")
         public B removeExtension(String key) {
-            extensions.remove(key);
+            extensions.get().remove(key);
             return (B) this;
         }
     }

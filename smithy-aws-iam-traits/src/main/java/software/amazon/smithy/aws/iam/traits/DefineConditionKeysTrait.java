@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.aws.iam.traits;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
@@ -14,7 +13,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -27,7 +26,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
     private DefineConditionKeysTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        conditionKeys = MapUtils.copyOf(builder.conditionKeys);
+        conditionKeys = builder.conditionKeys.copy();
     }
 
     public static Builder builder() {
@@ -89,7 +88,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
     }
 
     public static final class Builder extends AbstractTraitBuilder<DefineConditionKeysTrait, Builder> {
-        private final Map<String, ConditionKeyDefinition> conditionKeys = new HashMap<>();
+        private final BuilderRef<Map<String, ConditionKeyDefinition>> conditionKeys = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
@@ -99,12 +98,12 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
         }
 
         public Builder putConditionKey(String name, ConditionKeyDefinition definition) {
-            conditionKeys.put(name, definition);
+            conditionKeys.get().put(name, definition);
             return this;
         }
 
         public Builder removeConditionKey(String name) {
-            conditionKeys.remove(name);
+            conditionKeys.get().remove(name);
             return this;
         }
     }

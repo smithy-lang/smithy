@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -41,7 +42,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
             .createDefaultStrategy();
 
     /** All converters use the built-in mappers. */
-    private final List<JsonSchemaMapper> mappers = new ArrayList<>();
+    private final List<JsonSchemaMapper> mappers;
 
     private final Model model;
     private final PropertyNamingStrategy propertyNamingStrategy;
@@ -58,7 +59,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
     private final boolean unitTargetedByUnion;
 
     private JsonSchemaConverter(Builder builder) {
-        mappers.addAll(builder.mappers);
+        mappers = new ArrayList<>(builder.mappers.peek());
         config = SmithyBuilder.requiredState("config", builder.config);
         propertyNamingStrategy = SmithyBuilder.requiredState("propertyNamingStrategy", builder.propertyNamingStrategy);
 
@@ -325,7 +326,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         private PropertyNamingStrategy propertyNamingStrategy = DEFAULT_PROPERTY_STRATEGY;
         private JsonSchemaConfig config = new JsonSchemaConfig();
         private Predicate<Shape> shapePredicate = shape -> true;
-        private final List<JsonSchemaMapper> mappers = new ArrayList<>();
+        private final BuilderRef<List<JsonSchemaMapper>> mappers = BuilderRef.forList();
 
         private Builder() {}
 
@@ -402,7 +403,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
          * @return Returns the converter.
          */
         public Builder addMapper(JsonSchemaMapper jsonSchemaMapper) {
-            mappers.add(Objects.requireNonNull(jsonSchemaMapper));
+            mappers.get().add(Objects.requireNonNull(jsonSchemaMapper));
             return this;
         }
 
@@ -414,7 +415,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
          */
         public Builder mappers(List<JsonSchemaMapper> jsonSchemaMappers) {
             mappers.clear();
-            mappers.addAll(jsonSchemaMappers);
+            jsonSchemaMappers.forEach(this::addMapper);
             return this;
         }
     }

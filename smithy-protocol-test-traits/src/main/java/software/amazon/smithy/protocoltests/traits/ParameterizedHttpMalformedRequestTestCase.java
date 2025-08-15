@@ -17,8 +17,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SimpleCodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -57,8 +57,8 @@ final class ParameterizedHttpMalformedRequestTestCase
         protocol = SmithyBuilder.requiredState(PROTOCOL, builder.protocol);
         request = SmithyBuilder.requiredState(REQUEST, builder.request);
         response = SmithyBuilder.requiredState(RESPONSE, builder.response);
-        tags = ListUtils.copyOf(builder.tags);
-        testParameters = MapUtils.copyOf(builder.testParameters);
+        tags = builder.tags.copy();
+        testParameters = builder.testParameters.copy();
     }
 
     public Optional<String> getDocumentation() {
@@ -236,8 +236,8 @@ final class ParameterizedHttpMalformedRequestTestCase
         private ShapeId protocol;
         private HttpMalformedRequestDefinition request;
         private HttpMalformedResponseDefinition response;
-        private final List<String> tags = new ArrayList<>();
-        private final Map<String, List<String>> testParameters = new HashMap<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
+        private final BuilderRef<Map<String, List<String>>> testParameters = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
@@ -268,13 +268,13 @@ final class ParameterizedHttpMalformedRequestTestCase
 
         public Builder tags(List<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            this.tags.get().addAll(tags);
             return this;
         }
 
         public Builder testParameters(Map<String, List<String>> testParameters) {
             this.testParameters.clear();
-            this.testParameters.putAll(testParameters);
+            this.testParameters.get().putAll(testParameters);
             return this;
         }
 
