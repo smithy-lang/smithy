@@ -23,6 +23,15 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public abstract class SyntaxElement implements ToCondition, ToExpression {
     /**
+     * Get the rules engine version that this syntax element is available since.
+     *
+     * @return the version this is available since.
+     */
+    public String availableSince() {
+        return "1.0";
+    }
+
+    /**
      * Returns a BooleanEquals expression comparing this expression to the provided boolean value.
      *
      * @param value the value to compare against.

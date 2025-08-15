@@ -6,9 +6,11 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -71,5 +73,14 @@ public final class RecordLiteral extends Literal {
         ObjectNode.Builder builder = ObjectNode.builder();
         members.forEach((k, v) -> builder.withMember(k.toString(), v.toNode()));
         return builder.build();
+    }
+
+    @Override
+    protected Set<String> calculateReferences() {
+        Set<String> references = new LinkedHashSet<>();
+        for (Literal value : members().values()) {
+            references.addAll(value.getReferences());
+        }
+        return references;
     }
 }

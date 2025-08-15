@@ -5,7 +5,9 @@
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 
 /**
  * The "optional" type, a container for a type that may or may not be present.
@@ -77,5 +79,10 @@ public final class OptionalType extends AbstractType {
     @Override
     public String toString() {
         return String.format("OptionalType[%s]", inner);
+    }
+
+    @Override
+    public Optional<Literal> getZeroValue() {
+        return inner.getZeroValue();
     }
 }
