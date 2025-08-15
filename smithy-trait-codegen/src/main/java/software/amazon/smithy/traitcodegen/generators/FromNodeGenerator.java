@@ -247,12 +247,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void memberShape(MemberShape shape) {
-            if (shape.hasTrait(IdRefTrait.ID)) {
-                writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                        fieldName,
-                        memberName,
-                        (Runnable) () -> shape
-                                .accept(new FromNodeMapperVisitor(writer, model, "n", 1, symbolProvider)));
+            if (shape.hasTrait(IdRefTrait.ID) || shape.hasTrait(TimestampFormatTrait.ID)) {
+                writeObjectNodeMember(shape);
                 return null;
             }
             return model.expectShape(shape.getTarget()).accept(this);
@@ -413,19 +409,13 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                    fieldName,
-                    memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
+            writeObjectNodeMember(shape);
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
-                    fieldName,
-                    memberName,
-                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
+            writeObjectNodeMember(shape);
             return null;
         }
 
@@ -437,6 +427,13 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
         @Override
         public Void blobShape(BlobShape shape) {
             throw new UnsupportedOperationException("Shape not supported " + shape);
+        }
+
+        private void writeObjectNodeMember(Shape shape) {
+            writer.writeInline(memberPrefix + "Member($1S, n -> $3C, builder::$2L)",
+                    fieldName,
+                    memberName,
+                    (Runnable) () -> shape.accept(new FromNodeMapperVisitor(writer, model, "n", symbolProvider)));
         }
     }
 }

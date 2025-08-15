@@ -269,24 +269,10 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     @Override
     public Void timestampShape(TimestampShape shape) {
         if (shape.hasTrait(TimestampFormatTrait.ID)) {
-            switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
-                case EPOCH_SECONDS:
-                    writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
-                            varName,
-                            Instant.class);
-                    return null;
-                case HTTP_DATE:
-                    writer.writeInline("$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
-                            varName,
-                            Instant.class,
-                            DateTimeFormatter.class);
-                    return null;
-                default:
-                    // Fall through on default
-                    break;
-            }
+            writeForTimestampFormat(shape);
+        } else {
+            writer.writeInline("$2T.parse($1L.expectStringNode().getValue())", varName, Instant.class);
         }
-        writer.writeInline("$2T.parse($1L.expectStringNode().getValue())", varName, Instant.class);
         return null;
     }
 
@@ -304,6 +290,8 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     public Void memberShape(MemberShape shape) {
         if (shape.hasTrait(IdRefTrait.ID)) {
             writer.write("$T.fromNode($L)", ShapeId.class, varName);
+        } else if (shape.hasTrait(TimestampFormatTrait.ID)) {
+            writeForTimestampFormat(shape);
         } else {
             model.expectShape(shape.getTarget()).accept(this);
         }
@@ -320,5 +308,24 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
     public Void intEnumShape(IntEnumShape shape) {
         writer.write("$L.expectNumberNode().getValue().intValue()", varName);
         return null;
+    }
+
+    private void writeForTimestampFormat(Shape shape) {
+        switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+            case EPOCH_SECONDS:
+                writer.writeInline("$2T.ofEpochSecond($1L.expectNumberNode().getValue().longValue())",
+                        varName,
+                        Instant.class);
+                break;
+            case HTTP_DATE:
+                writer.writeInline("$2T.from($3T.RFC_1123_DATE_TIME.parse($1L.expectStringNode().getValue()))",
+                        varName,
+                        Instant.class,
+                        DateTimeFormatter.class);
+                break;
+            default:
+                // Fall through on default
+                writer.writeInline("$2T.parse($1L.expectStringNode().getValue())", varName, Instant.class);
+        }
     }
 }

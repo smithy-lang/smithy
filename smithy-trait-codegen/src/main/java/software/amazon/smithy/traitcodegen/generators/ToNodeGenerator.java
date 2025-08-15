@@ -352,6 +352,8 @@ final class ToNodeGenerator implements Runnable {
         public Void memberShape(MemberShape shape) {
             if (shape.hasTrait(IdRefTrait.ID)) {
                 toStringMapper();
+            } else if (shape.hasTrait(TimestampFormatTrait.ID)) {
+                writeForTimestampFormat(shape);
             } else {
                 model.expectShape(shape.getTarget()).accept(this);
             }
@@ -391,22 +393,10 @@ final class ToNodeGenerator implements Runnable {
         @Override
         public Void timestampShape(TimestampShape shape) {
             if (shape.hasTrait(TimestampFormatTrait.ID)) {
-                switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$T.from($L.getEpochSecond())", Node.class, varName);
-                        return null;
-                    case HTTP_DATE:
-                        writer.write("$T.from($T.RFC_1123_DATE_TIME.format($L))",
-                                Node.class,
-                                DateTimeFormatter.class,
-                                varName);
-                        return null;
-                    default:
-                        // Fall through on default
-                        break;
-                }
+                writeForTimestampFormat(shape);
+            } else {
+                toStringMapper();
             }
-            toStringMapper();
             return null;
         }
 
@@ -416,6 +406,25 @@ final class ToNodeGenerator implements Runnable {
 
         private void toStringMapper() {
             writer.write("$T.from($L.toString())", Node.class, varName);
+        }
+
+        private void writeForTimestampFormat(Shape shape) {
+            switch (shape.expectTrait(TimestampFormatTrait.class).getFormat()) {
+                case EPOCH_SECONDS:
+                    writer.write("$T.from($L.getEpochSecond())", Node.class, varName);
+                    break;
+                case HTTP_DATE:
+                    writer.write("$T.from($T.RFC_1123_DATE_TIME.format($T.ofInstant($L, $T.UTC)))",
+                            Node.class,
+                            DateTimeFormatter.class,
+                            ZonedDateTime.class,
+                            varName,
+                            ZoneOffset.class);
+                    break;
+                default:
+                    // Fall through on default
+                    toStringMapper();
+            }
         }
     }
 }
