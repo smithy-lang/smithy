@@ -37,6 +37,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *
  * <p>Supports chaining:
  * {@code coalesce(opt1, coalesce(opt2, coalesce(opt3, default)))}
+ *
+ * <p>Available since: rules engine 1.1.
  */
 @SmithyUnstableApi
 public final class Coalesce extends LibraryFunction {
@@ -65,6 +67,11 @@ public final class Coalesce extends LibraryFunction {
      */
     public static Coalesce ofExpressions(ToExpression arg1, ToExpression arg2) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
+    }
+
+    @Override
+    public String availableSince() {
+        return "1.1";
     }
 
     @Override

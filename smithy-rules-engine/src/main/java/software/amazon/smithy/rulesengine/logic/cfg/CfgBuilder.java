@@ -66,9 +66,12 @@ public final class CfgBuilder {
     private int convergenceNodesCreated = 0;
     private int phiVariableCounter = 0;
 
+    private String version = "1.1";
+
     public CfgBuilder(EndpointRuleSet ruleSet) {
         // Apply SSA transform to ensure globally unique variable names
         this.ruleSet = SsaTransform.transform(ruleSet);
+        this.version = ruleSet.getVersion();
 
         // Analyze results and create convergence nodes
         analyzeAndCreateConvergenceNodes();
@@ -82,6 +85,17 @@ public final class CfgBuilder {
      */
     public Cfg build(CfgNode root) {
         return new Cfg(ruleSet, Objects.requireNonNull(root));
+    }
+
+    /**
+     * Set the version of the endpoint rules engine (e.g., 1.1).
+     *
+     * @param version Version to set.
+     * @return the builder;
+     */
+    public CfgBuilder version(String version) {
+        this.version = Objects.requireNonNull(version);
+        return this;
     }
 
     /**
