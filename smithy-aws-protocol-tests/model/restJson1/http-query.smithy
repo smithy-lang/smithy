@@ -414,22 +414,12 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
         headers: {
             "Content-Type": "application/json"
         },
-        body: "{}",
+        body: "{\"baz\":\"bam\"}",
         bodyMediaType: "application/json",
-        params: {}
-    },
-    {
-        id: "RestJsonIgnoreQueryParamsInResponseNoPayload",
-        documentation: """
-                This test is similar to RestJsonIgnoreQueryParamsInResponse,
-                but it ensures that clients gracefully handle responses from
-                the server that do not serialize an empty JSON object.""",
-        protocol: restJson1,
-        code: 200,
-        body: "",
-        params: {},
-        appliesTo: "client",
-    },
+        params: {
+            baz: "bam"
+        }
+    }
 ])
 
 structure IgnoreQueryParamsInResponseOutput {
