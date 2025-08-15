@@ -12,7 +12,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
-import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
@@ -28,7 +28,7 @@ public class RuleSetTestCaseValidator extends AbstractValidator {
             EndpointTestsTrait testsTrait = serviceShape.expectTrait(EndpointTestsTrait.class);
             if (serviceShape.hasTrait(EndpointRuleSetTrait.class)) {
                 validate(serviceShape, testsTrait, events);
-            } else if (serviceShape.hasTrait(BddTrait.class)) {
+            } else if (serviceShape.hasTrait(EndpointBddTrait.class)) {
                 validateBdd(serviceShape, testsTrait, events);
             }
         }
@@ -49,7 +49,7 @@ public class RuleSetTestCaseValidator extends AbstractValidator {
     }
 
     private void validateBdd(ServiceShape serviceShape, EndpointTestsTrait testsTrait, List<ValidationEvent> events) {
-        BddTrait trait = serviceShape.expectTrait(BddTrait.class);
+        EndpointBddTrait trait = serviceShape.expectTrait(EndpointBddTrait.class);
         for (EndpointTestCase endpointTestCase : testsTrait.getTestCases()) {
             try {
                 TestEvaluator.evaluate(trait, endpointTestCase);

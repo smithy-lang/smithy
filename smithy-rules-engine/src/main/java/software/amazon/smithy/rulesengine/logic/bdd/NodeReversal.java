@@ -13,12 +13,12 @@ import java.util.logging.Logger;
  * <p>This transformation reverses the node array (except the terminal at index 0)
  * and updates all references throughout the BDD to maintain correctness.
  */
-public final class NodeReversal implements Function<BddTrait, BddTrait> {
+public final class NodeReversal implements Function<EndpointBddTrait, EndpointBddTrait> {
 
     private static final Logger LOGGER = Logger.getLogger(NodeReversal.class.getName());
 
     @Override
-    public BddTrait apply(BddTrait trait) {
+    public EndpointBddTrait apply(EndpointBddTrait trait) {
         Bdd reversedBdd = reverse(trait.getBdd());
         // Only rebuild the trait if the BDD actually changed
         return reversedBdd == trait.getBdd() ? trait : trait.toBuilder().bdd(reversedBdd).build();

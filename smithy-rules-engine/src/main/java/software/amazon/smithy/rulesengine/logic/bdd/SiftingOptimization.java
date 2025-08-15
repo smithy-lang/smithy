@@ -30,7 +30,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  *   <li>Granular: Fine-tuned optimization for maximum reduction</li>
  * </ul>
  */
-public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
+public final class SiftingOptimization implements Function<EndpointBddTrait, EndpointBddTrait> {
     private static final Logger LOGGER = Logger.getLogger(SiftingOptimization.class.getName());
 
     // When to use a parallel stream
@@ -96,7 +96,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
     }
 
     @Override
-    public BddTrait apply(BddTrait trait) {
+    public EndpointBddTrait apply(EndpointBddTrait trait) {
         try {
             return doApply(trait);
         } finally {
@@ -104,7 +104,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         }
     }
 
-    private BddTrait doApply(BddTrait trait) {
+    private EndpointBddTrait doApply(EndpointBddTrait trait) {
         LOGGER.info("Starting BDD sifting optimization");
         long startTime = System.currentTimeMillis();
         OptimizationState state = initializeOptimization(trait);
@@ -135,7 +135,7 @@ public final class SiftingOptimization implements Function<BddTrait, BddTrait> {
         return trait.toBuilder().conditions(state.orderView).results(state.results).bdd(state.bestBdd).build();
     }
 
-    private OptimizationState initializeOptimization(BddTrait trait) {
+    private OptimizationState initializeOptimization(EndpointBddTrait trait) {
         // Use the trait's existing ordering as the starting point
         List<Condition> initialOrder = new ArrayList<>(trait.getConditions());
         Condition[] order = initialOrder.toArray(new Condition[0]);

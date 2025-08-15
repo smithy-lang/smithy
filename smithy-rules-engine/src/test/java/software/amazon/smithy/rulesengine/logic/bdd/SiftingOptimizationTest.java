@@ -45,10 +45,10 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Basic checks
         assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
@@ -88,10 +88,10 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Verify the optimizer preserved the number of conditions
         assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
@@ -118,10 +118,10 @@ class SiftingOptimizationTest {
 
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).addRule(rule).build();
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Should be unchanged or very similar
         assertEquals(originalTrait.getBdd().getNodeCount(), optimizedTrait.getBdd().getNodeCount());
@@ -136,10 +136,10 @@ class SiftingOptimizationTest {
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder().cfg(cfg).build();
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         assertEquals(0, optimizedTrait.getBdd().getConditionCount());
         assertEquals(originalTrait.getBdd().getResultCount(), optimizedTrait.getBdd().getResultCount());
@@ -183,13 +183,13 @@ class SiftingOptimizationTest {
                 .build();
 
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder()
                 .cfg(cfg)
                 .granularEffort(100_000, 10) // Allow more aggressive optimization
                 .build();
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // Should maintain correctness
         assertEquals(originalTrait.getConditions().size(), optimizedTrait.getConditions().size());
@@ -214,14 +214,14 @@ class SiftingOptimizationTest {
 
         EndpointRuleSet ruleSet = EndpointRuleSet.builder().parameters(params).addRule(rule).build();
         Cfg cfg = Cfg.from(ruleSet);
-        BddTrait originalTrait = BddTrait.from(cfg);
+        EndpointBddTrait originalTrait = EndpointBddTrait.from(cfg);
 
         SiftingOptimization optimizer = SiftingOptimization.builder()
                 .cfg(cfg)
                 .coarseEffort(1, 1) // Minimal effort to likely find no improvement
                 .build();
 
-        BddTrait optimizedTrait = optimizer.apply(originalTrait);
+        EndpointBddTrait optimizedTrait = optimizer.apply(originalTrait);
 
         // For simple cases with minimal optimization effort, should return the same trait object
         if (optimizedTrait.getBdd().getNodeCount() == originalTrait.getBdd().getNodeCount()) {

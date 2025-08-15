@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.logic.RuleBasedConditionEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -57,7 +57,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
      * @param args The rule-set parameter identifiers and values to evaluate the BDD against.
      * @return The resulting value from the final matched rule.
      */
-    public static Value evaluate(BddTrait trait, Map<Identifier, Value> args) {
+    public static Value evaluate(EndpointBddTrait trait, Map<Identifier, Value> args) {
         return evaluate(trait.getBdd(), trait.getParameters(), trait.getConditions(), trait.getResults(), args);
     }
 

@@ -34,8 +34,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Trait containing a precompiled BDD with full context for endpoint resolution.
  */
-public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<BddTrait> {
-    public static final ShapeId ID = ShapeId.from("smithy.rules#bdd");
+public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBuilder<EndpointBddTrait> {
+    public static final ShapeId ID = ShapeId.from("smithy.rules#endpointBdd");
 
     private static final Set<String> ALLOWED_PROPERTIES = SetUtils.of(
             "parameters",
@@ -50,7 +50,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
     private final List<Rule> results;
     private final Bdd bdd;
 
-    private BddTrait(Builder builder) {
+    private EndpointBddTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         this.parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
         this.conditions = SmithyBuilder.requiredState("conditions", builder.conditions);
@@ -64,7 +64,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      * @param cfg the control flow graph to compile
      * @return the BddTrait containing the compiled BDD and all context
      */
-    public static BddTrait from(Cfg cfg) {
+    public static EndpointBddTrait from(Cfg cfg) {
         BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
         Bdd bdd = compiler.compile();
 
@@ -122,7 +122,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      * @param transformer Transformer used to modify the trait.
      * @return the updated trait.
      */
-    public BddTrait transform(Function<BddTrait, BddTrait> transformer) {
+    public EndpointBddTrait transform(Function<EndpointBddTrait, EndpointBddTrait> transformer) {
         return transformer.apply(this);
     }
 
@@ -164,7 +164,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
      * @param node the node to parse
      * @return the BddTrait
      */
-    public static BddTrait fromNode(Node node) {
+    public static EndpointBddTrait fromNode(Node node) {
         ObjectNode obj = node.expectObjectNode();
         obj.warnIfAdditionalProperties(ALLOWED_PROPERTIES);
         Parameters params = Parameters.fromNode(obj.expectObjectMember("parameters"));
@@ -181,7 +181,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
 
         Bdd bdd = decodeBdd(nodesBase64, nodeCount, rootRef, conditions.size(), results.size());
 
-        BddTrait trait = builder()
+        EndpointBddTrait trait = builder()
                 .sourceLocation(node)
                 .parameters(params)
                 .conditions(conditions)
@@ -251,7 +251,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
     /**
      * Builder for BddTrait.
      */
-    public static final class Builder extends AbstractTraitBuilder<BddTrait, Builder> {
+    public static final class Builder extends AbstractTraitBuilder<EndpointBddTrait, Builder> {
         private Parameters parameters;
         private List<Condition> conditions;
         private List<Rule> results;
@@ -304,8 +304,8 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
         }
 
         @Override
-        public BddTrait build() {
-            return new BddTrait(this);
+        public EndpointBddTrait build() {
+            return new EndpointBddTrait(this);
         }
     }
 
@@ -316,7 +316,7 @@ public final class BddTrait extends AbstractTrait implements ToSmithyBuilder<Bdd
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            BddTrait trait = BddTrait.fromNode(value);
+            EndpointBddTrait trait = EndpointBddTrait.fromNode(value);
             trait.setNodeCache(value);
             return trait;
         }

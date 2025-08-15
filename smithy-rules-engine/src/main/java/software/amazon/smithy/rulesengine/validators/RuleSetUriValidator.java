@@ -17,7 +17,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.St
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
-import software.amazon.smithy.rulesengine.logic.bdd.BddTrait;
+import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -31,7 +31,7 @@ public final class RuleSetUriValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ServiceShape serviceShape : model.getServiceShapes()) {
             visitRuleset(events, serviceShape, serviceShape.getTrait(EndpointRuleSetTrait.class).orElse(null));
-            visitBdd(events, serviceShape, serviceShape.getTrait(BddTrait.class).orElse(null));
+            visitBdd(events, serviceShape, serviceShape.getTrait(EndpointBddTrait.class).orElse(null));
         }
         return events;
     }
@@ -44,7 +44,7 @@ public final class RuleSetUriValidator extends AbstractValidator {
         }
     }
 
-    private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, BddTrait trait) {
+    private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, EndpointBddTrait trait) {
         if (trait != null) {
             for (Rule result : trait.getResults()) {
                 if (result instanceof EndpointRule) {
