@@ -10,7 +10,7 @@ use smithy.rules#endpointBdd
     UseFips: {type: "boolean", documentation: "docs"}
 )
 @endpointBdd({
-    version: "1.1"
+    version: "1.0"
     "parameters": {
         "Region": {
             "required": true,
