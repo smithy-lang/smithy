@@ -8,3 +8,4 @@ software.amazon.smithy.rulesengine.validators.RuleSetParamMissingDocsValidator
 software.amazon.smithy.rulesengine.validators.RuleSetParameterValidator
 software.amazon.smithy.rulesengine.validators.RuleSetTestCaseValidator
 software.amazon.smithy.rulesengine.validators.BddTraitValidator
+software.amazon.smithy.rulesengine.validators.RulesEngineVersionValidator

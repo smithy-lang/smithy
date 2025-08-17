@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions.functions
 
 import java.util.Arrays;
 import java.util.List;
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.OptionalType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -62,8 +63,8 @@ public final class Coalesce extends LibraryFunction {
     }
 
     @Override
-    public String availableSince() {
-        return "1.1";
+    public RulesVersion availableSince() {
+        return RulesVersion.V1_1;
     }
 
     @Override

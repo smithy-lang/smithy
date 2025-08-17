@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax;
 
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
@@ -27,8 +28,8 @@ public abstract class SyntaxElement implements ToCondition, ToExpression {
      *
      * @return the version this is available since.
      */
-    public String availableSince() {
-        return "1.0";
+    public RulesVersion availableSince() {
+        return RulesVersion.V1_0;
     }
 
     /**
