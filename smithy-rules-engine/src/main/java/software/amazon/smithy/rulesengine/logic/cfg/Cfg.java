@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
@@ -46,16 +47,16 @@ public final class Cfg implements Iterable<CfgNode> {
     // Lazily computed condition data
     private Condition[] conditions;
     private Map<Condition, Integer> conditionToIndex;
-    private final String version;
+    private final RulesVersion version;
 
     Cfg(EndpointRuleSet ruleSet, CfgNode root) {
         this(
                 ruleSet == null ? Parameters.builder().build() : ruleSet.getParameters(),
                 root,
-                ruleSet == null ? "1.1" : ruleSet.getVersion());
+                ruleSet == null ? RulesVersion.V1_1 : ruleSet.getRulesVersion());
     }
 
-    Cfg(Parameters parameters, CfgNode root, String version) {
+    Cfg(Parameters parameters, CfgNode root, RulesVersion version) {
         this.root = SmithyBuilder.requiredState("root", root);
         this.version = version;
         this.parameters = parameters;
@@ -80,7 +81,7 @@ public final class Cfg implements Iterable<CfgNode> {
      *
      * @return endpoint ruleset version.
      */
-    public String getVersion() {
+    public RulesVersion getVersion() {
         return version;
     }
 

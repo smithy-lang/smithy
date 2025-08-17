@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
@@ -38,7 +38,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBuilder<EndpointBddTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.rules#endpointBdd");
 
-    private static final BigDecimal MIN_VERSION = new BigDecimal("1.1");
+    private static final RulesVersion MIN_VERSION = RulesVersion.V1_1;
     private static final Set<String> ALLOWED_PROPERTIES = SetUtils.of(
             "version",
             "parameters",
@@ -48,7 +48,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
             "nodes",
             "nodeCount");
 
-    private final String version;
+    private final RulesVersion version;
     private final Parameters parameters;
     private final List<Condition> conditions;
     private final List<Rule> results;
@@ -62,8 +62,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         this.results = SmithyBuilder.requiredState("results", builder.results);
         this.bdd = SmithyBuilder.requiredState("bdd", builder.bdd);
 
-        BigDecimal v = new BigDecimal(version);
-        if (v.compareTo(MIN_VERSION) < 0) {
+        if (version.compareTo(MIN_VERSION) < 0) {
             throw new IllegalArgumentException("Rules engine version for endpointBdd trait must be >= " + MIN_VERSION);
         }
     }
@@ -83,9 +82,9 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         }
 
         // Automatically convert 1.0 versions of the decision tree to 1.1 for the minimum version of the BDD trait.
-        String version = cfg.getVersion();
-        if (version.equals("1.0")) {
-            version = "1.1";
+        RulesVersion version = cfg.getVersion();
+        if (version.equals(RulesVersion.V1_0)) {
+            version = RulesVersion.V1_1;
         }
 
         return builder()
@@ -138,7 +137,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
      *
      * @return the rules engine version
      */
-    public String getVersion() {
+    public RulesVersion getVersion() {
         return version;
     }
 
@@ -155,7 +154,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = ObjectNode.builder();
-        builder.withMember("version", version);
+        builder.withMember("version", version.toString());
         builder.withMember("parameters", parameters.toNode());
 
         ArrayNode.Builder conditionBuilder = ArrayNode.builder();
@@ -194,7 +193,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
     public static EndpointBddTrait fromNode(Node node) {
         ObjectNode obj = node.expectObjectNode();
         obj.warnIfAdditionalProperties(ALLOWED_PROPERTIES);
-        String version = obj.expectStringMember("version").getValue();
+        RulesVersion version = RulesVersion.of(obj.expectStringMember("version").getValue());
         Parameters params = Parameters.fromNode(obj.expectObjectMember("parameters"));
         List<Condition> conditions = obj.expectArrayMember("conditions").getElementsAs(Condition::fromNode);
 
@@ -282,7 +281,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
      * Builder for BddTrait.
      */
     public static final class Builder extends AbstractTraitBuilder<EndpointBddTrait, Builder> {
-        private String version = "1.1";
+        private RulesVersion version = RulesVersion.V1_1;
         private Parameters parameters;
         private List<Condition> conditions;
         private List<Rule> results;
@@ -296,7 +295,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
          * @param version Version to set (e.g., 1.1).
          * @return this builder
          */
-        public Builder version(String version) {
+        public Builder version(RulesVersion version) {
             this.version = version;
             return this;
         }
