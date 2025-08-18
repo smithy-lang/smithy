@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Updated `TopDownIndex` to return results in modeled order.",
+  "pull_requests": [
+    "[#2746](https://github.com/smithy-lang/smithy/pull/2746)"
+  ]
+}
