@@ -337,7 +337,7 @@ public class CodegenDirectorTest {
         runner.run();
 
         assertThat(testDirected.generatedShapes,
-                contains(
+                containsInAnyOrder(
                         ShapeId.from("smithy.example#FooOperation"),
                         ShapeId.from("smithy.example#FooOperationOutput"),
                         ShapeId.from("smithy.example#A"),

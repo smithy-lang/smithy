@@ -50,12 +50,18 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
         List<ValidationEvent> errors = new ArrayList<>();
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
+            // This validator is sensitive to order, and with the change to topdownindex returning
+            // things in modeled order, the actual errors returned changed. So This reverses that order
+            // to side-step the issue.
+            // TODO: Make the validator not sensitive to order
+            List<OperationShape> operations = new ArrayList<>(topDownIndex.getContainedOperations(serviceShape));
+            operations = operations.reversed();
             // Pull all the parameters used in this service related to endpoints, validating that
             // they are of matching types across the traits that can define them.
             Pair<List<ValidationEvent>, Map<String, Parameter>> errorsParamsPair = validateAndExtractParameters(
                     model,
                     serviceShape,
-                    topDownIndex.getContainedOperations(serviceShape));
+                    operations);
             errors.addAll(errorsParamsPair.getLeft());
 
             // Make sure parameters align across Params <-> RuleSet transitions.
@@ -79,7 +85,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     private Pair<List<ValidationEvent>, Map<String, Parameter>> validateAndExtractParameters(
             Model model,
             ServiceShape serviceShape,
-            Set<OperationShape> containedOperations
+            List<OperationShape> containedOperations
     ) {
         List<ValidationEvent> errors = new ArrayList<>();
         Map<String, Parameter> endpointParams = new HashMap<>();
