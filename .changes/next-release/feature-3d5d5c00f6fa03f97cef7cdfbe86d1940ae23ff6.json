@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Updated `Walker` to walk relationships in their defined order, rather than the reverse of their defined order.",
+  "pull_requests": [
+    "[#2746](https://github.com/smithy-lang/smithy/pull/2746)"
+  ]
+}
