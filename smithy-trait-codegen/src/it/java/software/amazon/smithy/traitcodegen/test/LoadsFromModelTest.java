@@ -48,6 +48,7 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
 import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
@@ -332,6 +333,16 @@ public class LoadsFromModelTest {
                                 Optional.of(ShapeId.from("test.smithy.traitcodegen#a")),
                                 "getIdRefMemberB",
                                 Optional.of(ShapeId.from("test.smithy.traitcodegen#b")))),
+                Arguments.of("structures/struct-member-with-timestamp-format-trait.smithy",
+                        StructMemberWithTimestampFormatTrait.class,
+                        MapUtils.of(
+                                "getMemberDateTime",
+                                Optional.of(Instant.parse("1985-04-12T23:20:50.52Z")),
+                                "getMemberHttpDate",
+                                Optional.of(Instant.from(
+                                        DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT"))),
+                                "getMemberEpochSeconds",
+                                Optional.of(Instant.ofEpochSecond((long) 1515531081.123)))),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,
