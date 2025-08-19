@@ -4,8 +4,9 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.OptionalType;
@@ -18,18 +19,16 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A coalesce function that returns the first non-empty value.
- * At runtime, returns the left value unless it's EmptyValue, in which case returns the right value.
+ *
+ * <p>This variadic function requires two or more arguments. At runtime, returns the first arguments that returns a
+ * non-EmptyValue, otherwise returns the result of the last argument.
  *
  * <p>Type checking rules:
  * <ul>
- * <li>{@code coalesce(T, T) => T} (same types)</li>
- * <li>{@code coalesce(Optional<T>, T) => T} (unwraps optional)</li>
- * <li>{@code coalesce(T, Optional<T>) => T} (unwraps optional)</li>
- * <li>{@code coalesce(Optional<T>, Optional<T>) => Optional<T>}</li>
+ * <li>{@code coalesce(T, T, T) => T} (same types)</li>
+ * <li>{@code coalesce(Optional<T>, T, T) => T} (any non-optional makes result non-optional)</li>
+ * <li>{@code coalesce(Optional<T>, Optional<T>, Optional<T>) => Optional<T>} (all optional)</li>
  * </ul>
- *
- * <p>Supports chaining:
- * {@code coalesce(opt1, coalesce(opt2, coalesce(opt3, default)))}
  *
  * <p>Available since: rules engine 1.1.
  */
@@ -52,14 +51,23 @@ public final class Coalesce extends LibraryFunction {
     }
 
     /**
-     * Creates a {@link Coalesce} function from the given expressions.
+     * Creates a {@link Coalesce} function from variadic expressions.
      *
-     * @param arg1 the first expression, typically optional.
-     * @param arg2 the second expression, used as fallback.
+     * @param args the expressions to coalesce
      * @return The resulting {@link Coalesce} function.
      */
-    public static Coalesce ofExpressions(ToExpression arg1, ToExpression arg2) {
-        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
+    public static Coalesce ofExpressions(ToExpression... args) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, args));
+    }
+
+    /**
+     * Creates a {@link Coalesce} function from a list of expressions.
+     *
+     * @param args the expressions to coalesce
+     * @return The resulting {@link Coalesce} function.
+     */
+    public static Coalesce ofExpressions(List<? extends ToExpression> args) {
+        return ofExpressions(args.toArray(new ToExpression[0]));
     }
 
     @Override
@@ -69,37 +77,38 @@ public final class Coalesce extends LibraryFunction {
 
     @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
-        List<Expression> args = getArguments();
-        return visitor.visitCoalesce(args.get(0), args.get(1));
+        return visitor.visitCoalesce(getArguments());
     }
 
     @Override
     public Type typeCheck(Scope<Type> scope) {
         List<Expression> args = getArguments();
-
-        if (args.size() != 2) {
-            throw new IllegalArgumentException("Coalesce requires exactly 2 arguments, got " + args.size());
+        if (args.size() < 2) {
+            throw new IllegalArgumentException("Coalesce requires at least 2 arguments, got " + args.size());
         }
 
-        Type leftType = args.get(0).typeCheck(scope);
-        Type rightType = args.get(1).typeCheck(scope);
-        Type leftInner = getInnerType(leftType);
-        Type rightInner = getInnerType(rightType);
+        // Get the first argument's type as the baseline
+        Type firstType = args.get(0).typeCheck(scope);
+        Type baseInnerType = getInnerType(firstType);
+        boolean hasNonOptional = !(firstType instanceof OptionalType);
 
-        // Both must be the same type (after unwrapping optionals)
-        if (!leftInner.equals(rightInner)) {
-            throw new IllegalArgumentException(String.format(
-                    "Type mismatch in coalesce: %s and %s must be the same type",
-                    leftType,
-                    rightType));
+        // Check all other arguments match the base type
+        for (int i = 1; i < args.size(); i++) {
+            Type argType = args.get(i).typeCheck(scope);
+            Type innerType = getInnerType(argType);
+
+            if (!innerType.equals(baseInnerType)) {
+                throw new IllegalArgumentException(String.format(
+                        "Type mismatch in coalesce at argument %d: expected %s but got %s",
+                        i + 1,
+                        baseInnerType,
+                        innerType));
+            }
+
+            hasNonOptional = hasNonOptional || !(argType instanceof OptionalType);
         }
 
-        // Only return Optional if both sides are optional
-        if (leftType instanceof OptionalType && rightType instanceof OptionalType) {
-            return Type.optionalType(leftInner);
-        }
-
-        return leftInner;
+        return hasNonOptional ? baseInnerType : Type.optionalType(baseInnerType);
     }
 
     private static Type getInnerType(Type t) {
@@ -119,7 +128,12 @@ public final class Coalesce extends LibraryFunction {
 
         @Override
         public List<Type> getArguments() {
-            return Arrays.asList(Type.anyType(), Type.anyType());
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Optional<Type> getVariadicArguments() {
+            return Optional.of(Type.anyType());
         }
 
         @Override

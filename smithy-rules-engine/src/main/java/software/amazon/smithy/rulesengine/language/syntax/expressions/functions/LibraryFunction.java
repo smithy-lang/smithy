@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
@@ -105,7 +106,7 @@ public abstract class LibraryFunction extends Expression {
     protected Type typeCheckLocal(Scope<Type> scope) {
         RuleError.context(String.format("while typechecking the invocation of %s", definition.getId()), this, () -> {
             try {
-                checkTypeSignature(definition.getArguments(), functionNode.getArguments(), scope);
+                checkTypeSignature(scope);
             } catch (InnerParseError e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -113,37 +114,64 @@ public abstract class LibraryFunction extends Expression {
         return definition.getReturnType();
     }
 
-    private void checkTypeSignature(List<Type> expectedArgs, List<Expression> actualArguments, Scope<Type> scope)
-            throws InnerParseError {
-        if (expectedArgs.size() != actualArguments.size()) {
-            throw new InnerParseError(
-                    String.format(
-                            "Expected %s arguments but found %s",
-                            expectedArgs.size(),
-                            actualArguments));
-        }
-        for (int i = 0; i < expectedArgs.size(); i++) {
-            Type expected = expectedArgs.get(i);
-            Type actual = actualArguments.get(i).typeCheck(scope);
-            if (!expected.isA(actual)) {
-                Type optAny = Type.optionalType(Type.anyType());
-                String hint = "";
-                if (actual.isA(optAny) && !expected.isA(optAny)
-                        && actual.expectOptionalType().inner().equals(expected)) {
-                    hint = String.format(
-                            "hint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null",
-                            actualArguments.get(i));
-                    hint = StringUtils.indent(hint, 2);
-                }
-                throw new InnerParseError(
-                        String.format(
-                                "Unexpected type in the %s argument: Expected %s but found %s%n%s",
-                                ordinal(i + 1),
-                                expected,
-                                actual,
-                                hint));
+    private void checkTypeSignature(Scope<Type> scope) throws InnerParseError {
+        List<Type> expectedArgs = definition.getArguments();
+        Optional<Type> variadicType = definition.getVariadicArguments();
+        List<Expression> actualArguments = functionNode.getArguments();
+
+        if (variadicType.isPresent()) {
+            // check we have at least the fixed arguments
+            if (actualArguments.size() < expectedArgs.size()) {
+                throw new InnerParseError(String.format("Expected at least %s arguments but found %s",
+                        expectedArgs.size(),
+                        actualArguments.size()));
+            }
+            // check fixed arguments
+            for (int i = 0; i < expectedArgs.size(); i++) {
+                checkArgument(i, expectedArgs.get(i), actualArguments.get(i), scope);
+            }
+            // check variadic arguments
+            Type varType = variadicType.get();
+            for (int i = expectedArgs.size(); i < actualArguments.size(); i++) {
+                checkArgument(i, varType, actualArguments.get(i), scope);
+            }
+        } else {
+            // Non-variadic, so exact count required
+            if (expectedArgs.size() != actualArguments.size()) {
+                throw new InnerParseError(String.format("Expected %s arguments but found %s",
+                        expectedArgs.size(),
+                        actualArguments.size()));
+            }
+            // check all positional arguments
+            for (int i = 0; i < expectedArgs.size(); i++) {
+                checkArgument(i, expectedArgs.get(i), actualArguments.get(i), scope);
             }
         }
+    }
+
+    private void checkArgument(int index, Type expected, Expression actual, Scope<Type> scope)
+            throws InnerParseError {
+        Type actualType = actual.typeCheck(scope);
+        if (expected.isA(actualType)) {
+            return;
+        }
+
+        Type optAny = Type.optionalType(Type.anyType());
+        String hint = "";
+        if (actualType.isA(optAny)
+                && !expected.isA(optAny)
+                && actualType.expectOptionalType().inner().equals(expected)) {
+            hint = String.format(
+                    "hint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null",
+                    actual);
+            hint = StringUtils.indent(hint, 2);
+        }
+
+        throw new InnerParseError(String.format("Unexpected type in the %s argument: Expected %s but found %s%n%s",
+                ordinal(index + 1),
+                expected,
+                actualType,
+                hint));
     }
 
     private static String ordinal(int arg) {

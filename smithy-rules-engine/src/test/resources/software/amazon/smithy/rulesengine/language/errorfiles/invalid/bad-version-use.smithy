@@ -37,6 +37,7 @@ use smithy.rules#endpointRuleSet
         }
     ]
 })
+@suppress(["UnstableTrait.smithy"])
 service FizzBuzz {
     operations: [GetResource]
 }
