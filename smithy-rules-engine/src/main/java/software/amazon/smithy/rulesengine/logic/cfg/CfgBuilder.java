@@ -34,6 +34,7 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 import software.amazon.smithy.rulesengine.logic.ConditionReference;
@@ -66,7 +67,7 @@ public final class CfgBuilder {
     private int convergenceNodesCreated = 0;
     private int phiVariableCounter = 0;
 
-    private String version = "1.1";
+    private String version;
 
     public CfgBuilder(EndpointRuleSet ruleSet) {
         // Apply SSA transform to ensure globally unique variable names
@@ -297,9 +298,10 @@ public final class CfgBuilder {
             Condition coalesceCondition = createCoalesceCondition(phiVar, versions);
             ConditionReference condRef = new ConditionReference(coalesceCondition, false);
 
-            // Use terminal (no match) as false branch to prevent BDD optimization
-            // The coalesce always succeeds, so we never take the false branch
-            resultNode = new ConditionNode(condRef, resultNode, ResultNode.terminal());
+            // Use NO_MATCH as false branch since coalesce should always succeed
+            // This ensures we get a valid result index instead of null that would result from FALSE.
+            CfgNode noMatch = createResult(NoMatchRule.INSTANCE);
+            resultNode = new ConditionNode(condRef, resultNode, noMatch);
 
             // Log with deterministic ordering
             LOGGER.fine(() -> {

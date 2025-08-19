@@ -172,6 +172,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
             Rule result = results.get(i);
             if (result instanceof NoMatchRule) {
                 throw new IllegalStateException("NoMatch rules can only appear at rule index 0. Found at index " + i);
+            } else if (result == null) {
+                throw new IllegalStateException("BDD result is null at index " + i);
             }
             resultBuilder.withValue(result);
         }
