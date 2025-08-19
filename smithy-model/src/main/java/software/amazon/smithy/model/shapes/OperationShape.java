@@ -17,6 +17,7 @@ import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -25,8 +26,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class OperationShape extends Shape implements ToSmithyBuilder<OperationShape> {
     private final ShapeId input;
     private final ShapeId output;
-    private final List<ShapeId> errors;
-    private final List<ShapeId> introducedErrors;
+    private final Set<ShapeId> errors;
+    private final Set<ShapeId> introducedErrors;
 
     private OperationShape(Builder builder) {
         super(builder, false);
@@ -43,11 +44,11 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
             // here.
             Set<ShapeId> computedErrors = new LinkedHashSet<>();
             for (Shape shape : builder.getMixins().values()) {
-                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
+                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrorsSet()));
             }
             introducedErrors = builder.errors.copy();
             computedErrors.addAll(introducedErrors);
-            errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
+            errors = Collections.unmodifiableSet(new LinkedHashSet<>(computedErrors));
         }
 
         if (hasTrait(MixinTrait.ID) && (!input.equals(UnitTypeTrait.UNIT) || !output.equals(UnitTypeTrait.UNIT))) {
@@ -68,7 +69,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         return updateBuilder(builder())
                 .input(input)
                 .output(output)
-                .errors(getIntroducedErrors());
+                .errors(getIntroducedErrorsSet());
     }
 
     @Override
@@ -134,8 +135,13 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         return output;
     }
 
+    @Deprecated
+    public List<ShapeId> getErrors() {
+        return ListUtils.copyOf(errors);
+    }
+
     /**
-     * <p>Gets a list of the error shape IDs bound directly to the operation
+     * <p>Gets a set of the error shape IDs bound directly to the operation
      * that can be encountered.
      *
      * <p>This DOES NOT include errors that are common to a service. Operations
@@ -152,8 +158,13 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      * @see #getErrors(ServiceShape)
      * @see OperationIndex#getErrors(ToShapeId, ToShapeId)
      */
-    public List<ShapeId> getErrors() {
+    public Set<ShapeId> getErrorsSet() {
         return errors;
+    }
+
+    @Deprecated
+    public List<ShapeId> getIntroducedErrors() {
+        return ListUtils.copyOf(introducedErrors);
     }
 
     /**
@@ -162,7 +173,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      *
      * @return Returns the introduced errors.
      */
-    public List<ShapeId> getIntroducedErrors() {
+    public Set<ShapeId> getIntroducedErrorsSet() {
         return introducedErrors;
     }
 
@@ -177,8 +188,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      * @see OperationIndex#getErrors(ToShapeId, ToShapeId)
      */
     public List<ShapeId> getErrors(ServiceShape service) {
-        Set<ShapeId> result = new LinkedHashSet<>(service.getErrors());
-        result.addAll(getErrors());
+        Set<ShapeId> result = new LinkedHashSet<>(service.getErrorsSet());
+        result.addAll(getErrorsSet());
         return new ArrayList<>(result);
     }
 
@@ -200,7 +211,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     public static final class Builder extends AbstractShapeBuilder<Builder, OperationShape> {
         private ShapeId input = UnitTypeTrait.UNIT;
         private ShapeId output = UnitTypeTrait.UNIT;
-        private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
+        private final BuilderRef<Set<ShapeId>> errors = BuilderRef.forOrderedSet();
 
         @Override
         public ShapeType getShapeType() {
@@ -307,7 +318,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
             Set<ShapeId> computedErrors = new LinkedHashSet<>();
             for (Shape shape : getMixins().values()) {
-                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
+                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrorsSet()));
             }
 
             computedErrors.addAll(errors.peek());

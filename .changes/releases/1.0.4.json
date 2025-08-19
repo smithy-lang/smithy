@@ -1,0 +1,42 @@
+{
+  "version": "1.0.4",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Ensure that when a property is removed from a JSON schema object, that a\ncorresponding \"required\" entry is also removed.",
+      "pull_requests": [
+        "[#452](https://github.com/awslabs/smithy/pull/452)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the (unstable) `@httpChecksumRequired` trait to indicate an operation\nrequires a checksum in its HTTP request.",
+      "pull_requests": [
+        "[#433](https://github.com/awslabs/smithy/pull/433)",
+        "[#453](https://github.com/awslabs/smithy/pull/453)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in OpenApi conversion where removing authentication for an\noperation would result in the operation inheriting the global \"security\"\nconfiguration instead of having it set to none.",
+      "pull_requests": [
+        "[#451](https://github.com/awslabs/smithy/pull/451/)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added examples of building models to various guides.",
+      "pull_requests": [
+        "[#449](https://github.com/awslabs/smithy/pull/449)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various documentation issues.",
+      "pull_requests": [
+        "[#449](https://github.com/awslabs/smithy/pull/449)"
+      ]
+    }
+  ],
+  "date": "2020-05-29"
+}

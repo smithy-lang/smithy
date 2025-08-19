@@ -16,10 +16,14 @@ import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
 import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
+import com.example.traits.lists.NestedListTrait;
+import com.example.traits.lists.NestedUniqueItemsListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StringListTrait;
 import com.example.traits.lists.StructureListTrait;
 import com.example.traits.maps.MapValue;
+import com.example.traits.maps.NestedMapTrait;
+import com.example.traits.maps.NestedStringUniqueItemMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
@@ -37,6 +41,10 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
+import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
+import com.example.traits.structures.StructWithIdrefMemberTrait;
+import com.example.traits.structures.StructWithListOfMapTrait;
+import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
 import com.example.traits.timestamps.EpochSecondsTimestampTrait;
@@ -46,6 +54,8 @@ import com.example.traits.uniqueitems.NumberSetTrait;
 import com.example.traits.uniqueitems.SetMember;
 import com.example.traits.uniqueitems.StringSetTrait;
 import com.example.traits.uniqueitems.StructureSetTrait;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -53,16 +63,20 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 public class CreatesTraitTest {
     private static final ShapeId DUMMY_ID = ShapeId.from("ns.foo#foo");
     private final TraitFactory provider = TraitFactory.createServiceFactory();
+    private static final SourceLocation testLocation = new SourceLocation("test.smithy", 1, 2);
 
     static Stream<Arguments> createTraitTests() {
         return Stream.of(
@@ -103,6 +117,14 @@ public class CreatesTraitTest {
                         ArrayNode.fromNodes(
                                 ObjectNode.builder().withMember("a", "b").build(),
                                 ObjectNode.builder().withMember("c", "d").withMember("e", "f").build())),
+                Arguments.of(NestedListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ArrayNode.fromNodes(
+                                        ArrayNode.fromNodes(Node.from("1"), Node.from("2"), Node.from("3"))))),
+                Arguments.of(NestedUniqueItemsListTrait.ID,
+                        ArrayNode.fromNodes(
+                                ArrayNode.fromNodes(
+                                        ArrayNode.fromNodes(Node.from("1"), Node.from("2"), Node.from("3"))))),
                 // Maps
                 Arguments.of(StringStringMapTrait.ID,
                         StringStringMapTrait.builder()
@@ -122,6 +144,19 @@ public class CreatesTraitTest {
                                 .putValues("b", ObjectNode.builder().withMember("b", "b").build().toNode())
                                 .putValues("string", Node.from("stuff"))
                                 .putValues("number", Node.from(1))
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedMapTrait.ID,
+                        NestedMapTrait.builder()
+                                .putValues("1", MapUtils.of("1", MapUtils.of("2", "3")))
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedStringUniqueItemMapTrait.ID,
+                        NestedStringUniqueItemMapTrait.builder()
+                                .putValues("1",
+                                        SetUtils.of(
+                                                MapUtils.of("2", "3"),
+                                                MapUtils.of("4", "5")))
                                 .build()
                                 .toNode()),
                 // Mixins
@@ -161,6 +196,31 @@ public class CreatesTraitTest {
                                 .fieldE(MapUtils.of("a", "one", "b", "two"))
                                 .build()
                                 .toNode()),
+                Arguments.of(StructWithListOfMapTrait.ID,
+                        StructWithListOfMapTrait.builder()
+                                .addItems(MapUtils.of("1", "2"))
+                                .addItems(MapUtils.of("3", "4"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithUniqueItemsListTrait.ID,
+                        StructWithUniqueItemsListTrait.builder()
+                                .addItems(SetUtils.of("a", "b", "c"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithIdrefMemberTrait.ID,
+                        StructWithIdrefMemberTrait.builder()
+                                .idRefMemberA(ShapeId.from("test.smithy.traitcodegen#a"))
+                                .idRefMemberB(ShapeId.from("test.smithy.traitcodegen#b"))
+                                .build()
+                                .toNode()),
+                Arguments.of(StructMemberWithTimestampFormatTrait.ID,
+                        StructMemberWithTimestampFormatTrait.builder()
+                                .memberDateTime(Instant.parse("1985-04-12T23:20:50.52Z"))
+                                .memberHttpDate(Instant.from(
+                                        DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT")))
+                                .memberEpochSeconds(Instant.ofEpochSecond((long) 1515531081.123))
+                                .build()
+                                .toNode()),
                 // Timestamps
                 Arguments.of(TimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(DateTimeTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
@@ -189,5 +249,55 @@ public class CreatesTraitTest {
         Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
         assertEquals(SourceLocation.NONE, trait.getSourceLocation());
         assertEquals(trait, provider.createTrait(traitId, DUMMY_ID, trait.toNode()).orElseThrow(RuntimeException::new));
+    }
+
+    static Stream<Arguments> createSourceLocationTests() {
+        return Stream.of(
+                Arguments.of(BigDecimalTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(BigIntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(ByteTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(DoubleTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(FloatTrait.ID, new NumberNode(1.2, testLocation)),
+                Arguments.of(IntegerTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(LongTrait.ID, new NumberNode(1L, testLocation)),
+                Arguments.of(ShortTrait.ID, new NumberNode(1, testLocation)),
+                Arguments.of(StringTrait.ID, new StringNode("a", testLocation)),
+                Arguments.of(TimestampTrait.ID, new StringNode("1985-04-12T23:20:50.52Z", testLocation)),
+                Arguments.of(NumberListTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NumberSetTrait.ID,
+                        ArrayNode.builder()
+                                .withValue(Node.from(1))
+                                .withValue(Node.from(2))
+                                .withValue(Node.from(3))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(NestedMapTrait.ID,
+                        NestedMapTrait.builder()
+                                .putValues("1", MapUtils.of("1", MapUtils.of("2", "3")))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()),
+                Arguments.of(StructWithListOfMapTrait.ID,
+                        StructWithListOfMapTrait.builder()
+                                .addItems(MapUtils.of("1", "2"))
+                                .addItems(MapUtils.of("3", "4"))
+                                .sourceLocation(testLocation)
+                                .build()
+                                .toNode()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createSourceLocationTests")
+    void sourceLocationTest(ShapeId traitId, Node fromNode) {
+        Trait trait = provider.createTrait(traitId, DUMMY_ID, fromNode).orElseThrow(RuntimeException::new);
+        assertEquals(testLocation, trait.getSourceLocation());
     }
 }

@@ -350,10 +350,10 @@ to convert each shape type:
       - :rfc:`Major type 7 (float) <8949#section-3.1-2.15>`
     * - ``double``
       - :rfc:`Major type 7 (float) <8949#section-3.1-2.15>`
-    * - ``bigDecimal``
+    * - ``bigInteger``
       - :rfc:`Major type 6 <8949#section-3.1-2.13>`, value
         :rfc:`tags 2 (unsigned bignum) or 3 (negative bignum) <8949#section-3.4>`
-    * - ``bigInteger``
+    * - ``bigDecimal``
       - :rfc:`Major type 6 <8949#section-3.1-2.13>`, value
         :rfc:`tag 4 (decimal fraction) <8949#section-3.4>`
     * - ``string``

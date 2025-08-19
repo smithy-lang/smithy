@@ -807,7 +807,7 @@ public final class SmithyIdlModelSerializer {
 
             codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
             codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
-            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrorsSet());
             if (!shape.getIntroducedRename().isEmpty()) {
                 codeWriter.openBlock("rename: {", "}", () -> {
                     for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
@@ -866,7 +866,7 @@ public final class SmithyIdlModelSerializer {
             List<MemberShape> mixinMembers = new ArrayList<>();
             mixinMembers.addAll(writeInlineableProperty("input", shape.getInputShape(), InputTrait.ID));
             mixinMembers.addAll(writeInlineableProperty("output", shape.getOutputShape(), OutputTrait.ID));
-            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrorsSet());
             codeWriter.closeBlock("}");
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);

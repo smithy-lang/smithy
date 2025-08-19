@@ -80,7 +80,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
         // defined in the actual model.
         String error = errorType.getValue();
 
-        for (ShapeId errorId : operation.getErrors()) {
+        for (ShapeId errorId : operation.getErrorsSet()) {
             if (error.equals(errorId.toString()) || error.equals(errorId.getName())) {
                 return events;
             }
@@ -90,7 +90,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
                 String.format(
                         "errorType '%s' not found on operation. This operation defines the following errors: %s",
                         error,
-                        operation.getErrors()),
+                        operation.getErrorsSet()),
                 INVALID_ERROR_TYPE,
                 waiterName,
                 String.valueOf(acceptorIndex));

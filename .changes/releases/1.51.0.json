@@ -1,0 +1,143 @@
+{
+  "version": "1.51.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `:recursive` selector function to enable recursively traversing\nrelationships.",
+      "pull_requests": [
+        "[#2353](https://github.com/smithy-lang/smithy/pull/2353)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation of `intEnum` shapes to the `NodeValidationVisitor`.",
+      "pull_requests": [
+        "[#2357](https://github.com/smithy-lang/smithy/pull/2357)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added various protocol tests.",
+      "pull_requests": [
+        "[#2333](https://github.com/smithy-lang/smithy/pull/2333)",
+        "[#2342](https://github.com/smithy-lang/smithy/pull/2342)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added elliptic curve cryptography module to the Smithy CLI for communicating\nwith certain package managers.",
+      "pull_requests": [
+        "[#2379](https://github.com/smithy-lang/smithy/pull/2379)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning when the `@idempotencyToken` trait is applied where it would\nbe ignored.",
+      "pull_requests": [
+        "[#2358](https://github.com/smithy-lang/smithy/pull/2358)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for the `@httpChecksum` trait's `responseAlgorithms`\nproperty.",
+      "pull_requests": [
+        "[#2371](https://github.com/smithy-lang/smithy/pull/2371)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated list of supported `@httpCheckum` algorithms.",
+      "pull_requests": [
+        "[#2386](https://github.com/smithy-lang/smithy/pull/2386)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved the performance of the `BottomUpIndex`.",
+      "pull_requests": [
+        "[#2367](https://github.com/smithy-lang/smithy/pull/2367)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed formatting of `resource` shape `identifiers` and `properties` fields.",
+      "pull_requests": [
+        "[#2377](https://github.com/smithy-lang/smithy/pull/2377)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issue with parsing different types of documentation comments.",
+      "pull_requests": [
+        "[#2390](https://github.com/smithy-lang/smithy/pull/2390)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issue that would cause shape conflicts when loading the same model twice\nthat uses `apply` on a member from a mixin.",
+      "pull_requests": [
+        "[#2378](https://github.com/smithy-lang/smithy/pull/2378)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issue with generating CFN resource schema handler permissions for\n`@noReplace` resources.",
+      "pull_requests": [
+        "[#2383](https://github.com/smithy-lang/smithy/pull/2383)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several classes of bugs in the `AwsTagIndex`.",
+      "pull_requests": [
+        "[#2384](https://github.com/smithy-lang/smithy/pull/2384)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various issues with protocol tests.",
+      "pull_requests": [
+        "[#2336](https://github.com/smithy-lang/smithy/pull/2336)",
+        "[#2340](https://github.com/smithy-lang/smithy/pull/2340)",
+        "[#2341](https://github.com/smithy-lang/smithy/pull/2341)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added full-stack application tutorial.",
+      "pull_requests": [
+        "[#2362](https://github.com/smithy-lang/smithy/pull/2362)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation to several places in the `smithy-aws-endpoints` trait\ndefinitions.",
+      "pull_requests": [
+        "[#2374](https://github.com/smithy-lang/smithy/pull/2374)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added note on `smithy-build.json` supporting `//` based comments.",
+      "pull_requests": [
+        "[#2375](https://github.com/smithy-lang/smithy/pull/2375)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified documentation for resolving auth schemes from endpoint rule sets.",
+      "pull_requests": [
+        "[#2382](https://github.com/smithy-lang/smithy/pull/2382)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various documentation issues.",
+      "pull_requests": [
+        "[#2346](https://github.com/smithy-lang/smithy/pull/2346)",
+        "[#2363](https://github.com/smithy-lang/smithy/pull/2363)"
+      ]
+    }
+  ],
+  "date": "2024-09-03"
+}

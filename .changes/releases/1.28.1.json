@@ -1,0 +1,85 @@
+{
+  "version": "1.28.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a suite of compliance tests for selectors",
+      "pull_requests": [
+        "[#1643](https://github.com/awslabs/smithy/pull/1643)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue with generating CloudFormation Resource Schemas when using the\n`@nestedProperties` trait",
+      "pull_requests": [
+        "[#1641](https://github.com/awslabs/smithy/pull/1641)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `enum` shapes could not be used as `resource` identifiers",
+      "pull_requests": [
+        "[#1644](https://github.com/awslabs/smithy/pull/1644)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue when comparing event ids for deprecated shapes",
+      "pull_requests": [
+        "[#1640](https://github.com/awslabs/smithy/pull/1640)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where \"core\" validation events were not suppressible",
+      "pull_requests": [
+        "[#1646](https://github.com/awslabs/smithy/pull/1646)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue with `NodeMapper`'s handling of lists of generic types",
+      "pull_requests": [
+        "[#1635](https://github.com/awslabs/smithy/pull/1635)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various typos of the word \"ignore\", including for the\n`NodeMapper.WhenMissing` enum",
+      "pull_requests": [
+        "[#1652](https://github.com/awslabs/smithy/pull/1652)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `enum` members were flagged by the\n`MissingSensitiveTrait` validator",
+      "pull_requests": [
+        "[#1661](https://github.com/awslabs/smithy/pull/1661)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated the validation messages for `uniqueItems` malformed request tests",
+      "pull_requests": [
+        "[#1639](https://github.com/awslabs/smithy/pull/1639)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated the validation messages for `enum` malformed request tests to not\nreturn internal values",
+      "pull_requests": [
+        "[#1658](https://github.com/awslabs/smithy/pull/1658)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various issues with protocol tests",
+      "pull_requests": [
+        "[#1642](https://github.com/awslabs/smithy/pull/1642)",
+        "[#1648](https://github.com/awslabs/smithy/pull/1648)",
+        "[#1645](https://github.com/awslabs/smithy/pull/1645)"
+      ]
+    }
+  ],
+  "date": "2023-03-09"
+}

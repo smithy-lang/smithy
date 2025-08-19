@@ -1,0 +1,118 @@
+{
+  "version": "0.9.6",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Allow XML maps to be flattened",
+      "pull_requests": [
+        "[#205](https://github.com/awslabs/smithy/pull/205)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add and remove shape members to model automatically",
+      "pull_requests": [
+        "[#206](https://github.com/awslabs/smithy/pull/206)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Deprecate ShapeIndex in favor of Model",
+      "pull_requests": [
+        "[#209](https://github.com/awslabs/smithy/pull/209)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow the sensitive trait to be applied to all but operations, services, and\nresources",
+      "pull_requests": [
+        "[#212](https://github.com/awslabs/smithy/pull/212)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added 0.5.0 IDL and AST format",
+      "pull_requests": [
+        "[#213](https://github.com/awslabs/smithy/pull/213)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow min to equal max in range trait",
+      "pull_requests": [
+        "[#216](https://github.com/awslabs/smithy/pull/216)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for length trait values",
+      "pull_requests": [
+        "[#217](https://github.com/awslabs/smithy/pull/217)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Limit streaming trait to top-level members",
+      "pull_requests": [
+        "[#221](https://github.com/awslabs/smithy/pull/221)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol compliance test traits",
+      "pull_requests": [
+        "[#226](https://github.com/awslabs/smithy/pull/226)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to configure timestamp validation",
+      "pull_requests": [
+        "[#229](https://github.com/awslabs/smithy/pull/229)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Moved `TemplateEngine` implementation into FreeMarker implementation",
+      "pull_requests": [
+        "[#230](https://github.com/awslabs/smithy/pull/230)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `BoxIndex`",
+      "pull_requests": [
+        "[#234](https://github.com/awslabs/smithy/pull/234)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added more expect methods to `Shape` and `Model`",
+      "pull_requests": [
+        "[#237](https://github.com/awslabs/smithy/pull/237)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Update smithy-build to be streaming",
+      "pull_requests": [
+        "[#211](https://github.com/awslabs/smithy/pull/211)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Prevent bad list, set, and map recursion",
+      "pull_requests": [
+        "[#204](https://github.com/awslabs/smithy/pull/204)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Properly allow omitting endpoint discovery operation inputs",
+      "pull_requests": [
+        "[#220](https://github.com/awslabs/smithy/pull/220)"
+      ]
+    }
+  ],
+  "date": "2020-01-02"
+}

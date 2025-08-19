@@ -1,0 +1,41 @@
+{
+  "version": "1.26.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add support for missing authorizer members",
+      "pull_requests": [
+        "[#1426](https://github.com/awslabs/smithy/pull/1426)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add intEnum DirectedCodegen",
+      "pull_requests": [
+        "[#1434](https://github.com/awslabs/smithy/pull/1434)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add Smithy Rules Engine (unstable)",
+      "pull_requests": [
+        "[#1356](https://github.com/awslabs/smithy/pull/1356)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix intEnum example",
+      "pull_requests": [
+        "[#1432](https://github.com/awslabs/smithy/pull/1432)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix javadoc for CodegenDirector.simplifyModelForServiceCodegen",
+      "pull_requests": [
+        "[#1433](https://github.com/awslabs/smithy/pull/1433)"
+      ]
+    }
+  ],
+  "date": "2022-10-10"
+}

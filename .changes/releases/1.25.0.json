@@ -1,0 +1,95 @@
+{
+  "version": "1.25.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Made many improvements for Smithy 1.0 and 2.0 interoperability.",
+      "pull_requests": [
+        "[1394](https://github.com/awslabs/smithy/pull/1394)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Default traits can now coexist with required trais. This indicates that a\nmember should be serialized, but it is a protocol-specific decision if and how\nthis is enforced. This was a pattern that occurred in Smithy 1.0 models when a\nmember was required and targeted a shape with a zero value.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "Default traits can be added to root-level shapes. Any structure member that\ntargets a shape marked with the default trait must repeat the default on the\nmember. This removes the action at a distance problem observed in Smithy IDL\n1.0 where a root level shape implicitly introduced a default zero value, and\nto know if that's the case for any member, you had to look through from the\nmember to the target shape. This change allows us to know if a root level\nshape was boxed in IDL 1.0 too (root shapes with no default or a default set\nto anything other than the zero value was boxed).",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@addedDefault` trait which is used to indicate that a `@default`\ntrait was added to a member after it was initially released. This can be used\nby tooling to make an appropriate determination if generating a non-nullable\ntype for the member is a backward compatible change. For example, if a\ngenerator only uses default zero values to generate non-nullable types, then\nthe removal of the required trait and addition of a default trait would be a\nbreaking change for them, so they can use addedDefault to ignore the default\ntrait.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "Add new NullableIndex modes for testing if a member is nullable based on the\nsupported features of the generator. For example, some generators only make\nmembers non-optional when the member is set to the zero value of a type, so\nthere is a NullableIndex check mode for that and other use cases.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "When loading IDL 2.0 models, we will now patch synthetic box traits onto\nshapes that would have been considered boxed in Smithy IDL 1.0. This improves\nfurther interop with tooling that has not yet adopted Smithy IDL 2 or that\nhasn't yet migrated to use the NullableIndex abstraction.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "When loading 1.0 models, rather than dropping the default trait from a member\nwhen the range trait of a shape is invalid for its zero value, we now instead\nemit only a warning for this specific case. This prevents changing the type\nand also doesn't lose the range constraint.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "The Primitive\\* shapes in the prelude are no longer deprecated, and they now\nhave a `@default` trait on them set to the zero value of the type. This makes\nthese traits function exactly as they did in Smithy 1.0 models. Any member\nthat targets one of these primitive prelude shapes must now also repeat the\nzero value of the target shape.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "Added an optional nullability report to smithy-build that shows the computed\nnullability semantics of each member in a model. This can be used to better\nunderstand nullability semantics.",
+      "pull_requests": []
+    },
+    {
+      "type": "feature",
+      "description": "Added method to NumberNode to detect if it is set to zero.",
+      "pull_requests": [
+        "[#1385](https://github.com/awslabs/smithy/pull/1385)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "In ChangeShapeType transform, ignored types changes to same type.",
+      "pull_requests": [
+        "[#1397](https://github.com/awslabs/smithy/pull/1397)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated smithy-diff to not emit events when diffing a 1.0 model against the\n2.0 serialized version of the model. This means that changes to the box trait\nare ignored unless the change impacts the nullability of the shape. Special\nhandling was added to detect breaking changes with the default trait too (you\ncan't change a default value of a root-level shape for example, you cannot\nchange a default value of a shape to or from the zero value of a type as this\nmight break code generators, etc).",
+      "pull_requests": [
+        "[1394](https://github.com/awslabs/smithy/pull/1394)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "smithy-diff is no longer reporting expected `set` shape to `list` shape\ntransitions. Sets are deprecated and models are encouraged to migrate from\nsets to lists with the `@uniqueItems` trait.",
+      "pull_requests": [
+        "[1383](https://github.com/awslabs/smithy/pull/1383)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix operationOutputSuffix in example code snippet",
+      "pull_requests": [
+        "[#1393](https://github.com/awslabs/smithy/pull/1393)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix ABNF grammar of inlined structure",
+      "pull_requests": [
+        "[1377](https://github.com/awslabs/smithy/pull/1377)"
+      ]
+    }
+  ],
+  "date": "2022-09-13"
+}

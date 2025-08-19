@@ -6,8 +6,11 @@ package software.amazon.smithy.traitcodegen;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -29,6 +32,15 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class TraitCodegenSettings {
+    private static final String SMITHY_KEYWORD = "smithy";
+    private static final Set<String> RESERVED_NAMESPACES = SetUtils.of("smithy.api",
+            "smithy.framework",
+            "smithy.mqtt",
+            "smithy.openapi",
+            "smithy.protocols",
+            "smithy.rules",
+            "smithy.test",
+            "smithy.waiters");
 
     private final String packageName;
     private final String smithyNamespace;
@@ -53,6 +65,9 @@ public final class TraitCodegenSettings {
             List<String> excludeTags
     ) {
         this.packageName = Objects.requireNonNull(packageName);
+        if (isReservedNamespace(smithyNamespace)) {
+            throw new IllegalArgumentException("The `smithy` namespace and its sub-namespaces are reserved.");
+        }
         this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
         this.headerLines = Objects.requireNonNull(headerLines);
         this.excludeTags = Objects.requireNonNull(excludeTags);
@@ -109,5 +124,27 @@ public final class TraitCodegenSettings {
      */
     public List<String> excludeTags() {
         return excludeTags;
+    }
+
+    /**
+     * Checks if a namespace is reserved. A namespace is considered reserved if it is
+     * "smithy", one of the predefined reserved namespaces or if it starts with one of the reserved namespaces followed by a dot.
+     *
+     * @param namespace the namespace to check
+     * @return true if the namespace is reserved, false otherwise
+     */
+    private static boolean isReservedNamespace(String namespace) {
+        String namespaceLowerCase = namespace.toLowerCase(Locale.ROOT);
+        if (namespaceLowerCase.equals(SMITHY_KEYWORD) || RESERVED_NAMESPACES.contains(namespaceLowerCase)) {
+            return true;
+        }
+
+        for (String reserved : RESERVED_NAMESPACES) {
+            if (namespaceLowerCase.startsWith(reserved + ".")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

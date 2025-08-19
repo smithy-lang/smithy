@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.model.loader;
 
+import static software.amazon.smithy.model.validation.Severity.ERROR;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,9 +20,11 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.Validator;
 
 final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
@@ -125,9 +129,11 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
         Model.Builder modelBuilder = Model.builder();
         modelBuilder.metadata(metadata.getData());
         resolveForwardReferences();
-        traitMap.applyTraitsToNonMixinsInShapeMap(shapeMap);
+        List<ShapeId> undefinedTraits = new ArrayList<>();
+        traitMap.applyTraitsToNonMixinsInShapeMap(shapeMap, undefinedTraits);
         shapeMap.buildShapesAndClaimMixinTraits(modelBuilder, traitMap::claimTraitsForShape);
         traitMap.emitUnclaimedTraits();
+        validateTraitWithTraitDefinition(undefinedTraits, modelBuilder);
         if (prelude != null) {
             modelBuilder.addShapes(prelude);
         }
@@ -136,6 +142,28 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
     List<ValidationEvent> events() {
         return events;
+    }
+
+    private void validateTraitWithTraitDefinition(List<ShapeId> undefiedTraits, Model.Builder modelBuilder) {
+        Map<ShapeId, Shape> shapes = modelBuilder.getCurrentShapes();
+        for (ShapeId traitId : undefiedTraits) {
+            if (shapes.containsKey(traitId)) {
+                Shape traitShape = shapes.get(traitId);
+                if (!traitShape.hasTrait(TraitDefinition.ID)) {
+                    events.add(ValidationEvent.builder()
+                            .id(Validator.MODEL_ERROR)
+                            .severity(ERROR)
+                            .sourceLocation(traitShape.getSourceLocation())
+                            .shapeId(traitId)
+                            .message(
+                                    String.format(
+                                            "Shape `%s` cannot be applied as a trait. If this is a custom trait, " +
+                                                    "please add `@trait` to this shape.",
+                                            traitId))
+                            .build());
+                }
+            }
+        }
     }
 
     private void resolveForwardReferences() {

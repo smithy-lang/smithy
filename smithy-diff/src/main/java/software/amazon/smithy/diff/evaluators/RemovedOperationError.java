@@ -27,13 +27,13 @@ public final class RemovedOperationError extends AbstractDiffEvaluator {
     }
 
     private List<ValidationEvent> createErrorViolations(ChangedShape<OperationShape> change) {
-        if (change.getOldShape().getErrors().equals(change.getNewShape().getErrors())) {
+        if (change.getOldShape().getErrorsSet().equals(change.getNewShape().getErrorsSet())) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId error : change.getOldShape().getErrors()) {
-            if (!change.getNewShape().getErrors().contains(error)) {
+        for (ShapeId error : change.getOldShape().getErrorsSet()) {
+            if (!change.getNewShape().getErrorsSet().contains(error)) {
                 events.add(
                         ValidationEvent.builder()
                                 .id(getEventId() + "." + error.getName())

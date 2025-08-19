@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.aws.cloudformation.schema.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +12,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -42,8 +42,8 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
             schemaBuilder.putExtension("insertionOrder", Node.from(true));
         }
 
-        if (!builder.dependencies.isEmpty()) {
-            schemaBuilder.putExtension("dependencies", Node.fromStrings(builder.dependencies));
+        if (!builder.dependencies.peek().isEmpty()) {
+            schemaBuilder.putExtension("dependencies", Node.fromStrings(builder.dependencies.peek()));
         }
 
         this.schema = schemaBuilder.build();
@@ -95,7 +95,7 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
 
     public static final class Builder implements SmithyBuilder<Property> {
         private boolean insertionOrder = false;
-        private final List<String> dependencies = new ArrayList<>();
+        private final BuilderRef<List<String>> dependencies = BuilderRef.forList();
         private Schema schema;
 
         private Builder() {}
@@ -112,12 +112,12 @@ public final class Property implements ToNode, ToSmithyBuilder<Property> {
 
         public Builder dependencies(List<String> dependencies) {
             this.dependencies.clear();
-            this.dependencies.addAll(dependencies);
+            dependencies.forEach(this::addDependency);
             return this;
         }
 
         public Builder addDependency(String dependency) {
-            this.dependencies.add(dependency);
+            this.dependencies.get().add(dependency);
             return this;
         }
 

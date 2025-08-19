@@ -1,0 +1,128 @@
+{
+  "version": "1.26.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added support for hierarchical event IDs in validation events, allowing for\nmore granular suppression",
+      "pull_requests": [
+        "[#1466](https://github.com/awslabs/smithy/pull/1466)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Removed the pattern from the `@suppress` trait's entry list, allowing them to\nmatch all validator IDs",
+      "pull_requests": [
+        "[#1455](https://github.com/awslabs/smithy/pull/1455)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the ability to lint based on word boundaries for the `ReservedWords`\nvalidator",
+      "pull_requests": [
+        "[#1461](https://github.com/awslabs/smithy/pull/1461)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `toNode` method to the `Partition` class in `smithy-rules-engine`",
+      "pull_requests": [
+        "[#1449](https://github.com/awslabs/smithy/pull/1449)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning when `smithy-diff` detects changes to traits that do not have\ndefinitions loaded",
+      "pull_requests": [
+        "[#1468](https://github.com/awslabs/smithy/pull/1468)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved validation for members that target nullable shapes",
+      "pull_requests": [
+        "[#1454](https://github.com/awslabs/smithy/pull/1454)",
+        "[1460](https://github.com/awslabs/smithy/pull/1460)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a hook to the `CodegenDirector` to allow for customization before shape\ngeneration",
+      "pull_requests": [
+        "[#1469](https://github.com/awslabs/smithy/pull/1469)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated model assembling to always attempt model interop transforms",
+      "pull_requests": [
+        "[#1435](https://github.com/awslabs/smithy/pull/1435)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where transforms would not remove enum members",
+      "pull_requests": [
+        "[#1442](https://github.com/awslabs/smithy/pull/1442)",
+        "[#1447](https://github.com/awslabs/smithy/pull/1447)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where documentation comments were dropped if they occurred after a\nmember using the default value syntactic sugar",
+      "pull_requests": [
+        "[1459](https://github.com/awslabs/smithy/pull/1459)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where resource identifier collisions would cause a model to\nfail loading",
+      "pull_requests": [
+        "[#1453](https://github.com/awslabs/smithy/pull/1453)",
+        "[#1474](https://github.com/awslabs/smithy/pull/1474)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added `@private` to the local traits for the AWS `HttpConfiguration` shape",
+      "pull_requests": [
+        "[#1445](https://github.com/awslabs/smithy/pull/1445)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue with behavior defined in an `awsQuery` protocol test",
+      "pull_requests": [
+        "[#1444](https://github.com/awslabs/smithy/pull/1444)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several protocol tests in the `awsJson1_1` protocol test suite",
+      "pull_requests": [
+        "[#1392](https://github.com/awslabs/smithy/pull/1392)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an incorrect application of the `@httpMalformedRequestTests` trait",
+      "pull_requests": [
+        "[#1467](https://github.com/awslabs/smithy/pull/1467)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified streaming trait values and semantics",
+      "pull_requests": [
+        "[#1458](https://github.com/awslabs/smithy/pull/1458)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the identifier ABNF and parser",
+      "pull_requests": [
+        "[#1464](https://github.com/awslabs/smithy/pull/1464)"
+      ]
+    }
+  ],
+  "date": "2022-10-31"
+}

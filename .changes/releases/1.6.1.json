@@ -1,0 +1,20 @@
+{
+  "version": "1.6.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `renameShapes` build transform to rename shapes within a model.",
+      "pull_requests": [
+        "[#721](https://github.com/awslabs/smithy/pull/721)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in protocol tests around `@endpoint`.",
+      "pull_requests": [
+        "[#720](https://github.com/awslabs/smithy/pull/720)"
+      ]
+    }
+  ],
+  "date": "2021-02-23"
+}

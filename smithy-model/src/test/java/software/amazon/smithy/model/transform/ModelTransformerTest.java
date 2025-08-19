@@ -51,8 +51,8 @@ public class ModelTransformerTest {
                 Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
         assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getOutputShape),
                 Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
-        assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getErrors),
-                Matchers.equalTo(Optional.of(Collections.emptyList())));
+        assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getErrorsSet),
+                Matchers.equalTo(Optional.of(Collections.emptySet())));
     }
 
     @Test

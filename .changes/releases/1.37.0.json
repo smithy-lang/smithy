@@ -1,0 +1,118 @@
+{
+  "version": "1.37.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Formatted operation errors onto multiple lines",
+      "pull_requests": [
+        "[#1933](https://github.com/smithy-lang/smithy/pull/1933)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for creating specific `TreeType` to smithy-syntax",
+      "pull_requests": [
+        "[#1925](https://github.com/smithy-lang/smithy/pull/1925)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validator for services with noAuth trait",
+      "pull_requests": [
+        "[#1929](https://github.com/smithy-lang/smithy/pull/1929)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ServiceIndex method for noAuth scheme",
+      "pull_requests": [
+        "[#1924](https://github.com/smithy-lang/smithy/pull/1924)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added warning on addition of required trait",
+      "pull_requests": [
+        "[#1923](https://github.com/smithy-lang/smithy/pull/1923)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added versioning for API Gateway defaults",
+      "pull_requests": [
+        "[#1916](https://github.com/smithy-lang/smithy/pull/1916)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for enum map keys with OpenApi 3.1.0",
+      "pull_requests": [
+        "[#1905](https://github.com/smithy-lang/smithy/pull/1905)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for suppressions to smithy-diff",
+      "pull_requests": [
+        "[#1861](https://github.com/smithy-lang/smithy/pull/1861)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `specificationExtension` trait for OpenAPI extensions",
+      "pull_requests": [
+        "[#1609](https://github.com/smithy-lang/smithy/pull/1609)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `conditionKeyValue` and `conditionKeysResolvedByService` traits",
+      "pull_requests": [
+        "[#1677](https://github.com/smithy-lang/smithy/pull/1677)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated `getAuthSchemes` javadoc",
+      "pull_requests": [
+        "[#1930](https://github.com/smithy-lang/smithy/pull/1930)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `default` and `clientOptional` traits",
+      "pull_requests": [
+        "[#1920](https://github.com/smithy-lang/smithy/pull/1920)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed version numbers in smithy-build.json examples",
+      "pull_requests": [
+        "[#1918](https://github.com/smithy-lang/smithy/pull/1918)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified ordering of auth schemes in ServiceIndex",
+      "pull_requests": [
+        "[#1915](https://github.com/smithy-lang/smithy/pull/1915)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Included prelude in spec",
+      "pull_requests": [
+        "[#1913](https://github.com/smithy-lang/smithy/pull/1913)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed assembler addTraits for some resource models",
+      "pull_requests": [
+        "[#1927](https://github.com/smithy-lang/smithy/pull/1927)"
+      ]
+    }
+  ],
+  "date": "2023-08-22"
+}

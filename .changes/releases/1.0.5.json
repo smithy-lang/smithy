@@ -1,0 +1,27 @@
+{
+  "version": "1.0.5",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in loading IDL files where resolving a forward reference that\nneeded another forward reference would throw an exception.",
+      "pull_requests": [
+        "[#458](https://github.com/awslabs/smithy/pull/458)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where smithy-build imports were not resolved relative to their\n`smithy-build.json`.",
+      "pull_requests": [
+        "[#457](https://github.com/awslabs/smithy/pull/457)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug where the `PREFIX_HEADERS` HTTP binding location would not default\nits timestamp format to `HTTP_DATE`.",
+      "pull_requests": [
+        "[#456](https://github.com/awslabs/smithy/pull/456)"
+      ]
+    }
+  ],
+  "date": "2020-06-05"
+}

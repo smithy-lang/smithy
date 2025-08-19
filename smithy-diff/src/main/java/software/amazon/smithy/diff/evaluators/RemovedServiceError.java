@@ -26,13 +26,13 @@ public final class RemovedServiceError extends AbstractDiffEvaluator {
     }
 
     private List<ValidationEvent> createErrorViolations(ChangedShape<ServiceShape> change) {
-        if (change.getOldShape().getErrors().equals(change.getNewShape().getErrors())) {
+        if (change.getOldShape().getErrorsSet().equals(change.getNewShape().getErrorsSet())) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId id : change.getOldShape().getErrors()) {
-            if (!change.getNewShape().getErrors().contains(id)) {
+        for (ShapeId id : change.getOldShape().getErrorsSet()) {
+            if (!change.getNewShape().getErrorsSet().contains(id)) {
                 events.add(warning(change.getNewShape(),
                         String.format(
                                 "The `%s` error was removed from the `%s` service. This means that it "

@@ -1,0 +1,20 @@
+{
+  "version": "1.9.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed a number of protocol tests related to non-numeric floats.",
+      "pull_requests": [
+        "[#844](https://github.com/awslabs/smithy/pull/844)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Tightened substitution pattern for Fn::Sub to match CloudFormation.",
+      "pull_requests": [
+        "[#842](https://github.com/awslabs/smithy/pull/842)"
+      ]
+    }
+  ],
+  "date": "2021-06-28"
+}

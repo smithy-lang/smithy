@@ -1,0 +1,184 @@
+{
+  "version": "1.18.0",
+  "changes": [
+    {
+      "type": "break",
+      "description": "Sets can now only contain byte, short, integer, long, bigInteger, bigDecimal,\nand string shapes. Sets with other types of values are either difficult to\nimplement in various programming languages (for example, sets of floats in\nRust), or highly problematic for client/server use cases. Clients that are out\nof sync with a service model could receive structures or unions from a\nservice, not recognize new members and drop them, causing the hash codes of\nmembers of the set to collide, and this would result in the client discarding\nset entries. For example, a service might return a set of 3 structures, but\nwhen clients deserialize them, they drop unknown members, and the set contains\nfewer than 3 entries.\n\nExisting models that already use a set of other types will need to migrate to\nuse a list rather than a set, and they will need to implement any necessary\nuniqueness checks server-side as needed.\n\n**NOTE**: This restriction was downgraded to a WARNING in 1.18.1",
+      "pull_requests": [
+        "[#1106](https://github.com/awslabs/smithy/pull/1106)"
+      ]
+    },
+    {
+      "type": "break",
+      "description": "Removed unused `UseShapeWriterObserver` and related features.",
+      "pull_requests": [
+        "[#1117](https://github.com/awslabs/smithy/pull/1117)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added interfaces for Codegen integrations, interceptors, and contexts.",
+      "pull_requests": [
+        "[#1109](https://github.com/awslabs/smithy/pull/1109)",
+        "[#1118](https://github.com/awslabs/smithy/pull/1118)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for typed sections, prependers and appenders, and more explicit\nnewline control to `CodeWriter`.",
+      "pull_requests": [
+        "[#1110](https://github.com/awslabs/smithy/pull/1110)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added built-in `Symbol` and `Call` formatters, a typed context, and debug info\nto `CodeWriter`.",
+      "pull_requests": [
+        "[#1095](https://github.com/awslabs/smithy/pull/1095)",
+        "[#1104](https://github.com/awslabs/smithy/pull/1104)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `DependencyTracker` for `Symbol`s.",
+      "pull_requests": [
+        "[#1107](https://github.com/awslabs/smithy/pull/1107)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Rewrote `CodeFormatter` to be easier to understand and evolve.",
+      "pull_requests": [
+        "[#1104](https://github.com/awslabs/smithy/pull/1104)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Exposed `CodegenWriter`'s `DocumentationWriter`.",
+      "pull_requests": [
+        "[#1083](https://github.com/awslabs/smithy/pull/1083)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved error messages from `SmithyBuilder`.",
+      "pull_requests": [
+        "[#1100](https://github.com/awslabs/smithy/pull/1100)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Reduced copies made in `smithy-codegen-core` and `smithy-build`.",
+      "pull_requests": [
+        "[#1103](https://github.com/awslabs/smithy/pull/1103)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added non-optional method for `@httpMalformedRequestTest` uris.",
+      "pull_requests": [
+        "[#1108](https://github.com/awslabs/smithy/pull/1108)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added multi-code-unit characters to `@length` validation tests.",
+      "pull_requests": [
+        "[#1092](https://github.com/awslabs/smithy/pull/1092)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added malformed request tests for `set` types.",
+      "pull_requests": [
+        "[#1094](https://github.com/awslabs/smithy/pull/1094)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Clarified a message for `@httpPayload` binding errors.",
+      "pull_requests": [
+        "[#1113](https://github.com/awslabs/smithy/pull/1113)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Deprecated `onSectionAppend` and `onSectionPrepend`.",
+      "pull_requests": [
+        "[#1110](https://github.com/awslabs/smithy/pull/1110)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an incorrect warning when the `errors` property was set on a `service`.",
+      "pull_requests": [
+        "[#1120](https://github.com/awslabs/smithy/pull/1120)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed various issues in protocol tests.",
+      "pull_requests": [
+        "[#1084](https://github.com/awslabs/smithy/pull/1084)",
+        "[#1040](https://github.com/awslabs/smithy/pull/1040)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a failing code path in `SmithyBuild`.",
+      "pull_requests": [
+        "[#1100](https://github.com/awslabs/smithy/pull/1100)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added note about escaping `\\` in `@pattern`.",
+      "pull_requests": [
+        "[#1091](https://github.com/awslabs/smithy/pull/1091)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified error serialization behavior for `@restJson1`.",
+      "pull_requests": [
+        "[#1099](https://github.com/awslabs/smithy/pull/1099)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified defaulting behavior of `@httpResponseCode`.",
+      "pull_requests": [
+        "[#1111](https://github.com/awslabs/smithy/pull/1111)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified behavior of the `sources` plugin.",
+      "pull_requests": [
+        "[#977](https://github.com/awslabs/smithy/pull/977)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified how `@length` interacts with UTF-8 encoding.",
+      "pull_requests": [
+        "[#1089](https://github.com/awslabs/smithy/pull/1089)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed an `@idRef` example.",
+      "pull_requests": [
+        "[#1087](https://github.com/awslabs/smithy/pull/1087)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrated to using Gradle 7.3.3 to build Smithy. This should have no impactful\ndownstream effects.",
+      "pull_requests": [
+        "[#1085](https://github.com/awslabs/smithy/pull/1085)"
+      ]
+    }
+  ],
+  "date": "2022-03-07"
+}

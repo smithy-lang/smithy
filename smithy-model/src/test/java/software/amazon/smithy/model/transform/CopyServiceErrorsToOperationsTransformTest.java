@@ -47,7 +47,7 @@ public class CopyServiceErrorsToOperationsTransformTest {
         assertThat(operation2, Matchers.equalTo(result.expectShape(operation2.getId())));
 
         // Make sure service errors were copied to the operation bound within it.
-        assertThat(result.expectShape(operation1.getId(), OperationShape.class).getErrors(),
+        assertThat(result.expectShape(operation1.getId(), OperationShape.class).getErrorsSet(),
                 Matchers.containsInAnyOrder(errorShape1.getId(), errorShape2.getId()));
     }
 }

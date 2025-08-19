@@ -1,0 +1,91 @@
+{
+  "version": "1.19.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Disallowed `requiresLength` trait in output.",
+      "pull_requests": [
+        "[#1155](https://github.com/awslabs/smithy/pull/1155)",
+        "[#1152](https://github.com/awslabs/smithy/pull/1152)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation that `code` in `http` trait is between 100 and 999.",
+      "pull_requests": [
+        "[#1156](https://github.com/awslabs/smithy/pull/1156)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation that `uri` in `http` trait uses ASCII characters.",
+      "pull_requests": [
+        "[#1154](https://github.com/awslabs/smithy/pull/1154)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allowed `jsonName` trait on union members.",
+      "pull_requests": [
+        "[#1153](https://github.com/awslabs/smithy/pull/1153)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved Dockerfile support.",
+      "pull_requests": [
+        "[#1140](https://github.com/awslabs/smithy/pull/1140)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for conditions and loops to AbstractCodeWriter.",
+      "pull_requests": [
+        "[#1144](https://github.com/awslabs/smithy/pull/1144)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning for missing `^` or `$` anchors in `@pattern` trait.",
+      "pull_requests": [
+        "[#1141](https://github.com/awslabs/smithy/pull/1141)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a validator to catch usage of non-inclusive words.",
+      "pull_requests": [
+        "[#931](https://github.com/awslabs/smithy/pull/931)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new classes for code writing and delegation, which deprecates the\n`software.amazon.smithy.codegen.core.writer` package.",
+      "pull_requests": [
+        "[#1131](https://github.com/awslabs/smithy/pull/1131)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning for using `@sensitive` trait on members, which will be removed\nin IDL 2.0.",
+      "pull_requests": [
+        "[#1132](https://github.com/awslabs/smithy/pull/1132)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Documented the supported OpenAPI version.",
+      "pull_requests": [
+        "[#1151](https://github.com/awslabs/smithy/pull/1151)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added links to Scala generator and plugin.",
+      "pull_requests": [
+        "[#1145](https://github.com/awslabs/smithy/pull/1145)"
+      ]
+    }
+  ],
+  "date": "2022-03-21"
+}

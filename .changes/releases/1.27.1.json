@@ -1,0 +1,104 @@
+{
+  "version": "1.27.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Update protocol tests with datetime offset coverage",
+      "pull_requests": [
+        "[#1502](https://github.com/awslabs/smithy/pull/1502)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add protocol tests to cover @range for short, long and integer shapes",
+      "pull_requests": [
+        "[#1515](https://github.com/awslabs/smithy/pull/1515)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add exclude/include tranforms using selectors",
+      "pull_requests": [
+        "[#1534](https://github.com/awslabs/smithy/pull/1534)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add a parseArn test case for resources with `:` and `/`",
+      "pull_requests": [
+        "[#1537](https://github.com/awslabs/smithy/pull/1537)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Move CDS warmup to the CLI directly",
+      "pull_requests": [
+        "[#1553](https://github.com/awslabs/smithy/pull/1553)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allow error rename and disallow error rename for all AWS protocols",
+      "pull_requests": [
+        "[#1554](https://github.com/awslabs/smithy/pull/1554)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add details to ModifiedTrait event id",
+      "pull_requests": [
+        "[#1560](https://github.com/awslabs/smithy/pull/1560)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix deterministic order of properties",
+      "pull_requests": [
+        "[#1555](https://github.com/awslabs/smithy/pull/1555)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix datetime offset restXml payload",
+      "pull_requests": [
+        "[#1559](https://github.com/awslabs/smithy/pull/1559)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix `RestJsonQueryStringEscaping` protocol test",
+      "pull_requests": [
+        "[#1562](https://github.com/awslabs/smithy/pull/1562)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix `RestJsonAllQueryStringTypes` protocol test",
+      "pull_requests": [
+        "[#1564](https://github.com/awslabs/smithy/pull/1564)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix Upgrade1to2Command for Set shape",
+      "pull_requests": [
+        "[#1569](https://github.com/awslabs/smithy/pull/1569)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix parameters to builder",
+      "pull_requests": [
+        "[#1571](https://github.com/awslabs/smithy/pull/1571)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fix typo for NOTE under breaking change rules",
+      "pull_requests": [
+        "[#1552](https://github.com/awslabs/smithy/pull/1552)"
+      ]
+    }
+  ],
+  "date": "2023-01-11"
+}

@@ -1,0 +1,192 @@
+{
+  "version": "1.50.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a `required` property to IAM trait condition key definitions.",
+      "pull_requests": [
+        "[#2288](https://github.com/smithy-lang/smithy/pull/2288)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `syncCorsPreflightIntegration` configuration option to APIGateway\nconversion, which updates CORS preflight templates with all possible content\ntypes.",
+      "pull_requests": [
+        "[#2290](https://github.com/smithy-lang/smithy/pull/2290)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validator for duplicate names in the `iamResource` trait.",
+      "pull_requests": [
+        "[#2293](https://github.com/smithy-lang/smithy/pull/2293)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `operationContextParams` support to `RulesetParameterValidator`.",
+      "pull_requests": [
+        "[#2295](https://github.com/smithy-lang/smithy/pull/2295)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Enabled the application of example traits to service-level errors.",
+      "pull_requests": [
+        "[#2307](https://github.com/smithy-lang/smithy/pull/2307)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added IDL serializer option to coerce inline IO.",
+      "pull_requests": [
+        "[#2316](https://github.com/smithy-lang/smithy/pull/2316)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a function to writer delegators to check out writers with a symbol.",
+      "pull_requests": [
+        "[#2328](https://github.com/smithy-lang/smithy/pull/2328)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added defaults tests for restJson1.",
+      "pull_requests": [
+        "[#2280](https://github.com/smithy-lang/smithy/pull/2280)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added float16 upcast tests for RPCv2 CBOR.",
+      "pull_requests": [
+        "[#2291](https://github.com/smithy-lang/smithy/pull/2291)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for content-type parameters.",
+      "pull_requests": [
+        "[#2296](https://github.com/smithy-lang/smithy/pull/2296)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests asserting servers reject empty unions.",
+      "pull_requests": [
+        "[#2300](https://github.com/smithy-lang/smithy/pull/2300)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for malformed media types.",
+      "pull_requests": [
+        "[#2309](https://github.com/smithy-lang/smithy/pull/2309)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for missing content types.",
+      "pull_requests": [
+        "[#2310](https://github.com/smithy-lang/smithy/pull/2310)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several content-type and HTTP payload protocol tests.",
+      "pull_requests": [
+        "[#2314](https://github.com/smithy-lang/smithy/pull/2314)",
+        "[#2315](https://github.com/smithy-lang/smithy/pull/2315)",
+        "[#2322](https://github.com/smithy-lang/smithy/pull/2322)",
+        "[#2331](https://github.com/smithy-lang/smithy/pull/2331)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed formatter to correctly convert invalid doc comments.",
+      "pull_requests": [
+        "[#2277](https://github.com/smithy-lang/smithy/pull/2277)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added missing node mapper for document types.",
+      "pull_requests": [
+        "[#2313](https://github.com/smithy-lang/smithy/pull/2313)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issues with S3 dot segment tests.",
+      "pull_requests": [
+        "[#2304](https://github.com/smithy-lang/smithy/pull/2304)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in RPCv2 CBOR protocol tests.",
+      "pull_requests": [
+        "[#2319](https://github.com/smithy-lang/smithy/pull/2319)",
+        "[#2320](https://github.com/smithy-lang/smithy/pull/2320)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated protocol tests to use floating point values representable exactly in\nIEEE representation.",
+      "pull_requests": [
+        "[#2321](https://github.com/smithy-lang/smithy/pull/2321)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed EC2 request ID casing.",
+      "pull_requests": [
+        "[#2329](https://github.com/smithy-lang/smithy/pull/2329)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed typos in RPCv2 CBOR spec.",
+      "pull_requests": [
+        "[#2278](https://github.com/smithy-lang/smithy/pull/2278)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed typo in AddDefaultConfigSettings.",
+      "pull_requests": [
+        "[#2285](https://github.com/smithy-lang/smithy/pull/2285)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed errors in IAM trait docs.",
+      "pull_requests": [
+        "[#2287](https://github.com/smithy-lang/smithy/pull/2287)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified RPCv2 response event stream behavior.",
+      "pull_requests": [
+        "[#2297](https://github.com/smithy-lang/smithy/pull/2297)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Replaced references to outdated RFCs with references to their replacements.",
+      "pull_requests": [
+        "[#2298](https://github.com/smithy-lang/smithy/pull/2298)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `httpResponseCode` value range.",
+      "pull_requests": [
+        "[#2308](https://github.com/smithy-lang/smithy/pull/2308)"
+      ]
+    }
+  ],
+  "date": "2024-06-18"
+}

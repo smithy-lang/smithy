@@ -1,0 +1,49 @@
+{
+  "version": "1.42.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added the `@aws.auth#sigv4a` auth trait.",
+      "pull_requests": [
+        "[#2032](https://github.com/smithy-lang/smithy/pull/2032)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `timestampFormat` and `httpChecksumRequired` traits to protocols.",
+      "pull_requests": [
+        "[#2054](https://github.com/smithy-lang/smithy/pull/2054)",
+        "[#2061](https://github.com/smithy-lang/smithy/pull/2061)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed conversion of root `intEnum` shape to IDL 1.0 when the shape doesn't\nhave a default value of 0.",
+      "pull_requests": [
+        "[#2053](https://github.com/smithy-lang/smithy/pull/2053)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed equality of `@examples` traits by overriding the `equals` method in\n`ExampleTrait.ErrorExample`.",
+      "pull_requests": [
+        "[#2052](https://github.com/smithy-lang/smithy/pull/2052)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated documentation for auth traits.",
+      "pull_requests": [
+        "[#2051](https://github.com/smithy-lang/smithy/pull/2051)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for smoke tests.",
+      "pull_requests": [
+        "[#2057](https://github.com/smithy-lang/smithy/pull/2057)"
+      ]
+    }
+  ],
+  "date": "2023-12-07"
+}

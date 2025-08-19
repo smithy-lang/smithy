@@ -1,0 +1,98 @@
+{
+  "version": "1.54.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added multiselect and filter to supported `operationContextParams` paths",
+      "pull_requests": [
+        "[#2442](https://github.com/smithy-lang/smithy/pull/2442)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Integrated Spotless formatter into build logic to automatically format Java\nand Kotlin code",
+      "pull_requests": [
+        "[#2485](https://github.com/smithy-lang/smithy/pull/2485)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added help text to `ResourceOperationInputOutput` event",
+      "pull_requests": [
+        "[#2489](https://github.com/smithy-lang/smithy/pull/2489)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-docgen` package that enables the generation of a service\ndocumentation site from a smithy model",
+      "pull_requests": [
+        "[#2488](https://github.com/smithy-lang/smithy/pull/2488)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `ShouldHaveUsedTimestampValidator` to reduce false positives",
+      "pull_requests": [
+        "[#2480](https://github.com/smithy-lang/smithy/pull/2480)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added service ID to tagging validator error messages to aid debugging",
+      "pull_requests": [
+        "[#2483](https://github.com/smithy-lang/smithy/pull/2483)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Corrected variable expansion logic in CLI to support multiple variables",
+      "pull_requests": [
+        "[#2495](https://github.com/smithy-lang/smithy/pull/2495)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added missing getters to CloudFormation `ResourceSchema`",
+      "pull_requests": [
+        "[#2486](https://github.com/smithy-lang/smithy/pull/2486)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Converted blob default values to Base64 for protocol tests",
+      "pull_requests": [
+        "[#2474](https://github.com/smithy-lang/smithy/pull/2474)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed smoke test validator to correctly enforce unique test case ids",
+      "pull_requests": [
+        "[#2482](https://github.com/smithy-lang/smithy/pull/2482)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated Smithy logo in documentation",
+      "pull_requests": [
+        "[#2478](https://github.com/smithy-lang/smithy/pull/2478)",
+        "[#2479](https://github.com/smithy-lang/smithy/pull/2479)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated build logic to now require JDK17+ for development",
+      "pull_requests": [
+        "[#2487](https://github.com/smithy-lang/smithy/pull/2487)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrated Gradle build logic to use conventions plugins",
+      "pull_requests": [
+        "[#2484](https://github.com/smithy-lang/smithy/pull/2484)"
+      ]
+    }
+  ],
+  "date": "2025-01-08"
+}

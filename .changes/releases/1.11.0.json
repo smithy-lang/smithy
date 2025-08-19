@@ -1,0 +1,70 @@
+{
+  "version": "1.11.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated CORS header configuration when converting to OpenAPI while using\n`sigv4` or `restJson1`.",
+      "pull_requests": [
+        "[#868](https://github.com/awslabs/smithy/pull/868)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the (unstable) `httpMalformedRequestTests` trait to validate service\nbehavior around malformed requests.",
+      "pull_requests": [
+        "[#871](https://github.com/awslabs/smithy/pull/871)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-diff` error when an enum entry is inserted.",
+      "pull_requests": [
+        "[#873](https://github.com/awslabs/smithy/pull/873)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `restXml` protocol test.",
+      "pull_requests": [
+        "[#866](https://github.com/awslabs/smithy/pull/866)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `httpChecksumRequired` protocol test.",
+      "pull_requests": [
+        "[#869](https://github.com/awslabs/smithy/pull/869)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated `NodeMapper` to properly handle `sourceLocation` for traits.",
+      "pull_requests": [
+        "[#865](https://github.com/awslabs/smithy/pull/865)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Removed warning when an operation using the HTTP `PATCH` method is marked with\nthe `@idempotent` trait.",
+      "pull_requests": [
+        "[#867](https://github.com/awslabs/smithy/pull/867)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues where a `sourceLocation` wasn't propagated for traits.",
+      "pull_requests": [
+        "[#864](https://github.com/awslabs/smithy/pull/864)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed various documentation issues.",
+      "pull_requests": [
+        "[#870](https://github.com/awslabs/smithy/pull/870)",
+        "[#874](https://github.com/awslabs/smithy/pull/874)"
+      ]
+    }
+  ],
+  "date": "2021-08-03"
+}

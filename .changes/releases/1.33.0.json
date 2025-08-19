@@ -1,0 +1,100 @@
+{
+  "version": "1.33.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Extended event ids for `AddedOperationError`, `RemovedOperationError`,\n`AddedEntityBinding` and `RemovedEntityBinding` diff events",
+      "pull_requests": [
+        "[#1797](https://github.com/awslabs/smithy/pull/1797)",
+        "[#1803](https://github.com/awslabs/smithy/pull/1803)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added enum values to ids for `ChangedEnumTrait` diff events",
+      "pull_requests": [
+        "[#1807](https://github.com/awslabs/smithy/pull/1807)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `init` command to Smithy CLI",
+      "pull_requests": [
+        "[#1802](https://github.com/awslabs/smithy/pull/1802)",
+        "[#1825](https://github.com/awslabs/smithy/pull/1825)",
+        "[#1832](https://github.com/awslabs/smithy/pull/1832)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `smithy-syntax` package and `smithy format` command to Smithy CLI",
+      "pull_requests": [
+        "[#1830](https://github.com/awslabs/smithy/pull/1830)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed duplicated events for `ChangedNullability` alongside the\n`AddedInputTrait / RemovedInputTrait`",
+      "pull_requests": [
+        "[#1806](https://github.com/awslabs/smithy/pull/1806)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated request compression trait protocol tests with regard to HTTP bindings\nand respective specification",
+      "pull_requests": [
+        "[#1831](https://github.com/awslabs/smithy/pull/1831)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added `smithy-dafny` to code generators table",
+      "pull_requests": [
+        "[#1813](https://github.com/awslabs/smithy/pull/1813)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated stale docs around `MissingPaginatedTrait`",
+      "pull_requests": [
+        "[#1814](https://github.com/awslabs/smithy/pull/1814)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed grammar rendering",
+      "pull_requests": [
+        "[#1815](https://github.com/awslabs/smithy/pull/1815)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated recommendation for HTTP status code",
+      "pull_requests": [
+        "[#1818](https://github.com/awslabs/smithy/pull/1818)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed selector example",
+      "pull_requests": [
+        "[#1824](https://github.com/awslabs/smithy/pull/1824)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added note about how constraint traits affect backward compatibility",
+      "pull_requests": [
+        "[#1826](https://github.com/awslabs/smithy/pull/1826)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added guide on disabling authentication",
+      "pull_requests": [
+        "[#1791](https://github.com/awslabs/smithy/pull/1791)"
+      ]
+    }
+  ],
+  "date": "2023-06-21"
+}

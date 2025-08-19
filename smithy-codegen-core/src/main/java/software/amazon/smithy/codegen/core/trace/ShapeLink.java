@@ -4,14 +4,13 @@
  */
 package software.amazon.smithy.codegen.core.trace;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -37,7 +36,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
     private ShapeLink(Builder builder) {
         type = SmithyBuilder.requiredState(TYPE_TEXT, builder.type);
         id = SmithyBuilder.requiredState(ID_TEXT, builder.id);
-        tags = ListUtils.copyOf(builder.tags);
+        tags = builder.tags.copy();
         file = builder.file;
         line = builder.line;
         column = builder.column;
@@ -165,7 +164,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
     }
 
     public static final class Builder implements SmithyBuilder<ShapeLink> {
-        private final List<String> tags = new ArrayList<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
         private String type;
         private String id;
         private String file;
@@ -194,7 +193,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
          */
         public Builder tags(List<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            tags.forEach(this::addTag);
             return this;
         }
 
@@ -205,7 +204,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
          * @return This builder.
          */
         public Builder addTag(String tag) {
-            this.tags.add(tag);
+            this.tags.get().add(tag);
             return this;
         }
 

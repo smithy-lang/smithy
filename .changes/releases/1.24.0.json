@@ -1,0 +1,48 @@
+{
+  "version": "1.24.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Made string enum to enum shape transform opt-in in CodegenDirector.",
+      "pull_requests": [
+        "[#1370](https://github.com/awslabs/smithy/pull/1370)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `@httpResponseCode` to not be applicable to `@input` structures.",
+      "pull_requests": [
+        "[#1359](https://github.com/awslabs/smithy/pull/1359)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made some improvements in smithy-build.",
+      "pull_requests": [
+        "[#1366](https://github.com/awslabs/smithy/pull/1366)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Filtered out synthetic traits from build info.",
+      "pull_requests": [
+        "[#1374](https://github.com/awslabs/smithy/pull/1374)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a log message when unable to convert string enum to enum shape.",
+      "pull_requests": [
+        "[#1372](https://github.com/awslabs/smithy/pull/1372)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated Smithy IDL ABNF Docs.",
+      "pull_requests": [
+        "[#1357](https://github.com/awslabs/smithy/pull/1357)"
+      ]
+    }
+  ],
+  "date": "2022-08-30"
+}

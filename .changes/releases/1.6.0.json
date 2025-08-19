@@ -1,0 +1,211 @@
+{
+  "version": "1.6.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added support for checking backwards compatibility for diffs of trait\ncontents.",
+      "pull_requests": [
+        "[#716](https://github.com/awslabs/smithy/pull/716)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for adding CORS configurations to API Gateway HTTP APIs.",
+      "pull_requests": [
+        "[#670](https://github.com/awslabs/smithy/pull/670)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed constraints on the `@httpPayload` trait, allowing it to target `list`,\n`set`, and `map` shapes except in AWS protocols.",
+      "pull_requests": [
+        "[#679](https://github.com/awslabs/smithy/pull/679)",
+        "[#683](https://github.com/awslabs/smithy/pull/683)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to ensure a `payloadFormatVersion` is set when generating an\nAPI Gateway HTTP API.",
+      "pull_requests": [
+        "[#688](https://github.com/awslabs/smithy/pull/688)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `vendorParamsShape` to protocol test cases to support validating a test\ncase's `vendorParams` values are configured properly.",
+      "pull_requests": [
+        "[#702](https://github.com/awslabs/smithy/pull/702)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the ability to validate resolved hosts to protocol tests.",
+      "pull_requests": [
+        "[#707](https://github.com/awslabs/smithy/pull/707)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added backwards compatibility checking to `smithy-diff` for the `@paginated`\ntrait.",
+      "pull_requests": [
+        "[#716](https://github.com/awslabs/smithy/pull/716)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `tags` and `appliesTo` to protocol test definitions for better\ncategorization and grouping.",
+      "pull_requests": [
+        "[#696](https://github.com/awslabs/smithy/pull/696)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several protocol tests for the `endpoint` and `hostLabel` traits.",
+      "pull_requests": [
+        "[#708](https://github.com/awslabs/smithy/pull/708)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several `@restXml` protocol tests.",
+      "pull_requests": [
+        "[#689](https://github.com/awslabs/smithy/pull/689)",
+        "[#690](https://github.com/awslabs/smithy/pull/690)",
+        "[#678](https://github.com/awslabs/smithy/pull/678)",
+        "[#694](https://github.com/awslabs/smithy/pull/694)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a configuration definition for use validating `vendorParams` in AWS\nprotocol tests.",
+      "pull_requests": [
+        "[#705](https://github.com/awslabs/smithy/pull/705)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added tests and documentation for some required Amazon S3 customizations.",
+      "pull_requests": [
+        "[#709](https://github.com/awslabs/smithy/pull/709)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added tests and documentation for required Amazon Glacier customizations.",
+      "pull_requests": [
+        "[#704](https://github.com/awslabs/smithy/pull/704)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a test and documentation for the required Amazon API Gateway\ncustomization.",
+      "pull_requests": [
+        "[#706](https://github.com/awslabs/smithy/pull/706)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a test and documentation for the required Amazon Machine Learning\ncustomization.",
+      "pull_requests": [
+        "[#707](https://github.com/awslabs/smithy/pull/707)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue that produced duplicate entries in the `security` list of a\nconverted OpenAPI document.",
+      "pull_requests": [
+        "[#687](https://github.com/awslabs/smithy/pull/687)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `alphanumericOnlyRefs` was not fully satisfied when\ngenerating synthesized shapes.",
+      "pull_requests": [
+        "[#695](https://github.com/awslabs/smithy/pull/695)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in IDL parsing where duplicate bindings were allowed\nincorrectly.",
+      "pull_requests": [
+        "[#714](https://github.com/awslabs/smithy/pull/714)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several issues in protocol tests around serialization of empty contents.",
+      "pull_requests": [
+        "[#692](https://github.com/awslabs/smithy/pull/692)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where parameters in a diff error message were swapped.",
+      "pull_requests": [
+        "[#713](https://github.com/awslabs/smithy/pull/713)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue in a `restXml` protocol test.",
+      "pull_requests": [
+        "[#715](https://github.com/awslabs/smithy/pull/715)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the documentation for the `awsJson1_0` and `awsJson1_1` protocols.",
+      "pull_requests": [
+        "[#698](https://github.com/awslabs/smithy/pull/698)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the documentation for the `awsQuery` and `ec2Query` protocols.",
+      "pull_requests": [
+        "[#700](https://github.com/awslabs/smithy/pull/700)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified that Smithy requires support for fractional seconds for the\n`http-date` value of `@timestampFormat`.",
+      "pull_requests": [
+        "[#672](https://github.com/awslabs/smithy/pull/672)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added missing shape documentation for some waiters related shapes.",
+      "pull_requests": [
+        "[#711](https://github.com/awslabs/smithy/pull/711)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed several minor documentation issues.",
+      "pull_requests": [
+        "[#681](https://github.com/awslabs/smithy/pull/681)",
+        "[#693](https://github.com/awslabs/smithy/pull/693)",
+        "[#697](https://github.com/awslabs/smithy/pull/697)",
+        "[#701](https://github.com/awslabs/smithy/pull/701)",
+        "[#708](https://github.com/awslabs/smithy/pull/708)",
+        "[#717](https://github.com/awslabs/smithy/pull/717)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrated to using Gradle 6 to build Smithy. This should have no impactful\ndownstream effects.",
+      "pull_requests": [
+        "[#194](https://github.com/awslabs/smithy/pull/194)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrated to using `main` from `master` for the default branch. This should\nhave no impactful downstream effects.",
+      "pull_requests": [
+        "[#685](https://github.com/awslabs/smithy/pull/685)"
+      ]
+    }
+  ],
+  "date": "2021-02-22"
+}

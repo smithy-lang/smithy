@@ -1,0 +1,56 @@
+{
+  "version": "1.8.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `awsQueryError` trait, which defines the value in the `Code`\ndistinguishing field.",
+      "pull_requests": [
+        "[#807](https://github.com/awslabs/smithy/pull/807)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added methods to get shapes by type and trait.",
+      "pull_requests": [
+        "[#806](https://github.com/awslabs/smithy/pull/806)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved performance.",
+      "pull_requests": [
+        "[#805](https://github.com/awslabs/smithy/pull/805)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved percent-encoding tests and doumentation.",
+      "pull_requests": [
+        "[#803](https://github.com/awslabs/smithy/pull/803)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `double` format to epoch-seconds timestamps when converting to OpenAPI.",
+      "pull_requests": [
+        "[#802](https://github.com/awslabs/smithy/pull/802)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved CLI output.",
+      "pull_requests": [
+        "[#800](https://github.com/awslabs/smithy/pull/800)",
+        "[#801](https://github.com/awslabs/smithy/pull/801)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed awsQuery protocol test to show distinction from ignored `@xmlNamespace`\ntrait.",
+      "pull_requests": [
+        "[#799](https://github.com/awslabs/smithy/pull/799)"
+      ]
+    }
+  ],
+  "date": "2021-05-20"
+}

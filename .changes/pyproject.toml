@@ -1,15 +1,18 @@
 [project]
-name = "changelog"
+name = "smithy_changelog"
 version = "0.1.0"
 description = "A staged changelog tool for Smithy."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "mdformat>=0.7.22,<0.8.0"
+]
 
 [project.scripts]
-amend = "tool.amend:main"
-render = "tool.render:main"
-new-change = "tool.new:main"
+amend = "smithy_changelog.amend:main"
+render = "smithy_changelog.render:main"
+new-change = "smithy_changelog.new:main"
+release = "smithy_changelog.release:main"
 
 [dependency-groups]
 lint = [
@@ -19,6 +22,13 @@ lint = [
 typing = [
     "pyright>=1.1.403"
 ]
+
+[build-system]
+requires = ["uv_build>=0.8.2,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
 
 [tool.uv]
 package = true

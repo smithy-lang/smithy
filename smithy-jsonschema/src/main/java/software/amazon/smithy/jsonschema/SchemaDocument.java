@@ -14,6 +14,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -35,7 +36,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
         idKeyword = builder.idKeyword;
         schemaKeyword = builder.schemaKeyword;
         rootSchema = builder.rootSchema != null ? builder.rootSchema : Schema.builder().build();
-        definitions = new LinkedHashMap<>(builder.definitions);
+        definitions = new LinkedHashMap<>(builder.definitions.copy());
         extensions = builder.extensions;
     }
 
@@ -224,7 +225,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
         private String schemaKeyword;
         private Schema rootSchema;
         private ObjectNode extensions = Node.objectNode();
-        private final Map<String, Schema> definitions = new LinkedHashMap<>();
+        private final BuilderRef<Map<String, Schema>> definitions = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
@@ -274,7 +275,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
          * @return Returns the builder.
          */
         public Builder putDefinition(String name, Schema schema) {
-            definitions.put(name, schema);
+            definitions.get().put(name, schema);
             return this;
         }
 
@@ -285,7 +286,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
          * @return Returns the builder.
          */
         public Builder removeDefinition(String name) {
-            definitions.remove(name);
+            definitions.get().remove(name);
             return this;
         }
 

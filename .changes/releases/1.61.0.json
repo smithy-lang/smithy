@@ -1,0 +1,64 @@
+{
+  "version": "1.61.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Return the specific type of the trait for RpcV2CborTrait as other protocols traits do.",
+      "pull_requests": [
+        "[#2711](https://github.com/smithy-lang/smithy/pull/2711)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Relocate `com.google` dependencies in the CLI to avoid classpath conflicts.",
+      "pull_requests": [
+        "[#2718](https://github.com/smithy-lang/smithy/pull/2718)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added more explicit rule on how to serialize conflicting headers.",
+      "pull_requests": [
+        "[#2692](https://github.com/smithy-lang/smithy/pull/2692)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed `set` from trait selector in `@trait` documentation.",
+      "pull_requests": [
+        "[#2698](https://github.com/smithy-lang/smithy/pull/2698)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed restrictions on trait-codegen to allow `smithy*`, and some `smithy.*` namespaces.",
+      "pull_requests": [
+        "[#2671](https://github.com/smithy-lang/smithy/pull/2671)",
+        "[#2708](https://github.com/smithy-lang/smithy/pull/2708)",
+        "[#2709](https://github.com/smithy-lang/smithy/pull/2709)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `aws-eusc` to AWS rules engine partitions.",
+      "pull_requests": [
+        "[#2697](https://github.com/smithy-lang/smithy/pull/2697)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added MQTT topic filter parsing and conflict support.",
+      "pull_requests": [
+        "[#2690](https://github.com/smithy-lang/smithy/pull/2690)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added OpenAPI configuration option to disable default deprecation description.",
+      "pull_requests": [
+        "[#2694](https://github.com/smithy-lang/smithy/pull/2694)"
+      ]
+    }
+  ],
+  "date": "2025-07-23"
+}

@@ -4,19 +4,16 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
 
@@ -62,10 +59,10 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         params = builder.params;
         vendorParamsShape = builder.vendorParamsShape;
         vendorParams = builder.vendorParams;
-        headers = Collections.unmodifiableMap(new TreeMap<>(builder.headers));
-        forbidHeaders = ListUtils.copyOf(builder.forbidHeaders);
-        requireHeaders = ListUtils.copyOf(builder.requireHeaders);
-        tags = ListUtils.copyOf(builder.tags);
+        headers = builder.headers.copy();
+        forbidHeaders = builder.forbidHeaders.copy();
+        requireHeaders = builder.requireHeaders.copy();
+        tags = builder.tags.copy();
         appliesTo = builder.appliesTo;
     }
 
@@ -243,10 +240,10 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         private ShapeId vendorParamsShape;
         private ObjectNode vendorParams = Node.objectNode();
         private AppliesTo appliesTo;
-        private final Map<String, String> headers = new TreeMap<>();
-        private final List<String> forbidHeaders = new ArrayList<>();
-        private final List<String> requireHeaders = new ArrayList<>();
-        private final List<String> tags = new ArrayList<>();
+        private final BuilderRef<Map<String, String>> headers = BuilderRef.forSortedMap();
+        private final BuilderRef<List<String>> forbidHeaders = BuilderRef.forList();
+        private final BuilderRef<List<String>> requireHeaders = BuilderRef.forList();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         @SuppressWarnings("unchecked")
         public B id(String id) {
@@ -305,34 +302,34 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         @SuppressWarnings("unchecked")
         public B headers(Map<String, String> headers) {
             this.headers.clear();
-            this.headers.putAll(headers);
+            headers.forEach(this::putHeader);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B putHeader(String key, String value) {
-            headers.put(key, value);
+            headers.get().put(key, value);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B forbidHeaders(List<String> forbidHeaders) {
             this.forbidHeaders.clear();
-            this.forbidHeaders.addAll(forbidHeaders);
+            this.forbidHeaders.get().addAll(forbidHeaders);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B requireHeaders(List<String> requireHeaders) {
             this.requireHeaders.clear();
-            this.requireHeaders.addAll(requireHeaders);
+            this.requireHeaders.get().addAll(requireHeaders);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B tags(List<String> tags) {
             this.tags.clear();
-            this.tags.addAll(tags);
+            this.tags.get().addAll(tags);
             return (B) this;
         }
 

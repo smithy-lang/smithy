@@ -1,0 +1,13 @@
+{
+  "version": "1.60.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed body of awsQueryCompatible test.",
+      "pull_requests": [
+        "[#2677](https://github.com/smithy-lang/smithy/pull/2677)"
+      ]
+    }
+  ],
+  "date": "2025-06-25"
+}

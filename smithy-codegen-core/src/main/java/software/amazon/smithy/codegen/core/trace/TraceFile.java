@@ -5,7 +5,6 @@
 package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -49,10 +48,10 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     private TraceFile(Builder builder) {
         smithyTrace = SmithyBuilder.requiredState(SMITHY_TRACE_TEXT, builder.smithyTrace);
         metadata = SmithyBuilder.requiredState(METADATA_TEXT, builder.metadata);
-        if (builder.shapes.isEmpty()) {
+        if (builder.shapes.peek().isEmpty()) {
             throw new IllegalStateException("TraceFile's shapes field must not be empty to build it.");
         }
-        shapes = MapUtils.copyOf(builder.shapes);
+        shapes = builder.shapes.copy();
         artifactDefinitions = builder.artifactDefinitions;
 
         //validate we received a TraceFile where ShapeLink types and tags match definitions
@@ -263,7 +262,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      */
     public static final class Builder implements SmithyBuilder<TraceFile> {
 
-        private final Map<ShapeId, List<ShapeLink>> shapes = new HashMap<>();
+        private final BuilderRef<Map<ShapeId, List<ShapeLink>>> shapes = BuilderRef.forUnorderedMap();
         private String smithyTrace = SMITHY_TRACE_VERSION;
         private ArtifactDefinitions artifactDefinitions;
         private TraceMetadata metadata;
@@ -310,9 +309,9 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @return This builder.
          */
         public Builder addShapeLink(ShapeId id, ShapeLink link) {
-            List<ShapeLink> list = this.shapes.getOrDefault(id, new ArrayList<>());
+            List<ShapeLink> list = this.shapes.get().getOrDefault(id, new ArrayList<>());
             list.add(link);
-            this.shapes.put(id, list);
+            this.shapes.get().put(id, list);
             return this;
         }
 
@@ -335,7 +334,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @return This builder.
          */
         public Builder addShapeLinks(ShapeId id, List<ShapeLink> linkList) {
-            this.shapes.put(id, linkList);
+            this.shapes.get().put(id, linkList);
             return this;
         }
 
@@ -356,7 +355,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          */
         public Builder shapes(Map<ShapeId, List<ShapeLink>> shapes) {
             this.shapes.clear();
-            this.shapes.putAll(shapes);
+            shapes.forEach(this::addShapeLinks);
             return this;
         }
 

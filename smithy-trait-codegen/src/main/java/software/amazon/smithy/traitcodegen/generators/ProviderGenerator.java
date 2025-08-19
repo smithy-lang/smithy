@@ -180,7 +180,7 @@ final class ProviderGenerator implements Runnable {
                                 () -> writer.write("return new $1T($2C, value.getSourceLocation());",
                                         traitSymbol,
                                         (Runnable) () -> shape
-                                                .accept(new FromNodeMapperVisitor(writer, model, "value"))));
+                                                .accept(new FromNodeMapperVisitor(writer, model, "value", provider))));
                     });
         }
 

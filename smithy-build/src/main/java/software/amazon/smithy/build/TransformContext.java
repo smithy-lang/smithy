@@ -144,7 +144,7 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         private ObjectNode settings = Node.objectNode();
         private Model model;
         private Model originalModel;
-        private BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
+        private final BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
         private String projectionName = "source";
         private ModelTransformer transformer;
         private final BuilderRef<List<ValidationEvent>> originalModelValidationEvents = BuilderRef.forList();

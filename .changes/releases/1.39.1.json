@@ -1,0 +1,13 @@
+{
+  "version": "1.39.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fix several issues with validating `authSchemes` configurations for endpoints\nin the `smithy-rules-engine` package for both AWS and non-AWS issues.",
+      "pull_requests": [
+        "[#1990](https://github.com/smithy-lang/smithy/pull/1990)"
+      ]
+    }
+  ],
+  "date": "2023-09-26"
+}

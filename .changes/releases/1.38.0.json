@@ -1,0 +1,173 @@
+{
+  "version": "1.38.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated auto-formatting to use line breaks for some properties",
+      "pull_requests": [
+        "[#1939](https://github.com/smithy-lang/smithy/pull/1939)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated JSON-based AWS protocols to ignore the `__type` field when\ndeserializing `union`s",
+      "pull_requests": [
+        "[#1945](https://github.com/smithy-lang/smithy/pull/1945)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added metadata key to `RemovedMetadata` diff events",
+      "pull_requests": [
+        "[#1940](https://github.com/smithy-lang/smithy/pull/1940)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved equality comparison for `NumberNode` instances",
+      "pull_requests": [
+        "[#1955](https://github.com/smithy-lang/smithy/pull/1955)",
+        "[#1965](https://github.com/smithy-lang/smithy/pull/1965)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `--aut` as a shortcut for `--allow-unknown-traits` in the Smithy CLI",
+      "pull_requests": [
+        "[#1950](https://github.com/smithy-lang/smithy/pull/1950)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `--show` option to the Smithy CLI to include extra information like\ntype, source location, and captured variables. This deprecates the\n`--show-vars` option",
+      "pull_requests": [
+        "[#1953](https://github.com/smithy-lang/smithy/pull/1953)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to emit warnings when a member has an HTTP trait applied in a\ncontext where it is ignored",
+      "pull_requests": [
+        "[#1962](https://github.com/smithy-lang/smithy/pull/1962)",
+        "[#1969](https://github.com/smithy-lang/smithy/pull/1969)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to check the consistency of IAM resource names and ARN\nresource names",
+      "pull_requests": [
+        "[#1954](https://github.com/smithy-lang/smithy/pull/1954)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `RemoveInvalidDefaults` transform to remove `@default` traits when\ntheir values conflict with applied `@range` traits",
+      "pull_requests": [
+        "[#1964](https://github.com/smithy-lang/smithy/pull/1964)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added an `allowConstraintErrors` property to the `@examples` trait for\nrelaxing content validation requirements",
+      "pull_requests": [
+        "[#1949](https://github.com/smithy-lang/smithy/pull/1949)",
+        "[#1968](https://github.com/smithy-lang/smithy/pull/1968)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several protocol tests for `@restXml`",
+      "pull_requests": [
+        "[#1909](https://github.com/smithy-lang/smithy/pull/1909)",
+        "[#1908](https://github.com/smithy-lang/smithy/pull/1908)",
+        "[#1574](https://github.com/smithy-lang/smithy/pull/1574)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several protocol tests for `@restJson1`",
+      "pull_requests": [
+        "[#1908](https://github.com/smithy-lang/smithy/pull/1908)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified how trait values are provided in the IDL",
+      "pull_requests": [
+        "[#1944](https://github.com/smithy-lang/smithy/pull/1944)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added the `@length` trait to the specification's trait index",
+      "pull_requests": [
+        "[#1952](https://github.com/smithy-lang/smithy/pull/1952)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Improved the ability to link to certain sections of the specification",
+      "pull_requests": [
+        "[#1958](https://github.com/smithy-lang/smithy/pull/1958)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified behavior of `@sigv4` and `@optionalAuth`",
+      "pull_requests": [
+        "[#1963](https://github.com/smithy-lang/smithy/pull/1963)",
+        "[#1971](https://github.com/smithy-lang/smithy/pull/1971)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed diff event messages for `ChangedNullability` events",
+      "pull_requests": [
+        "[#1972](https://github.com/smithy-lang/smithy/pull/1972)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an NPE when auto-formatting certain types of trait values",
+      "pull_requests": [
+        "[#1942](https://github.com/smithy-lang/smithy/pull/1942)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where exceptions thrown when creating traits were not emitted\nas validation events",
+      "pull_requests": [
+        "[#1947](https://github.com/smithy-lang/smithy/pull/1947)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue validating timestamp members in nodes where a\n`@timestampFormat` trait was involved",
+      "pull_requests": [
+        "[#1948](https://github.com/smithy-lang/smithy/pull/1948)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where the `FlattenAndRemoveMixins` transform would not remove\nunused mixins",
+      "pull_requests": [
+        "[#1951](https://github.com/smithy-lang/smithy/pull/1951)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a malformed request test for the `@restJson1` protocol",
+      "pull_requests": [
+        "[#1959](https://github.com/smithy-lang/smithy/pull/1959)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `NonInclusiveTerms` validation events would be identical\nfor different text paths.",
+      "pull_requests": [
+        "[#1975](https://github.com/smithy-lang/smithy/pull/1975)"
+      ]
+    }
+  ],
+  "date": "2023-09-14"
+}

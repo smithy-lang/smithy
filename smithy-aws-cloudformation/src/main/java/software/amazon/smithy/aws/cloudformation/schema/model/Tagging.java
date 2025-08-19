@@ -6,8 +6,7 @@ package software.amazon.smithy.aws.cloudformation.schema.model;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -28,7 +27,7 @@ public final class Tagging implements ToSmithyBuilder<Tagging> {
         tagUpdatable = builder.tagUpdatable;
         cloudFormationSystemTags = builder.cloudFormationSystemTags;
         tagProperty = builder.tagProperty;
-        this.permissions = SetUtils.orderedCopyOf(builder.permissions);
+        this.permissions = builder.permissions.copy();
     }
 
     public static Builder builder() {
@@ -106,7 +105,7 @@ public final class Tagging implements ToSmithyBuilder<Tagging> {
         private boolean tagUpdatable;
         private boolean cloudFormationSystemTags;
         private String tagProperty;
-        private final Set<String> permissions = new TreeSet<>();
+        private final BuilderRef<Set<String>> permissions = BuilderRef.forSortedSet();
 
         @Override
         public Tagging build() {
@@ -140,7 +139,7 @@ public final class Tagging implements ToSmithyBuilder<Tagging> {
 
         public Builder permissions(Collection<String> permissions) {
             this.permissions.clear();
-            this.permissions.addAll(permissions);
+            permissions.forEach(this::addPermission);
             return this;
         }
 
@@ -152,7 +151,7 @@ public final class Tagging implements ToSmithyBuilder<Tagging> {
         }
 
         public Builder addPermission(String permission) {
-            this.permissions.add(permission);
+            this.permissions.get().add(permission);
             return this;
         }
 

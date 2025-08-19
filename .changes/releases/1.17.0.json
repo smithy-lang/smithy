@@ -1,0 +1,55 @@
+{
+  "version": "1.17.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Updated `@streaming` validation for protocols that support `@httpPayload`.",
+      "pull_requests": [
+        "[#1076](https://github.com/awslabs/smithy/pull/1076)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to serialize the JMESPath AST.",
+      "pull_requests": [
+        "[#1059](https://github.com/awslabs/smithy/pull/1059)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update `CodeWriter` to add getters and ability to copy settings.",
+      "pull_requests": [
+        "[#1067](https://github.com/awslabs/smithy/pull/1067)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified `outputToken`.",
+      "pull_requests": [
+        "[#1056](https://github.com/awslabs/smithy/pull/1056)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed repeated words.",
+      "pull_requests": [
+        "[#1063](https://github.com/awslabs/smithy/pull/1063)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified server behavior for query parameter deserialization.",
+      "pull_requests": [
+        "[#1080](https://github.com/awslabs/smithy/pull/1080)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated traits to preserve the original `Node` value from the model.",
+      "pull_requests": [
+        "[#1047](https://github.com/awslabs/smithy/pull/1047)"
+      ]
+    }
+  ],
+  "date": "2022-02-04"
+}

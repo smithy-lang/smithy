@@ -1,0 +1,69 @@
+{
+  "version": "1.0.6",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Update `structure` and `union` shapes so member order is maintained as part of\nthe contract.",
+      "pull_requests": [
+        "[#465](https://github.com/awslabs/smithy/pull/465)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add validation for `document` types in protocols.",
+      "pull_requests": [
+        "[#474](https://github.com/awslabs/smithy/pull/474)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Provide suggestions for invalid Shape ID targets if a close match is found.",
+      "pull_requests": [
+        "[#466](https://github.com/awslabs/smithy/pull/466)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added message templates and trait binding to the `EmitEachSelector`.",
+      "pull_requests": [
+        "[#467](https://github.com/awslabs/smithy/pull/467)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to add traits directly to the `ModelAssembler`.",
+      "pull_requests": [
+        "[#470](https://github.com/awslabs/smithy/pull/470)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Convert `awsJson1_1` protocol tests to Smithy IDL.",
+      "pull_requests": [
+        "[#472](https://github.com/awslabs/smithy/pull/472)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update decimal values in protocol tests.",
+      "pull_requests": [
+        "[#471](https://github.com/awslabs/smithy/pull/471)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Update quick start guide with more examples.",
+      "pull_requests": [
+        "[#462](https://github.com/awslabs/smithy/pull/462)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed issues allowing `document` types in `@httpHeader` and\n`@httpPrefixHeaders` traits.",
+      "pull_requests": [
+        "[#474](https://github.com/awslabs/smithy/pull/474)"
+      ]
+    }
+  ],
+  "date": "2020-06-24"
+}

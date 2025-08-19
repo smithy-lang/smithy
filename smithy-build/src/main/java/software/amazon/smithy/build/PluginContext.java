@@ -268,7 +268,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         private ObjectNode settings = Node.objectNode();
         private FileManifest fileManifest;
         private ClassLoader pluginClassLoader;
-        private BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
+        private final BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
         private String artifactName;
 
         private Builder() {}

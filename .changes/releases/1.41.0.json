@@ -1,0 +1,153 @@
+{
+  "version": "1.41.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added new member to `@aws.iam#iamResource` for disabling condition key\ninheritance.",
+      "pull_requests": [
+        "[#2036](https://github.com/smithy-lang/smithy/pull/2036)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new trait for defining IAM actions, which consolidates and deprecates\nseveral older IAM traits.",
+      "pull_requests": [
+        "[#2034](https://github.com/smithy-lang/smithy/pull/2034)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added convenience method, `expectIntEnumShape`, to `GenerateIntEnumDirective`\nto get an `IntEnumShape`",
+      "pull_requests": [
+        "[#2033](https://github.com/smithy-lang/smithy/pull/2033)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added plugin to `NodeValidationVisitor` to ensure collections with\n`@uniqueItems` trait have unique-ness enforced.",
+      "pull_requests": [
+        "[#2031](https://github.com/smithy-lang/smithy/pull/2031)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new member to `@aws.iam#iamResource` and `@aws.iam#defineConditionKeys`\ntraits for defining a relative URL path of documentation.",
+      "pull_requests": [
+        "[#2027](https://github.com/smithy-lang/smithy/pull/2027)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Migrated IAM traits JSON file to IDL file in `smithy-aws-iam-traits`.",
+      "pull_requests": [
+        "[#2026](https://github.com/smithy-lang/smithy/pull/2026)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol test for verifying behavior when handling unknown union members\nin the `restJson1` protocol.",
+      "pull_requests": [
+        "[#2022](https://github.com/smithy-lang/smithy/pull/2022)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Enabled `aws.iam#disableConditionKeyInference` trait to be applicable to\nservice shapes.",
+      "pull_requests": [
+        "[#2019](https://github.com/smithy-lang/smithy/pull/2019)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `partitions.json` with two new entries, `aws-iso-e` and `aws-iso-f` to\nbe consistent with SDKs.",
+      "pull_requests": [
+        "[#2018](https://github.com/smithy-lang/smithy/pull/2018)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added event-id subparts to `ClientEndpointDiscoveryValidator` to clarify\nvalidation events.",
+      "pull_requests": [
+        "[#2017](https://github.com/smithy-lang/smithy/pull/2017)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added configuration for plugin integrations in `smithy-build.json`.",
+      "pull_requests": [
+        "[#2014](https://github.com/smithy-lang/smithy/pull/2014)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests for verifying behavior of default values in the\n`awsJson1_1` protocol.",
+      "pull_requests": [
+        "[#2002](https://github.com/smithy-lang/smithy/pull/2002)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added several new traits for modelling declarative endpoints.",
+      "pull_requests": [
+        "[#1987](https://github.com/smithy-lang/smithy/pull/1987)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added basic website analytics so that engagement can be measured.",
+      "pull_requests": [
+        "[#2025](https://github.com/smithy-lang/smithy/pull/2025)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for new traits added for declarative endpoints.",
+      "pull_requests": [
+        "[#2013](https://github.com/smithy-lang/smithy/pull/2013)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed handling and deconflicting of duplicate apply statements targetting\nmixed-in members",
+      "pull_requests": [
+        "[#2030](https://github.com/smithy-lang/smithy/pull/2030)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an NPE in the `PluginContext.toBuilder` method in `PluginContext`.",
+      "pull_requests": [
+        "[#2028](https://github.com/smithy-lang/smithy/pull/2028)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a trait parse error for shape IDs.",
+      "pull_requests": [
+        "[#2023](https://github.com/smithy-lang/smithy/pull/2023)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several major issues with how neighbors and model graph traversal was\nimplemented.",
+      "pull_requests": [
+        "[#2020](https://github.com/smithy-lang/smithy/pull/2020)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added expect-check to mitigate NSE exception in `PrivateAccessValidator`.",
+      "pull_requests": [
+        "[#2015](https://github.com/smithy-lang/smithy/pull/2015)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed equality of `@examples` traits by overriding the `equals` method in\n`ExampleTrait`.",
+      "pull_requests": [
+        "[#2009](https://github.com/smithy-lang/smithy/pull/2009)"
+      ]
+    }
+  ],
+  "date": "2023-11-08"
+}

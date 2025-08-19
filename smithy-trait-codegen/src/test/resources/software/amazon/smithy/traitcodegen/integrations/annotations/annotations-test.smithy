@@ -20,6 +20,14 @@ structure DeprecatedStructure {
     /// Has docs in addition to deprecated
     @deprecated
     deprecatedWithDocs: String
+
+    @deprecated
+    deprecatedMap: MemberMap
+}
+
+map MemberMap {
+    key: String
+    value: Integer
 }
 
 @trait
@@ -41,4 +49,15 @@ enum EnumWithAnnotations {
     UNSTABLE
 }
 
+@trait
+@deprecated
+list DeprecatedList {
+    member: Integer
+}
 
+@trait
+@deprecated
+map DeprecatedMap {
+    key: String
+    value: Integer
+}

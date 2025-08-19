@@ -1,0 +1,105 @@
+{
+  "version": "0.9.8",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add `RenameShapes` model transformer",
+      "pull_requests": [
+        "[#318](https://github.com/awslabs/smithy/pull/318)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Build `ValidationEvents` are now sorted",
+      "pull_requests": [
+        "[#263](https://github.com/awslabs/smithy/pull/263)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Smithy CLI logging improvements",
+      "pull_requests": [
+        "[#263](https://github.com/awslabs/smithy/pull/263)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Model builds fail early when syntax errors occur",
+      "pull_requests": [
+        "[#264](https://github.com/awslabs/smithy/pull/264)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Warn when a deprecated trait is applied to a shape",
+      "pull_requests": [
+        "[#279](https://github.com/awslabs/smithy/pull/279)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix behavior of `schemaDocumentExtensions` when converting to OpenAPI",
+      "pull_requests": [
+        "[#320](https://github.com/awslabs/smithy/pull/320)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix discrepancies in `smithy-aws-protocol-tests`",
+      "pull_requests": [
+        "[#309](https://github.com/awslabs/smithy/pull/309)",
+        "[#321](https://github.com/awslabs/smithy/pull/321)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Properly format test case results",
+      "pull_requests": [
+        "[#271](https://github.com/awslabs/smithy/pull/271)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix dropping one character text block lines",
+      "pull_requests": [
+        "[#285](https://github.com/awslabs/smithy/pull/285)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Builds run parallel projections in parallel only if there are more than one",
+      "pull_requests": [
+        "[#263](https://github.com/awslabs/smithy/pull/263)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Run Smithy test suites as parameterized tests",
+      "pull_requests": [
+        "[#263](https://github.com/awslabs/smithy/pull/263)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Migrate protocol tests to new operation syntax",
+      "pull_requests": [
+        "[#260](https://github.com/awslabs/smithy/pull/260)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Build protocol tests with the Smithy Gradle plugin",
+      "pull_requests": [
+        "[#263](https://github.com/awslabs/smithy/pull/263)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Deprecate using explicitly `smithy.api` for trait removal",
+      "pull_requests": [
+        "[#306](https://github.com/awslabs/smithy/pull/306)"
+      ]
+    }
+  ],
+  "date": "2020-03-26"
+}

@@ -1,0 +1,174 @@
+{
+  "version": "1.29.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added EnumTrait validation protocol test",
+      "pull_requests": [
+        "[#1679](https://github.com/awslabs/smithy/pull/1679)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added process based plugins to Smithy build",
+      "pull_requests": [
+        "[#1672](https://github.com/awslabs/smithy/pull/1672)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added GenerateOperationDirective to generate operation shapes separate from\nresources and services",
+      "pull_requests": [
+        "[#1676](https://github.com/awslabs/smithy/pull/1679)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added :root and :in selectors",
+      "pull_requests": [
+        "[#1690](https://github.com/awslabs/smithy/pull/1690)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added --show-traits to select command",
+      "pull_requests": [
+        "[#1692](https://github.com/awslabs/smithy/pull/1692)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added includePreludeShapes in model plugin",
+      "pull_requests": [
+        "[#1693](https://github.com/awslabs/smithy/pull/1693)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added aws.iam#actionName trait to override using the API operation name",
+      "pull_requests": [
+        "[#1679](https://github.com/awslabs/smithy/pull/1665)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved resource property validation and error messages",
+      "pull_requests": [
+        "[#1694](https://github.com/awslabs/smithy/pull/1694)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved CLI outputs for validation commands",
+      "pull_requests": [
+        "[#1695](https://github.com/awslabs/smithy/pull/1695)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Optimized identity and neighbor selectors",
+      "pull_requests": [
+        "[#1691](https://github.com/awslabs/smithy/pull/1691)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Refactored CLI to remove --severity from some commands",
+      "pull_requests": [
+        "[#1700](https://github.com/awslabs/smithy/pull/1700)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Removed unused positional \\[<MODEL>\\] from diff command",
+      "pull_requests": [
+        "[#1703](https://github.com/awslabs/smithy/pull/1703)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Ensured that the ValidationEvent listener gets all events when batch\ninclusions are used",
+      "pull_requests": [
+        "[#1698](https://github.com/awslabs/smithy/pull/1698)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed cp-R for linux, xcopy for windows in smithy-cli installers",
+      "pull_requests": [
+        "[#1686](https://github.com/awslabs/smithy/pull/1686)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed allowUnknownTraits for projection with import",
+      "pull_requests": [
+        "[#1685](https://github.com/awslabs/smithy/pull/1685)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed reversed parameters in diff message for RemovedOperationError",
+      "pull_requests": [
+        "[#1689](https://github.com/awslabs/smithy/pull/1689)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed hierarchical event ids lost when specifying a custom linter validator id\nor severity level",
+      "pull_requests": [
+        "[#1705](https://github.com/awslabs/smithy/pull/1705)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Improved handling additionalSchema targeting an invalid shape",
+      "pull_requests": [
+        "[#1708](https://github.com/awslabs/smithy/pull/1708)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Reduced IDL ambiguity by replacing \\*WS with [WS]",
+      "pull_requests": [
+        "[#1699](https://github.com/awslabs/smithy/pull/1699)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added compatibility note to evolving models",
+      "pull_requests": [
+        "[#1669](https://github.com/awslabs/smithy/pull/1669)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed mixins usage examples in style guide",
+      "pull_requests": [
+        "[#1670](https://github.com/awslabs/smithy/pull/1670)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed type in primitive root-level example",
+      "pull_requests": [
+        "[#1687](https://github.com/awslabs/smithy/pull/1687)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed recommendation to implement presence tracking when handling default\nvalues",
+      "pull_requests": [
+        "[#1682](https://github.com/awslabs/smithy/pull/1682)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Removed OperationBody indefinite repetition in IDL",
+      "pull_requests": [
+        "[#1707](https://github.com/awslabs/smithy/pull/1707)"
+      ]
+    }
+  ],
+  "date": "2023-04-03"
+}

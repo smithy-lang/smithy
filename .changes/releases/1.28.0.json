@@ -1,0 +1,127 @@
+{
+  "version": "1.28.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Add client-only protocol tests for fractional second parsing",
+      "pull_requests": [
+        "[#1627](https://github.com/awslabs/smithy/pull/1627)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add protocol test for omitting empty http-query lists",
+      "pull_requests": [
+        "[#1629](https://github.com/awslabs/smithy/pull/1629)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for JSON Schema draft2020-12",
+      "pull_requests": [
+        "[#1617](https://github.com/awslabs/smithy/pull/1617)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add hierarchical eventIds",
+      "pull_requests": [
+        "[#1527](https://github.com/awslabs/smithy/pull/1527)",
+        "[#1631](https://github.com/awslabs/smithy/pull/1631)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Preserve tag order in generated OpenAPI specification",
+      "pull_requests": [
+        "[#1604](https://github.com/awslabs/smithy/pull/1604)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add shapes generation order in CodegenDirector",
+      "pull_requests": [
+        "[#1615](https://github.com/awslabs/smithy/pull/1615)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Remove reflected input values from validation protocol tests",
+      "pull_requests": [
+        "[#1622](https://github.com/awslabs/smithy/pull/1622)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fail ExamplesTraitValidator when both output and error are defined",
+      "pull_requests": [
+        "[#1599](https://github.com/awslabs/smithy/pull/1599)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix mixin cycles being incorrectly detected",
+      "pull_requests": [
+        "[#1628](https://github.com/awslabs/smithy/pull/1628)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix warnings in AST Loader for Resource and Operation Shapes with mixins",
+      "pull_requests": [
+        "[#1626](https://github.com/awslabs/smithy/pull/1626)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix referenced components removed in openapi schema",
+      "pull_requests": [
+        "[#1595](https://github.com/awslabs/smithy/pull/1595)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix OR condition in scoped attribute selector",
+      "pull_requests": [
+        "[#1618](https://github.com/awslabs/smithy/pull/1618)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix passthroughBehavior casing on x-amzn-apigateway-integration",
+      "pull_requests": [
+        "[#1619](https://github.com/awslabs/smithy/pull/1619)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarify rules for escaping shapes bound to URIs",
+      "pull_requests": [
+        "[#1630](https://github.com/awslabs/smithy/pull/1630)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Document Tree Sitter implementation",
+      "pull_requests": [
+        "[#1621](https://github.com/awslabs/smithy/pull/1621)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarify handling of date-time offsets",
+      "pull_requests": [
+        "[#1597](https://github.com/awslabs/smithy/pull/1597)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add Smithy code generation guide",
+      "pull_requests": [
+        "[#1586](https://github.com/awslabs/smithy/pull/1586)",
+        "[#1592](https://github.com/awslabs/smithy/pull/1592)"
+      ]
+    }
+  ],
+  "date": "2023-02-24"
+}

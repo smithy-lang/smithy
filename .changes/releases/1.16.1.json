@@ -1,0 +1,20 @@
+{
+  "version": "1.16.1",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Make `smithy.api#Unit` easier to adopt by excluding direct relationships\nbetween it and operation inputs and outputs.",
+      "pull_requests": [
+        "[#1034](https://github.com/awslabs/smithy/pull/1034)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed character escaping in a restJson1 protocol test.",
+      "pull_requests": [
+        "[#1035](https://github.com/awslabs/smithy/pull/1035)"
+      ]
+    }
+  ],
+  "date": "2022-01-06"
+}

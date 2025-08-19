@@ -1,0 +1,93 @@
+{
+  "version": "1.16.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added `smithy.api#Unit` and `@input` and `@output` traits.",
+      "pull_requests": [
+        "[#980](https://github.com/awslabs/smithy/pull/980)",
+        "[#1005](https://github.com/awslabs/smithy/pull/1005)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Removed support for collection values for `@httpPrefixHeaders`.",
+      "pull_requests": [
+        "[#1022](https://github.com/awslabs/smithy/pull/1022)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a protocol test for handling path segments that contain regex\nexpressions.",
+      "pull_requests": [
+        "[#1018](https://github.com/awslabs/smithy/pull/1018)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Removed `jsonName` from the `awsJson` protocol tests and documentation.",
+      "pull_requests": [
+        "[#1026](https://github.com/awslabs/smithy/pull/1026)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Reverted changes to timestamp list header serialization protocol tests.",
+      "pull_requests": [
+        "[#1023](https://github.com/awslabs/smithy/pull/1023)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed links in the search results of Smithy's javadocs.",
+      "pull_requests": [
+        "[#1009](https://github.com/awslabs/smithy/pull/1009)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed duplication of validation events for conflicting names.",
+      "pull_requests": [
+        "[#999](https://github.com/awslabs/smithy/pull/999)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added links to Kotlin and Swift generators.",
+      "pull_requests": [
+        "[#1020](https://github.com/awslabs/smithy/pull/1020)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Clarified matching of URIs where greedy labels have no matching segment.",
+      "pull_requests": [
+        "[#1013](https://github.com/awslabs/smithy/pull/1013)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added minor optimizations.",
+      "pull_requests": [
+        "[#1028](https://github.com/awslabs/smithy/pull/1028)",
+        "[#1027](https://github.com/awslabs/smithy/pull/1027)",
+        "[#1004](https://github.com/awslabs/smithy/pull/1004)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added Apple silicon target for smithy-cli.",
+      "pull_requests": [
+        "[#1012](https://github.com/awslabs/smithy/pull/1012)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated smithy-cli to use JDK 17.",
+      "pull_requests": [
+        "[#1003](https://github.com/awslabs/smithy/pull/1003)"
+      ]
+    }
+  ],
+  "date": "2022-01-03"
+}

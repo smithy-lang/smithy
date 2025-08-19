@@ -1,0 +1,69 @@
+{
+  "version": "1.59.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed generation of nested lists/maps in trait code generation.",
+      "pull_requests": [
+        "[#2647](https://github.com/smithy-lang/smithy/pull/2647)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed generation of boolean collections in trait code generation.",
+      "pull_requests": [
+        "[#2652](https://github.com/smithy-lang/smithy/pull/2652)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed enum generation in docgen.",
+      "pull_requests": [
+        "[#2653](https://github.com/smithy-lang/smithy/pull/2653)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a warning when mixin members are removed.",
+      "pull_requests": [
+        "[#2644](https://github.com/smithy-lang/smithy/pull/2644)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a tag to identify service-specific protocol tests.",
+      "pull_requests": [
+        "[#2655](https://github.com/smithy-lang/smithy/pull/2655)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Made several improvements to the landing pages.",
+      "pull_requests": [
+        "[#2656](https://github.com/smithy-lang/smithy/pull/2656)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added guidance about generating unknown members for unions.",
+      "pull_requests": [
+        "[#2657](https://github.com/smithy-lang/smithy/pull/2657)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated references to `awslabs` to `smithy-lang` where relevant.",
+      "pull_requests": [
+        "[#2662](https://github.com/smithy-lang/smithy/pull/2662)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added additional protocol tests for `restJson1`.",
+      "pull_requests": [
+        "[#2641](https://github.com/smithy-lang/smithy/pull/2641)"
+      ]
+    }
+  ],
+  "date": "2025-06-16"
+}

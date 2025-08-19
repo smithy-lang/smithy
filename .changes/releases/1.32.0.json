@@ -1,0 +1,144 @@
+{
+  "version": "1.32.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Refactor parsing and validation of `list` and `map` shapes. This improved\nvalidation output when unexpected members were present in these shapes",
+      "pull_requests": [
+        "[#1782](https://github.com/awslabs/smithy/pull/1782)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated smithy-build to output projection failures only after all plugins\nfinish running (failed or otherwise)",
+      "pull_requests": [
+        "[#1762](https://github.com/awslabs/smithy/pull/1762)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new pluggable validation-event decorator capability. This allows for\ncustomizing of validation events through a service provider interface",
+      "pull_requests": [
+        "[#1774](https://github.com/awslabs/smithy/pull/1774)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added new diff-evaluator to emit events for when the `@required` trait is\nadded to existing structures without a default",
+      "pull_requests": [
+        "[##1781](https://github.com/awslabs/smithy/pull/1781)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved validation output for `@default` collisions",
+      "pull_requests": [
+        "[#1780](https://github.com/awslabs/smithy/pull/1780)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `@httpQuery` trait validation to prevent query-literal and query-param\nconflicts",
+      "pull_requests": [
+        "[#1786](https://github.com/awslabs/smithy/pull/1786)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated default pagination flags to improve missing-pagination validation",
+      "pull_requests": [
+        "[#1764](https://github.com/awslabs/smithy/pull/1764)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `SdkServiceIdValidator` to emit `DANGER` events instead of `ERROR`\nevents",
+      "pull_requests": [
+        "[#1772](https://github.com/awslabs/smithy/pull/1772)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated `ChangedEnumTrait` evaluator to include specific ids, in order to\ndifferentiate specific events",
+      "pull_requests": [
+        "[#1787](https://github.com/awslabs/smithy/pull/1787)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added protocol tests to validate http-label escaping in the `restXml` protocol",
+      "pull_requests": [
+        "[#1759](https://github.com/awslabs/smithy/pull/1759)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for `@externalDocs` trait when converting operations in the\nOpenAPI converter",
+      "pull_requests": [
+        "[#1767](https://github.com/awslabs/smithy/pull/1767)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated a handful of specifications in the smithy-grammar to improve\nparsability",
+      "pull_requests": [
+        "[#1788](https://github.com/awslabs/smithy/pull/1788)",
+        "[#1790](https://github.com/awslabs/smithy/pull/1790)",
+        "[#1792](https://github.com/awslabs/smithy/pull/1792)",
+        "[#1793](https://github.com/awslabs/smithy/pull/1793)",
+        "[#1800](https://github.com/awslabs/smithy/pull/1800)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed `migrate` CLI command to properly upgrade 1/1.0 models to 2/2.0",
+      "pull_requests": [
+        "[#1579](https://github.com/awslabs/smithy/pull/1579)",
+        "[#1769](https://github.com/awslabs/smithy/pull/1769)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed application of enum-mixins on empty enums",
+      "pull_requests": [
+        "[#1794](https://github.com/awslabs/smithy/pull/1794)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed handling of dangling doc-comments in structures",
+      "pull_requests": [
+        "[#1776](https://github.com/awslabs/smithy/pull/1776)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several smithy-grammar typos and consistency issues",
+      "pull_requests": [
+        "[#1783](https://github.com/awslabs/smithy/pull/1783)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added a warning about the limitations of request-validation in API-Gateway",
+      "pull_requests": [
+        "[#1765](https://github.com/awslabs/smithy/pull/1765)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated CLI installation guide for Windows to be more idiomatic",
+      "pull_requests": [
+        "[#1757](https://github.com/awslabs/smithy/pull/1757)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated protocol documentation pages to indicate support for the\n`@requestCompression` trait",
+      "pull_requests": [
+        "[#1763](https://github.com/awslabs/smithy/pull/1763)"
+      ]
+    }
+  ],
+  "date": "2023-06-06"
+}

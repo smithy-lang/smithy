@@ -1,0 +1,132 @@
+{
+  "version": "1.43.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Updated `RemovedShape` diff event severity from `ERROR` to `WARNING` for\nscalar shapes.",
+      "pull_requests": [
+        "[#2037](https://github.com/smithy-lang/smithy/pull/2037)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Made `parameterizedTestSource` public, allowing users to use a customized\nsuite as a source for JUnit parameterized tests.",
+      "pull_requests": [
+        "[#2087](https://github.com/smithy-lang/smithy/pull/2087)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Refactored `ReplaceShapes` transform to improve efficiency.",
+      "pull_requests": [
+        "[#2082](https://github.com/smithy-lang/smithy/pull/2082)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation for endpoint patterns used by `standardRegionalEndpoints` and\n`standardPartitionalEndpoints`.",
+      "pull_requests": [
+        "[#2069](https://github.com/smithy-lang/smithy/pull/2069)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added support for CLI dependency resolution via proxy.",
+      "pull_requests": [
+        "[#2076](https://github.com/smithy-lang/smithy/pull/2076)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Improved efficiency of `ReplaceShapes` transform by only building container\nshapes once when multiple members are changed.",
+      "pull_requests": [
+        "[#2081](https://github.com/smithy-lang/smithy/pull/2081)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Moved `allowOptionalNull` to `NodeValidationVisitor.Feature`.",
+      "pull_requests": [
+        "[#2080](https://github.com/smithy-lang/smithy/pull/2080)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added rules engine built-in for `AccountIdEndpointMode`.",
+      "pull_requests": [
+        "[#2065](https://github.com/smithy-lang/smithy/pull/2065)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added [JReleaser](https://jreleaser.org/) config.",
+      "pull_requests": [
+        "[#2059](https://github.com/smithy-lang/smithy/pull/2059)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added ability to find all operations for which a shape is used as an input,\noutput, or error.",
+      "pull_requests": [
+        "[#2064](https://github.com/smithy-lang/smithy/pull/2064)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Split InputOutput shapes into separate request and response shapes for\n`restXml` protocol tests.",
+      "pull_requests": [
+        "[#2063](https://github.com/smithy-lang/smithy/pull/2063)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where `@iamAction` wasn't reflected in CFN resource schema\ncreation.",
+      "pull_requests": [
+        "[#2091](https://github.com/smithy-lang/smithy/pull/2091)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed tree node start and end locations.",
+      "pull_requests": [
+        "[#2084](https://github.com/smithy-lang/smithy/pull/2084)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several minor build warnings.",
+      "pull_requests": [
+        "[2089](https://github.com/smithy-lang/smithy/pull/2089)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed protocol test service signing name for `awsJson1_1` protocol.",
+      "pull_requests": [
+        "[#2089](https://github.com/smithy-lang/smithy/pull/2089)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Updated member removal for `ReplaceShapes` transform to ensure enum and\nintEnum members are correctly removed.",
+      "pull_requests": [
+        "[#2082](https://github.com/smithy-lang/smithy/pull/2082)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Corrected erroneous outer tags in `restXml` protocol tests",
+      "pull_requests": [
+        "[#2071](https://github.com/smithy-lang/smithy/pull/2071)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for configuring CLI dependency resolution via proxy.",
+      "pull_requests": [
+        "[#2083](https://github.com/smithy-lang/smithy/pull/2083)"
+      ]
+    }
+  ],
+  "date": "2024-01-05"
+}
