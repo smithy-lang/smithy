@@ -9,7 +9,6 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -54,12 +53,11 @@ public interface ExpressionVisitor<R> {
     /**
      * Visits a coalesce function.
      *
-     * @param left the first value to check.
-     * @param right the second value to check.
+     * @param expressions The coalesce expressions to check.
      * @return the value from the visitor.
      */
-    default R visitCoalesce(Expression left, Expression right) {
-        return visitLibraryFunction(Coalesce.getDefinition(), ListUtils.of(left, right));
+    default R visitCoalesce(List<Expression> expressions) {
+        return visitLibraryFunction(Coalesce.getDefinition(), expressions);
     }
 
     /**
@@ -121,7 +119,7 @@ public interface ExpressionVisitor<R> {
         }
 
         @Override
-        public R visitCoalesce(Expression left, Expression right) {
+        public R visitCoalesce(List<Expression> expressions) {
             return getDefault();
         }
 

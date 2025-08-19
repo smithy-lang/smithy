@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
@@ -390,36 +391,18 @@ public final class CfgBuilder {
     }
 
     private Condition createCoalesceCondition(String resultVar, Set<String> versions) {
-        // De-duplicate and sort for determinism
-        List<String> inputs = new ArrayList<>(new LinkedHashSet<>(versions));
-        Collections.sort(inputs);
-
-        if (inputs.isEmpty()) {
+        if (versions.isEmpty()) {
             throw new IllegalArgumentException("Cannot create coalesce with no versions");
         }
 
-        Expression coalesced = buildCoalesceExpressionFromPrepared(inputs);
-
-        return Condition.builder()
-                .fn((LibraryFunction) coalesced)
-                .result(Identifier.of(resultVar))
-                .build();
-    }
-
-    private Expression buildCoalesceExpressionFromPrepared(List<String> inputs) {
-        Expression coalesced = Expression.getReference(Identifier.of(inputs.get(0)));
-
-        if (inputs.size() == 1) {
-            // Hack: coalesce(x, x) for single element
-            return Coalesce.ofExpressions(coalesced, coalesced);
+        // TreeSet for both deduplication and deterministic ordering
+        Set<String> inputs = new TreeSet<>(versions);
+        List<Expression> refs = new ArrayList<>(inputs.size());
+        for (String input : inputs) {
+            refs.add(Expression.getReference(Identifier.of(input)));
         }
 
-        // Build coalesce chain for multiple versions
-        for (int i = 1; i < inputs.size(); i++) {
-            Expression ref = Expression.getReference(Identifier.of(inputs.get(i)));
-            coalesced = Coalesce.ofExpressions(coalesced, ref);
-        }
-        return coalesced;
+        return Condition.builder().fn(Coalesce.ofExpressions(refs)).result(Identifier.of(resultVar)).build();
     }
 
     private Rule canonicalizeResult(Rule rule) {

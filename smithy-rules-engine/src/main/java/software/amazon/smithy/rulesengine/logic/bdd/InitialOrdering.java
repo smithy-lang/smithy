@@ -51,7 +51,6 @@ final class InitialOrdering implements OrderingStrategy {
 
         long elapsed = System.currentTimeMillis() - startTime;
         LOGGER.info(() -> String.format("Initial ordering: %d conditions in %dms", conditions.length, elapsed));
-        result.forEach(System.out::println);
         return result;
     }
 
