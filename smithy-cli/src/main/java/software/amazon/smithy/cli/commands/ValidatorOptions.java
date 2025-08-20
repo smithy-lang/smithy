@@ -24,6 +24,7 @@ final class ValidatorOptions implements ArgumentReceiver {
     static final String SHOW_VALIDATORS = "--show-validators";
     static final String HIDE_VALIDATORS = "--hide-validators";
 
+    private Severity severityOverride;
     private Severity severity;
     private List<String> showValidators = Collections.emptyList();
     private List<String> hideValidators = Collections.emptyList();
@@ -108,12 +109,20 @@ final class ValidatorOptions implements ArgumentReceiver {
     }
 
     /**
+     * Set a severity override
+     *
+     * @param severity Severity to set.
+     */
+    void severityOverride(Severity severity) {
+        this.severityOverride = severity;
+    }
+
+    /**
      * Set and get the severity level, taking into account standard options that affect the default.
      *
      * @param standardOptions  Standard options to query if no severity is explicitly set.
-     * @return Returns the resolved severity option.
      */
-    Severity detectAndGetSeverity(StandardOptions standardOptions) {
+    void detectAndSetSeverity(StandardOptions standardOptions) {
         if (severity == null) {
             if (standardOptions.quiet()) {
                 severity = Severity.DANGER;
@@ -121,7 +130,6 @@ final class ValidatorOptions implements ArgumentReceiver {
                 severity = Severity.WARNING;
             }
         }
-        return severity;
     }
 
     /**
@@ -161,6 +169,18 @@ final class ValidatorOptions implements ArgumentReceiver {
     }
 
     /**
+     * Returns the current severity.
+     *
+     *  @return The validation severity
+     */
+    Severity getSeverity() {
+        if (severityOverride != null) {
+            return severityOverride;
+        }
+        return severity;
+    }
+
+    /**
      * Check if the given validation event matches the show/hide settings.
      *
      * <p>A severity must be set before calling this method.
@@ -169,7 +189,8 @@ final class ValidatorOptions implements ArgumentReceiver {
      * @return Return true if the event can be seen.
      */
     boolean isVisible(ValidationEvent event) {
-        if (event.getSeverity().ordinal() < severity.ordinal()) {
+
+        if (event.getSeverity().ordinal() < getSeverity().ordinal()) {
             return false;
         }
 

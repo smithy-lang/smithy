@@ -298,11 +298,9 @@ final class ModelBuilder {
     }
 
     // Determine a default severity if one wasn't given, by inspecting if there is a --severity option.
-    private Severity resolveMinSeverity(StandardOptions standardOptions, ValidatorOptions validatorOption) {
-        if (defaultSeverity != null && validatorOption.severity() == null) {
-            validatorOption.severity(defaultSeverity);
-        }
-        return validatorOption.detectAndGetSeverity(standardOptions);
+    private void resolveMinSeverity(StandardOptions standardOptions, ValidatorOptions validatorOption) {
+        validatorOption.severityOverride(defaultSeverity);
+        validatorOption.detectAndSetSeverity(standardOptions);
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {
