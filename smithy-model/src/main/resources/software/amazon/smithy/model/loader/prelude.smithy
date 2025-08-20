@@ -767,13 +767,6 @@ string pattern
 /// be present.
 @trait(
     selector: "structure > member"
-    breakingChanges: [
-        {
-            change: "add"
-            severity: "WARNING"
-            message: "If any consumers were previously omitting this member in operation inputs, making it required is backwards incompatible"
-        }
-    ]
 )
 structure required {}
 
