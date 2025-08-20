@@ -44,8 +44,10 @@ public class DiffCommandTest {
         Path oldModel = Paths.get(getClass().getResource("diff/old2.smithy").toURI());
         Path newModel = Paths.get(getClass().getResource("diff/new2.smithy").toURI());
         CliUtils.Result result = CliUtils.runSmithy("diff",
-                "--old", oldModel.toString(),
-                "--new", newModel.toString());
+                "--old",
+                oldModel.toString(),
+                "--new",
+                newModel.toString());
 
         assertThat(result.code(), is(0));
 
@@ -60,9 +62,12 @@ public class DiffCommandTest {
         Path newModel = Paths.get(getClass().getResource("diff/new2.smithy").toURI());
         CliUtils.Result result = CliUtils.runSmithy("diff",
                 // warning events won't be shown in the output
-                "--severity", "DANGER",
-                "--old", oldModel.toString(),
-                "--new", newModel.toString());
+                "--severity",
+                "DANGER",
+                "--old",
+                oldModel.toString(),
+                "--new",
+                newModel.toString());
 
         assertThat(result.code(), is(0));
         assertThat(result.stdout(), is(""));
