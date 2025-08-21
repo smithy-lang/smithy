@@ -25,7 +25,7 @@ Smithy build plugin that generates Java trait classes from customized Smithy tra
 
 ## Configuration
 
-The generator supports the following configuration options: 
+The generator supports the following configuration options:
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -38,26 +38,55 @@ An example for `smithy-build.json`:
 
 ```json
 {
-    "version": "1.0",
-    "plugins": {
-        "trait-codegen": {
-            "package": "com.example.traits",
-            "namespace": "com.example.traits",
-            "header": ["Copyright Example Corp"],
-            "excludeTags": ["internal"]
-        }
+  "version": "1.0",
+  "plugins": {
+    "trait-codegen": {
+      "package": "com.example.traits",
+      "namespace": "com.example.traits",
+      "header": ["Copyright Example Corp"],
+      "excludeTags": ["internal"]
     }
+  }
 }
 ```
 
 ## Getting Started
+### Configure `smithy-build.json`
+To generate Java code for your customized traits, you will add the `trait-codegen` plugin to the
+[plugin configuration](https://smithy.io/2.0/guides/smithy-build-json.html) in `smithy-build.json`:
 
-First, create a gradle-based Smithy model project. You can also use Smithy CLI to generate a [complete custom trait example](https://github.com/smithy-lang/smithy-examples/tree/main/custom-trait-examples/custom-trait): `smithy init -o custom-trait -t custom-trait`.
+```json
+{
+  "version": "1.0",
+  "sources": ["model"],
+  "plugins": {
+    "trait-codegen": {
+      "package": "io.examples.traits",
+      "namespace": "example.traits"
+    }
+  }
+}
+```
+### Add dependency
 
-> [!NOTE]
-> The generator currently cannot be run with non-gradle-based projects.
+#### **Using Smithy CLI**
 
-In `build.gradle.kts`, add `id("software.amazon.smithy.gradle.smithy-trait-package").version("1.3.0")` to the `plugin` section.
+If you are using Smithy CLI, you will add dependency in `smithy-build.json`:
+```json
+{
+    "version": "1.0",
+    "sources": ["model"],
+    "maven": {
+      "dependencies": [
+        "software.amazon.smithy:smithy-trait-codegen:1.61.0"
+      ]
+    }
+    "...": "..."
+}
+```
+Then you can run `smithy build` to build the model and generate Java code for your customized traits.
+#### **Using Gradle**
+If you are using Gradle, you will add dependency `id("software.amazon.smithy.gradle.smithy-trait-package").version("1.3.0")` to the `plugin` section in `build.gradle.kts`:
 ```kotlin
 plugins {
     id("software.amazon.smithy.gradle.smithy-trait-package").version("1.3.0")
@@ -73,20 +102,10 @@ repositories {
     mavenCentral()
 }
 ```
+Then you can run `gradle build` to build the model and generate Java code for your customized traits.
 
-Next, add the `trait-codegen` plugin to the
-[plugin configuration](https://smithy.io/2.0/guides/smithy-build-json.html) in `smithy-build.json`.
-
-```json
-"plugins": {
-    "trait-codegen": {
-        "package": "io.examples.traits",
-        "namespace": "example.traits",
-    }
-}
-```
-
-Finally, build the model with Gradle: `gradle build` and you can find the the generated Java classes under `/build/smithyprojections/trait-codegen/`
+### Check the Generated Code
+Finally you can find the the generated Java classes under `/build/smithyprojections/trait-codegen/`
 
 The generated Java class for `annotationTrait` from `custom-trait` template would be:
 ```java
@@ -101,8 +120,8 @@ public final class AnnotationTrait extends AbstractTrait implements ToSmithyBuil
     @Override
     protected Node createNode() {
         return Node.objectNodeBuilder()
-            .sourceLocation(getSourceLocation())
-            .build();
+                .sourceLocation(getSourceLocation())
+                .build();
     }
 
     public static AnnotationTrait fromNode(Node node) {
