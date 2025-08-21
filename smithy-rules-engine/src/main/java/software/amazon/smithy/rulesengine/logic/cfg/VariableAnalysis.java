@@ -29,26 +29,24 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 
 /**
  * Analyzes variables in an endpoint rule set, collecting bindings, reference counts,
- * and other metadata needed for SSA transformation and optimization.
+ * and expression mappings needed for SSA transformation.
  */
 final class VariableAnalysis {
     private final Set<String> inputParams;
     private final Map<String, Set<String>> bindings;
     private final Map<String, Integer> referenceCounts;
     private final Map<String, Map<String, String>> expressionMappings;
-    private final Map<String, List<String>> expressionToVars;
 
     private VariableAnalysis(
             Set<String> inputParams,
             Map<String, Set<String>> bindings,
             Map<String, Integer> referenceCounts,
-            Map<String, List<String>> expressionToVars
+            Map<String, Map<String, String>> expressionMappings
     ) {
         this.inputParams = inputParams;
         this.bindings = bindings;
         this.referenceCounts = referenceCounts;
-        this.expressionToVars = expressionToVars;
-        this.expressionMappings = createExpressionMappings(bindings);
+        this.expressionMappings = expressionMappings;
     }
 
     static VariableAnalysis analyze(EndpointRuleSet ruleSet) {
@@ -63,7 +61,7 @@ final class VariableAnalysis {
                 inputParameters,
                 visitor.bindings,
                 visitor.referenceCounts,
-                visitor.expressionToVars);
+                createExpressionMappings(visitor.bindings));
     }
 
     Set<String> getInputParams() {
@@ -123,15 +121,16 @@ final class VariableAnalysis {
         Map<String, String> mapping = new HashMap<>();
 
         if (expressions.size() == 1) {
+            // Single binding: no SSA rename needed
             String expression = expressions.iterator().next();
             mapping.put(expression, varName);
         } else {
+            // Multiple bindings: use SSA naming convention
             List<String> sortedExpressions = new ArrayList<>(expressions);
             sortedExpressions.sort(String::compareTo);
-
             for (int i = 0; i < sortedExpressions.size(); i++) {
                 String expression = sortedExpressions.get(i);
-                String uniqueName = (i == 0) ? varName : varName + "_" + i;
+                String uniqueName = varName + "_ssa_" + (i + 1);
                 mapping.put(expression, uniqueName);
             }
         }
@@ -142,8 +141,6 @@ final class VariableAnalysis {
     private static class AnalysisVisitor {
         final Map<String, Set<String>> bindings = new HashMap<>();
         final Map<String, Integer> referenceCounts = new HashMap<>();
-        final Map<String, List<String>> expressionToVars = new HashMap<>();
-
         private final Set<String> inputParams;
 
         AnalysisVisitor(Set<String> inputParams) {
@@ -156,13 +153,9 @@ final class VariableAnalysis {
                     String varName = condition.getResult().get().toString();
                     LibraryFunction fn = condition.getFunction();
                     String expression = fn.toString();
-                    String canonical = fn.canonicalize().toString();
 
                     bindings.computeIfAbsent(varName, k -> new HashSet<>())
                             .add(expression);
-
-                    expressionToVars.computeIfAbsent(canonical, k -> new ArrayList<>())
-                            .add(varName);
                 }
 
                 countReferences(condition.getFunction());
@@ -194,7 +187,6 @@ final class VariableAnalysis {
             if (expression instanceof Reference) {
                 Reference ref = (Reference) expression;
                 String name = ref.getName().toString();
-                // Count all references, including input parameters
                 referenceCounts.merge(name, 1, Integer::sum);
             } else if (expression instanceof StringLiteral) {
                 StringLiteral str = (StringLiteral) expression;

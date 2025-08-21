@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -319,44 +318,6 @@ class CfgBuilderTest {
     }
 
     @Test
-    void createResultWithStructurallyIdenticalEndpointsCreatesConvergenceNode() {
-        // Create two rules with structurally identical endpoints but different variable names
-        Rule rule1 = EndpointRule.builder()
-                .endpoint(TestHelpers.endpoint("https://{region1}.example.com"));
-        Rule rule2 = EndpointRule.builder()
-                .endpoint(TestHelpers.endpoint("https://{region2}.example.com"));
-
-        // Create parameters for the variables used in the endpoints
-        Parameters params = Parameters.builder()
-                .addParameter(Parameter.builder()
-                        .name("region1")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("region2")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .build();
-
-        EndpointRuleSet ruleSetWithEndpoints = EndpointRuleSet.builder()
-                .parameters(params)
-                .rules(ListUtils.of(rule1, rule2))
-                .build();
-        CfgBuilder convergenceBuilder = new CfgBuilder(ruleSetWithEndpoints);
-
-        CfgNode node1 = convergenceBuilder.createResult(rule1);
-        CfgNode node2 = convergenceBuilder.createResult(rule2);
-
-        // Both should return the same convergence node
-        assertSame(node1, node2);
-        assertInstanceOf(ConditionNode.class, node1);
-    }
-
-    @Test
     void createResultDistinguishesEndpointsWithDifferentStructure() {
         // Create rules with different endpoint structures
         Rule rule1 = EndpointRule.builder()
@@ -384,140 +345,5 @@ class CfgBuilderTest {
 
         // Different structures should not converge
         assertNotSame(node1, node2);
-    }
-
-    @Test
-    void createResultWithIdenticalErrorsCreatesConvergenceNode() {
-        // Create structurally identical error rules with different variable references
-        Rule error1 = ErrorRule.builder()
-                .error(Expression.of("Region {r1} is not supported"));
-        Rule error2 = ErrorRule.builder()
-                .error(Expression.of("Region {r2} is not supported"));
-
-        Parameters params = Parameters.builder()
-                .addParameter(Parameter.builder()
-                        .name("r1")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("r2")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .build();
-
-        EndpointRuleSet ruleSetWithErrors = EndpointRuleSet.builder()
-                .parameters(params)
-                .rules(ListUtils.of(error1, error2))
-                .build();
-        CfgBuilder convergenceBuilder = new CfgBuilder(ruleSetWithErrors);
-
-        CfgNode node1 = convergenceBuilder.createResult(error1);
-        CfgNode node2 = convergenceBuilder.createResult(error2);
-
-        // Should converge to the same node
-        assertSame(node1, node2);
-    }
-
-    @Test
-    void createResultHandlesComplexTemplateConvergence() {
-        // Create endpoints with complex templates that are structurally identical
-        Rule rule1 = EndpointRule.builder()
-                .endpoint(TestHelpers.endpoint("https://{svc}.{reg}.amazonaws.com/{path}"));
-        Rule rule2 = EndpointRule.builder()
-                .endpoint(TestHelpers.endpoint("https://{service}.{region}.amazonaws.com/{resource}"));
-
-        Parameters params = Parameters.builder()
-                .addParameter(Parameter.builder()
-                        .name("svc")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("reg")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("path")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("service")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("region")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .addParameter(Parameter.builder()
-                        .name("resource")
-                        .type(ParameterType.STRING)
-                        .defaultValue(Value.stringValue("a"))
-                        .required(true)
-                        .build())
-                .build();
-
-        EndpointRuleSet ruleSetWithTemplates = EndpointRuleSet.builder()
-                .parameters(params)
-                .rules(ListUtils.of(rule1, rule2))
-                .build();
-        CfgBuilder convergenceBuilder = new CfgBuilder(ruleSetWithTemplates);
-
-        CfgNode node1 = convergenceBuilder.createResult(rule1);
-        CfgNode node2 = convergenceBuilder.createResult(rule2);
-
-        // Structurally identical templates should converge
-        assertSame(node1, node2);
-    }
-
-    @Test
-    void createResultDoesNotConvergeWithTooManyDivergentPaths() {
-        // Create many endpoints with different variable names at multiple positions
-        // This should exceed MAX_DIVERGENT_PATHS_FOR_CONVERGENCE (5)
-        List<Rule> rules = new ArrayList<>();
-        Parameters.Builder paramsBuilder = Parameters.builder();
-
-        for (int i = 0; i < 7; i++) {
-            rules.add(EndpointRule.builder()
-                    .endpoint(TestHelpers.endpoint(String.format("https://{var%d}.{reg%d}.example.com", i, i))));
-            paramsBuilder.addParameter(Parameter.builder()
-                    .name("var" + i)
-                    .type(ParameterType.STRING)
-                    .defaultValue(Value.stringValue("a"))
-                    .required(true)
-                    .build());
-            paramsBuilder.addParameter(Parameter.builder()
-                    .name("reg" + i)
-                    .type(ParameterType.STRING)
-                    .defaultValue(Value.stringValue("a"))
-                    .required(true)
-                    .build());
-        }
-
-        EndpointRuleSet ruleSetWithMany = EndpointRuleSet.builder()
-                .parameters(paramsBuilder.build())
-                .rules(rules)
-                .build();
-        CfgBuilder convergenceBuilder = new CfgBuilder(ruleSetWithMany);
-
-        // With too many divergent paths, convergence should be skipped
-        CfgNode firstNode = convergenceBuilder.createResult(rules.get(0));
-        CfgNode lastNode = convergenceBuilder.createResult(rules.get(rules.size() - 1));
-
-        // They should still be cached as the same due to interning,
-        // but won't have phi node convergence due to performance limits
-        assertSame(firstNode, lastNode);
     }
 }

@@ -77,15 +77,14 @@ public class SsaTransformTest {
 
         EndpointRuleSet result = SsaTransform.transform(original);
 
-        // The second "temp" should be renamed
         List<Rule> resultRules = result.getRules();
         assertEquals(2, resultRules.size());
 
         EndpointRule resultRule1 = (EndpointRule) resultRules.get(0);
-        assertEquals("temp", resultRule1.getConditions().get(0).getResult().get().toString());
+        assertEquals("temp_ssa_1", resultRule1.getConditions().get(0).getResult().get().toString());
 
         EndpointRule resultRule2 = (EndpointRule) resultRules.get(1);
-        assertEquals("temp_1", resultRule2.getConditions().get(0).getResult().get().toString());
+        assertEquals("temp_ssa_2", resultRule2.getConditions().get(0).getResult().get().toString());
     }
 
     @Test
@@ -110,9 +109,9 @@ public class SsaTransformTest {
         EndpointRuleSet result = SsaTransform.transform(original);
 
         List<Rule> resultRules = result.getRules();
-        assertEquals("temp", (resultRules.get(0)).getConditions().get(0).getResult().get().toString());
-        assertEquals("temp_1", (resultRules.get(1)).getConditions().get(0).getResult().get().toString());
-        assertEquals("temp_2", (resultRules.get(2)).getConditions().get(0).getResult().get().toString());
+        assertEquals("temp_ssa_1", resultRules.get(0).getConditions().get(0).getResult().get().toString());
+        assertEquals("temp_ssa_2", resultRules.get(1).getConditions().get(0).getResult().get().toString());
+        assertEquals("temp_ssa_3", resultRules.get(2).getConditions().get(0).getResult().get().toString());
     }
 
     @Test

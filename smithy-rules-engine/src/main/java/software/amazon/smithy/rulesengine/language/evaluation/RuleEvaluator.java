@@ -138,21 +138,6 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     }
 
     /**
-     * Configure the rule evaluator with the given parameters and parameter values for manual evaluation.
-     *
-     * @param parameters Parameters of the ruleset to evaluate.
-     * @param parameterArguments Parameter values to evaluate the ruleset against.
-     * @return the updated evaluator.
-     */
-    public RuleEvaluator withParameters(Parameters parameters, Map<Identifier, Value> parameterArguments) {
-        for (Parameter parameter : parameters) {
-            parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
-        }
-        parameterArguments.forEach(scope::insert);
-        return this;
-    }
-
-    /**
      * Evaluates the given condition in the current scope.
      *
      * @param condition the condition to evaluate.
@@ -185,14 +170,13 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
     @Override
     public Value visitCoalesce(List<Expression> expressions) {
-        Value result = Value.emptyValue();
         for (Expression exp : expressions) {
-            result = exp.accept(this);
+            Value result = exp.accept(this);
             if (!result.isEmpty()) {
                 return result;
             }
         }
-        return result;
+        return Value.emptyValue();
     }
 
     @Override
