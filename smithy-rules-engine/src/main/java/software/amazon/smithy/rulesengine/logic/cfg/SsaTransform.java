@@ -29,8 +29,8 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
  *
  * <p>This transformation ensures that each variable is assigned exactly once by renaming variables when they are
  * reassigned in different parts of the tree. For example, if variable "x" is assigned in multiple branches, they
- * become "x", "x_1", "x_2", etc. Without this transform, the BDD compilation would confuse divergent paths that have
- * the same variable name.
+ * become "x_ssa_1", "x_ssa_2", "x_ssa_3", etc. Without this transform, the BDD compilation would confuse divergent
+ * paths that have the same variable name.
  *
  * <p>Note that this transform is only applied when the reassignment is done using different
  * arguments than previously seen assignments of the same variable name.
@@ -59,7 +59,8 @@ final class SsaTransform {
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
         ruleSet = VariableConsolidationTransform.transform(ruleSet);
         ruleSet = CoalesceTransform.transform(ruleSet);
-        SsaTransform ssaTransform = new SsaTransform(VariableAnalysis.analyze(ruleSet));
+        VariableAnalysis variableAnalysis = VariableAnalysis.analyze(ruleSet);
+        SsaTransform ssaTransform = new SsaTransform(variableAnalysis);
 
         List<Rule> rewrittenRules = new ArrayList<>(ruleSet.getRules().size());
         for (Rule original : ruleSet.getRules()) {
