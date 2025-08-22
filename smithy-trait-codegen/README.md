@@ -1,18 +1,20 @@
 # Smithy Trait CodeGen
 
-Smithy build plugin that generates Java trait classes from customized Smithy trait defined with [`@trait`](https://smithy.io/2.0/spec/model.html#trait-trait).
+This package contains a Smithy build plugin that generates Java trait classes from customized Smithy traits defined with [`@trait`](https://smithy.io/2.0/spec/model.html#trait-trait).
 
 ## Supported Trait Types
-- [**Simple Types**](https://smithy.io/2.0/spec/simple-types.html) (Excluding `Blob` and `Boolean`)
-- **Structure**
+
+- [**Simple Types**](https://smithy.io/2.0/spec/simple-types.html), excluding `Blob` and `Boolean`
+- **Structure**, including [annotation traits](https://smithy.io/2.0/spec/model.html#annotation-traits)
 - **List**
 - **Set**
 - **Map**
 
 > [!NOTE]
-> [Annotation Trait](https://smithy.io/2.0/spec/model.html#annotation-traits) is recommended rather than Boolean trait
+> [Annotation traits](https://smithy.io/2.0/spec/model.html#annotation-traits) are recommended instead of Boolean traits.
 
 ## Supported Smithy Prelude Traits
+
 - [@required](https://smithy.io/2.0/spec/type-refinement-traits.html#required-trait)
 - [@enumValue](https://smithy.io/2.0/spec/type-refinement-traits.html#enumvalue-trait)
 - [@mixin](https://smithy.io/2.0/spec/type-refinement-traits.html#mixin-trait)
@@ -51,7 +53,9 @@ An example for `smithy-build.json`:
 ```
 
 ## Getting Started
+
 ### Configure `smithy-build.json`
+
 To generate Java code for your customized traits, you will add the `trait-codegen` plugin to the
 [plugin configuration](https://smithy.io/2.0/guides/smithy-build-json.html) in `smithy-build.json`:
 
@@ -67,11 +71,13 @@ To generate Java code for your customized traits, you will add the `trait-codege
   }
 }
 ```
+
 ### Add dependency
 
 #### **Using Smithy CLI**
 
-If you are using Smithy CLI, you will add dependency in `smithy-build.json`:
+If you are using the Smithy CLI, declare a dependency in `smithy-build.json`:
+
 ```json
 {
     "version": "1.0",
@@ -84,9 +90,13 @@ If you are using Smithy CLI, you will add dependency in `smithy-build.json`:
     "...": "..."
 }
 ```
-Then you can run `smithy build` to build the model and generate Java code for your customized traits.
+
+Then, running `smithy build` will build the model and generate Java code for your customized traits.
+
 #### **Using Gradle**
-If you are using Gradle, you will add dependency `id("software.amazon.smithy.gradle.smithy-trait-package").version("1.3.0")` to the `plugin` section in `build.gradle.kts`:
+
+If you are using Gradle, declare a dependency in the `plugin` section in `build.gradle.kts`:
+
 ```kotlin
 plugins {
     id("software.amazon.smithy.gradle.smithy-trait-package").version("1.3.0")
@@ -102,12 +112,15 @@ repositories {
     mavenCentral()
 }
 ```
-Then you can run `gradle build` to build the model and generate Java code for your customized traits.
+
+Then, running `gradle build` will build the model and generate Java code for your customized traits.
 
 ### Check the Generated Code
-Finally you can find the the generated Java classes under `/build/smithyprojections/trait-codegen/`
 
-The generated Java class for `annotationTrait` from `custom-trait` template would be:
+Finally, you can find the generated Java classes under `/build/smithyprojections/trait-codegen/`
+
+The generated Java class for `annotationTrait` from `custom-trait` [template](https://github.com/smithy-lang/smithy-examples/tree/main/custom-trait-examples/custom-trait) would be:
+
 ```java
 @SmithyGenerated
 public final class AnnotationTrait extends AbstractTrait implements ToSmithyBuilder<AnnotationTrait> {
@@ -135,7 +148,9 @@ public final class AnnotationTrait extends AbstractTrait implements ToSmithyBuil
     // Service Provider Implementation
 }
 ```
-The generated Java class for `JsonNameTrait` from `custom-trait` template would be:
+
+The generated Java class for `JsonNameTrait` from `custom-trait` [template](https://github.com/smithy-lang/smithy-examples/tree/main/custom-trait-examples/custom-trait) would be:
+
 ```java
 @SmithyGenerated
 public final class JsonNameTrait extends StringTrait {
@@ -154,7 +169,3 @@ public final class JsonNameTrait extends StringTrait {
     // Service Provider Implementation
 }
 ```
-
-## License
-
-Licensed under the Apache 2.0 License.
