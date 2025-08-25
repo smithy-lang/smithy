@@ -25,6 +25,18 @@ This package contains a Smithy build plugin that generates Java trait classes fr
 - [@externalDocumentation](https://smithy.io/2.0/spec/documentation-traits.html#externaldocumentation-trait)
 - [@timestampFormat](https://smithy.io/2.0/spec/protocol-traits.html#timestampformat-trait)
 
+## Naming of Generated Code
+
+The generated Java class will have a "Trait" suffix. For example, a Java class named `FooTrait.class` will be generated for a custom trait `@Foo`.
+
+### `enum` / `intEnum` Trait Naming Strategy
+
+For `enum` and `intEnum` traits, an inner `Enum` Java class is generated inside the trait Java class with the following naming convention:
+
+**Trait Class**: Uses the full name with "Trait" suffix (e.g., `MyEnumTrait`)
+
+**Inner Enum Class**: Uses the name without "Trait" suffix to avoid naming conflicts (e.g., `MyEnum`)
+
 ## Configuration
 
 The generator supports the following configuration options:
