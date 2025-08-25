@@ -20,6 +20,14 @@ state. Modeled endpoint errors allow for more explicit descriptions to users,
 such as providing errors when a service doesn't support a combination of
 conditions.
 
+--------------------
+Rules engine version
+--------------------
+
+The rules engine specification is versioned, with the current version being 1.1. Unless otherwise specified, functions,
+features, and built-ins have been available since version 1.0. Any feature, function, or built-in used in the
+``endpointRuleSet`` or ``endpointBdd`` traits MUST be supported by the declared version of the trait. In other words,
+the feature's introduction version must be less than or equal to the trait version.
 
 .. smithy-trait:: smithy.rules#endpointRuleSet
 .. _smithy.rules#endpointRuleSet-trait:
@@ -86,8 +94,8 @@ on the scenario.
     This trait is experimental and subject to change.
 
 Summary
-    Defines a `Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_ representation
-    of endpoint rules for efficient runtime evaluation.
+    A Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>_ representation of endpoint
+    rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.
 Trait selector
     ``service``
 Value type
