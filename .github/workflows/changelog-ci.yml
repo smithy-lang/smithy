@@ -1,0 +1,87 @@
+name: changelog
+on: pull_request_target
+jobs:
+    amend:
+        name: "Validate staged changelogs"
+        runs-on: ubuntu-latest
+        permissions:
+          # Used to pull the PR and detect changes. This is needed to see
+          # whether the PR introduced a staged changelog entry or not as
+          # well as to suggest amending the changelog entry if necessary.
+          contents: read
+
+          # Used to write issue comments. This is done when there is no staged
+          # changelog at all. The comment will include instructions on how to
+          # create the changelog entry.
+          issues: write
+
+          # Used to write PR comments. This is done when there is a staged
+          # changelog introduced by the PR, but it lacks a PR link. A PR
+          # comment is used so that a commitable suggestion may be posted.
+          pull-requests: write
+        steps:
+
+            # This pulls the base branch, from which we will run the changelog
+            # tool. Running from the base branch prevents us from picking up
+            # malicious changes that might be in a PR.
+            - name: Pull base branch
+              uses: actions/checkout@v4
+              with:
+                path: base
+                ref: ${{ github.base_ref }}
+
+                # Only check out the changes directory. This isn't strictly
+                # necessary, but it speeds up the checkout since all we care
+                # about is in that directory.
+                sparse-checkout: .changes
+
+            # This pulls the PR's branch, from which we MUST NOT run any code.
+            # All we do with it is inspect the changelog entries introduced,
+            # if any.
+            - name: Pull the PR
+              uses: actions/checkout@v4
+              with:
+                path: pr
+                ref: ${{ github.head_ref }}
+                repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+                # The changelog tool only needs to know about staged changelog
+                # entries in the PR branch, so ONLY check out those. This makes
+                # the checkout faster, but also makes it harder to accidentally
+                # run code from the PR branch.
+                sparse-checkout: .changes/next-release
+
+            # This is needed so that the changelog tool can check the diff for
+            # newly-introduced changes by comparing its head against that of
+            # the base. We still won't actually run code from that copy.
+            - name: Fetch base from PR copy
+              run: |
+                cd pr
+                git fetch origin ${{ github.base_ref }}
+
+            - name: Install Python
+              uses: actions/setup-python@v5
+              with:
+                python-version-file: "base/.changes/pyproject.toml"
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v6
+              with:
+                version-file: "base/.changes/pyproject.toml"
+
+            - name: Install changelog tool
+              run: |
+                cd base/.changes
+                uv sync --locked --all-extras --all-groups --dev
+
+            - name: Run validation script
+              env:
+                GITHUB_TOKEN: ${{ github.token }}
+                TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+                PR_TITLE: ${{ github.event.pull_request.title }}
+              run: |
+                cd base/.changes
+                uv run amend \
+                  --review-comment \
+                  --pull-request-number ${{ github.event.pull_request.number }} \
+                  --repository-dir ${{ github.workspace }}/pr
