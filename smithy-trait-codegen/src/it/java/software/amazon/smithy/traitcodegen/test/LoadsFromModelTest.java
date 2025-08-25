@@ -46,9 +46,12 @@ import com.example.traits.numbers.IntegerTrait;
 import com.example.traits.numbers.LongTrait;
 import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
+import com.example.traits.structures.EnumA;
+import com.example.traits.structures.EnumB;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
 import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
+import com.example.traits.structures.StructWithEnumDefaultTrait;
 import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
@@ -343,6 +346,13 @@ public class LoadsFromModelTest {
                                         DateTimeFormatter.RFC_1123_DATE_TIME.parse("Tue, 29 Apr 2014 18:30:38 GMT"))),
                                 "getMemberEpochSeconds",
                                 Optional.of(Instant.ofEpochSecond((long) 1515531081.123)))),
+                Arguments.of("structures/struct-with-enum-default-trait.smithy",
+                        StructWithEnumDefaultTrait.class,
+                        MapUtils.of(
+                                "getMemberA",
+                                EnumA.ONE,
+                                "getMemberB",
+                                EnumB.THREE)),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,

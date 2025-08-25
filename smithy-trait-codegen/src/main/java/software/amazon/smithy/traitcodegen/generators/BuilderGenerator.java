@@ -21,7 +21,9 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -532,6 +534,22 @@ final class BuilderGenerator implements Runnable {
                 }
             }
             writer.write("$T.parse($S)", Instant.class, defaultValue.expectStringNode().getValue());
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape intEnumShape) {
+            writer.write("$T.from($L)",
+                    symbolProvider.toSymbol(member),
+                    defaultValue.expectNumberNode().getValue());
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape enumShape) {
+            writer.write("$T.from($S)",
+                    symbolProvider.toSymbol(member),
+                    defaultValue.expectStringNode().getValue());
             return null;
         }
     }
