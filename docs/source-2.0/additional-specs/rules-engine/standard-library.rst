@@ -58,9 +58,9 @@ Since
     1.1
 
 The ``coalesce`` function provides null-safe chaining by evaluating arguments in order and returning the first
-non-empty result. If all arguments evaluate to empty, it returns the result of the last argument. This is
-particularly useful for providing default values for optional parameters, chaining multiple optional values
-together, and related optimizations.
+non-empty result. If all arguments leading up to the last argument evaluate to empty, it returns the result of the
+last argument. This is particularly useful for providing default values for optional parameters, chaining multiple
+optional values together, and related optimizations.
 
 The function accepts two or more arguments, all of which must have the same inner type after unwrapping any
 optionals. The return type is ``option<T>`` only if all arguments are ``option<T>``; otherwise it returns ``T``.
