@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -25,6 +26,18 @@ public interface FunctionDefinition {
      * @return The function arguments
      */
     List<Type> getArguments();
+
+    /**
+     * Gets the type of variadic arguments if this function accepts them.
+     *
+     * <p>When present, the function accepts any number of additional arguments of this type after the fixed arguments
+     * from getArguments().
+     *
+     * @return the variadic argument type, or empty if not variadic
+     */
+    default Optional<Type> getVariadicArguments() {
+        return Optional.empty();
+    }
 
     /**
      * The return type of this function definition.

@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax;
 
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
@@ -22,6 +23,15 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public abstract class SyntaxElement implements ToCondition, ToExpression {
+    /**
+     * Get the rules engine version that this syntax element is available since.
+     *
+     * @return the version this is available since.
+     */
+    public RulesVersion availableSince() {
+        return RulesVersion.V1_0;
+    }
+
     /**
      * Returns a BooleanEquals expression comparing this expression to the provided boolean value.
      *

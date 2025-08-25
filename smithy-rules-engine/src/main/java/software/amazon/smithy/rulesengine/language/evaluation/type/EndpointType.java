@@ -10,6 +10,9 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
  * The "endpoint" type, representing a valid client endpoint.
  */
 public final class EndpointType extends AbstractType {
+
+    static final EndpointType INSTANCE = new EndpointType();
+
     EndpointType() {}
 
     @Override

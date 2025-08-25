@@ -58,6 +58,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private final List<Rule> rules;
     private final SourceLocation sourceLocation;
     private final String version;
+    private final RulesVersion rulesVersion;
 
     private EndpointRuleSet(Builder builder) {
         super();
@@ -65,6 +66,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         rules = builder.rules.copy();
         sourceLocation = SmithyBuilder.requiredState("source", builder.getSourceLocation());
         version = SmithyBuilder.requiredState(VERSION, builder.version);
+        rulesVersion = RulesVersion.of(version);
     }
 
     /**
@@ -128,6 +130,15 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      */
     public String getVersion() {
         return version;
+    }
+
+    /**
+     * Get the parsed rules engine version.
+     *
+     * @return parsed version.
+     */
+    public RulesVersion getRulesVersion() {
+        return rulesVersion;
     }
 
     public Type typeCheck() {

@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.language;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Coalesce;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
@@ -36,6 +37,7 @@ public class CoreExtension implements EndpointRuleSetExtension {
                 IsSet.getDefinition(),
                 IsValidHostLabel.getDefinition(),
                 Not.getDefinition(),
+                Coalesce.getDefinition(),
                 ParseUrl.getDefinition(),
                 StringEquals.getDefinition(),
                 Substring.getDefinition(),

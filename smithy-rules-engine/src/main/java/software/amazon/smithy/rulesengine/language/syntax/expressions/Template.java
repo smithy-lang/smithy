@@ -22,7 +22,6 @@ import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -41,7 +40,7 @@ public final class Template implements FromSourceLocation, ToNode {
     private final String value;
 
     public Template(StringNode template) {
-        sourceLocation = SmithyBuilder.requiredState("source", template.getSourceLocation());
+        sourceLocation = template.getSourceLocation();
         value = template.getValue();
         parts = context("when parsing template", template, () -> parseTemplate(template.getValue(), template));
     }
