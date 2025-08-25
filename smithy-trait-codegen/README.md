@@ -33,7 +33,7 @@ The generator supports the following configuration options:
 |--------|-------------|----------|
 | `package` | Java package name for generated classes | Yes |
 | `namespace` | Smithy namespace to search for traits | Yes |
-| `header` | Header lines to include in generated files | No |
+| `header` | Header lines to include in generated files | Yes |
 | `excludeTags` | Smithy tags to exclude from generation | No |
 
 An example for `smithy-build.json`:
@@ -66,7 +66,8 @@ To generate Java code for your customized traits, you will add the `trait-codege
   "plugins": {
     "trait-codegen": {
       "package": "io.examples.traits",
-      "namespace": "example.traits"
+      "namespace": "example.traits",
+      "header": ["This is my header!"]
     }
   }
 }
