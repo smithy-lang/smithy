@@ -154,7 +154,15 @@ public final class Walker {
             while (!stack.isEmpty()) {
                 // Every relationship is returned, even if the same shape is pointed
                 // to multiple times from a single shape.
-                Relationship relationship = stack.pop();
+
+                // Use removeLast to retrieve relationships in their defined order rather
+                // than the reverse of the defined order. Note that this only preserves
+                // the order of a particular relationship type, not the order of all
+                // relationship types. So a resources `operation` relationships will be
+                // resolved in the order of that list, but the resources's `resource`
+                // relationships will nevertheless always appear first because that is
+                // simply the order that the NeighborVisitor checks them in.
+                Relationship relationship = stack.removeLast();
 
                 // Only traverse this relationship if the shape it points to hasn't
                 // already been traversed.
