@@ -37,6 +37,23 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public class RuleEvaluator implements ExpressionVisitor<Value> {
     private final Scope<Value> scope = new Scope<>();
 
+    public RuleEvaluator() {}
+
+    /**
+     * Create a rule evaluator from parameters and using an initial set of arguments.
+     *
+     * <p>This is primarily used for manually driven condition evaluation.
+     *
+     * @param parameters Parameters of the evaluator, used to initialize defaults and parameters.
+     * @param parameterArguments Arguments used to initialize evaluation scope state.
+     */
+    public RuleEvaluator(Parameters parameters, Map<Identifier, Value> parameterArguments) {
+        for (Parameter parameter : parameters) {
+            parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
+        }
+        parameterArguments.forEach(scope::insert);
+    }
+
     /**
      * Initializes a new {@link RuleEvaluator} instances, and evaluates
      * the provided ruleset and parameter arguments.
@@ -217,7 +234,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
         return scope.inScope(() -> {
             for (Condition condition : rule.getConditions()) {
                 Value value = evaluateCondition(condition);
-                if (value.isEmpty() || value.equals(Value.booleanValue(false))) {
+                if (!value.isTruthy()) {
                     return Value.emptyValue();
                 }
             }

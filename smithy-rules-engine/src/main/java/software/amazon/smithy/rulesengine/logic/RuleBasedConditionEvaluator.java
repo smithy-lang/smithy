@@ -5,8 +5,6 @@
 package software.amazon.smithy.rulesengine.logic;
 
 import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.evaluation.value.BooleanValue;
-import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 
 /**
@@ -24,7 +22,6 @@ public final class RuleBasedConditionEvaluator implements ConditionEvaluator {
     @Override
     public boolean test(int conditionIndex) {
         Condition condition = conditions[conditionIndex];
-        Value value = evaluator.evaluateCondition(condition);
-        return !value.isEmpty() && (!(value instanceof BooleanValue) || ((BooleanValue) value).getValue());
+        return evaluator.evaluateCondition(condition).isTruthy();
     }
 }

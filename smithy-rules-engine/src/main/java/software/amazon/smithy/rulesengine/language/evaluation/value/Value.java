@@ -38,6 +38,10 @@ public abstract class Value implements FromSourceLocation, ToNode {
 
     public abstract Type getType();
 
+    public boolean isTruthy() {
+        return true;
+    }
+
     /**
      * Creates a {@link Value} of a specific type from the given Node information.
      *
