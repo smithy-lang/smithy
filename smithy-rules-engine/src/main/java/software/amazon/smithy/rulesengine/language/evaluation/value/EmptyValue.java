@@ -19,6 +19,11 @@ public final class EmptyValue extends Value {
     }
 
     @Override
+    public boolean isTruthy() {
+        return false;
+    }
+
+    @Override
     public Type getType() {
         return Type.emptyType();
     }

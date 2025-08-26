@@ -134,6 +134,16 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
     }
 
     /**
+     * Constructs a {@link Reference} for the given {@link Identifier}.
+     *
+     * @param name the referenced identifier.
+     * @return the reference.
+     */
+    public static Reference getReference(String name) {
+        return getReference(Identifier.of(name));
+    }
+
+    /**
      * Constructs a {@link Literal} from the given {@link StringNode}.
      *
      * @param node the node to construct the literal from.

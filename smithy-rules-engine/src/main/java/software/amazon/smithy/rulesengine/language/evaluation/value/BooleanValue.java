@@ -29,6 +29,11 @@ public final class BooleanValue extends Value {
         this.value = value;
     }
 
+    @Override
+    public boolean isTruthy() {
+        return value;
+    }
+
     /**
      * Gets the true or false value of this boolean.
      *
