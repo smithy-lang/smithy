@@ -1459,4 +1459,36 @@ public class ModelAssemblerTest {
         assertTrue(combinedModel.expectShape(ShapeId.from("smithy.example#MachineData$machineId"), MemberShape.class)
                 .hasTrait(RequiredTrait.ID));
     }
+
+    @Test
+    public void loadsJarFromPathWithEncodedChars() throws Exception {
+        Path source = Paths.get(getClass().getResource("assembler-valid-jar").toURI());
+        Path jarPath = outputDirectory.resolve(Paths.get("path%20with%45encoded%25chars", "test.jar"));
+
+        Files.createDirectories(jarPath.getParent());
+        Files.copy(JarUtils.createJarFromDir(source), jarPath);
+
+        Model model = Model.assembler()
+                .addImport(jarPath)
+                .assemble()
+                .unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("smithy.example#ExampleString")).isPresent());
+    }
+
+    @Test
+    public void loadsJarFromUrlWithEncodedChars() throws Exception {
+        Path source = Paths.get(getClass().getResource("assembler-valid-jar").toURI());
+        Path jarPath = outputDirectory.resolve(Paths.get("path%20with%45encoded%25chars", "test.jar"));
+
+        Files.createDirectories(jarPath.getParent());
+        Files.copy(JarUtils.createJarFromDir(source), jarPath);
+
+        Model model = Model.assembler()
+                .addImport(jarPath.toUri().toURL())
+                .assemble()
+                .unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("smithy.example#ExampleString")).isPresent());
+    }
 }

@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -185,19 +187,25 @@ public final class ModelDiscovery {
      */
     public static URL createSmithyJarManifestUrl(String fileOrUrl) {
         try {
-            return new URL(getFilenameWithScheme(fileOrUrl) + "!/" + MANIFEST_PATH);
-        } catch (IOException e) {
+            // Building a URI from parts (scheme + file path) will make sure the file path
+            // gets properly URI encoded. URL does not do this, instead expecting callers
+            // to encode first, and consumers to decode. Encoding it here means that when
+            // it is decoded by the consumer (e.g. the JDK reading the jar from the file system),
+            // it will point to the correct location.
+            String manifestPath = removeScheme(fileOrUrl) + "!/" + MANIFEST_PATH;
+            return new URI("jar:file", null, manifestPath, null).toURL();
+        } catch (IOException | URISyntaxException e) {
             throw new ModelImportException(e.getMessage(), e);
         }
     }
 
-    private static String getFilenameWithScheme(String filename) {
-        if (filename.startsWith("jar:")) {
-            return filename;
-        } else if (filename.startsWith("file:")) {
-            return "jar:" + filename;
+    private static String removeScheme(String fileOrUrl) {
+        // Index will also cover jar: part of jar:file:
+        int pathStart = fileOrUrl.indexOf("file:");
+        if (pathStart == -1) {
+            return fileOrUrl;
         } else {
-            return "jar:file:" + filename;
+            return fileOrUrl.substring(pathStart + "file:".length());
         }
     }
 
