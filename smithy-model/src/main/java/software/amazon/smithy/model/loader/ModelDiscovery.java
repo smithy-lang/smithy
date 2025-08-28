@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -187,12 +188,17 @@ public final class ModelDiscovery {
      */
     public static URL createSmithyJarManifestUrl(String fileOrUrl) {
         try {
+            // This normalizes the path to the jar into the format expected by URI,
+            // accounting for the different string representation of a path on windows
+            // (otherwise all '\' path separators will be encoded).
+            URI jarUri = Paths.get(removeScheme(fileOrUrl)).toUri();
+            String manifestPath = jarUri.getPath() + "!/" + MANIFEST_PATH;
+
             // Building a URI from parts (scheme + file path) will make sure the file path
             // gets properly URI encoded. URL does not do this, instead expecting callers
             // to encode first, and consumers to decode. Encoding it here means that when
             // it is decoded by the consumer (e.g. the JDK reading the jar from the file system),
             // it will point to the correct location.
-            String manifestPath = removeScheme(fileOrUrl) + "!/" + MANIFEST_PATH;
             return new URI("jar:file", null, manifestPath, null).toURL();
         } catch (IOException | URISyntaxException e) {
             throw new ModelImportException(e.getMessage(), e);
