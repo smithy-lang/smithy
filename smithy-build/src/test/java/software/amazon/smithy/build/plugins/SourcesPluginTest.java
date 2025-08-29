@@ -10,10 +10,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuild;
@@ -235,5 +239,70 @@ public class SourcesPluginTest {
 
         assertThat(manifestString, containsString("a.smithy\n"));
         assertThat(manifestString, not(containsString("foo.md")));
+    }
+
+    @Test
+    public void copiesModelFromJarWithEncodedPathWithSourceProjection(@TempDir Path tempDir)
+            throws IOException, URISyntaxException {
+        Path source = Paths.get(getClass().getResource("sources/jar-import.jar").toURI());
+        Path jarPath = tempDir.resolve(Paths.get("special%45path", "special.jar"));
+
+        Files.createDirectories(jarPath.getParent());
+        Files.copy(source, jarPath);
+
+        Model model = Model.assembler()
+                .addImport(jarPath)
+                .addImport(getClass().getResource("notsources/d.smithy"))
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .model(model)
+                .originalModel(model)
+                .sources(ListUtils.of(jarPath))
+                .build();
+        new SourcesPlugin().execute(context);
+        String manifestString = manifest.getFileString("manifest").get();
+
+        assertThat(manifestString, containsString("special/a.smithy\n"));
+        assertThat(manifestString, containsString("special/b/b.smithy\n"));
+        assertThat(manifestString, containsString("special/b/c/c.json\n"));
+        assertThat(manifestString, not(containsString("jar-import/d.json")));
+        assertThat(manifest.getFileString("special/a.smithy").get(), containsString("string A"));
+        assertThat(manifest.getFileString("special/b/b.smithy").get(), containsString("string B"));
+        assertThat(manifest.getFileString("special/b/c/c.json").get(), containsString("\"foo.baz#C\""));
+    }
+
+    @Test
+    public void copiesModelFromJarWithEncodedPathWithNonSourceProjection(@TempDir Path tempDir)
+            throws IOException, URISyntaxException {
+        Path source = Paths.get(getClass().getResource("sources/jar-import.jar").toURI());
+        Path jarPath = tempDir.resolve(Paths.get("special%45path", "special.jar"));
+
+        Files.createDirectories(jarPath.getParent());
+        Files.copy(source, jarPath);
+
+        Model model = Model.assembler()
+                .addImport(jarPath)
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .projection("foo", projection)
+                .model(model)
+                .originalModel(model)
+                .sources(ListUtils.of(jarPath))
+                .build();
+        new SourcesPlugin().execute(context);
+        String manifestString = manifest.getFileString("manifest").get();
+
+        assertThat(manifestString, containsString("model.json"));
+        assertThat(manifestString, not(containsString("special")));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#A\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#B\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#C\""));
     }
 }
