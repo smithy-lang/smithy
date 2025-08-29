@@ -19,11 +19,13 @@ import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.logic.cfg.CfgNode;
 import software.amazon.smithy.rulesengine.logic.cfg.ConditionNode;
 import software.amazon.smithy.rulesengine.logic.cfg.ResultNode;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * BDD compiler that builds an unreduced BDD from CFG.
+ * BDD compiler that builds a BDD from a CFG.
  */
-final class BddCompiler {
+@SmithyInternalApi
+public final class BddCompiler {
     private static final Logger LOGGER = Logger.getLogger(BddCompiler.class.getName());
 
     private final Cfg cfg;
@@ -43,6 +45,13 @@ final class BddCompiler {
     // Simple cache to avoid recomputing identical subgraphs
     private final Map<CfgNode, Integer> nodeCache = new HashMap<>();
 
+    /**
+     * @param cfg CFG to convert to a BDD.
+     */
+    public BddCompiler(Cfg cfg) {
+        this(cfg, new BddBuilder());
+    }
+
     BddCompiler(Cfg cfg, BddBuilder bddBuilder) {
         this(cfg, OrderingStrategy.initialOrdering(cfg), bddBuilder);
     }
@@ -53,7 +62,12 @@ final class BddCompiler {
         this.bddBuilder = Objects.requireNonNull(bddBuilder, "BDD builder cannot be null");
     }
 
-    Bdd compile() {
+    /**
+     * Compile the CFG into a BDD.
+     *
+     * @return the compiled BDD.
+     */
+    public Bdd compile() {
         long start = System.currentTimeMillis();
         extractAndOrderConditions();
 
@@ -77,11 +91,21 @@ final class BddCompiler {
         return bdd;
     }
 
-    List<Rule> getIndexedResults() {
+    /**
+     * The ordered result rules after BDD compilation.
+     *
+     * @return ordered BDD result rules.
+     */
+    public List<Rule> getIndexedResults() {
         return indexedResults;
     }
 
-    List<Condition> getOrderedConditions() {
+    /**
+     * Get the ordered conditions referenced in the compiled BDD.
+     *
+     * @return the ordered BDD conditions.
+     */
+    public List<Condition> getOrderedConditions() {
         return orderedConditions;
     }
 

@@ -71,9 +71,15 @@ public final class Bdd {
     }
 
     /**
-     * Package-private constructor for direct array initialization (used by BddTrait).
+     * Creates a BDD by streaming nodes directly into the structure.
+     *
+     * @param rootRef the root reference
+     * @param conditionCount the number of conditions
+     * @param resultCount the number of results
+     * @param nodeCount the exact number of nodes
+     * @param nodes BDD nodes array where the condition, high, and low are all in succession.
      */
-    Bdd(int rootRef, int conditionCount, int resultCount, int nodeCount, int[] nodes) {
+    public Bdd(int rootRef, int conditionCount, int resultCount, int nodeCount, int[] nodes) {
         validateCounts(conditionCount, resultCount, nodeCount);
         validateRootReference(rootRef, nodeCount);
 

@@ -21,6 +21,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 
 // Does some basic checks, but doesn't get too specific so we can easily change the sifting algorithm.
 class SiftingOptimizationTest {

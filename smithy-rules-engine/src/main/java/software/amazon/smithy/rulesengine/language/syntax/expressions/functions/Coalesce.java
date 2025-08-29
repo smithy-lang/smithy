@@ -20,7 +20,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 /**
  * A coalesce function that returns the first non-empty value.
  *
- * <p>This variadic function requires two or more arguments. At runtime, returns the first arguments that returns a
+ * <p>This variadic function requires two or more arguments. At runtime, returns the first argument that contains a
  * non-EmptyValue, otherwise returns the result of the last argument.
  *
  * <p>Type checking rules:

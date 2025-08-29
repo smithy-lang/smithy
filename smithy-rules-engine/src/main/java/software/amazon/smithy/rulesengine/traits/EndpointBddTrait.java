@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.rulesengine.logic.bdd;
+package software.amazon.smithy.rulesengine.traits;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -27,6 +27,8 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
+import software.amazon.smithy.rulesengine.logic.bdd.BddCompiler;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -74,7 +76,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
      * @return the BddTrait containing the compiled BDD and all context
      */
     public static EndpointBddTrait from(Cfg cfg) {
-        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
+        BddCompiler compiler = new BddCompiler(cfg);
         Bdd bdd = compiler.compile();
 
         if (compiler.getOrderedConditions().size() != bdd.getConditionCount()) {
