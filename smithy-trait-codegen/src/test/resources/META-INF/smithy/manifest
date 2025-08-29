@@ -5,6 +5,7 @@ enums/enum-trait.smithy
 enums/int-enum-trait.smithy
 enums/string-enum-compatibility.smithy
 enums/enum-list-member-trait.smithy
+enums/with-trait-suffix.smithy
 idref/idref-list.smithy
 idref/idref-map.smithy
 idref/idref-string.smithy

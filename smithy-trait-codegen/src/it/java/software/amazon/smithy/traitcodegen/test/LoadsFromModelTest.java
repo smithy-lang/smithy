@@ -13,6 +13,8 @@ import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
 import com.example.traits.enums.EnumListMemberTrait;
 import com.example.traits.enums.IntEnumTrait;
+import com.example.traits.enums.MyEnumTrait;
+import com.example.traits.enums.MyIntEnumTrait;
 import com.example.traits.enums.SomeEnum;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
@@ -124,6 +126,18 @@ public class LoadsFromModelTest {
                         EnumListMemberTrait.class,
                         MapUtils.of("getValue",
                                 Optional.of(ListUtils.of(SomeEnum.SOME, SomeEnum.NONE, SomeEnum.SOME)))),
+                Arguments.of("enums/with-trait-suffix.smithy",
+                        MyIntEnumTrait.class,
+                        MapUtils.of("getValue",
+                                1,
+                                "getEnumValue",
+                                MyIntEnumTrait.MyIntEnum.ONE)),
+                Arguments.of("enums/with-trait-suffix.smithy",
+                        MyEnumTrait.class,
+                        MapUtils.of("getValue",
+                                "1",
+                                "getEnumValue",
+                                MyEnumTrait.MyEnum.ONE)),
                 // Id Refs
                 Arguments.of("idref/idref-string.smithy",
                         IdRefStringTrait.class,

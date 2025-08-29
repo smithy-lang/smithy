@@ -12,6 +12,8 @@ import com.example.traits.documents.DocumentTrait;
 import com.example.traits.documents.StructWithNestedDocumentTrait;
 import com.example.traits.enums.EnumListMemberTrait;
 import com.example.traits.enums.IntEnumTrait;
+import com.example.traits.enums.MyEnumTrait;
+import com.example.traits.enums.MyIntEnumTrait;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
 import com.example.traits.lists.DocumentListTrait;
@@ -105,6 +107,8 @@ public class CreatesTraitTest {
                         ObjectNode.objectNodeBuilder()
                                 .withMember("value", ArrayNode.fromStrings("some", "none", "some"))
                                 .build()),
+                Arguments.of(MyIntEnumTrait.ID, Node.from(1)),
+                Arguments.of(MyEnumTrait.ID, Node.from("1")),
                 // Lists
                 Arguments.of(NumberListTrait.ID,
                         ArrayNode.fromNodes(
