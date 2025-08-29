@@ -17,6 +17,7 @@ import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
@@ -46,14 +47,13 @@ final class SsaTransform {
     private SsaTransform(VariableAnalysis variableAnalysis) {
         scopeStack.push(new HashMap<>());
         this.variableAnalysis = variableAnalysis;
+        this.referenceRewriter = new TreeRewriter(this::referenceRewriter, this::needsRewriting);
+    }
 
-        this.referenceRewriter = new TreeRewriter(
-                ref -> {
-                    String originalName = ref.getName().toString();
-                    String uniqueName = resolveReference(originalName);
-                    return Expression.getReference(Identifier.of(uniqueName));
-                },
-                this::needsRewriting);
+    private Expression referenceRewriter(Reference ref) {
+        String originalName = ref.getName().toString();
+        String uniqueName = resolveReference(originalName);
+        return Expression.getReference(Identifier.of(uniqueName));
     }
 
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {

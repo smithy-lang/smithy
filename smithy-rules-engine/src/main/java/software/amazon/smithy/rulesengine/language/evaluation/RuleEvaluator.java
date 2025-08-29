@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.logic.RuleBasedConditionEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**

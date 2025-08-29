@@ -94,8 +94,8 @@ on the scenario.
     This trait is experimental and subject to change.
 
 Summary
-    A Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>_ representation of endpoint
-    rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.
+    A Binary `Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_ representation of
+    endpoint rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.
 Trait selector
     ``service``
 Value type

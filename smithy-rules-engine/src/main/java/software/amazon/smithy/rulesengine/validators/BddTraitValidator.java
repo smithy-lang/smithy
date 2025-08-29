@@ -12,7 +12,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
-import software.amazon.smithy.rulesengine.logic.bdd.EndpointBddTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 
 public final class BddTraitValidator extends AbstractValidator {
     @Override
@@ -59,12 +59,7 @@ public final class BddTraitValidator extends AbstractValidator {
         // Validate nodes
         int nodeCount = bdd.getNodeCount();
 
-        for (int i = 0; i < nodeCount; i++) {
-            // Skip terminal node at index 0
-            if (i == 0) {
-                continue;
-            }
-
+        for (int i = 1; i < nodeCount; i++) {
             int varIdx = bdd.getVariable(i);
             int highRef = bdd.getHigh(i);
             int lowRef = bdd.getLow(i);

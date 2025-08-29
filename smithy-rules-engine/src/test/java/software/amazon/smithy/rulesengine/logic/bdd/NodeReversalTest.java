@@ -13,6 +13,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 
 class NodeReversalTest {
 

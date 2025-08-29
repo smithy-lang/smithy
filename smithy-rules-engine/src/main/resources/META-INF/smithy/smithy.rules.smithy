@@ -60,7 +60,7 @@ structure endpointBdd {
     /// - -1: FALSE terminal (treated as "no match" in endpoint resolution)
     /// - 2, 3, 4, ...: Node references pointing to nodes[ref-1]
     /// - -2, -3, -4, ...: Complement node references (logical NOT of nodes[abs(ref)-1])
-    /// - 2000000+: Result terminals (2000000 + resultIndex)
+    /// - 100000000+: Result terminals (100000000 + resultIndex)
     ///
     /// Complement edges:
     /// A negative reference represents the logical NOT of the referenced node's entire subgraph. So `-5` means the

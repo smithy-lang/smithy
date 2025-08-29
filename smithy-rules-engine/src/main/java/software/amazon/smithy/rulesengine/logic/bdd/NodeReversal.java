@@ -6,6 +6,7 @@ package software.amazon.smithy.rulesengine.logic.bdd;
 
 import java.util.function.Function;
 import java.util.logging.Logger;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 
 /**
  * Reverses the node ordering in a BDD from bottom-up to top-down for better cache locality.
