@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -44,8 +46,8 @@ final class FormatCommand implements Command {
     private static final class Options implements ArgumentReceiver {
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.positional("<MODEL>",
-                    "A single `.smithy` model file or a directory of model files to recursively format.");
+            printer.positional("<MODELS>",
+                    "`.smithy` model files and directories of model files to recursively format.");
         }
     }
 
@@ -58,6 +60,7 @@ final class FormatCommand implements Command {
             buffer.println("Examples:");
             buffer.println("   smithy format model-file.smithy", ColorTheme.LITERAL);
             buffer.println("   smithy format model/", ColorTheme.LITERAL);
+            buffer.println("   smithy format model-file.smithy model/", ColorTheme.LITERAL);
             return buffer.toString();
         }, this::run);
         return action.apply(arguments, env);
@@ -66,22 +69,23 @@ final class FormatCommand implements Command {
     private int run(Arguments arguments, Env env) {
         if (arguments.getPositional().isEmpty()) {
             throw new CliError("No .smithy model or directory was provided as a positional argument");
-        } else if (arguments.getPositional().size() > 1) {
-            throw new CliError("Only a single .smithy model or directory can be provided as a positional argument");
         }
 
-        String filename = arguments.getPositional().get(0);
-        Path path = Paths.get(filename);
+        List<Path> paths = new ArrayList<>(arguments.getPositional().size());
+        for (String filename : arguments.getPositional()) {
+            Path path = Paths.get(filename);
+            paths.add(path);
 
-        if (Files.isRegularFile(path)) {
-            if (!filename.endsWith(".smithy")) {
-                throw new CliError("`" + filename + "` is not a .smithy model file");
+            if (Files.isRegularFile(path)) {
+                if (!filename.endsWith(".smithy")) {
+                    throw new CliError("`" + filename + "` is not a .smithy model file");
+                }
+            } else if (!Files.isDirectory(path)) {
+                throw new CliError("`" + filename + "` is not a valid file or directory");
             }
-        } else if (!Files.isDirectory(path)) {
-            throw new CliError("`" + filename + "` is not a valid file or directory");
         }
 
-        formatFile(path);
+        paths.forEach(this::formatFile);
         return 0;
     }
 
