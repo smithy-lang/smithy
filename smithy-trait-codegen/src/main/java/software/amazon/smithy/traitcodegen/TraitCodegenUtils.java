@@ -148,4 +148,20 @@ public final class TraitCodegenUtils {
     public static boolean isNullableMember(MemberShape shape) {
         return !shape.isRequired() && !shape.hasNonNullDefault();
     }
+
+    /**
+     * Gets the proper inner {@link Enum} class name without `Trait` suffix.
+     *
+     * @param symbol the symbol of a {@link software.amazon.smithy.model.shapes.EnumShape} or
+     *               {@link software.amazon.smithy.model.shapes.IntEnumShape}.
+     *
+     * @return A processed name for {@link Enum} class.
+     */
+    public static String getEnumClassName(Symbol symbol) {
+        String enumName = symbol.getName();
+        if (enumName.endsWith("Trait")) {
+            enumName = enumName.substring(0, enumName.length() - "Trait".length());
+        }
+        return enumName;
+    }
 }
