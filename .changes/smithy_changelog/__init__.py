@@ -141,7 +141,7 @@ class Version:
         The file name is expected to be in the form `major.minor.patch.extention`.
         """
         parts = path.name.split(".", 3)
-        if len(parts) != 3:
+        if len(parts) != 4:
             raise Exception(
                 f"Invalid version. Expected `major.minor.patch.extension` "
                 f"(e.g. `1.2.3.json`), but found: {path.name}"
@@ -224,7 +224,9 @@ class Release:
 
         :returns: The JSON representation of the release as a string.
         """
-        contents = json.dumps(asdict(self), indent=2, default=str) + "\n"
+        data = asdict(self)
+        data["version"] = str(self.version)
+        contents = json.dumps(data, indent=2, default=str) + "\n"
         if file is not None:
             file.write_text(contents)
         return contents

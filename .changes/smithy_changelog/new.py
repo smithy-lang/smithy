@@ -23,9 +23,9 @@ TEMPLATE = """\
 type: {change_type}
 
 # (Optional)
-# A link to the GitHub pull request that implments the feature. You can use GitHub
+# A link to the GitHub pull request that implements the feature. You can use GitHub
 # sytle references, which will automatically be replaced with the correct link.
-pull request: {pull_requests}
+pull requests: {pull_requests}
 
 # A brief description of the change. You can use GitHub style references to issues such
 # as "fixes #489", "smithy-lang/smithy#100", etc. These will get automatically replaced
@@ -116,16 +116,20 @@ def get_values_from_editor(
 
 
 def replace_issue_references(change: Change, repo_name: str):
-    def linkify(match: re.Match[str]):
+    def linkify_issue(match: re.Match[str]):
         number = match.group()[1:]
         return f"[{match.group()}](https://github.com/{repo_name}/issues/{number})"
 
-    new_description = re.sub(r"#\d+", linkify, change.description)
+    def linkify_pr(match: re.Match[str]):
+        number = match.group()[1:]
+        return f"[{match.group()}](https://github.com/{repo_name}/pull/{number})"
+
+    new_description = re.sub(r"#\d+", linkify_issue, change.description)
     change.description = new_description
 
     if change.pull_requests:
         change.pull_requests = [
-            re.sub(r"#\d+", linkify, pr) for pr in change.pull_requests
+            re.sub(r"#\d+", linkify_pr, pr) for pr in change.pull_requests
         ]
 
 
