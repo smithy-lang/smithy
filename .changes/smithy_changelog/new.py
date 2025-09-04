@@ -63,7 +63,7 @@ def main() -> None:
 
     args = parser.parse_args()
     new_change(
-        change_type=ChangeType[args.type.upper()],
+        change_type=ChangeType[args.type.upper()] if args.type is not None else None,
         description=args.description,
         pull_requests=args.pull_requests,
         repository=args.repository,
