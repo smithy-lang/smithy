@@ -72,6 +72,7 @@ public class PluginContextTest {
         PluginContext context = PluginContext.builder()
                 .projection("foo", ProjectionConfig.builder().build())
                 .fileManifest(new MockManifest())
+                .sharedFileManifest(new MockManifest())
                 .model(Model.builder().build())
                 .originalModel(Model.builder().build())
                 .settings(Node.objectNode().withMember("foo", "bar"))
@@ -83,6 +84,7 @@ public class PluginContextTest {
         assertThat(context.getModel(), equalTo(context2.getModel()));
         assertThat(context.getOriginalModel(), equalTo(context2.getOriginalModel()));
         assertThat(context.getFileManifest(), is(context2.getFileManifest()));
+        assertThat(context.getSharedFileManifest(), is(context2.getSharedFileManifest()));
         assertThat(context.getSources(), equalTo(context2.getSources()));
         assertThat(context.getEvents(), equalTo(context2.getEvents()));
     }
