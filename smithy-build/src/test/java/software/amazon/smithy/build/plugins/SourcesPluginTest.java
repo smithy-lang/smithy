@@ -10,14 +10,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuild;
@@ -30,6 +33,19 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.utils.ListUtils;
 
 public class SourcesPluginTest {
+
+    private Path tempDirectory;
+
+    @BeforeEach
+    public void before() throws IOException {
+        tempDirectory = Files.createTempDirectory(getClass().getSimpleName());
+    }
+
+    @AfterEach
+    public void after() throws IOException {
+        Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+    }
+
     @Test
     public void copiesFilesForSourceProjection() throws URISyntaxException {
         Model model = Model.assembler()
@@ -242,10 +258,10 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void copiesModelFromJarWithEncodedPathWithSourceProjection(@TempDir Path tempDir)
+    public void copiesModelFromJarWithEncodedPathWithSourceProjection()
             throws IOException, URISyntaxException {
         Path source = Paths.get(getClass().getResource("sources/jar-import.jar").toURI());
-        Path jarPath = tempDir.resolve(Paths.get("special%45path", "special.jar"));
+        Path jarPath = tempDirectory.resolve(Paths.get("special%45path", "special.jar"));
 
         Files.createDirectories(jarPath.getParent());
         Files.copy(source, jarPath);
@@ -275,10 +291,10 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void copiesModelFromJarWithEncodedPathWithNonSourceProjection(@TempDir Path tempDir)
+    public void copiesModelFromJarWithEncodedPathWithNonSourceProjection()
             throws IOException, URISyntaxException {
         Path source = Paths.get(getClass().getResource("sources/jar-import.jar").toURI());
-        Path jarPath = tempDir.resolve(Paths.get("special%45path", "special.jar"));
+        Path jarPath = tempDirectory.resolve(Paths.get("special%45path", "special.jar"));
 
         Files.createDirectories(jarPath.getParent());
         Files.copy(source, jarPath);
