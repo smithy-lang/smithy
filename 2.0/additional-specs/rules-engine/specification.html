@@ -402,11 +402,18 @@ Parameters define the primary set of values that a rule set operates on. Rules
 are composed of a set of <em>conditions</em>, which determine if a rule should be
 selected, and a result. Conditions act on the defined parameters, and allow for
 the modeling of statements.</p>
-<p>When a rule’s conditions are evaluated successfully, the rule provides either a
+<p>When a rule's conditions are evaluated successfully, the rule provides either a
 result and its accompanying requirements or an error describing the unsupported
 state. Modeled endpoint errors allow for more explicit descriptions to users,
 such as providing errors when a service doesn't support a combination of
 conditions.</p>
+<div class="section" id="rules-engine-version">
+<h2>Rules engine version<a class="headerlink" href="#rules-engine-version" title="Permalink to this heading">#</a></h2>
+<p>The rules engine specification is versioned, with the current version being 1.1. Unless otherwise specified, functions,
+features, and built-ins have been available since version 1.0. Any feature, function, or built-in used in the
+<code class="docutils literal notranslate"><span class="pre">endpointRuleSet</span></code> or <code class="docutils literal notranslate"><span class="pre">endpointBdd</span></code> traits MUST be supported by the declared version of the trait. In other words,
+the feature's introduction version must be less than or equal to the trait version.</p>
+</div>
 <div class="section" id="smithy-rules-endpointruleset-trait">
 <span id="smithy-rules-endpointruleset-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointRuleSet</span></code> trait<a class="headerlink" href="#smithy-rules-endpointruleset-trait" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
@@ -431,8 +438,7 @@ conditions.</p>
 <tbody valign="top">
 <tr class="row-even"><td>version</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The rule set schema version. This specification covers
-version 1.0 of the endpoint rule set.</td>
+<td><strong>Required</strong>. The rules engine version (e.g., 1.0).</td>
 </tr>
 <tr class="row-odd"><td>serviceId</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -464,8 +470,199 @@ that rule exhaustion has occurred. Rule authors SHOULD use either an <a class="r
 or <a class="reference internal" href="#rules-engine-endpoint-rule-set-error-rule"><span class="std std-ref">error rules,</span></a> with an
 empty set of conditions to provide a more meaningful default or error depending
 on the scenario.</p>
+</div>
+<div class="section" id="smithy-rules-endpointbdd-trait">
+<span id="smithy-rules-endpointbdd-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointBdd</span></code> trait<a class="headerlink" href="#smithy-rules-endpointbdd-trait" title="Permalink to this heading">#</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Experimental</p>
+<p class="last">This trait is experimental and subject to change.</p>
+</div>
+<dl class="docutils">
+<dt>Summary</dt><dd>A Binary <a class="reference external" href="https://en.wikipedia.org/wiki/Binary_decision_diagram">Decision Diagram (BDD)</a> representation of
+endpoint rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">endpointBdd</span></code> trait provides a BDD representation of endpoint rules, optimizing runtime evaluation by
+eliminating redundant condition evaluations and reducing the decision tree to a minimal directed acyclic graph.
+This trait is an alternative to <code class="docutils literal notranslate"><span class="pre">endpointRuleSet</span></code> that trades compile-time complexity for significantly improved
+runtime performance and reduced artifact sizes.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">endpointBdd</span></code> trait can be generated from an <code class="docutils literal notranslate"><span class="pre">endpointRuleSet</span></code> trait through compilation. Services may
+provide either trait, with <code class="docutils literal notranslate"><span class="pre">endpointBdd</span></code> preferred for production use due to its performance characteristics.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">endpointBdd</span></code> structure has the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>version</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The endpoint rules engine version. Must be at least version 1.1.</td>
+</tr>
+<tr class="row-odd"><td>parameters</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">parameter</span> <span class="pre">object&gt;</span></code> of <a class="reference internal" href="#parameter-object">Parameter object</a></td>
+<td><strong>Required</strong>. A map of zero or more endpoint parameter names to
+their parameter configuration. Uses the same parameter structure as
+<code class="docutils literal notranslate"><span class="pre">endpointRuleSet</span></code>.</td>
+</tr>
+<tr class="row-even"><td>conditions</td>
+<td><code class="docutils literal notranslate"><span class="pre">array</span></code> of <a class="reference internal" href="#condition-object">Condition object</a></td>
+<td><strong>Required</strong>. Array of conditions that are evaluated during BDD
+traversal. Each condition is referenced by its index in this array.</td>
+</tr>
+<tr class="row-odd"><td>results</td>
+<td><code class="docutils literal notranslate"><span class="pre">array</span></code> of <a class="reference internal" href="#endpoint-rule-object">Endpoint rule object</a> or <a class="reference internal" href="#error-rule-object">Error rule object</a></td>
+<td><strong>Required</strong>. Array of possible endpoint results. The implicit <cite>NoMatchRule</cite> at BDD reference 0 is not included
+in the array. These rule objects MUST NOT contain conditions.</td>
+</tr>
+<tr class="row-even"><td>root</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong>. The root reference where BDD evaluation begins.</td>
+</tr>
+<tr class="row-odd"><td>nodeCount</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong>. The total number of nodes in the BDD. Used for validation and exact-sizing arrays during
+deserialization.</td>
+</tr>
+<tr class="row-even"><td>nodes</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. Base64-encoded binary representation of BDD nodes. Each node is encoded as three 4-byte
+integers: <code class="docutils literal notranslate"><span class="pre">[conditionIndex,</span> <span class="pre">highRef,</span> <span class="pre">lowRef]</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bdd-node-structure">
+<span id="rules-engine-endpoint-bdd-node-structure"></span><h3>BDD node structure<a class="headerlink" href="#bdd-node-structure" title="Permalink to this heading">#</a></h3>
+<p>Each BDD node is encoded as a triple of integers:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">conditionIndex</span></code>: Zero-based index into the <code class="docutils literal notranslate"><span class="pre">conditions</span></code> array</li>
+<li><code class="docutils literal notranslate"><span class="pre">highRef</span></code>: Reference to follow when the condition evaluates to true</li>
+<li><code class="docutils literal notranslate"><span class="pre">lowRef</span></code>: Reference to follow when the condition evaluates to false</li>
+</ul>
+<p>The first node, index 0, is always the terminal node <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1,</span> <span class="pre">-1]</span></code> and MUST NOT be referenced directly. This node
+serves as the canonical base case for BDD reduction algorithms.</p>
+</div>
+<div class="section" id="reference-encoding">
+<span id="rules-engine-endpoint-bdd-reference-encoding"></span><h3>Reference encoding<a class="headerlink" href="#reference-encoding" title="Permalink to this heading">#</a></h3>
+<p>BDD references use the following encoding scheme:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Reference value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td>Invalid/unused reference (never appears in valid BDDs)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td>TRUE terminal (no match in endpoint resolution)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">-1</span></code></td>
+<td>FALSE terminal (no match in endpoint resolution)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">...</span></code></td>
+<td>Node references (points to <code class="docutils literal notranslate"><span class="pre">nodes[ref-1]</span></code>)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">-2,</span> <span class="pre">-3,</span> <span class="pre">-4,</span> <span class="pre">...</span></code></td>
+<td>Complement edges (logical NOT of the referenced node)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">100000000+</span></code></td>
+<td>Result terminals (100000000 + resultIndex)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When traversing a complement edge (negative reference), the high and low branches are swapped during evaluation.
+This enables significant node sharing and BDD size reduction.</p>
+</div>
+<div class="section" id="binary-node-encoding">
+<span id="rules-engine-endpoint-bdd-binary-encoding"></span><h3>Binary node encoding<a class="headerlink" href="#binary-node-encoding" title="Permalink to this heading">#</a></h3>
+<p>Nodes are encoded as a Base64 string using binary encoding for efficiency:</p>
+<ul class="simple">
+<li>Each node consists of three 4-byte big-endian integers</li>
+<li>Nodes are concatenated sequentially: <code class="docutils literal notranslate"><span class="pre">[node0,</span> <span class="pre">node1,</span> <span class="pre">...,</span> <span class="pre">nodeN-1]</span></code></li>
+<li>The resulting byte array is Base64-encoded</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Why binary?</p>
+<p>This encoding provides:</p>
+<ul class="last simple">
+<li><strong>Size efficiency</strong>: smaller than an array of JSON integers, or an array of arrays of integers</li>
+<li><strong>Performance</strong>: Direct deserialization into the target data structure (e.g., primitive arrays and integers)</li>
+<li><strong>Cleaner diffs</strong>: BDD node changes appear as single-line modifications rather than spread over thousands
+of numbers.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="bdd-evaluation">
+<span id="rules-engine-endpoint-bdd-evaluation"></span><h3>BDD evaluation<a class="headerlink" href="#bdd-evaluation" title="Permalink to this heading">#</a></h3>
+<p>BDD evaluation follows these steps:</p>
+<ol class="arabic simple">
+<li>Start at the root reference</li>
+<li>While the reference is a node reference (not a terminal or result):<ul>
+<li>Extract the node index: <code class="docutils literal notranslate"><span class="pre">nodeIndex</span> <span class="pre">=</span> <span class="pre">|ref|</span> <span class="pre">-</span> <span class="pre">1</span></code></li>
+<li>Retrieve the node at that index</li>
+<li>Evaluate the condition at <code class="docutils literal notranslate"><span class="pre">conditionIndex</span></code></li>
+<li>Determine which branch to follow:<ul>
+<li>If the reference is complemented (negative) AND condition is true: follow <code class="docutils literal notranslate"><span class="pre">lowRef</span></code></li>
+<li>If the reference is complemented (negative) AND condition is false: follow <code class="docutils literal notranslate"><span class="pre">highRef</span></code></li>
+<li>If the reference is positive AND condition is true: follow <code class="docutils literal notranslate"><span class="pre">highRef</span></code></li>
+<li>If the reference is positive AND condition is false: follow <code class="docutils literal notranslate"><span class="pre">lowRef</span></code></li>
+</ul>
+</li>
+<li>Update the reference to the chosen branch and continue</li>
+</ul>
+</li>
+<li>When reaching a terminal or result:<ul>
+<li>For result references ≥ 100000000: return <code class="docutils literal notranslate"><span class="pre">results[ref</span> <span class="pre">-</span> <span class="pre">100000000]</span></code></li>
+<li>For terminals (1 or -1): return the <code class="docutils literal notranslate"><span class="pre">NoMatchRule</span></code></li>
+</ul>
+</li>
+</ol>
+<p>For example, a reference of 100000003 would return <code class="docutils literal notranslate"><span class="pre">results[3]</span></code>, while a reference of 1 or -1 indicates no matching
+rule was found.</p>
+</div>
+<div class="section" id="validation-requirements">
+<span id="rules-engine-endpoint-bdd-validation"></span><h3>Validation requirements<a class="headerlink" href="#validation-requirements" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><strong>Root reference</strong>: MUST NOT be complemented (negative)</li>
+<li><strong>Reference validity</strong>: All references MUST be valid:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">0</span></code> is forbidden</li>
+<li>Node references MUST point to existing nodes</li>
+<li>Result references MUST point to existing results</li>
+</ul>
+</li>
+<li><strong>Node structure</strong>: Each node MUST be a properly formed triple</li>
+<li><strong>Condition indices</strong>: Each node's condition index MUST be within <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">conditionCount)</span></code></li>
+<li><strong>Result structure</strong>: The first result (index 0) implicitly represents <code class="docutils literal notranslate"><span class="pre">NoMatchRule</span></code> and is not serialized.
+All serialized results MUST be either <code class="docutils literal notranslate"><span class="pre">EndpointRule</span></code> or <code class="docutils literal notranslate"><span class="pre">ErrorRule</span></code> objects without conditions.</li>
+<li><strong>Version requirement</strong>: The version MUST be at least 1.1</li>
+</ul>
+</div>
+</div>
 <div class="section" id="parameter-object">
-<span id="rules-engine-endpoint-rule-set-parameter"></span><h3>Parameter object<a class="headerlink" href="#parameter-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-parameter"></span><h2>Parameter object<a class="headerlink" href="#parameter-object" title="Permalink to this heading">#</a></h2>
 <p>A parameter object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -518,7 +715,7 @@ correct usage within the rule set. <a class="reference internal" href="parameter
 allow values to be bound to parameters from other locations in generated
 clients.</p>
 <p>Parameters MAY be annotated with the <code class="docutils literal notranslate"><span class="pre">builtIn</span></code> property, which designates that
-the parameter should be bound to a value determined by the built-in’s name. The
+the parameter should be bound to a value determined by the built-in's name. The
 <a class="reference internal" href="parameters.html#rules-engine-parameters-built-ins"><span class="std std-ref">rules engine contains built-ins</span></a> and
 the set is extensible.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">required</span></code> property is used to validate that a parameter value MUST be set
@@ -551,7 +748,7 @@ handling of <code class="docutils literal notranslate"><span class="pre">require
 </div>
 </div>
 <div class="section" id="deprecated-object">
-<span id="rules-engine-endpoint-rule-set-parameter-deprecated"></span><h3>Deprecated object<a class="headerlink" href="#deprecated-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-parameter-deprecated"></span><h2>Deprecated object<a class="headerlink" href="#deprecated-object" title="Permalink to this heading">#</a></h2>
 <p>A deprecated object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -595,7 +792,7 @@ provide recourse options to a user.</td>
 </div>
 </div>
 <div class="section" id="endpoint-rule-object">
-<span id="rules-engine-endpoint-rule-set-endpoint-rule"></span><h3>Endpoint rule object<a class="headerlink" href="#endpoint-rule-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-endpoint-rule"></span><h2>Endpoint rule object<a class="headerlink" href="#endpoint-rule-object" title="Permalink to this heading">#</a></h2>
 <p>An endpoint rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -658,7 +855,7 @@ and uses a parameter value in a url template:</p>
 </div>
 </div>
 <div class="section" id="endpoint-object">
-<span id="rules-engine-endpoint-rule-set-endpoint"></span><h3>Endpoint object<a class="headerlink" href="#endpoint-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-endpoint"></span><h2>Endpoint object<a class="headerlink" href="#endpoint-object" title="Permalink to this heading">#</a></h2>
 <p>An endpoint object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -713,7 +910,7 @@ reference or function objects. Properties MAY contain <a class="reference intern
 string</span></a></p>
 </div>
 <div class="section" id="endpoint-authschemes-list-property">
-<span id="rules-engine-endpoint-rule-set-endpoint-authschemes"></span><h4>Endpoint <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> list property<a class="headerlink" href="#endpoint-authschemes-list-property" title="Permalink to this heading">#</a></h4>
+<span id="rules-engine-endpoint-rule-set-endpoint-authschemes"></span><h3>Endpoint <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> list property<a class="headerlink" href="#endpoint-authschemes-list-property" title="Permalink to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property of an endpoint is used to specify a list of
 authentication schemes and their configuration. These are used to modify
 properties of the resolved and modeled authentication scheme. Clients SHOULD
@@ -739,7 +936,7 @@ modify the resolved authentication scheme's properties
 and do not raise an error.</li>
 </ol>
 <div class="section" id="adding-authschemes-configuration-validators">
-<span id="rules-engine-standard-library-adding-authscheme-validators"></span><h5>Adding <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration validators<a class="headerlink" href="#adding-authschemes-configuration-validators" title="Permalink to this heading">#</a></h5>
+<span id="rules-engine-standard-library-adding-authscheme-validators"></span><h4>Adding <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration validators<a class="headerlink" href="#adding-authschemes-configuration-validators" title="Permalink to this heading">#</a></h4>
 <p>Extensions to the rules engine can provide additional validators for
 <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration objects. No validators are provided by default.</p>
 <p>The rules engine is highly extensible through
@@ -749,7 +946,7 @@ and do not raise an error.</li>
 </div>
 </div>
 <div class="section" id="error-rule-object">
-<span id="rules-engine-endpoint-rule-set-error-rule"></span><h3>Error rule object<a class="headerlink" href="#error-rule-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-error-rule"></span><h2>Error rule object<a class="headerlink" href="#error-rule-object" title="Permalink to this heading">#</a></h2>
 <p>An error rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -823,7 +1020,7 @@ other rules have failed to match.</p>
 </div>
 </div>
 <div class="section" id="tree-rule-object">
-<span id="rules-engine-endpoint-rule-set-tree-rule"></span><h3>Tree rule object<a class="headerlink" href="#tree-rule-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-tree-rule"></span><h2>Tree rule object<a class="headerlink" href="#tree-rule-object" title="Permalink to this heading">#</a></h2>
 <p>A tree rule object contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -922,7 +1119,7 @@ of a tree, endpoint, and error rule.</p>
 </div>
 </div>
 <div class="section" id="condition-object">
-<span id="rules-engine-endpoint-rule-set-condition"></span><h3>Condition object<a class="headerlink" href="#condition-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-condition"></span><h2>Condition object<a class="headerlink" href="#condition-object" title="Permalink to this heading">#</a></h2>
 <p>A condition is specified using an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -1023,7 +1220,7 @@ endpoint object.</p>
 </div>
 </div>
 <div class="section" id="function-object">
-<span id="rules-engine-endpoint-rule-set-function"></span><h3>Function object<a class="headerlink" href="#function-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-function"></span><h2>Function object<a class="headerlink" href="#function-object" title="Permalink to this heading">#</a></h2>
 <p>A function is specified using an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -1058,7 +1255,7 @@ correct type.</p>
 the set is extensible.</p>
 </div>
 <div class="section" id="reference-object">
-<span id="rules-engine-endpoint-rule-set-reference"></span><h3>Reference object<a class="headerlink" href="#reference-object" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-reference"></span><h2>Reference object<a class="headerlink" href="#reference-object" title="Permalink to this heading">#</a></h2>
 <p>A reference is an object containing the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="docutils align-default">
@@ -1088,7 +1285,7 @@ is set and can be safely used. The rules engine statically verifies references
 are valid at time-of-use.</p>
 </div>
 <div class="section" id="template-string">
-<span id="rules-engine-endpoint-rule-set-template-string"></span><h3>Template string<a class="headerlink" href="#template-string" title="Permalink to this heading">#</a></h3>
+<span id="rules-engine-endpoint-rule-set-template-string"></span><h2>Template string<a class="headerlink" href="#template-string" title="Permalink to this heading">#</a></h2>
 <p>String values in rules can use the <code class="docutils literal notranslate"><span class="pre">{parameterName}</span></code> syntax for defining
 automatic templating of the named parameter or variable values into a string.
 For example, if the string <code class="docutils literal notranslate"><span class="pre">{parameterName}.foobar.baz</span></code> is defined in the
@@ -1098,7 +1295,7 @@ string value would be <code class="docutils literal notranslate"><span class="pr
 in reference object. The rules engine statically verifies referenced
 parameters in template strings.</p>
 <div class="section" id="template-shorthand">
-<span id="rules-engine-endpoint-rule-set-template-string-shorthand"></span><h4>Template shorthand<a class="headerlink" href="#template-shorthand" title="Permalink to this heading">#</a></h4>
+<span id="rules-engine-endpoint-rule-set-template-string-shorthand"></span><h3>Template shorthand<a class="headerlink" href="#template-shorthand" title="Permalink to this heading">#</a></h3>
 <p>Template parameters also support a shorthand syntax for accessing nested
 properties or array arguments using the <code class="docutils literal notranslate"><span class="pre">#</span></code> character. This syntax is
 syntactic sugar for using the long-form <code class="docutils literal notranslate"><span class="pre">getAttr</span></code> function. For example,
@@ -1132,7 +1329,6 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -1201,7 +1397,16 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Rules engine specification</a><ul>
-<li><a class="reference internal" href="#smithy-rules-endpointruleset-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointRuleSet</span></code> trait</a><ul>
+<li><a class="reference internal" href="#rules-engine-version">Rules engine version</a></li>
+<li><a class="reference internal" href="#smithy-rules-endpointruleset-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointRuleSet</span></code> trait</a></li>
+<li><a class="reference internal" href="#smithy-rules-endpointbdd-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointBdd</span></code> trait</a><ul>
+<li><a class="reference internal" href="#bdd-node-structure">BDD node structure</a></li>
+<li><a class="reference internal" href="#reference-encoding">Reference encoding</a></li>
+<li><a class="reference internal" href="#binary-node-encoding">Binary node encoding</a></li>
+<li><a class="reference internal" href="#bdd-evaluation">BDD evaluation</a></li>
+<li><a class="reference internal" href="#validation-requirements">Validation requirements</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#parameter-object">Parameter object</a></li>
 <li><a class="reference internal" href="#deprecated-object">Deprecated object</a></li>
 <li><a class="reference internal" href="#endpoint-rule-object">Endpoint rule object</a></li>
@@ -1219,8 +1424,6 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 <li><a class="reference internal" href="#reference-object">Reference object</a></li>
 <li><a class="reference internal" href="#template-string">Template string</a><ul>
 <li><a class="reference internal" href="#template-shorthand">Template shorthand</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

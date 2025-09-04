@@ -422,6 +422,50 @@ parameter is equal to the value <code class="docutils literal notranslate"><span
 </pre></div>
 </div>
 </div>
+<div class="section" id="coalesce-function">
+<span id="rules-engine-standard-library-coalesce"></span><h2><code class="docutils literal notranslate"><span class="pre">coalesce</span></code> function<a class="headerlink" href="#coalesce-function" title="Permalink to this heading">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Evaluates arguments in order and returns the first non-empty result, otherwise returns the result of the last
+argument.</dd>
+<dt>Argument types</dt><dd><ul class="simple">
+<li>This function is variadic and requires two or more arguments, each of type <code class="docutils literal notranslate"><span class="pre">T</span></code> or <code class="docutils literal notranslate"><span class="pre">option&lt;T&gt;</span></code></li>
+<li>All arguments must have the same inner type <code class="docutils literal notranslate"><span class="pre">T</span></code></li>
+</ul>
+</dd>
+<dt>Return type</dt><dd><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">coalesce(T,</span> <span class="pre">T,</span> <span class="pre">...)</span></code> → <code class="docutils literal notranslate"><span class="pre">T</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">coalesce(option&lt;T&gt;,</span> <span class="pre">T,</span> <span class="pre">...)</span></code> → <code class="docutils literal notranslate"><span class="pre">T</span></code> (if any argument is non-optional)</li>
+<li><code class="docutils literal notranslate"><span class="pre">coalesce(T,</span> <span class="pre">option&lt;T&gt;,</span> <span class="pre">...)</span></code> → <code class="docutils literal notranslate"><span class="pre">T</span></code> (if any argument is non-optional)</li>
+<li><code class="docutils literal notranslate"><span class="pre">coalesce(option&lt;T&gt;,</span> <span class="pre">option&lt;T&gt;,</span> <span class="pre">...)</span></code> → <code class="docutils literal notranslate"><span class="pre">option&lt;T&gt;</span></code> (if all arguments are optional)</li>
+</ul>
+</dd>
+<dt>Since</dt><dd>1.1</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">coalesce</span></code> function provides null-safe chaining by evaluating arguments in order and returning the first
+non-empty result. If all arguments leading up to the last argument evaluate to empty, it returns the result of the
+last argument. This is particularly useful for providing default values for optional parameters, chaining multiple
+optional values together, and related optimizations.</p>
+<p>The function accepts two or more arguments, all of which must have the same inner type after unwrapping any
+optionals. The return type is <code class="docutils literal notranslate"><span class="pre">option&lt;T&gt;</span></code> only if all arguments are <code class="docutils literal notranslate"><span class="pre">option&lt;T&gt;</span></code>; otherwise it returns <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
+<p>The following example demonstrates using <code class="docutils literal notranslate"><span class="pre">coalesce</span></code> with multiple arguments to try several optional values
+in sequence:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;coalesce&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customEndpoint&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regionalEndpoint&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;defaultEndpoint&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">All arguments must have the same type after unwrapping any optionals (types are known at compile time and do not
+need to be validated at runtime). Note that the first non-empty result is returned even if it's <code class="docutils literal notranslate"><span class="pre">false</span></code>
+(coalesce is looking for a <em>non-empty</em> value, not a truthy value).</p>
+</div>
+</div>
 <div class="section" id="getattr-function">
 <span id="rules-engine-standard-library-getattr"></span><h2><code class="docutils literal notranslate"><span class="pre">getAttr</span></code> function<a class="headerlink" href="#getattr-function" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
@@ -881,6 +925,7 @@ add the <a class="reference internal" href="../../aws/rules-engine/library-funct
             <ul>
 <li><a class="reference internal" href="#">Rules engine standard library</a><ul>
 <li><a class="reference internal" href="#booleanequals-function"><code class="docutils literal notranslate"><span class="pre">booleanEquals</span></code> function</a></li>
+<li><a class="reference internal" href="#coalesce-function"><code class="docutils literal notranslate"><span class="pre">coalesce</span></code> function</a></li>
 <li><a class="reference internal" href="#getattr-function"><code class="docutils literal notranslate"><span class="pre">getAttr</span></code> function</a><ul>
 <li><a class="reference internal" href="#parsing-path-strings">Parsing <code class="docutils literal notranslate"><span class="pre">path</span></code> strings</a></li>
 </ul>

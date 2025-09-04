@@ -1261,7 +1261,7 @@ available in every Smithy model and namespace through relative shape IDs.</p>
 <div class="section" id="references-to-traits">
 <h4><span class="section-number">1.7.2.2. </span>References to traits<a class="headerlink" href="#references-to-traits" title="Permalink to this heading">#</a></h4>
 <p>The only valid reference to a trait is through applying a trait to a
-shape. Members and references within a model MUST NOT target shapes.</p>
+shape. Members and references within a model MUST NOT target trait shapes.</p>
 </div>
 <div class="section" id="trait-trait">
 <span id="smithy-api-trait-trait"></span><span id="id10"></span><h4><span class="section-number">1.7.2.3. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> trait<a class="headerlink" href="#trait-trait" title="Permalink to this heading">#</a></h4>
@@ -2372,13 +2372,6 @@ namespace using a relative shape ID.</p>
 <span class="c">/// be present.</span>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>
-<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span>
-<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;If any consumers were previously omitting this member in operation inputs, making it required is backwards incompatible&quot;</span>
-<span class="w">        </span>}
-<span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">required</span><span class="w"> </span>{}
 

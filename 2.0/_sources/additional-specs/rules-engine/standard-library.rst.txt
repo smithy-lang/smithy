@@ -38,6 +38,53 @@ parameter is equal to the value ``false``:
     }
 
 
+.. _rules-engine-standard-library-coalesce:
+
+``coalesce`` function
+=====================
+
+Summary
+    Evaluates arguments in order and returns the first non-empty result, otherwise returns the result of the last
+    argument.
+Argument types
+    * This function is variadic and requires two or more arguments, each of type ``T`` or ``option<T>``
+    * All arguments must have the same inner type ``T``
+Return type
+    * ``coalesce(T, T, ...)`` → ``T``
+    * ``coalesce(option<T>, T, ...)`` → ``T`` (if any argument is non-optional)
+    * ``coalesce(T, option<T>, ...)`` → ``T`` (if any argument is non-optional)
+    * ``coalesce(option<T>, option<T>, ...)`` → ``option<T>`` (if all arguments are optional)
+Since
+    1.1
+
+The ``coalesce`` function provides null-safe chaining by evaluating arguments in order and returning the first
+non-empty result. If all arguments leading up to the last argument evaluate to empty, it returns the result of the
+last argument. This is particularly useful for providing default values for optional parameters, chaining multiple
+optional values together, and related optimizations.
+
+The function accepts two or more arguments, all of which must have the same inner type after unwrapping any
+optionals. The return type is ``option<T>`` only if all arguments are ``option<T>``; otherwise it returns ``T``.
+
+The following example demonstrates using ``coalesce`` with multiple arguments to try several optional values
+in sequence:
+
+.. code-block:: json
+
+    {
+        "fn": "coalesce",
+        "argv": [
+            {"ref": "customEndpoint"},
+            {"ref": "regionalEndpoint"},
+            {"ref": "defaultEndpoint"}
+        ]
+    }
+
+.. important::
+    All arguments must have the same type after unwrapping any optionals (types are known at compile time and do not
+    need to be validated at runtime). Note that the first non-empty result is returned even if it's ``false``
+    (coalesce is looking for a *non-empty* value, not a truthy value).
+
+
 .. _rules-engine-standard-library-getAttr:
 
 ``getAttr`` function

@@ -603,7 +603,7 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 <p>Smithy Java <strong>requires</strong> that an implementation of a generated operation interface be registered with the server for
 every operation defined in service model. Let’s add the required implementation:</p>
 <div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">server/src/main/java/io/smithy/java/server/example/GetHoursOperation.java</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">server/src/main/java/io/smithy/java/server/example/GetHours.java</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">GetHours</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">GetHoursOperation</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">GetHoursOutput</span><span class="w"> </span><span class="nf">getHours</span><span class="p">(</span><span class="n">GetHoursInput</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">RequestContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
