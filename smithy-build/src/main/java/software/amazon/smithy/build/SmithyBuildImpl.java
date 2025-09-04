@@ -49,6 +49,8 @@ final class SmithyBuildImpl {
     private static final Pattern PLUGIN_PATTERN = Pattern
             .compile("^" + PATTERN_PART + "(::" + PATTERN_PART + ")?$");
 
+    private static final String SHARED_MANIFEST_NAME = "shared";
+
     private final SmithyBuildConfig config;
     private final Function<Path, FileManifest> fileManifestFactory;
     private final Supplier<ModelAssembler> modelAssemblerSupplier;
@@ -357,12 +359,17 @@ final class SmithyBuildImpl {
             LOGGER.fine(() -> String.format("No transforms to apply for projection %s", projectionName));
         }
 
+        // Create the manifest where shared artifacts are stored.
+        Path sharedPluginDir = baseProjectionDir.resolve(SHARED_MANIFEST_NAME);
+        FileManifest sharedManifest = fileManifestFactory.apply(sharedPluginDir);
+
         // Keep track of the first error created by plugins to fail the build after all plugins have run.
         Throwable firstPluginError = null;
         ProjectionResult.Builder resultBuilder = ProjectionResult.builder()
                 .projectionName(projectionName)
                 .model(projectedModel)
-                .events(modelResult.getValidationEvents());
+                .events(modelResult.getValidationEvents())
+                .sharedFileManifest(sharedManifest);
 
         for (ResolvedPlugin resolvedPlugin : resolvedPlugins) {
             if (pluginFilter.test(resolvedPlugin.id.getArtifactName())) {
@@ -374,7 +381,8 @@ final class SmithyBuildImpl {
                             projectedModel,
                             resolvedModel,
                             modelResult,
-                            resultBuilder);
+                            resultBuilder,
+                            sharedManifest);
                 } catch (Throwable e) {
                     if (firstPluginError == null) {
                         firstPluginError = e;
@@ -427,7 +435,8 @@ final class SmithyBuildImpl {
             Model projectedModel,
             Model resolvedModel,
             ValidatedResult<Model> modelResult,
-            ProjectionResult.Builder resultBuilder
+            ProjectionResult.Builder resultBuilder,
+            FileManifest sharedManifest
     ) {
         PluginId id = resolvedPlugin.id;
 
@@ -449,6 +458,7 @@ final class SmithyBuildImpl {
                             .events(modelResult.getValidationEvents())
                             .settings(resolvedPlugin.config)
                             .fileManifest(manifest)
+                            .sharedFileManifest(sharedManifest)
                             .pluginClassLoader(pluginClassLoader)
                             .sources(sources)
                             .artifactName(id.hasArtifactName() ? id.getArtifactName() : null)

@@ -12,7 +12,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -457,6 +459,47 @@ public class SmithyBuildTest {
         assertTrue(source.getPluginManifest("test2").get().hasFile("hello2"));
         assertTrue(a.getPluginManifest("test2").get().hasFile("hello2"));
         assertTrue(b.getPluginManifest("test2").get().hasFile("hello2"));
+    }
+
+    @Test
+    public void appliesPluginsWithSharedSpace() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "testSharing1",
+                new TestSharingPlugin1(),
+                "testSharing2",
+                new TestSharingPlugin2());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("applies-plugins-with-shared-space.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        ProjectionResult projection = results.getProjectionResult("testProjection").get();
+
+        assertNotNull(source.getSharedManifest());
+        assertNotNull(projection.getSharedManifest());
+
+        MockManifest sourceManifest = (MockManifest) source.getSharedManifest();
+        MockManifest projectionManifest = (MockManifest) projection.getSharedManifest();
+
+        assertTrue(sourceManifest.hasFile("helloShare1"));
+        assertEquals("1", sourceManifest.getFileString("helloShare1").get());
+
+        assertTrue(projectionManifest.hasFile("helloShare1"));
+        assertEquals("2", projectionManifest.getFileString("helloShare1").get());
+
+        assertFalse(sourceManifest.hasFile("helloShare2"));
+
+        assertTrue(projectionManifest.hasFile("helloShare2"));
+        assertEquals("2", projectionManifest.getFileString("helloShare2").get());
     }
 
     @Test
