@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Sync partitions.json to match latest SDK release",
-  "pull_requests": [
-    "[#2777](https://github.com/smithy-lang/smithy/pull/2777)"
-  ]
-}

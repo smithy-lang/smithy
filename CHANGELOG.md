@@ -1,5 +1,84 @@
 # Smithy Changelog
 
+## 1.62.0 (2025-09-24)
+
+### Features
+
+- Allow specifying multiple files and/or directories to smithy format. Fixes
+  ([#2757](https://github.com/smithy-lang/smithy/pull/2757))
+- Added split function to rules engine.
+  ([#2762](https://github.com/smithy-lang/smithy/pull/2762))
+- Added BDD-based rules engine trait.
+  ([#2703](https://github.com/smithy-lang/smithy/pull/2703))
+- Updated builders to consistently use BuilderRef to avoid leaking mutable
+  values. ([#2743](https://github.com/smithy-lang/smithy/pull/2743))
+- Synced partitions.json to match latest SDK release.
+  ([#2777](https://github.com/smithy-lang/smithy/pull/2777),
+  [#2781](https://github.com/smithy-lang/smithy/pull/2781))
+- Added support for union traits and unions as parts of other trait definitions.
+  ([#2780](https://github.com/smithy-lang/smithy/pull/2780),
+  [#2784](https://github.com/smithy-lang/smithy/pull/2784))
+
+### Bug Fixes
+
+- Updated query params output test in rest-json.
+  ([#2739](https://github.com/smithy-lang/smithy/pull/2739))
+- Fixed trait codegen for timestamp member with timestampformat trait.
+  ([#2744](https://github.com/smithy-lang/smithy/pull/2744))
+- Removed the breakingChanges member from the required trait.
+  ([#2748](https://github.com/smithy-lang/smithy/pull/2748))
+- Fixed trait codegen for list with uniqueitems trait.
+  ([#2706](https://github.com/smithy-lang/smithy/pull/2706))
+- Fixed loading smithy-ts version in docs.
+  ([#2722](https://github.com/smithy-lang/smithy/pull/2722))
+- Fixed trait codegen for class name conflicts in enum/intenum traits.
+  ([#2755](https://github.com/smithy-lang/smithy/pull/2755))
+- Fixed incorrect builder properties assignment for enum with default value.
+  ([#2752](https://github.com/smithy-lang/smithy/pull/2752))
+- Fixed a bug that prevented warning events to show up for diff CLI command.
+  ([#2749](https://github.com/smithy-lang/smithy/pull/2749))
+- Fixed trait codegen for structure's string member with `@idRef`.
+  ([#2728](https://github.com/smithy-lang/smithy/pull/2728))
+- Updated shape id sequences (such as an operation's list of errors) to use
+  ordered sets instead of lists to avoid models failing to evaluate as equal if
+  the order is changed.
+  ([#2742](https://github.com/smithy-lang/smithy/pull/2742))
+- Fixed using shapes without TraitDefinition as trait.
+  ([#2733](https://github.com/smithy-lang/smithy/pull/2733))
+- Fixed trait codegen for List or Map traits with annotations or Javadocs.
+  ([#2729](https://github.com/smithy-lang/smithy/pull/2729))
+- Fixed type transposing in RPC v2 CBOR spec.
+  ([#2727](https://github.com/smithy-lang/smithy/pull/2727))
+- Added missing sourceLocation setting in fromNode() in trait codegen.
+  ([#2730](https://github.com/smithy-lang/smithy/pull/2730))
+- Reverted casting terminal endpoint builder methods as their types were being
+  re-written as different types.
+  ([#2773](https://github.com/smithy-lang/smithy/pull/2773))
+- Fixed an issue causing OpenAPI error examples to be missing when service-level
+  and operation-level errors share HTTP status codes.
+  ([#2754](https://github.com/smithy-lang/smithy/pull/2754))
+
+### Documentation
+
+- Updated README.md for Trait Codegen.
+  ([#2753](https://github.com/smithy-lang/smithy/pull/2753))
+- Added README.md for trait codegen.
+  ([#2751](https://github.com/smithy-lang/smithy/pull/2751))
+- Added missing important word in `model.rst`.
+  ([#2726](https://github.com/smithy-lang/smithy/pull/2726))
+- Updated smithy-java quickstart docs with correct file name.
+  ([#2766](https://github.com/smithy-lang/smithy/pull/2766))
+- Fixed an incorrect command in the server quickstart.
+  ([#2782](https://github.com/smithy-lang/smithy/pull/2782))
+
+### Other
+
+- Raised the severity for query error validator to danger.
+  ([#2758](https://github.com/smithy-lang/smithy/pull/2758))
+- Added JSON protocol tests to assert that nested `__type` keys don't overwrite
+  the top-level `__type`.
+  ([#2778](https://github.com/smithy-lang/smithy/pull/2778))
+
 ## 1.61.0 (2025-07-23)
 
 ### Features
@@ -4020,4 +4099,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-

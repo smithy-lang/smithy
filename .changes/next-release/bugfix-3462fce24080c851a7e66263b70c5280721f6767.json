@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix PR link generation in new-change and render command",
-  "pull_requests": [
-    "[#2767](https://github.com/smithy-lang/smithy/pull/2767)"
-  ]
-}
