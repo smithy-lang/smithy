@@ -1,5 +1,74 @@
 # Smithy Changelog
 
+## 1.62.0 (2025-09-05)
+
+### Features
+
+- Allows specifying multiple files and/or directories to smithy format. Fixes
+  [#2563](https://github.com/smithy-lang/smithy/issues/2563).
+  ([#2757](https://github.com/smithy-lang/smithy/pull/2757))
+- Add split function to rules engine
+  ([#2762](https://github.com/smithy-lang/smithy/pull/2762))
+- Add BDD-based rules engine trait
+  ([#2703](https://github.com/smithy-lang/smithy/pull/2703))
+- Add changelog release script
+  ([#2723](https://github.com/smithy-lang/smithy/pull/2723))
+- Consistently use BuilderRefs for collections in builders
+  ([#2743](https://github.com/smithy-lang/smithy/pull/2743))
+
+### Bug Fixes
+
+- Update query params output test in rest-json
+  ([#2739](https://github.com/smithy-lang/smithy/pull/2739))
+- Fix trait codegen for timestamp member with timestampformat trai
+  ([#2744](https://github.com/smithy-lang/smithy/pull/2744))
+- Remove the breakingChanges member from the required trait
+  ([#2748](https://github.com/smithy-lang/smithy/pull/2748))
+- Fix trait codegen for list with uniqueitems trait
+  ([#2706](https://github.com/smithy-lang/smithy/pull/2706))
+- Fix loading smithy-ts version in docs
+  ([#2722](https://github.com/smithy-lang/smithy/pull/2722))
+- Fix trait codegen for class name conflicts in enum/intenum traits
+  ([#2755](https://github.com/smithy-lang/smithy/pull/2755))
+- Fix incorrect builder properties assignment for enum with default value
+  ([#2752](https://github.com/smithy-lang/smithy/pull/2752))
+- Fix a bug that prevented warning events to show up for diff CLI command
+  ([#2749](https://github.com/smithy-lang/smithy/pull/2749))
+- Fix new change tool for changelog generation
+  ([#2765](https://github.com/smithy-lang/smithy/pull/2765))
+- Fix PR link generation in new-change and render command
+  ([#2767](https://github.com/smithy-lang/smithy/pull/2767))
+- Fix trait codegen for structure's string member with `@idRef`
+  ([#2728](https://github.com/smithy-lang/smithy/pull/2728))
+- Use ordered sets for shape id sequences
+  ([#2742](https://github.com/smithy-lang/smithy/pull/2742))
+- Fix using shapes without TaritDefinition as trait
+  ([#2733](https://github.com/smithy-lang/smithy/pull/2733))
+- Fix trait codegen for List or Map traits with annotations or Javadocs
+  ([#2729](https://github.com/smithy-lang/smithy/pull/2729))
+- Fix type transposing in RPC v2 CBOR spec
+  ([#2727](https://github.com/smithy-lang/smithy/pull/2727))
+- Add missing sourceLocation setting in fromNode() in trait codegen
+  ([#2730](https://github.com/smithy-lang/smithy/pull/2730))
+
+### Documentation
+
+- Update README.md for Trait Codegen
+  ([#2753](https://github.com/smithy-lang/smithy/pull/2753))
+- Add README.md for trait codegen
+  ([#2751](https://github.com/smithy-lang/smithy/pull/2751))
+- Add missing important word in model.rst
+  ([#2726](https://github.com/smithy-lang/smithy/pull/2726))
+- Update smithy-java quickstart docs with correct file name
+  ([#2766](https://github.com/smithy-lang/smithy/pull/2766))
+
+### Other
+
+- Raise the severity for query error validator to danger
+  ([#2758](https://github.com/smithy-lang/smithy/pull/2758))
+- Prepare for Gradle 9
+  ([#2745](https://github.com/smithy-lang/smithy/pull/2745))
+
 ## 1.61.0 (2025-07-23)
 
 ### Features
@@ -4020,4 +4089,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-
