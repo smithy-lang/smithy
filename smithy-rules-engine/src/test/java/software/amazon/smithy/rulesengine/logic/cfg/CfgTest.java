@@ -50,7 +50,7 @@ class CfgTest {
 
     @Test
     void fromCreatesSimpleCfg() {
-        EndpointRule rule = EndpointRule.builder()
+        EndpointRule rule = (EndpointRule) EndpointRule.builder()
                 .endpoint(TestHelpers.endpoint("https://example.com"));
 
         EndpointRuleSet ruleSet = EndpointRuleSet.builder()
@@ -75,7 +75,7 @@ class CfgTest {
                 .addParameter(Parameter.builder().name("region").type(ParameterType.STRING).build())
                 .build();
 
-        EndpointRule rule = EndpointRule.builder()
+        EndpointRule rule = (EndpointRule) EndpointRule.builder()
                 .condition(Condition.builder().fn(TestHelpers.isSet("region")).build())
                 .endpoint(TestHelpers.endpoint("https://example.com"));
 
