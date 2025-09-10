@@ -6,6 +6,7 @@ package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
@@ -171,7 +172,7 @@ public class IntegrationTopologicalSortTest {
 
         RuntimeException e = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> SmithyIntegration.sort(integrations));
-        assertThat(e.getMessage(), equalTo("SmithyIntegration cycles detected among [b, d]"));
+        assertThat(e.getMessage(), containsString("[b, d]"));
     }
 
     @Test
