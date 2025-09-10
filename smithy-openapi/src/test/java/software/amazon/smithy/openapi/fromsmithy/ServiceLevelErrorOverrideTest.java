@@ -15,14 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that service-level errors don't override operation-specific error examples.
- * This reproduces the healthcare service issue where ValidationException (service-level)
- * overrides EligibilityCheckOutputValidationErrors (operation-level) examples.
  */
 public class ServiceLevelErrorOverrideTest {
-    
+
     @Test
     public void serviceLevelErrorsShouldNotOverrideOperationSpecificExamples() {
-        // Create a model that mimics the healthcare service structure
         String modelText = "$version: \"2.0\"\n" +
             "namespace test.service.error\n" +
             "use aws.protocols#restJson1\n" +
@@ -80,60 +77,56 @@ public class ServiceLevelErrorOverrideTest {
             "        allowConstraintErrors: true\n" +
             "    }\n" +
             "])";
-        
+
         Model model = Model.assembler()
                 .addImport(getClass().getResource("/META-INF/smithy/aws.protocols.smithy"))
                 .addUnparsedModel("test.smithy", modelText)
                 .assemble()
                 .unwrap();
-        
-        // Convert to OpenAPI with oneOf enabled (like healthcare service had)
+
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("test.service.error#TestService"));
         config.setOnErrorStatusConflict(OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF);
-        
+
         Node result = OpenApiConverter.create().config(config).convertToNode(model);
         ObjectNode openApi = result.expectObjectNode();
-        
-        // Print for debugging
+
         System.out.println("Generated OpenAPI:");
         System.out.println(Node.prettyPrintJson(result));
-        
-        // Navigate to the 400 response
+
         ObjectNode paths = openApi.expectMember("paths").expectObjectNode();
         ObjectNode testPath = paths.expectMember("/test").expectObjectNode();
         ObjectNode postOp = testPath.expectMember("post").expectObjectNode();
         ObjectNode responses = postOp.expectMember("responses").expectObjectNode();
-        
-        // Should have a 400 response
+
         assertTrue(responses.getMember("400").isPresent(), "Expected 400 response for client errors");
-        
+
         ObjectNode response400 = responses.expectMember("400").expectObjectNode();
         ObjectNode content = response400.expectMember("content").expectObjectNode();
         ObjectNode jsonContent = content.expectMember("application/json").expectObjectNode();
-        
-        // The bug: When ValidationException (service-level) and CustomError (operation-level) 
-        // both map to 400, the service-level error takes precedence and operation-specific 
+
+        // The bug: When ValidationException (service-level) and CustomError (operation-level)
+        // both map to 400, the service-level error takes precedence and operation-specific
         // examples are lost
-        assertTrue(jsonContent.getMember("examples").isPresent(), 
+        assertTrue(jsonContent.getMember("examples").isPresent(),
             "BUG: Service-level ValidationException overrides operation-specific CustomError examples. " +
             "Expected CustomError examples to appear in 400 response but they are missing.");
-        
+
         ObjectNode examples = jsonContent.expectMember("examples").expectObjectNode();
-        assertFalse(examples.getMembers().isEmpty(), 
+        assertFalse(examples.getMembers().isEmpty(),
             "Expected CustomError examples in 400 response content");
-        
+
         // Look for our specific custom error example content
         boolean foundCustomErrorExample = examples.getMembers().values().stream()
             .filter(Node::isObjectNode)
             .map(node -> node.expectObjectNode())
             .filter(example -> example.getMember("value").isPresent())
             .map(example -> example.expectMember("value").expectObjectNode())
-            .anyMatch(value -> 
+            .anyMatch(value ->
                 value.getMember("code").filter(node -> "CUSTOM_ERROR".equals(node.expectStringNode().getValue())).isPresent() &&
                 value.getMember("message").filter(node -> "Custom error occurred".equals(node.expectStringNode().getValue())).isPresent()
             );
-        
+
         assertTrue(foundCustomErrorExample,
             "Expected to find CustomError example with code 'CUSTOM_ERROR' and message 'Custom error occurred' " +
             "but service-level ValidationException appears to be overriding it");

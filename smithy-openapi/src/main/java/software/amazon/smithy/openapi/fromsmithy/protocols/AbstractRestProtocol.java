@@ -7,6 +7,7 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -354,9 +355,9 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // unique numbering for unique example names in OpenAPI.
         int uniqueNum = 1;
         Optional<ExamplesTrait> examplesTrait = operation.getTrait(ExamplesTrait.class);
-        
+
         Set<ShapeId> errorShapeIds = getErrorShapeIdsForMatching(context, error, operation);
-        
+
         for (ExamplesTrait.Example example : examplesTrait.map(ExamplesTrait::getExamples)
                 .orElse(Collections.emptyList())) {
             String name = operation.getId().getName() + "_example" + uniqueNum++;
@@ -378,40 +379,24 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private Set<ShapeId> getErrorShapeIdsForMatching(Context<T> context, Shape error, OperationShape operation) {
-        Set<ShapeId> errorShapeIds = new LinkedHashSet<>();
-        
-        String errorName = error.getId().getName();
-        if (errorName.matches(".*\\d+Error$")) {
-            if (error instanceof StructureShape && context.getModel() != null) {
-                // Try to find all error shapes in the model that match the HTTP status
-                String statusCode = extractStatusCodeFromSyntheticErrorName(errorName);
-                
-                // Get all operation and service errors and check which ones map to this status
-                context.getModel().shapes(StructureShape.class)
-                    .filter(shape -> shape.hasTrait(ErrorTrait.class))
-                    .filter(shape -> getHttpStatusCode(shape).equals(statusCode))
-                    .forEach(shape -> errorShapeIds.add(shape.getId()));
+        // Handle synthesized error unions when deconflicting is enabled
+        Set<ShapeId> errorShapeIds = new HashSet<>();
+        if (error.getMember("errorUnion").isPresent()) {
+            ShapeId unionShapeId = error.getMember("errorUnion").get().getTarget();
+            Shape unionShape = context.getModel().getShape(unionShapeId).orElse(null);
+
+            if (unionShape != null && unionShape.isUnionShape()) {
+                for (MemberShape unionMember : unionShape.getAllMembers().values()) {
+                    errorShapeIds.add(unionMember.getTarget());
+                }
+            } else {
+                errorShapeIds.add(error.toShapeId());
             }
         } else {
-            // For regular errors, just use the error shape ID
+            // If not deconflicted, then the error passed is an actual error (not synthesized)
             errorShapeIds.add(error.toShapeId());
         }
-        
         return errorShapeIds;
-    }
-    
-    private String extractStatusCodeFromSyntheticErrorName(String errorName) {
-        if (errorName.matches(".*\\d+Error$")) {
-            return errorName.replaceAll(".*?(\\d+)Error$", "$1");
-        }
-        return "400";
-    }
-    
-    private String getHttpStatusCode(StructureShape errorShape) {
-        return errorShape.getTrait(HttpErrorTrait.class)
-            .map(trait -> String.valueOf(trait.getCode()))
-            .orElse(errorShape.hasTrait(ErrorTrait.class) && "client".equals(
-                errorShape.expectTrait(ErrorTrait.class).getValue()) ? "400" : "500");
     }
 
     /*
