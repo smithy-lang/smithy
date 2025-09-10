@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +58,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     public static Parameters fromNode(ObjectNode node) throws RuleError {
         Builder builder = new Builder(node);
         for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
-            builder.addParameter(Parameter.fromNode(entry.getKey(),
-                    RuleError.context("when parsing parameter", () -> entry.getValue().expectObjectNode())));
+            builder.addParameter(Parameter.fromNode(entry.getKey(), entry.getValue().expectObjectNode()));
         }
         return builder.build();
     }
@@ -74,6 +74,15 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
                     parameter,
                     () -> scope.insert(parameter.getName(), parameter.toType()));
         }
+    }
+
+    /**
+     * Convert the Parameters container to a list.
+     *
+     * @return the parameters list.
+     */
+    public List<Parameter> toList() {
+        return Collections.unmodifiableList(parameters);
     }
 
     @Override

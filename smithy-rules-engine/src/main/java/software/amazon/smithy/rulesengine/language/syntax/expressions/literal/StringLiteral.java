@@ -4,8 +4,11 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
@@ -65,5 +68,22 @@ public final class StringLiteral extends Literal {
     @Override
     public Node toNode() {
         return value.toNode();
+    }
+
+    @Override
+    protected Set<String> calculateReferences() {
+        Template template = value();
+        if (template.isStatic()) {
+            return Collections.emptySet();
+        }
+
+        Set<String> references = new LinkedHashSet<>();
+        for (Template.Part part : template.getParts()) {
+            if (part instanceof Template.Dynamic) {
+                references.addAll(((Template.Dynamic) part).toExpression().getReferences());
+            }
+        }
+
+        return references;
     }
 }

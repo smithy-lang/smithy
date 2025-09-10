@@ -23,7 +23,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Emits a warning if two or more error shapes share the same error code.
+ * Emits a danger if two or more error shapes share the same error code.
  */
 @SmithyInternalApi
 public class QueryErrorCodeValidator extends AbstractValidator {
@@ -73,7 +73,7 @@ public class QueryErrorCodeValidator extends AbstractValidator {
             if (events.isEmpty()) {
                 events = new ArrayList<>();
             }
-            events.add(warning(service,
+            events.add(danger(service,
                     String.format("Multiple error shapes with the error code `%s` found: [%s]. This error code "
                             + "ambiguity will result in the wrong error shape being deserialized when running the "
                             + "query protocol. This pain will be carried forward when migrating to a new protocol "

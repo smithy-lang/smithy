@@ -6,8 +6,10 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -38,20 +40,20 @@ public interface Type {
     }
 
     static Type fromParameterType(ParameterType parameterType) {
-        if (parameterType == ParameterType.STRING) {
-            return stringType();
+        switch (parameterType) {
+            case STRING:
+                return stringType();
+            case BOOLEAN:
+                return booleanType();
+            case STRING_ARRAY:
+                return arrayType(stringType());
+            default:
+                throw new IllegalArgumentException("Unexpected parameter type: " + parameterType);
         }
-        if (parameterType == ParameterType.BOOLEAN) {
-            return booleanType();
-        }
-        if (parameterType == ParameterType.STRING_ARRAY) {
-            return arrayType(stringType());
-        }
-        throw new IllegalArgumentException("Unexpected parameter type: " + parameterType);
     }
 
     static AnyType anyType() {
-        return new AnyType();
+        return AnyType.INSTANCE;
     }
 
     static ArrayType arrayType(Type inner) {
@@ -59,19 +61,19 @@ public interface Type {
     }
 
     static BooleanType booleanType() {
-        return new BooleanType();
+        return BooleanType.INSTANCE;
     }
 
     static EmptyType emptyType() {
-        return new EmptyType();
+        return EmptyType.INSTANCE;
     }
 
     static EndpointType endpointType() {
-        return new EndpointType();
+        return EndpointType.INSTANCE;
     }
 
     static IntegerType integerType() {
-        return new IntegerType();
+        return IntegerType.INSTANCE;
     }
 
     static OptionalType optionalType(Type type) {
@@ -83,7 +85,7 @@ public interface Type {
     }
 
     static StringType stringType() {
-        return new StringType();
+        return StringType.INSTANCE;
     }
 
     static TupleType tupleType(List<Type> members) {
@@ -128,5 +130,18 @@ public interface Type {
 
     default TupleType expectTupleType() throws InnerParseError {
         throw new InnerParseError("Expected tuple but found " + this);
+    }
+
+    /**
+     * Gets the default zero-value of the type as a Literal.
+     *
+     * <p>Strings, booleans, integers, and arrays have zero values. Other types do not. E.g., a map might have
+     * required properties, and the behavior of a tuple _seems_ to imply that each member is required. Optionals
+     * return the zero value of its inner type.
+     *
+     * @return the default zero value.
+     */
+    default Optional<Literal> getZeroValue() {
+        return Optional.empty();
     }
 }

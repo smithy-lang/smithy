@@ -10,34 +10,43 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 
 /**
- * Validator to ensure that all parameters have documentation.
+ * Validator to ensure that all parameters have documentation (in BDD and ruleset).
  */
 public final class RuleSetParamMissingDocsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            events.addAll(validateRuleSet(serviceShape,
-                    serviceShape.expectTrait(EndpointRuleSetTrait.class)
-                            .getEndpointRuleSet()));
+        for (ServiceShape serviceShape : model.getServiceShapes()) {
+            visitRuleset(events, serviceShape, serviceShape.getTrait(EndpointRuleSetTrait.class).orElse(null));
+            visitBdd(events, serviceShape, serviceShape.getTrait(EndpointBddTrait.class).orElse(null));
         }
         return events;
     }
 
-    public List<ValidationEvent> validateRuleSet(ServiceShape serviceShape, EndpointRuleSet ruleSet) {
-        List<ValidationEvent> events = new ArrayList<>();
-        for (Parameter parameter : ruleSet.getParameters()) {
+    private void visitRuleset(List<ValidationEvent> events, ServiceShape serviceShape, EndpointRuleSetTrait trait) {
+        if (trait != null) {
+            visitParams(events, serviceShape, trait.getEndpointRuleSet().getParameters());
+        }
+    }
+
+    private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, EndpointBddTrait trait) {
+        if (trait != null) {
+            visitParams(events, serviceShape, trait.getParameters());
+        }
+    }
+
+    public void visitParams(List<ValidationEvent> events, ServiceShape serviceShape, Iterable<Parameter> parameters) {
+        for (Parameter parameter : parameters) {
             if (!parameter.getDocumentation().isPresent()) {
                 events.add(warning(serviceShape,
                         parameter,
                         String.format("Parameter `%s` does not have documentation", parameter.getName())));
             }
         }
-        return events;
     }
 }

@@ -14,18 +14,27 @@ are composed of a set of *conditions*, which determine if a rule should be
 selected, and a result. Conditions act on the defined parameters, and allow for
 the modeling of statements.
 
-When a rule’s conditions are evaluated successfully, the rule provides either a
+When a rule's conditions are evaluated successfully, the rule provides either a
 result and its accompanying requirements or an error describing the unsupported
 state. Modeled endpoint errors allow for more explicit descriptions to users,
 such as providing errors when a service doesn't support a combination of
 conditions.
 
+--------------------
+Rules engine version
+--------------------
+
+The rules engine specification is versioned, with the current version being 1.1. Unless otherwise specified, functions,
+features, and built-ins have been available since version 1.0. Any feature, function, or built-in used in the
+``endpointRuleSet`` or ``endpointBdd`` traits MUST be supported by the declared version of the trait. In other words,
+the feature's introduction version must be less than or equal to the trait version.
 
 .. smithy-trait:: smithy.rules#endpointRuleSet
 .. _smithy.rules#endpointRuleSet-trait:
 
+--------------------------------------
 ``smithy.rules#endpointRuleSet`` trait
-======================================
+--------------------------------------
 
 Summary
     Defines a rule set for deriving service endpoints at runtime.
@@ -45,8 +54,7 @@ The content of the ``endpointRuleSet`` document has the following properties:
       - Description
     * - version
       - ``string``
-      - **Required**. The rule set schema version. This specification covers
-        version 1.0 of the endpoint rule set.
+      - **Required**. The rules engine version (e.g., 1.0).
     * - serviceId
       - ``string``
       - **Required**. An identifier for the corresponding service.
@@ -73,6 +81,184 @@ that rule exhaustion has occurred. Rule authors SHOULD use either an :ref:`endpo
 or :ref:`error rules, <rules-engine-endpoint-rule-set-error-rule>` with an
 empty set of conditions to provide a more meaningful default or error depending
 on the scenario.
+
+.. smithy-trait:: smithy.rules#endpointBdd
+.. _smithy.rules#endpointBdd-trait:
+
+----------------------------------
+``smithy.rules#endpointBdd`` trait
+----------------------------------
+
+.. warning:: Experimental
+
+    This trait is experimental and subject to change.
+
+Summary
+    A Binary `Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_ representation of
+    endpoint rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.
+Trait selector
+    ``service``
+Value type
+    ``structure``
+
+The ``endpointBdd`` trait provides a BDD representation of endpoint rules, optimizing runtime evaluation by
+eliminating redundant condition evaluations and reducing the decision tree to a minimal directed acyclic graph.
+This trait is an alternative to ``endpointRuleSet`` that trades compile-time complexity for significantly improved
+runtime performance and reduced artifact sizes.
+
+.. note::
+
+   The ``endpointBdd`` trait can be generated from an ``endpointRuleSet`` trait through compilation. Services may
+   provide either trait, with ``endpointBdd`` preferred for production use due to its performance characteristics.
+
+The ``endpointBdd`` structure has the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - version
+      - ``string``
+      - **Required**. The endpoint rules engine version. Must be at least version 1.1.
+    * - parameters
+      - ``map<string, parameter object>`` of `Parameter object`_
+      - **Required**. A map of zero or more endpoint parameter names to
+        their parameter configuration. Uses the same parameter structure as
+        ``endpointRuleSet``.
+    * - conditions
+      - ``array`` of `Condition object`_
+      - **Required**. Array of conditions that are evaluated during BDD
+        traversal. Each condition is referenced by its index in this array.
+    * - results
+      - ``array`` of `Endpoint rule object`_ or `Error rule object`_
+      - **Required**. Array of possible endpoint results. The implicit `NoMatchRule` at BDD reference 0 is not included
+        in the array. These rule objects MUST NOT contain conditions.
+    * - root
+      - ``integer``
+      - **Required**. The root reference where BDD evaluation begins.
+    * - nodeCount
+      - ``integer``
+      - **Required**. The total number of nodes in the BDD. Used for validation and exact-sizing arrays during
+        deserialization.
+    * - nodes
+      - ``string``
+      - **Required**. Base64-encoded binary representation of BDD nodes. Each node is encoded as three 4-byte
+        integers: ``[conditionIndex, highRef, lowRef]``.
+
+.. _rules-engine-endpoint-bdd-node-structure:
+
+BDD node structure
+------------------
+
+Each BDD node is encoded as a triple of integers:
+
+* ``conditionIndex``: Zero-based index into the ``conditions`` array
+* ``highRef``: Reference to follow when the condition evaluates to true
+* ``lowRef``: Reference to follow when the condition evaluates to false
+
+The first node, index 0, is always the terminal node ``[-1, 1, -1]`` and MUST NOT be referenced directly. This node
+serves as the canonical base case for BDD reduction algorithms.
+
+.. _rules-engine-endpoint-bdd-reference-encoding:
+
+Reference encoding
+------------------
+
+BDD references use the following encoding scheme:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Reference value
+      - Description
+    * - ``0``
+      - Invalid/unused reference (never appears in valid BDDs)
+    * - ``1``
+      - TRUE terminal (no match in endpoint resolution)
+    * - ``-1``
+      - FALSE terminal (no match in endpoint resolution)
+    * - ``2, 3, 4, ...``
+      - Node references (points to ``nodes[ref-1]``)
+    * - ``-2, -3, -4, ...``
+      - Complement edges (logical NOT of the referenced node)
+    * - ``100000000+``
+      - Result terminals (100000000 + resultIndex)
+
+When traversing a complement edge (negative reference), the high and low branches are swapped during evaluation.
+This enables significant node sharing and BDD size reduction.
+
+.. _rules-engine-endpoint-bdd-binary-encoding:
+
+Binary node encoding
+--------------------
+
+Nodes are encoded as a Base64 string using binary encoding for efficiency:
+
+* Each node consists of three 4-byte big-endian integers
+* Nodes are concatenated sequentially: ``[node0, node1, ..., nodeN-1]``
+* The resulting byte array is Base64-encoded
+
+
+.. note:: Why binary?
+
+    This encoding provides:
+
+    * **Size efficiency**: smaller than an array of JSON integers, or an array of arrays of integers
+    * **Performance**: Direct deserialization into the target data structure (e.g., primitive arrays and integers)
+    * **Cleaner diffs**: BDD node changes appear as single-line modifications rather than spread over thousands
+      of numbers.
+
+.. _rules-engine-endpoint-bdd-evaluation:
+
+BDD evaluation
+--------------
+
+BDD evaluation follows these steps:
+
+#. Start at the root reference
+#. While the reference is a node reference (not a terminal or result):
+
+   * Extract the node index: ``nodeIndex = |ref| - 1``
+   * Retrieve the node at that index
+   * Evaluate the condition at ``conditionIndex``
+   * Determine which branch to follow:
+
+     * If the reference is complemented (negative) AND condition is true: follow ``lowRef``
+     * If the reference is complemented (negative) AND condition is false: follow ``highRef``
+     * If the reference is positive AND condition is true: follow ``highRef``
+     * If the reference is positive AND condition is false: follow ``lowRef``
+
+   * Update the reference to the chosen branch and continue
+
+#. When reaching a terminal or result:
+
+   * For result references ≥ 100000000: return ``results[ref - 100000000]``
+   * For terminals (1 or -1): return the ``NoMatchRule``
+
+For example, a reference of 100000003 would return ``results[3]``, while a reference of 1 or -1 indicates no matching
+rule was found.
+
+.. _rules-engine-endpoint-bdd-validation:
+
+Validation requirements
+-----------------------
+
+* **Root reference**: MUST NOT be complemented (negative)
+* **Reference validity**: All references MUST be valid:
+
+  * ``0`` is forbidden
+  * Node references MUST point to existing nodes
+  * Result references MUST point to existing results
+
+* **Node structure**: Each node MUST be a properly formed triple
+* **Condition indices**: Each node's condition index MUST be within ``[0, conditionCount)``
+* **Result structure**: The first result (index 0) implicitly represents ``NoMatchRule`` and is not serialized.
+  All serialized results MUST be either ``EndpointRule`` or ``ErrorRule`` objects without conditions.
+* **Version requirement**: The version MUST be at least 1.1
 
 .. _rules-engine-endpoint-rule-set-parameter:
 
@@ -119,7 +305,7 @@ allow values to be bound to parameters from other locations in generated
 clients.
 
 Parameters MAY be annotated with the ``builtIn`` property, which designates that
-the parameter should be bound to a value determined by the built-in’s name. The
+the parameter should be bound to a value determined by the built-in's name. The
 :ref:`rules engine contains built-ins <rules-engine-parameters-built-ins>` and
 the set is extensible.
 

@@ -15,6 +15,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -69,11 +70,12 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
             boolean isStandaloneClass
     ) {
         Symbol enumSymbol = provider.toSymbol(enumShape);
+        String enumName = TraitCodegenUtils.getEnumClassName(enumSymbol);
         writer.pushState(new ClassSection(enumShape))
                 .putContext("standalone", isStandaloneClass)
-                .openBlock("public enum $B ${?standalone}implements $T ${/standalone}{",
+                .openBlock("public enum $L ${?standalone}implements $T ${/standalone}{",
                         "}",
-                        enumSymbol,
+                        enumName,
                         ToNode.class,
                         () -> {
                             writeVariants(enumShape, provider, writer);
@@ -82,12 +84,12 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
                             writeValueField(writer);
                             writer.newLine();
 
-                            writeConstructor(enumSymbol, writer);
+                            writeConstructor(enumName, writer);
 
                             writeValueGetter(writer);
                             writer.newLine();
 
-                            writeFromMethod(enumSymbol, writer);
+                            writeFromMethod(enumName, writer);
 
                             // Only generate From and To Node when we are in a standalone class.
                             if (isStandaloneClass) {
@@ -133,29 +135,29 @@ abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
         writer.newLine();
     }
 
-    private void writeConstructor(Symbol enumSymbol, TraitCodegenWriter writer) {
-        writer.openBlock("$B($T value) {",
+    private void writeConstructor(String enumName, TraitCodegenWriter writer) {
+        writer.openBlock("$L($T value) {",
                 "}",
-                enumSymbol,
+                enumName,
                 getValueType(),
                 () -> writer.write("this.value = value;"));
         writer.newLine();
     }
 
-    private void writeFromMethod(Symbol enumSymbol, TraitCodegenWriter writer) {
-        writer.writeDocString(writer.format("Create a {@code $1B} from a value in a model.\n\n"
+    private void writeFromMethod(String enumName, TraitCodegenWriter writer) {
+        writer.writeDocString(writer.format("Create a {@code $1L} from a value in a model.\n\n"
                 + "<p>Any unknown value is returned as {@code UNKNOWN}.\n"
                 + "@param value Value to create enum from.\n"
-                + "@return Returns the {@link $1B} enum value.", enumSymbol));
-        writer.openBlock("public static $B from($T value) {",
+                + "@return Returns the {@link $1L} enum value.", enumName));
+        writer.openBlock("public static $L from($T value) {",
                 "}",
-                enumSymbol,
+                enumName,
                 getValueType(),
                 () -> {
                     writer.write("$T.requireNonNull(value, \"Enum value should not be null.\");", Objects.class);
-                    writer.openBlock("for ($B val: values()) {",
+                    writer.openBlock("for ($L val: values()) {",
                             "}",
-                            enumSymbol,
+                            enumName,
                             () -> writer.openBlock("if ($T.equals(val.getValue(), value)) {",
                                     "}",
                                     Objects.class,

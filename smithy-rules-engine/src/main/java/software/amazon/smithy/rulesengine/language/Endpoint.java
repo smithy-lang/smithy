@@ -206,21 +206,21 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("url: ").append(url).append("\n");
+        sb.append("url: ").append(url);
 
         if (!headers.isEmpty()) {
-            sb.append("headers:\n");
+            sb.append("\nheaders:");
             for (Map.Entry<String, List<Expression>> entry : headers.entrySet()) {
-                sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2))
-                        .append("\n");
+                sb.append("\n");
+                sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2));
             }
         }
 
         if (!properties.isEmpty()) {
-            sb.append("properties:\n");
+            sb.append("\nproperties:");
             for (Map.Entry<Identifier, Literal> entry : properties.entrySet()) {
-                sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2))
-                        .append("\n");
+                sb.append("\n");
+                sb.append(StringUtils.indent(String.format("%s: %s", entry.getKey(), entry.getValue()), 2));
             }
         }
 

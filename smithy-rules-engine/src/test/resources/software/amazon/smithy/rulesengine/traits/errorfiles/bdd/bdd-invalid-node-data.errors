@@ -1,0 +1,1 @@
+[ERROR] smithy.example#ValidBddService: Error creating trait `smithy.rules#endpointBdd`: Expected 36 bytes for 3 nodes, but got 2 | Model

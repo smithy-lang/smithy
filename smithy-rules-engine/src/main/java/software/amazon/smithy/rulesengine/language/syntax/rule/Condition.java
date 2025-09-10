@@ -21,6 +21,7 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -31,8 +32,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class Condition extends SyntaxElement implements TypeCheck, FromSourceLocation, ToNode {
     public static final String ASSIGN = "assign";
-    private final Expression function;
+    private final LibraryFunction function;
     private final Identifier result;
+    private int hash;
+    private String toString;
 
     private Condition(Builder builder) {
         this.result = builder.result;
@@ -86,8 +89,21 @@ public final class Condition extends SyntaxElement implements TypeCheck, FromSou
      *
      * @return the function for this condition.
      */
-    public Expression getFunction() {
+    public LibraryFunction getFunction() {
         return function;
+    }
+
+    /**
+     * Returns a canonical form of this condition.
+     *
+     * @return the canonical condition
+     */
+    public Condition canonicalize() {
+        LibraryFunction canonicalFn = function.canonicalize();
+        if (canonicalFn == function) {
+            return this;
+        }
+        return toBuilder().fn(canonicalFn).build();
     }
 
     @Override
@@ -152,26 +168,32 @@ public final class Condition extends SyntaxElement implements TypeCheck, FromSou
 
     @Override
     public int hashCode() {
-        return Objects.hash(function, result);
+        int h = hash;
+        if (h == 0) {
+            h = Objects.hash(function, result);
+            hash = h;
+        }
+        return h;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (result != null) {
-            sb.append(result).append(" = ");
+        String s = this.toString;
+        if (s == null) {
+            s = result != null ? (result + " = " + function) : function.toString();
+            toString = s;
         }
-        return sb.append(function).toString();
+        return s;
     }
 
     /**
      * A builder used to create a {@link Condition} class.
      */
     public static class Builder implements SmithyBuilder<Condition> {
-        private Expression fn;
+        private LibraryFunction fn;
         private Identifier result;
 
-        public Builder fn(Expression fn) {
+        public Builder fn(LibraryFunction fn) {
             this.fn = fn;
             return this;
         }

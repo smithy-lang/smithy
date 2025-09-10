@@ -1,0 +1,1 @@
+[ERROR] example#FizzBuzz: Coalesce requires rules engine version >= 1.1, but ruleset declares version 1.0 | RulesEngineVersion

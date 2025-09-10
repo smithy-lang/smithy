@@ -10,6 +10,9 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
  * The "empty" type.
  */
 public final class EmptyType extends AbstractType {
+
+    static final EmptyType INSTANCE = new EmptyType();
+
     EmptyType() {}
 
     @Override

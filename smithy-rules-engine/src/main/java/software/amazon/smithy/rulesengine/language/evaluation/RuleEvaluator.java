@@ -19,9 +19,15 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
+import software.amazon.smithy.rulesengine.logic.RuleBasedConditionEvaluator;
+import software.amazon.smithy.rulesengine.logic.bdd.Bdd;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -30,6 +36,23 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public class RuleEvaluator implements ExpressionVisitor<Value> {
     private final Scope<Value> scope = new Scope<>();
+
+    public RuleEvaluator() {}
+
+    /**
+     * Create a rule evaluator from parameters and using an initial set of arguments.
+     *
+     * <p>This is primarily used for manually driven condition evaluation.
+     *
+     * @param parameters Parameters of the evaluator, used to initialize defaults and parameters.
+     * @param parameterArguments Arguments used to initialize evaluation scope state.
+     */
+    public RuleEvaluator(Parameters parameters, Map<Identifier, Value> parameterArguments) {
+        for (Parameter parameter : parameters) {
+            parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
+        }
+        parameterArguments.forEach(scope::insert);
+    }
 
     /**
      * Initializes a new {@link RuleEvaluator} instances, and evaluates
@@ -42,6 +65,67 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
      */
     public static Value evaluate(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
         return new RuleEvaluator().evaluateRuleSet(ruleset, parameterArguments);
+    }
+
+    /**
+     * Initializes a new {@link RuleEvaluator} instances, and evaluates the provided BDD and parameter arguments.
+     *
+     * @param trait The trait to evaluate.
+     * @param args The rule-set parameter identifiers and values to evaluate the BDD against.
+     * @return The resulting value from the final matched rule.
+     */
+    public static Value evaluate(EndpointBddTrait trait, Map<Identifier, Value> args) {
+        return evaluate(trait.getBdd(), trait.getParameters(), trait.getConditions(), trait.getResults(), args);
+    }
+
+    /**
+     * Initializes a new {@link RuleEvaluator} instances, and evaluates the provided BDD and parameter arguments.
+     *
+     * @param bdd The endpoint bdd.
+     * @param parameterArguments The rule-set parameter identifiers and values to evaluate the BDD against.
+     * @return The resulting value from the final matched rule.
+     */
+    public static Value evaluate(
+            Bdd bdd,
+            Parameters parameters,
+            List<Condition> conditions,
+            List<Rule> results,
+            Map<Identifier, Value> parameterArguments
+    ) {
+        return new RuleEvaluator().evaluateBdd(bdd, parameters, conditions, results, parameterArguments);
+    }
+
+    private Value evaluateBdd(
+            Bdd bdd,
+            Parameters parameters,
+            List<Condition> conditions,
+            List<Rule> results,
+            Map<Identifier, Value> parameterArguments
+    ) {
+        return scope.inScope(() -> {
+            for (Parameter parameter : parameters) {
+                parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
+            }
+
+            parameterArguments.forEach(scope::insert);
+
+            Condition[] conds = conditions.toArray(new Condition[0]);
+            RuleBasedConditionEvaluator conditionEvaluator = new RuleBasedConditionEvaluator(this, conds);
+            int result = bdd.evaluate(conditionEvaluator);
+
+            if (result < 0) {
+                throw new RuntimeException("No BDD result matched");
+            }
+
+            Rule rule = results.get(result);
+            if (rule instanceof EndpointRule) {
+                return resolveEndpoint(this, ((EndpointRule) rule).getEndpoint());
+            } else if (rule instanceof ErrorRule) {
+                return resolveError(this, ((ErrorRule) rule).getError());
+            } else {
+                throw new RuntimeException("Invalid BDD rule result: " + rule);
+            }
+        });
     }
 
     /**
@@ -102,6 +186,17 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     }
 
     @Override
+    public Value visitCoalesce(List<Expression> expressions) {
+        for (Expression exp : expressions) {
+            Value result = exp.accept(this);
+            if (!result.isEmpty()) {
+                return result;
+            }
+        }
+        return Value.emptyValue();
+    }
+
+    @Override
     public Value visitNot(Expression not) {
         return Value.booleanValue(!not.accept(this).expectBooleanValue().getValue());
     }
@@ -139,7 +234,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
         return scope.inScope(() -> {
             for (Condition condition : rule.getConditions()) {
                 Value value = evaluateCondition(condition);
-                if (value.isEmpty() || value.equals(Value.booleanValue(false))) {
+                if (!value.isTruthy()) {
                     return Value.emptyValue();
                 }
             }
@@ -159,32 +254,40 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
                 @Override
                 public Value visitErrorRule(Expression error) {
-                    return error.accept(self);
+                    return resolveError(self, error);
                 }
 
                 @Override
                 public Value visitEndpointRule(Endpoint endpoint) {
-                    EndpointValue.Builder builder = EndpointValue.builder()
-                            .sourceLocation(endpoint)
-                            .url(endpoint.getUrl()
-                                    .accept(RuleEvaluator.this)
-                                    .expectStringValue()
-                                    .getValue());
-
-                    for (Map.Entry<Identifier, Literal> entry : endpoint.getProperties().entrySet()) {
-                        builder.putProperty(entry.getKey().toString(), entry.getValue().accept(RuleEvaluator.this));
-                    }
-
-                    for (Map.Entry<String, List<Expression>> entry : endpoint.getHeaders().entrySet()) {
-                        List<String> values = new ArrayList<>();
-                        for (Expression expression : entry.getValue()) {
-                            values.add(expression.accept(RuleEvaluator.this).expectStringValue().getValue());
-                        }
-                        builder.putHeader(entry.getKey(), values);
-                    }
-                    return builder.build();
+                    return resolveEndpoint(self, endpoint);
                 }
             });
         });
+    }
+
+    private static Value resolveEndpoint(RuleEvaluator self, Endpoint endpoint) {
+        EndpointValue.Builder builder = EndpointValue.builder()
+                .sourceLocation(endpoint)
+                .url(endpoint.getUrl()
+                        .accept(self)
+                        .expectStringValue()
+                        .getValue());
+
+        for (Map.Entry<Identifier, Literal> entry : endpoint.getProperties().entrySet()) {
+            builder.putProperty(entry.getKey().toString(), entry.getValue().accept(self));
+        }
+
+        for (Map.Entry<String, List<Expression>> entry : endpoint.getHeaders().entrySet()) {
+            List<String> values = new ArrayList<>();
+            for (Expression expression : entry.getValue()) {
+                values.add(expression.accept(self).expectStringValue().getValue());
+            }
+            builder.putHeader(entry.getKey(), values);
+        }
+        return builder.build();
+    }
+
+    private static Value resolveError(RuleEvaluator self, Expression error) {
+        return error.accept(self);
     }
 }

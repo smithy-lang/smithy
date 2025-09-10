@@ -243,7 +243,7 @@ Smithy Java **requires** that an implementation of a generated operation interfa
 every operation defined in service model. Let’s add the required implementation:
 
 .. code-block:: java
-    :caption: server/src/main/java/io/smithy/java/server/example/GetHoursOperation.java
+    :caption: server/src/main/java/io/smithy/java/server/example/GetHours.java
 
     final class GetHours implements GetHoursOperation {
         @Override

@@ -109,7 +109,7 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      *
      * @return this function as an expression.
      */
-    public Expression createFunction() {
+    public LibraryFunction createFunction() {
         return EndpointRuleSet.createFunctionFactory()
                 .apply(this)
                 .orElseThrow(() -> new RuleError(new SourceException(

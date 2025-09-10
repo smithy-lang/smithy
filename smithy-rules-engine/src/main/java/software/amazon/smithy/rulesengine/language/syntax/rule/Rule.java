@@ -84,7 +84,10 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
 
         Builder builder = new Builder(node);
         objectNode.getStringMember(DOCUMENTATION, builder::description);
-        builder.conditions(objectNode.expectArrayMember(CONDITIONS).getElementsAs(Condition::fromNode));
+
+        objectNode.getArrayMember(CONDITIONS).ifPresent(conds -> {
+            builder.conditions(conds.getElementsAs(Condition::fromNode));
+        });
 
         String type = objectNode.expectStringMember(TYPE).getValue();
         switch (type) {
@@ -131,9 +134,31 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
      */
     public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
+    /**
+     * Get a new Rule of the same type that has the same values, but with the given conditions.
+     *
+     * @param conditions Conditions to use.
+     * @return the rule with the given conditions.
+     * @throws UnsupportedOperationException if it is a TreeRule or Condition rule.
+     */
+    public final Rule withConditions(List<Condition> conditions) {
+        if (getConditions().equals(conditions)) {
+            return this;
+        } else if (this instanceof ErrorRule) {
+            return new ErrorRule(ErrorRule.builder(this).conditions(conditions), ((ErrorRule) this).getError());
+        } else if (this instanceof EndpointRule) {
+            return new EndpointRule(EndpointRule.builder(this).conditions(conditions),
+                    ((EndpointRule) this).getEndpoint());
+        } else if (this instanceof TreeRule) {
+            return new TreeRule(TreeRule.builder(this).conditions(conditions), ((TreeRule) this).getRules());
+        } else {
+            throw new UnsupportedOperationException("Unknown rule type: " + this.getClass());
+        }
+    }
+
     protected abstract Type typecheckValue(Scope<Type> scope);
 
-    abstract void withValueNode(ObjectNode.Builder builder);
+    protected abstract void withValueNode(ObjectNode.Builder builder);
 
     @Override
     public Type typeCheck(Scope<Type> scope) {
@@ -150,15 +175,16 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public Node toNode() {
         ObjectNode.Builder builder = ObjectNode.builder();
 
+        if (documentation != null) {
+            builder.withMember(DOCUMENTATION, documentation);
+        }
+
+        // TODO: we should remove the requirement of serializing an empty array here
         ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
         for (Condition condition : conditions) {
             conditionsBuilder.withValue(condition.toNode());
         }
         builder.withMember(CONDITIONS, conditionsBuilder.build());
-
-        if (documentation != null) {
-            builder.withMember(DOCUMENTATION, documentation);
-        }
 
         withValueNode(builder);
         return builder.build();
@@ -219,7 +245,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             return this;
         }
 
-        public Builder conditions(List<ToCondition> conditions) {
+        public Builder conditions(List<? extends ToCondition> conditions) {
             this.conditions.addAll(conditions);
             return this;
         }
@@ -234,11 +260,15 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         }
 
         public Rule error(Node error) {
-            return this.onBuild.apply(new ErrorRule(this, Expression.fromNode(error)));
+            return error(Expression.fromNode(error));
         }
 
         public Rule error(String error) {
-            return this.onBuild.apply(new ErrorRule(this, Literal.of(error)));
+            return error(Literal.of(error));
+        }
+
+        public Rule error(Expression error) {
+            return this.onBuild.apply(new ErrorRule(this, error));
         }
 
         public Rule treeRule(Rule... rules) {

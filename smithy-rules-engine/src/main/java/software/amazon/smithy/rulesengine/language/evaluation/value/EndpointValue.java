@@ -163,6 +163,11 @@ public final class EndpointValue extends Value {
         return sb.toString();
     }
 
+    @Override
+    public Object toObject() {
+        return this;
+    }
+
     /**
      * A builder used to create an {@link EndpointValue} class.
      */

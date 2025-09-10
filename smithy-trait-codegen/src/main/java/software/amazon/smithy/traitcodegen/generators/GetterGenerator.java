@@ -89,10 +89,11 @@ final class GetterGenerator implements Runnable {
         public Void enumShape(EnumShape shape) {
             Symbol shapeSymbol = symbolProvider.toSymbol(shape);
             generateEnumValueGetterDocstring(shapeSymbol);
-            writer.openBlock("public $B getEnumValue() {",
+            String enumName = TraitCodegenUtils.getEnumClassName(shapeSymbol);
+            writer.openBlock("public $L getEnumValue() {",
                     "}",
-                    shapeSymbol,
-                    () -> writer.write("return $B.from(getValue());", shapeSymbol));
+                    enumName,
+                    () -> writer.write("return $L.from(getValue());", enumName));
             writer.newLine();
             return null;
         }
@@ -109,10 +110,11 @@ final class GetterGenerator implements Runnable {
 
             Symbol shapeSymbol = symbolProvider.toSymbol(shape);
             generateEnumValueGetterDocstring(shapeSymbol);
-            writer.openBlock("public $B getEnumValue() {",
+            String enumName = TraitCodegenUtils.getEnumClassName(shapeSymbol);
+            writer.openBlock("public $L getEnumValue() {",
                     "}",
-                    shapeSymbol,
-                    () -> writer.write("return $B.from(value);", shapeSymbol));
+                    enumName,
+                    () -> writer.write("return $L.from(value);", enumName));
             writer.newLine();
             return null;
         }

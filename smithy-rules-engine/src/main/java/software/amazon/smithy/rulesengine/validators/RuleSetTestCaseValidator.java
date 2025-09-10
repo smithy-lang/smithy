@@ -12,6 +12,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
@@ -23,22 +24,38 @@ public class RuleSetTestCaseValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            if (serviceShape.hasTrait(EndpointTestsTrait.ID)) {
-                EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
-                EndpointTestsTrait testsTrait = serviceShape.expectTrait(EndpointTestsTrait.class);
-
-                // Test/Rule evaluation throws RuntimeExceptions when evaluating, wrap these
-                // up into ValidationEvents for automatic validation.
-                for (EndpointTestCase endpointTestCase : testsTrait.getTestCases()) {
-                    try {
-                        TestEvaluator.evaluate(ruleSet, endpointTestCase);
-                    } catch (RuntimeException e) {
-                        events.add(error(serviceShape, endpointTestCase, e.getMessage()));
-                    }
-                }
+        for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
+            EndpointTestsTrait testsTrait = serviceShape.expectTrait(EndpointTestsTrait.class);
+            if (serviceShape.hasTrait(EndpointRuleSetTrait.class)) {
+                validate(serviceShape, testsTrait, events);
+            } else if (serviceShape.hasTrait(EndpointBddTrait.class)) {
+                validateBdd(serviceShape, testsTrait, events);
             }
         }
         return events;
+    }
+
+    // Test/Rule evaluation throws RuntimeExceptions when evaluating, wrap these
+    // up into ValidationEvents for automatic validation.
+    private void validate(ServiceShape serviceShape, EndpointTestsTrait testsTrait, List<ValidationEvent> events) {
+        EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
+        for (EndpointTestCase endpointTestCase : testsTrait.getTestCases()) {
+            try {
+                TestEvaluator.evaluate(ruleSet, endpointTestCase);
+            } catch (RuntimeException e) {
+                events.add(error(serviceShape, endpointTestCase, e.getMessage()));
+            }
+        }
+    }
+
+    private void validateBdd(ServiceShape serviceShape, EndpointTestsTrait testsTrait, List<ValidationEvent> events) {
+        EndpointBddTrait trait = serviceShape.expectTrait(EndpointBddTrait.class);
+        for (EndpointTestCase endpointTestCase : testsTrait.getTestCases()) {
+            try {
+                TestEvaluator.evaluate(trait, endpointTestCase);
+            } catch (RuntimeException e) {
+                events.add(error(serviceShape, endpointTestCase, e.getMessage()));
+            }
+        }
     }
 }

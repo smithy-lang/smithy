@@ -12,8 +12,15 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
  * An empty value.
  */
 public final class EmptyValue extends Value {
+    static final EmptyValue INSTANCE = new EmptyValue();
+
     public EmptyValue() {
         super(SourceLocation.none());
+    }
+
+    @Override
+    public boolean isTruthy() {
+        return false;
     }
 
     @Override
@@ -34,5 +41,10 @@ public final class EmptyValue extends Value {
     @Override
     public String toString() {
         return "<empty>";
+    }
+
+    @Override
+    public Object toObject() {
+        return null;
     }
 }

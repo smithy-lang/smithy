@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import java.util.List;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Coalesce;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
@@ -48,6 +49,16 @@ public interface ExpressionVisitor<R> {
      * @return the value from the visitor.
      */
     R visitIsSet(Expression fn);
+
+    /**
+     * Visits a coalesce function.
+     *
+     * @param expressions The coalesce expressions to check.
+     * @return the value from the visitor.
+     */
+    default R visitCoalesce(List<Expression> expressions) {
+        return visitLibraryFunction(Coalesce.getDefinition(), expressions);
+    }
 
     /**
      * Visits a not function.
@@ -104,6 +115,11 @@ public interface ExpressionVisitor<R> {
 
         @Override
         public R visitIsSet(Expression fn) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitCoalesce(List<Expression> expressions) {
             return getDefault();
         }
 

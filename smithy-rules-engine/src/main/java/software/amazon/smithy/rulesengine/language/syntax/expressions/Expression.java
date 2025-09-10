@@ -6,8 +6,10 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
@@ -24,7 +26,6 @@ import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -35,6 +36,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public abstract class Expression extends SyntaxElement implements FromSourceLocation, ToNode, TypeCheck {
     private final SourceLocation sourceLocation;
+    private Set<String> cachedReferences;
     private Type cachedType;
 
     public Expression(SourceLocation sourceLocation) {
@@ -122,6 +124,26 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
     }
 
     /**
+     * Constructs a {@link Reference} for the given {@link Identifier}.
+     *
+     * @param name    the referenced identifier.
+     * @return the reference.
+     */
+    public static Reference getReference(Identifier name) {
+        return getReference(name, SourceLocation.NONE);
+    }
+
+    /**
+     * Constructs a {@link Reference} for the given {@link Identifier}.
+     *
+     * @param name the referenced identifier.
+     * @return the reference.
+     */
+    public static Reference getReference(String name) {
+        return getReference(Identifier.of(name));
+    }
+
+    /**
      * Constructs a {@link Literal} from the given {@link StringNode}.
      *
      * @param node the node to construct the literal from.
@@ -129,6 +151,27 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
      */
     public static Literal getLiteral(StringNode node) {
         return Literal.stringLiteral(new Template(node));
+    }
+
+    /**
+     * Get the set of variables that this condition references.
+     *
+     * @return variable references by name.
+     */
+    public final Set<String> getReferences() {
+        if (cachedReferences == null) {
+            cachedReferences = Collections.unmodifiableSet(calculateReferences());
+        }
+        return cachedReferences;
+    }
+
+    /**
+     * Computes the references of an expression.
+     *
+     * @return the computed references.
+     */
+    protected Set<String> calculateReferences() {
+        return Collections.emptySet();
     }
 
     /**
@@ -152,11 +195,6 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
             throw new RuntimeException("Typechecking was never invoked on this expression.");
         }
         return cachedType;
-    }
-
-    @Override
-    public Condition.Builder toConditionBuilder() {
-        return Condition.builder().fn(this);
     }
 
     @Override
