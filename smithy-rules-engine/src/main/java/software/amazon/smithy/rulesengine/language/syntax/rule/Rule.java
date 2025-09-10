@@ -255,24 +255,24 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             return this;
         }
 
-        public EndpointRule endpoint(Endpoint endpoint) {
-            return (EndpointRule) this.onBuild.apply(new EndpointRule(this, endpoint));
+        public Rule endpoint(Endpoint endpoint) {
+            return this.onBuild.apply(new EndpointRule(this, endpoint));
         }
 
-        public ErrorRule error(Node error) {
+        public Rule error(Node error) {
             return error(Expression.fromNode(error));
         }
 
-        public ErrorRule error(String error) {
+        public Rule error(String error) {
             return error(Literal.of(error));
         }
 
-        public ErrorRule error(Expression error) {
-            return (ErrorRule) this.onBuild.apply(new ErrorRule(this, error));
+        public Rule error(Expression error) {
+            return this.onBuild.apply(new ErrorRule(this, error));
         }
 
-        public TreeRule treeRule(Rule... rules) {
-            return (TreeRule) this.treeRule(Arrays.asList(rules));
+        public Rule treeRule(Rule... rules) {
+            return this.treeRule(Arrays.asList(rules));
         }
 
         @SafeVarargs

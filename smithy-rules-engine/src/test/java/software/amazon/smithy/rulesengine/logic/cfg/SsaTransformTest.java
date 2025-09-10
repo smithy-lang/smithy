@@ -41,7 +41,7 @@ public class SsaTransformTest {
                 .result("bucketMatches")
                 .build();
 
-        EndpointRule rule = EndpointRule.builder()
+        EndpointRule rule = (EndpointRule) EndpointRule.builder()
                 .conditions(Collections.singletonList(condition1))
                 .endpoint(endpoint("https://example.com"));
 
@@ -127,7 +127,7 @@ public class SsaTransformTest {
                 .result("hasError")
                 .build();
 
-        ErrorRule errorRule = ErrorRule.builder()
+        ErrorRule errorRule = (ErrorRule) ErrorRule.builder()
                 .conditions(Collections.singletonList(cond))
                 .error(Expression.of("Error occurred"));
 
@@ -161,7 +161,7 @@ public class SsaTransformTest {
         EndpointRule innerRule1 = createRuleWithBinding("Region", "us-east-1", "isEast", "https://east.com");
         EndpointRule innerRule2 = createRuleWithBinding("Region", "us-west-2", "isWest", "https://west.com");
 
-        TreeRule treeRule = TreeRule.builder()
+        TreeRule treeRule = (TreeRule) TreeRule.builder()
                 .conditions(Collections.singletonList(outerCond))
                 .treeRule(innerRule1, innerRule2);
 
@@ -193,7 +193,7 @@ public class SsaTransformTest {
                 .result("Bucket_shadow")
                 .build();
 
-        EndpointRule rule = EndpointRule.builder()
+        EndpointRule rule = (EndpointRule) EndpointRule.builder()
                 .conditions(Collections.singletonList(shadowingCond))
                 .endpoint(endpoint("https://example.com"));
 
@@ -216,7 +216,7 @@ public class SsaTransformTest {
                 .result(resultVar)
                 .build();
 
-        return EndpointRule.builder()
+        return (EndpointRule) EndpointRule.builder()
                 .conditions(Collections.singletonList(cond))
                 .endpoint(endpoint(url));
     }
