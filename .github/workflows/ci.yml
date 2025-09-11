@@ -24,6 +24,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'corretto'
+          cache: gradle
 
       - name: Clean, build, test, and javadoc
         run: ./gradlew clean build javadoc -PnoFormat -Plog-tests --stacktrace
@@ -86,6 +87,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'corretto'
+          cache: gradle
 
       - name: Publish Smithy to Maven local
         run: cd smithy && ./gradlew clean build pTML -PnoFormat
