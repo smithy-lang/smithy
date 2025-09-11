@@ -11,6 +11,7 @@ runs:
       with:
         java-version: 21
         distribution: 'corretto'
+        cache: gradle
 
     - uses: actions/checkout@v4
       with:

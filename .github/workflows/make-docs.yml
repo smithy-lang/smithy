@@ -25,6 +25,7 @@ jobs:
       with:
         java-version: 17
         distribution: 'corretto'
+        cache: gradle
 
     - name: Setup Node
       uses: actions/setup-node@v5
