@@ -14,7 +14,7 @@ import software.amazon.smithy.openapi.OpenApiConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests that service-level errors don't override operation-specific error examples.
+ * Tests that service-level error and operation-level error examples are both included in the openapi when error deconflicting (`onErrorStatusConflict`) is set to `oneOf`.
  */
 public class ErrorDeconflictingExamplesTest {
 
