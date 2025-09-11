@@ -34,6 +34,7 @@ jobs:
       with:
         distribution: 'corretto'
         java-version: 8
+        cache: gradle
 
     - name: Compile
       if: steps.iam-role.outcome == 'success'

@@ -50,6 +50,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'corretto'
+          cache: gradle
 
       - name: Set up Go 1.19
         uses: actions/setup-go@v5
@@ -134,6 +135,7 @@ jobs:
         with:
           java-version: 11
           distribution: 'corretto'
+          cache: gradle
 
       - uses: actions/checkout@v5
       - id: smithy-version
@@ -195,6 +197,7 @@ jobs:
         with:
           java-version: 11
           distribution: 'corretto'
+          cache: gradle
 
       - uses: actions/checkout@v5
       - id: smithy-version
