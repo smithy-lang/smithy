@@ -55,9 +55,11 @@ jobs:
             # newly-introduced changes by comparing its head against that of
             # the base. We still won't actually run code from that copy.
             - name: Fetch base from PR copy
+              env:
+                BASE_REF: ${{ github.base_ref }}
               run: |
                 cd pr
-                git fetch origin ${{ github.base_ref }}
+                git fetch origin "$BASE_REF"
 
             - name: Install Python
               uses: actions/setup-python@v5
@@ -79,9 +81,11 @@ jobs:
                 GITHUB_TOKEN: ${{ github.token }}
                 TARGET_SHA: ${{ github.event.pull_request.head.sha }}
                 PR_TITLE: ${{ github.event.pull_request.title }}
+                PR_NUMBER: ${{ github.event.pull_request.number }}
+                REPO_DIR: ${{ github.workspace }}
               run: |
                 cd base/.changes
                 uv run amend \
                   --review-comment \
-                  --pull-request-number ${{ github.event.pull_request.number }} \
-                  --repository-dir ${{ github.workspace }}/pr
+                  --pull-request-number "$REPO_NUMBER" \
+                  --repository-dir "$REPO_DIR/pr"
