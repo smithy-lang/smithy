@@ -1,0 +1,195 @@
+{
+  "version": "1.62.0",
+  "changes": [
+    {
+      "type": "documentation",
+      "description": "Update README.md for Trait Codegen",
+      "pull_requests": [
+        "[#2753](https://github.com/smithy-lang/smithy/pull/2753)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Update query params output test in rest-json",
+      "pull_requests": [
+        "[#2739](https://github.com/smithy-lang/smithy/pull/2739)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait codegen for timestamp member with timestampformat trai",
+      "pull_requests": [
+        "[#2744](https://github.com/smithy-lang/smithy/pull/2744)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Remove the breakingChanges member from the required trait",
+      "pull_requests": [
+        "[#2748](https://github.com/smithy-lang/smithy/pull/2748)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add README.md for trait codegen",
+      "pull_requests": [
+        "[#2751](https://github.com/smithy-lang/smithy/pull/2751)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait codegen for list with uniqueitems trait",
+      "pull_requests": [
+        "[#2706](https://github.com/smithy-lang/smithy/pull/2706)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Allows specifying multiple files and/or directories to smithy format. Fixes [#2563](https://github.com/smithy-lang/smithy/issues/2563).",
+      "pull_requests": [
+        "[#2757](https://github.com/smithy-lang/smithy/pull/2757)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add split function to rules engine",
+      "pull_requests": [
+        "[#2762](https://github.com/smithy-lang/smithy/pull/2762)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix loading smithy-ts version in docs",
+      "pull_requests": [
+        "[#2722](https://github.com/smithy-lang/smithy/pull/2722)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait codegen for class name conflicts in enum/intenum traits",
+      "pull_requests": [
+        "[#2755](https://github.com/smithy-lang/smithy/pull/2755)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix incorrect builder properties assignment for enum with default value",
+      "pull_requests": [
+        "[#2752](https://github.com/smithy-lang/smithy/pull/2752)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Raise the severity for query error validator to danger",
+      "pull_requests": [
+        "[#2758](https://github.com/smithy-lang/smithy/pull/2758)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add missing important word in model.rst",
+      "pull_requests": [
+        "[#2726](https://github.com/smithy-lang/smithy/pull/2726)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix a bug that prevented warning events to show up for diff CLI command",
+      "pull_requests": [
+        "[#2749](https://github.com/smithy-lang/smithy/pull/2749)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Prepare for Gradle 9",
+      "pull_requests": [
+        "[#2745](https://github.com/smithy-lang/smithy/pull/2745)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix new change tool for changelog generation",
+      "pull_requests": [
+        "[#2765](https://github.com/smithy-lang/smithy/pull/2765)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix PR link generation in new-change and render command",
+      "pull_requests": [
+        "[#2767](https://github.com/smithy-lang/smithy/pull/2767)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait codegen for structure's string member with `@idRef`",
+      "pull_requests": [
+        "[#2728](https://github.com/smithy-lang/smithy/pull/2728)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Use ordered sets for shape id sequences",
+      "pull_requests": [
+        "[#2742](https://github.com/smithy-lang/smithy/pull/2742)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix using shapes without TaritDefinition as trait",
+      "pull_requests": [
+        "[#2733](https://github.com/smithy-lang/smithy/pull/2733)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait codegen for List or Map traits with annotations or Javadocs",
+      "pull_requests": [
+        "[#2729](https://github.com/smithy-lang/smithy/pull/2729)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add BDD-based rules engine trait",
+      "pull_requests": [
+        "[#2703](https://github.com/smithy-lang/smithy/pull/2703)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix type transposing in RPC v2 CBOR spec",
+      "pull_requests": [
+        "[#2727](https://github.com/smithy-lang/smithy/pull/2727)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Update smithy-java quickstart docs with correct file name",
+      "pull_requests": [
+        "[#2766](https://github.com/smithy-lang/smithy/pull/2766)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Add missing sourceLocation setting in fromNode() in trait codegen",
+      "pull_requests": [
+        "[#2730](https://github.com/smithy-lang/smithy/pull/2730)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add changelog release script",
+      "pull_requests": [
+        "[#2723](https://github.com/smithy-lang/smithy/pull/2723)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Consistently use BuilderRefs for collections in builders",
+      "pull_requests": [
+        "[#2743](https://github.com/smithy-lang/smithy/pull/2743)"
+      ]
+    }
+  ],
+  "date": "2025-09-05"
+}
