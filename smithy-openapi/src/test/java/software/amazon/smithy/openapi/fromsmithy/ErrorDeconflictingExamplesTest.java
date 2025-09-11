@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.openapi.fromsmithy;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -11,8 +13,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.utils.IoUtils;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that all error examples are included in the openapi when error deconflicting (`onErrorStatusConflict`) is set to `oneOf`.
