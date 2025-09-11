@@ -42,6 +42,17 @@ apply TestOp @examples([
         output: { result: "success" }
     },
     {
+        title: "Client error (defined on the service) example"
+        input: { value: "client bad" }
+        error: {
+            shapeId: ClientError
+            content: {
+                message: "Client error occurred"
+            }
+        }
+        allowConstraintErrors: true
+    },
+    {
         title: "Custom error example"
         input: { value: "bad" }
         error: {
