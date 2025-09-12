@@ -7,6 +7,7 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
@@ -302,6 +304,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
      * This method is used for converting the Smithy examples to OpenAPI examples for non-payload HTTP message body.
      */
     private Map<String, Node> createBodyExamples(
+            Context<T> context,
             Shape operationOrError,
             List<HttpBinding> bindings,
             MessageType type,
@@ -312,7 +315,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         }
 
         if (type == MessageType.ERROR) {
-            return createErrorBodyExamples(operationOrError, bindings, operation);
+            return createErrorBodyExamples(context, operationOrError, bindings, operation);
         } else {
             Map<String, Node> examples = new TreeMap<>();
             // unique numbering for unique example names in OpenAPI.
@@ -342,6 +345,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private Map<String, Node> createErrorBodyExamples(
+            Context<T> context,
             Shape error,
             List<HttpBinding> bindings,
             OperationShape operation
@@ -350,14 +354,17 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // unique numbering for unique example names in OpenAPI.
         int uniqueNum = 1;
         Optional<ExamplesTrait> examplesTrait = operation.getTrait(ExamplesTrait.class);
+
+        Set<ShapeId> errorShapeIds = getErrorShapeIdsForMatching(context, error, operation);
+
         for (ExamplesTrait.Example example : examplesTrait.map(ExamplesTrait::getExamples)
                 .orElse(Collections.emptyList())) {
             String name = operation.getId().getName() + "_example" + uniqueNum++;
             // this has to be checked because an operation can have more than one error linked to it.
             if (example.getError().isPresent()
-                    && example.getError().get().getShapeId() == error.toShapeId()) {
+                    && errorShapeIds.contains(example.getError().get().getShapeId())) {
                 // get members included in bindings
-                ObjectNode values = getMembersWithHttpBindingTrait(bindings, example.getError().get().getContent());
+                ObjectNode values = example.getError().get().getContent();
                 examples.put(name,
                         ExampleObject.builder()
                                 .summary(example.getTitle())
@@ -368,6 +375,27 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             }
         }
         return examples;
+    }
+
+    private Set<ShapeId> getErrorShapeIdsForMatching(Context<T> context, Shape error, OperationShape operation) {
+        // Handle synthesized error unions when deconflicting is enabled
+        Set<ShapeId> errorShapeIds = new HashSet<>();
+        if (error.getMember("errorUnion").isPresent()) {
+            ShapeId unionShapeId = error.getMember("errorUnion").get().getTarget();
+            Shape unionShape = context.getModel().getShape(unionShapeId).orElse(null);
+
+            if (unionShape != null && unionShape.isUnionShape()) {
+                for (MemberShape unionMember : unionShape.getAllMembers().values()) {
+                    errorShapeIds.add(unionMember.getTarget());
+                }
+            } else {
+                errorShapeIds.add(error.toShapeId());
+            }
+        } else {
+            // If not deconflicted, then the error passed is an actual error (not synthesized)
+            errorShapeIds.add(error.toShapeId());
+        }
+        return errorShapeIds;
     }
 
     /*
@@ -598,7 +626,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
-                .examples(createBodyExamples(operation, bindings, MessageType.REQUEST, null))
+                .examples(createBodyExamples(context, operation, bindings, MessageType.REQUEST, null))
                 .build();
 
         // If any of the top level bindings are required, then the body itself must be required.
@@ -840,7 +868,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
-                .examples(createBodyExamples(operationOrError, bindings, messageType, operation))
+                .examples(createBodyExamples(context, operationOrError, bindings, messageType, operation))
                 .build();
 
         responseBuilder.putContent(mediaType, mediaTypeObject);

@@ -1,0 +1,147 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TestService",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/test": {
+            "post": {
+                "operationId": "TestOp",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestOpRequestContent"
+                            },
+                            "examples": {
+                                "TestOp_example1": {
+                                    "summary": "Success example",
+                                    "description": "",
+                                    "value": {
+                                        "value": "good"
+                                    }
+                                },
+                                "TestOp_example2": {
+                                    "summary": "Client error (defined on the service) example",
+                                    "description": "",
+                                    "value": {
+                                        "value": "client bad"
+                                    }
+                                },
+                                "TestOp_example3": {
+                                    "summary": "Custom error example",
+                                    "description": "",
+                                    "value": {
+                                        "value": "bad"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "TestOp 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestOpResponseContent"
+                                },
+                                "examples": {
+                                    "TestOp_example1": {
+                                        "summary": "Success example",
+                                        "description": "",
+                                        "value": {
+                                            "result": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "TestOp400Error 400 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestOp400ErrorResponseContent"
+                                },
+                                "examples": {
+                                    "TestOp_example2": {
+                                        "summary": "Client error (defined on the service) example",
+                                        "description": "",
+                                        "value": {
+                                            "message": "Client error occurred"
+                                        }
+                                    },
+                                    "TestOp_example3": {
+                                        "summary": "Custom error example",
+                                        "description": "",
+                                        "value": {
+                                            "message": "Custom error occurred",
+                                            "code": "CUSTOM_ERROR",
+                                            "details": "This should appear in 400 response examples"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ClientError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CustomError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TestOp400ErrorResponseContent": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/CustomError"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ClientError"
+                    }
+                ]
+            },
+            "TestOpRequestContent": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TestOpResponseContent": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
