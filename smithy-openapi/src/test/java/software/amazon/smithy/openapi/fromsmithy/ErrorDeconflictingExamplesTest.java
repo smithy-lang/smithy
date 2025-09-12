@@ -22,7 +22,7 @@ public class ErrorDeconflictingExamplesTest {
     @Test
     public void serviceLevelErrorsShouldNotOverrideOperationSpecificExamples() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("/META-INF/smithy/aws.protocols.smithy"))
+                .discoverModels()
                 .addImport(getClass().getResource("error-deconflicting-test.smithy"))
                 .assemble()
                 .unwrap();
