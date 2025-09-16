@@ -33,6 +33,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.DependencyGraph;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -216,7 +217,8 @@ final class SmithyBuildImpl {
     private List<ResolvedPlugin> resolvePlugins(String projectionName, ProjectionConfig config) {
         // Ensure that no two plugins use the same artifact name.
         Set<String> seenArtifactNames = new HashSet<>();
-        List<ResolvedPlugin> resolvedPlugins = new ArrayList<>();
+        DependencyGraph<PluginId> dependencyGraph = new DependencyGraph<>();
+        Map<PluginId, ResolvedPlugin> resolvedPlugins = new HashMap<>();
 
         for (Map.Entry<String, ObjectNode> pluginEntry : getCombinedPlugins(config).entrySet()) {
             PluginId id = PluginId.from(pluginEntry.getKey());
@@ -226,12 +228,45 @@ final class SmithyBuildImpl {
                         id.getArtifactName(),
                         projectionName));
             }
+
             createPlugin(projectionName, id).ifPresent(plugin -> {
-                resolvedPlugins.add(new ResolvedPlugin(id, plugin, pluginEntry.getValue()));
+                dependencyGraph.add(id);
+                for (String dependency : plugin.runAfter()) {
+                    dependencyGraph.addDependency(id, PluginId.from(dependency));
+                }
+                for (String dependant : plugin.runBefore()) {
+                    dependencyGraph.addDependency(PluginId.from(dependant), id);
+                }
+                resolvedPlugins.put(id, new ResolvedPlugin(id, plugin, pluginEntry.getValue()));
             });
         }
 
-        return resolvedPlugins;
+        List<PluginId> sorted;
+        try {
+            sorted = dependencyGraph.toSortedList();
+        } catch (IllegalStateException e) {
+            throw new SmithyBuildException(e.getMessage(), e);
+        }
+
+        List<ResolvedPlugin> result = new ArrayList<>();
+        for (PluginId id : sorted) {
+            ResolvedPlugin resolvedPlugin = resolvedPlugins.get(id);
+            if (resolvedPlugin != null) {
+                result.add(resolvedPlugin);
+                continue;
+            }
+
+            // If the plugin wasn't resolved, that's either because it was declared but not
+            // available on the classpath or not declared at all. In the former case we
+            // already have a log message that covers it, including a default build failure.
+            // If the plugin was seen, it was declared, and we don't need to log a second
+            // time.
+            if (!seenArtifactNames.contains(id.getArtifactName())) {
+                logMissingPluginDependency(dependencyGraph, id);
+            }
+        }
+
+        return result;
     }
 
     private Map<String, ObjectNode> getCombinedPlugins(ProjectionConfig projection) {
@@ -257,6 +292,33 @@ final class SmithyBuildImpl {
         }
 
         throw new SmithyBuildException(message);
+    }
+
+    private void logMissingPluginDependency(DependencyGraph<PluginId> dependencyGraph, PluginId name) {
+        StringBuilder message = new StringBuilder("Could not find plugin named '");
+        message.append(name).append('\'');
+        if (!dependencyGraph.getDirectDependants(name).isEmpty()) {
+            message.append(" that was supposed to run before plugins [");
+            message.append(dependencyGraph.getDirectDependants(name)
+                    .stream()
+                    .map(PluginId::toString)
+                    .collect(Collectors.joining(", ")));
+            message.append("]");
+        }
+        if (!dependencyGraph.getDirectDependencies(name).isEmpty()) {
+            if (!dependencyGraph.getDirectDependants(name).isEmpty()) {
+                message.append(" and ");
+            } else {
+                message.append(" that ");
+            }
+            message.append("was supposed to run after plugins [");
+            message.append(dependencyGraph.getDirectDependencies(name)
+                    .stream()
+                    .map(PluginId::toString)
+                    .collect(Collectors.joining(", ")));
+            message.append("]");
+        }
+        LOGGER.warning(message.toString());
     }
 
     private boolean areAnyResolvedPluginsSerial(List<ResolvedPlugin> resolvedPlugins) {
