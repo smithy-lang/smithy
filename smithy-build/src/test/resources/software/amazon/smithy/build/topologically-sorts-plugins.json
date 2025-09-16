@@ -1,0 +1,8 @@
+{
+  "version": "2.0",
+  "plugins": {
+    "timestampPlugin1": {},
+    "timestampPlugin2": {},
+    "timestampPlugin3": {}
+  }
+}
