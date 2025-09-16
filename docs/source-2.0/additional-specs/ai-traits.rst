@@ -161,7 +161,7 @@ Prompts can guide LLMs to perform complex workflows using existing operations:
 A complete example
 =====================
 
-The following example demonstrates creative prompt templates that enhance user experience with a weather service:
+The following example demonstrates creative prompt templates that enhance the user experience with a weather service:
 
 .. code-block:: smithy
 
