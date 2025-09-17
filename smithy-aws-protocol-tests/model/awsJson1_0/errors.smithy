@@ -261,5 +261,31 @@ apply FooError @httpResponseTests([
               }""",
         bodyMediaType: "application/json",
         appliesTo: "client",
+    },
+    {
+        id: "AwsJson10FooErrorWithNestedTypeProperty",
+        documentation: """
+            Some services serialize errors using __type, and if the response includes additional shapes that belong \
+            to a different namespace there'll be a nested __type property that must not be considered when \
+            determining which error to be surfaced.
+
+            For an example service see Amazon DynamoDB.""",
+        protocol: awsJson1_0,
+        code: 500,
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0"
+        },
+        body: """
+              {
+                  "__type": "aws.protocoltests.json10#FooError",
+                  "ErrorDetails": [
+                    {
+                        "__type": "com.amazon.coral#ErrorDetails",
+                        "reason": "Some reason"
+                    }
+                  ]
+              }""",
+        bodyMediaType: "application/json",
+        appliesTo: "client",
     }
 ])
