@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.profiling-conventions")
 }
 
 description = "This module provides a code generation framework for generating clients, " +
@@ -14,6 +15,7 @@ extra["moduleName"] = "software.amazon.smithy.codegen.core"
 
 dependencies {
     api(project(":smithy-utils"))
+    jmh(project(":smithy-utils"))
     api(project(":smithy-model"))
     api(project(":smithy-build"))
 }
