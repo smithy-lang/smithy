@@ -280,7 +280,7 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.json10#FooError",
                   "ErrorDetails": [
                     {
-                        "__type": "com.amazon.coral#ErrorDetails",
+                        "__type": "com.amazon.internal#ErrorDetails",
                         "reason": "Some reason"
                     }
                   ]
