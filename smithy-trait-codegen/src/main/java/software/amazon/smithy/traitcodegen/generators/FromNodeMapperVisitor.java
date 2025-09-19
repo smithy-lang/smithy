@@ -278,7 +278,8 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Union shapes not supported at this time.");
+        writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), varName);
+        return null;
     }
 
     @Override

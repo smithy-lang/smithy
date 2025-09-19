@@ -30,11 +30,13 @@ import com.example.traits.lists.NestedListTrait;
 import com.example.traits.lists.NestedUniqueItemsListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StructureListTrait;
+import com.example.traits.lists.UnionListTrait;
 import com.example.traits.maps.MapValue;
 import com.example.traits.maps.NestedMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
+import com.example.traits.maps.StringToUnionMapTrait;
 import com.example.traits.mixins.ListMemberWithMixin;
 import com.example.traits.mixins.StructWithMixinTrait;
 import com.example.traits.mixins.StructureListWithMixinMemberTrait;
@@ -50,12 +52,14 @@ import com.example.traits.numbers.ShortTrait;
 import com.example.traits.structures.BasicAnnotationTrait;
 import com.example.traits.structures.EnumA;
 import com.example.traits.structures.EnumB;
+import com.example.traits.structures.MyUnion;
 import com.example.traits.structures.NestedA;
 import com.example.traits.structures.NestedB;
 import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
 import com.example.traits.structures.StructWithEnumDefaultTrait;
 import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
+import com.example.traits.structures.StructWithUnionTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
@@ -63,6 +67,7 @@ import com.example.traits.timestamps.EpochSecondsTimestampTrait;
 import com.example.traits.timestamps.HttpDateTimestampTrait;
 import com.example.traits.timestamps.StructWithNestedTimestampsTrait;
 import com.example.traits.timestamps.TimestampTrait;
+import com.example.traits.unions.UnionTrait;
 import com.example.traits.uniqueitems.NumberSetTrait;
 import com.example.traits.uniqueitems.SetMember;
 import com.example.traits.uniqueitems.StringSetTrait;
@@ -188,6 +193,16 @@ public class LoadsFromModelTest {
                         MapUtils.of("getValues",
                                 SetUtils.of(SetUtils.of(SetUtils.of("a", "ab", "c", "bc"),
                                         SetUtils.of("b", "ba", "ab", "aa"))))),
+                Arguments.of("lists/union-list-trait.smithy",
+                        UnionListTrait.class,
+                        MapUtils.of("getValues",
+                                ListUtils.of(
+                                        com.example.traits.lists.MyUnion.builder()
+                                                .stringVariantMember("123")
+                                                .build(),
+                                        com.example.traits.lists.MyUnion.builder()
+                                                .integerVariantMember(123)
+                                                .build()))),
                 // Maps
                 Arguments.of("maps/string-string-map-trait.smithy",
                         StringStringMapTrait.class,
@@ -228,6 +243,18 @@ public class LoadsFromModelTest {
                                                 MapUtils.of(
                                                         "c",
                                                         "d"))))),
+                Arguments.of("maps/string-to-union-map-trait.smithy",
+                        StringToUnionMapTrait.class,
+                        MapUtils.of("getValues",
+                                MapUtils.of(
+                                        "one",
+                                        com.example.traits.maps.MyUnion.builder()
+                                                .stringVariantMember("123")
+                                                .build(),
+                                        "two",
+                                        com.example.traits.maps.MyUnion.builder()
+                                                .integerVariantMember(123)
+                                                .build()))),
                 // Mixins
                 Arguments.of("mixins/struct-with-mixin-member.smithy",
                         StructureListWithMixinMemberTrait.class,
@@ -367,6 +394,11 @@ public class LoadsFromModelTest {
                                 EnumA.ONE,
                                 "getMemberB",
                                 EnumB.THREE)),
+                Arguments.of("structures/struct-with-union-trait.smithy",
+                        StructWithUnionTrait.class,
+                        MapUtils.of(
+                                "getMyUnion",
+                                Optional.of(MyUnion.builder().stringVariantMember("123").build()))),
                 // Timestamps
                 Arguments.of("timestamps/struct-with-nested-timestamps.smithy",
                         StructWithNestedTimestampsTrait.class,
@@ -409,6 +441,10 @@ public class LoadsFromModelTest {
                                 ListUtils.of(
                                         SetMember.builder().a("first").b(1).c("other").build(),
                                         SetMember.builder().a("second").b(2).c("more").build()))),
+                // Unions
+                Arguments.of("unions/union-trait.smithy",
+                        UnionTrait.class,
+                        MapUtils.of("getValue", ListUtils.of("1"))),
                 // Strings
                 Arguments.of("string-trait.smithy",
                         StringTrait.class,

@@ -21,6 +21,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
@@ -175,6 +176,22 @@ final class GetterGenerator implements Runnable {
         @Override
         protected Void numberShape(NumberShape shape) {
             generateValueGetter(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            writer.pushState(new GetterSection(shape));
+            writer.openBlock("public $T getTag() {",
+                    "}",
+                    String.class,
+                    () -> writer.write("return type.getValue();"));
+            writer.newLine();
+            writer.openBlock("public Type getType() {",
+                    "}",
+                    () -> writer.write("return type;"));
+            writer.popState();
+            writer.newLine();
             return null;
         }
 

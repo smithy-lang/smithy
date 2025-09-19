@@ -15,6 +15,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -38,6 +39,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.CaseUtils;
 
 /**
@@ -166,6 +168,9 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol structureShape(StructureShape shape) {
+        if (shape.hasTrait(UnitTypeTrait.ID)) {
+            return TraitCodegenUtils.fromClass(ObjectNode.class);
+        }
         return getJavaClassSymbol(shape);
     }
 
@@ -186,7 +191,7 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Union shapes are not supported at this time.");
+        return getJavaClassSymbol(shape);
     }
 
     @Override

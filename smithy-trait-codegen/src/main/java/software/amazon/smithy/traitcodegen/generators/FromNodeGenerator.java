@@ -7,11 +7,14 @@ package software.amazon.smithy.traitcodegen.generators;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -197,6 +200,47 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
                 this::writeTimestampDeser);
         writer.newLine();
 
+        return null;
+    }
+
+    @Override
+    public Void unionShape(UnionShape shape) {
+        writer.write("public static $T fromNode($T node) {", symbol, Node.class);
+        writer.indent();
+        writer.write("$T<$T, $T> members = node.expectObjectNode().getMembers();",
+                Map.class,
+                StringNode.class,
+                Node.class);
+        writer.openBlock("if (members.size() != 1) {",
+                "}",
+                () -> {
+                    writer.write("throw new $T($S);",
+                            IllegalArgumentException.class,
+                            "Expected only one member for union node.");
+                });
+        writer.write("$T<$T, $T> value = members.entrySet().iterator().next();",
+                Map.Entry.class,
+                StringNode.class,
+                Node.class);
+        writer.openBlock("switch (value.getKey().getValue()) {",
+                "}",
+                () -> {
+                    Set<String> tags = shape.getAllMembers().keySet();
+                    for (String tag : tags) {
+                        String memberName = tag + "Member";
+                        writer.write("case $S:", tag);
+                        writer.indent();
+                        writer.write("return $U.from(value.getValue());", memberName);
+                        writer.dedent();
+                    }
+                    writer.writeWithNoFormatting("default:");
+                    writer.indent();
+                    writer.write("throw new $T($S);", IllegalArgumentException.class, "Unknown union variant.");
+                    writer.dedent();
+                });
+        writer.dedent();
+        writer.write("}");
+        writer.newLine();
         return null;
     }
 
@@ -421,7 +465,8 @@ final class FromNodeGenerator extends TraitVisitor<Void> implements Runnable {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Shape not supported " + shape);
+            writeObjectNodeMember(shape);
+            return null;
         }
 
         @Override

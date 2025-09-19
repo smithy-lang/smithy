@@ -17,7 +17,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 
 /**
  * This class provides a simplified visitor interface for visiting trait shapes.
@@ -27,7 +26,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
  * The following shapes are not supported when visiting traits:
  * <ul>
  *     <li>MemberShapes</li>
- *     <li>UnionShapes</li>
  *     <li>BlobShapes</li>
  * </ul>
  *
@@ -79,12 +77,6 @@ abstract class TraitVisitor<R> extends ShapeVisitor.DataShapeVisitor<R> {
     @Override
     public R bigDecimalShape(BigDecimalShape shape) {
         return numberShape(shape);
-    }
-
-    @Override
-    public R unionShape(UnionShape shape) {
-        throw new UnsupportedOperationException("Property generator does not support shape "
-                + shape + " of type " + shape.getType());
     }
 
     @Override

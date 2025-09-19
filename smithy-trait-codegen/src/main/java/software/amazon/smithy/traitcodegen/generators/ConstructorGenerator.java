@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.traitcodegen.generators;
 
+import java.util.Objects;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -164,6 +165,22 @@ final class ConstructorGenerator extends TraitVisitor<Void> implements Runnable 
     @Override
     protected Void numberShape(NumberShape shape) {
         writeValueShapeConstructors();
+        return null;
+    }
+
+    @Override
+    public Void unionShape(UnionShape shape) {
+        boolean isTrait = shape.hasTrait(TraitDefinition.ID);
+        writer.putContext("isTrait", isTrait);
+        writer.openBlock("private $T(Type type${?isTrait}, $T sourceLocation${/isTrait}) {",
+                "}",
+                symbol,
+                FromSourceLocation.class,
+                () -> {
+                    writer.writeInline("${?isTrait}super(ID, sourceLocation);\n${/isTrait}");
+                    writer.write("this.type = $T.requireNonNull(type);", Objects.class);
+                });
+        writer.newLine();
         return null;
     }
 
