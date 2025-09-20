@@ -10,9 +10,9 @@ Smithy AI traits provide metadata for service authors to embed contextual inform
 .. smithy-trait:: smithy.ai#prompts
 .. _smithy.ai#prompts-trait:
 
-----------------------------
+---------------------------
 ``smithy.ai#prompts`` trait
-----------------------------
+---------------------------
 
 Summary
     Defines prompt templates that provide contextual guidance to LLMs for understanding when and how to use operations or services. This trait can be used to generate prompts for a Model Context Protocol (MCP) server.
