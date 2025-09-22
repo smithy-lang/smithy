@@ -14,7 +14,7 @@ union UnionTrait {
     @documentation("This is my union trait's integer variant!!!")
     integerVariant: Integer
 
-    structVariant: NestedStructA
+    structVariant: Type
 
     unionVariant: NestedUnionA
 
@@ -26,6 +26,10 @@ union UnionTrait {
 
     @timestampFormat("http-date")
     timestampVariant: Timestamp
+}
+
+structure Type {
+    memberA: String
 }
 
 structure NestedStructA {
