@@ -67,8 +67,8 @@ public final class ShapeGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            throw new UnsupportedOperationException("Generation of nested types for Union shapes "
-                    + " is not supported at this time.");
+            new UnionShapeGenerator().accept(directive);
+            return null;
         }
 
         @Override

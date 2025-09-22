@@ -18,6 +18,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
@@ -138,6 +139,12 @@ final class ProviderGenerator implements Runnable {
         @Override
         protected Void numberShape(NumberShape shape) {
             generateValueShapeProvider();
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            generateAbstractTraitProvider();
             return null;
         }
 

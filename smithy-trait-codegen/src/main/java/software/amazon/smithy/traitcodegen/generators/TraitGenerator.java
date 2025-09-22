@@ -21,6 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
@@ -47,14 +48,17 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
             writer.pushState(new ClassSection(directive.shape()));
             // Add class definition context
             writer.putContext("baseClass", directive.shape().accept(new BaseClassVisitor(directive.symbolProvider())));
-            // Only collection types implement ToSmithyBuilder
-            boolean isAggregateType = directive.shape().getType().getCategory().equals(ShapeType.Category.AGGREGATE);
+            // Only collection types (excluding union) implement ToSmithyBuilder
+            boolean isUnionShape = directive.shape().isUnionShape();
+            boolean isAggregateType = directive.shape().getType().getCategory().equals(ShapeType.Category.AGGREGATE)
+                    && !isUnionShape;
             writer.putContext("isAggregateType", isAggregateType);
-            writer.openBlock("public final class $2T extends $baseClass:T"
+            writer.openBlock("public $3L class $2T extends $baseClass:T"
                     + "${?isAggregateType} implements $1T<$2T>${/isAggregateType} {",
                     "}",
                     ToSmithyBuilder.class,
                     directive.symbol(),
+                    isUnionShape ? "abstract" : "final",
                     () -> {
                         // All traits include a static ID property
                         writer.write("public static final $1T ID = $1T.from($2S);",
@@ -168,6 +172,11 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         protected Class<?> numberShape(NumberShape shape) {
             return AbstractTrait.class;
         }
+
+        @Override
+        public Class<?> unionShape(UnionShape shape) {
+            return AbstractTrait.class;
+        }
     }
 
     private static final class NestedClassVisitor extends ShapeVisitor.Default<Void> {
@@ -197,6 +206,13 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         @Override
         public Void enumShape(EnumShape shape) {
             new EnumShapeGenerator.StringEnumShapeGenerator().writeEnum(shape, symbolProvider, writer, model, false);
+            writer.newLine();
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            new UnionShapeGenerator().writeNestedClasses(shape, writer, symbolProvider, model);
             writer.newLine();
             return null;
         }

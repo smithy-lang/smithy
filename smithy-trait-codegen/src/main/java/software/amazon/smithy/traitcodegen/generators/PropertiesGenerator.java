@@ -16,6 +16,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -114,6 +115,12 @@ final class PropertiesGenerator implements Runnable {
         @Override
         protected Void numberShape(NumberShape shape) {
             createValueProperty(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            writer.write("private final Type type;");
             return null;
         }
 

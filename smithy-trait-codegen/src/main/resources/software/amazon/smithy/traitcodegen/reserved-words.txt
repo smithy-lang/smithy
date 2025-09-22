@@ -46,6 +46,7 @@ throw
 throws
 transient
 try
+type
 void
 volatile
 while

@@ -1,0 +1,3 @@
+[ERROR] test.smithy.traitcodegen.unions#myStructA: Error creating trait `test.smithy.traitcodegen.unions#UnionTrait`: Expected only one member for union node. | Model
+[ERROR] test.smithy.traitcodegen.unions#myStructB: Error creating trait `test.smithy.traitcodegen.unions#UnionTrait`: Expected only one member for union node. | Model
+[ERROR] test.smithy.traitcodegen.unions#myStructC: Error creating trait `test.smithy.traitcodegen.unions#UnionTrait`: Unknown union variant. | Model

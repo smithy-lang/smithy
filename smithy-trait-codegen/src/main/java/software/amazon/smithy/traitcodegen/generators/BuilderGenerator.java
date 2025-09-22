@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -43,6 +44,7 @@ import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -81,7 +83,11 @@ final class BuilderGenerator implements Runnable {
     public void run() {
         // Only create builder methods for aggregate types.
         if (baseShape.getType().getCategory().equals(ShapeType.Category.AGGREGATE)) {
-            writeToBuilderMethod();
+            if (baseShape.isUnionShape()) {
+                writeBuildStageInterface();
+            } else {
+                writeToBuilderMethod();
+            }
             writeBuilderMethod();
             writeBuilderClass();
         }
@@ -100,7 +106,7 @@ final class BuilderGenerator implements Runnable {
         writer.openBlock("public $T build() {",
                 "}",
                 symbol,
-                () -> writer.write("return new $C;", (Runnable) this::writeBuilderReturn));
+                () -> writer.write("return $C;", (Runnable) this::writeBuilderReturn));
         writer.dedent().write("}");
         writer.newLine();
     }
@@ -109,20 +115,28 @@ final class BuilderGenerator implements Runnable {
         if (baseShape.hasTrait(TraitDefinition.ID)) {
             if (TraitCodegenUtils.isJavaStringList(baseShape, symbolProvider)) {
                 writer.write("extends $T.Builder<$T, Builder> {", StringListTrait.class, symbol);
+            } else if (baseShape.isUnionShape()) {
+                writer.write("extends $T<$T, Builder> implements BuildStage {", AbstractTraitBuilder.class, symbol);
             } else {
                 writer.write("extends $T<$T, Builder> {", AbstractTraitBuilder.class, symbol);
             }
         } else {
-            writer.write("implements $T<$T> {", SmithyBuilder.class, symbol);
+            if (baseShape.isUnionShape()) {
+                writer.writeWithNoFormatting("implements BuildStage {");
+            } else {
+                writer.write("implements $T<$T> {", SmithyBuilder.class, symbol);
+            }
         }
     }
 
     private void writeBuilderReturn() {
         // String list traits need a custom builder return
         if (TraitCodegenUtils.isJavaStringList(baseShape, symbolProvider)) {
-            writer.write("$T(getValues(), getSourceLocation())", symbol);
+            writer.write("new $T(getValues(), getSourceLocation())", symbol);
+        } else if (baseShape.isUnionShape()) {
+            writer.write("$T.requireNonNull(value, $S)", Objects.class, "no union value set.");
         } else {
-            writer.write("$T(this)", symbol);
+            writer.write("new $T(this)", symbol);
         }
     }
 
@@ -171,6 +185,12 @@ final class BuilderGenerator implements Runnable {
                 () -> writer.write("return new Builder();")).newLine();
     }
 
+    private void writeBuildStageInterface() {
+        writer.openBlock("public interface BuildStage {",
+                "}",
+                () -> writer.write("$T build();", symbolProvider.toSymbol(baseShape))).newLine();
+    }
+
     private final class BuilderPropertyGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
@@ -197,6 +217,12 @@ final class BuilderGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             shape.members().forEach(this::writeProperty);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            writer.write("private $T value;", symbolProvider.toSymbol(shape));
             return null;
         }
 
@@ -262,6 +288,43 @@ final class BuilderGenerator implements Runnable {
                     .forEach(
                             memberShape -> memberShape
                                     .accept(new SetterVisitor(symbolProvider.toMemberName(memberShape))));
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            for (MemberShape memberShape : shape.members()) {
+                String memberName = memberShape.getMemberName() + "Member";
+                Shape target = model.expectShape(memberShape.getTarget());
+                Symbol symbol = memberShape.hasTrait(IdRefTrait.ID) ? symbolProvider.toSymbol(memberShape)
+                        : symbolProvider.toSymbol(target);
+                boolean isTargetUnitType = target.hasTrait(UnitTypeTrait.ID);
+                writer.putContext("isTargetUnitType", isTargetUnitType);
+                writer.openBlock("public BuildStage $L(${^isTargetUnitType}$T value${/isTargetUnitType}) {",
+                        "}",
+                        memberName,
+                        symbol,
+                        () -> writer.write(
+                                "return setValue(new $U(${^isTargetUnitType}value${/isTargetUnitType}));",
+                                memberName));
+                writer.newLine();
+            }
+            // Write base setValue method
+            writer.openBlock("private BuildStage setValue($T value) {",
+                    "}",
+                    symbolProvider.toSymbol(shape),
+                    () -> {
+                        writer.openBlock("if (this.value != null) {",
+                                "}",
+                                () -> {
+                                    writer.write("throw new $T($S);",
+                                            IllegalArgumentException.class,
+                                            "Only one value may be set for unions.");
+                                });
+                        writer.writeWithNoFormatting("this.value = value;");
+                        writer.writeWithNoFormatting("return this;");
+                    });
+            writer.newLine();
             return null;
         }
     }

@@ -18,19 +18,23 @@ import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
 import com.example.traits.lists.DocumentListTrait;
 import com.example.traits.lists.ListMember;
+import com.example.traits.lists.MyUnion;
 import com.example.traits.lists.NestedListTrait;
 import com.example.traits.lists.NestedUniqueItemsListTrait;
 import com.example.traits.lists.NumberListTrait;
 import com.example.traits.lists.StringListTrait;
 import com.example.traits.lists.StructureListTrait;
+import com.example.traits.lists.UnionListTrait;
 import com.example.traits.maps.MapValue;
 import com.example.traits.maps.NestedMapTrait;
 import com.example.traits.maps.NestedStringUniqueItemMapTrait;
 import com.example.traits.maps.StringDocumentMapTrait;
 import com.example.traits.maps.StringStringMapTrait;
 import com.example.traits.maps.StringToStructMapTrait;
+import com.example.traits.maps.StringToUnionMapTrait;
 import com.example.traits.mixins.StructWithMixinTrait;
 import com.example.traits.mixins.StructureListWithMixinMemberTrait;
+import com.example.traits.mixins.UnionWithMixinMemberTrait;
 import com.example.traits.names.SnakeCaseStructureTrait;
 import com.example.traits.numbers.BigDecimalTrait;
 import com.example.traits.numbers.BigIntegerTrait;
@@ -49,12 +53,16 @@ import com.example.traits.structures.StructMemberWithTimestampFormatTrait;
 import com.example.traits.structures.StructWithEnumDefaultTrait;
 import com.example.traits.structures.StructWithIdrefMemberTrait;
 import com.example.traits.structures.StructWithListOfMapTrait;
+import com.example.traits.structures.StructWithUnionTrait;
 import com.example.traits.structures.StructWithUniqueItemsListTrait;
 import com.example.traits.structures.StructureTrait;
 import com.example.traits.timestamps.DateTimeTimestampTrait;
 import com.example.traits.timestamps.EpochSecondsTimestampTrait;
 import com.example.traits.timestamps.HttpDateTimestampTrait;
 import com.example.traits.timestamps.TimestampTrait;
+import com.example.traits.unions.NestedUnionA;
+import com.example.traits.unions.TypeShape;
+import com.example.traits.unions.UnionTrait;
 import com.example.traits.uniqueitems.NumberSetTrait;
 import com.example.traits.uniqueitems.SetMember;
 import com.example.traits.uniqueitems.StringSetTrait;
@@ -132,6 +140,10 @@ public class CreatesTraitTest {
                         ArrayNode.fromNodes(
                                 ArrayNode.fromNodes(
                                         ArrayNode.fromNodes(Node.from("1"), Node.from("2"), Node.from("3"))))),
+                Arguments.of(UnionListTrait.ID,
+                        ArrayNode.fromNodes(
+                                MyUnion.builder().unitVariantMember().build().toNode(),
+                                MyUnion.builder().integerVariantMember(1).build().toNode())),
                 // Maps
                 Arguments.of(StringStringMapTrait.ID,
                         StringStringMapTrait.builder()
@@ -166,12 +178,25 @@ public class CreatesTraitTest {
                                                 MapUtils.of("4", "5")))
                                 .build()
                                 .toNode()),
+                Arguments.of(StringToUnionMapTrait.ID,
+                        StringToUnionMapTrait.builder()
+                                .putValues("1",
+                                        com.example.traits.maps.MyUnion.builder()
+                                                .integerVariantMember(1)
+                                                .build())
+                                .build()
+                                .toNode()),
                 // Mixins
                 Arguments.of(StructureListWithMixinMemberTrait.ID,
                         ArrayNode.fromNodes(ObjectNode.builder().withMember("a", "a").withMember("d", "d").build())),
                 Arguments.of(StructWithMixinTrait.ID,
                         StructWithMixinTrait.builder()
                                 .d("d")
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionWithMixinMemberTrait.ID,
+                        UnionWithMixinMemberTrait.builder()
+                                .unitVariantMember()
                                 .build()
                                 .toNode()),
                 // Naming Conflicts
@@ -234,6 +259,11 @@ public class CreatesTraitTest {
                                 .memberB(EnumB.FOUR)
                                 .build()
                                 .toNode()),
+                Arguments.of(StructWithUnionTrait.ID,
+                        StructWithUnionTrait.builder()
+                                .myUnion(com.example.traits.structures.MyUnion.builder().unitVariantMember().build())
+                                .build()
+                                .toNode()),
                 // Timestamps
                 Arguments.of(TimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
                 Arguments.of(DateTimeTimestampTrait.ID, Node.from("1985-04-12T23:20:50.52Z")),
@@ -250,6 +280,60 @@ public class CreatesTraitTest {
                         ArrayNode.fromNodes(
                                 SetMember.builder().a("first").b(1).c("other").build().toNode(),
                                 SetMember.builder().a("second").b(2).c("more").build().toNode())),
+                // Unions
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .unitVariantMember()
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .stringVariantMember(ShapeId.from("test.abc#myShape"))
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .integerVariantMember(123)
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .structVariantMember(
+                                        TypeShape.builder()
+                                                .memberA("123")
+                                                .build())
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .unionVariantMember(
+                                        NestedUnionA.builder()
+                                                .unitVariantMember()
+                                                .build())
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .listVariantMember(ListUtils.of("1", "2", "3"))
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .setVariantMember(SetUtils.of("1", "2", "3"))
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .mapVariantMember(MapUtils.of("a", "b"))
+                                .build()
+                                .toNode()),
+                Arguments.of(UnionTrait.ID,
+                        UnionTrait.builder()
+                                .timestampVariantMember(
+                                        Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME
+                                                .parse("Tue, 29 Apr 2014 18:30:38 GMT")))
+                                .build()
+                                .toNode()),
                 // Strings
                 Arguments.of(StringTrait.ID, Node.from("SPORKZ SPOONS YAY! Utensils.")),
                 // Defaults
