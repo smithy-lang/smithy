@@ -232,7 +232,7 @@ Let's try to start our server:
 
 .. code-block:: sh
 
-    cd server && yarn start
+    cd server && yarn setup && yarn start
 
 This will fail with a compilation error:
 
