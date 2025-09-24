@@ -49,6 +49,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final String fileName;
     private final TraitCodegenSettings settings;
     private final Map<String, Set<Symbol>> symbolNames = new HashMap<>();
+    private final Set<String> localDefinedNames = new HashSet<>();
 
     public TraitCodegenWriter(
             String fileName,
@@ -67,6 +68,18 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         putFormatter('T', new JavaTypeFormatter());
         putFormatter('B', new BaseTypeFormatter());
         putFormatter('U', new CapitalizingFormatter());
+    }
+
+    /**
+     * Declares a local name defined by this writer, e.g., the name of an inner class.
+     * The writer will use this information to decide if it should use a fully qualified
+     * name when referencing types with the same name in its scope.
+     *
+     * @param name the name defined by this writer.
+     */
+    public void addLocalDefinedName(String name) {
+        localDefinedNames.add(name);
+        symbolNames.computeIfAbsent(name, k -> new HashSet<>()).add(Symbol.builder().name(name).build());
     }
 
     private void addImport(Symbol symbol) {
@@ -138,7 +151,8 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
                 duplicates.forEach(dupe -> {
                     // If we are in the namespace of a Symbol, use its
                     // short name, otherwise use the full name
-                    if (dupe.getNamespace().equals(namespace)) {
+                    if (dupe.getNamespace().equals(namespace)
+                            && !localDefinedNames.contains(dupe.getName())) {
                         putContext(dupe.getFullName(), dupe.getName());
                     } else {
                         putContext(dupe.getFullName(), dupe.getFullName());

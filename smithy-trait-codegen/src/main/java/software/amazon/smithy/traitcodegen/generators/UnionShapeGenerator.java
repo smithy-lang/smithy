@@ -109,6 +109,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
             writer.pushState(new ClassSection(memberShape));
             String tag = memberShape.getMemberName();
             String variantClassName = symbolProvider.toMemberName(memberShape) + "Member";
+            writer.addLocalDefinedName(variantClassName);
             Symbol memberSymbol = symbolProvider.toSymbol(memberShape);
             boolean isTargetUnitType = model.expectShape(memberShape.getTarget()).hasTrait(UnitTypeTrait.ID);
             writer.putContext("isTargetUnitType", isTargetUnitType);
@@ -136,6 +137,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
     }
 
     private void writeEnumClass(TraitCodegenWriter writer, Shape shape, SymbolProvider symbolProvider) {
+        writer.addLocalDefinedName("Type");
         List<String> enumList = new ArrayList<>();
         writer.putContext("variants", enumList);
         for (MemberShape member : shape.members()) {
@@ -270,6 +272,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
                             }).newLine();
                     writer.enableNewlines();
                 });
+        writer.newLine();
     }
 
     private void writeHashCode(TraitCodegenWriter writer) {

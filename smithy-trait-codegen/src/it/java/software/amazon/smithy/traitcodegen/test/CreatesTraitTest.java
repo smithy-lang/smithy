@@ -61,7 +61,7 @@ import com.example.traits.timestamps.EpochSecondsTimestampTrait;
 import com.example.traits.timestamps.HttpDateTimestampTrait;
 import com.example.traits.timestamps.TimestampTrait;
 import com.example.traits.unions.NestedUnionA;
-import com.example.traits.unions.TypeShape;
+import com.example.traits.unions.Type;
 import com.example.traits.unions.UnionTrait;
 import com.example.traits.uniqueitems.NumberSetTrait;
 import com.example.traits.uniqueitems.SetMember;
@@ -299,7 +299,7 @@ public class CreatesTraitTest {
                 Arguments.of(UnionTrait.ID,
                         UnionTrait.builder()
                                 .structVariantMember(
-                                        TypeShape.builder()
+                                        Type.builder()
                                                 .memberA("123")
                                                 .build())
                                 .build()

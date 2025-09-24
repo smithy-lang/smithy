@@ -45,6 +45,7 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
     @Override
     public void accept(GenerateTraitDirective directive) {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
+            writer.addLocalDefinedName("Provider");
             writer.pushState(new ClassSection(directive.shape()));
             // Add class definition context
             writer.putContext("baseClass", directive.shape().accept(new BaseClassVisitor(directive.symbolProvider())));
