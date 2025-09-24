@@ -71,9 +71,11 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
     /**
-     * Store pre-defined class name in current file.
+     * Declares a local name defined by this writer, e.g., the name of an inner class.
+     * The writer will use this information to decide if it should use a fully qualified
+     * name when referencing types with the same name in its scope.
      *
-     * @param name a name pre-defined in the clas.
+     * @param name the name defined by this writer.
      */
     public void addLocalDefinedName(String name) {
         localDefinedNames.add(name);
