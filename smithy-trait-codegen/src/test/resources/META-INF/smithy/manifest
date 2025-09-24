@@ -1,3 +1,7 @@
+conflicts/struct-with-name-conflict.smithy
+conflicts/list-with-name-conflict.smithy
+conflicts/map-with-name-conflict.smithy
+conflicts/union-with-name-conflict.smithy
 deprecated.smithy
 documents/document-trait.smithy
 documents/struct-with-nested-document.smithy

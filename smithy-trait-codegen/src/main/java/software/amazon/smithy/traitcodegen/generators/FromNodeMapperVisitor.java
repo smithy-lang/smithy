@@ -42,7 +42,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -262,7 +261,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void structureShape(StructureShape shape) {
-        writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), varName);
+        writer.write("$T.fromNode($L)", symbolProvider.toSymbol(shape), varName);
         return null;
     }
 
@@ -278,7 +277,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), varName);
+        writer.write("$T.fromNode($L)", symbolProvider.toSymbol(shape), varName);
         return null;
     }
 
@@ -301,7 +300,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
 
     @Override
     public Void enumShape(EnumShape shape) {
-        writer.write("$L.fromNode($L)", TraitCodegenUtils.getDefaultName(shape), varName);
+        writer.write("$T.fromNode($L)", symbolProvider.toSymbol(shape), varName);
         return null;
     }
 
