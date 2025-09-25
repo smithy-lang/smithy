@@ -443,4 +443,38 @@ public class ReplaceShapesTest {
         assertThat(result.getShape(otherId).get(), Matchers.is(otherWithBase));
         assertThat(result.getShape(baseId).get(), Matchers.is(base));
     }
+    
+    @Test
+    public void canSwapMixinRelationships() {
+        ShapeId aId = ShapeId.from("ns.foo#A");
+        ShapeId bId = ShapeId.from("ns.foo#B");
+
+        StructureShape a = StructureShape.builder()
+                .id(aId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        
+
+        StructureShape b = StructureShape.builder()
+                .id(bId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        
+        StructureShape aWithMixin = a.toBuilder()
+                .addMixin(b)
+                .build();
+        
+        StructureShape bWithMixin = b.toBuilder()
+                .addMixin(a)
+                .build();
+
+        Model model = Model.builder().addShapes(a, bWithMixin).build();
+
+        ModelTransformer transformer = ModelTransformer.create();
+
+        Model result = transformer.replaceShapes(model, Arrays.asList(aWithMixin, b));
+
+        assertThat(result.getShape(aId).get(), Matchers.is(aWithMixin));
+        assertThat(result.getShape(bId).get(), Matchers.is(b));
+    }
 }
