@@ -66,4 +66,17 @@ public class TopologicalShapeSortTest {
             }
         }
     }
+
+    @Test
+    public void testReEnqueueWithDependencies() {
+        List<Pair<ShapeId, Set<ShapeId>>> input = new ArrayList<>();
+        input.add(Pair.of(from("test#B"), SetUtils.of()));
+        input.add(Pair.of(from("test#B"), SetUtils.of(from("test#A"))));
+        input.add(Pair.of(from("test#A"), SetUtils.of()));
+            
+        TopologicalShapeSort sort = new TopologicalShapeSort();
+        input.forEach(pair -> sort.enqueue(pair.getLeft(), pair.getRight()));
+        List<ShapeId> result = sort.dequeueSortedShapes();
+    }
+
 }
