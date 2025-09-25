@@ -81,7 +81,7 @@ public class TopologicalShapeSortTest {
         assertThat(result.get(0), equalTo(from("test#A")));
         assertThat(result.get(1), equalTo(from("test#B")));
     }
-    
+
     @Test
     public void testReEnqueueWithoutDependencies() {
         List<Pair<ShapeId, Set<ShapeId>>> input = new ArrayList<>();
