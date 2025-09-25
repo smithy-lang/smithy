@@ -57,8 +57,8 @@ public final class TopologicalShapeSort {
         if (dependencies.isEmpty()) {
             satisfiedShapes.offer(shape);
         } else {
-            for (ShapeId dependent : dependencies) {
-                reverseDependencies.computeIfAbsent(dependent, unused -> new HashSet<>()).add(shape);
+            for (ShapeId dependency : dependencies) {
+                reverseDependencies.computeIfAbsent(dependency, unused -> new HashSet<>()).add(shape);
             }
             forwardDependencies.put(shape, new HashSet<>(dependencies));
 
