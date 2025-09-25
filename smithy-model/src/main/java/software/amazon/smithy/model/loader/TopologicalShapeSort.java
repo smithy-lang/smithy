@@ -61,6 +61,11 @@ public final class TopologicalShapeSort {
                 reverseDependencies.computeIfAbsent(dependent, unused -> new HashSet<>()).add(shape);
             }
             forwardDependencies.put(shape, new HashSet<>(dependencies));
+
+            if (satisfiedShapes.contains(shape)) {
+                // This shape was previously marked as satisfied, but now we know it has dependencies.
+                satisfiedShapes.remove(shape);
+            }
         }
     }
 
