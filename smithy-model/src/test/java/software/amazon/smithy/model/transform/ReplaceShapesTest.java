@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 
@@ -415,5 +416,34 @@ public class ReplaceShapesTest {
         // This previously would have failed because ReplaceShapes only removed members when they were removed from
         // structures or unions. We now handle member removal generically instead.
         assertThat(modelB.getShape(shapeA.getAllMembers().get("b").getId()), Matchers.equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void canAddMixinToAMixin() {
+        try {
+            ShapeId baseId = ShapeId.from("ns.foo#Base");
+            StructureShape base = StructureShape.builder()
+                    .id(baseId)
+                    .addTrait(MixinTrait.builder().build())
+                    .build();
+
+            ShapeId otherId = ShapeId.from("ns.foo#Other");
+            StructureShape other = StructureShape.builder()
+                    .id(otherId)
+                    .addTrait(MixinTrait.builder().build())
+                    .build();
+
+            Model model = Model.builder().addShapes(base, other).build();
+
+            ModelTransformer transformer = ModelTransformer.create();
+
+            StructureShape otherWithBase = other.toBuilder().addMixin(base).build();
+
+            Model result = transformer.replaceShapes(model, Arrays.asList(otherWithBase));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
