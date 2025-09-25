@@ -21,6 +21,7 @@ public final class ProjectionResult {
     private final String projectionName;
     private final Model model;
     private final Map<String, FileManifest> pluginManifests;
+    private final FileManifest sharedFileManifest;
     private final List<ValidationEvent> events;
 
     private ProjectionResult(Builder builder) {
@@ -28,6 +29,7 @@ public final class ProjectionResult {
         this.model = SmithyBuilder.requiredState("model", builder.model);
         this.events = builder.events.copy();
         this.pluginManifests = builder.pluginManifests.copy();
+        this.sharedFileManifest = builder.sharedFileManifest;
     }
 
     /**
@@ -103,12 +105,31 @@ public final class ProjectionResult {
     }
 
     /**
+     * Gets the shared result manifest.
+     *
+     * @return Returns files created by plugins in shared space.
+     */
+    public FileManifest getSharedManifest() {
+        // This will always be set in actual Smithy builds, as it is set by
+        // SmithyBuildImpl. We therefore don't want the return type to be
+        // optional, since in real usage it isn't. This was introduced after
+        // the class was made public, however, and this class is likely being
+        // manually constructed in tests. So instead of checking if it's set
+        // in the builder, we check when it's actually used.
+        if (sharedFileManifest == null) {
+            SmithyBuilder.requiredState("sharedFileManifest", sharedFileManifest);
+        }
+        return sharedFileManifest;
+    }
+
+    /**
      * Builds up a {@link ProjectionResult}.
      */
     public static final class Builder implements SmithyBuilder<ProjectionResult> {
         private String projectionName;
         private Model model;
         private final BuilderRef<Map<String, FileManifest>> pluginManifests = BuilderRef.forUnorderedMap();
+        private FileManifest sharedFileManifest;
         private final BuilderRef<List<ValidationEvent>> events = BuilderRef.forList();
 
         @Override
@@ -150,6 +171,17 @@ public final class ProjectionResult {
          */
         public Builder addPluginManifest(String artifactName, FileManifest manifest) {
             pluginManifests.get().put(artifactName, manifest);
+            return this;
+        }
+
+        /**
+         * Sets the shared result manifest.
+         *
+         * @param sharedFileManifest File manifest shared by all plugins.
+         * @return Returns the builder.
+         */
+        public Builder sharedFileManifest(FileManifest sharedFileManifest) {
+            this.sharedFileManifest = sharedFileManifest;
             return this;
         }
 
