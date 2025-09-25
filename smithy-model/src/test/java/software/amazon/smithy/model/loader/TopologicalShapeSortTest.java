@@ -77,6 +77,9 @@ public class TopologicalShapeSortTest {
         TopologicalShapeSort sort = new TopologicalShapeSort();
         input.forEach(pair -> sort.enqueue(pair.getLeft(), pair.getRight()));
         List<ShapeId> result = sort.dequeueSortedShapes();
+
+        assertThat(result.get(0), equalTo(from("test#A")));
+        assertThat(result.get(1), equalTo(from("test#B")));
     }
 
 }
