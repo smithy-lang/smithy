@@ -420,30 +420,27 @@ public class ReplaceShapesTest {
 
     @Test
     public void canAddMixinToAMixin() {
-        try {
-            ShapeId baseId = ShapeId.from("ns.foo#Base");
-            StructureShape base = StructureShape.builder()
-                    .id(baseId)
-                    .addTrait(MixinTrait.builder().build())
-                    .build();
+        ShapeId baseId = ShapeId.from("ns.foo#Base");
+        StructureShape base = StructureShape.builder()
+                .id(baseId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
 
-            ShapeId otherId = ShapeId.from("ns.foo#Other");
-            StructureShape other = StructureShape.builder()
-                    .id(otherId)
-                    .addTrait(MixinTrait.builder().build())
-                    .build();
+        ShapeId otherId = ShapeId.from("ns.foo#Other");
+        StructureShape other = StructureShape.builder()
+                .id(otherId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
 
-            Model model = Model.builder().addShapes(base, other).build();
+        Model model = Model.builder().addShapes(base, other).build();
 
-            ModelTransformer transformer = ModelTransformer.create();
+        ModelTransformer transformer = ModelTransformer.create();
 
-            StructureShape otherWithBase = other.toBuilder().addMixin(base).build();
+        StructureShape otherWithBase = other.toBuilder().addMixin(base).build();
 
-            Model result = transformer.replaceShapes(model, Arrays.asList(otherWithBase));
+        Model result = transformer.replaceShapes(model, Arrays.asList(otherWithBase));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        assertThat(result.getShape(otherId).get(), Matchers.is(otherWithBase));
+        assertThat(result.getShape(baseId).get(), Matchers.is(base));
     }
 }
