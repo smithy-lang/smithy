@@ -81,5 +81,37 @@ public class TopologicalShapeSortTest {
         assertThat(result.get(0), equalTo(from("test#A")));
         assertThat(result.get(1), equalTo(from("test#B")));
     }
+    
+    @Test
+    public void testReEnqueueWithoutDependencies() {
+        List<Pair<ShapeId, Set<ShapeId>>> input = new ArrayList<>();
+        input.add(Pair.of(from("test#B"), SetUtils.of(from("test#A"))));
+        input.add(Pair.of(from("test#B"), SetUtils.of()));
+        input.add(Pair.of(from("test#A"), SetUtils.of()));
+
+        TopologicalShapeSort sort = new TopologicalShapeSort();
+        input.forEach(pair -> sort.enqueue(pair.getLeft(), pair.getRight()));
+        List<ShapeId> result = sort.dequeueSortedShapes();
+
+        assertThat(result.get(0), equalTo(from("test#B")));
+        assertThat(result.get(1), equalTo(from("test#A")));
+    }
+
+    @Test
+    public void testReEnqueueSwapDependencies() {
+        List<Pair<ShapeId, Set<ShapeId>>> input = new ArrayList<>();
+        input.add(Pair.of(from("test#B"), SetUtils.of()));
+        input.add(Pair.of(from("test#A"), SetUtils.of(from("test#B"))));
+
+        input.add(Pair.of(from("test#B"), SetUtils.of(from("test#A"))));
+        input.add(Pair.of(from("test#A"), SetUtils.of()));
+
+        TopologicalShapeSort sort = new TopologicalShapeSort();
+        input.forEach(pair -> sort.enqueue(pair.getLeft(), pair.getRight()));
+        List<ShapeId> result = sort.dequeueSortedShapes();
+
+        assertThat(result.get(0), equalTo(from("test#A")));
+        assertThat(result.get(1), equalTo(from("test#B")));
+    }
 
 }
