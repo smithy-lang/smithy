@@ -376,6 +376,109 @@ The following table shows valid and invalid values for an input to the
       - ``true``
 
 
+.. _rules-engine-standard-library-split:
+
+``split`` function
+==================
+
+Summary
+    Divides a string into an array of substrings based on a delimiter.
+Argument types
+    * value: ``string``
+    * delimiter: ``string``
+    * limit: ``int``
+Return type
+    ``array<string>``
+Since
+    1.1
+
+The ``split`` function divides a string into an array of substrings based on a non-empty delimiter.
+The behavior is controlled by the limit parameter:
+
+* ``limit = 0``: Split all occurrences (unlimited)
+* ``limit = 1``: No split performed (returns original string as single element array)
+* ``limit > 1``: Split into at most 'limit' parts (performs limit-1 splits)
+
+.. important::
+    The delimiter must not be null or empty. The limit must not be negative.
+    For empty input strings, the function returns an array containing a single empty string.
+
+The following example uses ``split`` to divide a bucket name into parts using ``--`` as the delimiter:
+
+.. code-block:: json
+
+    {
+        "fn": "split",
+        "argv": [
+            {"ref": "bucketName"},
+            "--",
+            0
+        ]
+    }
+
+
+.. _rules-engine-standard-library-split-examples:
+
+--------
+Examples
+--------
+
+The following table shows various inputs and their corresponding outputs for the ``split`` function:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 15 10 50
+
+    * - Input
+      - Delimiter
+      - Limit
+      - Output
+    * - ``"a--b--c"``
+      - ``"--"``
+      - ``0``
+      - ``["a", "b", "c"]``
+    * - ``"a--b--c"``
+      - ``"--"``
+      - ``2``
+      - ``["a", "b--c"]``
+    * - ``"a--b--c"``
+      - ``"--"``
+      - ``1``
+      - ``["a--b--c"]``
+    * - ``""``
+      - ``"--"``
+      - ``0``
+      - ``[""]``
+    * - ``"--"``
+      - ``"--"``
+      - ``0``
+      - ``["", ""]``
+    * - ``"----"``
+      - ``"--"``
+      - ``0``
+      - ``["", "", ""]``
+    * - ``"--b--"``
+      - ``"--"``
+      - ``0``
+      - ``["", "b", ""]``
+    * - ``"--x-s3--azid--suffix"``
+      - ``"--"``
+      - ``0``
+      - ``["", "x-s3", "azid", "suffix"]``
+    * - ``"--x-s3--azid--suffix"``
+      - ``"--"``
+      - ``2``
+      - ``["", "x-s3--azid--suffix"]``
+    * - ``"abc"``
+      - ``"x"``
+      - ``0``
+      - ``["abc"]``
+    * - ``"mybucket"``
+      - ``"--"``
+      - ``1``
+      - ``["mybucket"]``
+
+
 .. _rules-engine-standard-library-stringEquals:
 
 ``stringEquals`` function

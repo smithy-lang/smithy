@@ -756,6 +756,121 @@ end with a <code class="docutils literal notranslate"><span class="pre">/</span>
 </div>
 </div>
 </div>
+<div class="section" id="split-function">
+<span id="rules-engine-standard-library-split"></span><h2><code class="docutils literal notranslate"><span class="pre">split</span></code> function<a class="headerlink" href="#split-function" title="Permalink to this heading">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Divides a string into an array of substrings based on a delimiter.</dd>
+<dt>Argument types</dt><dd><ul class="simple">
+<li>value: <code class="docutils literal notranslate"><span class="pre">string</span></code></li>
+<li>delimiter: <code class="docutils literal notranslate"><span class="pre">string</span></code></li>
+<li>limit: <code class="docutils literal notranslate"><span class="pre">int</span></code></li>
+</ul>
+</dd>
+<dt>Return type</dt><dd><code class="docutils literal notranslate"><span class="pre">array&lt;string&gt;</span></code></dd>
+<dt>Since</dt><dd>1.1</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">split</span></code> function divides a string into an array of substrings based on a non-empty delimiter.
+The behavior is controlled by the limit parameter:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">limit</span> <span class="pre">=</span> <span class="pre">0</span></code>: Split all occurrences (unlimited)</li>
+<li><code class="docutils literal notranslate"><span class="pre">limit</span> <span class="pre">=</span> <span class="pre">1</span></code>: No split performed (returns original string as single element array)</li>
+<li><code class="docutils literal notranslate"><span class="pre">limit</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>: Split into at most 'limit' parts (performs limit-1 splits)</li>
+</ul>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The delimiter must not be null or empty. The limit must not be negative.
+For empty input strings, the function returns an array containing a single empty string.</p>
+</div>
+<p>The following example uses <code class="docutils literal notranslate"><span class="pre">split</span></code> to divide a bucket name into parts using <code class="docutils literal notranslate"><span class="pre">--</span></code> as the delimiter:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;split&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bucketName&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="rules-engine-standard-library-split-examples">
+<span id="id2"></span><h3>Examples<a class="headerlink" href="#rules-engine-standard-library-split-examples" title="Permalink to this heading">#</a></h3>
+<p>The following table shows various inputs and their corresponding outputs for the <code class="docutils literal notranslate"><span class="pre">split</span></code> function:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="25%" />
+<col width="15%" />
+<col width="10%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Input</th>
+<th class="head">Delimiter</th>
+<th class="head">Limit</th>
+<th class="head">Output</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;a--b--c&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;,</span> <span class="pre">&quot;c&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&quot;a--b--c&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b--c&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;a--b--c&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;a--b--c&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;,</span> <span class="pre">&quot;&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&quot;----&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;,</span> <span class="pre">&quot;&quot;,</span> <span class="pre">&quot;&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;--b--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;,</span> <span class="pre">&quot;b&quot;,</span> <span class="pre">&quot;&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&quot;--x-s3--azid--suffix&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;,</span> <span class="pre">&quot;x-s3&quot;,</span> <span class="pre">&quot;azid&quot;,</span> <span class="pre">&quot;suffix&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;--x-s3--azid--suffix&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;&quot;,</span> <span class="pre">&quot;x-s3--azid--suffix&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&quot;abc&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;x&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;abc&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&quot;mybucket&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">&quot;--&quot;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[&quot;mybucket&quot;]</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div class="section" id="stringequals-function">
 <span id="rules-engine-standard-library-stringequals"></span><h2><code class="docutils literal notranslate"><span class="pre">stringEquals</span></code> function<a class="headerlink" href="#stringequals-function" title="Permalink to this heading">#</a></h2>
 <dl class="docutils">
@@ -857,7 +972,7 @@ two colon <code class="docutils literal notranslate"><span class="pre">:</span><
 add the <a class="reference internal" href="../../aws/rules-engine/library-functions.html#rules-engine-aws-library-functions"><span class="std std-ref">AWS rules engine functions</span></a>.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.61.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.62.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 
@@ -936,6 +1051,10 @@ add the <a class="reference internal" href="../../aws/rules-engine/library-funct
 <li><a class="reference internal" href="#parseurl-function"><code class="docutils literal notranslate"><span class="pre">parseURL</span></code> function</a><ul>
 <li><a class="reference internal" href="#url-structure"><code class="docutils literal notranslate"><span class="pre">URL</span></code> structure</a></li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#split-function"><code class="docutils literal notranslate"><span class="pre">split</span></code> function</a><ul>
+<li><a class="reference internal" href="#rules-engine-standard-library-split-examples">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stringequals-function"><code class="docutils literal notranslate"><span class="pre">stringEquals</span></code> function</a></li>
