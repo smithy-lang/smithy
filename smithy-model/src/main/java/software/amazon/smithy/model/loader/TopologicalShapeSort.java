@@ -56,11 +56,25 @@ public final class TopologicalShapeSort {
     public void enqueue(ShapeId shape, Collection<ShapeId> dependencies) {
         if (dependencies.isEmpty()) {
             satisfiedShapes.offer(shape);
+
+            // Remove dependencies if this shape was enqueued in the past with them.
+            Set<ShapeId> previousDependencies = forwardDependencies.remove(shape);
+            if (previousDependencies != null) {
+                for (ShapeId dependency : previousDependencies) {
+                    reverseDependencies.get(dependency).remove(shape);
+                }
+            }
         } else {
-            for (ShapeId dependent : dependencies) {
-                reverseDependencies.computeIfAbsent(dependent, unused -> new HashSet<>()).add(shape);
+            for (ShapeId dependency : dependencies) {
+                reverseDependencies.computeIfAbsent(dependency, unused -> new HashSet<>()).add(shape);
             }
             forwardDependencies.put(shape, new HashSet<>(dependencies));
+
+            if (satisfiedShapes.contains(shape)) {
+                // This shape was previously enqueued with no dependencies and marked as satisfied.
+                // Now it has dependencies.
+                satisfiedShapes.remove(shape);
+            }
         }
     }
 

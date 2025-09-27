@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 
@@ -415,5 +416,64 @@ public class ReplaceShapesTest {
         // This previously would have failed because ReplaceShapes only removed members when they were removed from
         // structures or unions. We now handle member removal generically instead.
         assertThat(modelB.getShape(shapeA.getAllMembers().get("b").getId()), Matchers.equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void canAddMixinToAMixin() {
+        ShapeId baseId = ShapeId.from("ns.foo#Base");
+        StructureShape base = StructureShape.builder()
+                .id(baseId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+
+        ShapeId otherId = ShapeId.from("ns.foo#Other");
+        StructureShape other = StructureShape.builder()
+                .id(otherId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+
+        Model model = Model.builder().addShapes(base, other).build();
+
+        ModelTransformer transformer = ModelTransformer.create();
+
+        StructureShape otherWithBase = other.toBuilder().addMixin(base).build();
+
+        Model result = transformer.replaceShapes(model, Arrays.asList(otherWithBase));
+
+        assertThat(result.getShape(otherId).get(), Matchers.is(otherWithBase));
+        assertThat(result.getShape(baseId).get(), Matchers.is(base));
+    }
+
+    @Test
+    public void canSwapMixinRelationships() {
+        ShapeId aId = ShapeId.from("ns.foo#A");
+        ShapeId bId = ShapeId.from("ns.foo#B");
+
+        StructureShape a = StructureShape.builder()
+                .id(aId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+
+        StructureShape b = StructureShape.builder()
+                .id(bId)
+                .addTrait(MixinTrait.builder().build())
+                .build();
+
+        StructureShape aWithMixin = a.toBuilder()
+                .addMixin(b)
+                .build();
+
+        StructureShape bWithMixin = b.toBuilder()
+                .addMixin(a)
+                .build();
+
+        Model model = Model.builder().addShapes(a, bWithMixin).build();
+
+        ModelTransformer transformer = ModelTransformer.create();
+
+        Model result = transformer.replaceShapes(model, Arrays.asList(aWithMixin, b));
+
+        assertThat(result.getShape(aId).get(), Matchers.is(aWithMixin));
+        assertThat(result.getShape(bId).get(), Matchers.is(b));
     }
 }
