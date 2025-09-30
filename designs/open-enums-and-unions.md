@@ -6,14 +6,14 @@ In the Smithy 2.0 specification enums and unions are treated as strictly **open*
 
 ## Motivation
 
-It has been identified by smithy users that open by default enums and unions are problematic for several reasons:
+It has been identified by smithy users that **open by default** enums and unions might be problematic for several reasons:
 
-- **Exhaustiveness and type safety**. Many target languages (like Scala) encourage type safety and exhaustive matches on enums and algebraic data types. Default open enums/unions forces default, catch-all branches, weakening compiler checks forcing implementations to either provide a catch-all default (see point above for issues with it) or weaken exhaustivity of the union encoding.  
+- **Exhaustiveness and type safety**. Many target languages (like Scala) encourage type safety and exhaustive matches on enums and algebraic data types. Default open enums/unions forces default, catch-all branches, weakening compiler checks and forcing implementations to either provide a catch-all default (see points below for issues with it) or weaken exhaustivity of the union encoding.  
 - **Data integrity**. Treating unexpected variants as acceptable can mask producer errors and defer the discovery of such bugs. Closed enums and unions force modelers to be explicit if they want to opt-in and make it open for cases where forward compatibility is truly required.
 - **Protocol‑agnostic friction** - Unknown members of open unions are inherently protocol‑specific (e.g., JSON or binary) - it’s difficult to guarantee a single, portable “unknown” representation across protocols and therefore strictly follow the current spec. 
 - **Explicitness**: Unexpected variants can become explicit design decisions enabled on a per protocol basis.
 
-At the same time, open unions are valuable in certain domains (for example, event streams that evolve by adding event types). 
+At the same time, open unions are valuable in certain domains - for example, event streams that evolve by adding event types. 
 
 ## Proposal
 
