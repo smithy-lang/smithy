@@ -48,7 +48,7 @@ Presence of such annotation will cause the codegen also generate an `Unknown` va
 
 ### Unions
 
-[Unions] are also closed by default and like enums can be [opened](https://disneystreaming.github.io/smithy4s/docs/codegen/unions/#open-unions). Smithy4s outputs protocol agnostic code, and it would not be easy to provide a single “unknown” representation that works well across protocols. 
+Unions are also closed by default and like enums can be [opened](https://disneystreaming.github.io/smithy4s/docs/codegen/unions/#open-unions). Smithy4s outputs protocol agnostic code, and it would not be easy to provide a single “unknown” representation that works well across protocols. 
 
 In the context of the json based protocols, unions can be opened, like so:
 
