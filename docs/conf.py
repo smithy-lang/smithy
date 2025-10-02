@@ -1,6 +1,7 @@
 from smithy.lexer import SmithyLexer
 import requests
 import xml.etree.ElementTree as ET
+import re
 
 project = u'Smithy'
 copyright = u'2022, Amazon Web Services'
@@ -84,7 +85,8 @@ def __load_typescript_codegen_version():
 
 # Find the latest version of smithy-java from github
 def __load_java_version():
-    return requests.get('https://api.github.com/repos/smithy-lang/smithy-java/tags').json()[0]['name']
+    tags = requests.get('https://api.github.com/repos/smithy-lang/smithy-java/tags').json()
+    return next(tag['name'] for tag in tags if re.match(r'^\d+\.\d+\.\d+$', tag['name']))
 
 # We use this list of replacements to replace placeholder values in the documentation
 # with computed values. These are found and replaced
