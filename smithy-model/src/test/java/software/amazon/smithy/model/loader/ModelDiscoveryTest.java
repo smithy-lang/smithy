@@ -147,4 +147,14 @@ public class ModelDiscoveryTest {
         assertThat(ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo.jar"),
                 equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest")));
     }
+
+    @Test
+    public void encodesSmithyManifestUrl() throws IOException {
+        assertThat(ModelDiscovery.createSmithyJarManifestUrl("/foo bar.jar"),
+                equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
+        assertThat(ModelDiscovery.createSmithyJarManifestUrl("file:/foo bar.jar"),
+                equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
+        assertThat(ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo bar.jar"),
+                equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
+    }
 }
