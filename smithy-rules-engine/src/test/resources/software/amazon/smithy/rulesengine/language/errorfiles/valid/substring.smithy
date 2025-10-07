@@ -158,7 +158,7 @@ use smithy.rules#endpointTests
       "documentation": "unicode characters always return `None`",
       "params": {
         "TestCaseId": "1",
-        "Input": "\uD83D\uDC31abcdef"
+        "Input": "abcdef\uD83D\uDC31"
       },
       "expect": {
         "error": "No tests matched"
@@ -168,7 +168,7 @@ use smithy.rules#endpointTests
       "documentation": "non-ascii cause substring to always return `None`",
       "params": {
         "TestCaseId": "1",
-        "Input": "ab\u0080cdef"
+        "Input": "abcdef\u0080"
       },
       "expect": {
         "error": "No tests matched"
