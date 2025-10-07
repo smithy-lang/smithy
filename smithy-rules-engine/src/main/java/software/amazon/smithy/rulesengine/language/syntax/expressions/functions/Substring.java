@@ -122,18 +122,22 @@ public final class Substring extends LibraryFunction {
         }
 
         int len = value.length();
-        if (startIndex < 0 || stopIndex > len || startIndex >= stopIndex) {
+        if (startIndex >= stopIndex || len < stopIndex) {
             return null;
         }
 
-        int from = reverse ? len - stopIndex : startIndex;
-        int to = reverse ? len - startIndex : stopIndex;
-        for (int i = from; i < to; i++) {
+        for (int i = 0; i < len; i++) {
             if (value.charAt(i) > 127) {
                 return null;
             }
         }
 
-        return value.substring(from, to);
+        if (reverse) {
+            int revStart = len - stopIndex;
+            int revStop = len - startIndex;
+            return value.substring(revStart, revStop);
+        } else {
+            return value.substring(startIndex, stopIndex);
+        }
     }
 }
