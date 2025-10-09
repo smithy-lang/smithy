@@ -34,10 +34,10 @@ Each prompt template definition consists of the following components:
       - Description
     * - description
       - ``string``
-      - **Required** A concise description of the prompt's purpose and functionality.
+      - **Required.** A concise description of the prompt's purpose and functionality.
     * - template
       - ``string``
-      - **Required** The prompt template text.
+      - **Required.** The prompt template text.
     * - arguments
       - ``string``
       - Optional reference to a structure shape that defines the parameters used in the template placeholders. Valid value MUST be a structure shapeId.
@@ -45,9 +45,8 @@ Each prompt template definition consists of the following components:
       - ``string``
       - Optional condition to provide preference for tool selection.May be used for routing to other tools or prompts.
 
-
 Template Placeholder Syntax
-============================
+===========================
 
 Prompt templates use ``{{parameterName}}`` syntax to reference parameters from the associated ``arguments`` structure. This can be useful to reference and interpolate members of arguments when accepting user input for prompts in Model Context Protocol (MCP) servers.
 
@@ -60,6 +59,19 @@ Prompt templates use ``{{parameterName}}`` syntax to reference parameters from t
             arguments: DetailedWeatherInput
         }
     })
+    service WeatherService {
+        operations: [GetCurrentWeather]
+    }
+
+    operation GetCurrentWeather {
+            input := {
+                location: String
+            }
+
+            output := {
+                temperature : String
+            }
+    }
 
     structure DetailedWeatherInput {
         location: String
@@ -67,7 +79,6 @@ Prompt templates use ``{{parameterName}}`` syntax to reference parameters from t
         conditions: String
         humidity: Float
     }
-
 
 Service-level vs operation-level prompts
 ========================================
@@ -116,9 +127,8 @@ Service-level vs operation-level prompts
         location: String
     }
 
-
 Use cases for prompts
-=======================
+=====================
 
 Service authors can define sophisticated workflows by defining prompts to orchestrate multiple API calls and format results.
 
@@ -135,6 +145,15 @@ Service teams can control how LLMs present API results:
             arguments: GetCurrentWeatherInput
         }
     })
+    operation GetWeather {
+        input := {
+            location: String
+        }
+
+        output := {
+            temperature : String
+        }
+    }
 
 **Multi-operation workflows**
 
@@ -149,6 +168,15 @@ Prompts can guide LLMs to perform complex workflows using existing operations:
             arguments: VacationPlannerInput
         }
     })
+    operation GetWeather {
+        input := {
+            location: String
+        }
+
+        output := {
+            temperature : String
+        }
+    }
 
     structure VacationPlannerInput {
         @required
@@ -157,9 +185,8 @@ Prompts can guide LLMs to perform complex workflows using existing operations:
         destinationLocation: String
     }
 
-
 A complete example
-=====================
+==================
 
 The following example demonstrates creative prompt templates that enhance the user experience with a weather service:
 
@@ -223,11 +250,10 @@ The following example demonstrates creative prompt templates that enhance the us
         location2: String
     }
 
-
 Integration with Model Context Protocol
 =======================================
 
-The ``smithy.ai#prompts`` trait is designed to work with Model Context Protocol (MCP) servers. MCP servers can use the metadata defined in the trait to generate _prompts:https://modelcontextprotocol.io/specification/2025-06-18/server/prompts  as defined in the Model Context Protocol (MCP) specification.
+The ``smithy.ai#prompts`` trait is designed to work with Model Context Protocol (MCP) servers. MCP servers can use the metadata defined in the trait to generate   `prompts`_  as defined in the Model Context Protocol (MCP) specification.
 
 See also
     - `MCP Server Example`_ for a complete implementation of an MCP server using Smithy
@@ -237,3 +263,4 @@ See also
 .. _MCP Server Example: https://github.com/smithy-lang/smithy-java/tree/main/examples/mcp-server
 .. _MCP Traits Example: https://github.com/smithy-lang/smithy-java/tree/main/examples/mcp-traits-example
 .. _MCP Server Model: https://github.com/smithy-lang/smithy-java/blob/main/examples/mcp-server/src/main/resources/software/amazon/smithy/java/example/server/mcp/main.smithy
+.. _Prompts: https://modelcontextprotocol.io/specification/2025-06-18/server/prompts
