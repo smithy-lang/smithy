@@ -676,6 +676,24 @@ public class NodeValidationVisitorTest {
     }
 
     @Test
+    public void nullNonSparseDocumentMapValue() {
+        // This should not raise any errors since null is a valid Document value
+        ObjectNode map = ObjectNode.builder()
+                .withMember("a", Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(map)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#DocumentMap"))
+                .accept(visitor);
+
+        assertThat(events, hasSize(0));
+    }
+
+    @Test
     public void nullSparseMapValue() {
         ObjectNode map = ObjectNode.builder()
                 .withMember("a", Node.nullNode())
