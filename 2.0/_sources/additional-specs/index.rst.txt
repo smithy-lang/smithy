@@ -10,6 +10,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     :maxdepth: 1
     :caption: smithy.* specifications
 
+    ai-traits
     http-protocol-compliance-tests
     smoke-tests
     waiters
