@@ -33,6 +33,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.CycleException;
 import software.amazon.smithy.utils.DependencyGraph;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -244,7 +245,7 @@ final class SmithyBuildImpl {
         List<PluginId> sorted;
         try {
             sorted = dependencyGraph.toSortedList();
-        } catch (IllegalStateException e) {
+        } catch (CycleException e) {
             throw new SmithyBuildException(e.getMessage(), e);
         }
 

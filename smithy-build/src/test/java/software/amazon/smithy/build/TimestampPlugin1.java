@@ -20,6 +20,9 @@ public class TimestampPlugin1 implements SmithyBuildPlugin {
         } catch (InterruptedException ignored) {}
     }
 
+    // This is made serial to protect against test failures if we decide later to
+    // have plugins run in parallel. These plugins MUST run serially with respect
+    // to each other to function.
     @Override
     public boolean isSerial() {
         return true;

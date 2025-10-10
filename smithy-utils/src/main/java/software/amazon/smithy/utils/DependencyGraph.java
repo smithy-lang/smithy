@@ -375,15 +375,13 @@ public class DependencyGraph<T> implements Collection<T>, Iterable<T> {
 
         // Check for cycles.
         if (result.size() != reverseDependencies.size()) {
-            List<String> remaining = new ArrayList<>(reverseDependencies.size() - result.size());
+            Set<T> remaining = new LinkedHashSet<>(reverseDependencies.size() - result.size());
             for (T node : reverseDependencies.keySet()) {
                 if (!result.contains(node)) {
-                    remaining.add(node.toString());
+                    remaining.add(node);
                 }
             }
-            throw new IllegalStateException(
-                    String.format("Cycle(s) detected in dependency graph while attempting to sort among [%s]",
-                            String.join(", ", remaining)));
+            throw new CycleException(result, remaining);
         }
 
         return result;
@@ -428,4 +426,5 @@ public class DependencyGraph<T> implements Collection<T>, Iterable<T> {
         forwardDependencies.clear();
         reverseDependencies.clear();
     }
+
 }
