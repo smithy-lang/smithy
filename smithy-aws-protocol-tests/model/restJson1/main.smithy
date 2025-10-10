@@ -49,6 +49,7 @@ service RestJson {
         OmitsSerializingEmptyLists,
         QueryIdempotencyTokenAutoFill,
         QueryPrecedence,
+        HttpQueryParamsOnlyOperation,
         QueryParamsAsStringListMap,
 
         // @httpPrefixHeaders tests
