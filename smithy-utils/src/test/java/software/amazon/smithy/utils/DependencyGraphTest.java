@@ -242,10 +242,14 @@ public class DependencyGraphTest {
     @Test()
     public void sortedListThrowsErrorOnCycle() {
         DependencyGraph<String> graph = new DependencyGraph<>();
+        graph.add("foo");
+        graph.addDependency("bar", "foo");
         graph.addDependency("spam", "eggs");
         graph.addDependency("eggs", "spam");
 
-        assertThrows(IllegalStateException.class, graph::toSortedList);
+        CycleException exception = assertThrows(CycleException.class, graph::toSortedList);
+        assertThat(exception.getSortedNodes(String.class), contains("foo", "bar"));
+        assertThat(exception.getCyclicNodes(String.class), containsInAnyOrder("spam", "eggs"));
     }
 
     @Test
