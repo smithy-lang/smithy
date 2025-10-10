@@ -667,7 +667,7 @@ public class SmithyBuildTest {
                 .build());
 
         SmithyBuildException e = assertThrows(SmithyBuildException.class, builder::build);
-        assertThat(e.getMessage(), containsString("Cycle(s) detected in dependency graph"));
+        assertThat(e.getMessage(), containsString("Cycle(s) detected"));
     }
 
     @Test

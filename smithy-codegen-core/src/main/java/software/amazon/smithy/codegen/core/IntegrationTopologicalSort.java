@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import software.amazon.smithy.utils.CycleException;
 import software.amazon.smithy.utils.DependencyGraph;
 
 final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
@@ -46,7 +47,7 @@ final class IntegrationTopologicalSort<I extends SmithyIntegration<?, ?, ?>> {
         List<String> sorted;
         try {
             sorted = dependencyGraph.toSortedList(this::compareIntegrations);
-        } catch (IllegalStateException e) {
+        } catch (CycleException e) {
             throw new IllegalArgumentException(e);
         }
         for (String name : sorted) {
