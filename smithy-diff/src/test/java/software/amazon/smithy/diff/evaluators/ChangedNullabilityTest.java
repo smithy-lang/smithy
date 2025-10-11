@@ -396,7 +396,7 @@ public class ChangedNullabilityTest {
     }
 
     @Test
-    public void specialHandlingForRequiredUnionMembers() {
+    public void specialHandlingForRemovedRequiredUnionMembers() {
         SourceLocation memberSource = new SourceLocation("b.smithy", 3, 4);
         MemberShape memberA = MemberShape.builder().id("smithy.example#Baz$a").target("smithy.api#String").build();
         MemberShape memberB = MemberShape.builder().id("smithy.example#Baz$B").target("smithy.api#String").build();
@@ -418,7 +418,37 @@ public class ChangedNullabilityTest {
 
         List<ValidationEvent> events = TestHelper.findEvents(
                 ModelDiff.compare(oldModel, newModel),
-                "ChangedNullability");
+                "ChangedNullability.RemovedRequiredTrait.StructureOrUnion");
+
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getSeverity(), is(Severity.WARNING));
+        assertThat(events.get(0).getSourceLocation(), equalTo(memberSource));
+    }
+
+    @Test
+    public void specialHandlingForAddedRequiredUnionMembers() {
+        SourceLocation memberSource = new SourceLocation("b.smithy", 3, 4);
+        MemberShape memberA = MemberShape.builder().id("smithy.example#Baz$a").target("smithy.api#String").build();
+        MemberShape memberB = MemberShape.builder().id("smithy.example#Baz$B").target("smithy.api#String").build();
+        UnionShape union = UnionShape.builder().id("smithy.example#Baz").addMember(memberA).addMember(memberB).build();
+        MemberShape memberBaz = MemberShape.builder()
+                .id("smithy.example#Foo$baz")
+                .addTrait(new RequiredTrait())
+                .target(union)
+                .source(memberSource)
+                .build();
+        StructureShape struct = StructureShape.builder().id("smithy.example#Foo").addMember(memberBaz).build();
+        Model newModel = Model.assembler().addShapes(union, struct, memberA, memberB, memberBaz).assemble().unwrap();
+        Model oldModel = ModelTransformer.create()
+                .replaceShapes(newModel,
+                        ListUtils.of(
+                                Shape.shapeToBuilder(newModel.expectShape(ShapeId.from("smithy.example#Foo$baz")))
+                                        .removeTrait(RequiredTrait.ID)
+                                        .build()));
+
+        List<ValidationEvent> events = TestHelper.findEvents(
+                ModelDiff.compare(oldModel, newModel),
+                "ChangedNullability.AddedRequiredTrait.StructureOrUnion");
 
         assertThat(events, hasSize(1));
         assertThat(events.get(0).getSeverity(), is(Severity.WARNING));

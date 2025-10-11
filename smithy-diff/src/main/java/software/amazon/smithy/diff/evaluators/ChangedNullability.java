@@ -124,12 +124,24 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             }
             // Can't add required to a member unless the member is marked as @clientOptional or part of @input.
             if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
-                eventsToAdd.add(emit(Severity.ERROR,
-                        "AddedRequiredTrait",
-                        shape,
-                        oldMemberSourceLocation,
-                        message,
-                        "The @required trait was added to a member."));
+                if (newTarget.isStructureShape() || newTarget.isUnionShape()) {
+                    eventsToAdd.add(emit(Severity.WARNING,
+                            "AddedRequiredTrait.StructureOrUnion",
+                            shape,
+                            oldMemberSourceLocation,
+                            message,
+                            "The @required trait was added to a member "
+                                    + "that targets a " + newTarget.getType() + ". This is backward compatible in "
+                                    + "generators that always treat structures and unions as optional "
+                                    + "(e.g., AWS generators)"));
+                } else {
+                    eventsToAdd.add(emit(Severity.ERROR,
+                            "AddedRequiredTrait",
+                            shape,
+                            oldMemberSourceLocation,
+                            message,
+                            "The @required trait was added to a member."));
+                }
             }
             // Can't add the default trait to a member unless the member was previously required.
             if (change.isTraitAdded(DefaultTrait.ID) && !change.isTraitRemoved(RequiredTrait.ID)) {

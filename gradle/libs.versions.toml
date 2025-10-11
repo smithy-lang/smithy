@@ -1,5 +1,6 @@
 [versions]
 junit5 = "5.13.4"
+junit-platform = "1.13.4"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
@@ -40,7 +41,7 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 mockserver = { module = "org.mock-server:mockserver-netty", version.ref = "mockserver" }
