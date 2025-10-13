@@ -10,5 +10,6 @@ structure Foo {
 enum TestEnum {
     @documentation("it really does foo")
     FOO = "Foo"
+    @title("TestEnum Bar")
     BAR = "Bar"
 }

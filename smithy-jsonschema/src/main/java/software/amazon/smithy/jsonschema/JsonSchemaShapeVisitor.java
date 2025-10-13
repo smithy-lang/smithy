@@ -267,9 +267,13 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                     MemberShape member = entry.getValue();
                     Schema enumSchema = Schema.builder()
                             .constValue(StringNode.from(enumValues.get(memberName)))
+                            .title(member.getTrait(TitleTrait.class)
+                                    .map(TitleTrait::getValue)
+                                    .orElse(null))
                             .description(member.getTrait(DocumentationTrait.class)
                                     .map(DocumentationTrait::getValue)
                                     .orElse(null))
+
                             .build();
 
                     schemas.add(enumSchema);
