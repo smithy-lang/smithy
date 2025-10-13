@@ -4,6 +4,11 @@
  */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +37,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class AwsPartition extends LibraryFunction {
     public static final String ID = "aws.partition";
+    public static final String AWS_PARTITIONS_FILE_OVERRIDE = "AWS_PARTITIONS_FILE_OVERRIDE";
     public static final Identifier NAME = Identifier.of("name");
     public static final Identifier DNS_SUFFIX = Identifier.of("dnsSuffix");
     public static final Identifier DUAL_STACK_DNS_SUFFIX = Identifier.of("dualStackDnsSuffix");
@@ -51,10 +57,25 @@ public final class AwsPartition extends LibraryFunction {
     private static Partition AWS_PARTITION;
 
     static {
-        PARTITIONS.addAll(Partitions.fromNode(
-                Node.parse(Partitions.class.getResourceAsStream("partitions.json")))
-                .getPartitions());
-        initializeRegionMap();
+        // Use the override if present in the environment. Ignore an empty string value.
+        String override = System.getenv(AWS_PARTITIONS_FILE_OVERRIDE);
+        if (override != null && override.isEmpty()) {
+            override = null;
+        }
+
+        try (InputStream in = override != null
+                ? Files.newInputStream(Paths.get(override))
+                : Partitions.class.getResourceAsStream("partitions.json")) {
+            if (in == null) {
+                throw new IllegalStateException("partitions.json not found in JAR"); // should never happen
+            }
+            PARTITIONS.addAll(Partitions.fromNode(Node.parse(in)).getPartitions());
+            initializeRegionMap();
+        } catch (IOException io) {
+            throw new UncheckedIOException(
+                    "Failed to load partitions data from " + (override != null ? override : "JAR"),
+                    io);
+        }
     }
 
     private AwsPartition(FunctionNode functionNode) {
