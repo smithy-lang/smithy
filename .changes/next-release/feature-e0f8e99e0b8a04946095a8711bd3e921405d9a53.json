@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Deprecated `TopologicalShapeSort` in favor of `DependencyGraph`.",
+  "pull_requests": [
+    "[#2774](https://github.com/smithy-lang/smithy/pull/2774)"
+  ]
+}
