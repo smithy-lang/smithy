@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -75,22 +74,14 @@ public class SmokeTestCaseValidator extends AbstractValidator {
 
                 // Validate input params
                 StructureShape input = operationIndex.expectInputShape(shape);
-                if (input != null && testCase.getParams().isPresent()) {
+                if (testCase.getParams().isPresent()) {
                     NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(),
                             model,
                             shape,
                             testCase.getId(),
                             ".params");
                     events.addAll(input.accept(paramsValidator));
-                } else if (testCase.getParams().isPresent()) {
-                    events.add(error(shape,
-                            trait,
-                            String.format(
-                                    "Smoke test parameters provided for operation with no input: `%s`",
-                                    Node.printJson(testCase.getParams().get())
-
-                            )));
-                } else if (input != null) {
+                } else {
                     List<String> requiredMemberNames = new ArrayList<>();
                     for (Map.Entry<String, MemberShape> entry : input.getAllMembers().entrySet()) {
                         if (entry.getValue().isRequired()) {
