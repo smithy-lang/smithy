@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Op: Smoke test case with ID `MissingParams` does not define `params`, but the target operation has required input members: `requiredInputMember` | SmokeTestCase
