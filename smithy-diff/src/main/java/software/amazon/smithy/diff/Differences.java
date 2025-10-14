@@ -197,7 +197,6 @@ public final class Differences implements ToSmithyBuilder<Differences> {
         return Objects.hash(getOldModel(), getNewModel());
     }
 
-
     /**
      * Constructs a Builder for {@link Differences}.
      *
