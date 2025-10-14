@@ -7,36 +7,42 @@ package software.amazon.smithy.diff.evaluators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.EnumTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Checks for changes in the shapes targeted by a member.
  *
- * <p>If the shape targeted by the member changes from a simple shape to
- * a simple shape of the same type with the same traits, or a list or set
- * that has a member that targets the shame exact shape and has the same
- * traits, then the emitted event is a WARNING. If an enum trait is
- * found on the old or newly targeted shape, then the event is an ERROR,
- * because enum traits typically materialize as named types in codegen.
- * All other changes are ERROR events.
+ * <p>If the new target is not a compatible type, the emitted event will be
+ * an ERROR. The new target is not compatible if any of the following are true:
+ *
+ * <ul>
+ *     <li>The new target is a different shape type than the old target.</li>
+ *     <li>The target is a shape type whose name is significant to code generation,
+ *     such as structures and enums.</li>
+ *     <li>The new target is a list whose member is not a compatible type with the
+ *     old target's member.</li>
+ *     <li>The new target is a map whose key or value is not a compatible type with
+ *     the old target's key or value.</li>
+ * </ul>
+ *
+ * <p>If the types are compatible, the emitted event will default to a WARNING. This
+ * is elevated if any trait changes would result in a higher severity.
  */
 public final class ChangedMemberTarget extends AbstractDiffEvaluator {
 
@@ -47,29 +53,49 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
      */
     private static final Set<ShapeId> SIGNIFICANT_CODEGEN_TRAITS = SetUtils.of(EnumTrait.ID);
 
+    private static final Pair<Severity, String> COMPATIBLE =
+            Pair.of(Severity.WARNING, "This was determined backward compatible.");
+
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
+        return evaluate(ChangedMemberTarget.class.getClassLoader(), differences);
+    }
+
+    @Override
+    public List<ValidationEvent> evaluate(ClassLoader classLoader, Differences differences) {
         return differences.changedShapes(MemberShape.class)
                 .filter(change -> !change.getOldShape().getTarget().equals(change.getNewShape().getTarget()))
-                .map(change -> createChangeEvent(differences, change))
+                .map(change -> createChangeEvent(classLoader, differences, change))
                 .collect(Collectors.toList());
     }
 
-    private ValidationEvent createChangeEvent(Differences differences, ChangedShape<MemberShape> change) {
-        Shape oldTarget = getShapeTarget(differences.getOldModel(), change.getOldShape().getTarget());
-        Shape newTarget = getShapeTarget(differences.getNewModel(), change.getNewShape().getTarget());
-        List<String> issues = areShapesCompatible(oldTarget, newTarget);
-        Severity severity = issues.isEmpty() ? Severity.WARNING : Severity.ERROR;
+    private ValidationEvent createChangeEvent(
+            ClassLoader classLoader,
+            Differences differences,
+            ChangedShape<MemberShape> change
+    ) {
+        return createChangeEvent(classLoader, differences.getOldModel(), differences.getNewModel(), change);
+    }
 
-        String message = createSimpleMessage(change, oldTarget, newTarget);
-        if (severity == Severity.WARNING) {
-            message += "This was determined backward compatible.";
-        } else {
-            message += String.join(". ", issues) + ".";
-        }
+    private ValidationEvent createChangeEvent(
+            ClassLoader classLoader,
+            Model oldModel,
+            Model newModel,
+            ChangedShape<MemberShape> change
+    ) {
+        Shape oldTarget = getShapeTarget(oldModel, change.getOldShape().getTarget());
+        Shape newTarget = getShapeTarget(newModel, change.getNewShape().getTarget());
+
+        Pair<Severity, String> evaluation = evaluateShape(
+                classLoader,
+                oldModel,
+                newModel,
+                oldTarget,
+                newTarget);
+        String message = createSimpleMessage(change, oldTarget, newTarget) + evaluation.getRight();
 
         return ValidationEvent.builder()
-                .severity(severity)
+                .severity(evaluation.getLeft())
                 .id(getEventId())
                 .shape(change.getNewShape())
                 .message(message)
@@ -80,77 +106,107 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
         return model.getShape(id).orElse(null);
     }
 
-    private static List<String> areShapesCompatible(Shape oldShape, Shape newShape) {
+    private Pair<Severity, String> evaluateShape(
+            ClassLoader classLoader,
+            Model oldModel,
+            Model newModel,
+            Shape oldShape,
+            Shape newShape
+    ) {
         if (oldShape == null || newShape == null) {
-            return ListUtils.of();
+            return COMPATIBLE;
         }
 
         if (oldShape.getType() != newShape.getType()) {
-            return ListUtils.of(String.format("The type of the targeted shape changed from %s to %s",
-                    oldShape.getType(),
-                    newShape.getType()));
+            return Pair.of(
+                    Severity.ERROR,
+                    String.format(
+                            "The type of the targeted shape changed from %s to %s.",
+                            oldShape.getType(),
+                            newShape.getType()));
         }
 
-        if (!(oldShape instanceof SimpleShape || oldShape instanceof CollectionShape || oldShape instanceof MapShape)) {
-            return ListUtils.of(String.format("The name of a %s is significant", oldShape.getType()));
+        if (!(oldShape instanceof SimpleShape || oldShape instanceof CollectionShape || oldShape.isMapShape())
+                || oldShape.isIntEnumShape()
+                || oldShape.isEnumShape()) {
+            return Pair.of(
+                    Severity.ERROR,
+                    String.format("The name of a %s is significant.", oldShape.getType()));
         }
 
-        List<String> results = new ArrayList<>();
         for (ShapeId significantCodegenTrait : SIGNIFICANT_CODEGEN_TRAITS) {
             if (oldShape.hasTrait(significantCodegenTrait)) {
-                results.add(String.format("The `%s` trait was found on the target, so the name of the targeted "
-                        + "shape matters for codegen",
-                        significantCodegenTrait));
+                return Pair.of(
+                        Severity.ERROR,
+                        String.format("The `%s` trait was found on the target, so the name of the targeted "
+                                + "shape matters for codegen.",
+                                significantCodegenTrait));
             }
         }
 
-        if (!oldShape.getAllTraits().equals(newShape.getAllTraits())) {
-            results.add(createTraitDiffMessage(oldShape, newShape));
-        }
+        // Now that we've checked several terminal conditions, we need to evaluate traits and
+        // collection/map member targets. To evaluate traits, we will create a synthetic diff
+        // set to re-run the diff evaluator on. That will ensure that any differences are
+        // given the proper severity and context rather than simply returning an ERROR for any
+        // difference.
+        Differences.Builder differences = Differences.builder()
+                .oldModel(oldModel)
+                .newModel(newModel)
+                .changedShape(new ChangedShape<>(oldShape, newShape));
 
+        // Add any list / map members to the set of differences to check, and potentially
+        // recurse if this evaluator needs to be run on them. Note that this can't recurse
+        // infinitely, even without any specific checks here. That's because to get to this
+        // point a member target had to change without changing shape type and without being
+        // a structure, union, or enum. Neither maps nor lists can recurse by themselves or
+        // with each other, there MUST be a structure or union in the path for recursion to
+        // happen in a way that Smithy will allow. Therefore, when the structure or union
+        // in the path is hit, it'll get caught in the terminal conditions above.
         if (oldShape instanceof CollectionShape) {
-            evaluateMember(oldShape.getType(),
-                    results,
-                    ((CollectionShape) oldShape).getMember(),
-                    ((CollectionShape) newShape).getMember());
+            MemberShape oldMember = ((CollectionShape) oldShape).getMember();
+            MemberShape newMember = ((CollectionShape) newShape).getMember();
+            differences.changedShape(new ChangedShape<>(oldMember, newMember));
         } else if (oldShape instanceof MapShape) {
-            MapShape oldMapShape = (MapShape) oldShape;
-            MapShape newMapShape = (MapShape) newShape;
-            // Both the key and value need to be evaluated for maps.
-            evaluateMember(oldShape.getType(),
-                    results,
-                    oldMapShape.getKey(),
-                    newMapShape.getKey());
-            evaluateMember(oldShape.getType(),
-                    results,
-                    oldMapShape.getValue(),
-                    newMapShape.getValue());
+            MapShape oldMap = (MapShape) oldShape;
+            MapShape newMap = (MapShape) newShape;
+            differences.changedShape(new ChangedShape<>(oldMap.getKey(), newMap.getKey()));
+            differences.changedShape(new ChangedShape<>(oldMap.getValue(), newMap.getValue()));
         }
 
-        return results;
-    }
+        // Re-run the diff evaluator with this changed shape and any changed members.
+        ModelDiff.Result result = ModelDiff.builder()
+                .oldModel(oldModel)
+                .newModel(newModel)
+                .classLoader(classLoader)
+                .compare(differences.build());
+        List<ValidationEvent> diffEvents = new ArrayList<>(result.getDiffEvents());
 
-    private static void evaluateMember(
-            ShapeType oldShapeType,
-            List<String> results,
-            MemberShape oldMember,
-            MemberShape newMember
-    ) {
-        String memberSlug = oldShapeType == ShapeType.MAP ? oldMember.getMemberName() + " " : "";
-        if (!oldMember.getTarget().equals(newMember.getTarget())) {
-            results.add(String.format("Both the old and new shapes are a %s, but the old shape %stargeted "
-                    + "`%s` while the new shape targets `%s`",
-                    oldShapeType,
-                    memberSlug,
-                    oldMember.getTarget(),
-                    newMember.getTarget()));
-        } else if (!oldMember.getAllTraits().equals(newMember.getAllTraits())) {
-            results.add(String.format("Both the old and new shapes are a %s, but their %smembers have "
-                    + "differing traits. %s",
-                    oldShapeType,
-                    memberSlug,
-                    createTraitDiffMessage(oldMember, newMember)));
+        if (diffEvents.isEmpty()) {
+            return COMPATIBLE;
         }
+
+        Severity severity = Severity.WARNING;
+        StringBuilder message = new StringBuilder("This will result in the following effective differences:")
+                .append(System.lineSeparator())
+                .append(System.lineSeparator());
+
+        for (ValidationEvent event : diffEvents) {
+            // If the severity in any event is greater than the current severity, elevate it
+            // to that level.
+            severity = severity.compareTo(event.getSeverity()) > 0 ? severity : event.getSeverity();
+
+            // Add the event to a list and indent the message in case it also spans
+            // multiple lines.
+            String eventMessage = StringUtils.indent(event.getMessage(), 2).trim();
+            message.append(String.format("- [%s] %s%n", event.getSeverity(), eventMessage));
+        }
+
+        // If there are only warnings or less,
+        if (severity.compareTo(Severity.WARNING) <= 0) {
+            message.insert(0, "This was determined backward compatible. ");
+        }
+
+        return Pair.of(severity, message.toString().trim());
     }
 
     private static String createSimpleMessage(ChangedShape<MemberShape> change, Shape oldTarget, Shape newTarget) {
@@ -161,37 +217,5 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
                 oldTarget.getType(),
                 change.getNewShape().getTarget(),
                 newTarget.getType());
-    }
-
-    private static String createTraitDiffMessage(Shape oldShape, Shape newShape) {
-        StringJoiner joiner = new StringJoiner(". ");
-        ChangedShape<Shape> targetChange = new ChangedShape<>(oldShape, newShape);
-
-        Set<ShapeId> removedTraits = targetChange.removedTraits()
-                .map(Trait::toShapeId)
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        if (!removedTraits.isEmpty()) {
-            joiner.add("The targeted shape no longer has the following traits: " + removedTraits);
-        }
-
-        Set<ShapeId> addedTraits = targetChange.addedTraits()
-                .map(Trait::toShapeId)
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        if (!addedTraits.isEmpty()) {
-            joiner.add("The newly targeted shape now has the following additional traits: " + addedTraits);
-        }
-
-        // Only select the traits that exist in both placed but changed.
-        Set<ShapeId> changedTraits = new TreeSet<>(targetChange.getTraitDifferences().keySet());
-        changedTraits.removeAll(addedTraits);
-        changedTraits.removeAll(removedTraits);
-
-        if (!changedTraits.isEmpty()) {
-            joiner.add("The newly targeted shape has traits that differ from the previous shape: " + changedTraits);
-        }
-
-        return joiner.toString();
     }
 }
