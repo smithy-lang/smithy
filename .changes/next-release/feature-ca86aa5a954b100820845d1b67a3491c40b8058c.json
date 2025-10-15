@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Updated `ReplaceShapes` to use `DependencyGraph` to sort shapes.",
+  "pull_requests": [
+    "[#2774](https://github.com/smithy-lang/smithy/pull/2774)"
+  ]
+}
