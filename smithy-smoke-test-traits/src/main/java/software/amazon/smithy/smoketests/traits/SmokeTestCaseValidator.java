@@ -6,17 +6,19 @@ package software.amazon.smithy.smoketests.traits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 
 /**
@@ -72,21 +74,29 @@ public class SmokeTestCaseValidator extends AbstractValidator {
 
                 // Validate input params
                 StructureShape input = operationIndex.expectInputShape(shape);
-                if (input != null && testCase.getParams().isPresent()) {
+                if (testCase.getParams().isPresent()) {
                     NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(),
                             model,
                             shape,
                             testCase.getId(),
                             ".params");
                     events.addAll(input.accept(paramsValidator));
-                } else if (testCase.getParams().isPresent()) {
-                    events.add(error(shape,
-                            trait,
-                            String.format(
-                                    "Smoke test parameters provided for operation with no input: `%s`",
-                                    Node.printJson(testCase.getParams().get())
+                } else {
+                    List<String> requiredMemberNames = new ArrayList<>();
+                    for (Map.Entry<String, MemberShape> entry : input.getAllMembers().entrySet()) {
+                        if (entry.getValue().isRequired()) {
+                            requiredMemberNames.add(entry.getKey());
+                        }
+                    }
 
-                            )));
+                    if (!requiredMemberNames.isEmpty()) {
+                        events.add(error(shape,
+                                trait,
+                                String.format(
+                                        "Smoke test case with ID `%s` does not define `params`, but the target operation has required input members: %s",
+                                        testCase.getId(),
+                                        ValidationUtils.tickedList(requiredMemberNames))));
+                    }
                 }
             }
         }
