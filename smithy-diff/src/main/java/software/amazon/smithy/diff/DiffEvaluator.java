@@ -29,4 +29,8 @@ public interface DiffEvaluator {
      * @return Returns validation events that are relative to the new model.
      */
     List<ValidationEvent> evaluate(Differences differences);
+
+    default List<ValidationEvent> evaluate(ClassLoader classLoader, Differences differences) {
+        return evaluate(differences);
+    }
 }
