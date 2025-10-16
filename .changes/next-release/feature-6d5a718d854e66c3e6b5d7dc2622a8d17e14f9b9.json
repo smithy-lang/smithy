@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Updated `DiffEvaluator` interface to include an optional method that additionally accepts a `ClassLoader`. This ensures that the loader the evaluation is configured with can be used in any evaluators that may need it.",
+  "pull_requests": [
+    "[#2796](https://github.com/smithy-lang/smithy/pull/2796)"
+  ]
+}
