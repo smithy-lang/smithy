@@ -38,7 +38,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
     private final String artifactName;
-    private final List<String> sourceUriPaths;
+    private final List<String> sourceUris;
     private Model nonTraitsModel;
 
     private PluginContext(Builder builder) {
@@ -52,14 +52,14 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         settings = builder.settings;
         pluginClassLoader = builder.pluginClassLoader;
         sources = builder.sources.copy();
-        // Normalize the source paths into URI paths, which are URI encoded and use '/' separators,
+        // Normalize the source paths into URI strings, which are URI encoded and use '/' separators,
         // which is the format of paths in 'jar:file:/' filenames, so they can be compared in the
         // 'isSource*' methods.
         // This is done preemptively so we don't have to do the same work repeatedly, and the number
         // of configured sources is typically very low.
-        sourceUriPaths = new ArrayList<>(sources.size());
+        sourceUris = new ArrayList<>(sources.size());
         for (Path source : sources) {
-            sourceUriPaths.add(source.toUri().getRawPath());
+            sourceUris.add(source.toUri().toString());
         }
     }
 
@@ -236,8 +236,12 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
 
         if (offsetFromStart > 0) {
             // Offset means the filename is a URI, so compare to the URI paths to account for encoding and windows.
-            for (String sourceUriPath : sourceUriPaths) {
-                if (location.regionMatches(offsetFromStart, sourceUriPath, 0, sourceUriPath.length())) {
+            for (String sourceUri : sourceUris) {
+                // Compare starting after the protocol (the source uri will always be "file", because we created it
+                // from a path).
+                int sourceCompareStart = "file:".length();
+                int regionCompareLength = sourceUri.length() - sourceCompareStart;
+                if (location.regionMatches(offsetFromStart, sourceUri, sourceCompareStart, regionCompareLength)) {
                     return true;
                 }
             }

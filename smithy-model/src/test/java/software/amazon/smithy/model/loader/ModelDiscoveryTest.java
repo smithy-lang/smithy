@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -132,8 +133,10 @@ public class ModelDiscoveryTest {
 
     @Test
     public void createSmithyManifestUrlFromPath() throws IOException {
+        // Accounts for windows drive letters and path separators
+        String normalizedJarPath = Paths.get("/foo.jar").toUri().getPath();
         assertThat(ModelDiscovery.createSmithyJarManifestUrl("/foo.jar"),
-                equalTo(new URL("jar:file:/foo.jar!/META-INF/smithy/manifest")));
+                equalTo(new URL("jar:file:" + normalizedJarPath + "!/META-INF/smithy/manifest")));
     }
 
     @Test
@@ -149,12 +152,17 @@ public class ModelDiscoveryTest {
     }
 
     @Test
-    public void encodesSmithyManifestUrl() throws IOException {
+    public void encodesSmithyManifestUrlFromPath() throws IOException {
+        String normalizedAndEncodedJarPath = Paths.get("/foo bar.jar").toUri().getRawPath();
         assertThat(ModelDiscovery.createSmithyJarManifestUrl("/foo bar.jar"),
+                equalTo(new URL("jar:file:" + normalizedAndEncodedJarPath + "!/META-INF/smithy/manifest")));
+    }
+
+    @Test
+    public void preservesEncodingOfSmithyManifestUrlFromUrl() throws IOException {
+        assertThat(ModelDiscovery.createSmithyJarManifestUrl("file:/foo%20bar.jar"),
                 equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
-        assertThat(ModelDiscovery.createSmithyJarManifestUrl("file:/foo bar.jar"),
-                equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
-        assertThat(ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo bar.jar"),
+        assertThat(ModelDiscovery.createSmithyJarManifestUrl("jar:file:/foo%20bar.jar"),
                 equalTo(new URL("jar:file:/foo%20bar.jar!/META-INF/smithy/manifest")));
     }
 }

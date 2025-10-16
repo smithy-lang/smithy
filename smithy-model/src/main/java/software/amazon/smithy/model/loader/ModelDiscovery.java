@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -183,35 +182,33 @@ public final class ModelDiscovery {
      * to a file, (e.g., "/foo/baz.jar"), a file URL (e.g., "file:/baz.jar"),
      * or a JAR URL (e.g., "jar:file:/baz.jar").
      *
+     * <p>If {@code fileOrUrl} is a URL, it must be absolute and percent-encoded
+     * to ensure the manifest is read from the correct location.
+     *
      * @param fileOrUrl Filename or URL that points to a JAR.
      * @return Returns the computed URL.
      */
     public static URL createSmithyJarManifestUrl(String fileOrUrl) {
         try {
-            // This normalizes the path to the jar into the format expected by URI,
-            // accounting for the different string representation of a path on windows
-            // (otherwise all '\' path separators will be encoded).
-            URI jarUri = Paths.get(removeScheme(fileOrUrl)).toUri();
-            String manifestPath = jarUri.getPath() + "!/" + MANIFEST_PATH;
+            // URL expects callers to perform percent-encoding before construction,
+            // and for consumers to perform decoding. When given a URL-like string,
+            // (e.g. file:/foo.jar), we have to assume it is properly encoded because
+            // otherwise we risk double-encoding. For file paths, we have to encode
+            // to make sure that when the consumer of the URL performs decoding (i.e.
+            // to read from the file system), they will get back the original path.
+            String jarUrl;
+            if (fileOrUrl.startsWith("jar:")) {
+                jarUrl = fileOrUrl;
+            } else if (fileOrUrl.startsWith("file:")) {
+                jarUrl = "jar:" + fileOrUrl;
+            } else {
+                URI jarUri = Paths.get(fileOrUrl).toUri();
+                jarUrl = "jar:" + jarUri;
+            }
 
-            // Building a URI from parts (scheme + file path) will make sure the file path
-            // gets properly URI encoded. URL does not do this, instead expecting callers
-            // to encode first, and consumers to decode. Encoding it here means that when
-            // it is decoded by the consumer (e.g. the JDK reading the jar from the file system),
-            // it will point to the correct location.
-            return new URI("jar:file", null, manifestPath, null).toURL();
-        } catch (IOException | URISyntaxException e) {
+            return new URL(jarUrl + "!/" + MANIFEST_PATH);
+        } catch (IOException e) {
             throw new ModelImportException(e.getMessage(), e);
-        }
-    }
-
-    private static String removeScheme(String fileOrUrl) {
-        // Index will also cover jar: part of jar:file:
-        int pathStart = fileOrUrl.indexOf("file:");
-        if (pathStart == -1) {
-            return fileOrUrl;
-        } else {
-            return fileOrUrl.substring(pathStart + "file:".length());
         }
     }
 
