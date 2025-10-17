@@ -1,10 +1,40 @@
 # Smithy Changelog
 
+## 1.63.0 (2025-10-17)
+
+### Features
+
+- Added AWS_PARTITIONS_FILE_OVERRIDE env variable to allow easily overriding the
+  partitions.json file used to resolve partition metadata
+  ([#2794](https://github.com/smithy-lang/smithy/pull/2794))
+- Added a StructureOrUnion suffix to ChangedNullability.AddedRequiredTrait diff
+  event id when required is added to members targeting a structure or union
+  ([#2793](https://github.com/smithy-lang/smithy/pull/2793))
+
+### Bug Fixes
+
+- Fixed loading jars with percent-encoded paths
+  ([#2759](https://github.com/smithy-lang/smithy/pull/2759))
+- Fixed possible NPE in TopologicalShapeSort
+  ([#2785](https://github.com/smithy-lang/smithy/pull/2785))
+- Reverted change to substring validation in rules engine from 1.62.0
+  ([#2790](https://github.com/smithy-lang/smithy/pull/2790))
+- Fixed required member validation for smoke tests when params is not provided
+  ([#2795](https://github.com/smithy-lang/smithy/pull/2795))
+
+### Documentation
+
+- Added documentation page for AI traits
+  ([#2750](https://github.com/smithy-lang/smithy/pull/2750))
+- Fixed references to smithy-java version
+  ([#2788](https://github.com/smithy-lang/smithy/pull/2788))
+
 ## 1.62.0 (2025-09-24)
 
 ### Features
 
 - Allow specifying multiple files and/or directories to smithy format. Fixes
+  [#2563](https://github.com/smithy-lang/smithy/issues/2563).
   ([#2757](https://github.com/smithy-lang/smithy/pull/2757))
 - Added split function to rules engine.
   ([#2762](https://github.com/smithy-lang/smithy/pull/2762))
@@ -16,8 +46,8 @@
   ([#2777](https://github.com/smithy-lang/smithy/pull/2777),
   [#2781](https://github.com/smithy-lang/smithy/pull/2781))
 - Added support for union traits and unions as parts of other trait definitions.
-  ([#2780](https://github.com/smithy-lang/smithy/pull/2780),
-  [#2784](https://github.com/smithy-lang/smithy/pull/2784))
+  (https://github.com/smithy-lang/smithy/pull/2780,
+  https://github.com/smithy-lang/smithy/pull/2784)
 
 ### Bug Fixes
 
@@ -69,7 +99,7 @@
 - Updated smithy-java quickstart docs with correct file name.
   ([#2766](https://github.com/smithy-lang/smithy/pull/2766))
 - Fixed an incorrect command in the server quickstart.
-  ([#2782](https://github.com/smithy-lang/smithy/pull/2782))
+  (https://github.com/smithy-lang/smithy/pull/2782)
 
 ### Other
 
