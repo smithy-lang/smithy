@@ -239,9 +239,8 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
             for (String sourceUri : sourceUris) {
                 // Compare starting after the protocol (the source uri will always be "file", because we created it
                 // from a path).
-                int sourceCompareStart = "file:".length();
-                int regionCompareLength = sourceUri.length() - sourceCompareStart;
-                if (location.regionMatches(offsetFromStart, sourceUri, sourceCompareStart, regionCompareLength)) {
+                int regionCompareLength = sourceUri.length() - 5;
+                if (location.regionMatches(offsetFromStart, sourceUri, 5, regionCompareLength)) {
                     return true;
                 }
             }
