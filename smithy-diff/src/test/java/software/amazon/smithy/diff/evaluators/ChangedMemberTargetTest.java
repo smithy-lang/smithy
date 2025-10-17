@@ -143,8 +143,7 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
                 equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
                         + "`foo.baz#String1` (string) to `foo.baz#String2` (string). The `smithy.api#enum` trait "
-                        + "was found on the target, so the name of the targeted shape matters for codegen. "
-                        + "The targeted shape no longer has the following traits: [smithy.api#enum]."));
+                        + "was found on the target, so the name of the targeted shape matters for codegen."));
     }
 
     @Test
@@ -163,11 +162,13 @@ public class ChangedMemberTargetTest {
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
-                        + "(string) to `foo.baz#String2` (string). The newly targeted shape now has the "
-                        + "following additional traits: [smithy.api#sensitive]."));
+                equalTo(String
+                        .format("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
+                                + "(string) to `foo.baz#String2` (string). This was determined backward compatible. This will "
+                                + "result in the following effective differences:%n%n"
+                                + "- [NOTE] Added trait `smithy.api#sensitive` with value `{}`")));
     }
 
     @Test
@@ -186,21 +187,23 @@ public class ChangedMemberTargetTest {
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                equalTo("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
-                        + "(string) to `foo.baz#String2` (string). The newly targeted shape has traits that "
-                        + "differ from the previous shape: [smithy.api#documentation]."));
+                equalTo(String
+                        .format("The shape targeted by the member `foo.baz#List$member` changed from `foo.baz#String1` "
+                                + "(string) to `foo.baz#String2` (string). This was determined backward compatible. This will "
+                                + "result in the following effective differences:%n%n"
+                                + "- [NOTE] Changed trait `smithy.api#documentation` from `a` to `b`")));
     }
 
     @Test
-    public void detectsAcceptableListMemberChangesInNestedTargets() {
+    public void detectsNestedListWithUnchangedMemberTarget() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested1-a.smithy"))
+                .addImport(getClass().getResource("changed-member-target/nested-list-unchanged-member-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested1-b.smithy"))
+                .addImport(getClass().getResource("changed-member-target/nested-list-unchanged-member-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -209,24 +212,24 @@ public class ChangedMemberTargetTest {
         assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
                 equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined "
-                        + "backward compatible."));
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined backward "
+                        + "compatible."));
     }
 
     @Test
-    public void detectsAcceptableMapMemberChangesInNestedTargets() {
+    public void detectsNestedMapWithUnchangedValueTarget() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-a.smithy"))
+                .addImport(getClass().getResource("changed-member-target/nested-map-unchanged-member-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-b.smithy"))
+                .addImport(getClass().getResource("changed-member-target/nested-map-unchanged-member-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
                 equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
                         + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined "
@@ -234,35 +237,40 @@ public class ChangedMemberTargetTest {
     }
 
     @Test
-    public void detectsInvalidListMemberChangesInNestedTargets() {
+    public void detectsCompatibleTraitsAddedToNestedListMembers() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested1-a.smithy"))
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-list-added-compatible-member-trait-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested1-b.smithy"))
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-list-added-compatible-member-trait-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
-        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
-                        + "shapes are a list, but their members have differing traits. The newly targeted "
-                        + "shape now has the following additional traits: [smithy.api#pattern]."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] Added trait `smithy.api#pattern` with value `^[a-z]+$`; The @pattern trait "
+                        + "should only be added if the string already had adhered to the pattern.")));
     }
 
     @Test
-    public void detectsInvalidListMemberTargetChange() {
+    public void detectsIncompatibleTraitsAddedToNestedListMembers() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested2-a.smithy"))
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-list-added-incompatible-member-trait-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested2-b.smithy"))
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-list-added-incompatible-member-trait-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -271,42 +279,50 @@ public class ChangedMemberTargetTest {
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
         assertThat(event.getSeverity(), equalTo(Severity.ERROR));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
-                        + "shapes are a list, but the old shape targeted `smithy.example#MyString` while "
-                        + "the new shape targets `smithy.example#MyString2`."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] Added trait `smithy.example#noAddingTrait`")));
     }
 
     @Test
-    public void detectsInvalidMapKeyChangesInNestedTargets() {
+    public void detectsNestedListMemberChangedToCompatibleTarget() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey1-a.smithy"))
+                .addImport(
+                        getClass().getResource("changed-member-target/nested-list-compatible-changed-member-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey1-b.smithy"))
+                .addImport(
+                        getClass().getResource("changed-member-target/nested-list-compatible-changed-member-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
-        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
-                        + "shapes are a map, but their key members have differing traits. The newly targeted "
-                        + "shape now has the following additional traits: [smithy.api#pattern]."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] The shape targeted by the member `smithy.example#B1$member` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyString2` (string). This was "
+                        + "determined backward compatible.")));
     }
 
     @Test
-    public void detectsInvalidMapKeyTargetChange() {
+    public void detectsNestedListMemberChangedToIncompatibleTarget() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey2-a.smithy"))
+                .addImport(
+                        getClass()
+                                .getResource("changed-member-target/nested-list-incompatible-changed-member-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapkey2-b.smithy"))
+                .addImport(
+                        getClass()
+                                .getResource("changed-member-target/nested-list-incompatible-changed-member-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -315,42 +331,51 @@ public class ChangedMemberTargetTest {
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
         assertThat(event.getSeverity(), equalTo(Severity.ERROR));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
-                        + "shapes are a map, but the old shape key targeted `smithy.example#MyString` while "
-                        + "the new shape targets `smithy.example#MyString2`."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (list) to `smithy.example#B2` (list). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] The shape targeted by the member `smithy.example#B1$member` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyInteger` (integer). The type of the "
+                        + "targeted shape changed from string to integer.")));
     }
 
     @Test
-    public void detectsInvalidMapValueChangesInNestedTargets() {
+    public void detectsCompatibleTraitsAddedToNestedMapKey() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue1-a.smithy"))
+                .addImport(
+                        getClass().getResource("changed-member-target/nested-map-key-added-compatible-trait-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue1-b.smithy"))
+                .addImport(
+                        getClass().getResource("changed-member-target/nested-map-key-added-compatible-trait-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
-        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
-                        + "shapes are a map, but their value members have differing traits. The newly targeted "
-                        + "shape now has the following additional traits: [smithy.api#pattern]."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] Added trait `smithy.api#pattern` with value `^[a-z]+$`; The @pattern trait "
+                        + "should only be added if the string already had adhered to the pattern.")));
     }
 
     @Test
-    public void detectsInvalidMapValueTargetChange() {
+    public void detectsIncompatibleTraitsAddedToNestedMapKey() {
         Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue2-a.smithy"))
+                .addImport(
+                        getClass()
+                                .getResource("changed-member-target/nested-map-key-added-incompatible-trait-a.smithy"))
                 .assemble()
                 .unwrap();
         Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-invalid-nested-mapvalue2-b.smithy"))
+                .addImport(
+                        getClass()
+                                .getResource("changed-member-target/nested-map-key-added-incompatible-trait-b.smithy"))
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
@@ -359,9 +384,191 @@ public class ChangedMemberTargetTest {
         ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
         assertThat(event.getSeverity(), equalTo(Severity.ERROR));
         assertThat(event.getMessage(),
-                equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). Both the old and new "
-                        + "shapes are a map, but the old shape value targeted `smithy.example#MyString` while "
-                        + "the new shape targets `smithy.example#MyString2`."));
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] Added trait `smithy.example#noAddingTrait`")));
+    }
+
+    @Test
+    public void detectsNestedMapKeyChangedToCompatibleTarget() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-key-compatible-changed-target-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-key-compatible-changed-target-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] The shape targeted by the member `smithy.example#B1$key` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyString2` (string). This was "
+                        + "determined backward compatible.")));
+    }
+
+    @Test
+    public void detectsNestedMapKeyChangedToIncompatibleTarget() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-key-incompatible-changed-target-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-key-incompatible-changed-target-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] The shape targeted by the member `smithy.example#B1$key` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyEnum` (enum). The type of the "
+                        + "targeted shape changed from string to enum.")));
+    }
+
+    @Test
+    public void detectsCompatibleTraitsAddedToNestedMapValue() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-added-compatible-trait-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-added-compatible-trait-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] Added trait `smithy.api#pattern` with value `^[a-z]+$`; The @pattern trait "
+                        + "should only be added if the string already had adhered to the pattern.")));
+    }
+
+    @Test
+    public void detectsIncompatibleTraitsAddedToNestedMapValue() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-added-incompatible-trait-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-added-incompatible-trait-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] Added trait `smithy.example#noAddingTrait`")));
+    }
+
+    @Test
+    public void detectsNestedMapValueChangedToCompatibleTarget() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-compatible-changed-target-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-compatible-changed-target-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n"
+                        + "- [WARNING] The shape targeted by the member `smithy.example#B1$value` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyString2` (string). This was "
+                        + "determined backward compatible.")));
+    }
+
+    @Test
+    public void detectsNestedMapValueChangedToIncompatibleTarget() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-incompatible-changed-target-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/nested-map-value-incompatible-changed-target-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.ERROR));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B1` (map) to `smithy.example#B2` (map). This will result in the following "
+                        + "effective differences:%n%n"
+                        + "- [ERROR] The shape targeted by the member `smithy.example#B1$value` changed from "
+                        + "`smithy.example#MyString` (string) to `smithy.example#MyInteger` (integer). The type of the "
+                        + "targeted shape changed from string to integer.")));
+    }
+
+    @Test
+    public void handlesDeeplyNestedDiffs() {
+        Model modelA = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/double-nesting-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass()
+                        .getResource("changed-member-target/double-nesting-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        ValidationEvent event = TestHelper.findEvents(events, "ChangedMemberTarget").get(0);
+        assertThat(event.getSeverity(), equalTo(Severity.WARNING));
+        assertThat(event.getMessage(),
+                equalTo(String.format("The shape targeted by the member `smithy.example#A$member` changed from "
+                        + "`smithy.example#B` (list) to `smithy.example#NewB` (list). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n%n" +
+                        "- [WARNING] The shape targeted by the member `smithy.example#B$member` changed from "
+                        + "`smithy.example#C` (list) to `smithy.example#NewC` (list). This was determined backward "
+                        + "compatible. This will result in the following effective differences:%n"
+                        + "  %n"
+                        + "  - [WARNING] Added trait `smithy.api#pattern` with value `foo:.*`; The @pattern trait "
+                        + "should only be added if the string already had adhered to the pattern.")));
     }
 }

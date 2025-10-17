@@ -265,12 +265,23 @@ public final class ModelDiff {
          * @throws IllegalStateException if {@code oldModel} and {@code newModel} are not set.
          */
         public Result compare() {
+            return compare(Differences.detect(oldModel, newModel));
+        }
+
+        /**
+         * Performs an evaluation of specific differences between models.
+         *
+         * @param differences A specific set of differences to evaluate.
+         *
+         * @return Returns the diff {@link Result}.
+         * @throws IllegalStateException if {@code oldModel} and {@code newModel} are not set.
+         */
+        public Result compare(Differences differences) {
             SmithyBuilder.requiredState("oldModel", oldModel);
             SmithyBuilder.requiredState("newModel", newModel);
 
             List<DiffEvaluator> evaluators = new ArrayList<>();
             ServiceLoader.load(DiffEvaluator.class, classLoader).forEach(evaluators::add);
-            Differences differences = Differences.detect(oldModel, newModel);
 
             // Applies suppressions and elevates event severities.
             ValidationEventDecorator decoratorResult = new ModelBasedEventDecorator()
