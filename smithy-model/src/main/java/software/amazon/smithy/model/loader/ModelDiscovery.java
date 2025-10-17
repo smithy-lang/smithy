@@ -10,9 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -180,24 +182,33 @@ public final class ModelDiscovery {
      * to a file, (e.g., "/foo/baz.jar"), a file URL (e.g., "file:/baz.jar"),
      * or a JAR URL (e.g., "jar:file:/baz.jar").
      *
+     * <p>If {@code fileOrUrl} is a URL, it must be absolute and percent-encoded
+     * to ensure the manifest is read from the correct location.
+     *
      * @param fileOrUrl Filename or URL that points to a JAR.
      * @return Returns the computed URL.
      */
     public static URL createSmithyJarManifestUrl(String fileOrUrl) {
         try {
-            return new URL(getFilenameWithScheme(fileOrUrl) + "!/" + MANIFEST_PATH);
+            // URL expects callers to perform percent-encoding before construction,
+            // and for consumers to perform decoding. When given a URL-like string,
+            // (e.g. file:/foo.jar), we have to assume it is properly encoded because
+            // otherwise we risk double-encoding. For file paths, we have to encode
+            // to make sure that when the consumer of the URL performs decoding (i.e.
+            // to read from the file system), they will get back the original path.
+            String jarUrl;
+            if (fileOrUrl.startsWith("jar:")) {
+                jarUrl = fileOrUrl;
+            } else if (fileOrUrl.startsWith("file:")) {
+                jarUrl = "jar:" + fileOrUrl;
+            } else {
+                URI jarUri = Paths.get(fileOrUrl).toUri();
+                jarUrl = "jar:" + jarUri;
+            }
+
+            return new URL(jarUrl + "!/" + MANIFEST_PATH);
         } catch (IOException e) {
             throw new ModelImportException(e.getMessage(), e);
-        }
-    }
-
-    private static String getFilenameWithScheme(String filename) {
-        if (filename.startsWith("jar:")) {
-            return filename;
-        } else if (filename.startsWith("file:")) {
-            return "jar:" + filename;
-        } else {
-            return "jar:file:" + filename;
         }
     }
 
