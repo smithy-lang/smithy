@@ -46,8 +46,8 @@
   ([#2777](https://github.com/smithy-lang/smithy/pull/2777),
   [#2781](https://github.com/smithy-lang/smithy/pull/2781))
 - Added support for union traits and unions as parts of other trait definitions.
-  (https://github.com/smithy-lang/smithy/pull/2780,
-  https://github.com/smithy-lang/smithy/pull/2784)
+  ([#2780](https://github.com/smithy-lang/smithy/pull/2780),
+  [#2784](https://github.com/smithy-lang/smithy/pull/2784))
 
 ### Bug Fixes
 
@@ -99,7 +99,7 @@
 - Updated smithy-java quickstart docs with correct file name.
   ([#2766](https://github.com/smithy-lang/smithy/pull/2766))
 - Fixed an incorrect command in the server quickstart.
-  (https://github.com/smithy-lang/smithy/pull/2782)
+  ([#2782](https://github.com/smithy-lang/smithy/pull/2782))
 
 ### Other
 
@@ -4129,3 +4129,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+
