@@ -45,6 +45,7 @@ service RestXml {
         QueryIdempotencyTokenAutoFill,
         QueryPrecedence,
         QueryParamsAsStringListMap,
+        SkipsEncodingSquareBrackets
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,

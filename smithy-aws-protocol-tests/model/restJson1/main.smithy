@@ -50,6 +50,7 @@ service RestJson {
         QueryIdempotencyTokenAutoFill,
         QueryPrecedence,
         QueryParamsAsStringListMap,
+        SkipsEncodingSquareBrackets
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,

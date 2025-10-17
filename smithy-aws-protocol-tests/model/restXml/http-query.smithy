@@ -586,3 +586,30 @@ structure QueryParamsAsStringListMapInput {
     @httpQueryParams
     foo: StringListMap
 }
+
+/// Does not encode `[]` chars in serialized URIs.
+@readonly
+@http(uri: "/SkipsEncodingSquareBrackets", method: "GET")
+operation SkipsEncodingSquareBrackets {
+    input := {
+        @httpQuery("brackets[]")
+        paramWithBrackets: String
+    }
+}
+
+apply SkipsEncodingSquareBrackets @httpRequestTests([
+    {
+        id: "RestXmlSkipsEncodingSquareBrackets"
+        documentation: "Do not encode square brackets (`[` and `]`) in the names of query parameters."
+        protocol: restXml
+        method: "GET"
+        uri: "/SkipsEncodingSquareBrackets"
+        body: ""
+        queryParams: [
+            "brackets[]=Text"
+        ]
+        params: {
+            paramWithBrackets: "Text"
+        }
+    }
+])
