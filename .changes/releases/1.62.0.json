@@ -195,15 +195,15 @@
       "type": "documentation",
       "description": "Fixed an incorrect command in the server quickstart.",
       "pull_requests": [
-        "https://github.com/smithy-lang/smithy/pull/2782"
+        "[#2782](https://github.com/smithy-lang/smithy/pull/2782)"
       ]
     },
     {
       "type": "feature",
       "description": "Added support for union traits and unions as parts of other trait definitions.",
       "pull_requests": [
-        "https://github.com/smithy-lang/smithy/pull/2780",
-        "https://github.com/smithy-lang/smithy/pull/2784"
+        "[#2780](https://github.com/smithy-lang/smithy/pull/2780)",
+        "[#2784](https://github.com/smithy-lang/smithy/pull/2784)"
       ]
     }
   ],

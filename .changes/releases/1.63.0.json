@@ -1,0 +1,62 @@
+{
+  "version": "1.63.0",
+  "changes": [
+    {
+      "type": "documentation",
+      "description": "Added documentation page for AI traits",
+      "pull_requests": [
+        "[#2750](https://github.com/smithy-lang/smithy/pull/2750)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed loading jars with percent-encoded paths",
+      "pull_requests": [
+        "[#2759](https://github.com/smithy-lang/smithy/pull/2759)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added AWS_PARTITIONS_FILE_OVERRIDE env variable to allow easily overriding the partitions.json file used to resolve partition metadata",
+      "pull_requests": [
+        "[#2794](https://github.com/smithy-lang/smithy/pull/2794)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed possible NPE in TopologicalShapeSort",
+      "pull_requests": [
+        "[#2785](https://github.com/smithy-lang/smithy/pull/2785)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Reverted change to substring validation in rules engine from 1.62.0",
+      "pull_requests": [
+        "[#2790](https://github.com/smithy-lang/smithy/pull/2790)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a StructureOrUnion suffix to ChangedNullability.AddedRequiredTrait diff event id when required is added to members targeting a structure or union",
+      "pull_requests": [
+        "[#2793](https://github.com/smithy-lang/smithy/pull/2793)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed references to smithy-java version",
+      "pull_requests": [
+        "[#2788](https://github.com/smithy-lang/smithy/pull/2788)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed required member validation for smoke tests when params is not provided",
+      "pull_requests": [
+        "[#2795](https://github.com/smithy-lang/smithy/pull/2795)"
+      ]
+    }
+  ],
+  "date": "2025-10-17"
+}
