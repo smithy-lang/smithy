@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added protocol tests for event streaming in restJson1.",
+  "pull_requests": [
+    "[#2803](https://github.com/smithy-lang/smithy/pull/2803)"
+  ]
+}

@@ -5,167 +5,153 @@ namespace aws.protocoltests.restjson
 use aws.api#service
 use aws.auth#sigv4
 use aws.protocols#restJson1
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
 
-/// A REST JSON service that sends JSON requests and responses.
 @service(sdkId: "Rest Json Protocol")
 @sigv4(name: "restjson")
 @restJson1
 @title("Sample Rest Json Protocol Service")
 service RestJson {
-    version: "2019-12-16",
+    version: "2019-12-16"
     // Ensure that generators are able to handle renames.
     rename: {
-        "aws.protocoltests.restjson.nested#GreetingStruct": "RenamedGreeting",
-    },
+        "aws.protocoltests.restjson.nested#GreetingStruct": "RenamedGreeting"
+    }
     operations: [
         // Basic input and output tests
-        NoInputAndNoOutput,
-        NoInputAndOutput,
-        EmptyInputAndEmptyOutput,
-        UnitInputAndOutput,
-
+        NoInputAndNoOutput
+        NoInputAndOutput
+        EmptyInputAndEmptyOutput
+        UnitInputAndOutput
         // @httpHeader tests
-        InputAndOutputWithHeaders,
-        NullAndEmptyHeadersClient,
-        NullAndEmptyHeadersServer,
-        TimestampFormatHeaders,
-        MediaTypeHeader,
-
+        InputAndOutputWithHeaders
+        NullAndEmptyHeadersClient
+        NullAndEmptyHeadersServer
+        TimestampFormatHeaders
+        MediaTypeHeader
         // @httpLabel tests
-        HttpRequestWithLabels,
-        HttpRequestWithLabelsAndTimestampFormat,
-        HttpRequestWithGreedyLabelInPath,
-        HttpRequestWithFloatLabels,
-        HttpRequestWithRegexLiteral,
-
+        HttpRequestWithLabels
+        HttpRequestWithLabelsAndTimestampFormat
+        HttpRequestWithGreedyLabelInPath
+        HttpRequestWithFloatLabels
+        HttpRequestWithRegexLiteral
         // @httpQuery and @httpQueryParams tests
-        AllQueryStringTypes,
-        ConstantQueryString,
-        ConstantAndVariableQueryString,
-        IgnoreQueryParamsInResponse,
-        OmitsNullSerializesEmptyString,
-        OmitsSerializingEmptyLists,
-        QueryIdempotencyTokenAutoFill,
-        QueryPrecedence,
-        HttpQueryParamsOnlyOperation,
-        QueryParamsAsStringListMap,
+        AllQueryStringTypes
+        ConstantQueryString
+        ConstantAndVariableQueryString
+        IgnoreQueryParamsInResponse
+        OmitsNullSerializesEmptyString
+        OmitsSerializingEmptyLists
+        QueryIdempotencyTokenAutoFill
+        QueryPrecedence
+        HttpQueryParamsOnlyOperation
+        QueryParamsAsStringListMap
 
         // @httpPrefixHeaders tests
-        HttpPrefixHeaders,
-        HttpPrefixHeadersInResponse,
-        HttpEmptyPrefixHeaders,
-
+        HttpPrefixHeaders
+        HttpPrefixHeadersInResponse
+        HttpEmptyPrefixHeaders
         // @httpPayload tests
-        HttpPayloadTraits,
-        HttpPayloadTraitsWithMediaType,
-        HttpPayloadWithStructure,
-        HttpEnumPayload,
-        HttpStringPayload,
-        HttpPayloadWithUnion,
-
+        HttpPayloadTraits
+        HttpPayloadTraitsWithMediaType
+        HttpPayloadWithStructure
+        HttpEnumPayload
+        HttpStringPayload
+        HttpPayloadWithUnion
         // @httpResponseCode tests
-        HttpResponseCode,
+        HttpResponseCode
         ResponseCodeRequired
         ResponseCodeHttpFallback
-
         // @streaming tests
-        StreamingTraits,
-        StreamingTraitsRequireLength,
-        StreamingTraitsWithMediaType,
-
+        StreamingTraits
+        StreamingTraitsRequireLength
+        StreamingTraitsWithMediaType
         // Errors
-        GreetingWithErrors,
-
+        GreetingWithErrors
         // Synthesized JSON document body tests
-        SimpleScalarProperties,
-        JsonTimestamps,
-        JsonEnums,
-        JsonIntEnums,
-        RecursiveShapes,
-        JsonLists,
-        SparseJsonLists,
-        JsonMaps,
-        SparseJsonMaps,
-        JsonBlobs,
-
+        SimpleScalarProperties
+        JsonTimestamps
+        JsonEnums
+        JsonIntEnums
+        RecursiveShapes
+        JsonLists
+        SparseJsonLists
+        JsonMaps
+        SparseJsonMaps
+        JsonBlobs
         // Documents
-        DocumentType,
-        DocumentTypeAsPayload,
-        DocumentTypeAsMapValue,
-
+        DocumentType
+        DocumentTypeAsPayload
+        DocumentTypeAsMapValue
         // Unions
-        JsonUnions,
-        PostPlayerAction,
-        PostUnionWithJsonName,
-
+        JsonUnions
+        PostPlayerAction
+        PostUnionWithJsonName
         // @endpoint and @hostLabel trait tests
-        EndpointOperation,
-        EndpointWithHostLabelOperation,
-
+        EndpointOperation
+        EndpointWithHostLabelOperation
         // custom endpoints with paths
-        HostWithPathOperation,
-
+        HostWithPathOperation
         // checksum(s)
-        HttpChecksumRequired,
-
+        HttpChecksumRequired
         // malformed request tests
-        MalformedRequestBody,
-        MalformedInteger,
-        MalformedUnion,
-        MalformedBoolean,
-        MalformedList,
-        MalformedMap,
-        MalformedBlob,
-        MalformedByte,
-        MalformedShort,
-        MalformedLong,
-        MalformedFloat,
-        MalformedDouble,
-        MalformedString,
-        MalformedTimestampPathDefault,
-        MalformedTimestampPathHttpDate,
-        MalformedTimestampPathEpoch,
-        MalformedTimestampQueryDefault,
-        MalformedTimestampQueryHttpDate,
-        MalformedTimestampQueryEpoch,
-        MalformedTimestampHeaderDefault,
-        MalformedTimestampHeaderDateTime,
-        MalformedTimestampHeaderEpoch,
-        MalformedTimestampBodyDefault,
-        MalformedTimestampBodyDateTime,
-        MalformedTimestampBodyHttpDate,
-        MalformedContentTypeWithoutBody,
+        MalformedRequestBody
+        MalformedInteger
+        MalformedUnion
+        MalformedBoolean
+        MalformedList
+        MalformedMap
+        MalformedBlob
+        MalformedByte
+        MalformedShort
+        MalformedLong
+        MalformedFloat
+        MalformedDouble
+        MalformedString
+        MalformedTimestampPathDefault
+        MalformedTimestampPathHttpDate
+        MalformedTimestampPathEpoch
+        MalformedTimestampQueryDefault
+        MalformedTimestampQueryHttpDate
+        MalformedTimestampQueryEpoch
+        MalformedTimestampHeaderDefault
+        MalformedTimestampHeaderDateTime
+        MalformedTimestampHeaderEpoch
+        MalformedTimestampBodyDefault
+        MalformedTimestampBodyDateTime
+        MalformedTimestampBodyHttpDate
+        MalformedContentTypeWithoutBody
         MalformedContentTypeWithoutBodyEmptyInput
-        MalformedContentTypeWithBody,
-        MalformedContentTypeWithPayload,
-        MalformedContentTypeWithGenericString,
-        MalformedAcceptWithBody,
-        MalformedAcceptWithPayload,
-        MalformedAcceptWithGenericString,
-
+        MalformedContentTypeWithBody
+        MalformedContentTypeWithPayload
+        MalformedContentTypeWithGenericString
+        MalformedAcceptWithBody
+        MalformedAcceptWithPayload
+        MalformedAcceptWithGenericString
         // request body and content-type handling
-        TestBodyStructure,
-        TestPayloadStructure,
-        TestPayloadBlob,
+        TestBodyStructure
+        TestPayloadStructure
+        TestPayloadBlob
         TestGetNoPayload
-        TestPostNoPayload,
-        TestGetNoInputNoPayload,
-        TestPostNoInputNoPayload,
-
+        TestPostNoPayload
+        TestGetNoInputNoPayload
+        TestPostNoInputNoPayload
         // client-only timestamp parsing tests
-        DatetimeOffsets,
-        FractionalSeconds,
-
+        DatetimeOffsets
+        FractionalSeconds
         // requestCompression trait tests
-        PutWithContentEncoding,
-
+        PutWithContentEncoding
         // Content-Type header tests
-        ContentTypeParameters,
-
+        ContentTypeParameters
         // defaults
         OperationWithDefaults
         OperationWithNestedStructure
+        // Event streaming
+        InputStream
+        OutputStream
+        DuplexStream
+        InputStreamWithInitialRequest
+        OutputStreamWithInitialResponse
+        DuplexStreamWithInitialMessages
+        DuplexStreamWithDistinctStreams
     ]
 }
