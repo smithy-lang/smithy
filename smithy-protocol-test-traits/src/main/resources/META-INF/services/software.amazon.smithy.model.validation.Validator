@@ -3,3 +3,4 @@ software.amazon.smithy.protocoltests.traits.HttpResponseTestsOutputValidator
 software.amazon.smithy.protocoltests.traits.HttpResponseTestsErrorValidator
 software.amazon.smithy.protocoltests.traits.UniqueProtocolTestCaseIdValidator
 software.amazon.smithy.protocoltests.traits.HttpMalformedRequestTestsValidator
+software.amazon.smithy.protocoltests.traits.eventstream.EventStreamTestsTraitValidator
