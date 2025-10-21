@@ -16,6 +16,9 @@ on:
 env:
   ARTIFACTS_DIR: /tmp/artifacts
 
+permissions:
+  contents: write
+
 jobs:
   build-docs:
     runs-on: ubuntu-latest
