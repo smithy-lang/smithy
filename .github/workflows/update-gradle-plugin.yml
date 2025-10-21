@@ -6,6 +6,10 @@ on:
     # Runs every wednesday at 11
     - cron:  '0 11 * * WED'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   get-version:
     runs-on: ubuntu-latest
