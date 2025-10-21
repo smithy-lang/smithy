@@ -15,6 +15,9 @@ on:
 env:
   version: ${{ github.event.inputs.version || github.ref_name }}
 
+permissions:
+  contents: read
+
 jobs:
   homebrew-tap:
     runs-on: ubuntu-latest
