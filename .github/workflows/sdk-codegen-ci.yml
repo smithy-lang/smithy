@@ -3,6 +3,9 @@ name: sdk-codegen-ci
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-aws-sdk-js-v3:
     runs-on: ubuntu-latest
