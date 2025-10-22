@@ -134,7 +134,7 @@ public final class ModelDiff {
          */
         public Set<ValidationEvent> determineResolvedEvents() {
             Set<ValidationEvent> events = new TreeSet<>(getOldModelEvents());
-            events.removeAll(getNewModelEvents());
+            getNewModelEvents().forEach(events::remove);
             return events;
         }
 
@@ -146,7 +146,7 @@ public final class ModelDiff {
          */
         public Set<ValidationEvent> determineIntroducedEvents() {
             Set<ValidationEvent> events = new TreeSet<>(getNewModelEvents());
-            events.removeAll(getOldModelEvents());
+            getOldModelEvents().forEach(events::remove);
             return events;
         }
 
