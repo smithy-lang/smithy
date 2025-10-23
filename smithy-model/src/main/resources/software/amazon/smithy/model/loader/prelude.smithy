@@ -666,11 +666,11 @@ list tags {
     member: String
 }
 
-/// Defines a proper name for a service or resource shape.
+/// Defines a proper name for a shape.
 ///
 /// This title can be used in automatically generated documentation
-/// and other contexts to provide a user friendly for shapes.
-@trait(selector: ":not(member)")
+/// and other contexts to provide a user-friendly for shapes.
+@trait
 string title
 
 /// Constrains the acceptable values of a string to a fixed set

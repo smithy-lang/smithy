@@ -386,7 +386,7 @@ tags trait are arbitrary and up to the model author.
 ===============
 
 Summary
-    Defines a proper name for a service or resource shape. This title can be
+    Defines a proper name for a shape. This title can be
     used in automatically generated documentation and other contexts to
     provide a user friendly name for a shape.
 Trait selector

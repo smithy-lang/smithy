@@ -17,7 +17,8 @@
           "description": "it really does foo"
         },
         {
-          "const": "Bar"
+          "const": "Bar",
+          "title": "TestEnum Bar"
         }
       ]
     }
