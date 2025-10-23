@@ -87,5 +87,5 @@ jobs:
                 cd base/.changes
                 uv run amend \
                   --review-comment \
-                  --pull-request-number "$REPO_NUMBER" \
+                  --pull-request-number "$PR_NUMBER" \
                   --repository-dir "$REPO_DIR/pr"
