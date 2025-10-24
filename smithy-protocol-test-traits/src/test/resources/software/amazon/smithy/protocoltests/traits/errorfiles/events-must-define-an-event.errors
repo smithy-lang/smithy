@@ -1,0 +1,1 @@
+[ERROR] smithy.example#PublishMessages: smithy.test#eventStreamTests.3: At least one event, an initial request, or an initial response must be set. | EventStreamTestsTrait.3

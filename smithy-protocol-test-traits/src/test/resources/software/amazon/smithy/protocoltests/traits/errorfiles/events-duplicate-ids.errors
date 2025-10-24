@@ -1,0 +1,1 @@
+[ERROR] smithy.example#PublishMessages: Conflicting `smithy.test#eventStreamTests` test case IDs found for ID `duplicate`: `smithy.example#PublishMessages`, `smithy.example#PublishMessages` | UniqueProtocolTestCaseId
