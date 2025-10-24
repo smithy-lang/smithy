@@ -63,7 +63,7 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      * @return Return the shape ID.
      */
     public ShapeId getShapeId() {
-        return newShape.getId();
+        return oldShape.getId();
     }
 
     /**
