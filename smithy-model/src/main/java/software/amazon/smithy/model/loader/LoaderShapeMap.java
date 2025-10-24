@@ -29,6 +29,8 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.CycleException;
+import software.amazon.smithy.utils.DependencyGraph;
 
 final class LoaderShapeMap {
     private static final Logger LOGGER = Logger.getLogger(LoaderShapeMap.class.getName());
@@ -169,7 +171,9 @@ final class LoaderShapeMap {
         }
 
         for (ShapeId id : sort()) {
-            if (!createdShapes.containsKey(id)) {
+            // If the shape isn't in `shapes` that means it isn't defined at all. ApplyMixins will
+            // emit a specific error regarding the missing mixin.
+            if (!createdShapes.containsKey(id) && shapes.containsKey(id)) {
                 buildIntoModel(shapes.get(id), modelBuilder, unclaimedTraits, createdShapeMap);
             }
         }
@@ -199,91 +203,43 @@ final class LoaderShapeMap {
     }
 
     private List<ShapeId> sort() {
-        TopologicalShapeSort sorter = new TopologicalShapeSort(createdShapes.size() + shapes.size());
-
+        DependencyGraph<ShapeId> dependencyGraph = new DependencyGraph<>();
         for (Shape shape : createdShapes.values()) {
-            sorter.enqueue(shape.getId(), Collections.emptyList());
+            dependencyGraph.add(shape.toShapeId());
+            dependencyGraph.addDependencies(shape.toShapeId(), shape.getMixins());
         }
 
         for (Map.Entry<ShapeId, ShapeWrapper> entry : shapes.entrySet()) {
-            sorter.enqueue(entry.getKey(), entry.getValue().dependencies());
+            dependencyGraph.add(entry.getKey());
+            dependencyGraph.setDependencies(entry.getKey(), entry.getValue().dependencies());
         }
 
         try {
-            return sorter.dequeueSortedShapes();
-        } catch (TopologicalShapeSort.CycleException e) {
-            // Emit useful, per shape, error messages.
-            for (ShapeId unresolved : e.getUnresolved()) {
-                for (LoadOperation.DefineShape shape : get(unresolved)) {
-                    emitUnresolved(shape, e.getUnresolved(), e.getResolved());
+            return dependencyGraph.toSortedList();
+        } catch (CycleException e) {
+            // We know there is at least one cycle, now we use findCycles to
+            // identify each individual cycle so that we can give better error
+            // messages.
+            List<List<ShapeId>> cycles = dependencyGraph.findCycles();
+            for (List<ShapeId> cycle : cycles) {
+                for (ShapeId participant : cycle) {
+                    // Remove the shape that the event is attached to from the list that
+                    // will be added to the message for brevity.
+                    List<ShapeId> filtered = new ArrayList<>(cycle);
+                    filtered.remove(participant);
+                    for (LoadOperation.DefineShape shape : get(participant)) {
+                        events.add(ValidationEvent.builder()
+                                .id(Validator.MODEL_ERROR)
+                                .severity(Severity.ERROR)
+                                .shapeId(participant)
+                                .sourceLocation(shape)
+                                .message("Unable to resolve mixins; cycles detected between this shape and " + filtered)
+                                .build());
+                    }
                 }
             }
-            return e.getResolved();
+            return e.getSortedNodes(ShapeId.class);
         }
-    }
-
-    private void emitUnresolved(LoadOperation.DefineShape shape, Set<ShapeId> unresolved, List<ShapeId> resolved) {
-        List<ShapeId> notFoundShapes = new ArrayList<>();
-        List<ShapeId> missingTransitive = new ArrayList<>();
-        List<ShapeId> cycles = new ArrayList<>();
-
-        for (ShapeId id : shape.dependencies()) {
-            if (!unresolved.contains(id)) {
-                notFoundShapes.add(id);
-            } else if (anyMissingTransitiveDependencies(id, resolved, unresolved, new HashSet<>())) {
-                missingTransitive.add(id);
-            } else {
-                cycles.add(id);
-            }
-        }
-
-        StringJoiner message = new StringJoiner(" ");
-        message.add("Unable to resolve mixins;");
-
-        if (!notFoundShapes.isEmpty()) {
-            message.add("attempted to mixin shapes that are not in the model: " + notFoundShapes);
-        }
-
-        if (!missingTransitive.isEmpty()) {
-            message.add("unable to resolve due to missing transitive mixins: " + missingTransitive);
-        }
-
-        if (!cycles.isEmpty()) {
-            message.add("cycles detected between this shape and " + cycles);
-        }
-
-        events.add(ValidationEvent.builder()
-                .id(Validator.MODEL_ERROR)
-                .severity(Severity.ERROR)
-                .shapeId(shape.toShapeId())
-                .sourceLocation(shape)
-                .message(message.toString())
-                .build());
-    }
-
-    private boolean anyMissingTransitiveDependencies(
-            ShapeId current,
-            List<ShapeId> resolved,
-            Set<ShapeId> unresolved,
-            Set<ShapeId> visited
-    ) {
-        if (resolved.contains(current)) {
-            return false;
-        } else if (!unresolved.contains(current)) {
-            return true;
-        } else if (visited.contains(current)) {
-            visited.remove(current);
-            return false;
-        }
-
-        visited.add(current);
-        for (ShapeId next : get(current).dependencies()) {
-            if (anyMissingTransitiveDependencies(next, resolved, unresolved, visited)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private boolean validateShapeVersion(LoadOperation.DefineShape operation) {

@@ -5,6 +5,7 @@
 package software.amazon.smithy.build;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -103,5 +104,29 @@ public interface SmithyBuildPlugin {
      */
     static Function<String, Optional<SmithyBuildPlugin>> createServiceFactory(ClassLoader classLoader) {
         return createServiceFactory(ServiceLoader.load(SmithyBuildPlugin.class, classLoader));
+    }
+
+    /**
+     * Gets the names of plugins that this plugin must come before.
+     *
+     * <p>Dependencies are soft. Dependencies on plugin names that cannot be found
+     * log a warning and are ignored.
+     *
+     * @return Returns the plugin names this must come before.
+     */
+    default List<String> runBefore() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets the name of the plugins that this plugin must come after.
+     *
+     * <p>Dependencies are soft. Dependencies on plugin names that cannot be found
+     * log a warning and are ignored.
+     *
+     * @return Returns the plugins names this must come after.
+     */
+    default List<String> runAfter() {
+        return Collections.emptyList();
     }
 }

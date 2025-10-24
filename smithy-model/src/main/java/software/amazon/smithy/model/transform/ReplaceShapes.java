@@ -6,7 +6,6 @@ package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.TopologicalShapeSort;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -26,6 +24,7 @@ import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.MixinTrait;
+import software.amazon.smithy.utils.DependencyGraph;
 
 /**
  * Replaces shapes while ensuring that the transformed model is in a
@@ -161,30 +160,35 @@ final class ReplaceShapes {
         }
 
         // Topologically sort the updated shapes to ensure shapes are updated in order.
-        TopologicalShapeSort sorter = new TopologicalShapeSort();
+        DependencyGraph<ShapeId> dependencyGraph = new DependencyGraph<>();
 
         // Add shapes that are mixins or use mixins.
         for (Shape shape : model.toSet()) {
             if (!shape.isMemberShape() && (shape.hasTrait(MixinTrait.ID) || !shape.getMixins().isEmpty())) {
-                sorter.enqueue(shape);
+                dependencyGraph.add(shape.getId());
+                dependencyGraph.addDependencies(shape.getId(), shape.getMixins());
             }
         }
 
         // Add _all_ of the replacements in case mixins or the Mixin trait were removed from updated shapes.
         for (Shape shape : replacements) {
             // Enqueue member shapes with empty dependencies since the parent will be enqueued with them.
-            if (shape.isMemberShape()) {
-                sorter.enqueue(shape.getId(), Collections.emptySet());
-            } else {
-                sorter.enqueue(shape);
+            dependencyGraph.add(shape.getId());
+            if (!shape.isMemberShape()) {
+                dependencyGraph.setDependencies(shape.getId(), shape.getMixins());
             }
         }
 
-        List<ShapeId> sorted = sorter.dequeueSortedShapes();
-        for (ShapeId toRebuild : sorted) {
-            Shape shape = updatedShapes.containsKey(toRebuild)
-                    ? updatedShapes.get(toRebuild)
-                    : model.expectShape(toRebuild);
+        for (ShapeId toRebuild : dependencyGraph.toSortedList()) {
+            Shape shape;
+            if (updatedShapes.containsKey(toRebuild)) {
+                shape = updatedShapes.get(toRebuild);
+            } else if (model.getShape(toRebuild).isPresent()) {
+                shape = model.getShape(toRebuild).get();
+            } else {
+                continue;
+            }
+
             if (!shape.getMixins().isEmpty()) {
                 // We don't clear mixins here because a shape might have an inherited
                 // mixin member that was updated with an applied trait. Clearing mixins
