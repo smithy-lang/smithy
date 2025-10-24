@@ -16,4 +16,4 @@ updates:
           - "patch"
     ignore:
       - dependency-name: "com.opencastsoftware:prettier4j"
-        versions: [ "0.3.1" ]
+        versions: [ "0.3.1", "0.3.2" ]
