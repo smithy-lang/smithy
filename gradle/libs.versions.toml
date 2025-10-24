@@ -1,6 +1,5 @@
 [versions]
-junit5 = "5.14.0"
-junit-platform = "1.14.0"
+junit = "6.0.0"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
@@ -37,11 +36,11 @@ maven-resolver-transport-http = { module = "org.apache.maven.resolver:maven-reso
 slf4j-jul = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j" }
 
 # Test dependencies
-junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 mockserver = { module = "org.mock-server:mockserver-netty", version.ref = "mockserver" }
