@@ -5,6 +5,8 @@
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +73,9 @@ public final class RuleSetParameterValidator extends AbstractValidator {
     ) {
         // Pull all the parameters used in this service related to endpoints, validating that
         // they are of matching types across the traits that can define them.
-        Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
+        List<OperationShape> operations = new ArrayList<>(topDownIndex.getContainedOperations(service));
+        Collections.reverse(operations);
+
         Map<String, Parameter> modelParams = validateAndExtractParameters(errors, model, service, operations);
         // Make sure parameters align across Params <-> RuleSet transitions.
         validateParametersMatching(errors, service, sourceLocation, parameters, modelParams);
@@ -85,7 +89,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             List<ValidationEvent> errors,
             Model model,
             ServiceShape service,
-            Set<OperationShape> containedOperations
+            Collection<OperationShape> containedOperations
     ) {
         Map<String, Parameter> endpointParams = new HashMap<>();
 

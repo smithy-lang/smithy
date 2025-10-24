@@ -7,9 +7,9 @@ package software.amazon.smithy.model.knowledge;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
@@ -56,8 +56,8 @@ public final class TopDownIndex implements KnowledgeIndex {
     }
 
     private void findContained(ShapeId container, Collection<Shape> shapes) {
-        Set<ResourceShape> containedResources = new TreeSet<>();
-        Set<OperationShape> containedOperations = new TreeSet<>();
+        Set<ResourceShape> containedResources = new LinkedHashSet<>();
+        Set<OperationShape> containedOperations = new LinkedHashSet<>();
 
         for (Shape shape : shapes) {
             if (!shape.getId().equals(container)) {
