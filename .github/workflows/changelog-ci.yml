@@ -25,7 +25,7 @@ jobs:
             # tool. Running from the base branch prevents us from picking up
             # malicious changes that might be in a PR.
             - name: Pull base branch
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                 path: base
                 ref: ${{ github.base_ref }}
@@ -39,7 +39,7 @@ jobs:
             # All we do with it is inspect the changelog entries introduced,
             # if any.
             - name: Pull the PR
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                 path: pr
                 ref: ${{ github.head_ref }}
