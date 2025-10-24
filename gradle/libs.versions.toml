@@ -1,6 +1,6 @@
 [versions]
-junit5 = "5.13.4"
-junit-platform = "1.13.4"
+junit5 = "5.14.0"
+junit-platform = "1.14.0"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
