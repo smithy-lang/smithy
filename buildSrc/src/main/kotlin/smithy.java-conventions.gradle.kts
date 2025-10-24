@@ -72,7 +72,7 @@ tasks {
             metaInf.with(licenseSpec)
             inputs.property("moduleName", project.extra.get("moduleName"))
             manifest {
-                attributes("Automatic-Module-Name" to project.extra.get("moduleName"))
+                attributes(mapOf("Automatic-Module-Name" to project.extra.get("moduleName")))
             }
         }
     }
