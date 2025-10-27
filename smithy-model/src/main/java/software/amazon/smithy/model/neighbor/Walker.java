@@ -158,7 +158,7 @@ public final class Walker {
                 // Use removeLast to retrieve relationships in their defined order rather
                 // than the reverse of the defined order. Note that this only preserves
                 // the order of a particular relationship type, not the order of all
-                // relationship types. So a resources `operation` relationships will be
+                // relationship types. So a resource's `operation` relationships will be
                 // resolved in the order of that list, but the resources's `resource`
                 // relationships will nevertheless always appear first because that is
                 // simply the order that the NeighborVisitor checks them in.
