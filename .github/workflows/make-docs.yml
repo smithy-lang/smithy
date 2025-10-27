@@ -68,7 +68,7 @@ jobs:
         rm $ARTIFACTS_DIR/objects.inv || true
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: smithy-docs
         path: ${{ env.ARTIFACTS_DIR }}
