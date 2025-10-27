@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "This adds a space for plugins to write data that is intended to be consumable by other plugins. This appears under a directory called `shared` in the the projection's output directory.",
+  "description": "Added a space for plugins to write data that is intended to be consumable by other plugins. This appears under a directory called `shared` in the the projection's output directory.",
   "pull_requests": [
     "[#2764](https://github.com/awslabs/smithy/pull/2764)"
   ]

@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "Add the ability for smithy build plugins to declare that they must be run before or after other plugins. These dependencies are soft, so missing dependencies will be logged and ignored.",
+  "description": "Added the ability for smithy build plugins to declare that they must be run before or after other plugins. These dependencies are soft, so missing dependencies will be logged and ignored.",
   "pull_requests": [
     "[#2774](https://github.com/smithy-lang/smithy/pull/2774)"
   ]
