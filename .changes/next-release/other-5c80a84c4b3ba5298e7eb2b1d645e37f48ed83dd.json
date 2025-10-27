@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Added `restJson1` protocol tests for `httpQueryParams` when no params exist.",
+  "pull_requests": [
+    "[#2792](https://github.com/smithy-lang/smithy/pull/2792)"
+  ]
+}

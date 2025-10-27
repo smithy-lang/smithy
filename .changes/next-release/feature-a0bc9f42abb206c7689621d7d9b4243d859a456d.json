@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added support for mapping the `title` trait in JSON Schema's `oneOf` enum strategy.",
+  "pull_requests": [
+    "[#2791](https://github.com/smithy-lang/smithy/pull/2791)"
+  ]
+}
