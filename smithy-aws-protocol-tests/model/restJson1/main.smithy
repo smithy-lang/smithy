@@ -51,6 +51,7 @@ service RestJson {
         QueryPrecedence,
         HttpQueryParamsOnlyOperation,
         QueryParamsAsStringListMap,
+        SkipsEncodingSquareBrackets
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
