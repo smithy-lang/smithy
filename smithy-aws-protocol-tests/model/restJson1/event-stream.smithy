@@ -109,6 +109,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
     }
@@ -126,6 +127,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     byteHeader: { byte: 1 }
                 }
+                bytes: "AAAASQAAADlvxG1ZDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYnl0ZUhlYWRlcgIBKFTmjg=="
             }
         ]
     }
@@ -143,6 +145,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     shortHeader: { short: 2 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMLc2hvcnRIZWFkZXIDAAL1ETsK"
             }
         ]
     }
@@ -160,6 +163,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     intHeader: { integer: 3 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMJaW50SGVhZGVyBAAAAAPlyUrb"
             }
         ]
     }
@@ -177,6 +181,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     longHeader: { long: 4294967294 }
                 }
+                bytes: "AAAAUAAAAEAr7VEyDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKbG9uZ0hlYWRlcgUAAAAA/////udnd/I="
             }
         ]
     }
@@ -194,6 +199,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     blobHeader: { blob: "Zm9v" }
                 }
+                bytes: "AAAATQAAAD2dKQ+ADTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYmxvYkhlYWRlcgYAA2Zvb5sbbGM="
             }
         ]
     }
@@ -211,6 +217,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     stringHeader: { string: "foo" }
                 }
+                bytes: "AAAATwAAAD8J5z3MDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMMc3RyaW5nSGVhZGVyBwADZm9vxT+2MA=="
             }
         ]
     }
@@ -228,6 +235,7 @@ structure ErrorEvent {
                     ":event-type": { string: "headers" }
                     timestampHeader: { timestamp: "2024-10-31T14:15:14Z" }
                 }
+                bytes: "AAAAVQAAAEWTZyrNDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMPdGltZXN0YW1wSGVhZGVyCAAAAZLi7jFQ6uV3Eg=="
             }
         ]
     }
@@ -247,6 +255,7 @@ structure ErrorEvent {
                     stringHeader: { string: "foo" }
                     blobHeader: { blob: "YmFy" }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgAMc3RyaW5nSGVhZGVyBwADZm9vCmJsb2JIZWFkZXIGAANiYXIDXbo7"
             }
         ]
     }
@@ -266,6 +275,7 @@ structure ErrorEvent {
                 }
                 body: "foo"
                 bodyMediaType: "text/plain"
+                bytes: "AAAAYAAAAE30fZUJDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADXN0cmluZ1BheWxvYWQNOmNvbnRlbnQtdHlwZQcACnRleHQvcGxhaW5mb29G1ELr"
             }
         ]
     }
@@ -285,6 +295,7 @@ structure ErrorEvent {
                 }
                 body: "bar"
                 bodyMediaType: "application/octet-stream"
+                bytes: "AAAAbAAAAFkrV6x1DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAC2Jsb2JQYXlsb2FkDTpjb250ZW50LXR5cGUHABhhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW1iYXJv5nGJ"
             }
         ]
     }
@@ -307,6 +318,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAEHN0cnVjdHVyZVBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257InN0cnVjdHVyZU1lbWJlciI6ImZvbyJ9rcIRVA=="
             }
         ]
     }
@@ -329,6 +341,7 @@ structure ErrorEvent {
                 body: """
                     {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdwAAAFKrtdNuDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADHVuaW9uUGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbnsidW5pb25NZW1iZXIiOiJiYXIifcZDMD4="
             }
         ]
     }
@@ -353,6 +366,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
     }
@@ -374,6 +388,7 @@ structure ErrorEvent {
                 body: """
                     {"payload":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAjQAAAGxoUIY5DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRJbXBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJwYXlsb2FkIjoiYmFyIn15lZtT"
             }
         ]
     }
@@ -394,6 +409,7 @@ structure ErrorEvent {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         expectation: {
@@ -418,6 +434,7 @@ structure ErrorEvent {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         appliesTo: "client"
@@ -434,6 +451,7 @@ structure ErrorEvent {
                     ":error-code": { string: "internal-error" }
                     ":error-message": { string: "An unknown error occurred." }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVlcnJvcgs6ZXJyb3ItY29kZQcADmludGVybmFsLWVycm9yDjplcnJvci1tZXNzYWdlBwAaQW4gdW5rbm93biBlcnJvciBvY2N1cnJlZC4kun0t"
             }
         ]
         expectation: {
@@ -462,6 +480,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2CzpldmVudC10eXBlBwAZaGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ98LexJg=="
             }
         ]
         expectation: {
@@ -490,6 +509,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUGAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ95dXDSw=="
             }
         ]
         expectation: {
@@ -519,6 +539,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
         expectation: {
@@ -548,6 +569,7 @@ structure ErrorEvent {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQYAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifcP6KLk="
             }
         ]
         expectation: {
@@ -579,6 +601,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
     }
@@ -596,6 +619,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     byteHeader: { byte: 1 }
                 }
+                bytes: "AAAASQAAADlvxG1ZDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYnl0ZUhlYWRlcgIBKFTmjg=="
             }
         ]
     }
@@ -613,6 +637,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     shortHeader: { short: 2 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMLc2hvcnRIZWFkZXIDAAL1ETsK"
             }
         ]
     }
@@ -630,6 +655,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     intHeader: { integer: 3 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMJaW50SGVhZGVyBAAAAAPlyUrb"
             }
         ]
     }
@@ -647,6 +673,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     longHeader: { long: 4294967294 }
                 }
+                bytes: "AAAAUAAAAEAr7VEyDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKbG9uZ0hlYWRlcgUAAAAA/////udnd/I="
             }
         ]
     }
@@ -664,6 +691,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     blobHeader: { blob: "Zm9v" }
                 }
+                bytes: "AAAATQAAAD2dKQ+ADTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYmxvYkhlYWRlcgYAA2Zvb5sbbGM="
             }
         ]
     }
@@ -681,6 +709,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     stringHeader: { string: "foo" }
                 }
+                bytes: "AAAATwAAAD8J5z3MDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMMc3RyaW5nSGVhZGVyBwADZm9vxT+2MA=="
             }
         ]
     }
@@ -698,6 +727,7 @@ operation InputStream {
                     ":event-type": { string: "headers" }
                     timestampHeader: { timestamp: "2024-10-31T14:15:14Z" }
                 }
+                bytes: "AAAAVQAAAEWTZyrNDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMPdGltZXN0YW1wSGVhZGVyCAAAAZLi7jFQ6uV3Eg=="
             }
         ]
     }
@@ -717,6 +747,7 @@ operation InputStream {
                     stringHeader: { string: "foo" }
                     blobHeader: { blob: "YmFy" }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgAMc3RyaW5nSGVhZGVyBwADZm9vCmJsb2JIZWFkZXIGAANiYXIDXbo7"
             }
         ]
     }
@@ -736,6 +767,7 @@ operation InputStream {
                 }
                 body: "foo"
                 bodyMediaType: "text/plain"
+                bytes: "AAAAYAAAAE30fZUJDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADXN0cmluZ1BheWxvYWQNOmNvbnRlbnQtdHlwZQcACnRleHQvcGxhaW5mb29G1ELr"
             }
         ]
     }
@@ -755,6 +787,7 @@ operation InputStream {
                 }
                 body: "bar"
                 bodyMediaType: "application/octet-stream"
+                bytes: "AAAAbAAAAFkrV6x1DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAC2Jsb2JQYXlsb2FkDTpjb250ZW50LXR5cGUHABhhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW1iYXJv5nGJ"
             }
         ]
     }
@@ -777,6 +810,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAEHN0cnVjdHVyZVBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257InN0cnVjdHVyZU1lbWJlciI6ImZvbyJ9rcIRVA=="
             }
         ]
     }
@@ -799,6 +833,7 @@ operation InputStream {
                 body: """
                     {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdwAAAFKrtdNuDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADHVuaW9uUGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbnsidW5pb25NZW1iZXIiOiJiYXIifcZDMD4="
             }
         ]
     }
@@ -823,6 +858,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
     }
@@ -844,6 +880,7 @@ operation InputStream {
                 body: """
                     {"payload":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAjQAAAGxoUIY5DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRJbXBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJwYXlsb2FkIjoiYmFyIn15lZtT"
             }
         ]
     }
@@ -864,6 +901,7 @@ operation InputStream {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         appliesTo: "server"
@@ -885,6 +923,7 @@ operation InputStream {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         expectation: {
@@ -904,6 +943,7 @@ operation InputStream {
                     ":error-code": { string: "internal-error" }
                     ":error-message": { string: "An unknown error occurred." }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVlcnJvcgs6ZXJyb3ItY29kZQcADmludGVybmFsLWVycm9yDjplcnJvci1tZXNzYWdlBwAaQW4gdW5rbm93biBlcnJvciBvY2N1cnJlZC4kun0t"
             }
         ]
         expectation: {
@@ -932,6 +972,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2CzpldmVudC10eXBlBwAZaGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ98LexJg=="
             }
         ]
         expectation: {
@@ -961,6 +1002,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUGAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifVwdfzU="
             }
         ]
         expectation: {
@@ -990,6 +1032,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
         expectation: {
@@ -1019,6 +1062,7 @@ operation InputStream {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQYAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifcP6KLk="
             }
         ]
         expectation: {
@@ -1091,6 +1135,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
     }
@@ -1108,6 +1153,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     byteHeader: { byte: 1 }
                 }
+                bytes: "AAAASQAAADlvxG1ZDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYnl0ZUhlYWRlcgIBKFTmjg=="
             }
         ]
     }
@@ -1125,6 +1171,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     shortHeader: { short: 2 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMLc2hvcnRIZWFkZXIDAAL1ETsK"
             }
         ]
     }
@@ -1142,6 +1189,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     intHeader: { integer: 3 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMJaW50SGVhZGVyBAAAAAPlyUrb"
             }
         ]
     }
@@ -1159,6 +1207,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     longHeader: { long: 4294967294 }
                 }
+                bytes: "AAAAUAAAAEAr7VEyDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKbG9uZ0hlYWRlcgUAAAAA/////udnd/I="
             }
         ]
     }
@@ -1176,6 +1225,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     blobHeader: { blob: "Zm9v" }
                 }
+                bytes: "AAAATQAAAD2dKQ+ADTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYmxvYkhlYWRlcgYAA2Zvb5sbbGM="
             }
         ]
     }
@@ -1193,6 +1243,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     stringHeader: { string: "foo" }
                 }
+                bytes: "AAAATwAAAD8J5z3MDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMMc3RyaW5nSGVhZGVyBwADZm9vxT+2MA=="
             }
         ]
     }
@@ -1210,6 +1261,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     timestampHeader: { timestamp: "2024-10-31T14:15:14Z" }
                 }
+                bytes: "AAAAVQAAAEWTZyrNDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMPdGltZXN0YW1wSGVhZGVyCAAAAZLi7jFQ6uV3Eg=="
             }
         ]
     }
@@ -1229,6 +1281,7 @@ structure ServiceUnavailableError {
                     stringHeader: { string: "foo" }
                     blobHeader: { blob: "YmFy" }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgAMc3RyaW5nSGVhZGVyBwADZm9vCmJsb2JIZWFkZXIGAANiYXIDXbo7"
             }
         ]
     }
@@ -1248,6 +1301,7 @@ structure ServiceUnavailableError {
                 }
                 body: "foo"
                 bodyMediaType: "text/plain"
+                bytes: "AAAAYAAAAE30fZUJDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADXN0cmluZ1BheWxvYWQNOmNvbnRlbnQtdHlwZQcACnRleHQvcGxhaW5mb29G1ELr"
             }
         ]
     }
@@ -1267,6 +1321,7 @@ structure ServiceUnavailableError {
                 }
                 body: "bar"
                 bodyMediaType: "application/octet-stream"
+                bytes: "AAAAbAAAAFkrV6x1DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAC2Jsb2JQYXlsb2FkDTpjb250ZW50LXR5cGUHABhhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW1iYXJv5nGJ"
             }
         ]
     }
@@ -1289,6 +1344,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAEHN0cnVjdHVyZVBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257InN0cnVjdHVyZU1lbWJlciI6ImZvbyJ9rcIRVA=="
             }
         ]
     }
@@ -1311,6 +1367,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdwAAAFKrtdNuDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADHVuaW9uUGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbnsidW5pb25NZW1iZXIiOiJiYXIifcZDMD4="
             }
         ]
     }
@@ -1335,6 +1392,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
     }
@@ -1356,6 +1414,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"payload":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAjQAAAGxoUIY5DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRJbXBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJwYXlsb2FkIjoiYmFyIn15lZtT"
             }
         ]
     }
@@ -1376,6 +1435,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         expectation: {
@@ -1400,6 +1460,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         appliesTo: "client"
@@ -1416,6 +1477,7 @@ structure ServiceUnavailableError {
                     ":error-code": { string: "internal-error" }
                     ":error-message": { string: "An unknown error occurred." }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVlcnJvcgs6ZXJyb3ItY29kZQcADmludGVybmFsLWVycm9yDjplcnJvci1tZXNzYWdlBwAaQW4gdW5rbm93biBlcnJvciBvY2N1cnJlZC4kun0t"
             }
         ]
         expectation: {
@@ -1444,6 +1506,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2CzpldmVudC10eXBlBwAZaGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ98LexJg=="
             }
         ]
         expectation: {
@@ -1472,6 +1535,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUGAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ95dXDSw=="
             }
         ]
         expectation: {
@@ -1501,6 +1565,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
         expectation: {
@@ -1530,6 +1595,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQYAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifcP6KLk="
             }
         ]
         expectation: {
@@ -1551,6 +1617,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
     }
@@ -1568,6 +1635,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     byteHeader: { byte: 1 }
                 }
+                bytes: "AAAASQAAADlvxG1ZDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYnl0ZUhlYWRlcgIBKFTmjg=="
             }
         ]
     }
@@ -1585,6 +1653,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     shortHeader: { short: 2 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMLc2hvcnRIZWFkZXIDAAL1ETsK"
             }
         ]
     }
@@ -1602,6 +1671,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     intHeader: { integer: 3 }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMJaW50SGVhZGVyBAAAAAPlyUrb"
             }
         ]
     }
@@ -1619,6 +1689,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     longHeader: { long: 4294967294 }
                 }
+                bytes: "AAAAUAAAAEAr7VEyDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKbG9uZ0hlYWRlcgUAAAAA/////udnd/I="
             }
         ]
     }
@@ -1636,6 +1707,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     blobHeader: { blob: "Zm9v" }
                 }
+                bytes: "AAAATQAAAD2dKQ+ADTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMKYmxvYkhlYWRlcgYAA2Zvb5sbbGM="
             }
         ]
     }
@@ -1653,6 +1725,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     stringHeader: { string: "foo" }
                 }
+                bytes: "AAAATwAAAD8J5z3MDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMMc3RyaW5nSGVhZGVyBwADZm9vxT+2MA=="
             }
         ]
     }
@@ -1670,6 +1743,7 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "headers" }
                     timestampHeader: { timestamp: "2024-10-31T14:15:14Z" }
                 }
+                bytes: "AAAAVQAAAEWTZyrNDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMPdGltZXN0YW1wSGVhZGVyCAAAAZLi7jFQ6uV3Eg=="
             }
         ]
     }
@@ -1689,6 +1763,7 @@ structure ServiceUnavailableError {
                     stringHeader: { string: "foo" }
                     blobHeader: { blob: "YmFy" }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgAMc3RyaW5nSGVhZGVyBwADZm9vCmJsb2JIZWFkZXIGAANiYXIDXbo7"
             }
         ]
     }
@@ -1708,6 +1783,7 @@ structure ServiceUnavailableError {
                 }
                 body: "foo"
                 bodyMediaType: "text/plain"
+                bytes: "AAAAYAAAAE30fZUJDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADXN0cmluZ1BheWxvYWQNOmNvbnRlbnQtdHlwZQcACnRleHQvcGxhaW5mb29G1ELr"
             }
         ]
     }
@@ -1727,6 +1803,7 @@ structure ServiceUnavailableError {
                 }
                 body: "bar"
                 bodyMediaType: "application/octet-stream"
+                bytes: "AAAAbAAAAFkrV6x1DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAC2Jsb2JQYXlsb2FkDTpjb250ZW50LXR5cGUHABhhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW1iYXJv5nGJ"
             }
         ]
     }
@@ -1749,6 +1826,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAEHN0cnVjdHVyZVBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257InN0cnVjdHVyZU1lbWJlciI6ImZvbyJ9rcIRVA=="
             }
         ]
     }
@@ -1771,6 +1849,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdwAAAFKrtdNuDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcADHVuaW9uUGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbnsidW5pb25NZW1iZXIiOiJiYXIifcZDMD4="
             }
         ]
     }
@@ -1795,6 +1874,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
     }
@@ -1816,6 +1896,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"payload":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAjQAAAGxoUIY5DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRJbXBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJwYXlsb2FkIjoiYmFyIn15lZtT"
             }
         ]
     }
@@ -1836,6 +1917,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         appliesTo: "server"
@@ -1857,6 +1939,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"message":"foo"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAdAAAAFObEpkoDTptZXNzYWdlLXR5cGUHAAlleGNlcHRpb24POmV4Y2VwdGlvbi10eXBlBwAFZXJyb3INOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb257Im1lc3NhZ2UiOiJmb28ifTua1S8="
             }
         ]
         expectation: {
@@ -1876,6 +1959,7 @@ structure ServiceUnavailableError {
                     ":error-code": { string: "internal-error" }
                     ":error-message": { string: "An unknown error occurred." }
                 }
+                bytes: "AAAAbwAAAF+FlHOQDTptZXNzYWdlLXR5cGUHAAVlcnJvcgs6ZXJyb3ItY29kZQcADmludGVybmFsLWVycm9yDjplcnJvci1tZXNzYWdlBwAaQW4gdW5rbm93biBlcnJvciBvY2N1cnJlZC4kun0t"
             }
         ]
         expectation: {
@@ -1904,6 +1988,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAfwAAAFacqFy2CzpldmVudC10eXBlBwAZaGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ98LexJg=="
             }
         ]
         expectation: {
@@ -1933,6 +2018,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUGAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifVwdfzU="
             }
         ]
         expectation: {
@@ -1962,6 +2048,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
             }
         ]
         expectation: {
@@ -1991,6 +2078,7 @@ structure ServiceUnavailableError {
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQYAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifcP6KLk="
             }
         ]
         expectation: {
@@ -2038,6 +2126,7 @@ operation DuplexStream {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
         expectation: {
@@ -2083,6 +2172,7 @@ operation InputStreamWithInitialRequest {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
         expectation: {
@@ -2129,6 +2219,7 @@ operation OutputStreamWithInitialResponse {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
         expectation: {
@@ -2160,6 +2251,7 @@ operation OutputStreamWithInitialResponse {
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                 }
+                bytes: "AAAASwAAADv7Cl8VDTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAB2hlYWRlcnMNYm9vbGVhbkhlYWRlcgC4J9Ws"
             }
         ]
         expectation: {
