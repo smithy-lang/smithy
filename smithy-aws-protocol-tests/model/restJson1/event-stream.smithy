@@ -170,12 +170,12 @@ structure ErrorEvent {
             {
                 type: "request"
                 params: {
-                    headers: { longHeader: 4 }
+                    headers: { longHeader: 4294967294 }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    longHeader: { long: 4 }
+                    longHeader: { long: 4294967294 }
                 }
             }
         ]
@@ -630,12 +630,12 @@ operation InputStream {
             {
                 type: "response"
                 params: {
-                    headers: { longHeader: 4 }
+                    headers: { longHeader: 4294967294 }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    longHeader: { long: 4 }
+                    longHeader: { long: 4294967294 }
                 }
             }
         ]
@@ -1131,12 +1131,12 @@ structure ServiceUnavailableError {
             {
                 type: "request"
                 params: {
-                    headers: { longHeader: 4 }
+                    headers: { longHeader: 4294967294 }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    longHeader: { long: 4 }
+                    longHeader: { long: 4294967294 }
                 }
             }
         ]
@@ -1581,12 +1581,12 @@ structure ServiceUnavailableError {
             {
                 type: "response"
                 params: {
-                    headers: { longHeader: 4 }
+                    headers: { longHeader: 4294967294 }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    longHeader: { long: 4 }
+                    longHeader: { long: 4294967294 }
                 }
             }
         ]
