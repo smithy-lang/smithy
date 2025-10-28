@@ -304,7 +304,8 @@ structure ErrorEvent {
                     ":event-type": { string: "structurePayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"structureMember\":\"foo\"}"
+                body: """
+                    {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -325,7 +326,8 @@ structure ErrorEvent {
                     ":event-type": { string: "unionPayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"unionMember\":\"bar\"}"
+                body: """
+                    {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -348,7 +350,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -368,7 +371,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"payload\":\"bar\"}"
+                body: """
+                    {"payload":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -387,7 +391,8 @@ structure ErrorEvent {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -410,7 +415,8 @@ structure ErrorEvent {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -453,7 +459,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -480,7 +487,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -508,7 +516,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -536,7 +545,8 @@ structure ErrorEvent {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -764,7 +774,8 @@ operation InputStream {
                     ":event-type": { string: "structurePayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"structureMember\":\"foo\"}"
+                body: """
+                    {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -785,7 +796,8 @@ operation InputStream {
                     ":event-type": { string: "unionPayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"unionMember\":\"bar\"}"
+                body: """
+                    {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -808,7 +820,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -828,7 +841,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"payload\":\"bar\"}"
+                body: """
+                    {"payload":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -847,7 +861,8 @@ operation InputStream {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -867,7 +882,8 @@ operation InputStream {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -913,7 +929,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -941,7 +958,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -969,7 +987,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -997,7 +1016,8 @@ operation InputStream {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1012,7 +1032,8 @@ operation InputStream {
         initialResponse: {
             code: 500
             headers: { "Content-Type": "application/json", "X-Amzn-Errortype": "ServiceUnavailableError" }
-            body: "{\"message\": \"foo\"}"
+            body: """
+                {"message": "foo"}"""
             bodyMediaType: "application/json"
         }
         initialResponseShape: InitialHttpResponse
@@ -1265,7 +1286,8 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "structurePayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"structureMember\":\"foo\"}"
+                body: """
+                    {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1286,7 +1308,8 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "unionPayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"unionMember\":\"bar\"}"
+                body: """
+                    {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1309,7 +1332,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1329,7 +1353,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"payload\":\"bar\"}"
+                body: """
+                    {"payload":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1348,7 +1373,8 @@ structure ServiceUnavailableError {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1371,7 +1397,8 @@ structure ServiceUnavailableError {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1414,7 +1441,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1441,7 +1469,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1469,7 +1498,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1497,7 +1527,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1715,7 +1746,8 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "structurePayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"structureMember\":\"foo\"}"
+                body: """
+                    {"structureMember":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1736,7 +1768,8 @@ structure ServiceUnavailableError {
                     ":event-type": { string: "unionPayload" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"unionMember\":\"bar\"}"
+                body: """
+                    {"unionMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1759,7 +1792,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1779,7 +1813,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"payload\":\"bar\"}"
+                body: """
+                    {"payload":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1798,7 +1833,8 @@ structure ServiceUnavailableError {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1818,7 +1854,8 @@ structure ServiceUnavailableError {
                     ":exception-type": { string: "error" }
                     ":content-type": { string: "application/json" }
                 }
-                body: "{\"message\":\"foo\"}"
+                body: """
+                    {"message":"foo"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1864,7 +1901,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1892,7 +1930,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1920,7 +1959,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -1948,7 +1988,8 @@ structure ServiceUnavailableError {
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
-                body: "{\"structureMember\":\"bar\"}"
+                body: """
+                    {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
             }
         ]
@@ -2132,7 +2173,8 @@ operation OutputStreamWithInitialResponse {
         initialResponse: {
             code: 500
             headers: { "Content-Type": "application/json", "X-Amzn-Errortype": "ServiceUnavailableError" }
-            body: "{\"message\": \"foo\"}"
+            body: """
+                {"message": "foo"}"""
             bodyMediaType: "application/json"
         }
         initialResponseShape: InitialHttpResponse
