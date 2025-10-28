@@ -7,6 +7,7 @@ package software.amazon.smithy.protocoltests.traits.eventstream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -123,7 +124,7 @@ public abstract class EventHeaderValue<T> implements ToNode {
                     builder.setLong(value.expectNumberNode().getValue().longValue());
                     break;
                 case BLOB:
-                    builder.setBlob(value.expectStringNode().getValue());
+                    builder.setBlob(Base64.getDecoder().decode(value.expectStringNode().getValue()));
                     break;
                 case STRING:
                     builder.setString(value.expectStringNode().getValue());
@@ -249,7 +250,7 @@ public abstract class EventHeaderValue<T> implements ToNode {
 
         @Override
         public String asString() {
-            return new String(value, StandardCharsets.UTF_8);
+            return Base64.getEncoder().encodeToString(value);
         }
 
         @Override

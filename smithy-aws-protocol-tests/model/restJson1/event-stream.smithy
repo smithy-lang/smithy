@@ -187,12 +187,12 @@ structure ErrorEvent {
             {
                 type: "request"
                 params: {
-                    headers: { blobHeader: "foo" }
+                    headers: { blobHeader: "Zm9v" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    blobHeader: { blob: "foo" }
+                    blobHeader: { blob: "Zm9v" }
                 }
             }
         ]
@@ -238,14 +238,14 @@ structure ErrorEvent {
             {
                 type: "request"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                     stringHeader: { string: "foo" }
-                    blobHeader: { blob: "bar" }
+                    blobHeader: { blob: "YmFy" }
                 }
             }
         ]
@@ -483,7 +483,7 @@ structure ErrorEvent {
                     }
                 }
                 headers: {
-                    ":message-type": { blob: "event" }
+                    ":message-type": { blob: "ZXZlbnQ=" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
@@ -541,7 +541,7 @@ structure ErrorEvent {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { blob: "headersAndExplicitPayload" }
+                    ":event-type": { blob: "aGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA==" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
@@ -657,12 +657,12 @@ operation InputStream {
             {
                 type: "response"
                 params: {
-                    headers: { blobHeader: "foo" }
+                    headers: { blobHeader: "Zm9v" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    blobHeader: { blob: "foo" }
+                    blobHeader: { blob: "Zm9v" }
                 }
             }
         ]
@@ -708,14 +708,14 @@ operation InputStream {
             {
                 type: "response"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                     stringHeader: { string: "foo" }
-                    blobHeader: { blob: "bar" }
+                    blobHeader: { blob: "YmFy" }
                 }
             }
         ]
@@ -953,7 +953,7 @@ operation InputStream {
                     }
                 }
                 headers: {
-                    ":message-type": { blob: "event" }
+                    ":message-type": { blob: "ZXZlbnQ=" }
                     ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
@@ -1012,7 +1012,7 @@ operation InputStream {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { blob: "headersAndExplicitPayload" }
+                    ":event-type": { blob: "aGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA==" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
@@ -1169,12 +1169,12 @@ structure ServiceUnavailableError {
             {
                 type: "request"
                 params: {
-                    headers: { blobHeader: "foo" }
+                    headers: { blobHeader: "Zm9v" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    blobHeader: { blob: "foo" }
+                    blobHeader: { blob: "Zm9v" }
                 }
             }
         ]
@@ -1220,14 +1220,14 @@ structure ServiceUnavailableError {
             {
                 type: "request"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                     stringHeader: { string: "foo" }
-                    blobHeader: { blob: "bar" }
+                    blobHeader: { blob: "YmFy" }
                 }
             }
         ]
@@ -1465,7 +1465,7 @@ structure ServiceUnavailableError {
                     }
                 }
                 headers: {
-                    ":message-type": { blob: "event" }
+                    ":message-type": { blob: "ZXZlbnQ=" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
@@ -1523,7 +1523,7 @@ structure ServiceUnavailableError {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { blob: "headersAndExplicitPayload" }
+                    ":event-type": { blob: "aGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA==" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
@@ -1629,12 +1629,12 @@ structure ServiceUnavailableError {
             {
                 type: "response"
                 params: {
-                    headers: { blobHeader: "foo" }
+                    headers: { blobHeader: "Zm9v" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
-                    blobHeader: { blob: "foo" }
+                    blobHeader: { blob: "Zm9v" }
                 }
             }
         ]
@@ -1680,14 +1680,14 @@ structure ServiceUnavailableError {
             {
                 type: "response"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "headers" }
                     booleanHeader: { boolean: true }
                     stringHeader: { string: "foo" }
-                    blobHeader: { blob: "bar" }
+                    blobHeader: { blob: "YmFy" }
                 }
             }
         ]
@@ -1925,7 +1925,7 @@ structure ServiceUnavailableError {
                     }
                 }
                 headers: {
-                    ":message-type": { blob: "event" }
+                    ":message-type": { blob: "ZXZlbnQ=" }
                     ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
@@ -1984,7 +1984,7 @@ structure ServiceUnavailableError {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { blob: "headersAndExplicitPayload" }
+                    ":event-type": { blob: "aGVhZGVyc0FuZEV4cGxpY2l0UGF5bG9hZA==" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }

@@ -510,6 +510,9 @@ map EventHeaders {
 @private
 union EventHeaderValue {
     boolean: Boolean
+
+    /// Byte headers MUST be written in the model as base64-encoded
+    /// strings, e.g. `Zm9v` represents utf8 `foo`.
     byte: Byte
     short: Short
     integer: Integer

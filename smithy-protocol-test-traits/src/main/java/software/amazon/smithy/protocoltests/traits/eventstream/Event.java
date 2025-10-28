@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.protocoltests.traits.eventstream;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public final class Event implements ToSmithyBuilder<Event> {
     private final List<String> requireHeaders;
     private final String body;
     private final String bodyMediaType;
-    private final String bytes;
+    private final byte[] bytes;
     private final ObjectNode vendorParams;
     private final ShapeId vendorParamsShape;
 
@@ -134,8 +135,8 @@ public final class Event implements ToSmithyBuilder<Event> {
      *
      * @return Returns an optional binary representation of the entire event.
      */
-    public Optional<String> getBytes() {
-        return Optional.ofNullable(bytes);
+    public Optional<byte[]> getBytes() {
+        return Optional.of(bytes);
     }
 
     /**
@@ -194,7 +195,7 @@ public final class Event implements ToSmithyBuilder<Event> {
         private final BuilderRef<List<String>> requireHeaders = BuilderRef.forList();
         private String body;
         private String bodyMediaType;
-        private String bytes;
+        private byte[] bytes;
         private ObjectNode vendorParams;
         private ShapeId vendorParamsShape;
 
@@ -242,6 +243,11 @@ public final class Event implements ToSmithyBuilder<Event> {
         }
 
         public Builder bytes(String bytes) {
+            this.bytes = Base64.getDecoder().decode(bytes);
+            return this;
+        }
+
+        public Builder bytes(byte[] bytes) {
             this.bytes = bytes;
             return this;
         }
