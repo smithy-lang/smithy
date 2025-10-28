@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.protocoltests.traits.eventstream;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +244,7 @@ public final class Event implements ToSmithyBuilder<Event> {
         }
 
         public Builder bytes(String bytes) {
-            this.bytes = Base64.getDecoder().decode(bytes);
+            this.bytes = Base64.getDecoder().decode(bytes.getBytes(StandardCharsets.UTF_8));
             return this;
         }
 
