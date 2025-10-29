@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -81,6 +82,19 @@ final class DefaultNodeSerializers {
         @Override
         public Node serialize(Number value, Set<Object> serializedObjects, NodeMapper mapper) {
             return Node.from(value);
+        }
+    };
+
+    // Serializes a byte array into a base64-encoded string node.
+    private static final Serializer<byte[]> BLOB_SERIALIZER = new Serializer<byte[]>() {
+        @Override
+        public Class<byte[]> getType() {
+            return byte[].class;
+        }
+
+        @Override
+        public Node serialize(byte[] value, Set<Object> serializedObjects, NodeMapper mapper) {
+            return Node.from(Base64.getEncoder().encodeToString(value));
         }
     };
 
@@ -392,6 +406,7 @@ final class DefaultNodeSerializers {
     static final List<Serializer> SERIALIZERS = ListUtils.of(
             TO_NODE_SERIALIZER,
             OPTIONAL_SERIALIZER,
+            BLOB_SERIALIZER,
             STRING_SERIALIZER,
             BOOLEAN_SERIALIZER,
             NUMBER_SERIALIZER,
