@@ -20,9 +20,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -603,6 +605,21 @@ final class DefaultNodeDeserializers {
         };
     };
 
+    // Creates a byte array from a base64-encoded string node.
+    private static final ObjectCreatorFactory BYTES_CREATOR = (nodeType, target, nodeMapper) -> {
+        if (nodeType != NodeType.STRING || target != byte[].class) {
+            return null;
+        }
+        return (node, targetType, pointer, mapper) -> {
+            String value = node.expectStringNode().getValue();
+            try {
+                return Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                throw NodeDeserializationException.fromContext(targetType, pointer, node, e, e.getMessage());
+            }
+        };
+    };
+
     // The priority ordered list of default factories that NodeMapper uses.
     // The priority is determined based on the specificity of each deserializer;
     // the most specific ones should appear at the start of the list, and the
@@ -615,6 +632,7 @@ final class DefaultNodeDeserializers {
             NULL_CREATOR,
             FROM_NODE_CREATOR,
             BOOLEAN_CREATOR_FACTORY,
+            BYTES_CREATOR,
             FROM_STRING,
             STRING_CREATOR,
             ENUM_CREATOR,

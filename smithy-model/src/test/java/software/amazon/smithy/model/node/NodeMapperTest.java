@@ -16,10 +16,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1632,6 +1634,36 @@ public class NodeMapperTest {
 
         public Map<ShapeId, List<Map<ShapeId, ShapeType>>> getShapeTypes() {
             return shapeTypes;
+        }
+    }
+
+    @Test
+    public void serializesBytesToBase64StringNode() {
+        NodeMapper mapper = new NodeMapper();
+        Node input = Node.objectNode().withMember("bytes", "Zm9v");
+        HasBytes result = mapper.deserialize(input, HasBytes.class);
+        String decoded = new String(result.getBytes(), StandardCharsets.UTF_8);
+        assertEquals("foo", decoded);
+    }
+
+    @Test
+    public void deserializesBytesFromBase64StringNode() {
+        NodeMapper mapper = new NodeMapper();
+        HasBytes input = new HasBytes();
+        input.setBytes("foo".getBytes(StandardCharsets.UTF_8));
+        ObjectNode result = mapper.serialize(input).expectObjectNode();
+        assertEquals("Zm9v", result.expectStringMember("bytes").getValue());
+    }
+
+    public static final class HasBytes {
+        private byte[] bytes;
+
+        public byte[] getBytes() {
+            return bytes;
+        }
+
+        public void setBytes(byte[] bytes) {
+            this.bytes = bytes;
         }
     }
 }
