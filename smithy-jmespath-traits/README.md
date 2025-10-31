@@ -1,0 +1,3 @@
+# Smithy JMESPath Traits
+
+TODO
