@@ -25,9 +25,9 @@ public class IDLPlugin implements SmithyBuildPlugin {
                 .build()
                 .serialize(context.getModel());
         try {
+            Files.createDirectories(context.getFileManifest().getBaseDir());
             for (Map.Entry<Path, String> entry : serialized.entrySet()) {
                 Path path = entry.getKey();
-                System.err.println(path);
                 Files.write(path, entry.getValue().getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
