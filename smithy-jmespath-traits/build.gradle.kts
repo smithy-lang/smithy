@@ -14,4 +14,6 @@ extra["moduleName"] = "software.amazon.smithy.jmespath.traits"
 dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-jmespath"))
+    api(project(":smithy-build"))
+    api(project(":smithy-utils"))
 }
