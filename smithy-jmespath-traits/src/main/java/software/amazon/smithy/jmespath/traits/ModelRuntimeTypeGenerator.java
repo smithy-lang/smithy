@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.waiters;
+package software.amazon.smithy.jmespath.traits;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +43,12 @@ import software.amazon.smithy.model.traits.RangeTrait;
 /**
  * Generates fake data from a modeled shape for static JMESPath analysis.
  */
-final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
+public final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     private final Model model;
     private Set<MemberShape> visited = new HashSet<>();
 
-    ModelRuntimeTypeGenerator(Model model) {
+    public ModelRuntimeTypeGenerator(Model model) {
         this.model = model;
     }
 
