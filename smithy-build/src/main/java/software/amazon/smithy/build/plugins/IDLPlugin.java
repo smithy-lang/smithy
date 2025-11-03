@@ -2,12 +2,9 @@ package software.amazon.smithy.build.plugins;
 
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
-import software.amazon.smithy.utils.FunctionalUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -28,14 +25,11 @@ public class IDLPlugin implements SmithyBuildPlugin {
         if (includePrelude) {
             builder.serializePrelude();
         }
-        Map<Path, String> serialized = builder
-                .build()
-                .serialize(context.getModel());
+        Map<Path, String> serialized = builder.build().serialize(context.getModel());
         try {
             Files.createDirectories(context.getFileManifest().getBaseDir());
             for (Map.Entry<Path, String> entry : serialized.entrySet()) {
-                Path path = entry.getKey();
-                context.getFileManifest().writeFile(path, entry.getValue());
+                context.getFileManifest().writeFile(entry.getKey(), entry.getValue());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
