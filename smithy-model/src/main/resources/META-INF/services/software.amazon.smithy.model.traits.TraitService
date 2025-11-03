@@ -58,6 +58,7 @@ software.amazon.smithy.model.traits.RequiresLengthTrait$Provider
 software.amazon.smithy.model.traits.ResourceIdentifierTrait$Provider
 software.amazon.smithy.model.traits.RetryableTrait$Provider
 software.amazon.smithy.model.traits.SensitiveTrait$Provider
+software.amazon.smithy.model.traits.ShapeExamplesTrait$Provider
 software.amazon.smithy.model.traits.SinceTrait$Provider
 software.amazon.smithy.model.traits.SparseTrait$Provider
 software.amazon.smithy.model.traits.StreamingTrait$Provider

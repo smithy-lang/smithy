@@ -129,13 +129,13 @@ public class SmithyTestCaseTest {
                         + "\n"
                         + "Did not match the following events\n"
                         + "----------------------------------\n"
-                        + "[DANGER] foo.baz#Bar: a | FooBar N/A:0:0\n"
-                        + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n"
+                        + "[DANGER] foo.baz#Bar: a | FooBar\n"
+                        + "[DANGER] foo.baz#Bar: b | FooBar\n"
                         + "\n"
                         + "\n"
                         + "Encountered unexpected events\n"
                         + "-----------------------------\n"
-                        + "[DANGER] foo.baz#Bar: a | FooBar N/A:0:0\n"
-                        + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n\n"));
+                        + "[DANGER] foo.baz#Bar: a | FooBar\n"
+                        + "[DANGER] foo.baz#Bar: b | FooBar\n\n"));
     }
 }
