@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Updated `LoaderShapeMap` to use `DependencyGraph` to sort shapes\ninstead of `TopologicalShapeSort`. This results in some error messages\nchanging:\n\n* There is no longer a special message for missing transitive mixins.\n* The message for genrically missing mixins is now applied by\n  ApplyMixin, which has a slightly different wording and which will\n  trigger for each mising mixin.\n* The error message for detected cycles will now include the entire\n  cycle that a shape is part of, rather than just the edges that it\n  is directly connected to.",
-  "pull_requests": [
-    "[#2774](https://github.com/smithy-lang/smithy/pull/2774)"
-  ]
-}

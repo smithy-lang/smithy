@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a new `eventStreamProtocolTests` trait to enable writing shared test suites for event streams just as has been done for standard HTTP protocol requests and responses.",
-  "pull_requests": [
-    "[#2803](https://github.com/smithy-lang/smithy/pull/2803)"
-  ]
-}

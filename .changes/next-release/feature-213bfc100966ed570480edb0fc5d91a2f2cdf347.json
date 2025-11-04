@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a builder to `Differences` in smithy-diff that allows constructing an instance that only contains a set of hand-curated changes. This enables making comparisons that weren't or wouldn't be auto-detected, such as comparing two shapes of the same type to see if they are compatible with each other.",
-  "pull_requests": [
-    "[#2796](https://github.com/smithy-lang/smithy/pull/2796/)"
-  ]
-}

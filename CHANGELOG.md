@@ -1,5 +1,107 @@
 # Smithy Changelog
 
+## 1.64.0 (2025-11-04)
+
+### Features
+
+- Updated `LoaderShapeMap` to use `DependencyGraph` to sort shapes instead of
+  `TopologicalShapeSort`. This results in some error messages changing:
+
+  - There is no longer a special message for missing transitive mixins.
+  - The message for genrically missing mixins is now applied by ApplyMixin,
+    which has a slightly different wording and which will trigger for each
+    mising mixin.
+  - The error message for detected cycles will now include the entire cycle that
+    a shape is part of, rather than just the edges that it is directly connected
+    to. ([#2774](https://github.com/smithy-lang/smithy/pull/2774))
+
+- Added a space for plugins to write data that is intended to be consumable by
+  other plugins. This appears under a directory called `shared` in the the
+  projection's output directory.
+  ([#2764](https://github.com/awslabs/smithy/pull/2764))
+
+- Expanded `title` trait to apply to members.
+  ([#2791](https://github.com/smithy-lang/smithy/pull/2791))
+
+- Added a generic dependency graph to smithy-utils to be used for sorting
+  various dependent objects, such as integrations and plugins.
+  ([#2774](https://github.com/smithy-lang/smithy/pull/2774))
+
+- Added support for (de)serializing byte arrays to/from base64-encoded string
+  nodes to `NodeMapper`.
+  ([#2803](https://github.com/smithy-lang/smithy/pull/2803))
+
+- Added builder method support for `ServiceResolvedConditionKeysTrait`.
+  ([#2779](https://github.com/smithy-lang/smithy/pull/2779))
+
+- Added support for mapping the `title` trait in JSON Schema's `oneOf` enum
+  strategy. ([#2791](https://github.com/smithy-lang/smithy/pull/2791))
+
+- Added a new `eventStreamProtocolTests` trait to enable writing shared test
+  suites for event streams just as has been done for standard HTTP protocol
+  requests and responses.
+  ([#2803](https://github.com/smithy-lang/smithy/pull/2803))
+
+- Deprecated `TopologicalShapeSort` in favor of `DependencyGraph`.
+  ([#2774](https://github.com/smithy-lang/smithy/pull/2774))
+
+- Added a builder to `Differences` in smithy-diff that allows constructing an
+  instance that only contains a set of hand-curated changes. This enables making
+  comparisons that weren't or wouldn't be auto-detected, such as comparing two
+  shapes of the same type to see if they are compatible with each other.
+  ([#2796](https://github.com/smithy-lang/smithy/pull/2796/))
+
+- Updated `TopDownIndex` to return results in modeled order.
+  ([#2746](https://github.com/smithy-lang/smithy/pull/2746))
+
+- Updated `ReplaceShapes` to use `DependencyGraph` to sort shapes.
+  ([#2774](https://github.com/smithy-lang/smithy/pull/2774))
+
+- Updated `Walker` to walk relationships in their defined order, rather than the
+  reverse of their defined order.
+  ([#2746](https://github.com/smithy-lang/smithy/pull/2746))
+
+- Loosened the `ChangedMemberTarget` diff evaluator to not report `ERROR` level
+  events so often. Now it will always report an `ERROR` if the change is
+  expected to result in codegen type errors, but otherwise it will default to
+  `WARNING` unless differing traits between the targets would result in a higher
+  severity event had those trait changes been applied to the original target.
+  ([#2796](https://github.com/smithy-lang/smithy/pull/2796))
+
+- Updated `DiffEvaluator` interface to include an optional method that
+  additionally accepts a `ClassLoader`. This ensures that the loader the
+  evaluation is configured with can be used in any evaluators that may need it.
+  ([#2796](https://github.com/smithy-lang/smithy/pull/2796))
+
+- Added protocol tests for event streaming in restJson1.
+  ([#2803](https://github.com/smithy-lang/smithy/pull/2803))
+
+- Added missing suffixes to allow identification of all cases for when the
+  nullability of a member changed
+
+  - `RemovedClientOptionalTrait` for when the `@clientOptional` trait is
+    removed.
+  - `RemovedNullDefault` for when a `@default(null)` is changed to a default
+    with non-null value.
+  - `AddedNullDefault` for when a `@default(<non-null-value>)` is changed to a
+    default with null value.
+    ([#2805](https://github.com/smithy-lang/smithy/pull/2805))
+
+- Added the ability for smithy build plugins to declare that they must be run
+  before or after other plugins. These dependencies are soft, so missing
+  dependencies will be logged and ignored.
+  ([#2774](https://github.com/smithy-lang/smithy/pull/2774))
+
+### Bug Fixes
+
+- Fix message in RemovedServiceError diff event
+  ([#2823](https://github.com/smithy-lang/smithy/pull/2823))
+
+### Other
+
+- Added `restJson1` protocol tests for `httpQueryParams` when no params exist.
+  ([#2792](https://github.com/smithy-lang/smithy/pull/2792))
+
 ## 1.63.0 (2025-10-17)
 
 ### Features
@@ -4129,4 +4231,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-
