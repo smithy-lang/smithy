@@ -6,6 +6,7 @@ package software.amazon.smithy.protocoltests.traits.eventstream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -56,6 +57,20 @@ public final class EventStreamTestsTrait extends AbstractTrait {
         return testCases.stream()
                 .filter(test -> !test.getAppliesTo().filter(value -> value != appliesTo).isPresent())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EventStreamTestsTrait)) {
+            return false;
+        }
+        EventStreamTestsTrait that = (EventStreamTestsTrait) o;
+        return Objects.equals(testCases, that.testCases);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), testCases);
     }
 
     @Override
