@@ -5,9 +5,11 @@
 package software.amazon.smithy.protocoltests.traits.eventstream;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -137,7 +139,7 @@ public final class Event implements ToSmithyBuilder<Event> {
      * @return Returns an optional binary representation of the entire event.
      */
     public Optional<byte[]> getBytes() {
-        return Optional.of(bytes);
+        return Optional.ofNullable(bytes);
     }
 
     /**
@@ -183,6 +185,37 @@ public final class Event implements ToSmithyBuilder<Event> {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Event)) {
+            return false;
+        }
+        Event event = (Event) o;
+        return type == event.type && Objects.equals(params, event.params)
+                && Objects.equals(headers, event.headers)
+                && Objects.equals(forbidHeaders, event.forbidHeaders)
+                && Objects.equals(requireHeaders, event.requireHeaders)
+                && Objects.equals(body, event.body)
+                && Objects.equals(bodyMediaType, event.bodyMediaType)
+                && Objects.deepEquals(bytes, event.bytes)
+                && Objects.equals(vendorParams, event.vendorParams)
+                && Objects.equals(vendorParamsShape, event.vendorParamsShape);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type,
+                params,
+                headers,
+                forbidHeaders,
+                requireHeaders,
+                body,
+                bodyMediaType,
+                Arrays.hashCode(bytes),
+                vendorParams,
+                vendorParamsShape);
     }
 
     /**
@@ -244,7 +277,11 @@ public final class Event implements ToSmithyBuilder<Event> {
         }
 
         public Builder bytes(String bytes) {
-            this.bytes = Base64.getDecoder().decode(bytes.getBytes(StandardCharsets.UTF_8));
+            if (bytes == null) {
+                this.bytes = null;
+            } else {
+                this.bytes = Base64.getDecoder().decode(bytes.getBytes(StandardCharsets.UTF_8));
+            }
             return this;
         }
 

@@ -5,6 +5,7 @@
 package software.amazon.smithy.protocoltests.traits.eventstream;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -193,6 +194,45 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EventStreamTestCase)) {
+            return false;
+        }
+        EventStreamTestCase that = (EventStreamTestCase) o;
+        return Objects.equals(id, that.id) && Objects.equals(protocol, that.protocol)
+                && Objects.equals(initialRequestParams, that.initialRequestParams)
+                && Objects.equals(initialRequest, that.initialRequest)
+                && Objects.equals(initialRequestShape, that.initialRequestShape)
+                && Objects.equals(initialResponseParams, that.initialResponseParams)
+                && Objects.equals(initialResponse, that.initialResponse)
+                && Objects.equals(initialResponseShape, that.initialResponseShape)
+                && Objects.equals(events, that.events)
+                && Objects.equals(expectation, that.expectation)
+                && Objects.equals(vendorParams, that.vendorParams)
+                && Objects.equals(vendorParamsShape, that.vendorParamsShape)
+                && Objects.equals(documentation, that.documentation)
+                && appliesTo == that.appliesTo;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id,
+                protocol,
+                initialRequestParams,
+                initialRequest,
+                initialRequestShape,
+                initialResponseParams,
+                initialResponse,
+                initialResponseShape,
+                events,
+                expectation,
+                vendorParams,
+                vendorParamsShape,
+                documentation,
+                appliesTo);
     }
 
     /**
