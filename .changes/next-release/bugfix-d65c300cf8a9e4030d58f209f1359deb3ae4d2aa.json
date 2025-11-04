@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Correctly compute and enforce blob length values in the NodeValidationVisitor",
+  "pull_requests": [
+    "[#2833](https://github.com/smithy-lang/smithy/pull/2833)"
+  ]
+}

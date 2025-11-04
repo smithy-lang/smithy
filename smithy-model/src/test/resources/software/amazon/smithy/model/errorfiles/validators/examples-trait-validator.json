@@ -67,8 +67,8 @@
                     {
                         "title": "Testing 5",
                         "input": {
-                            "blobMin": "a",
-                            "blobMax": "abcdef",
+                            "blobMin": "YQ==",
+                            "blobMax": "YWJjZGVm",
                             "mapMin": {
                                 "a": "b"
                             },

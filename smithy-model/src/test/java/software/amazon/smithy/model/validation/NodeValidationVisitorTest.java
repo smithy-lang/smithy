@@ -102,15 +102,20 @@ public class NodeValidationVisitorTest {
 
                 // Blobs
                 {"ns.foo#Blob1", "\"\"", null},
-                {"ns.foo#Blob1", "\"foo\"", null},
+                {"ns.foo#Blob1",
+                        "\"{}\"",
+                        new String[] {
+                                "Blob value should be a valid base64 string"
+                        }},
+                {"ns.foo#Blob1", "\"Zm9v\"", null},
                 {"ns.foo#Blob1",
                         "true",
                         new String[] {
                                 "Expected string value for blob shape, `ns.foo#Blob1`; found boolean value, `true`"
                         }},
-                {"ns.foo#Blob2", "\"f\"", null},
+                {"ns.foo#Blob2", "\"Zg==\"", null},
                 {"ns.foo#Blob2",
-                        "\"fooo\"",
+                        "\"Zm9vbw==\"",
                         new String[] {
                                 "Value provided for `ns.foo#Blob2` must have no more than 3 bytes, but the provided value has 4 bytes"}},
                 {"ns.foo#Blob2",
