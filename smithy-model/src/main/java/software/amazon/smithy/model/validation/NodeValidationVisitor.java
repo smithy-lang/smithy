@@ -4,7 +4,9 @@
  */
 package software.amazon.smithy.model.validation;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -106,7 +108,14 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          *
          * <p>By default, null values are not allowed for optional types.
          */
-        ALLOW_OPTIONAL_NULLS;
+        ALLOW_OPTIONAL_NULLS,
+
+        /**
+         * Requires that blob values are validly encoded base64 strings.
+         *
+         * <p>By default, blob values which are not valid base64 encoded strings will be allowed.
+         */
+        REQUIRE_BASE_64_BLOB_VALUES;
 
         public static Feature fromNode(Node node) {
             return Feature.valueOf(node.expectStringNode().getValue());
@@ -178,7 +187,19 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> blobShape(BlobShape shape) {
         return value.asStringNode()
-                .map(stringNode -> applyPlugins(shape))
+                .map(stringNode -> {
+                    if (validationContext.hasFeature(Feature.REQUIRE_BASE_64_BLOB_VALUES)) {
+                        byte[] encodedValue = stringNode.getValue().getBytes(StandardCharsets.UTF_8);
+
+                        try {
+                            Base64.getDecoder().decode(encodedValue);
+                        } catch (IllegalArgumentException e) {
+                            return ListUtils.of(event("Blob value must be a valid base64 string"));
+                        }
+                    }
+
+                    return applyPlugins(shape);
+                })
                 .orElseGet(() -> invalidShape(shape, NodeType.STRING));
     }
 
