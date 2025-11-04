@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add NodeValidationVisitor feature that enforces base64 encoding of blob values",
+  "pull_requests": []
+}
