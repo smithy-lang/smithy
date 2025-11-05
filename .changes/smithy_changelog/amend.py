@@ -142,7 +142,7 @@ def _get_new_changes(repository_dir: Path, base: str | None) -> dict[Path, Chang
     with chdir(repository_dir):
         print(f"Running a diff against base branch: {base}")
         result = subprocess.run(
-            f"git diff origin/{base} --name-only",
+            f"git diff origin/{base} --name-only --diff-filter=A",
             check=True,
             shell=True,
             capture_output=True,
