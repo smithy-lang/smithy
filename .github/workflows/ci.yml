@@ -46,6 +46,22 @@ jobs:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
           path: '**/build/reports/tests'
 
+  cli-distributions:
+    runs-on: ubuntu-latest
+    name: Build CLI executables
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: 'corretto'
+          cache: gradle
+
+      - name: Build CLI distributions
+        run: ./gradlew :smithy-cli:images
+
   build-docs:
     runs-on: ubuntu-latest
     name: Documentation Build
