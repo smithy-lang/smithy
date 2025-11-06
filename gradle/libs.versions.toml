@@ -17,7 +17,7 @@ json-schema = "1.12.1"
 shadow = "9.2.2"
 api-guardian = "1.1.2"
 jreleaser = "1.20.0"
-runtime = "2.0.0"
+runtime = "2.0.1"
 gradle-checksum = "1.4.0"
 
 [libraries]
