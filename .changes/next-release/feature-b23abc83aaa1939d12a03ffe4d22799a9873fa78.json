@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Loosened the `ChangedMemberTarget` diff evaluator to not report `ERROR` level events so often. Now it will always report an `ERROR` if the change is expected to result in codegen type errors, but otherwise it will default to `WARNING` unless differing traits between the targets would result in a higher severity event had those trait changes been applied to the original target.",
-  "pull_requests": [
-    "[#2796](https://github.com/smithy-lang/smithy/pull/2796)"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added builder method support for `ServiceResolvedConditionKeysTrait`.",
-  "pull_requests": [
-    "[#2779](https://github.com/smithy-lang/smithy/pull/2779)"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix message in RemovedServiceError diff event",
-  "pull_requests": [
-    "[#2823](https://github.com/smithy-lang/smithy/pull/2823)"
-  ]
-}
