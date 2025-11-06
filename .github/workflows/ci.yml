@@ -60,7 +60,7 @@ jobs:
           cache: gradle
 
       - name: Build CLI distributions
-        run: ./gradlew :smithy-cli:images
+        run: ./gradlew :smithy-cli:checksumImages
 
   build-docs:
     runs-on: ubuntu-latest
