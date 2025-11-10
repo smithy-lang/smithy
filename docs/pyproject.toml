@@ -1,0 +1,31 @@
+[build-system]
+requires = ["uv_build >= 0.9.5, <0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[project]
+name = "smithy"
+version = "1.0.0"
+dependencies = [
+    "sphinx==5.3.0",
+    "pygments==2.15.0",
+    "furo==2022.6.21",
+
+    # Used by new docs
+    "sphinx-inline-tabs==2022.1.2b11",
+    "Sphinx-Substitution-Extensions==2022.2.16",
+
+    # Used by old docs
+    "sphinx-tabs>=3.4.4",
+
+    "sphinx_copybutton==0.5.0",
+    "sphinx-autobuild==2025.8.25",
+
+    # needs to be added as it is removed in python3.13
+    "standard-imghdr==3.13.0"
+]
+
+[project.entry-points."pygments.lexers"]
+smithy = "smithy.lexer:SmithyLexer"
