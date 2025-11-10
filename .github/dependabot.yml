@@ -17,3 +17,15 @@ updates:
     ignore:
       - dependency-name: "com.opencastsoftware:prettier4j"
         versions: [ "0.3.1", "0.3.2" ]
+  - package-ecosystem: "pip"
+    directories:
+      - "/docs"
+      - "/.changes"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    groups:
+      python:
+        update-types:
+          - "minor"
+          - "patch"
