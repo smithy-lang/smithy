@@ -9,18 +9,18 @@ module-root = ""
 name = "smithy"
 version = "1.0.0"
 dependencies = [
-    "sphinx==5.3.0",
-    "pygments==2.15.0",
-    "furo==2022.6.21",
+    "sphinx==8.2.3",
+    "pygments==2.19.2",
+    "furo==2025.9.25",
 
     # Used by new docs
-    "sphinx-inline-tabs==2022.1.2b11",
-    "Sphinx-Substitution-Extensions==2022.2.16",
+    "sphinx-inline-tabs==2023.4.21",
+    "Sphinx-Substitution-Extensions==2025.10.24",
 
     # Used by old docs
-    "sphinx-tabs>=3.4.4",
+    "sphinx-tabs>=3.4.7",
 
-    "sphinx_copybutton==0.5.0",
+    "sphinx_copybutton==0.5.2",
     "sphinx-autobuild==2025.8.25",
 
     # needs to be added as it is removed in python3.13
