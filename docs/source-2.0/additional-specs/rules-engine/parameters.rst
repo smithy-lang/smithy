@@ -21,7 +21,7 @@ parameter with the name ``endpointId`` may be converted to ``EndpointId`` or
 This following is the :rfc:`ABNF <5234>` grammar for rule set parameter names:
 
 .. productionlist:: smithy
-    identifier = ALPHA *(ALPHA / DIGIT)
+    identifier : ALPHA *(ALPHA / DIGIT)
 
 Parameters declare their respective type using the ``type`` key. The following
 parameter types are supported: ``string``, ``boolean``, and ``stringArray``.
