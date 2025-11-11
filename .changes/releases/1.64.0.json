@@ -80,7 +80,7 @@
     },
     {
       "type": "feature",
-      "description": "Updated `TopDownIndex` to return results in modeled order.",
+      "description": "Updated `TopDownIndex` to allow disabling the sorting behavior, instead returning results in the order that they are discovered.",
       "pull_requests": [
         "[#2746](https://github.com/smithy-lang/smithy/pull/2746)"
       ]

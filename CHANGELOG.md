@@ -51,7 +51,8 @@
   shapes of the same type to see if they are compatible with each other.
   ([#2796](https://github.com/smithy-lang/smithy/pull/2796/))
 
-- Updated `TopDownIndex` to return results in modeled order.
+- Updated `TopDownIndex` to allow disabling the sorting behavior, instead
+  returning results in the order that they are discovered.
   ([#2746](https://github.com/smithy-lang/smithy/pull/2746))
 
 - Updated `ReplaceShapes` to use `DependencyGraph` to sort shapes.
