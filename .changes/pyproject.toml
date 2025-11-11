@@ -5,7 +5,7 @@ description = "A staged changelog tool for Smithy."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mdformat>=0.7.22,<0.8.0"
+    "mdformat>=0.7.22,<1.1.0"
 ]
 
 [project.scripts]
