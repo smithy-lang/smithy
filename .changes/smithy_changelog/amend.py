@@ -127,7 +127,7 @@ def amend(
                     repository=repository,
                     pr_number=pr_number,
                     comment=comment,
-                    file=change_file,
+                    file=change_file.relative_to(repository_dir),
                     start_line=1,
                     end_line=len(change_file.read_text().splitlines()),
                 )
