@@ -4,11 +4,17 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    labels:
+     - "dependencies"
+     - "no-changelog-needed"
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "wednesday"
+    labels:
+     - "dependencies"
+     - "no-changelog-needed"
     groups:
       gradle:
         update-types:
@@ -24,6 +30,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "wednesday"
+    labels:
+     - "dependencies"
+     - "no-changelog-needed"
     groups:
       python:
         update-types:
