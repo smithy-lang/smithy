@@ -117,8 +117,20 @@ implements <a href="KnowledgeIndex.html" title="interface in software.amazon.smi
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get all operations in service or resource closure.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/OperationShape.html" title="class in software.amazon.smithy.model.shapes">OperationShape</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getContainedOperations(software.amazon.smithy.model.shapes.ToShapeId,boolean)" class="member-name-link">getContainedOperations</a><wbr>(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity,
+ boolean&nbsp;sorted)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get all operations in service or resource closure.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/ResourceShape.html" title="class in software.amazon.smithy.model.shapes">ResourceShape</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getContainedResources(software.amazon.smithy.model.shapes.ToShapeId)" class="member-name-link">getContainedResources</a><wbr>(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get all resources in a service or resource closure.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/ResourceShape.html" title="class in software.amazon.smithy.model.shapes">ResourceShape</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getContainedResources(software.amazon.smithy.model.shapes.ToShapeId)" class="member-name-link">getContainedResources</a><wbr>(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getContainedResources(software.amazon.smithy.model.shapes.ToShapeId,boolean)" class="member-name-link">getContainedResources</a><wbr>(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity,
+ boolean&nbsp;sorted)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Get all resources in a service or resource closure.</div>
 </div>
@@ -166,7 +178,9 @@ implements <a href="KnowledgeIndex.html" title="interface in software.amazon.smi
 <section class="detail" id="getContainedOperations(software.amazon.smithy.model.shapes.ToShapeId)">
 <h3>getContainedOperations</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/OperationShape.html" title="class in software.amazon.smithy.model.shapes">OperationShape</a>&gt;</span>&nbsp;<span class="element-name">getContainedOperations</span><wbr><span class="parameters">(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity)</span></div>
-<div class="block">Get all operations in service or resource closure.</div>
+<div class="block">Get all operations in service or resource closure.
+
+ <p>Operations returned are be sorted by id.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>entity</code> - Service or resource shape ID.</dd>
@@ -176,13 +190,45 @@ implements <a href="KnowledgeIndex.html" title="interface in software.amazon.smi
 </section>
 </li>
 <li>
+<section class="detail" id="getContainedOperations(software.amazon.smithy.model.shapes.ToShapeId,boolean)">
+<h3>getContainedOperations</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/OperationShape.html" title="class in software.amazon.smithy.model.shapes">OperationShape</a>&gt;</span>&nbsp;<span class="element-name">getContainedOperations</span><wbr><span class="parameters">(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity,
+ boolean&nbsp;sorted)</span></div>
+<div class="block">Get all operations in service or resource closure.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entity</code> - Service or resource shape ID.</dd>
+<dd><code>sorted</code> - Whether to return the operations sorted by id.</dd>
+<dt>Returns:</dt>
+<dd>Returns all operations in the service closure.</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getContainedResources(software.amazon.smithy.model.shapes.ToShapeId)">
 <h3>getContainedResources</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/ResourceShape.html" title="class in software.amazon.smithy.model.shapes">ResourceShape</a>&gt;</span>&nbsp;<span class="element-name">getContainedResources</span><wbr><span class="parameters">(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity)</span></div>
+<div class="block">Get all resources in a service or resource closure.
+
+ <p>Resources returned are be sorted by id.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entity</code> - Service or resource shape ID.</dd>
+<dt>Returns:</dt>
+<dd>Returns all resources in the service closure.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getContainedResources(software.amazon.smithy.model.shapes.ToShapeId,boolean)">
+<h3>getContainedResources</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="../shapes/ResourceShape.html" title="class in software.amazon.smithy.model.shapes">ResourceShape</a>&gt;</span>&nbsp;<span class="element-name">getContainedResources</span><wbr><span class="parameters">(<a href="../shapes/ToShapeId.html" title="interface in software.amazon.smithy.model.shapes">ToShapeId</a>&nbsp;entity,
+ boolean&nbsp;sorted)</span></div>
 <div class="block">Get all resources in a service or resource closure.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>entity</code> - Service or resource shape ID.</dd>
+<dd><code>sorted</code> - Whether to return the resources sorted by id.</dd>
 <dt>Returns:</dt>
 <dd>Returns all resources in the service closure.</dd>
 </dl>
