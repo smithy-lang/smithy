@@ -42,7 +42,7 @@
     "@storybook/addon-onboarding": "^8.3.6",
     "@storybook/addon-themes": "^8.3.6",
     "@storybook/blocks": "^8.3.6",
-    "@storybook/react": "^8.3.6",
+    "@storybook/react": "^10.0.7",
     "@storybook/react-vite": "^8.3.6",
     "@storybook/test": "^8.6.14",
     "@types/node": "^22.7.7",
