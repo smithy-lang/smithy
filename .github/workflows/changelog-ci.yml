@@ -3,6 +3,7 @@ on: pull_request_target
 jobs:
     amend:
         name: "Validate staged changelogs"
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-changelog-needed') }}
         runs-on: ubuntu-latest
         permissions:
           # Used to pull the PR and detect changes. This is needed to see
