@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Add new shapeExamples to express allowed and disallowed values on an individual shape level",
-  "pull_requests": []
+  "pull_requests": [
+    "[#2851](https://github.com/smithy-lang/smithy/pull/2851)"
+  ]
 }
