@@ -48,7 +48,8 @@
 [ERROR] smithy.example#ConflictingExamplesString: Disallowed shape example `"aa"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.1
 [ERROR] smithy.example#ConflictingExamplesString: Disallowed shape example `"aaa"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2
 [ERROR] smithy.example#ConflictingExamplesBlob: Allowed shape example `""`: Value provided for `smithy.example#ConflictingExamplesBlob` must have at least 1 bytes, but the provided value only has 0 bytes | ShapeExamplesTrait.allowed.0
-[ERROR] smithy.example#ConflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#ConflictingExamplesBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.1
+[ERROR] smithy.example#ConflictingExamplesBlob: Allowed shape example `"{}"`: Blob value must be a valid base64 string | ShapeExamplesTrait.allowed.1
+[ERROR] smithy.example#ConflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#ConflictingExamplesBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.2
 [ERROR] smithy.example#ConflictingExamplesBlob: Disallowed shape example `"YQ=="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.0
 [ERROR] smithy.example#ConflictingExamplesBlob: Disallowed shape example `"YWE="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.1
 [ERROR] smithy.example#ConflictingExamplesBlob: Disallowed shape example `"YWFh"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2
@@ -130,7 +131,8 @@
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesString: Disallowed shape example `"aaa"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Allowed shape example `null`: Required structure member `conflictingExamplesBlob` for `smithy.example#DirectMembersStructure` cannot be null | ShapeExamplesTrait.allowed.0
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Allowed shape example `""`: Value provided for `smithy.example#DirectMembersStructure$conflictingExamplesBlob` must have at least 1 bytes, but the provided value only has 0 bytes | ShapeExamplesTrait.allowed.1
-[ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#DirectMembersStructure$conflictingExamplesBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.2
+[ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"{}"`: Blob value must be a valid base64 string | ShapeExamplesTrait.allowed.2
+[ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#DirectMembersStructure$conflictingExamplesBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.3
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `"YQ=="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.0
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `"YWE="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.1
 [ERROR] smithy.example#DirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `"YWFh"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2
@@ -224,7 +226,8 @@
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesString: Disallowed shape example `"aa"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesString: Disallowed shape example `"aaa"` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.3
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Allowed shape example `""`: Value provided for `smithy.example#TestBlob` must have at least 1 bytes, but the provided value only has 0 bytes | ShapeExamplesTrait.allowed.0
-[ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#TestBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.1
+[ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"{}"`: Blob value must be a valid base64 string | ShapeExamplesTrait.allowed.1
+[ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Allowed shape example `"YWFhYQ=="`: Value provided for `smithy.example#TestBlob` must have no more than 3 bytes, but the provided value has 4 bytes | ShapeExamplesTrait.allowed.2
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `null` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.0
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `"YQ=="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.1
 [ERROR] smithy.example#IndirectMembersStructure$conflictingExamplesBlob: Disallowed shape example `"YWE="` passed all validations when it shouldn't have | ShapeExamplesTrait.disallowed.2

@@ -29,7 +29,12 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
         byte[] value = node.getValue().getBytes(StandardCharsets.UTF_8);
 
         if (context.hasFeature(NodeValidationVisitor.Feature.REQUIRE_BASE_64_BLOB_VALUES)) {
-            value = Base64.getDecoder().decode(value);
+            try {
+                value = Base64.getDecoder().decode(value);
+            } catch (IllegalArgumentException e) {
+                // Error will reported by the blobShape method in NodeValidationVisitor
+                return;
+            }
         }
 
         int size = value.length;

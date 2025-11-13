@@ -270,6 +270,7 @@ string ConflictingExamplesString
     ]
     disallowed: [
         ""
+        "{}"
         "YWFhYQ=="
     ]
 })
@@ -279,6 +280,7 @@ blob ValidExamplesBlob
 @shapeExamples({
     allowed: [
         ""
+        "{}"
         "YWFhYQ=="
     ]
     disallowed: [
@@ -714,6 +716,7 @@ structure DirectMembersStructure {
         disallowed: [
             null
             ""
+            "{}"
             "YWFhYQ=="
         ]
     })
@@ -725,6 +728,7 @@ structure DirectMembersStructure {
         allowed: [
             null
             ""
+            "{}"
             "YWFhYQ=="
         ]
         disallowed: [
@@ -1179,6 +1183,7 @@ structure IndirectMembersStructure {
         ]
         disallowed: [
             ""
+            "{}"
             "YWFhYQ=="
         ]
     })
@@ -1187,6 +1192,7 @@ structure IndirectMembersStructure {
     @shapeExamples({
         allowed: [
             ""
+            "{}"
             "YWFhYQ=="
         ]
         disallowed: [
