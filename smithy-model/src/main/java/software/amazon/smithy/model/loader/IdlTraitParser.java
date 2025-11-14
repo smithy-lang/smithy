@@ -16,6 +16,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.StringUtils;
 
 final class IdlTraitParser {
 
@@ -158,29 +159,40 @@ final class IdlTraitParser {
         tokenizer.expect(IdlToken.LBRACE,
                 IdlToken.LBRACKET,
                 IdlToken.TEXT_BLOCK,
+                IdlToken.BYTE_TEXT_BLOCK,
                 IdlToken.STRING,
+                IdlToken.BYTE_STRING,
                 IdlToken.NUMBER,
                 IdlToken.IDENTIFIER);
 
         switch (tokenizer.getCurrentToken()) {
             case LBRACE:
-            case LBRACKET:
+            case LBRACKET: {
                 Node result = IdlNodeParser.expectAndSkipNode(loader, location);
                 tokenizer.skipWsAndDocs();
                 return result;
-            case TEXT_BLOCK:
-                Node textBlockResult = new StringNode(tokenizer.getCurrentTokenStringSlice().toString(), location);
+            }
+            case TEXT_BLOCK: {
+                String value = tokenizer.getCurrentTokenStringSlice().toString();
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();
-                return textBlockResult;
-            case NUMBER:
-                Number number = tokenizer.getCurrentTokenNumberValue();
+                return new StringNode(value, location);
+            }
+            case BYTE_TEXT_BLOCK: {
+                String value = StringUtils.base64Encode(tokenizer.getCurrentTokenStringSlice().toString());
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();
-                return new NumberNode(number, location);
-            case STRING:
-                String stringValue = tokenizer.getCurrentTokenStringSlice().toString();
-                StringNode stringNode = new StringNode(stringValue, location);
+                return new StringNode(value, location);
+            }
+            case NUMBER: {
+                Number value = tokenizer.getCurrentTokenNumberValue();
+                tokenizer.next();
+                tokenizer.skipWsAndDocs();
+                return new NumberNode(value, location);
+            }
+            case STRING: {
+                String value = tokenizer.getCurrentTokenStringSlice().toString();
+                StringNode stringNode = new StringNode(value, location);
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();
                 if (tokenizer.getCurrentToken() == IdlToken.COLON) {
@@ -190,8 +202,22 @@ final class IdlTraitParser {
                 } else {
                     return stringNode;
                 }
+            }
+            case BYTE_STRING: {
+                String value = StringUtils.base64Encode(tokenizer.getCurrentTokenStringSlice().toString());
+                StringNode stringNode = new StringNode(value, location);
+                tokenizer.next();
+                tokenizer.skipWsAndDocs();
+                if (tokenizer.getCurrentToken() == IdlToken.COLON) {
+                    tokenizer.next();
+                    tokenizer.skipWsAndDocs();
+                    return parseStructuredTrait(loader, stringNode);
+                } else {
+                    return stringNode;
+                }
+            }
             case IDENTIFIER:
-            default:
+            default: {
                 // Handle: `foo`, `foo$bar`, `foo.bar#baz`, `foo.bar#baz$bam`, `foo: bam`
                 String identifier = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
                 tokenizer.skipWsAndDocs();
@@ -203,6 +229,7 @@ final class IdlTraitParser {
                     tokenizer.skipWsAndDocs();
                     return parseStructuredTrait(loader, new StringNode(identifier, location));
                 }
+            }
         }
     }
 
@@ -228,7 +255,7 @@ final class IdlTraitParser {
         tokenizer.skipWsAndDocs();
 
         while (tokenizer.getCurrentToken() != IdlToken.RPAREN) {
-            tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
+            tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING, IdlToken.BYTE_STRING);
             String key = loader.internString(tokenizer.getCurrentTokenStringSlice());
             StringNode keyNode = new StringNode(key, tokenizer.getCurrentTokenLocation());
             tokenizer.next();

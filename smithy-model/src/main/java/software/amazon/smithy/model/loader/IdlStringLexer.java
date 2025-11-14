@@ -279,7 +279,7 @@ final class IdlStringLexer {
                 || c == '\n'
                 || c == '\r'
                 || (c >= 0x20 && c <= 0x21) // space - "!"
-                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
+                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block and byte_text_block
                 || (c >= 0x23 && c <= 0x5b) // "#" - "["
                 || c >= 0x5d; // "]"+
     }

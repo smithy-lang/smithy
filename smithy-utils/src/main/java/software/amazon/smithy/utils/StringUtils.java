@@ -4,7 +4,9 @@
  */
 package software.amazon.smithy.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1616,5 +1618,17 @@ public final class StringUtils {
         String indent = indentBuilder.toString();
 
         return stripEnd(indent + string.replace(System.lineSeparator(), System.lineSeparator() + indent), " ");
+    }
+
+    /**
+     * Encodes the provided CharSequence to a byte array via the UTF-8 charset,
+     * then base64 encodes that byte array as a String.
+     *
+     * @param charSequence the CharSequence to base64 encode.
+     * @return the base64 encoded representation.
+     */
+    public static String base64Encode(CharSequence charSequence) {
+        byte[] utf8Encoded = charSequence.toString().getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(utf8Encoded);
     }
 }

@@ -117,13 +117,15 @@ string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
     ControlSection   :*(`ControlStatement`)
-    ControlStatement :"$" `NodeObjectKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
+    ControlStatement :"$" `ControlKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
+    ControlKey       :`QuotedText` / `Identifier`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     MetadataSection   :*(`MetadataStatement`)
-    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
+    MetadataStatement :%s"metadata" `SP` `MetadataKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
+    MetadataKey       :`QuotedText` / `Identifier`
 
 .. rubric:: Node values
 
@@ -136,7 +138,7 @@ string support defined in :rfc:`7405`.
     NodeArray           :"[" [`WS`] *(`NodeValue` [`WS`]) "]"
     NodeObject          :"{" [`WS`] [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] [`WS`] "}"
     NodeObjectKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
-    NodeObjectKey       :`QuotedText` / `Identifier`
+    NodeObjectKey       :`QuotedText` / `ByteString` / `Identifier`
     Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
     DecimalPoint        :%x2E ; .
     DigitOneToNine      :%x31-39 ; 1-9
@@ -148,7 +150,8 @@ string support defined in :rfc:`7405`.
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
     NodeKeyword         :%s"true" / %s"false" / %s"null"
-    NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
+    NodeStringValue     :`ShapeId` / `TextBlock` / `ByteTextBlock` / `QuotedText` / `ByteString`
+    ByteString          :"b" `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
     QuotedChar          :%x09        ; tab
                         :/ %x20-21     ; space - "!"
@@ -162,6 +165,7 @@ string support defined in :rfc:`7405`.
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
     Escape              :%x5C ; backslash
+    ByteTextBlock       : "b" `TextBlock`
     TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
@@ -2397,5 +2401,49 @@ example is interpreted as ``Foo\nBaz Bam``:
     Foo
     Baz \
     Bam"""
+
+Byte Strings
+============
+
+The byte string and byte text block productions are used to encode human
+readable strings as if they were binary values.  They are equivalent to a
+standard string containing the base64 encoded representation of the UTF-8 bytes
+which make up the string.
+
+These values are parsed into the :ref:`semantic model <semantic-model>` in the
+same manner as their standard counterparts.
+
+The following values are all equivalent:
+
+.. tab:: Smithy
+
+    .. code-block:: smithy
+
+        version: "2"
+        metadata foo = {
+            byteString: b"Hello\nWorld"
+            byteTextBlock: b"""
+                Hello
+                World"""
+            string: "SGVsbG8KV29ybGQ="
+            textBlock: """
+                SGVsbG8KV29ybGQ="""
+        }
+
+.. tab:: JSON
+
+    .. code-block:: json
+
+        {
+            "smithy": "2",
+            "metadata": {
+                "foo": {
+                    "byteString": "SGVsbG8KV29ybGQ=",
+                    "byteTextBlock": "SGVsbG8KV29ybGQ=",
+                    "string": "SGVsbG8KV29ybGQ=",
+                    "textBlock": "SGVsbG8KV29ybGQ="
+                }
+            }
+        }
 
 .. _CommonMark: https://spec.commonmark.org/

@@ -246,4 +246,71 @@ public class IdlInternalTokenizerTest {
 
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(stringValue));
     }
+
+    public static Stream<Arguments> byteTextBlockTests() {
+        return Stream.of(
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "    Hello\n"
+                                + "        - Indented\"\"\"\n",
+                        "Hello\n    - Indented"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "    Hello\n"
+                                + "        - Indented\n"
+                                + "    \"\"\"\n",
+                        "Hello\n    - Indented\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "    Hello\n"
+                                + "        - Indented\n"
+                                + "\"\"\"\n",
+                        "    Hello\n        - Indented\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "    Hello\"\"\"\n",
+                        "Hello"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "    Hello\n"
+                                + "\n"
+                                + "        - Indented\n"
+                                + "\"\"\"\n",
+                        "    Hello\n\n        - Indented\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "                        \n" // only WS doesn't influence line length calculations.
+                                + "          Hello\n"
+                                + "                        \n" // only WS doesn't influence line length calculations.
+                                + "          \"\"\"",
+                        "\nHello\n\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "\n" // empty lines are incidental whitespace.
+                                + "          Hello\n"
+                                + "                        \n" // only WS doesn't influence line length calculations.
+                                + "          \"\"\"",
+                        "\nHello\n\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "\n" // empty lines are incidental whitespace.
+                                + "Hello\n"
+                                + "\n"
+                                + "\n"
+                                + "\"\"\"",
+                        "\nHello\n\n\n"),
+                Arguments.of(
+                        "b\"\"\"\n"
+                                + "\"\"\"",
+                        ""));
+    }
+
+    @ParameterizedTest
+    @MethodSource("byteTextBlockTests")
+    public void parsesByteTextBlocks(String model, String stringValue) {
+        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", model);
+        tokenizer.expect(IdlToken.BYTE_TEXT_BLOCK);
+
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(stringValue));
+    }
 }

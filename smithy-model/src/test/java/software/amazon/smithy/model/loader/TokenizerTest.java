@@ -215,6 +215,30 @@ public class TokenizerTest {
     }
 
     @Test
+    public void storesCurrentTokenByteString() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("b\"hello\"");
+
+        assertThat(tokenizer.next(), is(IdlToken.BYTE_STRING));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
+    }
+
+    @Test
+    public void storesCurrentTokenTextBlock() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("\"\"\"\nhello\"\"\"");
+
+        assertThat(tokenizer.next(), is(IdlToken.TEXT_BLOCK));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
+    }
+
+    @Test
+    public void storesCurrentTokenByteTextBlock() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("b\"\"\"\nhello\"\"\"");
+
+        assertThat(tokenizer.next(), is(IdlToken.BYTE_TEXT_BLOCK));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
+    }
+
+    @Test
     public void storesCurrentTokenStringForIdentifier() {
         IdlTokenizer tokenizer = IdlTokenizer.create("hello");
 
@@ -268,5 +292,34 @@ public class TokenizerTest {
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(""));
         assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("\"\""));
         assertThat(tokenizer.getCurrentTokenSpan(), is(2));
+    }
+
+    @Test
+    public void tokenizesByteStringWithNewlines() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("b\"hi\nthere\"");
+
+        tokenizer.next();
+
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.BYTE_STRING));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hi\nthere"));
+        assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("b\"hi\nthere\""));
+        assertThat(tokenizer.getCurrentTokenSpan(), is(11));
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.EOF));
+        assertThat(tokenizer.getCurrentTokenLine(), is(2));
+        assertThat(tokenizer.getCurrentTokenColumn(), is(7));
+    }
+
+    @Test
+    public void tokenizesEmptyByteStrings() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("b\"\"");
+
+        tokenizer.next();
+
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.BYTE_STRING));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(""));
+        assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("b\"\""));
+        assertThat(tokenizer.getCurrentTokenSpan(), is(3));
     }
 }

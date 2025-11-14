@@ -22,6 +22,7 @@ structure Foo {
     q: StringMap = {} // comment
     r: BigInteger = 0
     s: BigDecimal = 0
+    t: Blob = b"foo"
 }
 
 list StringList {

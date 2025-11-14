@@ -98,11 +98,14 @@ final class BracketFormatter {
         List<TreeCursor> children = cursor.findChildrenByType(
                 TreeType.COMMENT,
                 TreeType.TEXT_BLOCK,
+                TreeType.BYTE_TEXT_BLOCK,
                 TreeType.NODE_ARRAY,
                 TreeType.NODE_OBJECT,
-                TreeType.QUOTED_TEXT);
+                TreeType.QUOTED_TEXT,
+                TreeType.BYTE_STRING);
         for (TreeCursor child : children) {
-            if (child.getTree().getType() != TreeType.QUOTED_TEXT) {
+            if (child.getTree().getType() != TreeType.QUOTED_TEXT
+                    && child.getTree().getType() != TreeType.BYTE_STRING) {
                 return true;
             } else if (child.getTree().getStartLine() != child.getTree().getEndLine()) {
                 // Detect strings with line breaks.

@@ -54,26 +54,6 @@ public class TreeTypeTest {
     }
 
     @Test
-    public void identifierNodeObjectKey() {
-        String identifier = "version";
-        TokenTree tree = getTree(TreeType.NODE_OBJECT_KEY, identifier);
-        assertTreeIsValid(tree);
-        rootAndChildTypesEqual(tree,
-                TreeType.NODE_OBJECT_KEY,
-                TreeType.IDENTIFIER);
-    }
-
-    @Test
-    public void stringNodeObjectKey() {
-        String string = "\"foo bar\"";
-        TokenTree tree = getTree(TreeType.NODE_OBJECT_KEY, string);
-        assertTreeIsValid(tree);
-        rootAndChildTypesEqual(tree,
-                TreeType.NODE_OBJECT_KEY,
-                TreeType.QUOTED_TEXT);
-    }
-
-    @Test
     public void metadataSection() {
         String metadataSection = "metadata foo = bar\nmetadata bar=baz\n";
         TokenTree tree = getTree(TreeType.METADATA_SECTION, metadataSection);
@@ -1137,10 +1117,24 @@ public class TreeTypeTest {
                 TreeType.NODE_VALUE,
                 TreeType.NODE_STRING_VALUE);
 
+        String byteString = "b\"foo\"";
+        TokenTree byteStringTree = getTree(TreeType.NODE_VALUE, byteString);
+        assertTreeIsValid(byteStringTree);
+        rootAndChildTypesEqual(byteStringTree,
+                TreeType.NODE_VALUE,
+                TreeType.NODE_STRING_VALUE);
+
         String textBlock = "\"\"\"\nfoo\"\"\"";
         TokenTree textBlockTree = getTree(TreeType.NODE_VALUE, textBlock);
         assertTreeIsValid(textBlockTree);
         rootAndChildTypesEqual(textBlockTree,
+                TreeType.NODE_VALUE,
+                TreeType.NODE_STRING_VALUE);
+
+        String byteTextBlock = "b\"\"\"\nfoo\"\"\"";
+        TokenTree byteTextBlockTree = getTree(TreeType.NODE_VALUE, byteTextBlock);
+        assertTreeIsValid(byteTextBlockTree);
+        rootAndChildTypesEqual(byteTextBlockTree,
                 TreeType.NODE_VALUE,
                 TreeType.NODE_STRING_VALUE);
     }
@@ -1263,6 +1257,11 @@ public class TreeTypeTest {
         assertTreeIsValid(quotedTree);
         rootAndChildTypesEqual(quotedTree, TreeType.NODE_OBJECT_KEY, TreeType.QUOTED_TEXT);
 
+        String byteString = "b\"foo bar\"";
+        TokenTree byteStringTree = getTree(TreeType.NODE_OBJECT_KEY, byteString);
+        assertTreeIsValid(byteStringTree);
+        rootAndChildTypesEqual(byteStringTree, TreeType.NODE_OBJECT_KEY, TreeType.BYTE_STRING);
+
         String identifier = "foo";
         TokenTree idTree = getTree(TreeType.NODE_OBJECT_KEY, identifier);
         assertTreeIsValid(idTree);
@@ -1288,10 +1287,20 @@ public class TreeTypeTest {
         assertTreeIsValid(quotedTree);
         rootAndChildTypesEqual(quotedTree, TreeType.NODE_STRING_VALUE, TreeType.QUOTED_TEXT);
 
+        String byteString = "b\"foo bar\"";
+        TokenTree byteStringTree = getTree(TreeType.NODE_STRING_VALUE, byteString);
+        assertTreeIsValid(byteStringTree);
+        rootAndChildTypesEqual(byteStringTree, TreeType.NODE_STRING_VALUE, TreeType.BYTE_STRING);
+
         String block = "\"\"\"\nfoo\"\"\"";
         TokenTree blockTree = getTree(TreeType.NODE_STRING_VALUE, block);
         assertTreeIsValid(blockTree);
         rootAndChildTypesEqual(blockTree, TreeType.NODE_STRING_VALUE, TreeType.TEXT_BLOCK);
+
+        String byteTextBlock = "b\"\"\"\nfoo\"\"\"";
+        TokenTree byteTextBlockTree = getTree(TreeType.NODE_STRING_VALUE, byteTextBlock);
+        assertTreeIsValid(byteTextBlockTree);
+        rootAndChildTypesEqual(byteTextBlockTree, TreeType.NODE_STRING_VALUE, TreeType.BYTE_TEXT_BLOCK);
     }
 
     @Test
@@ -1305,6 +1314,19 @@ public class TreeTypeTest {
         TokenTree withQuotesTree = getTree(TreeType.TEXT_BLOCK, withQuotes);
         assertTreeIsValid(withQuotesTree);
         rootAndChildTypesEqual(withQuotesTree, TreeType.TEXT_BLOCK, TreeType.TOKEN);
+    }
+
+    @Test
+    public void byteTextBlock() {
+        String empty = "b\"\"\"\n\"\"\"";
+        TokenTree emptyTree = getTree(TreeType.BYTE_TEXT_BLOCK, empty);
+        assertTreeIsValid(emptyTree);
+        rootAndChildTypesEqual(emptyTree, TreeType.BYTE_TEXT_BLOCK, TreeType.TOKEN);
+
+        String withQuotes = "b\"\"\"\n\"\"foo\"\n\"\"bar\"\"\"";
+        TokenTree withQuotesTree = getTree(TreeType.BYTE_TEXT_BLOCK, withQuotes);
+        assertTreeIsValid(withQuotesTree);
+        rootAndChildTypesEqual(withQuotesTree, TreeType.BYTE_TEXT_BLOCK, TreeType.TOKEN);
     }
 
     @Test

@@ -59,7 +59,10 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         this.endColumn = endColumn;
 
         if (stringContents == null
-                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING || token == IdlToken.TEXT_BLOCK)) {
+                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING
+                        || token == IdlToken.BYTE_STRING
+                        || token == IdlToken.TEXT_BLOCK
+                        || token == IdlToken.BYTE_TEXT_BLOCK)) {
             this.stringContents = lexeme.toString();
         } else {
             this.stringContents = stringContents;
@@ -197,9 +200,12 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .endLine(tokenizer.getLine())
                 .endColumn(tokenizer.getColumn())
                 .lexeme(tokenizer.getCurrentTokenLexeme())
-                .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
-                        ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
-                        : null)
+                .stringContents(tok == IdlToken.STRING || tok == IdlToken.BYTE_STRING
+                        || tok == IdlToken.TEXT_BLOCK
+                        || tok == IdlToken.BYTE_TEXT_BLOCK
+                        || tok == IdlToken.IDENTIFIER
+                                ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
+                                : null)
                 .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
                 .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
                 .build();

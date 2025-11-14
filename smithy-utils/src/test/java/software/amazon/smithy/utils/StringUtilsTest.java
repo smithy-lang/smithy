@@ -75,4 +75,17 @@ public class StringUtilsTest {
     void stringLiteral(String expected, String value, String indent) {
         assertThat("\"" + expected + "\"", equalTo(StringUtils.escapeJavaString(value, indent)));
     }
+
+    @Test
+    public void base64Encode() {
+        base64Encode("", "");
+        base64Encode("Zg==", "f");
+        base64Encode("Zm9v", "foo");
+        base64Encode("YmFy", "foobar".subSequence(3, 6));
+        base64Encode("4pmm4pml4pmg4pmj", "♦♥♠♣");
+    }
+
+    void base64Encode(String expected, CharSequence value) {
+        assertEquals(expected, StringUtils.base64Encode(value));
+    }
 }
