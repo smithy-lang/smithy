@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Added byte strings and byte text blocks to the IDL to support encoding human readable text as blob values",
-  "pull_requests": []
+  "pull_requests": [
+    "[#2853](https://github.com/smithy-lang/smithy/pull/2853)"
+  ]
 }
