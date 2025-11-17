@@ -16,8 +16,11 @@ public final class TimestampFormatTrait extends StringTrait {
     public static final String HTTP_DATE = "http-date";
     public static final ShapeId ID = ShapeId.from("smithy.api#timestampFormat");
 
+    private final Format format;
+
     public TimestampFormatTrait(String value, SourceLocation sourceLocation) {
         super(ID, value, sourceLocation);
+        this.format = Format.fromString(getValue());
     }
 
     public TimestampFormatTrait(String value) {
@@ -30,7 +33,7 @@ public final class TimestampFormatTrait extends StringTrait {
      * @return Returns the {@code Format} enum.
      */
     public Format getFormat() {
-        return Format.fromString(getValue());
+        return format;
     }
 
     public static final class Provider extends StringTrait.Provider<TimestampFormatTrait> {
@@ -48,7 +51,7 @@ public final class TimestampFormatTrait extends StringTrait {
         HTTP_DATE(TimestampFormatTrait.HTTP_DATE),
         UNKNOWN("unknown");
 
-        private String value;
+        private final String value;
 
         Format(String value) {
             this.value = value;
