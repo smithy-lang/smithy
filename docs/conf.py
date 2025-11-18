@@ -3,14 +3,14 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 
-project = u'Smithy'
-copyright = u'2022, Amazon Web Services'
-author = u'Amazon Web Services'
+project = "Smithy"
+copyright = "2022, Amazon Web Services"
+author = "Amazon Web Services"
 
 # -- General configuration ------------------------------------------------
 
-extensions = ['sphinx_copybutton', 'sphinx_substitution_extensions', 'smithy']
-templates_path = ['../_templates', '../root']
+extensions = ["sphinx_copybutton", "sphinx_substitution_extensions", "smithy"]
+templates_path = ["../_templates", "../root"]
 
 pygments_style = "default"
 pygments_dark_style = "gruvbox-dark"
@@ -21,7 +21,7 @@ nitpicky = True
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = 'furo'
+html_theme = "furo"
 language = "en"
 
 html_static_path = ["../_static"]
@@ -37,7 +37,7 @@ html_theme_options = {
         "color-brand-primary": "#C44536",
         "color-brand-content": "#00808b",
         "color-announcement-background": "#f8f8f8",
-        "color-announcement-text": "#383838"
+        "color-announcement-text": "#383838",
     },
     "dark_css_variables": {
         "color-brand-primary": "#ed9d13",
@@ -58,35 +58,48 @@ html_theme_options = {
     ],
     "source_repository": "https://github.com/smithy-lang/smithy/",
     "source_branch": "main",
-    "sidebar_hide_name": True
+    "sidebar_hide_name": True,
 }
 
 # Disable the copy button on code blocks using the "no-copybutton" class.
 copybutton_selector = "div:not(.no-copybutton) > div.highlight > pre"
 
+
 # Load the version number from ../VERSION
 def __load_version():
-    with open('../../VERSION', 'r') as file:
-        return file.read().replace('\n', '')
+    with open("../../VERSION", "r") as file:
+        return file.read().replace("\n", "")
+
 
 # Find the latest version of the gradle plugin from github
 def __load_gradle_version():
-    return requests.get('https://api.github.com/repos/smithy-lang/smithy-gradle-plugin/tags').json()[0]['name']
+    return requests.get(
+        "https://api.github.com/repos/smithy-lang/smithy-gradle-plugin/tags"
+    ).json()[0]["name"]
+
 
 # Find the latest version of the typescript codegen plugin from maven repo
 def __load_typescript_codegen_version():
-    response = requests.get("https://repo1.maven.org/maven2/software/amazon/smithy/typescript/smithy-typescript-codegen/maven-metadata.xml")
+    response = requests.get(
+        "https://repo1.maven.org/maven2/software/amazon/smithy/typescript/smithy-typescript-codegen/maven-metadata.xml"
+    )
     response.raise_for_status()
     root = ET.fromstring(response.text)
-    version = root.find('.//latest').text
+    version = root.find(".//latest").text
     if version is None:
         raise Exception("Unable to find latest version of smithy-typescript-codegen")
     return version
 
+
 # Find the latest version of smithy-java from github
 def __load_java_version():
-    tags = requests.get('https://api.github.com/repos/smithy-lang/smithy-java/tags').json()
-    return next(tag['name'] for tag in tags if re.match(r'^\d+\.\d+\.\d+$', tag['name']))
+    tags = requests.get(
+        "https://api.github.com/repos/smithy-lang/smithy-java/tags"
+    ).json()
+    return next(
+        tag["name"] for tag in tags if re.match(r"^\d+\.\d+\.\d+$", tag["name"])
+    )
+
 
 # We use this list of replacements to replace placeholder values in the documentation
 # with computed values. These are found and replaced
@@ -96,14 +109,16 @@ replacements = [
     ("__smithy_version__", __load_version()),
     ("__smithy_gradle_version__", __load_gradle_version()),
     ("__smithy_typescript_version__", __load_typescript_codegen_version()),
-    ("__smithy_java_version__", __load_java_version())
+    ("__smithy_java_version__", __load_java_version()),
 ]
+
 
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer)
-    sphinx.connect('source-read', source_read_handler)
+    sphinx.connect("source-read", source_read_handler)
     for placeholder, replacement in replacements:
         print("Finding and replacing '" + placeholder + "' with '" + replacement + "'")
+
 
 # Rewrites placeholders with computed value
 def source_read_handler(app, docname, source):
