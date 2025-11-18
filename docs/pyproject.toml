@@ -24,7 +24,10 @@ dependencies = [
     "sphinx-autobuild==2025.8.25",
 
     # needs to be added as it is removed in python3.13
-    "standard-imghdr==3.13.0"
+    "standard-imghdr==3.13.0",
+
+    # Allows writing docs in markdown
+    "myst-parser==4.0.1"
 ]
 
 [project.entry-points."pygments.lexers"]

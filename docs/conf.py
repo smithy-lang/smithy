@@ -9,7 +9,12 @@ author = "Amazon Web Services"
 
 # -- General configuration ------------------------------------------------
 
-extensions = ["sphinx_copybutton", "sphinx_substitution_extensions", "smithy"]
+extensions = [
+    "myst_parser",
+    "sphinx_copybutton",
+    "sphinx_substitution_extensions",
+    "smithy",
+]
 templates_path = ["../_templates", "../root"]
 
 pygments_style = "default"
