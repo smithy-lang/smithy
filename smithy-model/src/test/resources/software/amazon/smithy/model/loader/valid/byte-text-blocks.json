@@ -55,6 +55,18 @@
                 "smithy.api#documentation": "SGVsbG8K"
             }
         },
+        "smithy.example#WithHex": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkgdGhlcmUK"
+            }
+        },
+        "smithy.example#WithNullByte": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkACg=="
+            }
+        },
         "smithy.example#WithUnicode": {
             "type": "string",
             "traits": {

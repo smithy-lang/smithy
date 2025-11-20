@@ -2405,15 +2405,17 @@ example is interpreted as ``Foo\nBaz Bam``:
 Byte Strings
 ============
 
-The byte string and byte text block productions are used to encode human
-readable strings as if they were binary values.  They are equivalent to a
-standard string containing the base64 encoded representation of the UTF-8 bytes
-which make up the string.
+The byte string and byte text block productions are used to encode binary
+values as human readable strings.  These offer an alternative to having to
+embed opaque base64 strings in places where binary values are required.
 
-These values are parsed into the :ref:`semantic model <semantic-model>` in the
-same manner as their standard counterparts.
+Byte strings follow the same high-level parsing logic as standard strings.
+The escape sequences, line normalization, and incidental whitespace behaviors
+that exists in standard strings also work the same way in byte strings.
+Converting a valid standard string into a byte string is equivalent to encoding
+the original string into its UTF-8 bytes and then base64 encoding those bytes.
 
-The following values are all equivalent:
+The following values are all logically equivalent after parsing:
 
 .. tab:: Smithy
 
@@ -2445,5 +2447,23 @@ The following values are all equivalent:
                 }
             }
         }
+
+In addition to the :ref:`string escape characters <string-escape-characters>`,
+byte strings support additional escape characters to make encoding arbitrary
+byte sequences possible:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 30 50
+
+    * - Byte value
+      - Escape
+      - Meaning
+    * - ``00``
+      - ``\0``
+      - NULL byte
+    * - ``HH``
+      - ``\xHH``
+      - 2-digit hexadecimal byte value
 
 .. _CommonMark: https://spec.commonmark.org/

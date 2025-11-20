@@ -29,6 +29,16 @@ string EscapedNewlineString
     """)
 string WithUnicode
 
+@documentation(b"""
+    Hi\x20there
+    """)
+string WithHex
+
+@documentation(b"""
+    Hi\0
+    """)
+string WithNullByte
+
 // If the last line is offset to the right, it's discarded since it's all whitespace.
 @documentation(b"""
     Hello

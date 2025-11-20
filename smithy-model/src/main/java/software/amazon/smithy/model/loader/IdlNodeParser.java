@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.model.loader;
 
+import java.util.Base64;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -16,7 +17,6 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Parses Node values from a {@link IdlInternalTokenizer}.
@@ -71,7 +71,7 @@ final class IdlNodeParser {
             }
             case BYTE_STRING:
             case BYTE_TEXT_BLOCK: {
-                String value = StringUtils.base64Encode(tokenizer.getCurrentTokenStringSlice());
+                String value = Base64.getEncoder().encodeToString(tokenizer.getCurrentTokenBytes());
                 tokenizer.next();
                 return new StringNode(value, location);
             }

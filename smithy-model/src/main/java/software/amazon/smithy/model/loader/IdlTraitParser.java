@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.StringUtils;
 
 final class IdlTraitParser {
 
@@ -179,7 +179,7 @@ final class IdlTraitParser {
                 return new StringNode(value, location);
             }
             case BYTE_TEXT_BLOCK: {
-                String value = StringUtils.base64Encode(tokenizer.getCurrentTokenStringSlice().toString());
+                String value = Base64.getEncoder().encodeToString(tokenizer.getCurrentTokenBytes());
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();
                 return new StringNode(value, location);
@@ -204,7 +204,7 @@ final class IdlTraitParser {
                 }
             }
             case BYTE_STRING: {
-                String value = StringUtils.base64Encode(tokenizer.getCurrentTokenStringSlice().toString());
+                String value = Base64.getEncoder().encodeToString(tokenizer.getCurrentTokenBytes());
                 StringNode stringNode = new StringNode(value, location);
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();

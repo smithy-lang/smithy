@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -219,7 +220,7 @@ public class TokenizerTest {
         IdlTokenizer tokenizer = IdlTokenizer.create("b\"hello\"");
 
         assertThat(tokenizer.next(), is(IdlToken.BYTE_STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
+        assertThat(tokenizer.getCurrentTokenBytes(), equalTo("hello".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -235,7 +236,7 @@ public class TokenizerTest {
         IdlTokenizer tokenizer = IdlTokenizer.create("b\"\"\"\nhello\"\"\"");
 
         assertThat(tokenizer.next(), is(IdlToken.BYTE_TEXT_BLOCK));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
+        assertThat(tokenizer.getCurrentTokenBytes(), equalTo("hello".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -301,7 +302,7 @@ public class TokenizerTest {
         tokenizer.next();
 
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.BYTE_STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hi\nthere"));
+        assertThat(tokenizer.getCurrentTokenBytes(), equalTo("hi\nthere".getBytes(StandardCharsets.UTF_8)));
         assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("b\"hi\nthere\""));
         assertThat(tokenizer.getCurrentTokenSpan(), is(11));
 
@@ -318,7 +319,7 @@ public class TokenizerTest {
         tokenizer.next();
 
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.BYTE_STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(""));
+        assertThat(tokenizer.getCurrentTokenBytes(), equalTo(new byte[0]));
         assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("b\"\""));
         assertThat(tokenizer.getCurrentTokenSpan(), is(3));
     }

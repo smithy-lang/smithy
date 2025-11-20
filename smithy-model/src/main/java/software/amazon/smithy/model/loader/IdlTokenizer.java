@@ -152,6 +152,14 @@ public interface IdlTokenizer extends Iterator<IdlToken> {
     CharSequence getCurrentTokenStringSlice();
 
     /**
+     * If the current token is a byte string or byte text block, get the parsed content as a byte array.
+     *
+     * @return Returns the byte array associated with the current token.
+     * @throws ModelSyntaxException if the current token is not a byte string or byte text block.
+     */
+    byte[] getCurrentTokenBytes();
+
+    /**
      * If the current token is a number, get the associated parsed number.
      *
      * @return Returns the parsed number associated with the current token.

@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
@@ -311,6 +312,6 @@ public class IdlInternalTokenizerTest {
         IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", model);
         tokenizer.expect(IdlToken.BYTE_TEXT_BLOCK);
 
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(stringValue));
+        assertThat(tokenizer.getCurrentTokenBytes(), equalTo(stringValue.getBytes(StandardCharsets.UTF_8)));
     }
 }
