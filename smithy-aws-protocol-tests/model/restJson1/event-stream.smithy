@@ -7,6 +7,7 @@ use aws.protocoltests.shared#DateTime
 use smithy.test#InitialHttpRequest
 use smithy.test#InitialHttpResponse
 use smithy.test#eventStreamTests
+use smithy.framework#ValidationException
 
 @streaming
 union EventStream {
@@ -584,6 +585,8 @@ operation InputStream {
         @httpPayload
         stream: EventStream
     }
+
+    errors: [ValidationException]
 }
 
 @eventStreamTests([
@@ -1110,6 +1113,7 @@ operation OutputStream {
     }
 
     errors: [
+        ValidationException
         ServiceUnavailableError
     ]
 }
@@ -2098,6 +2102,8 @@ operation DuplexStream {
         @httpPayload
         stream: EventStream
     }
+
+    errors: [ValidationException]
 }
 
 @eventStreamTests([
@@ -2145,6 +2151,8 @@ operation InputStreamWithInitialRequest {
         @httpPayload
         stream: EventStream
     }
+
+    errors: [ValidationException]
 }
 
 @eventStreamTests([
@@ -2327,6 +2335,8 @@ operation DuplexStreamWithDistinctStreams {
         @httpPayload
         stream: SingletonEventStream
     }
+
+    errors: [ValidationException]
 }
 
 union SingletonEventStream {
