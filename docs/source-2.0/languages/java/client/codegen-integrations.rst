@@ -60,10 +60,10 @@ you can add this integration to your project like so:
     dependencies {
         // Add codegen integration as a smithy-build dependency so it can be
         // discovered by the client codegen plugin
-        smithyBuild("software.amazon.smithy.java.codegen:waiters:__smithy_java_version__")
+        smithyBuild("software.amazon.smithy.java:waiters-codegen:__smithy_java_version__")
 
         // Add waiters core package as a runtime dependency
-        implementation("software.amazon.smithy.java:waiters:__smithy_java_version__")
+        implementation("software.amazon.smithy.java:client-waiters:__smithy_java_version__")
     }
 
 The code generator will create a class named ``<ServiceName>Waiters`` in the client package.
