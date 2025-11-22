@@ -14,6 +14,4 @@ extra["moduleName"] = "software.amazon.smithy.waiters"
 dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-jmespath"))
-    // TODO: Fix
-    api(project(":smithy-contracts"))
 }
