@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.RangeTrait;
 /**
  * Generates fake data from a modeled shape for static JMESPath analysis.
  */
+// TODO: Copied from the rules engine. Waiters has another copy too. :P
 public final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     private final Model model;
