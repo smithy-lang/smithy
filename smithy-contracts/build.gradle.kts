@@ -8,8 +8,8 @@ plugins {
 
 description = "This module provides Smithy traits that depend on JMESPath."
 
-extra["displayName"] = "Smithy :: JMESPath Traits"
-extra["moduleName"] = "software.amazon.smithy.jmespath.traits"
+extra["displayName"] = "Smithy :: Contracts"
+extra["moduleName"] = "software.amazon.smithy.contracts"
 
 dependencies {
     api(project(":smithy-model"))
