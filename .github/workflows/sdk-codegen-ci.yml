@@ -18,7 +18,7 @@ jobs:
       - name: Increase Node Heap space
         run: echo "NODE_OPTIONS=--max-old-space-size=16384" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: smithy-version
         uses: ./.github/workflows/checkout-and-build-smithy
 
@@ -26,7 +26,7 @@ jobs:
         run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
 
       - name: Checkout smithy-typescript
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: smithy-lang/smithy-typescript
           path: smithy-typescript
@@ -35,7 +35,7 @@ jobs:
         run: cd smithy-typescript && ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
 
       - name: Checkout aws-sdk-js-v3
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: aws/aws-sdk-js-v3
           path: aws-sdk-js-v3
@@ -60,7 +60,7 @@ jobs:
         with:
           go-version: 1.19
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: smithy-version
         uses: ./.github/workflows/checkout-and-build-smithy
 
@@ -68,7 +68,7 @@ jobs:
         run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
 
       - name: Checkout smithy-go
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: aws/smithy-go
           path: smithy-go
@@ -77,7 +77,7 @@ jobs:
         run: cd smithy-go/codegen && ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
 
       - name: Checkout aws-sdk-go-v2
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: aws/aws-sdk-go-v2
           path: aws-sdk-go-v2
@@ -99,7 +99,7 @@ jobs:
   build-aws-sdk-kotlin:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: smithy-version
         uses: ./.github/workflows/checkout-and-build-smithy
 
@@ -107,7 +107,7 @@ jobs:
         run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
 
       - name: Checkout smithy-kotlin
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: smithy-lang/smithy-kotlin
           path: smithy-kotlin
@@ -116,7 +116,7 @@ jobs:
         run: cd smithy-kotlin && ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
 
       - name: Checkout aws-sdk-kotlin
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: awslabs/aws-sdk-kotlin
           path: aws-sdk-kotlin
@@ -140,7 +140,7 @@ jobs:
           distribution: 'corretto'
           cache: gradle
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: smithy-version
         uses: ./.github/workflows/checkout-and-build-smithy
 
@@ -148,13 +148,13 @@ jobs:
         run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
 
       - name: Checkout aws-crt-swift
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: awslabs/aws-crt-swift
           path: Sources/SmithySwift/aws-crt-swift
 
       - name: Checkout smithy-swift
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: smithy-lang/smithy-swift
           path: Sources/SmithySwift/smithy-swift
@@ -165,7 +165,7 @@ jobs:
           ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
 
       - name: Checkout aws-sdk-swift
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: awslabs/aws-sdk-swift
           path: Sources/SmithySwift/aws-sdk-swift
@@ -202,7 +202,7 @@ jobs:
           distribution: 'corretto'
           cache: gradle
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: smithy-version
         uses: ./.github/workflows/checkout-and-build-smithy
 
@@ -210,14 +210,14 @@ jobs:
         run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
 
       - name: Check out smithy-rs
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: smithy-lang/smithy-rs
           ref: main
           path: smithy-rs
 
       - name: Check out aws-sdk-rust
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: awslabs/aws-sdk-rust
           ref: main
