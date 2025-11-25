@@ -2,19 +2,13 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath;
+package software.amazon.smithy.model.validation.node;
 
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.EXPREF;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.NULL;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.OBJECT;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import software.amazon.smithy.jmespath.ExpressionProblem;
+import software.amazon.smithy.jmespath.ExpressionVisitor;
+import software.amazon.smithy.jmespath.FunctionDefinition;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.AndExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorType;
@@ -34,15 +28,28 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
-import software.amazon.smithy.jmespath.functions.FunctionDefinition;
 
-final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
+import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
+import static software.amazon.smithy.jmespath.ast.LiteralExpression.EXPREF;
+import static software.amazon.smithy.jmespath.ast.LiteralExpression.NULL;
+import static software.amazon.smithy.jmespath.ast.LiteralExpression.OBJECT;
+
+public final class NodeExpressionVisitor implements ExpressionVisitor<LiteralExpression> {
 
     private final LiteralExpression current;
     private final Set<ExpressionProblem> problems;
     private LiteralExpression knownFunctionType = ANY;
 
-    TypeChecker(LiteralExpression current, Set<ExpressionProblem> problems) {
+    NodeExpressionVisitor(LiteralExpression current, Set<ExpressionProblem> problems) {
         this.current = current;
         this.problems = problems;
     }
@@ -69,7 +76,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     public LiteralExpression visitExpressionType(ExpressionTypeExpression expression) {
         // Expression references are late bound, so the type is only known
         // when the reference is used in a function.
-        expression.getExpression().accept(new TypeChecker(knownFunctionType, problems));
+        expression.getExpression().accept(new NodeExpressionVisitor(knownFunctionType, problems));
         return EXPREF;
     }
 
@@ -197,13 +204,13 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
                 danger(expression, "Array projection performed on " + leftResult.getType());
             }
             // Run RHS once using an ANY to test it too.
-            expression.getRight().accept(new TypeChecker(ANY, problems));
+            expression.getRight().accept(new NodeExpressionVisitor(ANY, problems));
             return ARRAY;
         } else {
             // LHS is an array, so do the projection.
             List<Object> result = new ArrayList<>();
             for (Object value : leftResult.expectArrayValue()) {
-                TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
+                NodeExpressionVisitor checker = new NodeExpressionVisitor(LiteralExpression.from(value), problems);
                 result.add(expression.getRight().accept(checker).getValue());
             }
             return new LiteralExpression(result);
@@ -219,7 +226,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
             if (leftResult.getType() != RuntimeType.ANY) {
                 danger(expression, "Object projection performed on " + leftResult.getType());
             }
-            TypeChecker checker = new TypeChecker(ANY, problems);
+            NodeExpressionVisitor checker = new NodeExpressionVisitor(ANY, problems);
             expression.getRight().accept(checker);
             return OBJECT;
         }
@@ -227,7 +234,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         // LHS is an object, so do the projection.
         List<Object> result = new ArrayList<>();
         for (Object value : leftResult.expectObjectValue().values()) {
-            TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
+            NodeExpressionVisitor checker = new NodeExpressionVisitor(LiteralExpression.from(value), problems);
             result.add(expression.getRight().accept(checker).getValue());
         }
 
@@ -244,7 +251,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
                 danger(expression, "Filter projection performed on " + leftResult.getType());
             }
             // Check the comparator and RHS.
-            TypeChecker rightVisitor = new TypeChecker(ANY, problems);
+            NodeExpressionVisitor rightVisitor = new NodeExpressionVisitor(ANY, problems);
             expression.getComparison().accept(rightVisitor);
             expression.getRight().accept(rightVisitor);
             return ARRAY;
@@ -254,7 +261,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         List<Object> result = new ArrayList<>();
         for (Object value : leftResult.expectArrayValue()) {
             LiteralExpression literalValue = LiteralExpression.from(value);
-            TypeChecker rightVisitor = new TypeChecker(literalValue, problems);
+            NodeExpressionVisitor rightVisitor = new NodeExpressionVisitor(literalValue, problems);
             LiteralExpression comparisonValue = expression.getComparison().accept(rightVisitor);
             if (comparisonValue.isTruthy()) {
                 LiteralExpression rightValue = expression.getRight().accept(rightVisitor);
@@ -284,7 +291,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     @Override
     public LiteralExpression visitSubexpression(Subexpression expression) {
         LiteralExpression leftResult = expression.getLeft().accept(this);
-        TypeChecker rightVisitor = new TypeChecker(leftResult, problems);
+        NodeExpressionVisitor rightVisitor = new NodeExpressionVisitor(leftResult, problems);
         return expression.getRight().accept(rightVisitor);
     }
 
@@ -293,14 +300,14 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         List<LiteralExpression> arguments = new ArrayList<>();
 
         // Give expression references the right context.
-        TypeChecker checker = new TypeChecker(current, problems);
+        NodeExpressionVisitor checker = new NodeExpressionVisitor(current, problems);
         checker.knownFunctionType = current;
 
         for (JmespathExpression arg : expression.getArguments()) {
             arguments.add(arg.accept(checker));
         }
 
-        FunctionDefinition def = FunctionDefinition.FUNCTIONS.get(expression.getName());
+        FunctionDefinition def = FUNCTIONS.get(expression.getName());
 
         // Function must be known.
         if (def == null) {

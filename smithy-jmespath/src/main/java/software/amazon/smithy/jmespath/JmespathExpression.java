@@ -81,4 +81,11 @@ public abstract class JmespathExpression {
         LiteralExpression result = this.accept(typeChecker);
         return new LinterResult(result.getType(), problems);
     }
+
+    public ExpressionResult evaluate(LiteralExpression currentNode) {
+        Set<ExpressionProblem> problems = new TreeSet<>();
+        Evaluator evaluator = new Evaluator(currentNode, problems);
+        LiteralExpression value = this.accept(evaluator);
+        return new ExpressionResult(value, problems);
+    }
 }

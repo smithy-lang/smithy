@@ -1,5 +1,7 @@
 package software.amazon.smithy.jmespath;
 
+import software.amazon.smithy.jmespath.functions.FunctionDefinition;
+
 import java.util.Collections;
 import java.util.List;
 
