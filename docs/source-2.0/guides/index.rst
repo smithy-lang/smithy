@@ -15,4 +15,5 @@ Guides
     style-guide
     model-translations/index
     building-codegen/index
+    client-guidance/index
     glossary
