@@ -1,4 +1,5 @@
 software.amazon.smithy.model.validation.validators.AuthTraitValidator
+software.amazon.smithy.model.validation.validators.ContractsTraitValidator
 software.amazon.smithy.model.validation.validators.DefaultValueInUpdateValidator
 software.amazon.smithy.model.validation.validators.DefaultTraitValidator
 software.amazon.smithy.model.validation.validators.DeprecatedTraitValidator
