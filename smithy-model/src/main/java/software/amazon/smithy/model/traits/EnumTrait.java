@@ -4,8 +4,8 @@
  */
 package software.amazon.smithy.model.traits;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -58,7 +58,11 @@ public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrai
      * @return returns the enum constant definitions.
      */
     public List<String> getEnumDefinitionValues() {
-        return definitions.stream().map(EnumDefinition::getValue).collect(Collectors.toList());
+        List<String> values = new ArrayList<>(definitions.size());
+        for (EnumDefinition definition : definitions) {
+            values.add(definition.getValue());
+        }
+        return values;
     }
 
     /**
@@ -70,18 +74,29 @@ public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrai
      * @return Returns true if all constants define a name.
      */
     public boolean hasNames() {
-        return definitions.stream().allMatch(body -> body.getName().isPresent());
+        for (EnumDefinition definition : definitions) {
+            if (!definition.getName().isPresent()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     protected Node createNode() {
-        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect(getSourceLocation()));
+        ArrayNode.Builder builder = ArrayNode.builder().sourceLocation(getSourceLocation());
+        for (EnumDefinition definition : definitions) {
+            builder.withValue(definition);
+        }
+        return builder.build();
     }
 
     @Override
     public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        definitions.forEach(builder::addEnum);
+        for (EnumDefinition definition : definitions) {
+            builder.addEnum(definition);
+        }
         return builder;
     }
 
