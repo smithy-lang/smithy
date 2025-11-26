@@ -197,6 +197,7 @@ structure httpChecksum {
         httpQuery
         httpQueryParams
         httpResponseCode
+        httpChecksum
         httpChecksumRequired
         jsonName
     ]
@@ -221,6 +222,7 @@ structure restJson1 with [HttpConfiguration] {}
         httpQuery
         httpQueryParams
         httpResponseCode
+        httpChecksum
         httpChecksumRequired
         xmlAttribute
         xmlFlattened
