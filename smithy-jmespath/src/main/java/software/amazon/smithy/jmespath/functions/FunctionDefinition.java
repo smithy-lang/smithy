@@ -26,7 +26,7 @@ import static software.amazon.smithy.jmespath.ast.LiteralExpression.STRING;
  */
 public final class FunctionDefinition {
 
-    static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
+    public static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
 
     static {
         FunctionDefinition.ArgValidator isAny = isType(RuntimeType.ANY);
