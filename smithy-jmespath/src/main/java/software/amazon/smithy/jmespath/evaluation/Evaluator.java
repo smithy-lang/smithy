@@ -4,13 +4,11 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
-import software.amazon.smithy.jmespath.ExpressionProblem;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.AndExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
-import software.amazon.smithy.jmespath.ast.ComparatorType;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
 import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
 import software.amazon.smithy.jmespath.ast.FieldExpression;
@@ -30,13 +28,9 @@ import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.jmespath.functions.FunctionDefinition;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
@@ -59,21 +53,40 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     public T visitComparator(ComparatorExpression comparatorExpression) {
         T left = visit(comparatorExpression.getLeft());
         T right = visit(comparatorExpression.getRight());
-        Boolean value = switch (comparatorExpression.getComparator()) {
-            case EQUAL -> Objects.equals(left, right);
-            case NOT_EQUAL -> !Objects.equals(left, right);
+        switch (comparatorExpression.getComparator()) {
+            case EQUAL:
+                return adaptor.createBoolean(Objects.equals(left, right));
+            case NOT_EQUAL:
+                return adaptor.createBoolean(!Objects.equals(left, right));
             // NOTE: Ordering operators >, >=, <, <= are only valid for numbers. All invalid
             // comparisons return null.
-            case LESS_THAN ->
-                    JMESPathTUtils.isNumericComparison(left, right) ? T.compare(left, right) < 0 : null;
-            case LESS_THAN_EQUAL ->
-                    JMESPathTUtils.isNumericComparison(left, right) ? T.compare(left, right) <= 0 : null;
-            case GREATER_THAN ->
-                    JMESPathTUtils.isNumericComparison(left, right) ? T.compare(left, right) > 0 : null;
-            case GREATER_THAN_EQUAL ->
-                    JMESPathTUtils.isNumericComparison(left, right) ? T.compare(left, right) >= 0 : null;
-        };
-        return value == null ? null : T.of(value);
+            case LESS_THAN:
+                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
+                    return adaptor.createBoolean(adaptor.compare(left, right) < 0);
+                } else {
+                    return adaptor.createNull();
+                }
+            case LESS_THAN_EQUAL:
+                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
+                    return adaptor.createBoolean(adaptor.compare(left, right) <= 0);
+                } else {
+                    return adaptor.createNull();
+                }
+            case GREATER_THAN:
+                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
+                    return adaptor.createBoolean(adaptor.compare(left, right) > 0);
+                } else {
+                    return adaptor.createNull();
+                }
+            case GREATER_THAN_EQUAL:
+                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
+                    return adaptor.createBoolean(adaptor.compare(left, right) >= 0);
+                } else {
+                    return adaptor.createNull();
+                }
+            default:
+                throw new IllegalArgumentException("Unsupported comparator: " + comparatorExpression.getComparator());
+        }
     }
 
     @Override
@@ -107,7 +120,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitFunction(FunctionExpression functionExpression) {
-        var function = JMESPathFunction.from(functionExpression);
+        FunctionDefinition function = FunctionDefinition.from(functionExpression.getName());
         List<T> arguments = new ArrayList<>();
         ExpressionTypeExpression functionReference = null;
         for (var expr : functionExpression.getArguments()) {

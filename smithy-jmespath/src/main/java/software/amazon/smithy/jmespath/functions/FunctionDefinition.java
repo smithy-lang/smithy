@@ -71,6 +71,10 @@ public final class FunctionDefinition {
         FUNCTIONS.put("values", new FunctionDefinition(ARRAY, isType(RuntimeType.OBJECT)));
     }
 
+    public static FunctionDefinition from(String string) {
+        return FUNCTIONS.get(string);
+    }
+
     @FunctionalInterface
     interface ArgValidator {
         String validate(LiteralExpression argument);

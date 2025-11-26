@@ -3,10 +3,16 @@ package software.amazon.smithy.jmespath.evaluation;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
-public interface Adaptor<T> {
+public interface Adaptor<T> extends Comparator<T> {
     RuntimeType typeOf(T value);
+
+    default boolean is(T value, RuntimeType type) {
+        return typeOf(value).equals(type);
+    }
+
     boolean isTruthy(T value);
 
     T createNull();
@@ -18,6 +24,7 @@ public interface Adaptor<T> {
 
     // TODO: Or expose length() and at(int) primitives. Safe to assume random access,
     // but more annoying to not use enhanced for loops.
+    // Have to double check consistent behavior around operations on non-lists
     List<T> toList(T value);
 
     ArrayBuilder<T> arrayBuilder();
@@ -40,4 +47,6 @@ public interface Adaptor<T> {
         void put(T key, T value);
         T build();
     }
+
+    // TODO: T parseJson(String)?
 }
