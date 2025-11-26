@@ -9,7 +9,7 @@ plugins {
 description = "Tests for the smithy rules engine language and traits"
 
 extra["displayName"] = "Smithy :: Rules Engine :: Tests"
-extra["moduleName"] = "software.amazon.smithy.rulesengine"
+extra["moduleName"] = "software.amazon.smithy.rulesenginetests"
 
 dependencies {
     api(project(":smithy-rules-engine"))
