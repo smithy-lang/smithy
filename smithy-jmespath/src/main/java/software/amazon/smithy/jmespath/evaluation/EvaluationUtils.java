@@ -42,4 +42,8 @@ public class EvaluationUtils {
             return BigDecimal.valueOf(number.doubleValue());
         }
     }
+
+    public static int codePointCount(String string) {
+        return string.codePointCount(0, string.length());
+    }
 }
