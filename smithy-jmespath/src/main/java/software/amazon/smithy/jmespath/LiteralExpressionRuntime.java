@@ -1,7 +1,7 @@
 package software.amazon.smithy.jmespath;
 
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.Adaptor;
+import software.amazon.smithy.jmespath.evaluation.Runtime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 // TODO: Or "TypeCheckerAdaptor"
-public class LiteralExpressionAdaptor implements Adaptor<LiteralExpression> {
+public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
     @Override
     public RuntimeType typeOf(LiteralExpression value) {
         return value.getType();
@@ -63,12 +63,12 @@ public class LiteralExpressionAdaptor implements Adaptor<LiteralExpression> {
     }
 
     @Override
-    public LiteralExpression getArrayElement(LiteralExpression array, LiteralExpression index) {
+    public LiteralExpression element(LiteralExpression array, LiteralExpression index) {
         return LiteralExpression.from(array.expectArrayValue().get(index.expectNumberValue().intValue()));
     }
 
     @Override
-    public Iterable<LiteralExpression> getArrayIterator(LiteralExpression array) {
+    public Iterable<LiteralExpression> iterate(LiteralExpression array) {
         return new ArrayIterable(array.expectArrayValue());
     }
 
@@ -130,12 +130,12 @@ public class LiteralExpressionAdaptor implements Adaptor<LiteralExpression> {
     }
 
     @Override
-    public LiteralExpression getValue(LiteralExpression value, LiteralExpression name) {
+    public LiteralExpression value(LiteralExpression value, LiteralExpression name) {
         return LiteralExpression.from(value.expectObjectValue().get(name.expectStringValue()));
     }
 
     @Override
-    public LiteralExpression getKeys(LiteralExpression value) {
+    public LiteralExpression keys(LiteralExpression value) {
         Map<String, Object> map = value.expectObjectValue();
         return LiteralExpression.from(new ArrayList<>(map.keySet()));
     }

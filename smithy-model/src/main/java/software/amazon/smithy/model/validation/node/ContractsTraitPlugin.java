@@ -3,15 +3,10 @@ package software.amazon.smithy.model.validation.node;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ContractsTrait;
-import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
-
-import java.util.Map;
 
 public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node, ContractsTrait> {
 
@@ -28,7 +23,7 @@ public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node,
 
     private void checkContract(Shape shape, ContractsTrait.Contract contract, Node value, Context context, Emitter emitter) {
         JmespathExpression expression = JmespathExpression.parse(contract.getExpression());
-        Evaluator<Node> evaluator = new Evaluator<>(value, new NodeAdaptor());
+        Evaluator<Node> evaluator = new Evaluator<>(value, new NodeRuntime());
         Node result = evaluator.visit(expression);
         // TODO: Or should it be isTruthy()?
         if (!result.expectBooleanNode().getValue()) {
