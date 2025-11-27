@@ -12,6 +12,7 @@ import java.util.Map;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.Adaptor;
 
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
@@ -76,13 +77,13 @@ public final class FunctionDefinition {
     }
 
     @FunctionalInterface
-    interface ArgValidator {
+    public interface ArgValidator {
         String validate(LiteralExpression argument);
     }
 
-    final LiteralExpression returnValue;
-    final List<ArgValidator> arguments;
-    final ArgValidator variadic;
+    public final LiteralExpression returnValue;
+    public final List<ArgValidator> arguments;
+    public final ArgValidator variadic;
 
     FunctionDefinition(LiteralExpression returnValue, ArgValidator... arguments) {
         this(returnValue, Arrays.asList(arguments), null);
@@ -139,5 +140,9 @@ public final class FunctionDefinition {
 
             return "Expected one of " + Arrays.toString(types) + ", but found " + arg.getType();
         };
+    }
+
+    public <T> T apply(Adaptor<T> adaptor, List<FunctionArgument<T>> arguments) {
+        throw new UnsupportedOperationException();
     }
 }
