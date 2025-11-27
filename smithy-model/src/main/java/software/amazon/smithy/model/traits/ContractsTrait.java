@@ -6,10 +6,12 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -27,7 +29,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ContractsTrait extends AbstractTrait implements ToSmithyBuilder<ContractsTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.contracts#contracts");
 
-    private final Map<String, Contract> values;
+    private final List<Contract> values;
 
     private ContractsTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -36,10 +38,8 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
 
     @Override
     protected Node createNode() {
-        return values.entrySet().stream()
-            .map(entry -> new SimpleImmutableEntry<>(
-                Node.from(entry.getKey()), entry.getValue().toNode()))
-            .collect(ObjectNode.collect(Entry::getKey, Entry::getValue))
+        return values.stream()
+            .collect(ArrayNode.collect())
             .toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
@@ -52,8 +52,8 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
      */
     public static ContractsTrait fromNode(Node node) {
         Builder builder = builder();
-        node.expectObjectNode().getMembers().forEach((k, v) -> {
-            builder.putValues(k.expectStringNode().getValue(), Contract.fromNode(v));
+        node.expectArrayNode().forEach(v -> {
+            builder.addValue(Contract.fromNode(v));
         });
         return builder.build();
     }
@@ -61,7 +61,7 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
     /**
      * These expressions must produce 'true'
      */
-    public Map<String, Contract> getValues() {
+    public List<Contract> getValues() {
         return values;
     }
 
@@ -81,13 +81,13 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
      * Builder for {@link ContractsTrait}.
      */
     public static final class Builder extends AbstractTraitBuilder<ContractsTrait, Builder> {
-        private final BuilderRef<Map<String, Contract>> values = BuilderRef.forOrderedMap();
+        private final BuilderRef<List<Contract>> values = BuilderRef.forList();
 
         private Builder() {}
 
-        public Builder values(Map<String, Contract> values) {
+        public Builder values(List<Contract> values) {
             clearValues();
-            this.values.get().putAll(values);
+            this.values.get().addAll(values);
             return this;
         }
 
@@ -96,13 +96,13 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
             return this;
         }
 
-        public Builder putValues(String key, Contract value) {
-            this.values.get().put(key, value);
+        public Builder addValue(Contract value) {
+            this.values.get().add(value);
             return this;
         }
 
-        public Builder removeValues(String values) {
-            this.values.get().remove(values);
+        public Builder removeValue(Contract value) {
+            this.values.get().remove(value);
             return this;
         }
 

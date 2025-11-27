@@ -127,10 +127,4 @@ public class NodeAdaptor implements Adaptor<Node> {
             return builder.build();
         }
     }
-
-    @Override
-    public int compare(Node o1, Node o2) {
-        // TODO: fairly complicated, may want a default implementation based on Number?
-        throw new UnsupportedOperationException();
-    }
 }

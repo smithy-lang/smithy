@@ -774,9 +774,8 @@ structure required {}
 @trait(
     selector: "*"
 )
-map contracts {
-    key: String
-    value: Contract
+list contracts {
+    member: Contract
 }
 
 structure Contract {
