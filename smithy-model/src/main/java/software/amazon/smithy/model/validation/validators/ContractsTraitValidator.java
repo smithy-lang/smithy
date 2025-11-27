@@ -34,8 +34,8 @@ public class ContractsTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         ContractsTrait constraints = shape.expectTrait(ContractsTrait.class);
 
-        for (Map.Entry<String, ContractsTrait.Contract> entry : constraints.getValues().entrySet()) {
-            events.addAll(validatePath(model, shape, constraints, entry.getValue().getExpression()));
+        for (ContractsTrait.Contract contract : constraints.getValues()) {
+            events.addAll(validatePath(model, shape, constraints, contract.getExpression()));
         }
         return events;
     }

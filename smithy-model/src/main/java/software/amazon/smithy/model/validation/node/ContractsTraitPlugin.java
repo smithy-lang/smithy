@@ -21,8 +21,8 @@ public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node,
 
     @Override
     protected void check(Shape shape, ContractsTrait trait, Node value, Context context, Emitter emitter) {
-        for (Map.Entry<String, ContractsTrait.Contract> entry : trait.getValues().entrySet()) {
-            checkContract(shape, entry.getValue(), value, context, emitter);
+        for (ContractsTrait.Contract contract : trait.getValues()) {
+            checkContract(shape, contract, value, context, emitter);
         }
     }
 
@@ -30,6 +30,7 @@ public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node,
         JmespathExpression expression = JmespathExpression.parse(contract.getExpression());
         Evaluator<Node> evaluator = new Evaluator<>(value, new NodeAdaptor());
         Node result = evaluator.visit(expression);
+        // TODO: Or should it be isTruthy()?
         if (!result.expectBooleanNode().getValue()) {
             emitter.accept(value,
                     getSeverity(context),
