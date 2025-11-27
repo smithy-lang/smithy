@@ -2,6 +2,7 @@ package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.Adaptor;
+import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -65,8 +66,23 @@ public class NodeAdaptor implements Adaptor<Node> {
     }
 
     @Override
-    public List<Node> toList(Node value) {
-        return value.expectArrayNode().getElements();
+    public Node length(Node value) {
+        switch (value.getType()) {
+            case OBJECT: return createNumber(value.expectObjectNode().size());
+            case ARRAY: return createNumber(value.expectArrayNode().size());
+            case STRING: return createNumber(EvaluationUtils.codePointCount(value.expectStringNode().getValue()));
+            default: throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public Node getArrayElement(Node array, Node index) {
+        return array.expectArrayNode().get(index.expectNumberNode().getValue().intValue()).orElseGet(this::createNull);
+    }
+
+    @Override
+    public Iterable<Node> getArrayIterator(Node array) {
+        return array.expectArrayNode().getElements();
     }
 
     @Override
@@ -94,14 +110,21 @@ public class NodeAdaptor implements Adaptor<Node> {
     }
 
     @Override
-    public Node getProperty(Node value, Node name) {
-        Optional<Node> result = value.expectObjectNode().getMember(name.expectStringNode().getValue());
-        return result.orElseGet(this::createNull);
+    public Node getKeys(Node value) {
+        // TODO: Bit inefficient, but does it matter?
+        // If it does this can be be more of a lazy proxy.
+        // Could provide a generic List<T> implementation for this.
+        ArrayBuilder<Node> arrayBuilder = arrayBuilder();
+        for (StringNode key : value.expectObjectNode().getMembers().keySet()) {
+            arrayBuilder.add(key);
+        }
+        return arrayBuilder.build();
     }
 
     @Override
-    public Collection<? extends Node> getPropertyNames(Node value) {
-        return value.expectObjectNode().getMembers().keySet();
+    public Node getValue(Node value, Node name) {
+        Optional<Node> result = value.expectObjectNode().getMember(name.expectStringNode().getValue());
+        return result.orElseGet(this::createNull);
     }
 
     @Override

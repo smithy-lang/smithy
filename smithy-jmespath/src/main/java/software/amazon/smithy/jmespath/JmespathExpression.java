@@ -7,6 +7,7 @@ package software.amazon.smithy.jmespath;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.Adaptor;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 
 /**
@@ -81,5 +82,13 @@ public abstract class JmespathExpression {
         TypeChecker typeChecker = new TypeChecker(currentNode, problems);
         LiteralExpression result = this.accept(typeChecker);
         return new LinterResult(result.getType(), problems);
+    }
+
+    public LiteralExpression evaluate(LiteralExpression currentNode) {
+        return evaluate(currentNode, new LiteralExpressionAdaptor());
+    }
+
+    public <T> T evaluate(T currentNode, Adaptor<T> adaptor) {
+        return new Evaluator<>(currentNode, adaptor).visit(this);
     }
 }

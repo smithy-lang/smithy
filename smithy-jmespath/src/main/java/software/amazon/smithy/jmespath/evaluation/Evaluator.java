@@ -28,15 +28,14 @@ import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.jmespath.functions.FunctionArgument;
 import software.amazon.smithy.jmespath.functions.FunctionDefinition;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.OptionalInt;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
+    // TODO: Try making this state mutable instead of creating lots of sub-Evaluators
     private final T current;
     private final Adaptor<T> adaptor;
 
@@ -58,9 +57,9 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T right = visit(comparatorExpression.getRight());
         switch (comparatorExpression.getComparator()) {
             case EQUAL:
-                return adaptor.createBoolean(Objects.equals(left, right));
+                return adaptor.createBoolean(adaptor.equal(left, right));
             case NOT_EQUAL:
-                return adaptor.createBoolean(!Objects.equals(left, right));
+                return adaptor.createBoolean(!adaptor.equal(left, right));
             // NOTE: Ordering operators >, >=, <, <= are only valid for numbers. All invalid
             // comparisons return null.
             case LESS_THAN:
@@ -111,7 +110,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return null;
         }
         Adaptor.ArrayBuilder<T> flattened = adaptor.arrayBuilder();
-        for (T val : adaptor.toList(value)) {
+        for (T val : adaptor.getArrayIterator(value)) {
             if (adaptor.typeOf(val).equals(RuntimeType.ARRAY)) {
                 flattened.addAll(val);
                 continue;
@@ -137,7 +136,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitField(FieldExpression fieldExpression) {
-        return adaptor.getProperty(current, adaptor.createString(fieldExpression.getName()));
+        return adaptor.getValue(current, adaptor.createString(fieldExpression.getName()));
     }
 
     @Override
@@ -146,15 +145,18 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (!adaptor.typeOf(current).equals(RuntimeType.ARRAY)) {
             return null;
         }
-        List<T> list = adaptor.toList(current);
+        // TODO: Capping at int here unnecessarily
+        // Perhaps define intLength() and return -1 if it doesn't fit?
+        // Although technically IndexExpression should be using a Number instead of an int in the first place
+        int length = adaptor.toNumber(adaptor.length(current)).intValue();
         // Negative indices indicate reverse indexing in JMESPath
         if (index < 0) {
-            index = list.size() + index;
+            index = length + index;
         }
-        if (list.size() <= index || index < 0) {
+        if (length <= index || index < 0) {
             return null;
         }
-        return list.get(index);
+        return adaptor.getArrayElement(current, adaptor.createNumber(index));
     }
 
     @Override
@@ -240,7 +242,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return null;
         }
         Adaptor.ArrayBuilder<T> projectedResults = adaptor.arrayBuilder();
-        for (T result : adaptor.toList(resultList)) {
+        for (T result : adaptor.getArrayIterator(resultList)) {
             T projected = new Evaluator<T>(result, adaptor).visit(projectionExpression.getRight());
             if (!adaptor.typeOf(projected).equals(RuntimeType.NULL)) {
                 projectedResults.add(projected);
@@ -256,7 +258,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return null;
         }
         Adaptor.ArrayBuilder<T> results = adaptor.arrayBuilder();
-        for (T val : adaptor.toList(left)) {
+        for (T val : adaptor.getArrayIterator(left)) {
             T output = new Evaluator<T>(val, adaptor).visit(filterProjectionExpression.getComparison());
             if (adaptor.isTruthy(output)) {
                 T result = new Evaluator<T>(val, adaptor).visit(filterProjectionExpression.getRight());
@@ -275,8 +277,8 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return null;
         }
         Adaptor.ArrayBuilder<T> projectedResults = adaptor.arrayBuilder();
-        for (T member : adaptor.getPropertyNames(resultObject)) {
-            T memberValue = adaptor.getProperty(resultObject, member);
+        for (T member : adaptor.getArrayIterator(adaptor.getKeys(resultObject))) {
+            T memberValue = adaptor.getValue(resultObject, member);
             if (!adaptor.typeOf(memberValue).equals(RuntimeType.NULL)) {
                 T projectedResult = new Evaluator<T>(memberValue, adaptor).visit(objectProjectionExpression.getRight());
                 if (projectedResult != null) {
@@ -289,29 +291,18 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitSlice(SliceExpression sliceExpression) {
-        Adaptor.ArrayBuilder<T> output = adaptor.arrayBuilder();
-        List<T> currentList = adaptor.toList(current);
-        int step = sliceExpression.getStep();
-        int start = sliceExpression.getStart().orElseGet(() -> step > 0 ? 0 : currentList.size());
-        if (start < 0) {
-            start = currentList.size() + start;
-        }
-        int stop = sliceExpression.getStop().orElseGet(() -> step > 0 ? currentList.size() : 0);
-        if (stop < 0) {
-            stop = currentList.size() + stop;
-        }
+        return adaptor.slice(current,
+                optionalNumber(sliceExpression.getStart()),
+                optionalNumber(sliceExpression.getStop()),
+                adaptor.createNumber(sliceExpression.getStep()));
+    }
 
-        if (start < stop) {
-            for (int idx = start; idx < stop; idx += step) {
-                output.add(currentList.get(idx));
-            }
+    private T optionalNumber(OptionalInt optionalInt) {
+        if (optionalInt.isPresent()) {
+            return adaptor.createNumber(optionalInt.getAsInt());
         } else {
-            // List is iterating in reverse
-            for (int idx = start; idx > stop; idx += step) {
-                output.add(currentList.get(idx - 1));
-            }
+            return adaptor.createNull();
         }
-        return output.build();
     }
 
     @Override
