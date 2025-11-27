@@ -13,12 +13,31 @@ public interface Adaptor<T> extends Comparator<T> {
         return typeOf(value).equals(type);
     }
 
-    boolean isTruthy(T value);
+    default boolean isTruthy(T value) {
+        switch (typeOf(value)) {
+            case NULL:  return false;
+            case BOOLEAN: return toBoolean(value);
+            case STRING: return !toString(value).isEmpty();
+            case NUMBER: return true;
+            case ARRAY: return !toList(value).isEmpty();
+            case OBJECT: return !getPropertyNames(value).isEmpty();
+            default: throw new IllegalStateException();
+        }
+    }
 
     T createNull();
+
     T createBoolean(boolean b);
+
+    boolean toBoolean(T value);
+
     T createString(String string);
+
+    String toString(T value);
+
     T createNumber(Number value);
+
+    Number toNumber(T value);
 
     // Arrays
 
@@ -39,14 +58,22 @@ public interface Adaptor<T> extends Comparator<T> {
 
     T getProperty(T value, T name);
 
-    Collection<T> getPropertyNames(T value);
+    Collection<? extends T> getPropertyNames(T value);
 
     ObjectBuilder<T> objectBuilder();
 
     interface ObjectBuilder<T> {
         void put(T key, T value);
+        void putAll(T object);
         T build();
     }
 
     // TODO: T parseJson(String)?
+
+    // TODO: Move somewhere better and make this a default implementation of Adaptor.compare
+    default int compare(T a, T b) {
+        return EvaluationUtils.compareNumbersWithPromotion(toNumber(a), toNumber(b));
+    }
+
+
 }

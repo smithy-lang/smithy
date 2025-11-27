@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.evaluation.Adaptor;
+import software.amazon.smithy.jmespath.functions.FunctionArgument;
 
 /**
  * Executes a function by name using a list of argument expressions.

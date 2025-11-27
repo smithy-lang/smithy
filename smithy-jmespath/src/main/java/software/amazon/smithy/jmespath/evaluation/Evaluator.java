@@ -25,8 +25,11 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
+import software.amazon.smithy.jmespath.functions.FunctionArgument;
 import software.amazon.smithy.jmespath.functions.FunctionDefinition;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,21 +124,15 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitFunction(FunctionExpression functionExpression) {
         FunctionDefinition function = FunctionDefinition.from(functionExpression.getName());
-        List<T> arguments = new ArrayList<>();
-        ExpressionTypeExpression functionReference = null;
-        for (var expr : functionExpression.getArguments()) {
-            // Store up to one function reference for passing to jmespath functions
-            if (expr instanceof ExpressionTypeExpression exprType) {
-                if (functionReference != null) {
-                    throw new IllegalArgumentException(
-                            "JMESPath functions only support a single function reference");
-                }
-                functionReference = exprType;
-                continue;
+        List<FunctionArgument<T>> arguments = new ArrayList<>();
+        for (JmespathExpression expr : functionExpression.getArguments()) {
+            if (expr instanceof ExpressionTypeExpression) {
+                arguments.add(FunctionArgument.of(((ExpressionTypeExpression)expr).getExpression()));
+            } else {
+                arguments.add(FunctionArgument.of(visit(expr)));
             }
-            arguments.add(visit(expr));
         }
-        return function.apply(arguments, functionReference);
+        return function.apply(adaptor, arguments);
     }
 
     @Override
