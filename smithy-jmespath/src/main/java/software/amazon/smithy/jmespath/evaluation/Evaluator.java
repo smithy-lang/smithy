@@ -35,13 +35,14 @@ import java.util.OptionalInt;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
+    private final Runtime<T> runtime;
+
     // TODO: Try making this state mutable instead of creating lots of sub-Evaluators
     private final T current;
-    private final Adaptor<T> adaptor;
 
-    public Evaluator(T current, Adaptor<T> adaptor) {
+    public Evaluator(T current, Runtime<T> runtime) {
         this.current = current;
-        this.adaptor = adaptor;
+        this.runtime = runtime;
     }
 
     public T visit(JmespathExpression expression) {
@@ -57,34 +58,34 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T right = visit(comparatorExpression.getRight());
         switch (comparatorExpression.getComparator()) {
             case EQUAL:
-                return adaptor.createBoolean(adaptor.equal(left, right));
+                return runtime.createBoolean(runtime.equal(left, right));
             case NOT_EQUAL:
-                return adaptor.createBoolean(!adaptor.equal(left, right));
+                return runtime.createBoolean(!runtime.equal(left, right));
             // NOTE: Ordering operators >, >=, <, <= are only valid for numbers. All invalid
             // comparisons return null.
             case LESS_THAN:
-                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
-                    return adaptor.createBoolean(adaptor.compare(left, right) < 0);
+                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
+                    return runtime.createBoolean(runtime.compare(left, right) < 0);
                 } else {
-                    return adaptor.createNull();
+                    return runtime.createNull();
                 }
             case LESS_THAN_EQUAL:
-                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
-                    return adaptor.createBoolean(adaptor.compare(left, right) <= 0);
+                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
+                    return runtime.createBoolean(runtime.compare(left, right) <= 0);
                 } else {
-                    return adaptor.createNull();
+                    return runtime.createNull();
                 }
             case GREATER_THAN:
-                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
-                    return adaptor.createBoolean(adaptor.compare(left, right) > 0);
+                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
+                    return runtime.createBoolean(runtime.compare(left, right) > 0);
                 } else {
-                    return adaptor.createNull();
+                    return runtime.createNull();
                 }
             case GREATER_THAN_EQUAL:
-                if (adaptor.is(left, RuntimeType.NUMBER) && adaptor.is(right, RuntimeType.NUMBER)) {
-                    return adaptor.createBoolean(adaptor.compare(left, right) >= 0);
+                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
+                    return runtime.createBoolean(runtime.compare(left, right) >= 0);
                 } else {
-                    return adaptor.createNull();
+                    return runtime.createNull();
                 }
             default:
                 throw new IllegalArgumentException("Unsupported comparator: " + comparatorExpression.getComparator());
@@ -106,12 +107,12 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T value = visit(flattenExpression.getExpression());
 
         // Only lists can be flattened.
-        if (!adaptor.typeOf(value).equals(RuntimeType.ARRAY)) {
+        if (!runtime.typeOf(value).equals(RuntimeType.ARRAY)) {
             return null;
         }
-        Adaptor.ArrayBuilder<T> flattened = adaptor.arrayBuilder();
-        for (T val : adaptor.getArrayIterator(value)) {
-            if (adaptor.typeOf(val).equals(RuntimeType.ARRAY)) {
+        Runtime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
+        for (T val : runtime.iterate(value)) {
+            if (runtime.typeOf(val).equals(RuntimeType.ARRAY)) {
                 flattened.addAll(val);
                 continue;
             }
@@ -131,24 +132,24 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
                 arguments.add(FunctionArgument.of(visit(expr)));
             }
         }
-        return function.apply(adaptor, arguments);
+        return function.apply(runtime, arguments);
     }
 
     @Override
     public T visitField(FieldExpression fieldExpression) {
-        return adaptor.getValue(current, adaptor.createString(fieldExpression.getName()));
+        return runtime.value(current, runtime.createString(fieldExpression.getName()));
     }
 
     @Override
     public T visitIndex(IndexExpression indexExpression) {
         int index = indexExpression.getIndex();
-        if (!adaptor.typeOf(current).equals(RuntimeType.ARRAY)) {
+        if (!runtime.typeOf(current).equals(RuntimeType.ARRAY)) {
             return null;
         }
         // TODO: Capping at int here unnecessarily
         // Perhaps define intLength() and return -1 if it doesn't fit?
         // Although technically IndexExpression should be using a Number instead of an int in the first place
-        int length = adaptor.toNumber(adaptor.length(current)).intValue();
+        int length = runtime.toNumber(runtime.length(current)).intValue();
         // Negative indices indicate reverse indexing in JMESPath
         if (index < 0) {
             index = length + index;
@@ -156,45 +157,40 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (length <= index || index < 0) {
             return null;
         }
-        return adaptor.getArrayElement(current, adaptor.createNumber(index));
+        return runtime.element(current, runtime.createNumber(index));
     }
 
     @Override
     public T visitLiteral(LiteralExpression literalExpression) {
         if (literalExpression.isNumberValue()) {
-            // TODO: Remove this check by correcting behavior in smithy-jmespath to correctly
-            //       handle int vs double
-            Number value = literalExpression.expectNumberValue();
-            if (value.doubleValue() == Math.floor(value.doubleValue())) {
-                return adaptor.createNumber(value.longValue());
-            }
+            return runtime.createNumber(literalExpression.expectNumberValue());
         } else if (literalExpression.isArrayValue()) {
-            Adaptor.ArrayBuilder<T> result = adaptor.arrayBuilder();
+            Runtime.ArrayBuilder<T> result = runtime.arrayBuilder();
             for (Object item : literalExpression.expectArrayValue()) {
                 result.add(visit(LiteralExpression.from(item)));
             }
             return result.build();
         } else if (literalExpression.isObjectValue()) {
-            Adaptor.ObjectBuilder<T> result = adaptor.objectBuilder();
+            Runtime.ObjectBuilder<T> result = runtime.objectBuilder();
             for (Map.Entry<String, Object> entry : literalExpression.expectObjectValue().entrySet()) {
-                T key = adaptor.createString(entry.getKey());
+                T key = runtime.createString(entry.getKey());
                 T value = visit(LiteralExpression.from(entry.getValue()));
                 result.put(key, value);
             }
             return result.build();
         } else if (literalExpression.isStringValue()) {
-            return adaptor.createString(literalExpression.expectStringValue());
+            return runtime.createString(literalExpression.expectStringValue());
         } else if (literalExpression.isBooleanValue()) {
-            return adaptor.createBoolean(literalExpression.expectBooleanValue());
+            return runtime.createBoolean(literalExpression.expectBooleanValue());
         } else if (literalExpression.isNullValue()) {
-            return adaptor.createNull();
+            return runtime.createNull();
         }
         throw new IllegalArgumentException(String.format("Unrecognized literal: %s", literalExpression));
     }
 
     @Override
     public T visitMultiSelectList(MultiSelectListExpression multiSelectListExpression) {
-        Adaptor.ArrayBuilder<T> output = adaptor.arrayBuilder();
+        Runtime.ArrayBuilder<T> output = runtime.arrayBuilder();
         for (JmespathExpression exp : multiSelectListExpression.getExpressions()) {
             output.add(visit(exp));
         }
@@ -205,9 +201,9 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitMultiSelectHash(MultiSelectHashExpression multiSelectHashExpression) {
-        Adaptor.ObjectBuilder<T> output = adaptor.objectBuilder();
+        Runtime.ObjectBuilder<T> output = runtime.objectBuilder();
         for (Map.Entry<String, JmespathExpression> expEntry : multiSelectHashExpression.getExpressions().entrySet()) {
-            output.put(adaptor.createString(expEntry.getKey()), visit(expEntry.getValue()));
+            output.put(runtime.createString(expEntry.getKey()), visit(expEntry.getValue()));
         }
         // TODO: original smithy-java has output.isEmpty() ? null : Document.of(output);
         // but that doesn't seem to match the spec
@@ -217,13 +213,13 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitAnd(AndExpression andExpression) {
         T left = visit(andExpression.getLeft());
-        return adaptor.isTruthy(left) ? visit(andExpression.getRight()) : left;
+        return runtime.isTruthy(left) ? visit(andExpression.getRight()) : left;
     }
 
     @Override
     public T visitOr(OrExpression orExpression) {
         T left = visit(orExpression.getLeft());
-        if (adaptor.isTruthy(left)) {
+        if (runtime.isTruthy(left)) {
             return left;
         }
         return orExpression.getRight().accept(this);
@@ -232,19 +228,19 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitNot(NotExpression notExpression) {
         T output = visit(notExpression.getExpression());
-        return adaptor.createBoolean(!adaptor.isTruthy(output));
+        return runtime.createBoolean(!runtime.isTruthy(output));
     }
 
     @Override
     public T visitProjection(ProjectionExpression projectionExpression) {
         T resultList = visit(projectionExpression.getLeft());
-        if (!adaptor.typeOf(resultList).equals(RuntimeType.ARRAY)) {
+        if (!runtime.typeOf(resultList).equals(RuntimeType.ARRAY)) {
             return null;
         }
-        Adaptor.ArrayBuilder<T> projectedResults = adaptor.arrayBuilder();
-        for (T result : adaptor.getArrayIterator(resultList)) {
-            T projected = new Evaluator<T>(result, adaptor).visit(projectionExpression.getRight());
-            if (!adaptor.typeOf(projected).equals(RuntimeType.NULL)) {
+        Runtime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
+        for (T result : runtime.iterate(resultList)) {
+            T projected = new Evaluator<T>(result, runtime).visit(projectionExpression.getRight());
+            if (!runtime.typeOf(projected).equals(RuntimeType.NULL)) {
                 projectedResults.add(projected);
             }
         }
@@ -254,14 +250,14 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitFilterProjection(FilterProjectionExpression filterProjectionExpression) {
         T left = visit(filterProjectionExpression.getLeft());
-        if (!adaptor.typeOf(left).equals(RuntimeType.ARRAY)) {
+        if (!runtime.typeOf(left).equals(RuntimeType.ARRAY)) {
             return null;
         }
-        Adaptor.ArrayBuilder<T> results = adaptor.arrayBuilder();
-        for (T val : adaptor.getArrayIterator(left)) {
-            T output = new Evaluator<T>(val, adaptor).visit(filterProjectionExpression.getComparison());
-            if (adaptor.isTruthy(output)) {
-                T result = new Evaluator<T>(val, adaptor).visit(filterProjectionExpression.getRight());
+        Runtime.ArrayBuilder<T> results = runtime.arrayBuilder();
+        for (T val : runtime.iterate(left)) {
+            T output = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getComparison());
+            if (runtime.isTruthy(output)) {
+                T result = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getRight());
                 if (result != null) {
                     results.add(result);
                 }
@@ -273,14 +269,14 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitObjectProjection(ObjectProjectionExpression objectProjectionExpression) {
         T resultObject = visit(objectProjectionExpression.getLeft());
-        if (!adaptor.typeOf(resultObject).equals(RuntimeType.OBJECT)) {
+        if (!runtime.typeOf(resultObject).equals(RuntimeType.OBJECT)) {
             return null;
         }
-        Adaptor.ArrayBuilder<T> projectedResults = adaptor.arrayBuilder();
-        for (T member : adaptor.getArrayIterator(adaptor.getKeys(resultObject))) {
-            T memberValue = adaptor.getValue(resultObject, member);
-            if (!adaptor.typeOf(memberValue).equals(RuntimeType.NULL)) {
-                T projectedResult = new Evaluator<T>(memberValue, adaptor).visit(objectProjectionExpression.getRight());
+        Runtime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
+        for (T member : runtime.iterate(runtime.keys(resultObject))) {
+            T memberValue = runtime.value(resultObject, member);
+            if (!runtime.typeOf(memberValue).equals(RuntimeType.NULL)) {
+                T projectedResult = new Evaluator<T>(memberValue, runtime).visit(objectProjectionExpression.getRight());
                 if (projectedResult != null) {
                     projectedResults.add(projectedResult);
                 }
@@ -291,23 +287,23 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitSlice(SliceExpression sliceExpression) {
-        return adaptor.slice(current,
+        return runtime.slice(current,
                 optionalNumber(sliceExpression.getStart()),
                 optionalNumber(sliceExpression.getStop()),
-                adaptor.createNumber(sliceExpression.getStep()));
+                runtime.createNumber(sliceExpression.getStep()));
     }
 
     private T optionalNumber(OptionalInt optionalInt) {
         if (optionalInt.isPresent()) {
-            return adaptor.createNumber(optionalInt.getAsInt());
+            return runtime.createNumber(optionalInt.getAsInt());
         } else {
-            return adaptor.createNull();
+            return runtime.createNull();
         }
     }
 
     @Override
     public T visitSubexpression(Subexpression subexpression) {
         T left = visit(subexpression.getLeft());
-        return new Evaluator<>(left, adaptor).visit(subexpression.getRight());
+        return new Evaluator<>(left, runtime).visit(subexpression.getRight());
     }
 }

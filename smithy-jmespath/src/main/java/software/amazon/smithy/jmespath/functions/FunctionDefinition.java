@@ -12,7 +12,7 @@ import java.util.Map;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.Adaptor;
+import software.amazon.smithy.jmespath.evaluation.Runtime;
 
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
@@ -142,7 +142,7 @@ public final class FunctionDefinition {
         };
     }
 
-    public <T> T apply(Adaptor<T> adaptor, List<FunctionArgument<T>> arguments) {
+    public <T> T apply(Runtime<T> runtime, List<FunctionArgument<T>> arguments) {
         throw new UnsupportedOperationException();
     }
 }

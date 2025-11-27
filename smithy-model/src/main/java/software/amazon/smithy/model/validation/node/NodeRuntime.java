@@ -1,7 +1,7 @@
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.jmespath.RuntimeType;
-import software.amazon.smithy.jmespath.evaluation.Adaptor;
+import software.amazon.smithy.jmespath.evaluation.Runtime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -11,11 +11,9 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.NumberNode;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
-public class NodeAdaptor implements Adaptor<Node> {
+public class NodeRuntime implements Runtime<Node> {
 
     @Override
     public RuntimeType typeOf(Node value) {
@@ -76,12 +74,12 @@ public class NodeAdaptor implements Adaptor<Node> {
     }
 
     @Override
-    public Node getArrayElement(Node array, Node index) {
+    public Node element(Node array, Node index) {
         return array.expectArrayNode().get(index.expectNumberNode().getValue().intValue()).orElseGet(this::createNull);
     }
 
     @Override
-    public Iterable<Node> getArrayIterator(Node array) {
+    public Iterable<Node> iterate(Node array) {
         return array.expectArrayNode().getElements();
     }
 
@@ -110,7 +108,7 @@ public class NodeAdaptor implements Adaptor<Node> {
     }
 
     @Override
-    public Node getKeys(Node value) {
+    public Node keys(Node value) {
         // TODO: Bit inefficient, but does it matter?
         // If it does this can be be more of a lazy proxy.
         // Could provide a generic List<T> implementation for this.
@@ -122,7 +120,7 @@ public class NodeAdaptor implements Adaptor<Node> {
     }
 
     @Override
-    public Node getValue(Node value, Node name) {
+    public Node value(Node value, Node name) {
         Optional<Node> result = value.expectObjectNode().getMember(name.expectStringNode().getValue());
         return result.orElseGet(this::createNull);
     }

@@ -2,12 +2,11 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
-public interface Adaptor<T> extends Comparator<T> {
+public interface Runtime<T> extends Comparator<T> {
+
     RuntimeType typeOf(T value);
 
     default boolean is(T value, RuntimeType type) {
@@ -20,8 +19,8 @@ public interface Adaptor<T> extends Comparator<T> {
             case BOOLEAN: return toBoolean(value);
             case STRING: return !toString(value).isEmpty();
             case NUMBER: return true;
-            case ARRAY: return !getArrayIterator(value).iterator().hasNext();
-            case OBJECT: return isTruthy(getKeys(value));
+            case ARRAY: return !iterate(value).iterator().hasNext();
+            case OBJECT: return isTruthy(keys(value));
             default: throw new IllegalStateException();
         }
     }
@@ -50,13 +49,14 @@ public interface Adaptor<T> extends Comparator<T> {
 
     // Arrays
 
+    // TODO: Might be better as a Number
     T length(T value);
 
-    // TODO: rename to element
-    T getArrayElement(T array, T index);
+    T element(T array, T index);
 
     default T slice(T array, T startNumber, T stopNumber, T stepNumber) {
-        Adaptor.ArrayBuilder<T> output = arrayBuilder();
+        // TODO: Move to a static method somewhere
+        Runtime.ArrayBuilder<T> output = arrayBuilder();
         int length = toNumber(length(array)).intValue();
         int step = toNumber(stepNumber).intValue();
         int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : toNumber(startNumber).intValue();
@@ -71,19 +71,18 @@ public interface Adaptor<T> extends Comparator<T> {
         if (start < stop) {
             // TODO: Use iterate(...) when step == 1
             for (int idx = start; idx < stop; idx += step) {
-                output.add(getArrayElement(array, createNumber(idx)));
+                output.add(element(array, createNumber(idx)));
             }
         } else {
             // List is iterating in reverse
             for (int idx = start; idx > stop; idx += step) {
-                output.add(getArrayElement(array, createNumber(idx - 1)));
+                output.add(element(array, createNumber(idx - 1)));
             }
         }
         return output.build();
     }
 
-    // TODO: rename to iterate
-    Iterable<T> getArrayIterator(T array);
+    Iterable<T> iterate(T array);
 
     ArrayBuilder<T> arrayBuilder();
 
@@ -95,11 +94,9 @@ public interface Adaptor<T> extends Comparator<T> {
 
     // Objects
 
-    // TODO: rename to keys
-    T getKeys(T value);
+    T keys(T value);
 
-    // TODO: rename to value
-    T getValue(T value, T name);
+    T value(T value, T name);
 
     ObjectBuilder<T> objectBuilder();
 
@@ -110,4 +107,6 @@ public interface Adaptor<T> extends Comparator<T> {
     }
 
     // TODO: T parseJson(String)?
+    // Only worth it if we make parsing use the runtime as well,
+    // and recognize LiteralExpressions that are wrapping a T somehow.
 }
