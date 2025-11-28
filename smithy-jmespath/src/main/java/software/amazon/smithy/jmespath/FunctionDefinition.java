@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath.functions;
+package software.amazon.smithy.jmespath;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.functions.FunctionArgument;
 
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
@@ -25,9 +25,9 @@ import static software.amazon.smithy.jmespath.ast.LiteralExpression.STRING;
  * Defines the positional arguments, variadic arguments, and return value
  * of JMESPath functions.
  */
-public final class FunctionDefinition {
+final class FunctionDefinition {
 
-    public static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
+    static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
 
     static {
         FunctionDefinition.ArgValidator isAny = isType(RuntimeType.ANY);

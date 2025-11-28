@@ -2,8 +2,27 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EvaluationUtils {
+
+    private static Map<Class<? extends Number>, NumberType> numberTypeCache = new HashMap<>();
+    static {
+        numberTypeCache.put(Byte.class, NumberType.BYTE);
+        numberTypeCache.put(Short.class, NumberType.SHORT);
+        numberTypeCache.put(Integer.class, NumberType.INTEGER);
+        numberTypeCache.put(Long.class, NumberType.LONG);
+        numberTypeCache.put(Float.class, NumberType.FLOAT);
+        numberTypeCache.put(Double.class, NumberType.DOUBLE);
+        numberTypeCache.put(BigInteger.class, NumberType.BIG_INTEGER);
+        numberTypeCache.put(BigDecimal.class, NumberType.BIG_DECIMAL);
+    }
+
+    public static NumberType numberType(Number number) {
+        return numberTypeCache.get(number.getClass());
+    }
+
     // Emulate JLS 5.1.2 type promotion.
     static int compareNumbersWithPromotion(Number a, Number b) {
         // Exact matches.

@@ -19,8 +19,11 @@ public interface Runtime<T> extends Comparator<T> {
             case BOOLEAN: return toBoolean(value);
             case STRING: return !toString(value).isEmpty();
             case NUMBER: return true;
-            case ARRAY: return !iterate(value).iterator().hasNext();
-            case OBJECT: return isTruthy(keys(value));
+            case ARRAY:
+            case OBJECT:
+                // This is likely a bit faster than calling length
+                // (allocating a Number) and checking > 0.
+                return iterate(value).iterator().hasNext();
             default: throw new IllegalStateException();
         }
     }
@@ -45,19 +48,20 @@ public interface Runtime<T> extends Comparator<T> {
 
     T createNumber(Number value);
 
+    NumberType numberType(T value);
+
     Number toNumber(T value);
 
     // Arrays
 
-    // TODO: Might be better as a Number
-    T length(T value);
+    Number length(T value);
 
     T element(T array, T index);
 
     default T slice(T array, T startNumber, T stopNumber, T stepNumber) {
         // TODO: Move to a static method somewhere
         Runtime.ArrayBuilder<T> output = arrayBuilder();
-        int length = toNumber(length(array)).intValue();
+        int length = length(array).intValue();
         int step = toNumber(stepNumber).intValue();
         int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : toNumber(startNumber).intValue();
         if (start < 0) {
@@ -87,8 +91,11 @@ public interface Runtime<T> extends Comparator<T> {
     ArrayBuilder<T> arrayBuilder();
 
     interface ArrayBuilder<T> {
+
         void add(T value);
+
         void addAll(T array);
+
         T build();
     }
 
@@ -101,8 +108,11 @@ public interface Runtime<T> extends Comparator<T> {
     ObjectBuilder<T> objectBuilder();
 
     interface ObjectBuilder<T> {
+
         void put(T key, T value);
+
         void putAll(T object);
+
         T build();
     }
 

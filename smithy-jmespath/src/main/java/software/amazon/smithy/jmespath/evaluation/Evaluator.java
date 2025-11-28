@@ -26,7 +26,8 @@ import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.jmespath.functions.FunctionArgument;
-import software.amazon.smithy.jmespath.functions.FunctionDefinition;
+import software.amazon.smithy.jmespath.functions.Function;
+import software.amazon.smithy.jmespath.functions.FunctionRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,13 +124,13 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitFunction(FunctionExpression functionExpression) {
-        FunctionDefinition function = FunctionDefinition.from(functionExpression.getName());
+        Function function = FunctionRegistry.lookup(functionExpression.getName());
         List<FunctionArgument<T>> arguments = new ArrayList<>();
         for (JmespathExpression expr : functionExpression.getArguments()) {
             if (expr instanceof ExpressionTypeExpression) {
-                arguments.add(FunctionArgument.of(((ExpressionTypeExpression)expr).getExpression()));
+                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression)expr).getExpression()));
             } else {
-                arguments.add(FunctionArgument.of(visit(expr)));
+                arguments.add(FunctionArgument.of(runtime, visit(expr)));
             }
         }
         return function.apply(runtime, arguments);
@@ -149,7 +150,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         // TODO: Capping at int here unnecessarily
         // Perhaps define intLength() and return -1 if it doesn't fit?
         // Although technically IndexExpression should be using a Number instead of an int in the first place
-        int length = runtime.toNumber(runtime.length(current)).intValue();
+        int length = runtime.length(current).intValue();
         // Negative indices indicate reverse indexing in JMESPath
         if (index < 0) {
             index = length + index;

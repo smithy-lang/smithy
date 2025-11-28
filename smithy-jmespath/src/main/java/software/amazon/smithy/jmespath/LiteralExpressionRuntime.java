@@ -1,6 +1,7 @@
 package software.amazon.smithy.jmespath;
 
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.Runtime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 
@@ -10,8 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Or "TypeCheckerAdaptor"
+// TODO: Or "TypeCheckerRuntime"
 public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
+
+    // TODO: Add problems, or make a separate TypeCheckerRuntime that subclasses this
+
     @Override
     public RuntimeType typeOf(LiteralExpression value) {
         return value.getType();
@@ -48,16 +52,21 @@ public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
     }
 
     @Override
+    public NumberType numberType(LiteralExpression value) {
+        return EvaluationUtils.numberType(value.expectNumberValue());
+    }
+
+    @Override
     public Number toNumber(LiteralExpression value) {
         return value.expectNumberValue();
     }
 
     @Override
-    public LiteralExpression length(LiteralExpression value) {
+    public Number length(LiteralExpression value) {
         switch (value.getType()) {
-            case STRING: return LiteralExpression.from(EvaluationUtils.codePointCount(value.expectStringValue()));
-            case ARRAY: return LiteralExpression.from(value.expectArrayValue().size());
-            case OBJECT: return LiteralExpression.from(value.expectObjectValue().size());
+            case STRING: return EvaluationUtils.codePointCount(value.expectStringValue());
+            case ARRAY: return value.expectArrayValue().size();
+            case OBJECT: return value.expectObjectValue().size();
             default: throw new IllegalStateException();
         }
     }
@@ -69,27 +78,31 @@ public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
 
     @Override
     public Iterable<LiteralExpression> iterate(LiteralExpression array) {
-        return new ArrayIterable(array.expectArrayValue());
+        switch (array.getType()) {
+            case ARRAY: return new WrappingIterable(array.expectArrayValue());
+            case OBJECT: return new WrappingIterable(array.expectObjectValue().keySet());
+            default: throw new IllegalStateException("invalid-type");
+        }
     }
 
-    private static class ArrayIterable implements Iterable<LiteralExpression> {
+    private static class WrappingIterable implements Iterable<LiteralExpression> {
 
-        private final Iterable<Object> inner;
+        private final Iterable<?> inner;
 
-        private ArrayIterable(Iterable<Object> inner) {
+        private WrappingIterable(Iterable<?> inner) {
             this.inner = inner;
         }
 
         @Override
         public Iterator<LiteralExpression> iterator() {
-            return new ArrayIterator(inner.iterator());
+            return new WrappingIterator(inner.iterator());
         }
 
-        private static class ArrayIterator implements Iterator<LiteralExpression> {
+        private static class WrappingIterator implements Iterator<LiteralExpression> {
 
-            private final Iterator<Object> inner;
+            private final Iterator<?> inner;
 
-            private ArrayIterator(Iterator<Object> inner) {
+            private WrappingIterator(Iterator<?> inner) {
                 this.inner = inner;
             }
 
