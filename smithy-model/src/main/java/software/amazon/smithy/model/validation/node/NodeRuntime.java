@@ -1,6 +1,7 @@
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.Runtime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.model.SourceLocation;
@@ -59,16 +60,21 @@ public class NodeRuntime implements Runtime<Node> {
     }
 
     @Override
+    public NumberType numberType(Node value) {
+        return null;
+    }
+
+    @Override
     public Number toNumber(Node value) {
         return value.expectNumberNode().getValue();
     }
 
     @Override
-    public Node length(Node value) {
+    public Number length(Node value) {
         switch (value.getType()) {
-            case OBJECT: return createNumber(value.expectObjectNode().size());
-            case ARRAY: return createNumber(value.expectArrayNode().size());
-            case STRING: return createNumber(EvaluationUtils.codePointCount(value.expectStringNode().getValue()));
+            case OBJECT: return value.expectObjectNode().size();
+            case ARRAY: return value.expectArrayNode().size();
+            case STRING: return EvaluationUtils.codePointCount(value.expectStringNode().getValue());
             default: throw new IllegalArgumentException();
         }
     }
