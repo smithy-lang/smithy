@@ -250,6 +250,28 @@ public class ChangedDefaultTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedDefault").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedNullability").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedNullability.RemovedNullDefault").size(), equalTo(1));
+    }
+
+    @Test
+    public void changingFromZeroDefaultToNullIsBreaking() {
+        String originalModel =
+                "$version: \"2\"\n"
+                        + "namespace smithy.example\n"
+                        + "structure Foo {\n"
+                        + "    bar: Integer = 0\n"
+                        + "}\n";
+        String updatedModel =
+                "$version: \"2\"\n"
+                        + "namespace smithy.example\n"
+                        + "structure Foo {\n"
+                        + "    bar: Integer = null\n"
+                        + "}\n";
+        Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
+        Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedDefault").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedNullability.AddedNullDefault").size(), equalTo(1));
     }
 }

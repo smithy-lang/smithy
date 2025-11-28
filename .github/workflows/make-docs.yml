@@ -16,12 +16,15 @@ on:
 env:
   ARTIFACTS_DIR: /tmp/artifacts
 
+permissions:
+  contents: write
+
 jobs:
   build-docs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo 
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup
       run: |
         mkdir -p $ARTIFACTS_DIR
@@ -34,9 +37,11 @@ jobs:
         cache: gradle
 
     - name: Setup Node
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: latest
+        cache: npm
+        cache-dependency-path: "docs/landing-page/package-lock.json"
 
     - name: Build JavaDocs
       # run if 'javadocs' is not set to false 
@@ -65,7 +70,7 @@ jobs:
         rm $ARTIFACTS_DIR/objects.inv || true
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: smithy-docs
         path: ${{ env.ARTIFACTS_DIR }}
@@ -79,12 +84,12 @@ jobs:
     needs: build-docs
     steps:
     - name: Checkout GitHub pages branch
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: 'gh-pages'
     - name: Download artifacts
       id: download
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: smithy-docs
         path: /tmp/smithy-docs

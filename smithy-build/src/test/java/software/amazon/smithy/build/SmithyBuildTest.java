@@ -12,7 +12,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -23,6 +26,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -460,6 +464,47 @@ public class SmithyBuildTest {
     }
 
     @Test
+    public void appliesPluginsWithSharedSpace() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "testSharing1",
+                new TestSharingPlugin1(),
+                "testSharing2",
+                new TestSharingPlugin2());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("applies-plugins-with-shared-space.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        ProjectionResult projection = results.getProjectionResult("testProjection").get();
+
+        assertNotNull(source.getSharedManifest());
+        assertNotNull(projection.getSharedManifest());
+
+        MockManifest sourceManifest = (MockManifest) source.getSharedManifest();
+        MockManifest projectionManifest = (MockManifest) projection.getSharedManifest();
+
+        assertTrue(sourceManifest.hasFile("helloShare1"));
+        assertEquals("1", sourceManifest.getFileString("helloShare1").get());
+
+        assertTrue(projectionManifest.hasFile("helloShare1"));
+        assertEquals("2", projectionManifest.getFileString("helloShare1").get());
+
+        assertFalse(sourceManifest.hasFile("helloShare2"));
+
+        assertTrue(projectionManifest.hasFile("helloShare2"));
+        assertEquals("2", projectionManifest.getFileString("helloShare2").get());
+    }
+
+    @Test
     public void appliesSerialPlugins() throws Exception {
         Map<String, SmithyBuildPlugin> plugins = new LinkedHashMap<>();
         plugins.put("test1Serial", new Test1SerialPlugin());
@@ -537,6 +582,92 @@ public class SmithyBuildTest {
             assertTrue(result.getPluginManifest(pluginName).isPresent());
             assertTrue(result.getPluginManifest(pluginName).get().hasFile(outputFileName));
         }
+    }
+
+    @Test
+    public void topologicallySortsPlugins() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "timestampPlugin1",
+                new TimestampPlugin1(),
+                "timestampPlugin2",
+                new TimestampPlugin2(),
+                "timestampPlugin3",
+                new TimestampPlugin3());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("topologically-sorts-plugins.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        MockManifest manifest1 = (MockManifest) source.getPluginManifest("timestampPlugin1").get();
+        MockManifest manifest2 = (MockManifest) source.getPluginManifest("timestampPlugin2").get();
+        MockManifest manifest3 = (MockManifest) source.getPluginManifest("timestampPlugin3").get();
+
+        Instant instant1 = Instant.ofEpochMilli(Long.parseLong(manifest1.getFileString("timestamp").get()));
+        Instant instant2 = Instant.ofEpochMilli(Long.parseLong(manifest2.getFileString("timestamp").get()));
+        Instant instant3 = Instant.ofEpochMilli(Long.parseLong(manifest3.getFileString("timestamp").get()));
+
+        assertTrue(instant2.isBefore(instant1));
+        assertTrue(instant3.isAfter(instant1));
+    }
+
+    @Test
+    public void dependenciesAreSoft() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "timestampPlugin2",
+                new TimestampPlugin2(),
+                "timestampPlugin3",
+                new TimestampPlugin3());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("soft-plugin-dependencies.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        MockManifest manifest2 = (MockManifest) source.getPluginManifest("timestampPlugin2").get();
+        MockManifest manifest3 = (MockManifest) source.getPluginManifest("timestampPlugin3").get();
+
+        assertTrue(manifest2.hasFile("timestamp"));
+        assertTrue(manifest3.hasFile("timestamp"));
+    }
+
+    @Test
+    public void detectsPluginCycles() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "cyclicplugin1",
+                new CyclicPlugin1(),
+                "cyclicplugin2",
+                new CyclicPlugin2());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)),
+                () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("detects-plugin-cycles.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildException e = assertThrows(SmithyBuildException.class, builder::build);
+        assertThat(e.getMessage(), containsString("Cycle(s) detected"));
     }
 
     @Test

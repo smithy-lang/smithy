@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from contextlib import chdir
 from pathlib import Path
 
-from . import REPO_ROOT, Change
+from . import Change
 from .github import post_comment, post_review_comment
 
 DEFAULT_REPO = "smithy-lang/smithy"
@@ -127,7 +127,7 @@ def amend(
                     repository=repository,
                     pr_number=pr_number,
                     comment=comment,
-                    file=change_file,
+                    file=change_file.relative_to(repository_dir),
                     start_line=1,
                     end_line=len(change_file.read_text().splitlines()),
                 )
@@ -142,7 +142,7 @@ def _get_new_changes(repository_dir: Path, base: str | None) -> dict[Path, Chang
     with chdir(repository_dir):
         print(f"Running a diff against base branch: {base}")
         result = subprocess.run(
-            f"git diff origin/{base} --name-only",
+            f"git diff origin/{base} --name-only --diff-filter=A",
             check=True,
             shell=True,
             capture_output=True,
@@ -152,7 +152,7 @@ def _get_new_changes(repository_dir: Path, base: str | None) -> dict[Path, Chang
         for changed_file in result.stdout.decode("utf-8").splitlines():
             changed_file = changed_file.strip()
             if _is_staged_entry(changed_file):
-                file = REPO_ROOT / changed_file
+                file = repository_dir / changed_file
                 print(f"Discovered newly staged changelog entry: {file}")
                 new_changes[file] = Change.read(file)
 

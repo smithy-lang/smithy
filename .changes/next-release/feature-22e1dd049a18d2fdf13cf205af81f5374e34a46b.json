@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `NodeValidationVisitor` feature that enforces base64 encoding of blob values.",
+  "pull_requests": [
+    "[#2838](https://github.com/smithy-lang/smithy/pull/2838)"
+  ]
+}

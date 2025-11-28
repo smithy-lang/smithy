@@ -1,0 +1,2 @@
+[ERROR] smithy.example#PublishMessages: smithy.test#eventStreamTests.0.events.0: Invalid response event for operation smithy.example#PublishMessages that has no output stream. | EventStreamTestsTrait
+[ERROR] smithy.example#ReceiveMessages: smithy.test#eventStreamTests.0.events.0: Invalid request event for operation smithy.example#ReceiveMessages that has no input stream. | EventStreamTestsTrait

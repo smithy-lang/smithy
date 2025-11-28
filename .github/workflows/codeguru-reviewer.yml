@@ -23,7 +23,7 @@ jobs:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       if: steps.iam-role.outcome == 'success'
       with:
         fetch-depth: 0
@@ -56,6 +56,6 @@ jobs:
 
     - name: Upload review result
       if: steps.iam-role.outcome == 'success' &&steps.guruscan.outcome == 'success'
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: codeguru-results.sarif.json

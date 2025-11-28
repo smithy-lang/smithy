@@ -33,6 +33,12 @@ java {
     }
 }
 
+// junit6 requires java 17
+tasks.compileTestJava {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}
+
 tasks {
     // Set up tasks that build source and javadoc jars.
     val sourcesJar by registering(Jar::class) {
@@ -72,7 +78,7 @@ tasks {
             metaInf.with(licenseSpec)
             inputs.property("moduleName", project.extra.get("moduleName"))
             manifest {
-                attributes("Automatic-Module-Name" to project.extra.get("moduleName"))
+                attributes(mapOf("Automatic-Module-Name" to project.extra.get("moduleName")))
             }
         }
     }

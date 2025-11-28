@@ -4,9 +4,9 @@ SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = Smithy
 SHELL         := /bin/bash
 
-install: requirements.txt
+install:
 	python3 -m venv build/venv
-	source build/venv/bin/activate && pip3 install -r requirements.txt . && pip3 install -e .
+	source build/venv/bin/activate && pip3 install -e .
 	(cd landing-page && npm install)
 
 clean:

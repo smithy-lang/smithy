@@ -1,0 +1,2 @@
+[DANGER] smithy.example#PublishMessages: smithy.test#eventStreamTests.1.events.0.body: Invalid application/json content: Error parsing JSON: Expected ':' ([1, 19]) | EventStreamTestsTrait
+[DANGER] smithy.example#PublishMessages: smithy.test#eventStreamTests.3.events.0.body: Invalid application/xml content: Content is not allowed in prolog. | EventStreamTestsTrait

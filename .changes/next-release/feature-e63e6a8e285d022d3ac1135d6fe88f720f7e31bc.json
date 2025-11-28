@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add a new package with tests for rule engine",
+  "pull_requests": [
+    "[#2864](https://github.com/smithy-lang/smithy/pull/2864)"
+  ]
+}

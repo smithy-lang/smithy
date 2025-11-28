@@ -12,8 +12,10 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
-public final class ServiceResolvedConditionKeysTrait extends StringListTrait {
+public final class ServiceResolvedConditionKeysTrait extends StringListTrait
+        implements ToSmithyBuilder<ServiceResolvedConditionKeysTrait> {
     public static final ShapeId ID = ShapeId.from("aws.iam#serviceResolvedConditionKeys");
     private List<String> resolvedConditionKeys;
 
@@ -45,6 +47,22 @@ public final class ServiceResolvedConditionKeysTrait extends StringListTrait {
     public static final class Provider extends StringListTrait.Provider<ServiceResolvedConditionKeysTrait> {
         public Provider() {
             super(ID, ServiceResolvedConditionKeysTrait::new);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder().sourceLocation(getSourceLocation()).values(getValues());
+    }
+
+    public static final class Builder extends StringListTrait.Builder<ServiceResolvedConditionKeysTrait, Builder> {
+        @Override
+        public ServiceResolvedConditionKeysTrait build() {
+            return new ServiceResolvedConditionKeysTrait(getValues(), getSourceLocation());
         }
     }
 }

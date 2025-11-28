@@ -5,6 +5,7 @@
 package software.amazon.smithy.build;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +35,17 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     private final List<ValidationEvent> events;
     private final ObjectNode settings;
     private final FileManifest fileManifest;
+    private final FileManifest sharedFileManifest;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
     private final String artifactName;
+    private final List<String> sourceUris;
     private Model nonTraitsModel;
 
     private PluginContext(Builder builder) {
         model = SmithyBuilder.requiredState("model", builder.model);
         fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
+        sharedFileManifest = builder.sharedFileManifest;
         artifactName = builder.artifactName;
         projection = builder.projection;
         projectionName = builder.projectionName;
@@ -50,6 +54,15 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         settings = builder.settings;
         pluginClassLoader = builder.pluginClassLoader;
         sources = builder.sources.copy();
+        // Normalize the source paths into URI strings, which are URI encoded and use '/' separators,
+        // which is the format of paths in 'jar:file:/' filenames, so they can be compared in the
+        // 'isSource*' methods.
+        // This is done preemptively so we don't have to do the same work repeatedly, and the number
+        // of configured sources is typically very low.
+        sourceUris = new ArrayList<>(sources.size());
+        for (Path source : sources) {
+            sourceUris.add(source.toUri().toString());
+        }
     }
 
     /**
@@ -133,12 +146,47 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
      * Gets the FileManifest used to create files in the projection.
      *
      * <p>All files written by a plugin should either be written using this
-     * manifest or added to the manifest via {@link FileManifest#addFile}.
+     * manifest, the shared manifest ({@link #getSharedFileManifest()}), or
+     * added to the manifest via {@link FileManifest#addFile}.
+     *
+     * <p>Files written to this manifest are specific to this plugin and cannot
+     * be read or modified by other plugins. To write files that should be
+     * shared with other plugins, use the shared manifest from
+     * {@link #getSharedFileManifest()}.
      *
      * @return Returns the file manifest.
      */
     public FileManifest getFileManifest() {
         return fileManifest;
+    }
+
+    /**
+     * Gets the FileManifest used to create files in the projection's shared
+     * file space.
+     *
+     * <p>All files written by a plugin should either be written using this
+     * manifest, the plugin's isolated manifest ({@link #getFileManifest()}),
+     * or added to the manifest via {@link FileManifest#addFile}.
+     *
+     * <p>Files written to this manifest may be read or modified by other
+     * plugins. Plugins SHOULD NOT write files to this manifest unless they
+     * specifically intend for them to be consumed by other plugins. Files
+     * that are not intended to be shared should be written to the manifest
+     * from {@link #getFileManifest()}.
+     *
+     * @return Returns the file manifest.
+     */
+    public FileManifest getSharedFileManifest() {
+        // This will always be set in actual Smithy builds, as it is set by
+        // SmithyBuildImpl. We therefore don't want the return type to be
+        // optional, since in real usage it isn't. This was introduced after
+        // the class was made public, however, and this class is likely being
+        // manually constructed in tests. So instead of checking if it's set
+        // in the builder, we check when it's actually used.
+        if (sharedFileManifest == null) {
+            SmithyBuilder.requiredState("sharedFileManifest", sharedFileManifest);
+        }
+        return sharedFileManifest;
     }
 
     /**
@@ -223,6 +271,21 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         String location = sourceLocation.getSourceLocation().getFilename();
         int offsetFromStart = findOffsetFromStart(location);
 
+        if (offsetFromStart > 0) {
+            // Offset means the filename is a URI, so compare to the URI paths to account for encoding and windows.
+            for (String sourceUri : sourceUris) {
+                // Compare starting after the protocol (the source uri will always be "file", because we created it
+                // from a path).
+                int regionCompareLength = sourceUri.length() - 5;
+                if (location.regionMatches(offsetFromStart, sourceUri, 5, regionCompareLength)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Filename is a regular path, so we can compare to sources directly.
         for (Path path : sources) {
             String pathString = path.toString();
             int offsetFromStartInSource = findOffsetFromStart(pathString);
@@ -248,6 +311,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
                 .events(events)
                 .settings(settings)
                 .fileManifest(fileManifest)
+                .sharedFileManifest(sharedFileManifest)
                 .pluginClassLoader(pluginClassLoader)
                 .sources(sources)
                 .artifactName(artifactName);
@@ -267,6 +331,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         private List<ValidationEvent> events = Collections.emptyList();
         private ObjectNode settings = Node.objectNode();
         private FileManifest fileManifest;
+        private FileManifest sharedFileManifest;
         private ClassLoader pluginClassLoader;
         private final BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
         private String artifactName;
@@ -287,6 +352,18 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
          */
         public Builder fileManifest(FileManifest fileManifest) {
             this.fileManifest = fileManifest;
+            return this;
+        }
+
+        /**
+         * Sets the <strong>required</strong> shared space {@link FileManifest} to use
+         * in the plugin.
+         *
+         * @param sharedFileManifest FileManifest to use for shared space.
+         * @return Returns the builder.
+         */
+        public Builder sharedFileManifest(FileManifest sharedFileManifest) {
+            this.sharedFileManifest = sharedFileManifest;
             return this;
         }
 

@@ -161,9 +161,12 @@ def parse_filled_in_contents(contents: str) -> Change | None:
         if "type" not in parsed and line.startswith("type:"):
             parsed["type"] = ChangeType[line.split(":")[1].strip().upper()]
         if "pull_requests" not in parsed and line.startswith("pull requests:"):
-            parsed["pull_requests"] = [
-                pr.strip() for pr in line.split(":")[1].strip().split(",")
-            ]
+            prs: list[str] = []
+            for pr in line.split(":")[1].strip().split(","):
+                pr = pr.strip()
+                if pr:
+                    prs.append(pr)
+            parsed["pull_requests"] = prs
         elif "description" not in parsed and line.startswith("description:"):
             # Assume that everything until the end of the file is part
             # of the description, so we can break once we pull in the

@@ -18,6 +18,8 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.protocoltests.traits.eventstream.EventStreamTestCase;
+import software.amazon.smithy.protocoltests.traits.eventstream.EventStreamTestsTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -33,6 +35,7 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
         Map<String, List<Shape>> requestIdsToTraits = new TreeMap<>();
         Map<String, List<Shape>> responseIdsToTraits = new TreeMap<>();
         Map<String, List<Shape>> malformedRequestIdsToTraits = new TreeMap<>();
+        Map<String, List<Shape>> eventCaseIdsToTraits = new TreeMap<>();
 
         Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class)).forEach(shape -> {
             shape.getTrait(HttpRequestTestsTrait.class)
@@ -43,13 +46,19 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
             // in case someone does something wild with naming, like add _case0 to the end of the id
             shape.getTrait(HttpMalformedRequestTestsTrait.class)
                     .ifPresent(t -> addMalformedRequestTestCaseIdsToMap(shape, t.getTestCases(), responseIdsToTraits));
+            shape.getTrait(EventStreamTestsTrait.class)
+                    .ifPresent(trait -> addEventTestCaseIdsToMap(shape, trait.getTestCases(), eventCaseIdsToTraits));
         });
 
         removeEntriesWithSingleValue(requestIdsToTraits);
         removeEntriesWithSingleValue(responseIdsToTraits);
         removeEntriesWithSingleValue(malformedRequestIdsToTraits);
+        removeEntriesWithSingleValue(eventCaseIdsToTraits);
 
-        return collectEvents(requestIdsToTraits, responseIdsToTraits, malformedRequestIdsToTraits);
+        return collectEvents(requestIdsToTraits,
+                responseIdsToTraits,
+                malformedRequestIdsToTraits,
+                eventCaseIdsToTraits);
     }
 
     private void addTestCaseIdsToMap(
@@ -72,6 +81,16 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
         }
     }
 
+    private void addEventTestCaseIdsToMap(
+            Shape shape,
+            List<EventStreamTestCase> testCases,
+            Map<String, List<Shape>> map
+    ) {
+        for (EventStreamTestCase testCase : testCases) {
+            map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
+        }
+    }
+
     private void removeEntriesWithSingleValue(Map<String, List<Shape>> map) {
         map.keySet().removeIf(key -> map.get(key).size() == 1);
     }
@@ -79,9 +98,13 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     private List<ValidationEvent> collectEvents(
             Map<String, List<Shape>> requestIdsToTraits,
             Map<String, List<Shape>> responseIdsToTraits,
-            Map<String, List<Shape>> malformedRequestIdsToTraits
+            Map<String, List<Shape>> malformedRequestIdsToTraits,
+            Map<String, List<Shape>> eventCaseIdsToTraits
     ) {
-        if (requestIdsToTraits.isEmpty() && responseIdsToTraits.isEmpty() && malformedRequestIdsToTraits.isEmpty()) {
+        if (requestIdsToTraits.isEmpty()
+                && responseIdsToTraits.isEmpty()
+                && malformedRequestIdsToTraits.isEmpty()
+                && eventCaseIdsToTraits.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -89,6 +112,7 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
         addValidationEvents(requestIdsToTraits, mutableEvents, HttpRequestTestsTrait.ID);
         addValidationEvents(responseIdsToTraits, mutableEvents, HttpResponseTestsTrait.ID);
         addValidationEvents(malformedRequestIdsToTraits, mutableEvents, HttpMalformedRequestTestsTrait.ID);
+        addValidationEvents(eventCaseIdsToTraits, mutableEvents, EventStreamTestsTrait.ID);
         return mutableEvents;
     }
 
