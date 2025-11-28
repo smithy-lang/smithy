@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.functions.FunctionArgument;
 
 import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
@@ -142,7 +142,7 @@ final class FunctionDefinition {
         };
     }
 
-    public <T> T apply(Runtime<T> runtime, List<FunctionArgument<T>> arguments) {
+    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments) {
         throw new UnsupportedOperationException();
     }
 }

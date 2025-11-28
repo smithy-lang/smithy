@@ -2,19 +2,16 @@ package software.amazon.smithy.jmespath;
 
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
+import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Or "TypeCheckerRuntime"
-public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
-
-    // TODO: Add problems, or make a separate TypeCheckerRuntime that subclasses this
+public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
     @Override
     public RuntimeType typeOf(LiteralExpression value) {
@@ -77,44 +74,11 @@ public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
     }
 
     @Override
-    public Iterable<LiteralExpression> iterate(LiteralExpression array) {
+    public Iterable<LiteralExpression> toIterable(LiteralExpression array) {
         switch (array.getType()) {
-            case ARRAY: return new WrappingIterable(array.expectArrayValue());
-            case OBJECT: return new WrappingIterable(array.expectObjectValue().keySet());
+            case ARRAY: return new WrappingIterable<>(LiteralExpression::from, array.expectArrayValue());
+            case OBJECT: return new WrappingIterable<>(LiteralExpression::from, array.expectObjectValue().keySet());
             default: throw new IllegalStateException("invalid-type");
-        }
-    }
-
-    private static class WrappingIterable implements Iterable<LiteralExpression> {
-
-        private final Iterable<?> inner;
-
-        private WrappingIterable(Iterable<?> inner) {
-            this.inner = inner;
-        }
-
-        @Override
-        public Iterator<LiteralExpression> iterator() {
-            return new WrappingIterator(inner.iterator());
-        }
-
-        private static class WrappingIterator implements Iterator<LiteralExpression> {
-
-            private final Iterator<?> inner;
-
-            private WrappingIterator(Iterator<?> inner) {
-                this.inner = inner;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return inner.hasNext();
-            }
-
-            @Override
-            public LiteralExpression next() {
-                return LiteralExpression.from(inner.next());
-            }
         }
     }
 
@@ -145,12 +109,6 @@ public class LiteralExpressionRuntime implements Runtime<LiteralExpression> {
     @Override
     public LiteralExpression value(LiteralExpression value, LiteralExpression name) {
         return LiteralExpression.from(value.expectObjectValue().get(name.expectStringValue()));
-    }
-
-    @Override
-    public LiteralExpression keys(LiteralExpression value) {
-        Map<String, Object> map = value.expectObjectValue();
-        return LiteralExpression.from(new ArrayList<>(map.keySet()));
     }
 
     @Override

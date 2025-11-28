@@ -36,12 +36,12 @@ import java.util.OptionalInt;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
-    private final Runtime<T> runtime;
+    private final JmespathRuntime<T> runtime;
 
     // TODO: Try making this state mutable instead of creating lots of sub-Evaluators
     private final T current;
 
-    public Evaluator(T current, Runtime<T> runtime) {
+    public Evaluator(T current, JmespathRuntime<T> runtime) {
         this.current = current;
         this.runtime = runtime;
     }
@@ -108,12 +108,12 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T value = visit(flattenExpression.getExpression());
 
         // Only lists can be flattened.
-        if (!runtime.typeOf(value).equals(RuntimeType.ARRAY)) {
+        if (!runtime.is(value, RuntimeType.ARRAY)) {
             return null;
         }
-        Runtime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
-        for (T val : runtime.iterate(value)) {
-            if (runtime.typeOf(val).equals(RuntimeType.ARRAY)) {
+        JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
+        for (T val : runtime.toIterable(value)) {
+            if (runtime.is(value, RuntimeType.ARRAY)) {
                 flattened.addAll(val);
                 continue;
             }
@@ -144,7 +144,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitIndex(IndexExpression indexExpression) {
         int index = indexExpression.getIndex();
-        if (!runtime.typeOf(current).equals(RuntimeType.ARRAY)) {
+        if (!runtime.is(current, RuntimeType.ARRAY)) {
             return null;
         }
         // TODO: Capping at int here unnecessarily
@@ -166,13 +166,13 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (literalExpression.isNumberValue()) {
             return runtime.createNumber(literalExpression.expectNumberValue());
         } else if (literalExpression.isArrayValue()) {
-            Runtime.ArrayBuilder<T> result = runtime.arrayBuilder();
+            JmespathRuntime.ArrayBuilder<T> result = runtime.arrayBuilder();
             for (Object item : literalExpression.expectArrayValue()) {
                 result.add(visit(LiteralExpression.from(item)));
             }
             return result.build();
         } else if (literalExpression.isObjectValue()) {
-            Runtime.ObjectBuilder<T> result = runtime.objectBuilder();
+            JmespathRuntime.ObjectBuilder<T> result = runtime.objectBuilder();
             for (Map.Entry<String, Object> entry : literalExpression.expectObjectValue().entrySet()) {
                 T key = runtime.createString(entry.getKey());
                 T value = visit(LiteralExpression.from(entry.getValue()));
@@ -191,7 +191,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitMultiSelectList(MultiSelectListExpression multiSelectListExpression) {
-        Runtime.ArrayBuilder<T> output = runtime.arrayBuilder();
+        JmespathRuntime.ArrayBuilder<T> output = runtime.arrayBuilder();
         for (JmespathExpression exp : multiSelectListExpression.getExpressions()) {
             output.add(visit(exp));
         }
@@ -202,7 +202,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitMultiSelectHash(MultiSelectHashExpression multiSelectHashExpression) {
-        Runtime.ObjectBuilder<T> output = runtime.objectBuilder();
+        JmespathRuntime.ObjectBuilder<T> output = runtime.objectBuilder();
         for (Map.Entry<String, JmespathExpression> expEntry : multiSelectHashExpression.getExpressions().entrySet()) {
             output.put(runtime.createString(expEntry.getKey()), visit(expEntry.getValue()));
         }
@@ -235,11 +235,11 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitProjection(ProjectionExpression projectionExpression) {
         T resultList = visit(projectionExpression.getLeft());
-        if (!runtime.typeOf(resultList).equals(RuntimeType.ARRAY)) {
+        if (!runtime.is(resultList, RuntimeType.ARRAY)) {
             return null;
         }
-        Runtime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
-        for (T result : runtime.iterate(resultList)) {
+        JmespathRuntime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
+        for (T result : runtime.toIterable(resultList)) {
             T projected = new Evaluator<T>(result, runtime).visit(projectionExpression.getRight());
             if (!runtime.typeOf(projected).equals(RuntimeType.NULL)) {
                 projectedResults.add(projected);
@@ -251,11 +251,11 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitFilterProjection(FilterProjectionExpression filterProjectionExpression) {
         T left = visit(filterProjectionExpression.getLeft());
-        if (!runtime.typeOf(left).equals(RuntimeType.ARRAY)) {
+        if (!runtime.is(left, RuntimeType.ARRAY)) {
             return null;
         }
-        Runtime.ArrayBuilder<T> results = runtime.arrayBuilder();
-        for (T val : runtime.iterate(left)) {
+        JmespathRuntime.ArrayBuilder<T> results = runtime.arrayBuilder();
+        for (T val : runtime.toIterable(left)) {
             T output = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getComparison());
             if (runtime.isTruthy(output)) {
                 T result = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getRight());
@@ -270,13 +270,13 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitObjectProjection(ObjectProjectionExpression objectProjectionExpression) {
         T resultObject = visit(objectProjectionExpression.getLeft());
-        if (!runtime.typeOf(resultObject).equals(RuntimeType.OBJECT)) {
+        if (!runtime.is(resultObject, RuntimeType.OBJECT)) {
             return null;
         }
-        Runtime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
-        for (T member : runtime.iterate(runtime.keys(resultObject))) {
+        JmespathRuntime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
+        for (T member : runtime.toIterable(resultObject)) {
             T memberValue = runtime.value(resultObject, member);
-            if (!runtime.typeOf(memberValue).equals(RuntimeType.NULL)) {
+            if (!runtime.is(memberValue, RuntimeType.NULL)) {
                 T projectedResult = new Evaluator<T>(memberValue, runtime).visit(objectProjectionExpression.getRight());
                 if (projectedResult != null) {
                     projectedResults.add(projectedResult);

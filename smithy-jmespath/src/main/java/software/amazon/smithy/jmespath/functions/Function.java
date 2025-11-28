@@ -1,18 +1,14 @@
 package software.amazon.smithy.jmespath.functions;
 
-import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public interface Function {
 
     String name();
 
-    <T> T apply(Runtime<T> runtime, List<FunctionArgument<T>> arguments);
+    <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments);
 
     // Helpers
 

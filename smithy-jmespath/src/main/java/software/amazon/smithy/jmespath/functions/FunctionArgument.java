@@ -3,81 +3,87 @@ package software.amazon.smithy.jmespath.functions;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 public abstract class FunctionArgument<T> {
 
-    protected final Runtime<T> runtime;
+    protected final JmespathRuntime<T> runtime;
 
-    protected FunctionArgument(Runtime<T> runtime) {
+    protected FunctionArgument(JmespathRuntime<T> runtime) {
         this.runtime = runtime;
     }
 
-    public abstract T expectString();
+    public T expectValue() {
+        throw new JmespathException("invalid-type");
+    }
 
-    public abstract T expectNumber();
+    public T expectString() {
+        throw new JmespathException("invalid-type");
+    }
 
-    public abstract JmespathExpression expectExpression();
+    public T expectNumber() {
+        throw new JmespathException("invalid-type");
+    }
 
-    public static <T> FunctionArgument<T> of(Runtime<T> runtime, JmespathExpression expression) {
+    public T expectObject() {
+        throw new JmespathException("invalid-type");
+    }
+
+    public JmespathExpression expectExpression() {
+        throw new JmespathException("invalid-type");
+    }
+
+    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, JmespathExpression expression) {
         return new Expression<T>(runtime, expression);
     }
 
-    public static <T> FunctionArgument<T> of(Runtime<T> runtime, T value) {
+    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value) {
         return new Value<T>(runtime, value);
     }
 
     static class Value<T> extends FunctionArgument<T> {
         T value;
 
-        public Value(Runtime<T> runtime, T value) {
+        public Value(JmespathRuntime<T> runtime, T value) {
             super(runtime);
             this.value = value;
         }
 
         @Override
-        public T expectString() {
-            if (runtime.is(value, RuntimeType.STRING)) {
+        public T expectValue() {
+            return value;
+        }
+
+        protected T expectType(RuntimeType runtimeType) {
+            if (runtime.is(value, runtimeType)) {
                 return value;
             } else {
                 throw new JmespathException("invalid-type");
             }
+        }
+
+        @Override
+        public T expectString() {
+            return expectType(RuntimeType.STRING);
         }
 
         @Override
         public T expectNumber() {
-            if (runtime.is(value, RuntimeType.NUMBER)) {
-                return value;
-            } else {
-                throw new JmespathException("invalid-type");
-            }
+            return expectType(RuntimeType.NUMBER);
         }
 
         @Override
-        public JmespathExpression expectExpression() {
-            // TODO: Check spec, tests, etc
-            throw new JmespathException("invalid-type");
+        public T expectObject() {
+            return expectType(RuntimeType.OBJECT);
         }
     }
 
     static class Expression<T> extends FunctionArgument<T> {
         JmespathExpression expression;
 
-        public Expression(Runtime<T> runtime, JmespathExpression expression) {
+        public Expression(JmespathRuntime<T> runtime, JmespathExpression expression) {
             super(runtime);
             this.expression = expression;
-        }
-
-        @Override
-        public T expectString() {
-            // TODO: Check spec, tests, etc
-            throw new JmespathException("invalid-type");
-        }
-
-        @Override
-        public T expectNumber() {
-            // TODO: Check spec, tests, etc
-            throw new JmespathException("invalid-type");
         }
 
         @Override

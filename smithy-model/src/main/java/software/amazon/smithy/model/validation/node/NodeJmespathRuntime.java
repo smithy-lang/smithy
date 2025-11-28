@@ -2,7 +2,7 @@ package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -14,7 +14,7 @@ import software.amazon.smithy.model.node.NumberNode;
 
 import java.util.Optional;
 
-public class NodeRuntime implements Runtime<Node> {
+public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public RuntimeType typeOf(Node value) {
@@ -85,7 +85,7 @@ public class NodeRuntime implements Runtime<Node> {
     }
 
     @Override
-    public Iterable<Node> iterate(Node array) {
+    public Iterable<Node> toIterable(Node array) {
         return array.expectArrayNode().getElements();
     }
 
@@ -111,18 +111,6 @@ public class NodeRuntime implements Runtime<Node> {
         public Node build() {
             return builder.build();
         }
-    }
-
-    @Override
-    public Node keys(Node value) {
-        // TODO: Bit inefficient, but does it matter?
-        // If it does this can be be more of a lazy proxy.
-        // Could provide a generic List<T> implementation for this.
-        ArrayBuilder<Node> arrayBuilder = arrayBuilder();
-        for (StringNode key : value.expectObjectNode().getMembers().keySet()) {
-            arrayBuilder.add(key);
-        }
-        return arrayBuilder.build();
     }
 
     @Override

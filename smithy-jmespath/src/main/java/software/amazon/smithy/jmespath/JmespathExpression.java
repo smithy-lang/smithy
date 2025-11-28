@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.Runtime;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 
 /**
@@ -85,10 +85,10 @@ public abstract class JmespathExpression {
     }
 
     public LiteralExpression evaluate(LiteralExpression currentNode) {
-        return evaluate(currentNode, new LiteralExpressionRuntime());
+        return evaluate(currentNode, new LiteralExpressionJmespathRuntime());
     }
 
-    public <T> T evaluate(T currentNode, Runtime<T> runtime) {
+    public <T> T evaluate(T currentNode, JmespathRuntime<T> runtime) {
         return new Evaluator<>(currentNode, runtime).visit(this);
     }
 }

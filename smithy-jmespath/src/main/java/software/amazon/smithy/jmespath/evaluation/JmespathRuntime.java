@@ -2,10 +2,11 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 
-public interface Runtime<T> extends Comparator<T> {
+public interface JmespathRuntime<T> extends Comparator<T> {
 
     RuntimeType typeOf(T value);
 
@@ -15,15 +16,22 @@ public interface Runtime<T> extends Comparator<T> {
 
     default boolean isTruthy(T value) {
         switch (typeOf(value)) {
-            case NULL:  return false;
-            case BOOLEAN: return toBoolean(value);
-            case STRING: return !toString(value).isEmpty();
-            case NUMBER: return true;
+            case NULL:
+                return false;
+            case BOOLEAN:
+                return toBoolean(value);
+            case STRING:
+                return !toString(value).isEmpty();
+            case NUMBER:
+                return true;
             case ARRAY:
             case OBJECT:
-                // This is likely a bit faster than calling length
-                // (allocating a Number) and checking > 0.
-                return iterate(value).iterator().hasNext();
+                Iterable<? extends T> iterable = toIterable(value);
+                if (iterable instanceof Collection<?>) {
+                    return ((Collection<?>) iterable).isEmpty();
+                } else {
+                    return !iterable.iterator().hasNext();
+                }
             default: throw new IllegalStateException();
         }
     }
@@ -52,15 +60,20 @@ public interface Runtime<T> extends Comparator<T> {
 
     Number toNumber(T value);
 
-    // Arrays
+    // Common collection operations
 
     Number length(T value);
+
+    // Iterating over arrays or objects
+    Iterable<? extends T> toIterable(T value);
+
+    // Arrays
 
     T element(T array, T index);
 
     default T slice(T array, T startNumber, T stopNumber, T stepNumber) {
         // TODO: Move to a static method somewhere
-        Runtime.ArrayBuilder<T> output = arrayBuilder();
+        JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
         int length = length(array).intValue();
         int step = toNumber(stepNumber).intValue();
         int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : toNumber(startNumber).intValue();
@@ -86,8 +99,6 @@ public interface Runtime<T> extends Comparator<T> {
         return output.build();
     }
 
-    Iterable<T> iterate(T array);
-
     ArrayBuilder<T> arrayBuilder();
 
     interface ArrayBuilder<T> {
@@ -100,8 +111,6 @@ public interface Runtime<T> extends Comparator<T> {
     }
 
     // Objects
-
-    T keys(T value);
 
     T value(T value, T name);
 
