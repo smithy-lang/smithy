@@ -7,20 +7,20 @@ import java.util.Map;
 
 public class EvaluationUtils {
 
-    private static Map<Class<? extends Number>, NumberType> numberTypeCache = new HashMap<>();
+    public static Map<Class<? extends Number>, NumberType> numberTypeForClass = new HashMap<>();
     static {
-        numberTypeCache.put(Byte.class, NumberType.BYTE);
-        numberTypeCache.put(Short.class, NumberType.SHORT);
-        numberTypeCache.put(Integer.class, NumberType.INTEGER);
-        numberTypeCache.put(Long.class, NumberType.LONG);
-        numberTypeCache.put(Float.class, NumberType.FLOAT);
-        numberTypeCache.put(Double.class, NumberType.DOUBLE);
-        numberTypeCache.put(BigInteger.class, NumberType.BIG_INTEGER);
-        numberTypeCache.put(BigDecimal.class, NumberType.BIG_DECIMAL);
+        numberTypeForClass.put(Byte.class, NumberType.BYTE);
+        numberTypeForClass.put(Short.class, NumberType.SHORT);
+        numberTypeForClass.put(Integer.class, NumberType.INTEGER);
+        numberTypeForClass.put(Long.class, NumberType.LONG);
+        numberTypeForClass.put(Float.class, NumberType.FLOAT);
+        numberTypeForClass.put(Double.class, NumberType.DOUBLE);
+        numberTypeForClass.put(BigInteger.class, NumberType.BIG_INTEGER);
+        numberTypeForClass.put(BigDecimal.class, NumberType.BIG_DECIMAL);
     }
 
     public static NumberType numberType(Number number) {
-        return numberTypeCache.get(number.getClass());
+        return numberTypeForClass.get(number.getClass());
     }
 
     // Emulate JLS 5.1.2 type promotion.

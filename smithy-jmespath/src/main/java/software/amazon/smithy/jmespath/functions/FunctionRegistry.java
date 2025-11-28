@@ -8,11 +8,16 @@ public class FunctionRegistry {
     private static Map<String, Function> builtins = new HashMap<>();
 
     private static void registerFunction(Function function) {
-        builtins.put(function.name(), function);
+        if (builtins.put(function.name(), function) != null) {
+            throw new IllegalArgumentException("Duplicate function name: " + function.name());
+        }
     }
 
     static {
         registerFunction(new AbsFunction());
+        registerFunction(new KeysFunction());
+        registerFunction(new TypeFunction());
+        registerFunction(new ValuesFunction());
     }
 
     public static Function lookup(String name) {

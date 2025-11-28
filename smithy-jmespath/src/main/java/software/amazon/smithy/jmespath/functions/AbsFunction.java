@@ -1,7 +1,6 @@
 package software.amazon.smithy.jmespath.functions;
 
-import software.amazon.smithy.jmespath.evaluation.Runtime;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,7 +13,7 @@ public class AbsFunction implements Function {
     }
 
     @Override
-    public <T> T apply(Runtime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
         Number number = runtime.toNumber(value);

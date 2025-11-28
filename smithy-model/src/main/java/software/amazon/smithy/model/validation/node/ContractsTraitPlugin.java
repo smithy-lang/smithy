@@ -23,7 +23,7 @@ public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node,
 
     private void checkContract(Shape shape, ContractsTrait.Contract contract, Node value, Context context, Emitter emitter) {
         JmespathExpression expression = JmespathExpression.parse(contract.getExpression());
-        Evaluator<Node> evaluator = new Evaluator<>(value, new NodeRuntime());
+        Evaluator<Node> evaluator = new Evaluator<>(value, new NodeJmespathRuntime());
         Node result = evaluator.visit(expression);
         // TODO: Or should it be isTruthy()?
         if (!result.expectBooleanNode().getValue()) {
