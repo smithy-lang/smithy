@@ -201,6 +201,24 @@
                 "com.example#bInteger": 9223372036854775808
             }
         },
+        "com.example#ZB": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGVsbG8h"
+            }
+        },
+        "com.example#ZC": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "CkhlbGxvISBUaGlzIGlzIGEgdGVzdC4KCklnbm9yZSB0aGVzZSB0b2tlbnM6IHt9W10oKSw6LT4kdmVyc2lvbi8vPD4gKzEwIC0xMCA9CgpJcyBpdCB3b3JraW5nPyBJcyAiVGhpcyIgdGhlICdleHBlY3RlZCcgcmVzdWx0PwpJcyB0aGlzIGEgYmFja3NsYXNoPyAiXCIu"
+            }
+        },
+        "com.example#ZD": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "VGhpcyBpcyBhCnN0cmluZyBkZWZpbmVkIG9uIG11bHRpcGxlIGxpbmVzLgpJdCBjYW4gc3BhbgphCmdyZWF0Cm1hbnkKbGluZXMu"
+            }
+        },
         "com.example#bDecimal": {
             "type": "bigDecimal",
             "traits": {
