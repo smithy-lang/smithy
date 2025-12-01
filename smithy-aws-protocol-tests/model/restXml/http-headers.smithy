@@ -375,14 +375,13 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
         headers: {
             "X-B": ""
             "X-C": ""
-        }
+        },
         body: "",
         params: {
             a: null,
             b: "",
             c: [],
         },
-        appliesTo: "client",
     },
 ])
 
@@ -405,14 +404,13 @@ apply NullAndEmptyHeadersServer @httpResponseTests([
         headers: {
             "X-B": ""
             "X-C": ""
-        }
+        },
         body: "",
         params: {
             a: null,
             b: "",
             c: [],
         },
-        appliesTo: "server",
     },
 ])
 
