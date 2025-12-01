@@ -5,6 +5,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
+import java.util.Set;
+
 public abstract class FunctionArgument<T> {
 
     protected final JmespathRuntime<T> runtime;
@@ -26,6 +28,10 @@ public abstract class FunctionArgument<T> {
     }
 
     public T expectObject() {
+        throw new JmespathException("invalid-type");
+    }
+
+    public T expectAnyOf(Set<RuntimeType> types) {
         throw new JmespathException("invalid-type");
     }
 
@@ -56,6 +62,14 @@ public abstract class FunctionArgument<T> {
 
         protected T expectType(RuntimeType runtimeType) {
             if (runtime.is(value, runtimeType)) {
+                return value;
+            } else {
+                throw new JmespathException("invalid-type");
+            }
+        }
+
+        public T expectAnyOf(Set<RuntimeType> types) {
+            if (types.contains(runtime.typeOf(value))) {
                 return value;
             } else {
                 throw new JmespathException("invalid-type");

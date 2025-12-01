@@ -41,6 +41,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     default int compare(T a, T b) {
+        // TODO: More types
         return EvaluationUtils.compareNumbersWithPromotion(toNumber(a), toNumber(b));
     }
 
