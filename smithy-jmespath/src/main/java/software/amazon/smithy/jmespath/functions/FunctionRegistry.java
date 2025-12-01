@@ -16,6 +16,7 @@ public class FunctionRegistry {
     static {
         registerFunction(new AbsFunction());
         registerFunction(new KeysFunction());
+        registerFunction(new LengthFunction());
         registerFunction(new TypeFunction());
         registerFunction(new ValuesFunction());
     }
