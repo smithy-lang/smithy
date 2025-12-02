@@ -31,7 +31,32 @@ public abstract class JmespathExpression {
      * @throws JmespathException if the expression is invalid.
      */
     public static JmespathExpression parse(String text) {
-        return Parser.parse(text);
+        return Parser.parse(text, LiteralExpressionJmespathRuntime.INSTANCE);
+    }
+
+    /**
+     * Parse a JMESPath expression.
+     *
+     * @param text Expression to parse.
+     * @param runtime JmespathRuntime used to instantiate literal values.
+     * @return Returns the parsed expression.
+     * @throws JmespathException if the expression is invalid.
+     */
+    public static <T> JmespathExpression parse(String text, JmespathRuntime<T> runtime) {
+        return Parser.parse(text, runtime);
+    }
+
+    /**
+     * Parse a JSON value.
+     *
+     * @param text JSON value to parse.
+     * @param runtime JmespathRuntime used to instantiate the parsed JSON value.
+     * @return Returns the parsed JSON value.
+     * @throws JmespathException if the text is invalid.
+     */
+    public static <T> T parseJson(String text, JmespathRuntime<T> runtime) {
+        Lexer<T> lexer = new Lexer<T>(text, runtime);
+        return lexer.parseJsonValue();
     }
 
     /**

@@ -10,3 +10,7 @@ description = "A standalone JMESPath parser"
 
 extra["displayName"] = "Smithy :: JMESPath"
 extra["moduleName"] = "software.amazon.smithy.jmespath"
+
+dependencies {
+    testImplementation(project(":smithy-utils"))
+}

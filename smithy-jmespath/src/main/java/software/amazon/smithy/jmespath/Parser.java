@@ -27,6 +27,7 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 /**
  * A top-down operator precedence parser (aka Pratt parser) for JMESPath.
@@ -74,13 +75,13 @@ final class Parser {
     private final String expression;
     private final TokenIterator iterator;
 
-    private Parser(String expression) {
+    private Parser(String expression, JmespathRuntime<?> runtime) {
         this.expression = expression;
-        iterator = Lexer.tokenize(expression);
+        iterator = Lexer.tokenize(expression, runtime);
     }
 
-    static JmespathExpression parse(String expression) {
-        Parser parser = new Parser(expression);
+    static JmespathExpression parse(String expression, JmespathRuntime<?> runtime) {
+        Parser parser = new Parser(expression, runtime);
         JmespathExpression result = parser.expression(0);
         parser.iterator.expect(TokenType.EOF);
         return result;

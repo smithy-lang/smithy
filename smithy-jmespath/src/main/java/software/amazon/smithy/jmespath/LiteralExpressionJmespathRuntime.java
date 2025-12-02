@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
+    public static final LiteralExpressionJmespathRuntime INSTANCE = new LiteralExpressionJmespathRuntime();
+
     @Override
     public RuntimeType typeOf(LiteralExpression value) {
         return value.getType();

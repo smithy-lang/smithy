@@ -5,17 +5,17 @@
 package software.amazon.smithy.jmespath;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-final class Lexer {
+final class Lexer<T> {
 
     private static final int MAX_NESTING_LEVEL = 50;
 
+    private final JmespathRuntime<T> runtime;
     private final String expression;
     private final int length;
     private int position = 0;
@@ -25,13 +25,18 @@ final class Lexer {
     private final List<Token> tokens = new ArrayList<>();
     private boolean currentlyParsingLiteral;
 
-    private Lexer(String expression) {
+    Lexer(String expression, JmespathRuntime<T> runtime) {
+        this.runtime = Objects.requireNonNull(runtime, "runtime must not be null");
         this.expression = Objects.requireNonNull(expression, "expression must not be null");
         this.length = expression.length();
     }
 
     static TokenIterator tokenize(String expression) {
-        return new Lexer(expression).doTokenize();
+        return tokenize(expression, LiteralExpressionJmespathRuntime.INSTANCE);
+    }
+
+    static <T> TokenIterator tokenize(String expression, JmespathRuntime<T> runtime) {
+        return new Lexer<T>(expression, runtime).doTokenize();
     }
 
     TokenIterator doTokenize() {
@@ -506,30 +511,30 @@ final class Lexer {
         return new Token(TokenType.LITERAL, expression, currentLine, currentColumn);
     }
 
-    private Object parseJsonValue() {
+    T parseJsonValue() {
         ws();
         switch (expect('\"', '{', '[', 't', 'f', 'n', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-')) {
             case 't':
                 expect('r');
                 expect('u');
                 expect('e');
-                return true;
+                return runtime.createBoolean(true);
             case 'f':
                 expect('a');
                 expect('l');
                 expect('s');
                 expect('e');
-                return false;
+                return runtime.createBoolean(false);
             case 'n':
                 expect('u');
                 expect('l');
                 expect('l');
-                return null;
+                return runtime.createNull();
             case '"':
                 // Backtrack for positioning.
                 position--;
                 column--;
-                return parseString().value.expectStringValue();
+                return runtime.createString(parseString().value.expectStringValue());
             case '{':
                 return parseJsonObject();
             case '[':
@@ -538,44 +543,44 @@ final class Lexer {
                 // Backtrack.
                 position--;
                 column--;
-                return parseNumber().value.expectNumberValue();
+                return runtime.createNumber(parseNumber().value.expectNumberValue());
         }
     }
 
-    private Object parseJsonArray() {
+    private T parseJsonArray() {
         increaseNestingLevel();
-        List<Object> values = new ArrayList<>();
+        JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
         ws();
 
         if (peek() == ']') {
             skip();
             decreaseNestingLevel();
-            return values;
+            return builder.build();
         }
 
         while (!eof() && peek() != '`') {
-            values.add(parseJsonValue());
+            builder.add(parseJsonValue());
             ws();
             if (expect(',', ']') == ',') {
                 ws();
             } else {
                 decreaseNestingLevel();
-                return values;
+                return builder.build();
             }
         }
 
         throw syntax("Unclosed JSON array");
     }
 
-    private Object parseJsonObject() {
+    private T parseJsonObject() {
         increaseNestingLevel();
-        Map<String, Object> values = new LinkedHashMap<>();
+        JmespathRuntime.ObjectBuilder<T> builder = runtime.objectBuilder();
         ws();
 
         if (peek() == '}') {
             skip();
             decreaseNestingLevel();
-            return values;
+            return builder.build();
         }
 
         while (!eof() && peek() != '`') {
@@ -583,13 +588,13 @@ final class Lexer {
             ws();
             expect(':');
             ws();
-            values.put(key, parseJsonValue());
+            builder.put(runtime.createString(key), parseJsonValue());
             ws();
             if (expect(',', '}') == ',') {
                 ws();
             } else {
                 decreaseNestingLevel();
-                return values;
+                return builder.build();
             }
         }
 

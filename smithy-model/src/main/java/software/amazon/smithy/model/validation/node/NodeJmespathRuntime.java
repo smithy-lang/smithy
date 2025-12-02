@@ -61,7 +61,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public NumberType numberType(Node value) {
-        return null;
+        return EvaluationUtils.numberType(value.expectNumberNode().getValue());
     }
 
     @Override
