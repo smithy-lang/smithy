@@ -1,5 +1,6 @@
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.Collection;
@@ -77,6 +78,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
         int length = length(array).intValue();
         int step = toNumber(stepNumber).intValue();
+        if (step == 0) {
+            throw new JmespathException("invalid-value");
+        }
         int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : toNumber(startNumber).intValue();
         if (start < 0) {
             start = length + start;
@@ -93,7 +97,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             }
         } else {
             // List is iterating in reverse
-            for (int idx = start; idx > stop; idx += step) {
+            for (int idx = start; idx > stop; idx -= step) {
                 output.add(element(array, createNumber(idx - 1)));
             }
         }

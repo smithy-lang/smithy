@@ -7,17 +7,16 @@ import java.util.Map;
 
 public class EvaluationUtils {
 
-    public static Map<Class<? extends Number>, NumberType> numberTypeForClass = new HashMap<>();
-    static {
-        numberTypeForClass.put(Byte.class, NumberType.BYTE);
-        numberTypeForClass.put(Short.class, NumberType.SHORT);
-        numberTypeForClass.put(Integer.class, NumberType.INTEGER);
-        numberTypeForClass.put(Long.class, NumberType.LONG);
-        numberTypeForClass.put(Float.class, NumberType.FLOAT);
-        numberTypeForClass.put(Double.class, NumberType.DOUBLE);
-        numberTypeForClass.put(BigInteger.class, NumberType.BIG_INTEGER);
-        numberTypeForClass.put(BigDecimal.class, NumberType.BIG_DECIMAL);
-    }
+    public static InheritingClassMap<NumberType> numberTypeForClass = InheritingClassMap.<NumberType>builder()
+        .put(Byte.class, NumberType.BYTE)
+        .put(Short.class, NumberType.SHORT)
+        .put(Integer.class, NumberType.INTEGER)
+        .put(Long.class, NumberType.LONG)
+        .put(Float.class, NumberType.FLOAT)
+        .put(Double.class, NumberType.DOUBLE)
+        .put(BigInteger.class, NumberType.BIG_INTEGER)
+        .put(BigDecimal.class, NumberType.BIG_DECIMAL)
+        .build();
 
     public static NumberType numberType(Number number) {
         return numberTypeForClass.get(number.getClass());
