@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.traitcodegen.integrations.idref;
 
+import static software.amazon.smithy.traitcodegen.TraitCodegenUtils.SHAPE_ID_SYMBOL;
+
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolReference;
@@ -14,7 +16,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
-import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -28,7 +29,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public class IdRefDecoratorIntegration implements TraitCodegenIntegration {
-    private static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class);
 
     @Override
     public String name() {
