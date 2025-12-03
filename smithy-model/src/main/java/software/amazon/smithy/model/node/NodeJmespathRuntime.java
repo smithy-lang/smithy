@@ -104,8 +104,14 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
         }
 
         @Override
-        public void addAll(Node array) {
-            builder.merge(array.expectArrayNode());
+        public void addAll(Node value) {
+            if (value.isArrayNode()) {
+                builder.merge(value.expectArrayNode());
+            } else {
+                for (StringNode key : value.expectObjectNode().getMembers().keySet()) {
+                    builder.withValue(key);
+                }
+            }
         }
 
         @Override
