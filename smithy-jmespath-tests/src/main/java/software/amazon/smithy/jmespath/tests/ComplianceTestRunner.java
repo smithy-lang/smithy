@@ -100,6 +100,13 @@ public class ComplianceTestRunner<T> {
                     var result = value(runtime, testCase, RESULT_MEMBER);
                     var expectedErrorString = valueAsString(runtime, testCase, ERROR_MEMBER);
                     var expectedError = expectedErrorString != null ? JmespathExceptionType.fromID(expectedErrorString) : null;
+
+                    // Special case: The spec says function names cannot be quoted,
+                    // but our parser allows it and it may be useful in the future.
+                    if ("function names cannot be quoted".equals(comment)) {
+                        expectedError = JmespathExceptionType.UNKNOWN_FUNCTION;
+                    }
+
                     var benchmark = valueAsString(runtime, testCase, BENCH_MEMBER);
                     testCases.add(new TestCase<>(runtime, testSuiteName, comment, given, expression, result, expectedError, benchmark));
                 }
@@ -126,11 +133,6 @@ public class ComplianceTestRunner<T> {
             // TODO: Remove once all built-in functions are supported
             if (UNSUPPORTED_FUNCTIONS.stream().anyMatch(expression::contains)) {
                 Assumptions.abort("Unsupported functions");
-            }
-
-            // TODO
-            if ("breakpoint".equals(comment)) {
-                int bp = 42;
             }
 
             try {
