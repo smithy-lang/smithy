@@ -193,23 +193,27 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitMultiSelectList(MultiSelectListExpression multiSelectListExpression) {
+        if (runtime.is(current, RuntimeType.NULL)) {
+            return current;
+        }
+
         JmespathRuntime.ArrayBuilder<T> output = runtime.arrayBuilder();
         for (JmespathExpression exp : multiSelectListExpression.getExpressions()) {
             output.add(visit(exp));
         }
-        // TODO: original smithy-java has output.isEmpty() ? null : Document.of(output);
-        // but that doesn't seem to match the spec
         return output.build();
     }
 
     @Override
     public T visitMultiSelectHash(MultiSelectHashExpression multiSelectHashExpression) {
+        if (runtime.is(current, RuntimeType.NULL)) {
+            return current;
+        }
+
         JmespathRuntime.ObjectBuilder<T> output = runtime.objectBuilder();
         for (Map.Entry<String, JmespathExpression> expEntry : multiSelectHashExpression.getExpressions().entrySet()) {
             output.put(runtime.createString(expEntry.getKey()), visit(expEntry.getValue()));
         }
-        // TODO: original smithy-java has output.isEmpty() ? null : Document.of(output);
-        // but that doesn't seem to match the spec
         return output.build();
     }
 
