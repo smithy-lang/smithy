@@ -76,19 +76,47 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     default T slice(T array, T startNumber, T stopNumber, T stepNumber) {
         // TODO: Move to a static method somewhere
+        if (!is(array, RuntimeType.ARRAY)) {
+            return createNull();
+        }
+
         JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
         int length = length(array).intValue();
+
         int step = asNumber(stepNumber).intValue();
         if (step == 0) {
             throw new JmespathException(JmespathExceptionType.INVALID_VALUE, "invalid-value");
         }
-        int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : asNumber(startNumber).intValue();
-        if (start < 0) {
-            start = length + start;
+
+        int start;
+        if (is(startNumber, RuntimeType.NULL)) {
+            start = step > 0 ? 0 : length - 1;
+        } else {
+            start = asNumber(startNumber).intValue();
+            if (start < 0) {
+                start = length + start;
+            }
+            if (start < 0) {
+                start = 0;
+            } else if (start > length - 1) {
+                start = length - 1;
+            }
         }
-        int stop = is(stopNumber, RuntimeType.NULL) ? (step > 0 ? length : 0) : asNumber(stopNumber).intValue();
-        if (stop < 0) {
-            stop = length + stop;
+
+        int stop;
+        if (is(stopNumber, RuntimeType.NULL)) {
+            stop = step > 0 ? length : -1;
+        } else {
+            stop = asNumber(stopNumber).intValue();
+            if (stop < 0) {
+                stop = length + stop;
+            }
+
+            if (stop < 0) {
+                stop = -1;
+            } else if (stop > length) {
+                stop = length;
+            }
         }
 
         if (start < stop) {
@@ -102,7 +130,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             if (step < 0) {
                 // List is iterating in reverse
                 for (int idx = start; idx > stop; idx += step) {
-                    output.add(element(array, createNumber(idx - 1)));
+                    output.add(element(array, createNumber(idx)));
                 }
             }
         }
